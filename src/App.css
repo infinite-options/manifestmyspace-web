@@ -1,0 +1,112 @@
+:root{
+    --text-color:#F6EEE3;
+}
+
+.main-header{
+    width:100%;
+    height: 116px;
+}
+
+.main-header-title-logo{
+    background-color: #160449;
+    border: 1px solid var(--text-color);
+    color:  var(--text-color);
+}
+
+.main-header-title-logo-container{
+    /* display: inline-block; */
+    margin-left: 50%;
+    /* transform: translateX(-50%); */
+    transform: translateX(-20%);
+
+}
+
+.main-header-title{
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size:36px;
+    line-height: 47.99px;
+    letter-spacing: 1px;
+}
+
+.main-header-title > span{
+    display: block;
+    font-family: 'Source Sans 3', sans-serif;
+    text-transform: uppercase;
+    font-weight: 400px;
+    font-size: 10px;
+    line-height: 12.57px;
+}
+
+.main-header-redirect-btns{
+    background-color: #3D5CAC;
+    height: 40px;
+    clear: both;
+}
+
+.main-header-redirect-btns > a{
+    color: var(--text-color);
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 400;
+    font-size: 25px;
+    line-height: 20.11px;
+    margin-top: 12px;
+    text-decoration: none;
+}
+
+.main-header-redirect-owner{
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+
+.main-header-redirect-tenant{
+    float:right;
+    width: 50%;
+    text-align: center;
+}
+
+.main-header-logo{
+    display: inline-block;
+    margin-right: 25px;
+}
+
+.main-header-logo > .rectangle-1{
+    height: 7px;
+    width: 26.5px;
+    border:1px solid var(--text-color);
+    transform: rotate(-44.5deg);
+    margin-bottom: 2px;
+}
+
+.main-header-logo > .rectangle-2{
+    height: 7px;
+    width: 26.5px;
+    border:1px solid var(--text-color);
+    transform: rotate(-44.5deg) translateX(15px);
+    margin-bottom: 2px;
+}
+
+.main-header-logo > .rectangle-3{
+    height: 7px;
+    width: 26.5px;
+    border:1px solid var(--text-color);
+    transform: rotate(-44.5deg) translateX(10px);
+    margin-bottom: 2px;
+}
+
+.main-header-logo > .rectangle-4{
+    height: 7px;
+    width: 26.5px;
+    border:1px solid var(--text-color);
+    transform: rotate(-44.5deg) translateX(30px);
+    margin-bottom: 2px;
+}
+
+.main-header-logo > .rectangle-5{
+    height: 7px;
+    width: 26.5px;
+    border:1px solid var(--text-color);
+    transform: rotate(-44.5deg) translateX(25px);
+}

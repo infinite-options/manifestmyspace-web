@@ -1,0 +1,23 @@
+:root{
+    --light-gray-bg:#F2F2F2;
+}
+.cf-widget-main{
+    background-color: var(--light-gray-bg);
+    display: block;
+    margin-top: 80px;
+    width: 90%;
+    height:150px;
+    transform: translateX(5%);
+    border-radius: 10px;
+}
+
+.cf-widget-title-info-container{
+    position: relative;
+    display: inline-block;
+    height:150px;
+    width: 70%;
+}
+
+.cf-widget-graph-container{
+
+}
