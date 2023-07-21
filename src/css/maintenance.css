@@ -1,0 +1,56 @@
+:root{
+    --light-gray-bg:#F2F2F2;
+}
+@font-face {
+    font-family: 'Source Sans Pro';
+    src: url('../fonts/Source_Sans_3/SourceSans3-VariableFont_wght.ttf') format('opentype'); 
+  }
+  
+.mt-widget-main{
+    background-color: var(--light-gray-bg);
+    display: block;
+    margin-top: 35px;
+    width: 45%;
+    height: 390px;
+    transform: translateX(10%);
+    /* margin: auto; */
+    /* margin-left: 45px; */
+    /* transform: translateX(5%); */
+    border-radius: 10px;
+}
+.mt-widget-title {
+    font-family: 'Source Sans Pro';
+    text-align: center;
+    color: #160449;
+    
+}
+
+.mt-widget-requests-container{
+    position: relative;
+    display: inline-block;
+    height: 449px;
+    width: 90%;
+}
+#mt-all-requests{
+    display: block;
+    border-radius: 10px;
+}
+.mt-widget-requests {
+    list-style-type: none;
+    padding: 0;
+    
+}
+.mt-widget-requests li {
+    padding: 10px 20px; /* Increase padding to adjust the background width */
+    /* margin: 5px 0;  */
+    margin-left: 30px;
+    font-family: 'Source Sans Pro';
+}
+.mt-prop-widget-container {
+    background-color: var(--light-gray-bg);
+    display: block;
+    position: relative;
+    display: inline-block;
+    height: 449px;
+    width: 90%;
+}
