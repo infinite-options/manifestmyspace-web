@@ -1,17 +1,21 @@
+import { Button } from "@mui/material";
 import "../../../css/cashflow.css";
+import { useNavigate } from "react-router-dom";
 
-function CashflowWidget(){
-    return(
-        <div className="cf-widget-main">
+function CashflowWidget() {
+    const navigate = useNavigate();
+
+    return (
+        <div className="cf-widget-main" onClick={()=>navigate('/cashflowOwner')}>
             <div className="cf-widget-title-info-container">
                 <div className="cf-widget-title-container">
-                    <p className="cf-widget-title">March 2023</p>
+                    <h2 className="cf-widget-title">March 2023</h2>
                 </div>
                 <div className="cf-widget-info-container">
                     <div className="cf-widget-info-cf">Cashflow
                         <span></span>
                     </div>
-                    <div className="cf-widgrt-info-revenue">Revenue
+                    <div className="cf-widget-info-revenue">Revenue
                         <span></span>
                     </div>
                     <div className="cf-widget-info-expenses">Expenses 

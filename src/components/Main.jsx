@@ -1,10 +1,10 @@
 import React from "react";
 import Header from './Header';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CashflowWidget from './Dashboard-Components/Cashflow/CashflowWidget';
 import CashflowOwner from './Cashflow/CashflowOwner';
 import Footer from './Footer';
-
+import SelectMonthComponent from './SelectMonthComponent';
+import MaintenanceWidjet from './MaintenanceWidget';
 function Main(){
     return (
         <>
@@ -12,8 +12,9 @@ function Main(){
             <Header></Header>
             <Router>
             <Routes>
-              <Route exact path="/dashboard" element={<CashflowWidget />} />
+              <Route exact path="/dashboard" element={<MaintenanceWidjet />} />
               <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
+              <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
             </Routes>
             </Router>
             </div>

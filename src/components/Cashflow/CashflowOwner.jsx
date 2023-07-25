@@ -6,11 +6,14 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import CashflowData from './CashflowData';
 import theme from '../../theme/theme';
 import RevenueTable from './RevenueTable';
+import SelectMonthComponent from '../SelectMonthComponent';
 // import ExpenseTable from './ExpenseTable';
 
 const CashflowOwner = () => {
     const [revenueDropdown, setRevenueDropdown] = useState(false);
     const [expenseDropdown, setExpenseDropdown] = useState(false);
+
+    const [showSelectMonth, setShowSelectMonth] = useState(false);
 
     const [revenue, setRevenue] = useState(null);
     const [revenueSummary, setRevenueSummary] = useState(null);
@@ -69,12 +72,15 @@ const CashflowOwner = () => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Button sx={{ textTransform: 'capitalize' }}>
+                    <Button sx={{ textTransform: 'capitalize' }} onClick={()=>setShowSelectMonth(true)}>
                         <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/>
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
+                        <Typography 
+                        sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                        >
                         Select Month / Year
                         </Typography>
                     </Button>
+                    <SelectMonthComponent showSelectMonth={showSelectMonth}></SelectMonthComponent>
                     <Button sx={{ textTransform: 'capitalize' }}>
                         <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
