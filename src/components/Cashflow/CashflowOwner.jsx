@@ -3,11 +3,23 @@ import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, Accord
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import CashflowData from './CashflowData';
 import theme from '../../theme/theme';
+import RevenueTable from './RevenueTable';
+// import ExpenseTable from './ExpenseTable';
 
 const CashflowOwner = () => {
     const [revenueDropdown, setRevenueDropdown] = useState(false);
     const [expenseDropdown, setExpenseDropdown] = useState(false);
+
+    const [revenue, setRevenue] = useState(null);
+    const [revenueSummary, setRevenueSummary] = useState(null);
+    const [expense, setExpense] = useState(null);
+    const [expenseSummary, setExpenseSummary] = useState(null);
+    console.log("cashflow revenue ", revenue);
+    console.log("cashflow expense ", expense);
+    console.log("cashflow revenueSummary ", revenueSummary);
+    console.log("cashflow expenseSummary ", expenseSummary);
 
     const handleRevenueDropdown = () => {
         setRevenueDropdown(!revenueDropdown);
@@ -18,11 +30,11 @@ const CashflowOwner = () => {
     
     return (
         <ThemeProvider theme={theme}>
+            <CashflowData year={'2023'} month={'June'} filter={false} role={'Owner'} userID={'100-000003'} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue}></CashflowData>
           <Box
             style={{
                 display: 'flex',
                 justifyContent: 'center',
-                // alignItems: 'center',
                 width: '100%', // Take up full screen width
                 minHeight: '100vh', // Set the Box height to full height
                 marginTop: theme.spacing(2), // Set the margin to 20px
@@ -126,9 +138,7 @@ const CashflowOwner = () => {
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                    <Typography>
-                    This is the content of the Accordion. You can put any additional text or components here.
-                    </Typography>
+                    <RevenueTable revenue={revenue} revenueSummary={revenueSummary}></RevenueTable>
                 </AccordionDetails>
                 </Accordion>
                 <Accordion sx={{backgroundColor: theme.palette.primary.main, boxShadow: 'none'}}>
@@ -149,35 +159,12 @@ const CashflowOwner = () => {
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                    <Typography>
-                    This is the content of the Accordion. You can put any additional text or components here.
-                    </Typography>
+                    {/* <ExpenseTable expense={expense} expenseSummary={expenseSummary}></ExpenseTable> */}
                 </AccordionDetails>
                 </Accordion>
-                {/* <Box
-                    component="span"
-                    m={3}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
-                            Expense
-                        </Typography>
-                        <ExpandMoreIcon 
-                            sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}
-                            onClick={()=>{handleExpenseDropdown()}}
-                            />
-                    </Stack>
-                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
-                        $1150
-                    </Typography>
-                </Box> */}
                 <Stack
                 direction="row"
                 justifyContent="center"
-                // sx={{ mt :2}}
                 >
                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
                     Cashflow and Revenue by Month
@@ -190,10 +177,6 @@ const CashflowOwner = () => {
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                //     style={{
-                //         backgroundColor: theme.palette.custom.grey,
-                //         borderRadius: '5px',
-                // }}
                 >
                     <Button sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>Add Revenue</Button>
                     <Button sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>Add Expense</Button>
