@@ -1,0 +1,57 @@
+.ten-sign-in {
+    width: 50vh;
+    margin: 0 auto;
+    margin-top: 65px;
+}
+.ten-portal-title-info {
+    display: grid;
+    place-items: center;
+}
+.ten-portal-detail {
+    height: 370px;
+    margin: 0 auto;
+    background-color: var(--light-gray-bg);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 1px 5px 4px rgba(0, 0, 0, 0.2);
+}
+.ten-portal-title {
+    font-family: 'Source Sans Pro';
+    text-align: center;
+    color: #000000;
+}
+.login-title-info {
+    padding-left: 15px;
+}
+.login-title {
+    font-family: 'Source Sans Pro';
+    /* text-align: center; */
+    color: #000000; 
+}
+.email-info, .password-info, .login-button-info {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.other-info {
+    padding-left: 30px;
+    padding-right: 30px;
+    display: flex;
+    align-items: center;
+}
+#login {
+    border-color: #3D5CAC;
+    color: white;
+    background-color: #3D5CAC;
+    font-family: "Source Sans Pro";
+    text-transform: inherit;
+    font-weight: 800;
+    font-size: medium;
+}
+#sign-up-text, #password-text {
+    font-size: 12px;
+    color: #3D5CAC;
+    font-weight: 500;
+    text-transform: inherit;
+}
