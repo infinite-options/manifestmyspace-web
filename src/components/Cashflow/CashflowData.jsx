@@ -2,17 +2,22 @@ import React, { Component, useEffect, useState } from 'react';
 import { get } from '../utils/api'
 const CashflowData = (props) => {
     console.log("props", props);
-    const [role, setRole] = useState(props.role);
-    const [userID, setUserID] = useState(props.userID);
-    const [year, setYear] = useState(props.year);
-    const [month, setMonth] = useState(props.month);
+    const role = props.role;
+    const userID = props.userID;
+    const year = props.year;
+    const month = props.month;
+    
+    // const [role, setRole] = useState(props.role);
+    // const [userID, setUserID] = useState(props.userID);
+    // const [year, setYear] = useState(props.year);
+    // const [month, setMonth] = useState(props.month);
     const [filter, setFilter] = useState(props.filter); //boolean
 
     // const [revenue, setRevenue] = useState(null);
     // const [revenueSummary, setRevenueSummary] = useState(null);
     // const [expense, setExpense] = useState(null);
     // const [expenseSummary, setExpenseSummary] = useState(null);
-    
+
     const propertyView = false;
 
     const fetchCashflow = async () => {

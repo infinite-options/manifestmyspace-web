@@ -14,6 +14,8 @@ const CashflowOwner = () => {
     const [expenseDropdown, setExpenseDropdown] = useState(false);
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
+    const [month, setMonth] = useState('June');
+    const [year, setYear] = useState('2023');
 
     const [revenue, setRevenue] = useState(null);
     const [revenueSummary, setRevenueSummary] = useState(null);
@@ -21,7 +23,7 @@ const CashflowOwner = () => {
     const [expenseSummary, setExpenseSummary] = useState(null);
     console.log("cashflow revenue ", revenue);
     console.log("cashflow expense ", expense);
-    console.log("cashflow revenueSummary ", revenueSummary);
+    console.log("cashflow revenueSummary ", revenueSummary, month);
     console.log("cashflow expenseSummary ", expenseSummary);
 
     const handleRevenueDropdown = () => {
@@ -33,7 +35,7 @@ const CashflowOwner = () => {
     
     return (
         <ThemeProvider theme={theme}>
-            <CashflowData year={'2023'} month={'June'} filter={false} role={'Owner'} userID={'100-000003'} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue}></CashflowData>
+            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={'100-000003'} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue}></CashflowData>
           <Box
             style={{
                 display: 'flex',
@@ -62,7 +64,7 @@ const CashflowOwner = () => {
                 justifyContent="center"
                 >
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                    March 2023 Cashflow
+                    {month} {year} Cashflow
                     </Typography>
                 </Stack>
                 <Box
@@ -80,7 +82,7 @@ const CashflowOwner = () => {
                         Select Month / Year
                         </Typography>
                     </Button>
-                    <SelectMonthComponent showSelectMonth={showSelectMonth}></SelectMonthComponent>
+                    <SelectMonthComponent showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
                     <Button sx={{ textTransform: 'capitalize' }}>
                         <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -104,7 +106,15 @@ const CashflowOwner = () => {
                         Cashflow
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                        $6850
+                        ${
+                        revenueSummary && expenseSummary ?
+                        ((revenueSummary.reduce(function (prev, current) {
+                            return prev + +current.amount_paid;
+                        }, 0) -
+                        expenseSummary.reduce(function (prev, current) {
+                            return prev + +current.amount_paid;
+                        }, 0)
+                        ).toFixed(2)) : '0.00'}
                     </Typography>
                 </Box>
                 <Box
@@ -123,7 +133,15 @@ const CashflowOwner = () => {
                         Expected Cashflow
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                        $6850
+                        ${
+                        revenueSummary && expenseSummary ?
+                        ((revenueSummary.reduce(function (prev, current) {
+                            return prev + +current.amount_due;
+                        }, 0) -
+                        expenseSummary.reduce(function (prev, current) {
+                            return prev + +current.amount_due;
+                        }, 0)
+                        ).toFixed(2)) : '0.00'}
                     </Typography>
                 </Box>
                 <Accordion sx={{backgroundColor: theme.palette.primary.main, boxShadow: 'none'}}>
@@ -140,7 +158,12 @@ const CashflowOwner = () => {
                     </Typography>
                 </AccordionSummary>
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                        $13800
+                        ${revenueSummary ?
+                        (revenueSummary
+                        .reduce(function (prev, current) {
+                            return prev + +current.amount_paid;
+                        }, 0)
+                        .toFixed(2)) : '0.00'}
                     </Typography>
                 </Box>
                 <AccordionDetails>
@@ -161,7 +184,12 @@ const CashflowOwner = () => {
                     </Typography>
                 </AccordionSummary>
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                        $1150
+                        ${expenseSummary ?
+                        (expenseSummary
+                        .reduce(function (prev, current) {
+                            return prev + +current.amount_paid;
+                        }, 0)
+                        .toFixed(2)) : '0.00'}
                     </Typography>
                 </Box>
                 <AccordionDetails>
