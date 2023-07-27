@@ -1,9 +1,13 @@
+import React, { useState } from 'react';
 import "../css/selectMonth.css";
 import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 const SelectMonthComponent = (props) => {
+  const [selected, setSelected] = useState(props.month);
+
   const handleMonthChange = (month) => {
+    setSelected(month);
     props.setMonth(month);
     console.log("month ", month)
     // props.setShowSelectMonth(false)
@@ -60,22 +64,22 @@ const SelectMonthComponent = (props) => {
       </div>
       <div className="january-february-march-april-m">
         <span className="january-february-march-april-m1">
-          <p className="january" onClick={()=>{handleMonthChange('January')}}>January</p>
-          <p className="january" onClick={()=>{handleMonthChange('February')}}>February</p>
-          <p className="january" onClick={()=>{handleMonthChange('March')}}>March</p>
-          <p className="january" onClick={()=>{handleMonthChange('April')}}>April</p>
-          <p className="january" onClick={()=>{handleMonthChange('May')}}>May</p>
-          <p className="january" onClick={()=>{handleMonthChange('June')}}>June</p>
+          <p id='January' className={selected === 'January' ? 'selected' : 'january'} onClick={()=>{handleMonthChange('January')}}>January</p>
+          <p id='February' className={selected === 'February' ? 'selected' : 'january'} onClick={()=>{handleMonthChange('February')}}>February</p>
+          <p id='March' className={selected === 'March' ? 'selected' : 'january'} onClick={()=>{handleMonthChange('March')}}>March</p>
+          <p id='April' className={selected === 'April' ? 'selected' : 'january'} onClick={()=>{handleMonthChange('April')}}>April</p>
+          <p id='May' className={selected === 'May' ? 'selected' : 'january'} onClick={()=>{handleMonthChange('May')}}>May</p>
+          <p id='June' className={selected === 'June' ? 'selected' : 'january'} onClick={()=>{handleMonthChange('June')}}>June</p>
         </span>
       </div>
       <div className="july-august-september-october">
         <span className="january-february-march-april-m1">
-          <p className="january" onClick={()=>{handleMonthChange('July')}}>July</p>
-          <p className="january" onClick={()=>{handleMonthChange('August')}}>August</p>
-          <p className="january" onClick={()=>{handleMonthChange('September')}}>September</p>
-          <p className="january" onClick={()=>{handleMonthChange('October')}}>October</p>
-          <p className="january" onClick={()=>{handleMonthChange('November')}}>November</p>
-          <p className="january" onClick={()=>{handleMonthChange('December')}}>December</p>
+          <p id='July' className={selected === 'July' ? 'selected' : 'january'} onClick={() => { handleMonthChange('July')}}>July</p>
+          <p id='August' className={selected === 'August' ? 'selected' : 'january'}  onClick={()=>{handleMonthChange('August')}}>August</p>
+          <p id='September' className={selected === 'September' ? 'selected' : 'january'}  onClick={()=>{handleMonthChange('September')}}>September</p>
+          <p id='October' className={selected === 'October' ? 'selected' : 'january'}  onClick={()=>{handleMonthChange('October')}}>October</p>
+          <p id='November' className={selected === 'November' ? 'selected' : 'january'}  onClick={()=>{handleMonthChange('November')}}>November</p>
+          <p id='December' className={selected === 'December' ? 'selected' : 'january'}  onClick={()=>{handleMonthChange('December')}}>December</p>
         </span>
       </div>
       {/* <img className="close-round-icon" alt="" src="/close-round.svg" /> */}

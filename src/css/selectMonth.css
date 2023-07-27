@@ -185,3 +185,11 @@
     font-weight: 800;
     font-size: medium;
   }
+  .selected {
+    background-color: #3D5CAC;
+    color: white;
+    padding: 2px;
+    display: inline;
+    border-radius: 4px;
+    margin: 0px;
+  }
