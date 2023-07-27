@@ -46,6 +46,7 @@ const theme = createTheme({
       blue: '#3D5CAC80', 
       grey: '#22222240',
       yellow: alpha('#FFE3AD', 0.5),
+      pink: alpha('#F87C7A', 0.5)
     },
   },
   typography: {

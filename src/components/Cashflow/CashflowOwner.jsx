@@ -7,7 +7,8 @@ import CashflowData from './CashflowData';
 import theme from '../../theme/theme';
 import RevenueTable from './RevenueTable';
 import SelectMonthComponent from '../SelectMonthComponent';
-// import ExpenseTable from './ExpenseTable';
+import ExpenseTable from './ExpenseTable';
+import MixedChart from '../Graphs/OwnerCashflowGraph';
 
 const CashflowOwner = () => {
     const [revenueDropdown, setRevenueDropdown] = useState(false);
@@ -154,7 +155,7 @@ const CashflowOwner = () => {
                 >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                       March Revenue
+                       {month} Revenue
                     </Typography>
                 </AccordionSummary>
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
@@ -180,7 +181,7 @@ const CashflowOwner = () => {
                 >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                       March Expense
+                       {month} Expense
                     </Typography>
                 </AccordionSummary>
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
@@ -193,7 +194,7 @@ const CashflowOwner = () => {
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                    {/* <ExpenseTable expense={expense} expenseSummary={expenseSummary}></ExpenseTable> */}
+                    <ExpenseTable expense={expense} expenseSummary={expenseSummary}></ExpenseTable>
                 </AccordionDetails>
                 </Accordion>
                 <Stack
@@ -203,6 +204,12 @@ const CashflowOwner = () => {
                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
                     Cashflow and Revenue by Month
                     </Typography>
+                </Stack>
+                <Stack
+                direction="row"
+                justifyContent="center"
+                >
+               {/* <MixedChart></MixedChart> */}
                 </Stack>
                 <Box
                     component="span"

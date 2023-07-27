@@ -1,5 +1,6 @@
 import "../css/selectMonth.css";
-import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 const SelectMonthComponent = (props) => {
   const handleMonthChange = (month) => {
@@ -12,7 +13,21 @@ const SelectMonthComponent = (props) => {
     console.log("year ", year)
   }
   return (
-      <Dialog open={props.showSelectMonth} onClose={()=>props.setShowSelectMonth(false)} maxWidth="lg">
+    <Dialog open={props.showSelectMonth} onClose={() => props.setShowSelectMonth(false)} maxWidth="lg">
+      <DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={()=>props.setShowSelectMonth(false)}
+          sx={{
+            position: 'absolute',
+            right: 1,
+            top: 1,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
       <div className="rectangle-parent">
       <div className="group-child" />
