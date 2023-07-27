@@ -14,11 +14,9 @@
 }
 
 .main-header-title-logo-container{
-    /* display: inline-block; */
-    margin-left: 50%;
-    /* transform: translateX(-50%); */
-    transform: translateX(-20%);
-
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
 }
 
 .main-header-title{

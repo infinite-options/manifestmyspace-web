@@ -5,6 +5,8 @@ import CashflowOwner from './Cashflow/CashflowOwner';
 import Footer from './Footer';
 import SelectMonthComponent from './SelectMonthComponent';
 import MaintenanceWidjet from './MaintenanceWidget';
+import Announcement from "./Announcement/Announcement";
+
 function Main(){
     return (
         <>
@@ -15,6 +17,7 @@ function Main(){
               <Route exact path="/dashboard" element={<MaintenanceWidjet />} />
               <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
               <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
+              <Route exact path="/announcement" element={<Announcement />} />
             </Routes>
             </Router>
             </div>
