@@ -108,7 +108,8 @@ export default function EmailLogin() {
     }
     setShowSpinner(true);
     axios
-      .post("http://127.0.0.1:2000/api/v2/SetTempPassword/FINDME", {
+      // .post("http://127.0.0.1:2000/api/v2/SetTempPassword/FINDME", {
+      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/SetTempPassword/FINDME", {
         email: email,
       })
       .then((response) => {
