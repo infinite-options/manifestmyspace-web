@@ -1,0 +1,88 @@
+.property-rent-container {
+    font-family: 'Source Sans Pro';
+    color: #160449;
+    background-color: #F2F2F2;
+    border-radius: 10px;
+    margin: 25px;
+}
+
+.property-rent-title-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-top: 16px;
+}
+.property-rent-title-text {
+    font-size: 20px;
+    font-weight: bold;
+
+}
+.property-rent-title-emptybox {
+    width:18;
+    height:18;
+    margin-left: 13px;
+    margin-right: auto;
+
+}
+.property-rent-title-add {
+    margin-right: 13px;
+    margin-left: auto;
+}
+
+.property-rent-subtext-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    color: #3D5CAC;
+    font-size: 14px;
+    font-weight: bold;
+}
+.property-rent-subtext-select-icon {
+    margin-right: 10px;
+}
+.property-rent-subtext-days {
+    display: flex;
+    flex-direction: row;
+    
+    align-items: center;
+    margin-left: 20px;
+    margin-right: auto;
+}
+.property-rent-subtext-select {
+    display: flex;
+    flex-direction: row;
+    
+    align-items: center;
+    margin-right: 20px;
+    margin-left: auto;
+}
+.property-rent-all-property {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: #9EAED6;
+    border-radius: 10px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    margin: 15px;
+    box-shadow: 0px 4px 4px #00000019;
+}
+
+.property-rent-property-status-container {
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px #00000019;
+}
+
+.property-rent-detail-subtext {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}
