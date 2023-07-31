@@ -7,16 +7,7 @@ const CashflowData = (props) => {
     const year = props.year;
     const month = props.month;
     
-    // const [role, setRole] = useState(props.role);
-    // const [userID, setUserID] = useState(props.userID);
-    // const [year, setYear] = useState(props.year);
-    // const [month, setMonth] = useState(props.month);
     const [filter, setFilter] = useState(props.filter); //boolean
-
-    // const [revenue, setRevenue] = useState(null);
-    // const [revenueSummary, setRevenueSummary] = useState(null);
-    // const [expense, setExpense] = useState(null);
-    // const [expenseSummary, setExpenseSummary] = useState(null);
 
     const propertyView = false;
 
