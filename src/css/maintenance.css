@@ -11,10 +11,12 @@
     
   }
   .mt-container {
-    display: flex; 
-    justify-content: space-between; /* Add some space between the containers */
-    padding-left: 20px;
-    padding-right: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    /* padding-left: 40px; */
+    /* padding-right: 20px; */
+    /* position: relative; */
   }
     
 .mt-widget-title {
@@ -28,7 +30,7 @@
     background-color: var(--light-gray-bg);
     display: block;
     margin-top: 30px;
-    width: 47%;
+    width: 42.75%;
     height: 392px;
     /* transform: translateX(11%); */
     border-radius: 10px;
@@ -57,7 +59,7 @@
     border-radius: 10px;
     margin-top: 30px;
     height: 392px;
-    width: 47%;
+    width: 42.75%;
 }
 .mt-prop-widget-title {
     font-family: 'Source Sans Pro';
@@ -78,6 +80,7 @@
     border-radius: 10px;
     height: 187px;
     width: 90%;
+    margin-top: 30px;
 }
 .mt-expiry-widget-title {
     font-family: 'Source Sans Pro';

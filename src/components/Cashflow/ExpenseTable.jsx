@@ -22,24 +22,24 @@ const ExpenseTable = (props) => {
             }}
             >
             <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-            <Table>
-            <TableHead>
-                <TableRow>
-                <TableCell>
-                    <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Maintenance </Typography>
-                </TableCell>
-                <TableCell align="right">
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                    $
-                {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "MAINTENANCE")
-                            .amount_paid.toFixed(2)) : '0.00'}
-                </Typography>
-                </TableCell>
-                </TableRow>
-            </TableHead>
-            </Table>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                        <TableCell>
+                            <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Maintenance </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                            <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
+                                $
+                            {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
+                            (expenseSummary
+                                .find((reS) => reS.purchase_type === "MAINTENANCE")
+                                        .amount_paid.toFixed(2)) : '0.00'}
+                            </Typography>
+                        </TableCell>
+                        </TableRow>
+                    </TableHead>
+                </Table>
             </AccordionSummary>
             <AccordionDetails>
             <Table>

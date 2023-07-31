@@ -2,10 +2,9 @@ import { Chart } from "react-google-charts";
 import { Button } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
+import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../css/maintenance.css";
-function MaintenanceWidjet() {
-    const colors = ['#B62C2A', '#D4736D', '#DEA19C', '#92A9CB', '#6788B3','#173C8D'];
-    const requests = ['New Requests', 'Quotes Requested', 'Quotes Accepted', 'Scheduled', 'Completed', 'Paid'];
+function Dashboard() {
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
     const rentData = [
         ["Properties", "Rent status"],
@@ -32,49 +31,37 @@ function MaintenanceWidjet() {
       };
     return(
         <div className="mt-widget-main">
-            <CashflowWidget></CashflowWidget>
+            <CashflowWidget/>
             <div className="mt-container">
-                <div className="mt-widget-requests-container">  
-                    <h2 className="mt-widget-title">Maintenance</h2>
-                    <div id="mt-all-requests">
-                        <ul className="mt-widget-requests">
-                            {requests.map((req, index) => (
-                                <li key={index} style={{ backgroundColor: colors[index], color: '#FFFFFF', fontFamily: 'Source Sans Pro', fontSize: '11px', fontWeight:600}}>
-                                    {req}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
+                <MaintenanceWidget/>
                 <div className="mt-prop-widget-container">
                     <h2 className="mt-prop-widget-title"> Property Rent</h2>
                     <div className="mt-prop-widget-graph">
-
                     <PieChart width={200} height={250} >
-                    <Legend
-                    height={36}
-                    iconType="circle"
-                    layout="vertical"
-                    verticalAlign="bottom"
-                    iconSize={5}
-                    padding={5}
-                    formatter={renderColorfulLegendText}
-                    />
-                    <Pie
-                    data={data}
-                    cx={80}
-                    cy={100}
-                    innerRadius={35}
-                    outerRadius={50}
-                    paddingAngle={0}
-                    dataKey="number"
-                    >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                    
-                    </Pie>
-                </PieChart>
+                        <Legend
+                        height={36}
+                        iconType="circle"
+                        layout="vertical"
+                        verticalAlign="bottom"
+                        iconSize={5}
+                        padding={5}
+                        formatter={renderColorfulLegendText}
+                        />
+                        <Pie
+                        data={data}
+                        cx={80}
+                        cy={100}
+                        innerRadius={35}
+                        outerRadius={50}
+                        paddingAngle={0}
+                        dataKey="number"
+                        >
+                            {data.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                            ))}
+                        
+                        </Pie>
+                    </PieChart>
                      <Button
                         color="primary"
                         style={{    position: 'absolute', 
@@ -84,8 +71,7 @@ function MaintenanceWidjet() {
                                     fontFamily: 'Source Sans Pro',
                                     fontSize: '9px',
                                     color: '#160449',
-                                    fontWeight: 600,}}
-                    >
+                                    fontWeight: 600,}}>
                         View All 63 <br />properties
                     </Button>
                     </div>
@@ -178,4 +164,4 @@ function MaintenanceWidjet() {
     )
 }
 
-export default MaintenanceWidjet;
+export default Dashboard;

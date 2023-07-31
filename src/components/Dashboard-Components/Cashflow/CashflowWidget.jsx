@@ -96,7 +96,6 @@ function CashflowWidget() {
             </Box>
             </Grid>
             <Grid item xs={6}>
-                
             </Grid>
             </Grid>
             {/* <div className="cf-widget-main" onClick={() => navigate('/cashflowOwner')}>
