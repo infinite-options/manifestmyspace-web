@@ -3,12 +3,14 @@ import "../../css/announcement.css"
 import AnnouncementCard from "./AnnouncementCard";
 import Searchbar from "./Searchbar";
 import axios from "axios";
+import SearchFilter from "./SearchFilter";
 function Announcement() {
     const [announcementData, setAnnouncementData] = useState([]);
     useEffect(() => {
         axios.get("https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/announcement?receiver=350-000002")
             .then((res) => {
                 setAnnouncementData(res.data.result);
+                // console.log(res.data.result);
             });
     }, []);
     return (
@@ -69,6 +71,10 @@ function Announcement() {
                         )) : <>Loading...</>}
                 </div>
             </div>
+            {/**
+            <hr/>
+            <SearchFilter/>
+             */}
         </div>
     );
 }

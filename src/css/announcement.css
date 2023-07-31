@@ -145,3 +145,8 @@
 .announcement-list-card-picture {
     margin: 15px;
 }
+
+.search-filter-container {    
+    font-family: 'Source Sans Pro';
+    color: #160449;
+}

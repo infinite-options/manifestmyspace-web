@@ -1,13 +1,11 @@
 
 function AnnouncementCard(props) {
     const data = props.data;
-    console.log(data);
     const pm_info = data.pm_details[0];
     function getDateText(date_announcement) {
         // Format: "2023-05-23 15:30:55"
         const date = date_announcement.substring(0, date_announcement.indexOf(' '));
         const date_list = date.split('-');
-        console.log(date, date_list);
         const year = getYearText(date_list[0]);
         const month = getMonthText(date_list[1]);
         const day = date_list[2];
