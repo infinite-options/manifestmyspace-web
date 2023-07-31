@@ -1,42 +1,20 @@
 import { 
     Typography, 
-    Grid, 
     Box, 
     Stack,
     Paper,
     ThemeProvider, 
-    Accordion, 
-    AccordionSummary,
-    AccordionDetails,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import theme from '../../theme/theme';
 import MaintenanceStatusTable from './MaintenanceStatusTable';
-import { get } from "../utils/api";
 
 
 export default function Maintenance(){
     const location = useLocation();
     const data = location.state.maintenanceData;
-    const [maintenanceData, setMaintenanceData] = useState({});
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         let dataObject = {};
-    //         const data = await get(`/maintenanceRequests`)  
-    //         for (const item of data.result) {
-    //             if (!dataObject[item.request_status]){
-    //                 dataObject[item.request_status] = [];
-    //             }
-    //             dataObject[item.request_status].push(item);
-    //         }            
-    //         setMaintenanceData(prevData => ({ ...prevData, ...dataObject }))
-    //     }
-    //     fetchData();
-    // }, []);
-
-    console.log("Maintenance data", data)
+    const colorStatus = location.state.colorStatus;
 
     return(
         <ThemeProvider theme={theme}>
@@ -70,8 +48,12 @@ export default function Maintenance(){
                         <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                             Maintenance
                         </Typography>
-                    </Stack>
-                    {Object.keys(maintenanceData).map((key, index) => <MaintenanceStatusTable key={index} status={key} data={maintenanceData[key]}/>)}
+                        </Stack>
+                    <div style={{
+                        borderRadius: "10px"
+                    }}>
+                    {colorStatus.map((item, index) => <MaintenanceStatusTable key={index} status={item.status} data={data[item.mapping]} color={item.color}/>)}
+                    </div>
                 </Paper>
             </Box>
         </ThemeProvider>

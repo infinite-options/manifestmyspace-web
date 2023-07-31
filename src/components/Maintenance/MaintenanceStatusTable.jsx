@@ -1,9 +1,4 @@
 import { 
-    Typography, 
-    Grid, 
-    Box, 
-    Stack,
-    Paper,
     ThemeProvider, 
     Accordion, 
     AccordionSummary,
@@ -14,22 +9,39 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import theme from '../../theme/theme';
 
 
-export default function MaintenanceStatusTable({status, data}){
-
-    // console.log(data)
+export default function MaintenanceStatusTable({status, data, color}){
+      
     return(
         <ThemeProvider theme={theme}>
-                    <Accordion
+            <Accordion
             sx={{
-                backgroundColor: theme.palette.custom.pink,
+                backgroundColor: color,
                 boxShadow: 'none',
             }}>
             <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                <Typography>{status}</Typography>
+                <div style={{ 
+                    backgroundColor: color, 
+                    color: '#FFFFFF', 
+                    fontFamily: 'Source Sans Pro', 
+                    fontSize: '18px', 
+                    fontWeight:600, 
+                    display:"flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    paddingRight: '10px',
+                    alignItems: "center",
+                    position: "sticky",
+                    paddingTop: "5px",
+                }}>
+                    <p>{status}</p>
+                    <span style={{float: "right", alignContent: "center", alignItems: "center"}}>{data.length}</span>
+                </div>  
             </AccordionSummary>
             {data.map((item, index) => 
                 <AccordionDetails key={index}>
-                    <Typography>{item.property_uid} {item.request_type} {item.priority}</Typography>
+                    <p style={{ backgroundColor: color, color: '#FFFFFF', fontFamily: 'Source Sans Pro', fontSize: '15px', fontWeight:600}}>
+                        {item.property_uid} {item.request_type} {item.priority}
+                    </p>
                 </AccordionDetails>
             )}
             </Accordion>
