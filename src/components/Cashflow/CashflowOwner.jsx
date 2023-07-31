@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import CashflowData from './CashflowData';
 import theme from '../../theme/theme';
 import RevenueTable from './RevenueTable';
+import ExpectedRevenueTable from './ExpectedRevenueTable'
 import SelectMonthComponent from '../SelectMonthComponent';
 import ExpenseTable from './ExpenseTable';
-// import MixedChart from '../Graphs/OwnerCashflowGraph';
+import ExpectedExpenseTable from './ExpectedExpenseTable';
+import MixedChart from '../Graphs/OwnerCashflowGraph';
 
 const CashflowOwner = () => {
+    const navigate = useNavigate();
+    const [activeButton, setActiveButton] = useState('Cashflow');
     const [revenueDropdown, setRevenueDropdown] = useState(false);
     const [expenseDropdown, setExpenseDropdown] = useState(false);
 
@@ -27,6 +32,10 @@ const CashflowOwner = () => {
     console.log("cashflow revenueSummary ", revenueSummary, month);
     console.log("cashflow expenseSummary ", expenseSummary);
 
+    const handleButtonClick = (buttonName) => {
+        setActiveButton(buttonName);
+    };
+    
     const handleRevenueDropdown = () => {
         setRevenueDropdown(!revenueDropdown);
     }
@@ -50,7 +59,8 @@ const CashflowOwner = () => {
               style={{
                 margin: '30px',
                 padding: theme.spacing(2),
-                backgroundColor: theme.palette.primary.main,
+                // backgroundColor: theme.palette.primary.main,
+                backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
                 width: '85%', // Occupy full width with 25px margins on each side
                 [theme.breakpoints.down('sm')]: {
                   width: '80%',
@@ -98,12 +108,16 @@ const CashflowOwner = () => {
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
+                    onClick={()=>{handleButtonClick('Cashflow')}}
                     style={{
-                        backgroundColor: theme.palette.custom.blue,
+                        // backgroundColor: theme.palette.custom.blue,
+                        backgroundColor: activeButton === 'Cashflow' ? theme.palette.custom.blue : theme.palette.custom.grey,
                         borderRadius: '5px'
                 }}
                 >
-                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                    <Typography 
+                    sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}
+                    >
                         Cashflow
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
@@ -125,12 +139,16 @@ const CashflowOwner = () => {
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
+                    onClick={()=>{handleButtonClick('ExpectedCashflow')}}
                     style={{
-                        backgroundColor: theme.palette.custom.grey,
+                        // backgroundColor: theme.palette.custom.grey,
+                        backgroundColor: activeButton === 'Cashflow' ? theme.palette.custom.grey : theme.palette.custom.yellowHighlight,
                         borderRadius: '5px',
                 }}
                 >
-                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                    <Typography 
+                    sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}
+                    >
                         Expected Cashflow
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
@@ -145,7 +163,11 @@ const CashflowOwner = () => {
                         ).toFixed(2)) : '0.00'}
                     </Typography>
                 </Box>
-                <Accordion sx={{backgroundColor: theme.palette.primary.main, boxShadow: 'none'}}>
+                <Accordion 
+                sx={{
+                    // backgroundColor: theme.palette.primary.main, 
+                    backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                    boxShadow: 'none'}}>
                 <Box
                     component="span"
                     m={3}
@@ -154,24 +176,43 @@ const CashflowOwner = () => {
                     alignItems="center"
                 >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                       {month} Revenue
+                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                    {activeButton === 'Cashflow' ? '' : 'Expected'} {month} Revenue
                     </Typography>
                 </AccordionSummary>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                        ${revenueSummary ?
-                        (revenueSummary
-                        .reduce(function (prev, current) {
-                            return prev + +current.amount_paid;
-                        }, 0)
-                        .toFixed(2)) : '0.00'}
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                    $ {activeButton === 'Cashflow' ?
+                        (
+                            revenueSummary ?
+                                (revenueSummary
+                                .reduce(function (prev, current) {
+                                    return prev + +current.amount_paid;
+                                }, 0)
+                                .toFixed(2)) : '0.00'
+                        ):(
+                            revenueSummary ?
+                                (revenueSummary
+                                .reduce(function (prev, current) {
+                                    return prev + +current.amount_due;
+                                }, 0)
+                                .toFixed(2)) : '0.00'
+                        )}
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                    <RevenueTable revenue={revenue} revenueSummary={revenueSummary}></RevenueTable>
+                {activeButton === 'Cashflow' ?
+                    (
+                        <RevenueTable revenue={revenue} revenueSummary={revenueSummary}></RevenueTable>
+                    ):(
+                        <ExpectedRevenueTable revenue={revenue} revenueSummary={revenueSummary}></ExpectedRevenueTable>
+                    )}
                 </AccordionDetails>
                 </Accordion>
-                <Accordion sx={{backgroundColor: theme.palette.primary.main, boxShadow: 'none'}}>
+                <Accordion 
+                sx={{
+                    // backgroundColor: theme.palette.primary.main, 
+                    backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                    boxShadow: 'none'}}>
                 <Box
                     component="span"
                     m={3}
@@ -180,21 +221,38 @@ const CashflowOwner = () => {
                     alignItems="center"
                 >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                       {month} Expense
+                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                       {activeButton === 'Cashflow' ? '' : 'Expected'} {month} Expense
                     </Typography>
                 </AccordionSummary>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                        ${expenseSummary ?
-                        (expenseSummary
-                        .reduce(function (prev, current) {
-                            return prev + +current.amount_paid;
-                        }, 0)
-                        .toFixed(2)) : '0.00'}
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                       $ {activeButton === 'Cashflow' ?
+                        (
+                            expenseSummary ?
+                                (expenseSummary
+                                .reduce(function (prev, current) {
+                                    return prev + +current.amount_paid;
+                                }, 0)
+                                .toFixed(2)) : '0.00'
+                        ) : 
+                        (
+                            expenseSummary ?
+                                (expenseSummary
+                                .reduce(function (prev, current) {
+                                    return prev + +current.amount_due;
+                                }, 0)
+                                .toFixed(2)) : '0.00'
+                        )}
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                    <ExpenseTable expense={expense} expenseSummary={expenseSummary}></ExpenseTable>
+                {activeButton === 'Cashflow' ?
+                    (
+                        <ExpenseTable expense={expense} expenseSummary={expenseSummary}></ExpenseTable>
+                    )
+                    :(
+                        <ExpectedExpenseTable expense={expense} expenseSummary={expenseSummary}></ExpectedExpenseTable>
+                    )}
                 </AccordionDetails>
                 </Accordion>
                 <Stack
@@ -209,7 +267,7 @@ const CashflowOwner = () => {
                 direction="row"
                 justifyContent="center"
                 >
-               {/* <MixedChart></MixedChart> */}
+               <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary}></MixedChart>
                 </Stack>
                 <Box
                     component="span"
@@ -220,7 +278,9 @@ const CashflowOwner = () => {
                     alignItems="center"
                 >
                     <Button sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>Add Revenue</Button>
-                    <Button sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>Add Expense</Button>
+                    <Button 
+                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
+                        onClick={()=>{navigate('/addExpense')}}>Add Expense</Button>
                 </Box>
             </Paper>
           </Box>

@@ -41,10 +41,12 @@ const theme = createTheme({
     },
     primary: {
       main: '#F2F2F2', // Paper background color
+      secondary: '#D6D5DA'
     },
     custom: {
       blue: '#3D5CAC80', 
       grey: '#22222240',
+      yellowHighlight: '#FFE3AD',
       yellow: alpha('#FFE3AD', 0.5),
       pink: alpha('#F87C7A', 0.5)
     },
