@@ -59,6 +59,9 @@ const theme = createTheme({
     background: {
       default: '#FFFFFF', // White background outside the paper
     },
+    form: {
+      main: '#D6D5DA', // Paper background color
+    },
     primary: {
       main: '#F2F2F2', // Paper background color
       secondary: '#D6D5DA',

@@ -86,7 +86,7 @@ export default function MaintenanceStatusTable({status, data, color}){
                                         {item.request_type}
                                     </TableCell>
                                     <TableCell align="right">
-                                        <p style={{...tableTextStyle}}>{item.priority}</p>
+                                        <p style={{...tableTextStyle}}>{item.request_created_date}</p>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>

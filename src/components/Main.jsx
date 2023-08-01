@@ -17,14 +17,15 @@ function Main(){
         <div>
             <Header/>
             <Router>
-            <Routes>
-              <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
-              <Route exact path="/properties" element={<PropertyList />} />
-              <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
-              <Route exact path="/addExpense" element={<AddExpense/>}/>
-              <Route exact path="/addRevenue" element={<AddRevenue/>}/>
-              <Route exact path="/addUtility" element={<AddUtility/>}/>
-                <Route exact path="/maintenance" element={<Maintenance />} />
+                <Routes>
+                    <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
+                    <Route exact path="/properties" element={<PropertyList />} />
+                    <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
+                    <Route exact path="/addExpense" element={<AddExpense/>}/>
+                    <Route exact path="/addRevenue" element={<AddRevenue/>}/>
+                    <Route exact path="/addUtility" element={<AddUtility/>}/>
+                    <Route exact path="/maintenance" element={<Maintenance />} />
+                    <Route exact path="/" element={<Dashboard />} />
                     <Route exact path="/dashboard" element={<Dashboard />} />
                     <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
                 </Routes>

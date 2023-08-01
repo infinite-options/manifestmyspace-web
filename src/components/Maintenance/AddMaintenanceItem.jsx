@@ -70,7 +70,7 @@ export default function AddMaintenanceItem({}){
                     style={{
                         margin: '30px',
                         padding: theme.spacing(2),
-                        backgroundColor: theme.palette.primary.main,
+                        backgroundColor: theme.palette.form.main,
                         width: '85%', // Occupy full width with 25px margins on each side
                         [theme.breakpoints.down('sm')]: {
                             width: '80%',
@@ -116,9 +116,8 @@ export default function AddMaintenanceItem({}){
                             noValidate
                             autoComplete="off"
                         >
-                            
-                            <Grid container rowSpacing={2} columnSpacing={{ xs: 4, sm: 6, md: 8 }}>
-                                <Grid xs={12}>
+                            <Grid container spacing={3}>
+                                <Grid item padding="20px">
                                     <FormControl sx={{ m: 1, minWidth: 400 }} size="small">
                                         <InputLabel>Select Property</InputLabel>
                                         <Select
@@ -134,8 +133,8 @@ export default function AddMaintenanceItem({}){
                                         {/* <FormHelperText>Property</FormHelperText> */}
                                     </FormControl>
                                 </Grid>
-                                <Grid xs={12}>
-                                    <TextField 
+                                <Grid item padding="20px">
+                                    <TextField fullWidth
                                         id="outlined-basic" 
                                         label="Estimated Cost" 
                                         variant="outlined" 
@@ -143,10 +142,10 @@ export default function AddMaintenanceItem({}){
                                         // helperText="Estimated Cost"
                                         InputProps={{
                                             startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                                          }}
+                                            }}
                                     />
                                 </Grid>
-                                <Grid xs={12}>
+                                <Grid item padding="20px">
                                     <ToggleButtonGroup
                                         color="primary"
                                         // value={alignment}
@@ -154,14 +153,13 @@ export default function AddMaintenanceItem({}){
                                         size="small"
                                         exclusive
                                         onChange={handleToggleGroupChange}
-                                        aria-label="Platform"
                                     >
                                         <ToggleButton value="low" key="low">Low</ToggleButton>
                                         <ToggleButton value="medium" key="medium">Medium</ToggleButton>
                                         <ToggleButton value="high" key="high">High</ToggleButton>
                                     </ToggleButtonGroup>
                                 </Grid>
-                                <Grid xs={12}>
+                                <Grid item padding="20px">
                                     <FormControl sx={{ m: 1, minWidth: 400 }} size="small">
                                         <InputLabel>Issue</InputLabel>
                                         <Select
@@ -177,76 +175,14 @@ export default function AddMaintenanceItem({}){
                                         <FormHelperText>Issue</FormHelperText>
                                     </FormControl>
                                 </Grid>
+                                <Button>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Add Maintenance
+                                    </Typography>
+                                </Button>
                             </Grid>
                         </Box>
                     </Stack>
-
-                    {/* <Stack
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <Box
-                            component="form"
-                            sx={{
-                            '& .MuiTextField-root': { m: 1, width: '25ch' },
-                            }}
-                            noValidate
-                            autoComplete="off">
-                            <div>
-                                <TextField 
-                                    id="outlined-basic" 
-                                    label="$" 
-                                    variant="outlined" 
-                                    size="small"
-                                    helperText="Estimated Cost"
-                                />
-
-                                <ToggleButtonGroup
-                                    color="primary"
-                                    // value={alignment}
-                                    sx={{ m: 1, minWidth: 400 }}
-                                    size="small"
-                                    exclusive
-                                    onChange={handleToggleGroupChange}
-                                    aria-label="Platform"
-                                >
-                                    <ToggleButton value="low" key="low">Low</ToggleButton>
-                                    <ToggleButton value="medium" key="medium">Medium</ToggleButton>
-                                    <ToggleButton value="high" key="high">High</ToggleButton>
-                                </ToggleButtonGroup>
-
-                                <FormControl sx={{ m: 1, minWidth: 400 }} size="small">
-                                    <InputLabel>Select Property</InputLabel>
-                                    <Select
-                                        value={property}
-                                        label="Select Property"
-                                        onChange={handlePropertyChange}
-                                    >
-                                        <MenuItem value={"6123 Corte de la Reina"}>6123 Corte de la Reina</MenuItem>
-                                        <MenuItem value={"9501 Kempler Drive"}>9501 Kempler Drive</MenuItem>
-                                        <MenuItem value={"9107 Japonica Court"}>9107 Japonica Court</MenuItem>
-                                    </Select>
-                                    <FormHelperText>Property</FormHelperText>
-                                </FormControl>
-
-                                <FormControl sx={{ m: 1, minWidth: 400 }} size="small">
-                                    <InputLabel>Issue</InputLabel>
-                                    <Select
-                                        value={issue}
-                                        label="Select Category"
-                                        onChange={handleIssueCategoryChange}
-                                    >
-                                        <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
-                                        <MenuItem value={"Electrical"}>Electrical</MenuItem>
-                                        <MenuItem value={"Appliance"}>Appliance</MenuItem>
-                                        <MenuItem value={"HVAC"}>HVAC</MenuItem>
-                                    </Select>
-                                    <FormHelperText>Issue</FormHelperText>
-                                </FormControl>
-                            </div>
-                        </Box>
-                    </Stack> */}
                 </Paper>
             </Box>
         </ThemeProvider>
