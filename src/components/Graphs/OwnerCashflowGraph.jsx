@@ -8,7 +8,7 @@ const data = [
   // Add data for other months (up to 12)
 ];
 
-const MixedChart = () => {
+const MixedChart = (props) => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
