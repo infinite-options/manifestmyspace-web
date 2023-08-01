@@ -1,6 +1,8 @@
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getStatusColor } from "../utils/propertyRentFunctions";
+import theme from "../../theme/theme";
+import { useState } from "react";
 function PropertyRentAccordionCard(props) {
     const [property, amount] = props.data;
     return (
@@ -16,19 +18,24 @@ function PropertyRentAccordionCard(props) {
 }
 function PropertyRentAccordion(props) {
     const [status] = props.status;
-    const [id] = props.property;
+    const [accordionCount, setAccordionCount] = useState(0);
     return (
-        <Accordion style={{backgroundColor:getStatusColor(status), "font-family": 'Source Sans Pro', color: "#FFFFFF"}}>
+        <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), "font-family": 'Source Sans Pro', color: "#FFFFFF" }}>
             <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={
+                    <div className="property-rent-property-status-summary-text">
+                        {accordionCount}
+                        <ExpandMoreIcon />
+                    </div>
+                }
             >
                 {status}
             </AccordionSummary>
             <AccordionDetails>
-                <PropertyRentAccordionCard data={["103 N. Abel St, Milpitas CA 95035", "$2300"]}/>
+                <PropertyRentAccordionCard data={["103 N. Abel St, Milpitas CA 95035", "$2300"]} />
             </AccordionDetails>
             <AccordionDetails>
-                <PropertyRentAccordionCard data={["104 N. Abel St, Milpitas CA 95035", "$2400"]}/>
+                <PropertyRentAccordionCard data={["104 N. Abel St, Milpitas CA 95035", "$2400"]} />
             </AccordionDetails>
         </Accordion>
     );
@@ -37,11 +44,11 @@ function PropertyRentAccordion(props) {
 function PropertyRentAccordionView(props) {
     return (
         <div className="property-rent-property-status-container">
-            <PropertyRentAccordion status={["Not Paid"]} property={["panel1a-header"]} />
-            <PropertyRentAccordion status={["Paid Partially"]} property={["panel2a-header"]} />
-            <PropertyRentAccordion status={["Paid Late"]} property={["panel2a-header"]} />
-            <PropertyRentAccordion status={["Paid on Time"]} property={["panel2a-header"]} />
-            <PropertyRentAccordion status={["Vacant"]} property={["panel3a-header"]} />
+            <PropertyRentAccordion status={["Not Paid"]} />
+            <PropertyRentAccordion status={["Paid Partially"]} />
+            <PropertyRentAccordion status={["Paid Late"]} />
+            <PropertyRentAccordion status={["Paid on Time"]} />
+            <PropertyRentAccordion status={["Vacant"]} />
         </div>
     );
 }
