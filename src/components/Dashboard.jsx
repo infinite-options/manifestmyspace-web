@@ -83,27 +83,27 @@ function Dashboard() {
                     <div className="months-and-moveouts">
                         <div className="months">
                                 <div id="first-row">
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}> <b> 2</b> </div>
                                     <div> JAN </div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 3</b></div>
                                     <div>FEB</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>MAR</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>APR</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>MAY</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>JUN</div>
                                 </div>
@@ -111,27 +111,27 @@ function Dashboard() {
                             <br />
                             <br />
                             <div id="second-row">
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>JUL</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>AUG</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>SEP</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>OCT</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>NOV</div>
                                 </div>
-                                <div class="box">
+                                <div className="box">
                                     <div style={{fontSize: '14px'}}><b> 2</b></div>
                                     <div>DEC</div>
                                 </div>
@@ -139,7 +139,7 @@ function Dashboard() {
                         </div>
                         <div className="moveouts">
                                 <h2 className="move-out-title"> Move-outs</h2>
-                                <div class="big-box"> 
+                                <div className="big-box"> 
                                     <div>5 </div>
                                     <div> IN NEXT </div> 
                                     <div> 6 WEEKS </div>

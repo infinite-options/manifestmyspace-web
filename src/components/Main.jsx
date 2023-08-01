@@ -10,6 +10,7 @@ import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
 import Dashboard from './Dashboard';
 import Maintenance from './Maintenance/Maintenance';
+import AddMaintenanceItem from './Maintenance/AddMaintenanceItem';
 function Main(){
 
     return (
@@ -24,7 +25,9 @@ function Main(){
               <Route exact path="/addRevenue" element={<AddRevenue/>}/>
               <Route exact path="/addUtility" element={<AddUtility/>}/>
                 <Route exact path="/maintenance" element={<Maintenance />} />
-            </Routes>
+                    <Route exact path="/dashboard" element={<Dashboard />} />
+                    <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
+                </Routes>
             </Router>
         </div>
     )

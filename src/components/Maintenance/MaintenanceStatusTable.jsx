@@ -5,11 +5,28 @@ import {
     AccordionDetails,
 } from "@mui/material";
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import Divider from '@mui/material/Divider';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import theme from '../../theme/theme';
 
 
+
 export default function MaintenanceStatusTable({status, data, color}){
+    
+    const tableTextStyle = {
+        backgroundColor: color, 
+        color: '#FFFFFF', 
+        fontFamily: 'Source Sans Pro', 
+        fontSize: '15px', 
+        fontWeight:600,
+    }
       
     return(
         <ThemeProvider theme={theme}>
@@ -18,7 +35,16 @@ export default function MaintenanceStatusTable({status, data, color}){
                 backgroundColor: color,
                 boxShadow: 'none',
             }}>
-            <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+            <AccordionSummary 
+                sx={{
+                    flexDirection: 'row', // Changed this from 'row-reverse'
+                    '& .MuiIconButton-edgeEnd': { // This targets the IconButton
+                        marginLeft: 'auto', // This pushes the IconButton to the right
+                    },
+                }} 
+                expandIcon={<ExpandMoreIcon />} 
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div style={{ 
                     backgroundColor: color, 
                     color: '#FFFFFF', 
@@ -32,6 +58,7 @@ export default function MaintenanceStatusTable({status, data, color}){
                     alignItems: "center",
                     position: "sticky",
                     paddingTop: "5px",
+                    paddingLeft: "15px",
                 }}>
                     <p>{status}</p>
                     <span style={{float: "right", alignContent: "center", alignItems: "center"}}>{data.length}</span>
@@ -39,9 +66,33 @@ export default function MaintenanceStatusTable({status, data, color}){
             </AccordionSummary>
             {data.map((item, index) => 
                 <AccordionDetails key={index}>
-                    <p style={{ backgroundColor: color, color: '#FFFFFF', fontFamily: 'Source Sans Pro', fontSize: '15px', fontWeight:600}}>
-                        {item.property_uid} {item.request_type} {item.priority}
-                    </p>
+                    <div
+                        style={{
+                            paddingLeft: "15px",
+                            paddingRight: "15px",
+                        }}
+                    >
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell align="left">
+                                        <p style={{...tableTextStyle}}>{item.property_uid}</p>
+                                    </TableCell>
+                                    <TableCell align="left"
+                                        style={{
+                                            verticalAlign: 'middle', // Vertically center the text
+                                            ...tableTextStyle // Include your existing styles
+                                        }}>
+                                        {item.request_type}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <p style={{...tableTextStyle}}>{item.priority}</p>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                        <Divider />
+                    </div>
                 </AccordionDetails>
             )}
             </Accordion>
