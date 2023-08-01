@@ -1,28 +1,36 @@
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import { getStatusColor } from "../utils/propertyRentFunctions";
+function PropertyRentAccordionCard(props) {
+    const [property, amount] = props.data;
+    return (
+        <div className="property-rent-property-status-card">
+            <div className="property-rent-property-status-card-text">
+                {property}
+            </div>
+            <div className="property-rent-property-status-card-amount">
+                {amount}
+            </div>
+        </div>
+    );
+}
 function PropertyRentAccordion(props) {
     const [status] = props.status;
     const [id] = props.property;
     return (
-        <div className="property-rent-property-status-type">
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                >
-                    <Typography>{status}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    1Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                </AccordionDetails>
-                <AccordionDetails>
-                    2Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                </AccordionDetails>
-            </Accordion>
-        </div>
-
+        <Accordion style={{backgroundColor:getStatusColor(status), "font-family": 'Source Sans Pro', color: "#FFFFFF"}}>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+            >
+                {status}
+            </AccordionSummary>
+            <AccordionDetails>
+                <PropertyRentAccordionCard data={["103 N. Abel St, Milpitas CA 95035", "$2300"]}/>
+            </AccordionDetails>
+            <AccordionDetails>
+                <PropertyRentAccordionCard data={["104 N. Abel St, Milpitas CA 95035", "$2400"]}/>
+            </AccordionDetails>
+        </Accordion>
     );
 }
 
