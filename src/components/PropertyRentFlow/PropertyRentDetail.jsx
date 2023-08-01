@@ -1,6 +1,21 @@
+import { useState } from "react";
 import "../../css/propertyRent.css";
-
+const propertyRentStatus = [{ status: "Not Paid", color: "#A52A2A" },
+{ status: "Paid Partially", color: "#FF8A00" },
+{ status: "Paid Late", color: "#FFC614" },
+{ status: "Paid On Time", color: "#3D5CAC" },
+{ status: "Vacant", color: "#160449" },
+];
+const getStatusColor = (status) => {
+    for (let i = 0; i < propertyRentStatus.length; i++) {
+        if (propertyRentStatus[i].status.toUpperCase() === status.toUpperCase()) {
+            return propertyRentStatus[i].color;
+        }
+    }
+    return "#FFFFFF";
+};
 function PropertyRentDetail() {
+    const [propertyStatus, setPropertyStatus] = useState("Not Paid");
     return (
         <div className="property-rent-container">
             <div className="property-rent-title-container">
@@ -27,29 +42,123 @@ function PropertyRentDetail() {
                     Return to Viewing All Listings
                 </div>
             </div>
-            <div className="property-rent-all-property">
-                View All 63 Properties
+            <div className="property-rent-detail-container">
+                <div className="property-rent-detail-navbar-box">
+                    <div className="property-rent-detail-navbar">
+                        <div className="property-rent-detail-navbar-np" style={{ backgroundColor: getStatusColor("Not Paid") }} onClick={()=>setPropertyStatus("Not Paid")}/>
+                        <div className="property-rent-detail-navbar-pp" style={{ backgroundColor: getStatusColor("Paid Partially") }} onClick={()=>setPropertyStatus("Paid Partially")}/>
+                        <div className="property-rent-detail-navbar-pl" style={{ backgroundColor: getStatusColor("Paid Late") }} onClick={()=>setPropertyStatus("Paid Late")}/>
+                        <div className="property-rent-detail-navbar-pot" style={{ backgroundColor: getStatusColor("Paid On Time") }} onClick={()=>setPropertyStatus("Paid On Time")}/>
+                        <div className="property-rent-detail-navbar-v" style={{ backgroundColor: getStatusColor("Vacant") }} onClick={()=>setPropertyStatus("Vacant")}/>
+                    </div>
+                </div>
+                <div className="property-rent-detail-background">
+                    <div className="property-rent-detail-status-indicator" style={{backgroundColor:getStatusColor(propertyStatus)}}/>
+                    <div className="property-rent-detail-selector-container">
+                        <div className="property-rent-detail-selector-icon-left">
+                            <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z" fill="#160449" />
+                            </svg>
+                        </div>
+                        <div className="property-rent-detail-selector-icon-text">
+                            1 Of 3 Not Paid
+                        </div>
+                        <div className="property-rent-detail-selector-icon-right">
+                            <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z" fill="#160449" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div className="property-rent-detail-info-container">
+                        <div className="property-rent-detail-image"/>
+                        <div className="property-rent-detail-info-text-container">
+                            <div className="property-rent-detail-info-text-title">
+                                103 N. Abel St, Milpitas CA 95035
+                            </div>
+                            <div className="property-rent-detail-info-text-description">
+                                $2300
+                                due 07/02/2022
+                                11 Days Overdue
+                            </div>
+                        </div>
+                    </div>
+                    <div className="property-rent-detail-table-container">
+                        <div className="property-rent-detail-table-title">
+                            Rent History
+                        </div>
+                        <div className="property-rent-detail-table-contents">
+                            <table>
+                                <tr style={{ "border-bottom": "1px solid #3D5CAC" }}>
+                                    <th>
+                                        Month
+                                    </th>
+                                    <th>
+                                        Paid
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+                                    <th>
+                                        Rent Status
+                                    </th>
+                                    <th>
+                                        Fees
+                                    </th>
+                                </tr>
+                                <PropertyRow data={["MAR", "-", "-", "Not Paid", ""]} />
+                                <PropertyRow data={["FEB", "02/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["JAN", "01/10", "$2300", "Paid Late", "+$200"]} />
+                                <PropertyRow data={["DEC", "12/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["NOV", "11/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["OCT", "10/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["SEP", "09/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["AUG", "08/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["JUL", "07/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["JUN", "06/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["MAY", "05/05", "$2300", "Paid On Time", ""]} />
+                                <PropertyRow data={["APR", "04/05", "$2300", "Paid On Time", ""]} />
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="property-rent-property-status-container">
-                <div className="property-rent-property-status-type">
-                    Not Paid
-                </div>
-                <div className="property-rent-property-status-type">
-                    Paid Partially
-                </div>
-                <div className="property-rent-property-status-type">
-                    Paid Late
-                </div>
-                <div className="property-rent-property-status-type">
-                    Paid on Time
-                </div>
-                <div className="property-rent-property-status-type">
-                    Vacant
-                </div>
-            </div>
-
         </div>
     );
+}
+
+function PropertyStatus(props) {
+    const status = props.data;
+    const color = getStatusColor(status);
+    return (
+        <div className="property-rent-detail-table-contents-status" style={{ backgroundColor: color }}>
+            {status}
+        </div>
+    );
+}
+
+function PropertyRow(props) {
+    const [month, paid, amount, status, fees] = props.data;
+
+    return (
+        <tr>
+            <td>
+                {month}
+            </td>
+            <td>
+                {paid}
+            </td>
+            <td>
+                {amount}
+            </td>
+            <td>
+                <PropertyStatus data={status} />
+            </td>
+            <td>
+                {fees}
+            </td>
+        </tr>
+    );
+
 }
 
 export default PropertyRentDetail;
