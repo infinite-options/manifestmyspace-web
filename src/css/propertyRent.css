@@ -110,7 +110,8 @@
 
 }
 .property-rent-detail-navbar-box {
-    display: relative;
+    position: relative;
+    top: 20px;
     z-index: 1;
 }
 .property-rent-detail-navbar {
@@ -150,9 +151,11 @@
     margin-right: 15px;
 }
 .property-rent-detail-background {
+    position: relative;
     border-radius: 10px;
     box-shadow: 0px 4px 4px #00000019;
     background-color: #FFFFFF;
+    z-index: 2  ;
 }
 .property-rent-detail-status-indicator {
     width: 100%;
