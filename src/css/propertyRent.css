@@ -3,8 +3,8 @@
     color: #160449;
     background-color: #F2F2F2;
     border-radius: 10px;
-    margin: 25px;
     padding-bottom: 20px;
+    margin: 25px;
 }
 
 .property-rent-title-container {
@@ -79,28 +79,43 @@
     font-family: 'Source Sans Pro';
     color: #FFFFFF;
     border-radius: 10px;
+    margin-left: 13px;
+    margin-right: 13px;
     box-shadow: 0px 4px 4px #00000019;
 }
-.property-rent-property-status-summary-text {
+.property-rent-property-status-summary-text-container {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
     color: #F2F2F2;
     font-weight: bold;
     font-size: 13px;
+}
+.property-rent-property-status-summary-text-1 {
+    color: #F2F2F2;
+    font-weight: 600;
+    font-size: 13px;
+    margin-left: 0px;
+    margin-right: auto;
+}
+.property-rent-property-status-summary-text-2 {
+    color: #F2F2F2;
+    font-weight: 600;
+    font-size: 13px;
+    margin-left: auto;
+    margin-right: 5px;
 }
 .property-rent-property-status-card {
     display: flex;
     flex-direction: row;
 }
 .property-rent-property-status-card-text {
-    margin-left: 10px;
+    margin-left: 0px;
     margin-right: auto;
 }
 .property-rent-property-status-card-amount {
     margin-left: auto;
-    margin-right: 10px;
+    margin-right: 0px;
 }
 .property-rent-detail-subtext {
     display: flex;
@@ -111,7 +126,7 @@
 }
 .property-rent-detail-navbar-box {
     position: relative;
-    top: 20px;
+    top: 30px;
     z-index: 1;
 }
 .property-rent-detail-navbar {
@@ -124,26 +139,31 @@
     width: 20%;
     height: 50px;
     border-radius: 10px;
+    box-shadow: 0px 4px 4px #00000019;
 }
 .property-rent-detail-navbar-pp {
     width: 20%;
     height: 50px;
     border-radius: 10px;
+    box-shadow: 0px 4px 4px #00000019;
 }
 .property-rent-detail-navbar-pl {
     width: 20%;
     height: 50px;
     border-radius: 10px;
+    box-shadow: 0px 4px 4px #00000019;
 }
 .property-rent-detail-navbar-pot {
     width: 20%;
     height: 50px;
     border-radius: 10px;
+    box-shadow: 0px 4px 4px #00000019;
 }
 .property-rent-detail-navbar-v {
     width: 20%;
     height: 50px;
     border-radius: 10px;
+    box-shadow: 0px 4px 4px #00000019;
 }
 
 .property-rent-detail-container {
@@ -160,7 +180,6 @@
 .property-rent-detail-status-indicator {
     width: 100%;
     height: 20px;
-    border-radius: 10px 10px 0px 0px;
 }
 .property-rent-detail-selector-container {
     display: flex;
