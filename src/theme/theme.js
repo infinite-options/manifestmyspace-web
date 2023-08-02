@@ -75,6 +75,11 @@ const theme = createTheme({
       yellow: alpha('#FFE3AD', 0.5),
       pink: alpha('#F87C7A', 0.5)
     },
+    priority: {
+      high: '#A52A2A',
+      medium: '#FF8A00',
+      low: '#FFC614',
+    }
   },
   typography: {
       common: {

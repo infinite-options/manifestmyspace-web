@@ -11,6 +11,9 @@ import AddUtility from "./Cashflow/AddUtility";
 import Dashboard from './Dashboard';
 import Maintenance from './Maintenance/Maintenance';
 import AddMaintenanceItem from './Maintenance/AddMaintenanceItem';
+import MaintenanceRequestDetail from './Maintenance/MaintenanceRequestDetail';
+
+
 function Main(){
 
     return (
@@ -28,6 +31,7 @@ function Main(){
                     <Route exact path="/" element={<Dashboard />} />
                     <Route exact path="/dashboard" element={<Dashboard />} />
                     <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
+                    <Route exact path="/maintenanceRequestDetail/:id" element={<MaintenanceRequestDetail />} />
                 </Routes>
             </Router>
         </div>

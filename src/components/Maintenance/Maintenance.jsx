@@ -114,7 +114,7 @@ export default function Maintenance(){
                         <Button sx={{ textTransform: 'capitalize' }}>
                                 {/* <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/> */}
                                 <Typography 
-                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                                 >
                                 All Properties
                                 </Typography>
@@ -124,7 +124,7 @@ export default function Maintenance(){
                         borderRadius: "10px",
                         margin: "20px",
                     }}>
-                    {colorStatus.map((item, index) => <MaintenanceStatusTable key={index} status={item.status} data={data[item.mapping]} color={item.color}/>)}
+                    {colorStatus.map((item, index) => <MaintenanceStatusTable key={index} status={item.status} data={data[item.mapping]} color={item.color} allData={data}/>)}
                     </div>
                 </Paper>
             </Box>

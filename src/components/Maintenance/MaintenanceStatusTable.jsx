@@ -3,7 +3,11 @@ import {
     Accordion, 
     AccordionSummary,
     AccordionDetails,
+    Typography,
 } from "@mui/material";
+
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -18,14 +22,21 @@ import theme from '../../theme/theme';
 
 
 
-export default function MaintenanceStatusTable({status, data, color}){
-    
+export default function MaintenanceStatusTable({status, data, color, allData}){
+    const location = useLocation();
+    let navigate = useNavigate();
+
     const tableTextStyle = {
         backgroundColor: color, 
         color: '#FFFFFF', 
         fontFamily: 'Source Sans Pro', 
         fontSize: '15px', 
         fontWeight:600,
+    }
+
+    function handleRequestDetailPage(property_uid, maintenance_request_uid){
+        console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
+        navigate('/maintenanceRequestDetail/' + maintenance_request_uid, {state: {data, status, allData}})
     }
       
     return(
@@ -42,7 +53,7 @@ export default function MaintenanceStatusTable({status, data, color}){
                         marginLeft: 'auto', // This pushes the IconButton to the right
                     },
                 }} 
-                expandIcon={<ExpandMoreIcon />} 
+                expandIcon={<ExpandMoreIcon sx={{color: "white"}}/>} 
                 onClick={(e) => e.stopPropagation()}
             >
                 <div style={{ 
@@ -74,19 +85,31 @@ export default function MaintenanceStatusTable({status, data, color}){
                     >
                         <Table>
                             <TableBody>
-                                <TableRow>
+                                <TableRow onClick={() => handleRequestDetailPage(item.property_uid, item.maintenance_request_uid)}>
                                     <TableCell align="left">
-                                        <p style={{...tableTextStyle}}>{item.property_uid}</p>
+                                    <Typography 
+                                        sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
+                                    >
+                                        {item.property_uid}
+                                    </Typography>
                                     </TableCell>
                                     <TableCell align="left"
                                         style={{
                                             verticalAlign: 'middle', // Vertically center the text
                                             ...tableTextStyle // Include your existing styles
                                         }}>
+                                        <Typography 
+                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
+                                        >
                                         {item.request_type}
+                                        </Typography>
                                     </TableCell>
                                     <TableCell align="right">
-                                        <p style={{...tableTextStyle}}>{item.request_created_date}</p>
+                                        <Typography 
+                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
+                                        >
+                                            {item.request_created_date}
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
