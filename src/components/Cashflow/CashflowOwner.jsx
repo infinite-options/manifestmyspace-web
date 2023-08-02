@@ -277,10 +277,15 @@ const CashflowOwner = () => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Button sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>Add Revenue</Button>
+                    <Button 
+                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
+                        onClick={()=>{navigate('/addRevenue')}}>Add Revenue</Button>
                     <Button 
                         sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
                         onClick={()=>{navigate('/addExpense')}}>Add Expense</Button>
+                    <Button 
+                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
+                        onClick={()=>{navigate('/addUtility')}}>Add Utility</Button>
                 </Box>
             </Paper>
           </Box>

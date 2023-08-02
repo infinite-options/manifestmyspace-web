@@ -62,7 +62,8 @@ const theme = createTheme({
     primary: {
       main: '#F2F2F2', // Paper background color
       secondary: '#D6D5DA',
-      pink: '#F5B7B6'
+      pink: '#F5B7B6',
+      mustardYellow: alpha('#FF8A00', 0.35),
     },
     custom: {
       blue: '#3D5CAC80', 

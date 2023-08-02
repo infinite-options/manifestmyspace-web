@@ -1,36 +1,60 @@
 import React, { useState } from 'react';
-import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import PropertyListData from '../Property/PropertyList';
 import theme from '../../theme/theme';
 import File_dock_add from '../../images/File_dock_add.png';
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
-import PropertyListData from '../Property/PropertyList';
 
-const AddExpense = (props) => {
+const AddUtility = (props) => {
     const navigate = useNavigate();
-    const [category, setCategory] = useState('Insurance');
-    const [frequency, setFrequency] = useState('Monthly');
+    const [type, setType] = useState('Electricty');
+    const [provider, setProvider] = useState('');
+    const [splitMethod, setSplitMethod] = useState('Uniformly');
     const [amount, setAmount] = useState('');
     const [propertyList, setPropertyList] = useState([]);
     const properties = ['Option 1', 'Option 2', 'Option 3', 'Option 4']; // Replace with your array of options
     
-    const [selectedProperty, setSelectedProperty] = useState('');
+    const [selectedProperty, setSelectedProperty] = useState([]);
 
-    const handlePropertyChange = (event) => {
-        setSelectedProperty(event.target.value);
+    const [dropdowns, setDropdowns] = useState([{}]);
+
+    const handlePropertyChange = (event, index) => {
+        const selectedOption = event.target.value;
+        const selectedProperty = event.target.value.address + ',' + event.target.value.unit;
+        console.log("%657 ", selectedOption);
+        setDropdowns((prevDropdowns) =>
+        prevDropdowns.map((dropdown, i) =>
+            i === index ? { ...dropdown, selectedOption } : dropdown
+        )
+        );
+        // console.log("%657 dropdowns",dropdowns)
     };
 
-    const handleCategoryChange = (event) => {
-        setCategory(event.target.value);
+    const handleAddDropdown = () => {
+        setDropdowns([...dropdowns, {}]);
     };
-    const handleFrequencyChange = (event) => {
-        setFrequency(event.target.value);
+
+    const handleRemoveDropdown = (index) => {
+        setDropdowns((prevDropdowns) => prevDropdowns.filter((_, i) => i !== index));
+    };
+    // const handlePropertyChange = (event) => {
+    //     setSelectedProperty(event.target.value);
+    // };
+    const handleTypeChange = (event) => {
+        setType(event.target.value);
+    };
+    const handleSplitMethodChange = (event) => {
+        setSplitMethod(event.target.value);
     };
     const handleAmountChange = (event) => {
         setAmount(event.target.value);
     }
-    const handleAddExpense = async () => {
+    const handleProviderChange = (event) => {
+        setProvider(event.target.value);
+    }
+    const handleAddUtility = async () => {
         console.log("amount ", amount);
         // const expense = {
         //     pur_property_id: '200-000057',
@@ -69,7 +93,7 @@ const AddExpense = (props) => {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
+            <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
                 <Box
                     style={{
                         display: 'flex',
@@ -84,7 +108,7 @@ const AddExpense = (props) => {
                             margin: '30px',
                             padding: 20,
                             // backgroundColor: theme.palette.primary.main,
-                            backgroundColor: theme.palette.primary.pink,
+                            backgroundColor: theme.palette.primary.mustardYellow,
                             width: '85%', // Occupy full width with 25px margins on each side
                             [theme.breakpoints.down('sm')]: {
                                 width: '80%',
@@ -112,7 +136,7 @@ const AddExpense = (props) => {
                             justifyContent="center"
                         >
                             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                                Add Expense
+                                Add Utility
                             </Typography>
                         </Stack>
 
@@ -122,7 +146,8 @@ const AddExpense = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Property
                         </Typography>
-                        <Select
+                        {/* <Select
+                            multiple
                             value={selectedProperty}
                             onChange={handlePropertyChange}
                             variant="filled"
@@ -134,88 +159,149 @@ const AddExpense = (props) => {
                             {propertyList.map((option, index) => (
                             <MenuItem key={index} value={option}>
                             {option.address}{", "}{option.unit}
-                            {/* {option.city}, {option.state}{" "}{option.zip} */}
                             </MenuItem>
                             ))}
-                        </Select>
+                        </Select> */}
+                        <div>
+      {dropdowns.map((dropdown, index) => (
+        <div key={index}>
+          <Select
+            value={dropdown.selectedOption || ''}
+            onChange={(event) => handlePropertyChange(event, index)}
+            variant="filled"
+            displayEmpty
+          >
+            <MenuItem value="" disabled>
+              Select an option
+            </MenuItem>
+            {propertyList
+              .filter((option) => !dropdowns.find((d) => d.selectedOption === option))
+              .map((option, i) => (
+                <MenuItem key={i} value={option}>
+                  {option.address}{", "}{option.unit}
+                  {/* {option.city}, {option.state}{" "}{option.zip} */}
+                </MenuItem>
+              ))}
+          </Select>
+          {index > 0 && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleRemoveDropdown(index)}
+            >
+              X
+            </Button>
+          )}
+        </div>
+      ))}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAddDropdown}
+      >
+        +
+      </Button>
+    </div>
                         </Stack>
                         
                         <Stack
                             spacing={-2}
                         >
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                            Category
+                            Type
                         </Typography>
                         <FormControl variant="filled" fullWidth>
                             <Select
                             labelId="category-label"
                             id="category"
-                            defaultValue='Insurance'
-                            value={category}
-                            onChange={handleCategoryChange}
+                            defaultValue='Electricty'
+                            value={type}
+                            onChange={handleTypeChange}
                             >
-                            <MenuItem value="Insurance">Insurance</MenuItem>
-                            <MenuItem value="Maintenance">Maintenance</MenuItem>
-                            <MenuItem value="Management">Management</MenuItem>
-                            <MenuItem value="Mortgage">Mortgage</MenuItem>
-                            <MenuItem value="Repairs">Repairs</MenuItem>
-                            <MenuItem value="Taxes">Taxes</MenuItem>
-                            <MenuItem value="Utilities">Utilities</MenuItem>
+                            <MenuItem value="Electricty">Electricty</MenuItem>
+                            <MenuItem value="Trash">Trash</MenuItem>
+                            <MenuItem value="Water">Water</MenuItem>
+                            <MenuItem value="Wifi">Wifi</MenuItem>
+                            <MenuItem value="Gas">Gas</MenuItem>
                             </Select>
                         </FormControl>
                         </Stack>
 
+                        <Box
+                            component="span"
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
                         <Stack
                             spacing={-2}
                         >
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Amount
                         </Typography>
+                        <Box width={'98%'}>
                         <TextField 
                         variant='filled' 
-                        fullWidth 
                         placeholder='$' 
                         type='number'
                         value= {amount}
                         onChange= {handleAmountChange}
                         ></TextField>
+                        </Box>
                         </Stack>
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Provider
+                        </Typography>
+                        <Box width={'98%'}>
+                        <TextField 
+                        variant='filled' 
+                        placeholder='Add Provider' 
+                        value= {provider}
+                        onChange= {handleProviderChange}
+                        ></TextField>
+                        </Box>
+                        </Stack>
+                        </Box>
 
                         <Stack
                         spacing={-2}
                         >
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                            Payment Date
+                            Due By Date
                         </Typography>
                         <TextField type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
-                        <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Already Paid" sx={{color: theme.typography.common.blue}}/>
+                        <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Pay with rent" sx={{color: theme.typography.common.blue}}/>
                         </Stack>
 
                         <Stack
                             spacing={-2}
                         >
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                            Frequency
+                            Notes
+                        </Typography>
+                        <TextField variant='filled' fullWidth placeholder='Monthly'></TextField>
+                        </Stack>
+
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Split Method
                         </Typography>
                         <FormControl variant="filled" fullWidth>
                             <Select
-                            defaultValue='Monthly'
-                            value={frequency}
-                            onChange={handleFrequencyChange}
+                            defaultValue='Uniformly'
+                            value={splitMethod}
+                            onChange={handleSplitMethodChange}
                             >
-                            <MenuItem value="Monthly">Monthly</MenuItem>
-                            <MenuItem value="Yearly">Yearly</MenuItem>
+                            <MenuItem value="Uniformly">Uniformly</MenuItem>
+                            <MenuItem value="By Number of Tenants">By Number of Tenants</MenuItem>
+                            <MenuItem value="By Square Footage">By Square Footage</MenuItem>
                             </Select>
                         </FormControl>
-                        </Stack>
-
-                        <Stack
-                            spacing={-2}
-                        >
-                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                            Description
-                        </Typography>
-                        <TextField variant='filled' fullWidth placeholder='Add Description'></TextField>
                         </Stack>
 
                         <Box
@@ -227,10 +313,10 @@ const AddExpense = (props) => {
                         >
                             <Stack>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                                Reimbursible?
+                                Payable By?
                             </Typography>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="By Property Manager" sx={{color: theme.typography.common.blue}}/>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="By Tenant" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Owner" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Tenant" sx={{color: theme.typography.common.blue}}/>
                             </Stack>
                             <Stack>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
@@ -250,9 +336,9 @@ const AddExpense = (props) => {
                                 color: theme.typography.secondary.white,
                                 fontWeight: theme.typography.primary.fontWeight
                             }}
-                            onClick={handleAddExpense}
+                            onClick={handleAddUtility}
                         >
-                            + Add Expense
+                            + Add Utility
                         </Button>
                     </Paper>
                 </Box>
@@ -260,4 +346,4 @@ const AddExpense = (props) => {
         </>
     )
 }
-export default AddExpense;
+export default AddUtility;

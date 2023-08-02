@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import PropertyListData from '../Property/PropertyList';
 import theme from '../../theme/theme';
 import File_dock_add from '../../images/File_dock_add.png';
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
-import PropertyListData from '../Property/PropertyList';
 
-const AddExpense = (props) => {
+const AddRevenue = (props) => {
     const navigate = useNavigate();
-    const [category, setCategory] = useState('Insurance');
+    const [category, setCategory] = useState('Deposits');
     const [frequency, setFrequency] = useState('Monthly');
     const [amount, setAmount] = useState('');
     const [propertyList, setPropertyList] = useState([]);
@@ -20,7 +20,6 @@ const AddExpense = (props) => {
     const handlePropertyChange = (event) => {
         setSelectedProperty(event.target.value);
     };
-
     const handleCategoryChange = (event) => {
         setCategory(event.target.value);
     };
@@ -30,7 +29,7 @@ const AddExpense = (props) => {
     const handleAmountChange = (event) => {
         setAmount(event.target.value);
     }
-    const handleAddExpense = async () => {
+    const handleAddRevenue = async () => {
         console.log("amount ", amount);
         // const expense = {
         //     pur_property_id: '200-000057',
@@ -69,7 +68,7 @@ const AddExpense = (props) => {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
+            <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
                 <Box
                     style={{
                         display: 'flex',
@@ -84,7 +83,7 @@ const AddExpense = (props) => {
                             margin: '30px',
                             padding: 20,
                             // backgroundColor: theme.palette.primary.main,
-                            backgroundColor: theme.palette.primary.pink,
+                            backgroundColor: theme.palette.custom.yellow,
                             width: '85%', // Occupy full width with 25px margins on each side
                             [theme.breakpoints.down('sm')]: {
                                 width: '80%',
@@ -112,7 +111,7 @@ const AddExpense = (props) => {
                             justifyContent="center"
                         >
                             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                                Add Expense
+                                Add Revenue
                             </Typography>
                         </Stack>
 
@@ -150,16 +149,16 @@ const AddExpense = (props) => {
                             <Select
                             labelId="category-label"
                             id="category"
-                            defaultValue='Insurance'
+                            defaultValue='Deposits'
                             value={category}
                             onChange={handleCategoryChange}
                             >
-                            <MenuItem value="Insurance">Insurance</MenuItem>
+                            <MenuItem value="Deposits">Deposits</MenuItem>
+                            <MenuItem value="Extra Charges">Extra Charges</MenuItem>
+                            <MenuItem value="Late Fee">Late Fee</MenuItem>
                             <MenuItem value="Maintenance">Maintenance</MenuItem>
-                            <MenuItem value="Management">Management</MenuItem>
-                            <MenuItem value="Mortgage">Mortgage</MenuItem>
+                            <MenuItem value="Rent">Rent</MenuItem>
                             <MenuItem value="Repairs">Repairs</MenuItem>
-                            <MenuItem value="Taxes">Taxes</MenuItem>
                             <MenuItem value="Utilities">Utilities</MenuItem>
                             </Select>
                         </FormControl>
@@ -188,7 +187,7 @@ const AddExpense = (props) => {
                             Payment Date
                         </Typography>
                         <TextField type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
-                        <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Already Paid" sx={{color: theme.typography.common.blue}}/>
+                        <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Already Received" sx={{color: theme.typography.common.blue}}/>
                         </Stack>
 
                         <Stack
@@ -227,14 +226,14 @@ const AddExpense = (props) => {
                         >
                             <Stack>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                                Reimbursible?
+                                Payable By?
                             </Typography>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="By Property Manager" sx={{color: theme.typography.common.blue}}/>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="By Tenant" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Property Manager" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Tenant" sx={{color: theme.typography.common.blue}}/>
                             </Stack>
                             <Stack>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                                Add Receipt
+                                Add File
                             </Typography>
                             <IconButton sx={{backgroundColor: 'white', width: 70, height: 70, borderRadius: 0, margin: 5}}>
                                 <img src={File_dock_add} ></img>
@@ -250,9 +249,9 @@ const AddExpense = (props) => {
                                 color: theme.typography.secondary.white,
                                 fontWeight: theme.typography.primary.fontWeight
                             }}
-                            onClick={handleAddExpense}
+                            onClick={handleAddRevenue}
                         >
-                            + Add Expense
+                            + Add Revenue
                         </Button>
                     </Paper>
                 </Box>
@@ -260,4 +259,4 @@ const AddExpense = (props) => {
         </>
     )
 }
-export default AddExpense;
+export default AddRevenue;
