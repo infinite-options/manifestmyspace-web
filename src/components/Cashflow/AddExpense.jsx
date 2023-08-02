@@ -1,45 +1,233 @@
-import React, { Component } from 'react';
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import React, { useState } from 'react';
+import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import theme from '../../theme/theme';
+import { useNavigate } from "react-router-dom";
+import { post, put } from "../utils/api";
 
 const AddExpense = (props) => {
+    const navigate = useNavigate();
+    const [category, setCategory] = useState('Insurance');
+    const [frequency, setFrequency] = useState('Monthly');
+    const [amount, setAmount] = useState('');
+
+    const handleCategoryChange = (event) => {
+        setCategory(event.target.value);
+    };
+    const handleFrequencyChange = (event) => {
+        setFrequency(event.target.value);
+    };
+    const handleAmountChange = (event) => {
+        setAmount(event.target.value);
+    }
+    const handleAddExpense = async () => {
+        console.log("amount ", amount);
+        // const expense = {
+        //     pur_property_id: '200-000057',
+        //     payer: 'TENANT',
+        //     receiver: '200-000057',
+        //     purchase_type: category,
+        //     // title: title,
+        //     description: 1,
+        //     amount_due: amount,
+        //     purchase_frequency: frequency,
+        //     payment_frequency: 1,
+        //     next_payment: '2023-12-08',
+
+        //     pur_property_id: "200-000057",
+        //     payer: "TENANT",
+        //     payerID: "100-000082",
+        //     ownerID: "100-000002",
+        //     managerID: "600-000001",
+        //     tenantID: '100-000007',
+        //     splitPercentManager: "40",
+        //     splitPercentOwner: "60",
+        //     splitPercentTenant: "0",
+        //     purchase_type: category,
+        //     description: "Test 1",
+        //     amount_due: amount,
+        //     purchase_frequency: "One-time",
+        //     payment_frequency: "One-time",
+        //     next_payment: "2023-12-08",
+        //     purchase_status: "UNPAID"
+        //   };
+    
+          // console.log(newExpense);
+        //   const response = await post("/createExpenses", expense);
+        navigate(-1);
+    }
     return (
         <>
             <ThemeProvider theme={theme}>
-            <Box
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    width: '100%', // Take up full screen width
-                    minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
-                }}
-            >
-            <Paper
-              style={{
-                margin: '30px',
-                padding: theme.spacing(2),
-                // backgroundColor: theme.palette.primary.main,
-                backgroundColor: theme.palette.primary.main,
-                width: '85%', // Occupy full width with 25px margins on each side
-                [theme.breakpoints.down('sm')]: {
-                  width: '80%',
-                },
-                [theme.breakpoints.up('sm')]: {
-                  width: '50%',
-                },
-              }}
-            >
-                <Stack
-                direction="row"
-                justifyContent="center"
+                <Box
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        width: '100%', // Take up full screen width
+                        minHeight: '100vh', // Set the Box height to full height
+                        marginTop: theme.spacing(2), // Set the margin to 20px
+                    }}
                 >
-                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                    Add Expense
-                    </Typography>
-                </Stack>
-            </Paper>
-            </Box>
+                    <Paper
+                        style={{
+                            margin: '30px',
+                            padding: 20,
+                            // backgroundColor: theme.palette.primary.main,
+                            backgroundColor: theme.palette.primary.pink,
+                            width: '85%', // Occupy full width with 25px margins on each side
+                            [theme.breakpoints.down('sm')]: {
+                                width: '80%',
+                            },
+                            [theme.breakpoints.up('sm')]: {
+                                width: '50%',
+                            },
+                        }}
+                    >
+                        <IconButton
+                            aria-label="close"
+                            onClick={() => navigate(-1)}
+                            sx={{
+                                position: 'sticky',
+                                left: '90vw',
+                                top: 1,
+                                color: theme.typography.common.blue,
+                                fontWeight: theme.typography.common.fontWeight
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                        <Stack
+                            direction="row"
+                            justifyContent="center"
+                        >
+                            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
+                                Add Expense
+                            </Typography>
+                        </Stack>
+
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Property
+                        </Typography>
+                        <TextField variant='filled' fullWidth placeholder="Property"></TextField>
+                        </Stack>
+                        
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Category
+                        </Typography>
+                        <FormControl variant="filled" fullWidth>
+                            <Select
+                            labelId="category-label"
+                            id="category"
+                            defaultValue='Insurance'
+                            value={category}
+                            onChange={handleCategoryChange}
+                            >
+                            <MenuItem value="Insurance">Insurance</MenuItem>
+                            <MenuItem value="Maintenance">Maintenance</MenuItem>
+                            <MenuItem value="Management">Management</MenuItem>
+                            <MenuItem value="Mortgage">Mortgage</MenuItem>
+                            <MenuItem value="Repairs">Repairs</MenuItem>
+                            <MenuItem value="Taxes">Taxes</MenuItem>
+                            <MenuItem value="Utilities">Utilities</MenuItem>
+                            </Select>
+                        </FormControl>
+                        </Stack>
+
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Amount
+                        </Typography>
+                        <TextField 
+                        variant='filled' 
+                        fullWidth 
+                        placeholder='$' 
+                        type='number'
+                        value= {amount}
+                        onChange= {handleAmountChange}
+                        ></TextField>
+                        </Stack>
+
+                        <Stack
+                        spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Payment Date
+                        </Typography>
+                        <TextField type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
+                        <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Already Paid" sx={{color: theme.typography.common.blue}}/>
+                        </Stack>
+
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Frequency
+                        </Typography>
+                        <FormControl variant="filled" fullWidth>
+                            <Select
+                            defaultValue='Monthly'
+                            value={frequency}
+                            onChange={handleFrequencyChange}
+                            >
+                            <MenuItem value="Monthly">Monthly</MenuItem>
+                            <MenuItem value="Yearly">Yearly</MenuItem>
+                            </Select>
+                        </FormControl>
+                        </Stack>
+
+                        <Stack
+                            spacing={-2}
+                        >
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                            Description
+                        </Typography>
+                        <TextField variant='filled' fullWidth placeholder='Add Description'></TextField>
+                        </Stack>
+
+                        <Box
+                        component="span"
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        // onClick={()=>{handleButtonClick('ExpectedCashflow')}}
+                        >
+                            <Stack>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                                Reimbursible?
+                            </Typography>
+                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="By Property Manager" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="By Tenant" sx={{color: theme.typography.common.blue}}/>
+                            </Stack>
+                            <Stack>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                                Add Receipt
+                            </Typography>
+                            <IconButton></IconButton>
+                            </Stack>
+                        </Box>
+
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{
+                                backgroundColor: theme.palette.custom.blue,
+                                color: theme.typography.secondary.white,
+                                fontWeight: theme.typography.primary.fontWeight
+                            }}
+                            onClick={handleAddExpense}
+                        >
+                            Add Expense
+                        </Button>
+                    </Paper>
+                </Box>
             </ThemeProvider>
         </>
     )

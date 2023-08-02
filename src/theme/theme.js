@@ -34,6 +34,26 @@ const theme = createTheme({
         },
       },
     },
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          '&.MuiFilledInput-root': {
+            backgroundColor: '#F2F2F2', // Update the background color here
+            borderRadius: 10,
+            height: 30,
+            marginBlock: 10,
+          },
+          '&.MuiFilledInput-root:before, &.MuiFilledInput-root:hover:before, &.MuiFilledInput-root:after': {
+            borderBottom: 'none',
+          },
+        },
+        input: {
+          // Center the text inside the TextField
+          textAlign: 'left',
+          paddingBlock: 2
+        },
+      },
+    },
   },
   palette: {
     background: {
@@ -41,7 +61,8 @@ const theme = createTheme({
     },
     primary: {
       main: '#F2F2F2', // Paper background color
-      secondary: '#D6D5DA'
+      secondary: '#D6D5DA',
+      pink: '#F5B7B6'
     },
     custom: {
       blue: '#3D5CAC80', 
