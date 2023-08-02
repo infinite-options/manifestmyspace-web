@@ -112,6 +112,7 @@
 .property-rent-property-status-card-text {
     margin-left: 0px;
     margin-right: auto;
+    text-decoration: underline;
 }
 .property-rent-property-status-card-amount {
     margin-left: auto;

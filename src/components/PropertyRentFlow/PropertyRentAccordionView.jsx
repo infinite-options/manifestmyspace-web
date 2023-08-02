@@ -1,23 +1,35 @@
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import { getStatusColor } from "../utils/propertyRentFunctions";
 import theme from "../../theme/theme";
-import { useState } from "react";
+import { useNavigate } from "react-router";
+
 function PropertyRentAccordionCard(props) {
-    const [property, amount] = props.data;
+    const ownerData = props.ownerData;
+    const [index, property, amount] = props.data;
+    const navigate = useNavigate();
+    function navigateTo(url, index) {
+        navigate(url, {
+            state:
+            {
+                index: index,
+                data: ownerData
+            }
+        });
+    }
     return (
         <div className="property-rent-property-status-card">
-            <div className="property-rent-property-status-card-text">
+            <div className="property-rent-property-status-card-text" onClick={()=>navigateTo("/propertyRentDetail", index)}>
                 {property}
             </div>
             <div className="property-rent-property-status-card-amount">
-                {amount}
+                ${amount}
             </div>
         </div>
     );
 }
 function PropertyRentAccordion(props) {
-    const [status] = props.status;
-    const [accordionCount, setAccordionCount] = useState(0);
+    const status = props.status;
+    const [ownerData, properties] = props.data;
     return (
         <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), "font-family": 'Source Sans Pro', color: "#FFFFFF"}}>
             <AccordionSummary
@@ -32,27 +44,28 @@ function PropertyRentAccordion(props) {
                     {status}
                 </div>
                 <div className="property-rent-property-status-summary-text-2">
-                    {accordionCount}
+                    {properties.length}
                 </div>
             </AccordionSummary>
-            <AccordionDetails>
-                <PropertyRentAccordionCard data={["103 N. Abel St, Milpitas CA 95035", "$2300"]} />
-            </AccordionDetails>
-            <AccordionDetails>
-                <PropertyRentAccordionCard data={["104 N. Abel St, Milpitas CA 95035", "$2400"]} />
-            </AccordionDetails>
+            {properties.map((property, index)=>
+                <AccordionDetails>
+                    <PropertyRentAccordionCard ownerData={ownerData} data={[index, property.address, property.deposit]} />
+                </AccordionDetails>
+
+            )}
         </Accordion>
     );
 }
 
 function PropertyRentAccordionView(props) {
+    const ownerData = props.data;
     return (
         <div className="property-rent-property-status-container">
-            <PropertyRentAccordion status={["Not Paid"]} />
-            <PropertyRentAccordion status={["Paid Partially"]} />
-            <PropertyRentAccordion status={["Paid Late"]} />
-            <PropertyRentAccordion status={["Paid on Time"]} />
-            <PropertyRentAccordion status={["Vacant"]} />
+            <PropertyRentAccordion status={"Not Paid"} data={[ownerData, ownerData]}/>
+            <PropertyRentAccordion status={"Paid Partially"} data={[ownerData, ownerData]}/>
+            <PropertyRentAccordion status={"Paid Late"} data={[ownerData, ownerData]}/>
+            <PropertyRentAccordion status={"Paid on Time"} data={[ownerData, ownerData]}/>
+            <PropertyRentAccordion status={"Vacant"} data={[ownerData, ownerData]}/>
         </div>
     );
 }

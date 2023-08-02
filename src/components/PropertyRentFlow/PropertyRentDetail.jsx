@@ -1,9 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../css/propertyRent.css";
 import { getStatusColor } from "../utils/propertyRentFunctions";
+import { useLocation } from "react-router";
+import axios from "axios";
 
 function PropertyRentDetail() {
     const [propertyStatus, setPropertyStatus] = useState("Not Paid");
+    const location = useLocation();
+    const index = location.state.index;
+    const ownerData = location.state.data;
+    const property = ownerData[index];
+
+    const [cashflowOwner, setCashflowOwner] = useState({});
+    useEffect(() => {
+        const requestURL = "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/CashflowOwner";
+        const config = {
+            params: {
+                owner_id: property.owner_id,
+                year: "2023"
+            }
+        }
+        axios.get(requestURL, config).then(res => {
+            console.log("Cashflow Owner: ", res.data.result);
+            setCashflowOwner(res.data.result);
+        });
+    }, []);
     return (
         <div className="property-rent-container">
             <div className="property-rent-title-container">
@@ -33,15 +54,15 @@ function PropertyRentDetail() {
             <div className="property-rent-detail-container">
                 <div className="property-rent-detail-navbar-box">
                     <div className="property-rent-detail-navbar">
-                        <div className="property-rent-detail-navbar-np" style={{ backgroundColor: getStatusColor("Not Paid") }} onClick={()=>setPropertyStatus("Not Paid")}/>
-                        <div className="property-rent-detail-navbar-pp" style={{ backgroundColor: getStatusColor("Paid Partially") }} onClick={()=>setPropertyStatus("Paid Partially")}/>
-                        <div className="property-rent-detail-navbar-pl" style={{ backgroundColor: getStatusColor("Paid Late") }} onClick={()=>setPropertyStatus("Paid Late")}/>
-                        <div className="property-rent-detail-navbar-pot" style={{ backgroundColor: getStatusColor("Paid On Time") }} onClick={()=>setPropertyStatus("Paid On Time")}/>
-                        <div className="property-rent-detail-navbar-v" style={{ backgroundColor: getStatusColor("Vacant") }} onClick={()=>setPropertyStatus("Vacant")}/>
+                        <div className="property-rent-detail-navbar-np" style={{ backgroundColor: getStatusColor("Not Paid") }} onClick={() => setPropertyStatus("Not Paid")} />
+                        <div className="property-rent-detail-navbar-pp" style={{ backgroundColor: getStatusColor("Paid Partially") }} onClick={() => setPropertyStatus("Paid Partially")} />
+                        <div className="property-rent-detail-navbar-pl" style={{ backgroundColor: getStatusColor("Paid Late") }} onClick={() => setPropertyStatus("Paid Late")} />
+                        <div className="property-rent-detail-navbar-pot" style={{ backgroundColor: getStatusColor("Paid On Time") }} onClick={() => setPropertyStatus("Paid On Time")} />
+                        <div className="property-rent-detail-navbar-v" style={{ backgroundColor: getStatusColor("Vacant") }} onClick={() => setPropertyStatus("Vacant")} />
                     </div>
                 </div>
                 <div className="property-rent-detail-background">
-                    <div className="property-rent-detail-status-indicator" style={{backgroundColor:getStatusColor(propertyStatus)}}/>
+                    <div className="property-rent-detail-status-indicator" style={{ backgroundColor: getStatusColor(propertyStatus) }} />
                     <div className="property-rent-detail-selector-container">
                         <div className="property-rent-detail-selector-icon-left">
                             <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,16 +80,22 @@ function PropertyRentDetail() {
                     </div>
                     <div className="property-rent-detail-info-container">
                         <div className="property-rent-detail-image">
-                            
+
                         </div>
                         <div className="property-rent-detail-info-text-container">
                             <div className="property-rent-detail-info-text-title">
-                                103 N. Abel St, Milpitas CA 95035
+                                {property.address}
                             </div>
                             <div className="property-rent-detail-info-text-description">
-                                $2300
-                                due 07/02/2022
-                                11 Days Overdue
+                                <div>
+                                    ${cashflowOwner.expense_summary[0].amount_due}
+                                </div>
+                                <div>
+                                    due {property.active_date}
+                                </div>
+                                <div>
+                                    11 Days Overdue
+                                </div>
                             </div>
                         </div>
                     </div>

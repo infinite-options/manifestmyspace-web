@@ -1,11 +1,27 @@
+import { useEffect, useState } from "react";
 import "../../css/propertyRent.css";
 import PropertyRentAccordionView from "./PropertyRentAccordionView";
+import axios from "axios";
 
 function PropertyRentFlow() {
+    const [ownerData, setOwnerData] = useState([]);
+    
+    useEffect(() => {
+        const requestURL = "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard";
+        const config = {
+            headers: {
+                Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5MDk1NDYxMywianRpIjoiZThiYjljN2EtM2I4NS00N2I0LTgwNjAtN2FhYWEwN2I0NmY3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJ1c2VyX3VpZCI6IjEwMC0wMDAwOTAiLCJmaXJzdF9uYW1lIjoiSmluc2VvayIsImxhc3RfbmFtZSI6IkhlbyIsInBob25lX251bWJlciI6Iig2NTApIDc3Mi04MDg3IiwiZW1haWwiOm51bGwsInJvbGUiOiJNQU5BR0VSLFRFTkFOVCxNQUlOVEVOQU5DRSxPV05FUiIsImdvb2dsZV9hdXRoX3Rva2VuIjoieWEyOS5hMEFiVmJZNlBGa3ZXaXpxYjNJQWhqMmxvTlBxd0pUZnVjRWVwQV9NYWNIbXBzNkZLcjBBR3RzUGg2ZWhmUC1nVlRDQkhMRWhsTHB6X0xUQXFRTkV5SVQ3Q2RobUhXV3lqMW9rS3piVC0zR0toTlkydFhhU0llMDVPeFZfcUNqZHZPOTlYQ2RSeDFaU1hLU0pIZlhnbldMYUZmZmw1LWFDZ1lLQWNvU0FSRVNGUUZXS3ZQbFZFR0xSM3NjdjBqYUVSX3NsNkdVLWcwMTYzIiwiYnVzaW5lc3NlcyI6W3siYnVzaW5lc3NfdWlkIjoiNjAwLTAwMDAyMCIsImJ1c2luZXNzX3R5cGUiOiJNQU5BR0VNRU5UIiwiYnVzaW5lc3NfbmFtZSI6IkppbnNlb2sgUHJvcGVydHkgTWFuYWdlbWVudCIsImJ1c2luZXNzX3Bob25lX251bWJlciI6Iig2NTApIDc3Mi04MDg3IiwiYnVzaW5lc3NfZW1haWwiOiJnZW5pZS5oMUBnbWFpbC5jb20iLCJidXNpbmVzc19laW5fbnVtYmVyIjoiNTYtMTIzNDU2IiwiYnVzaW5lc3Nfc2VydmljZXNfZmVlcyI6Ilt7XCJvZlwiOiBcIkdyb3NzIFJlbnRcIiwgXCJjaGFyZ2VcIjogXCIxNSVcIiwgXCJmZWVfbmFtZVwiOiBcIlNlcnZpY2UgQ2hhcmdlXCIsIFwiZmVlX3R5cGVcIjogXCIlXCIsIFwiZnJlcXVlbmN5XCI6IFwiTW9udGhseVwifV0iLCJidXNpbmVzc19sb2NhdGlvbnMiOiJbe1wiZGlzdGFuY2VcIjogXCIxNVwiLCBcImxvY2F0aW9uXCI6IFwiU3Vubnl2YWxlXCJ9XSIsImJ1c2luZXNzX3BheXBhbCI6ImdlbmllLmgxQGdtYWlsLmNvbSIsImJ1c2luZXNzX2FwcGxlX3BheSI6bnVsbCwiYnVzaW5lc3NfemVsbGUiOm51bGwsImJ1c2luZXNzX3Zlbm1vIjpudWxsLCJidXNpbmVzc19hY2NvdW50X251bWJlciI6bnVsbCwiYnVzaW5lc3Nfcm91dGluZ19udW1iZXIiOm51bGwsImJ1c2luZXNzX2RvY3VtZW50cyI6IltdIiwiZW1wbG95ZWVfcm9sZSI6Ik93bmVyIn0seyJidXNpbmVzc191aWQiOiI2MDAtMDAwMDIxIiwiYnVzaW5lc3NfdHlwZSI6Ik1BSU5URU5BTkNFIiwiYnVzaW5lc3NfbmFtZSI6IkppbnNlb2sgTWFpbnRlbmFuY2UiLCJidXNpbmVzc19waG9uZV9udW1iZXIiOiIoNjUwKSA3NzItODA4NyIsImJ1c2luZXNzX2VtYWlsIjoiZ2VuaWUuaDFAZ21haWwuY29tIiwiYnVzaW5lc3NfZWluX251bWJlciI6IjU2LTEyMzQ1NiIsImJ1c2luZXNzX3NlcnZpY2VzX2ZlZXMiOiJbe1wicGVyXCI6IFwiSG91clwiLCBcImNoYXJnZVwiOiBcIjEwMFwiLCBcImV2ZW50X3R5cGVcIjogXCIxIEhvdXIgSm9iXCIsIFwic2VydmljZV9uYW1lXCI6IFwiRWxlY3RyaWNpdHlcIiwgXCJ0b3RhbF9lc3RpbWF0ZVwiOiAxMDB9XSIsImJ1c2luZXNzX2xvY2F0aW9ucyI6Ilt7XCJkaXN0YW5jZVwiOiBcIjE1XCIsIFwibG9jYXRpb25cIjogXCJTdW5ueXZhbGVcIn1dIiwiYnVzaW5lc3NfcGF5cGFsIjoiZ2VuaWUuaDFAZ21haWwuY29tIiwiYnVzaW5lc3NfYXBwbGVfcGF5IjpudWxsLCJidXNpbmVzc196ZWxsZSI6ImdlbmllLmgxQGdtYWlsLmNvbSIsImJ1c2luZXNzX3Zlbm1vIjoiZ2VuaWUuaDFAZ21haWwuY29tIiwiYnVzaW5lc3NfYWNjb3VudF9udW1iZXIiOm51bGwsImJ1c2luZXNzX3JvdXRpbmdfbnVtYmVyIjpudWxsLCJidXNpbmVzc19kb2N1bWVudHMiOiJbXSIsImVtcGxveWVlX3JvbGUiOiJPd25lciJ9XSwidGVuYW50X2lkIjpbeyJ0ZW5hbnRfaWQiOiIzNTAtMDAwMDUzIn1dfSwibmJmIjoxNjkwOTU0NjEzLCJleHAiOjE2OTA5NTgyMTN9.bJt4fdjF0uzwAduIZf5fn_y1AZ2TehTMJvGqQVExSqc"
+            }
+        }
+        axios.get(requestURL, config).then(res => {
+            //console.log("Owner Dashboard: ", res.data.result);
+            setOwnerData(res.data.result);
+        });
+    }, []);
     return (
         <div className="property-rent-container">
             <div className="property-rent-title-container">
-                <div className="property-rent-title-emptybox"/>
+                <div className="property-rent-title-emptybox" />
                 <div className="property-rent-title-text">
                     Property Rent
                 </div>
@@ -34,9 +50,9 @@ function PropertyRentFlow() {
                 </div>
             </div>
             <div className="property-rent-all-property">
-                View All 63 Properties
+                View All {ownerData.length} Properties
             </div>
-            <PropertyRentAccordionView />
+            <PropertyRentAccordionView data={ownerData} />
 
         </div>
     );
