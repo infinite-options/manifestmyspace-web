@@ -23,12 +23,11 @@ export default function RequestNavigator({requestData, color, item}){
         <div style={{paddingBottom: "10px"}}>
             <Box
                 sx={{
-                    display: 'flex',
                     flexDirection: 'column', // Added this to stack children vertically
                     justifyContent: 'center',
-                    width: '100%', // Take up full screen width
+                    width: "100%", // Take up full screen width
                     marginTop: theme.spacing(2), // Set the margin to 20px
-                    color: color,
+                    backgroundColor: '#3D5CAC80',
                 }}
             > 
                 <Stack
@@ -43,32 +42,46 @@ export default function RequestNavigator({requestData, color, item}){
                     <Typography
                         sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont}}
                         >
-                        {item.mapping}
+                        {item.status} {currentIndex + 1} of {requestData.length}
                     </Typography>
                     <Button onClick={handleNextCard} disabled={requestData.length <= 1}>
                         <ArrowForwardIcon />
                     </Button>  
                 </Stack>
                 <Stack
-                    direction="row"
-                    justifyContent="center"
                     alignItems="center"
-                    spacing={2}
+                    justifyContent="center"
                 >
-                    <div sx={{ maxWidth: 345, backgroundColor: color, boxShadow: "0px"}}>
+                    <Card
+                        sx={{
+                            backgroundColor: color,
+                            boxShadow: "none",
+                            elevation: "0",
+                        }}
+                        >
                         <Typography
                                 sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.largeFont}}
                             >
-                                {data.title}
+                                {data.title}    
                         </Typography>
-                        <CardMedia
-                            component="img"
-                            height="194"
-                            width="345"
-                            image={maintenaceRequestImage}
-                            alt="Paella dish"
-                        />
-                        <CardContent>
+                        <CardContent sx={{
+                            center: "true",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width:"100%",
+
+                        }}>
+                            <CardMedia
+                                component="img"
+                                height="200px"
+                                width="200px"
+                                image={maintenaceRequestImage}
+                                sx={{
+                                    elevation: "0",
+                                    boxShadow: "none",
+                                }}
+                                alignItems="center"
+                            />
                             <Typography
                                 sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.largeFont}}
                             >
@@ -80,22 +93,36 @@ export default function RequestNavigator({requestData, color, item}){
                                 {data.request_created_date}
                             </Typography>
                             <Typography
-                                sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}
+                                sx={{
+                                    overflowWrap: 'break-word',
+                                    color: theme.typography.secondary.white, 
+                                    fontWeight: theme.typography.secondary.fontWeight, 
+                                    fontSize:theme.typography.smallFont
+                                }}
                             >
                                 {data.description}
                             </Typography>
                             <Typography
-                                sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}
+                                sx={{
+                                    overflowWrap: 'break-word',
+                                    color: theme.typography.secondary.white, 
+                                    fontWeight: theme.typography.secondary.fontWeight, 
+                                    fontSize:theme.typography.smallFont
+                                }}
                             >
                                 {data.request_type}
                             </Typography>
                             <Typography
-                                sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}
+                                sx={{
+                                    overflowWrap: 'break-word',
+                                    color: theme.typography.secondary.white, 
+                                    fontWeight: theme.typography.secondary.fontWeight, 
+                                    fontSize: theme.typography.smallFont}}
                             >
                                 {data.notes}
                             </Typography>
                         </CardContent>
-                    </div>
+                    </Card>
                 </Stack>
             </Box>
         </div>

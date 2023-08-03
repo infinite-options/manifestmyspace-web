@@ -22,6 +22,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import RequestCard from './RequestCard';
 import RequestNavigator from './RequestNavigator';
+import AddIcon from '@mui/icons-material/Add';
+import SelectMonthComponent from '../SelectMonthComponent';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 
 function CustomTabPanel(props) {
@@ -61,6 +65,16 @@ export default function MaintenanceRequestDetail(){
     const location = useLocation();
     let navigate = useNavigate();
 
+    function navigateToAddMaintenanceItem(){
+        console.log("navigateToAddMaintenanceItem")
+        navigate('/addMaintenanceItem', {state: {month, year}})
+    }
+
+    function handleBackButton(){
+        console.log("handleBackButton")
+        navigate(-1); 
+    }
+
     const colorStatus = [
         {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
         {'color': '#D4736D', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'},
@@ -79,6 +93,8 @@ export default function MaintenanceRequestDetail(){
     const allData = location.state.allData;
 
     const [value, setValue] = useState(0);
+    const [month, setMonth] = useState(new Date().getMonth());
+    const [year, setYear] = useState(new Date().getFullYear());
 
     const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -109,7 +125,7 @@ export default function MaintenanceRequestDetail(){
         <ThemeProvider theme={theme}>
             <Box
             style={{
-                display: 'flex',
+                //display: 'flex',
                 justifyContent: 'center',
                 width: '100%', // Take up full screen width
                 minHeight: '100vh', // Set the Box height to full height
@@ -120,50 +136,104 @@ export default function MaintenanceRequestDetail(){
                     style={{
                         margin: '30px',
                         padding: theme.spacing(2),
-                        backgroundColor: theme.palette.form.main,
+                        backgroundColor: theme.palette.primary.main,
                         width: '85%', // Occupy full width with 25px margins on each side
-                        [theme.breakpoints.down('sm')]: {
-                            width: '80%',
-                        },
-                        [theme.breakpoints.up('sm')]: {
-                            width: '50%',
-                        },
+                        // [theme.breakpoints.down('sm')]: {
+                        //     width: '80%',
+                        // },
+                        // [theme.breakpoints.up('sm')]: {
+                        //     width: '50%',
+                        // },
                         paddingTop: '10px',
                     }}
                 >
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="basic tabs example">
-                            {colorStatus.map((item, index) =>
-                                <Tab {...a11yProps(index)} sx={{
+                     <Stack
+                        direction="row"
+                        justifyContent="center"
+                        alignItems="center"
+                        position="relative"
+                        sx={{
+                            paddingBottom: "20px"
+                        }}
+                    >
+                         <Box position="absolute" left={0}>
+                            <Button onClick={() => handleBackButton()}>
+                                <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                        <Box
+                            direction="row"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                Maintenance
+                            </Typography>
+                        </Box>
+                        <Box position="absolute" right={0}>
+                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                    </Stack>
+                    <Stack
+                        sx={{
+                            margin: "20px",
+                            backgroundColor: "teal",
+                            width: '100%',
+                            // direction="row"
+                            // justifyContent="center"
+                            // alignItems="center"
+                            // position="relative"
+                            paddingBottom: "20px"
+
+                        }}
+                    >
+                        <Box sx={{ 
+                            borderBottom: 0,
+                        }}>
+                            <Tabs 
+                                variant="fullWidth" 
+                                value={value} 
+                                onChange={handleChange} 
+                                aria-label="basic tabs example"
+                                TabIndicatorProps={{
+                                    style: {
+                                        backgroundColor: 'transparent',
+                                        border: '0px',
+                                        minWidth: '5px',
+                                    }
+                                }}
+                            >
+                                {colorStatus.map((item, index) =>
+                                    <Tab {...a11yProps(index)} sx={{
+                                        backgroundColor: item.color,
+                                        borderTopLeftRadius: '10px',
+                                        borderTopRightRadius: '10px',
+                                        // maxWidth: '25px',
+                                        minWidth: '5px',
+                                    }}/>
+                                )}
+                            </Tabs>
+                        </Box>
+                        {colorStatus.map((item, index) =>
+                            <div>
+                                <CustomTabPanel key={index} value={value} index={index} style={{
                                     backgroundColor: item.color,
-                                    borderTopLeftRadius: '10px',
-                                    borderTopRightRadius: '10px',
-                                    // '&.Mui-focusVisible': {
-                                    //     outline: 'none',
-                                    //   },
-                                    //   '& .MuiTouchRipple-root': {
-                                    //     display: 'none',
-                                    //   },
-                                }}/>
-                            )}
-                        </Tabs>
-                    </Box>
-                    {colorStatus.map((item, index) =>
-                        <>
-                            <CustomTabPanel key={index} value={value} index={index} style={{
-                                backgroundColor: item.color,
-                                paddingBottom: '10px',
-                            }}>
-                                <Box direction="row"
-                                    justifyContent="center"
-                                    alignItems="center">
-                                    <Grid container spacing={3}>
+                                    paddingBottom: '10px',
+
+                                }}>
+                                    <Grid container spacing={2}
+                                        sx={{
+                                            backgroundColor: theme.palette.primary.main,
+                                            justifyContent: "center",
+                                    }}>
                                         <RequestNavigator requestData={allData[item.mapping]} color={item.color} item={item}/>
                                     </Grid>
-                                </Box>
-                            </CustomTabPanel>
-                        </>
-                    )}
+                                </CustomTabPanel>
+                            </div>
+                        )}
+                    </Stack>
                 </Paper>
             </Box>
         </ThemeProvider>
