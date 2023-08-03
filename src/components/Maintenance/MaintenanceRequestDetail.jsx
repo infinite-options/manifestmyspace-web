@@ -134,8 +134,8 @@ export default function MaintenanceRequestDetail(){
             >
                 <Paper
                     style={{
-                        margin: '30px',
-                        padding: theme.spacing(2),
+                        // margin: '30px',
+                        // padding: theme.spacing(2),
                         backgroundColor: theme.palette.primary.main,
                         width: '85%', // Occupy full width with 25px margins on each side
                         // [theme.breakpoints.down('sm')]: {
@@ -179,12 +179,17 @@ export default function MaintenanceRequestDetail(){
                     <Stack
                         sx={{
                             margin: "20px",
-                            backgroundColor: "teal",
-                            width: '100%',
-                            // direction="row"
-                            // justifyContent="center"
-                            // alignItems="center"
-                            // position="relative"
+                            // backgroundColor: colorStatus[status].color,
+                            // width: '100%',
+                            // I want to make this stack the max width of the parent
+                            // but I don't want to set a fixed width
+                            // I want it to be responsive
+                            [theme.breakpoints.down('sm')]: {
+                                width: '80%',
+                            },
+                            // [theme.breakpoints.up('sm')]: {
+                            //     width: '50%',
+                            // },
                             paddingBottom: "20px"
 
                         }}
@@ -196,7 +201,6 @@ export default function MaintenanceRequestDetail(){
                                 variant="fullWidth" 
                                 value={value} 
                                 onChange={handleChange} 
-                                aria-label="basic tabs example"
                                 TabIndicatorProps={{
                                     style: {
                                         backgroundColor: 'transparent',
@@ -223,10 +227,12 @@ export default function MaintenanceRequestDetail(){
                                     paddingBottom: '10px',
 
                                 }}>
-                                    <Grid container spacing={2}
+                                    <Grid spacing={2}
                                         sx={{
-                                            backgroundColor: theme.palette.primary.main,
+                                            backgroundColor: item.color,
                                             justifyContent: "center",
+                                            margin: "25px",
+
                                     }}>
                                         <RequestNavigator requestData={allData[item.mapping]} color={item.color} item={item}/>
                                     </Grid>
