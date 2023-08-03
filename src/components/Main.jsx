@@ -10,6 +10,8 @@ import AddExpense from "./Cashflow/AddExpense";
 import PropertyRentFlow from "./PropertyRentFlow/PropertyRentFlow";
 import PropertyRentDetail from "./PropertyRentFlow/PropertyRentDetail";
 import Announcement from "./Announcement/Announcement"
+import Profile from "./Profile/Profile";
+import Documents from "./Documents/Documents";
 function Main(){
     return (
         <>
@@ -25,6 +27,8 @@ function Main(){
               <Route exact path="/announcement" element={<Announcement />} />
               <Route exact path="/propertyRent" element={<PropertyRentFlow />} />
               <Route exact path="/propertyRentDetail" element={<PropertyRentDetail />} />
+              <Route exact path="/profile" element={<Profile />} />
+              <Route exact path="/documents" element={<Documents />} />
             </Routes>
             </Router>
             </div>
