@@ -5,6 +5,7 @@ function Leases(params) {
     return (
         <Box>
             <Box sx={{
+                fontFamily: 'Source Sans Pro',
                 backgroundColor: '#F2F2F2',
                 fontSize: '14px',
                 color: '#3D5CAC',

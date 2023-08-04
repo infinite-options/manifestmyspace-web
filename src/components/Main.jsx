@@ -13,6 +13,7 @@ import Announcement from "./Announcement/Announcement"
 import Profile from "./Profile/Profile";
 import Documents from "./Documents/Documents";
 import Leases from "./Leases/Leases";
+import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
 function Main(){
     return (
         <>
@@ -31,6 +32,7 @@ function Main(){
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/documents" element={<Documents />} />
               <Route exact path="/leases" element={<Leases />} />
+              <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
             </Routes>
             </Router>
             </div>
