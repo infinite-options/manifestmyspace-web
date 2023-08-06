@@ -2,7 +2,7 @@ import React from "react";
 import Header from './Header';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CashflowOwner from './Cashflow/CashflowOwner';
-import Footer from './Footer';
+// import Footer from './Footer';
 import SelectMonthComponent from './SelectMonthComponent';
 import MaintenanceWidjet from './MaintenanceWidget';
 import PropertyList from "./Property/PropertyList";
@@ -14,6 +14,7 @@ import Profile from "./Profile/Profile";
 import Documents from "./Documents/Documents";
 import Leases from "./Leases/Leases";
 import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
+import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 function Main(){
     return (
         <>
@@ -33,6 +34,7 @@ function Main(){
               <Route exact path="/documents" element={<Documents />} />
               <Route exact path="/leases" element={<Leases />} />
               <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
+              <Route exact path="/tenantProfile" element={<TenantProfile />} />
             </Routes>
             </Router>
             </div>

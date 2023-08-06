@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/material";
 
 function Leases(params) {
 
@@ -222,7 +222,7 @@ function LeaseMonth(props) {
                 </Box>
             </Box>
         </Box>
-    );    
+    );
 }
 
 export default Leases;
