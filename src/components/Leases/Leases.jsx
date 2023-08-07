@@ -1,6 +1,26 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import SelectProperty from "./SelectProperty";
 
-function Leases(params) {
+function Leases(props) {
+    // Select Property Tab
+    const [open, setOpen] = useState(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const [leaseStatus, setLeaseStatus] = useState([]);
+    useEffect(() => {
+        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/100-000003")
+            .then((res) => {
+                // console.log(res.data.LeaseStatus);
+                setLeaseStatus(res.data.LeaseStatus);
+            });
+    }, []);
 
     return (
         <Box>
@@ -62,7 +82,7 @@ function Leases(params) {
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M5.49423 10.97C5.20833 11.6165 5.20833 12.3519 5.20833 13.8228V18.4166C5.20833 20.4594 5.20833 21.4807 5.81852 22.1153C6.37694 22.6961 7.24682 22.7454 8.89583 22.7495V17.3333C8.89583 16.2201 9.77331 15.25 10.9375 15.25H14.0625C15.2267 15.25 16.1042 16.2201 16.1042 17.3333V22.7495C17.7532 22.7454 18.6231 22.6961 19.1815 22.1153C19.7917 21.4807 19.7917 20.4594 19.7917 18.4166V13.8228C19.7917 12.3519 19.7917 11.6165 19.5058 10.97C19.2199 10.3236 18.6829 9.84493 17.6091 8.88768L16.5674 7.9591C14.6265 6.22888 13.656 5.36377 12.5 5.36377C11.344 5.36377 10.3735 6.22888 8.43255 7.9591L7.39088 8.88768C6.31704 9.84493 5.78012 10.3236 5.49423 10.97ZM14.1042 22.7499V17.3333C14.1042 17.2974 14.091 17.2737 14.0782 17.2604C14.0719 17.2538 14.067 17.2512 14.0653 17.2505L14.0652 17.2504C14.0644 17.2501 14.0642 17.25 14.0625 17.25H10.9375C10.9358 17.25 10.9355 17.2501 10.9348 17.2504L10.9347 17.2505C10.933 17.2512 10.9281 17.2538 10.9218 17.2604C10.909 17.2737 10.8958 17.2974 10.8958 17.3333V22.7499H14.1042Z" fill="#3D5CAC" />
                             </svg>
                         </Box>
-                        <Box>
+                        <Box onClick={handleOpen}>
                             Select Property
                         </Box>
                     </Box>
@@ -109,18 +129,21 @@ function Leases(params) {
                         </Box>
                     </AccordionDetails>
                 </Accordion>
-                <LeaseMonth />
-                <LeaseMonth />
-                <LeaseMonth />
-                <LeaseMonth />
-                <LeaseMonth />
+                {leaseStatus.map((status, i) => (
+                    <LeaseMonth key={i} data={status} />
+                ))}
             </Box>
+            <Backdrop sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open}                
+            >
+                <SelectProperty closeTab={handleClose} />
+            </Backdrop>
         </Box>
     )
 }
 
 function LeaseMonth(props) {
-
+    const leaseData = props.data;
     return (
         <Box sx={{
             display: 'flex',
@@ -151,7 +174,7 @@ function LeaseMonth(props) {
                     marginTop: 'auto',
                     marginBottom: '0px',
                 }}>
-                    2
+                    {leaseData.num}
                 </Box>
             </Box>
             <Box sx={{
