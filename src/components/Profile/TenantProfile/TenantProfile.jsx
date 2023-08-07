@@ -120,7 +120,33 @@ function TenantProfile(props) {
                     <Box>
                         <ProfileAccordion>
                             <ProfileAccordionSummary>
-                                Identification Details
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                }}>
+                                    <Box>
+                                        Identification Details
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: '#A52A2A',
+                                        borderRadius: '10px',
+                                        fontSize: '9px',
+                                        fontWeight: '600',
+                                        color: '#FFFFFF',
+                                        width: '60px',
+                                        height: '13px',
+                                        marginRight: '20px',
+                                    }}>
+                                        Incomplete
+                                    </Box>
+                                </Box>
+
+
                             </ProfileAccordionSummary>
                             <ProfileAccordionDetail>
                                 <Box sx={{
@@ -238,10 +264,10 @@ function TenantProfile(props) {
                                     <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} widths={['25%', '25%', '25%', '25%']}/>
                                     <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} widths={['25%', '25%', '25%', '25%']}/>
                                     <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} widths={['20%', '20%', '20%', '20%', '20%']}/> */}
-                                    <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]}/>
-                                    <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]}/>
-                                    <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]}/>
-                                    <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]}/>
+                                    <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} />
+                                    <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} />
+                                    <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} />
+                                    <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} />
                                 </Box>
                             </ProfileAccordionDetail>
                         </ProfileAccordion>
@@ -326,6 +352,7 @@ function ProfileAccordionSummary(props) {
             }>
             <Box sx={{
                 fontSize: '16px',
+                width: '100%',
             }}>
                 {props.children}
             </Box>
