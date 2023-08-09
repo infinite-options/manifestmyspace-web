@@ -13,9 +13,19 @@ import {
     TableBody,
 } from '@mui/material';
 import { ArrowBack, Chat, Visibility } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const ViewLease = (props) => {
+    const navigate = useNavigate();
     const handleBackButton = () => {};
+
+    const handleViewButton = () => {
+        navigate('/leaseDocument');
+    };
+
+    const handleRenewLease = () => {
+        navigate('/editLease');
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -79,7 +89,7 @@ const ViewLease = (props) => {
                             </Typography>
                         </Box>
                         <Box position="absolute" right={0}>
-                            <Button>
+                            <Button onClick={handleViewButton}>
                                 <Visibility
                                     sx={{
                                         color: theme.typography.primary.black,
@@ -442,6 +452,7 @@ const ViewLease = (props) => {
                                 backgroundColor: theme.palette.custom.blue,
                                 margin: '10px',
                             }}
+                            onClick={handleRenewLease}
                         >
                             Renew Lease
                         </Button>

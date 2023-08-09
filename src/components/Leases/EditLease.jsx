@@ -15,9 +15,14 @@ import {
     InputAdornment,
 } from '@mui/material';
 import { CalendarToday, Chat, Close, Description } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const EditLease = (props) => {
-    const handleCloseButton = () => {};
+    const navigate = useNavigate();
+
+    const handleCloseButton = () => {
+        navigate('/viewLease');
+    };
 
     return (
         <ThemeProvider theme={theme}>
