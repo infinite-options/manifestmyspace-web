@@ -11,11 +11,13 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    TextField,
+    InputAdornment,
 } from '@mui/material';
-import { ArrowBack, Chat, Visibility } from '@mui/icons-material';
+import { CalendarToday, Chat, Close, Description } from '@mui/icons-material';
 
-const ViewLease = (props) => {
-    const handleBackButton = () => {};
+const EditLease = (props) => {
+    const handleCloseButton = () => {};
 
     return (
         <ThemeProvider theme={theme}>
@@ -25,7 +27,7 @@ const ViewLease = (props) => {
                     fontFamily: 'Source Sans Pro',
                     justifyContent: 'center',
                     width: '100%', // Take up full screen width
-                    minHeight: '85vh', // Set the Box height to full height
+                    minHeight: '90vh', // Set the Box height to full height
                     marginTop: theme.spacing(2), // Set the margin to 20px
                 }}
             >
@@ -33,7 +35,7 @@ const ViewLease = (props) => {
                     style={{
                         margin: '30px',
                         padding: theme.spacing(2),
-                        backgroundColor: theme.palette.primary.main,
+                        backgroundColor: theme.palette.primary.secondary,
                         width: '85%', // Occupy full width with 25px margins on each side
                         [theme.breakpoints.down('sm')]: {
                             width: '80%',
@@ -51,17 +53,6 @@ const ViewLease = (props) => {
                         position="relative"
                         sx={{ paddingBottom: '25px', paddingTop: '15px' }}
                     >
-                        <Box position="absolute" left={0}>
-                            <Button onClick={() => handleBackButton()}>
-                                <ArrowBack
-                                    sx={{
-                                        color: theme.typography.primary.black,
-                                        fontSize: '30px',
-                                        margin: '5px',
-                                    }}
-                                />
-                            </Button>
-                        </Box>
                         <Box
                             direction="row"
                             justifyContent="center"
@@ -75,12 +66,12 @@ const ViewLease = (props) => {
                                     fontSize: theme.typography.largeFont,
                                 }}
                             >
-                                Viewing Lease
+                                Edit/Renew Lease
                             </Typography>
                         </Box>
                         <Box position="absolute" right={0}>
-                            <Button>
-                                <Visibility
+                            <Button onClick={handleCloseButton}>
+                                <Close
                                     sx={{
                                         color: theme.typography.primary.black,
                                         fontSize: '20px',
@@ -181,19 +172,16 @@ const ViewLease = (props) => {
                                     >
                                         Contract Name
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Signed Lease between Steve Albini and
-                                        Lou Reed
-                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        type="text"
+                                        label="Enter contract name"
+                                        fullWidth
+                                    />
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell>
+                                <TableCell colSpan={1}>
                                     <Typography
                                         sx={{
                                             color: theme.typography.common.blue,
@@ -205,16 +193,28 @@ const ViewLease = (props) => {
                                     >
                                         Start Date
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
+                                    <TextField
+                                        variant="filled"
+                                        label="mm/dd/yyyy"
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: theme.typography
+                                                            .common.blue,
+                                                        fontSize:
+                                                            theme.typography
+                                                                .smallFont,
+                                                    }}
+                                                >
+                                                    <CalendarToday />
+                                                </InputAdornment>
+                                            ),
                                         }}
-                                    >
-                                        02/21/2022
-                                    </Typography>
+                                    />
                                 </TableCell>
-                                <TableCell>
+                                <TableCell colSpan={1}>
                                     <Typography
                                         sx={{
                                             color: theme.typography.common.blue,
@@ -226,14 +226,26 @@ const ViewLease = (props) => {
                                     >
                                         End Date
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
+                                    <TextField
+                                        variant="filled"
+                                        label="mm/dd/yyyy"
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: theme.typography
+                                                            .common.blue,
+                                                        fontSize:
+                                                            theme.typography
+                                                                .smallFont,
+                                                    }}
+                                                >
+                                                    <CalendarToday />
+                                                </InputAdornment>
+                                            ),
                                         }}
-                                    >
-                                        02/21/2023
-                                    </Typography>
+                                    />
                                 </TableCell>
                             </TableRow>
                             <TableRow>
@@ -249,14 +261,26 @@ const ViewLease = (props) => {
                                     >
                                         Move In Date
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
+                                    <TextField
+                                        variant="filled"
+                                        label="mm/dd/yyyy"
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: theme.typography
+                                                            .common.blue,
+                                                        fontSize:
+                                                            theme.typography
+                                                                .smallFont,
+                                                    }}
+                                                >
+                                                    <CalendarToday />
+                                                </InputAdornment>
+                                            ),
                                         }}
-                                    >
-                                        02/22/2022
-                                    </Typography>
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Typography
@@ -270,14 +294,11 @@ const ViewLease = (props) => {
                                     >
                                         # of Occupants
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        4
-                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        label="Number"
+                                        type="number"
+                                    />
                                 </TableCell>
                             </TableRow>
                             <TableRow>
@@ -293,14 +314,24 @@ const ViewLease = (props) => {
                                     >
                                         Rent
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
+                                    <TextField
+                                        variant="filled"
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: theme.typography
+                                                            .common.blue,
+                                                        fontSize: '16px',
+                                                        paddingRight: '5px',
+                                                    }}
+                                                >
+                                                    &#36;
+                                                </InputAdornment>
+                                            ),
                                         }}
-                                    >
-                                        $3000
-                                    </Typography>
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Typography
@@ -314,14 +345,11 @@ const ViewLease = (props) => {
                                     >
                                         Rent Frequency
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Monthly
-                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        label="Monthly"
+                                        type="text"
+                                    />
                                 </TableCell>
                             </TableRow>
                             <TableRow>
@@ -337,14 +365,11 @@ const ViewLease = (props) => {
                                     >
                                         Late Fee After
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        2 days
-                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        label="days"
+                                        type="text"
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Typography
@@ -358,14 +383,25 @@ const ViewLease = (props) => {
                                     >
                                         Late Fee Per Day
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
+                                    <TextField
+                                        variant="filled"
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: theme.typography
+                                                            .common.blue,
+                                                        fontSize: '16px',
+                                                        paddingRight: '5px',
+                                                        margin: 0,
+                                                    }}
+                                                >
+                                                    &#36;
+                                                </InputAdornment>
+                                            ),
                                         }}
-                                    >
-                                        $20
-                                    </Typography>
+                                    />
                                 </TableCell>
                             </TableRow>
                             <TableRow>
@@ -381,14 +417,11 @@ const ViewLease = (props) => {
                                     >
                                         Rent Due Date
                                     </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        21st of month
-                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        label="of month"
+                                        type="text"
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Typography
@@ -402,14 +435,30 @@ const ViewLease = (props) => {
                                     >
                                         Available to Pay
                                     </Typography>
-                                    <Typography
+                                    <TextField
+                                        variant="filled"
+                                        label="days before"
+                                        type="text"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <Button
+                                        fullWidth
+                                        variant="text"
                                         sx={{
                                             color: theme.typography.common.blue,
-                                            fontSize: '16px',
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
                                         }}
                                     >
-                                        10 days before
-                                    </Typography>
+                                        <Description
+                                            sx={{ paddingRight: '5px' }}
+                                        />
+                                        Add Document
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         </TableBody>
@@ -422,18 +471,6 @@ const ViewLease = (props) => {
                         sx={{ padding: '15px' }}
                     >
                         <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.common.fontWeight,
-                                backgroundColor: theme.palette.custom.pink,
-                                margin: '10px',
-                            }}
-                        >
-                            End Lease
-                        </Button>
-                        <Button
                             fullWidth
                             variant="contained"
                             sx={{
@@ -445,6 +482,18 @@ const ViewLease = (props) => {
                         >
                             Renew Lease
                         </Button>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{
+                                color: theme.typography.common.blue,
+                                fontWeight: theme.typography.common.fontWeight,
+                                backgroundColor: theme.palette.custom.blue,
+                                margin: '10px',
+                            }}
+                        >
+                            New Lease
+                        </Button>
                     </Stack>
                 </Paper>
             </Box>
@@ -452,4 +501,4 @@ const ViewLease = (props) => {
     );
 };
 
-export default ViewLease;
+export default EditLease;

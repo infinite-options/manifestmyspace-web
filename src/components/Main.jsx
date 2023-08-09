@@ -10,6 +10,7 @@ import AddExpense from './Cashflow/AddExpense';
 import AddRevenue from './Cashflow/AddRevenue';
 import AddUtility from './Cashflow/AddUtility';
 import ViewLease from './Leases/ViewLease';
+import EditLease from './Leases/EditLease';
 
 function Main() {
     return (
@@ -57,6 +58,11 @@ function Main() {
                             exact
                             path="/viewLease"
                             element={<ViewLease />}
+                        />
+                        <Route
+                            exact
+                            path="/editLease"
+                            element={<EditLease />}
                         />
                     </Routes>
                 </Router>
