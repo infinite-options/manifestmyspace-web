@@ -12,6 +12,11 @@ import Dashboard from './Dashboard';
 import Maintenance from './Maintenance/Maintenance';
 import AddMaintenanceItem from './Maintenance/AddMaintenanceItem';
 import MaintenanceRequestDetail from './Maintenance/MaintenanceRequestDetail';
+import AddProperty from './Property/AddProperty';
+import EditProperty from './Property/EditProperty';
+import PropertyDetail from './Property/PropertyDetail';
+import TenantMaintenance from './Maintenance/TenantMaintenance';
+import AddTenantMaintenanceItem from './Maintenance/AddTenantMaintenanceItem';
 
 
 function Main(){
@@ -31,7 +36,12 @@ function Main(){
                     <Route exact path="/" element={<Dashboard />} />
                     <Route exact path="/dashboard" element={<Dashboard />} />
                     <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
-                    <Route exact path="/maintenanceRequestDetail/:id" element={<MaintenanceRequestDetail />} />
+                    <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
+                    <Route exact path="/addProperty" element={<AddProperty />} />
+                    <Route exact path="/editProperty" element={<EditProperty />} />
+                    <Route exact path="/propertyDetail" element={<PropertyDetail />} />
+                    <Route exact path="/tenantMaintenance" element={<TenantMaintenance />} />
+                    <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
                 </Routes>
             </Router>
         </div>

@@ -6,7 +6,7 @@ import {
     Button,
     ThemeProvider, 
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import MaintenanceStatusTable from './MaintenanceStatusTable';
@@ -19,7 +19,8 @@ import SelectMonthComponent from '../SelectMonthComponent';
 export default function Maintenance(){
     const location = useLocation();
     let navigate = useNavigate();
-    const data = location.state.maintenanceData;
+    const [maintenanceData, setMaintenanceData] = useState({});
+    const maintenanceRequests = location.state.maintenanceRequests;
     const colorStatus = location.state.colorStatus;
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
@@ -27,9 +28,33 @@ export default function Maintenance(){
     const [year, setYear] = useState(new Date().getFullYear());
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
+
+    // console.log("numMaintenanceRequests", numMaintenanceRequests)
+
+    useEffect(() => {
+        // console.log("Maintenance useEffect")
+        const dataObject = {};
+        const getMaintenanceData = async () => {
+            const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000029');
+            const jsonData = await response.json();
+            // console.log("jsonData", jsonData)
+            for (const item of jsonData.MaintenanceProjects) {
+                if (!dataObject[item.maintenance_request_status]){
+                    dataObject[item.maintenance_request_status] = [];
+                }
+                dataObject[item.maintenance_request_status].push(item);
+            }
+            // console.log("MAINTENANCE dataObject", dataObject)
+            setMaintenanceData(prevData => ({
+                ...prevData, 
+                ...dataObject
+            }));
+        }
+        getMaintenanceData();
+    }, [])
 
 
     return(
@@ -89,9 +114,9 @@ export default function Maintenance(){
                             <Button sx={{ textTransform: 'capitalize' }} onClick={()=>setShowSelectMonth(true)}>
                                 <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin: '5px'}}/>
                                 <Typography 
-                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                                 >
-                                Last 30 days
+                                    Last 30 days
                                 </Typography>
                             </Button>
                         
@@ -100,7 +125,7 @@ export default function Maintenance(){
                             <Button sx={{ textTransform: 'capitalize' }}>
                                 <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
-                                Select Property
+                                    Select Property
                                 </Typography>
                             </Button>
                         </Box>
@@ -111,7 +136,7 @@ export default function Maintenance(){
                             justifyContent="center"
                             alignItems="center"
                         >
-                        <Button sx={{ textTransform: 'capitalize' }}>
+                            <Button sx={{ textTransform: 'capitalize' }}>
                                 {/* <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/> */}
                                 <Typography 
                                     sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
@@ -124,7 +149,29 @@ export default function Maintenance(){
                         borderRadius: "10px",
                         margin: "20px",
                     }}>
-                    {colorStatus.map((item, index) => <MaintenanceStatusTable key={index} status={item.status} data={data[item.mapping]} color={item.color} allData={data}/>)}
+                        {colorStatus.map((item, index) => {
+                            // construct mapping key if it doesn't exist
+                            var mappingKey = ""
+                            if (item.mapping === "SCHEDULED") { // a known key with color mapping
+                                mappingKey = "SCHEDULE" // a mapped key to the maintenanceData object
+                            } else if (item.mapping == "PAID"){
+                                mappingKey = "INFO"
+                            } else{
+                                mappingKey = item.mapping
+                            }
+
+                            let maintenanceArray = maintenanceData[mappingKey] || []
+
+                            return (
+                                <MaintenanceStatusTable 
+                                    key={index}
+                                    status={item.status}
+                                    color={item.color}
+                                    maintenanceItemsForStatus={maintenanceArray}
+                                    allMaintenanceData={maintenanceData}
+                                />
+                            );
+                        })}
                     </div>
                 </Paper>
             </Box>

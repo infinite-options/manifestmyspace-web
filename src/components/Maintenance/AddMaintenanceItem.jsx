@@ -29,6 +29,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ImageUploader from '../ImageUploader';
 
 import theme from '../../theme/theme';
 
@@ -149,9 +150,6 @@ export default function AddMaintenanceItem({}){
                     >
                         <Box
                             component="form"
-                            sx={{
-                                '& .MuiTextField-root': { m: 1, width: '25ch' },
-                            }}
                             noValidate
                             autoComplete="off"
                         >
@@ -168,7 +166,7 @@ export default function AddMaintenanceItem({}){
                                             borderColor: 'black',
                                         }}
                                         size="small"
-                                        >
+                                    >
                                         {/* <InputLabel>Select Property</InputLabel> */}
                                         <Select onChange={handlePropertyChange}>
                                             <MenuItem value={"6123 Corte de la Reina"}>6123 Corte de la Reina</MenuItem>
@@ -348,27 +346,7 @@ export default function AddMaintenanceItem({}){
 
                                 {/* File Upload Field */}
                                 <Grid item xs={12}>
-                                    <Container fixed sx={{
-                                        backgroundColor: 'white',
-                                        borderColor: 'black',
-                                        borderRadius: '7px',
-                                        borderStyle: 'dashed',
-                                        borderColor: theme.typography.common.blue,
-                                    }}>
-                                        <Box
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            display="flex"
-                                            padding={10}
-                                        >
-                                            <Button>
-                                                <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
-                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                    Upload File
-                                                </Typography>
-                                            </Button>
-                                        </Box>
-                                    </Container>
+                                    <ImageUploader/>
                                 </Grid>
 
                                 {/* Submit Button */}

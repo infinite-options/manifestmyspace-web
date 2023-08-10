@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Box, Stack } from '@mui/material';
 import theme from '../../theme/theme';
 import maintenaceRequestImage from './maintenanceRequest.png'
@@ -9,30 +9,36 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 
-export default function RequestNavigator({requestData, color, item}){
-    const [currentIndex, setCurrentIndex] = useState(0);
+export default function MaintenanceRequestNavigator({requestIndex, requestData, color, item, allData}){
+    const [currentIndex, setCurrentIndex] = useState(requestIndex);
     const [activeStep, setActiveStep] = useState(0);
+    const [formattedDate, setFormattedDate] = useState("")
+    const [numOpenRequestDays, setNumOpenRequestDays] = useState("")
+
+
+    console.log("RequestNavigator")
+    console.log("requestIndex", requestIndex)
+    console.log("requestData", requestData)
+    console.log("color", color)
+    console.log("item", item)
+    console.log("allData", allData)
 
     const images = [
         {
-          label: 'San Francisco – Oakland Bay Bridge, United States',
-          imgPath:
-            'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
+          label: 'maintenanceRequest',
+          imgPath: maintenaceRequestImage,
         },
         {
-          label: 'Bird',
-          imgPath:
-            'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+          label: 'maintenanceRequest',
+          imgPath: maintenaceRequestImage,
         },
         {
-          label: 'Bali, Indonesia',
-          imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+          label: 'maintenanceRequest',
+          imgPath: maintenaceRequestImage,
         },
         {
-          label: 'Goč, Serbia',
-          imgPath:
-            'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
+          label: 'maintenanceRequest',
+          imgPath: maintenaceRequestImage,
         },
       ];
     const maxSteps = images.length;
@@ -57,8 +63,31 @@ export default function RequestNavigator({requestData, color, item}){
       setActiveStep(step);
     };
   
+    function formatDate(date){
+        let formattedDate = ""
+        let openTime = ""
+        if (date){
+            const postDate = new Date(date)
+            let currentDate = new Date()
+            formattedDate = postDate.toLocaleDateString()
+            const diffInMilliseconds = currentDate.getTime() - postDate.getTime()
+            openTime = Math.floor(diffInMilliseconds / (1000 * 3600 * 24))
+        }
+        console.log("formattedDate", formattedDate, "openTime", openTime)
+        setNumOpenRequestDays(openTime)
+        setFormattedDate(formattedDate)
+    }
+
 
     const data = requestData[currentIndex]
+    // which tab are we on?
+    // console.log("requestData", requestData)
+    // console.log("data", data)
+
+    useEffect(() => {
+        formatDate(data.maintenance_request_created_date)
+    }, [data]) 
+    
 
     return(
         <div style={{paddingBottom: "10px"}}>
@@ -119,15 +148,6 @@ export default function RequestNavigator({requestData, color, item}){
                         alignItems: "center",
                         justifyContent: "center",
                       }}
-                        // sx={{
-                        //     backgroundColor: color,
-                        //     boxShadow: "none",
-                        //     elevation: "0",
-                        //     width: "100%",
-                        //     center: "true",
-                        //     alignItems: "center",
-                        //     justifyContent: "center",
-                        // }}
                         >
                         <CardContent 
                             sx={{
@@ -137,61 +157,82 @@ export default function RequestNavigator({requestData, color, item}){
                                 justifyContent: "center",
                                 width: "100%",
                             }}
-                            // sx={{
-                            //     center: "true",
-                            //     alignItems: "center",
-                            //     justifyContent: "center",
-                            //     width:"100%",
-                            // }}
                         >
-                            <CardMedia
-                                component="img"
-                                image={images[activeStep].imgPath}
-                                sx={{
-                                    elevation: "0",
-                                    boxShadow: "none",
-                                    minWidth: "50%",
-                                    center: "true",
-                                    alignContent: "center",
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
                                     justifyContent: "center",
+                                    width: "100%",
                                 }}
-                            />
-                            <MobileStepper
-                                steps={maxSteps}
-                                position="static"
-                                activeStep={activeStep}
-                                nextButton={
-                                <Button
-                                    size="small"
-                                    onClick={handleNext}
-                                    disabled={activeStep === maxSteps - 1}
-                                >
-                                    Next
-                                    {theme.direction === 'rtl' ? (
-                                    <KeyboardArrowLeft />
-                                    ) : (
-                                    <KeyboardArrowRight />
-                                    )}
-                                </Button>
-                                }
-                                backButton={
+                            >
                                 <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
                                     {theme.direction === 'rtl' ? (
                                     <KeyboardArrowRight />
                                     ) : (
                                     <KeyboardArrowLeft />
                                     )}
-                                    Back
                                 </Button>
-                                }
+                                <CardMedia
+                                    component="img"
+                                    image={images[activeStep].imgPath}
+                                    sx={{
+                                        elevation: "0",
+                                        boxShadow: "none",
+                                        maxWidth: "450px",
+                                        center: "true",
+                                        alignContent: "center",
+                                        justifyContent: "center",
+                                    }}
+                                />
+                                <Button
+                                    size="small"
+                                    onClick={handleNext}
+                                    disabled={activeStep === maxSteps - 1}
+                                >
+                                    {theme.direction === 'rtl' ? (
+                                    <KeyboardArrowLeft />
+                                    ) : (
+                                    <KeyboardArrowRight />
+                                    )}
+                                </Button>
+                            </div>
+                            <MobileStepper
+                                steps={maxSteps}
+                                position="static"
+                                activeStep={activeStep}
+                                variant='text'
+                                sx={{
+                                    backgroundColor: color,
+                                    width: "100%",
+                                    justifyContent: "center",
+                                    alignContent: "center",
+                                    alignItems: "center",
+                                    elevation: "0",
+                                    boxShadow: "none",
+
+                                }}
+                                nextButton={<></>}
+                                backButton={<></>}
                             />
-                            {/* <Typography
-                                sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.largeFont}}
-                            >
-                                {data.title}    
-                            </Typography> */}
+                        </CardContent>
+                        <CardContent
+                            sx={{
+                                flexDirection: "column",
+                                alignItems: "left",
+                                justifyContent: "left",
+                                width: "100%",
+                            }}
+                        >
                             <div
-                                style={{paddingTop: "10px"}}
+                                style={{
+                                    paddingTop: "10px",
+                                    paddingLeft:"10px",
+                                    alignContent:"left",
+                                    justifyContent:"left",
+                                    alignItems:"left"
+                                }}
                             >
                                 <Typography
                                     sx={{
@@ -201,7 +242,7 @@ export default function RequestNavigator({requestData, color, item}){
                                         paddingBottom: "10px"
                                     }}
                                 >
-                                    {data.priority} Priority
+                                    {data.maintenance_priority} Priority
                                 </Typography>
                                 <Typography
                                     sx={{
@@ -211,7 +252,37 @@ export default function RequestNavigator({requestData, color, item}){
                                         paddingBottom: "10px"
                                     }}
                                 >
-                                    {data.request_created_date}
+                                    <u>{data.property_address}</u>
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.secondary.white,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize:theme.typography.smallFont,
+                                        paddingBottom: "10px"
+                                    }}
+                                >
+                                    {data.maintenance_title}
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.secondary.white,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize:theme.typography.smallFont,
+                                        paddingBottom: "10px"
+                                    }}
+                                >
+                                    Estimated Cost: {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"}
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.secondary.white,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize:theme.typography.smallFont,
+                                        paddingBottom: "10px"
+                                    }}
+                                >
+                                    Reported: {formattedDate} | Open: {numOpenRequestDays} days
                                 </Typography>
                                 <Typography
                                     sx={{
@@ -221,30 +292,8 @@ export default function RequestNavigator({requestData, color, item}){
                                         fontSize:theme.typography.smallFont,
                                         paddingBottom: "10px"
                                     }}
-                                >
-                                    {data.description}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        overflowWrap: 'break-word',
-                                        color: theme.typography.secondary.white, 
-                                        fontWeight: theme.typography.secondary.fontWeight, 
-                                        fontSize:theme.typography.smallFont,
-                                        paddingBottom: "10px"
-                                    }}
-                                >
-                                    {data.request_type}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        overflowWrap: 'break-word',
-                                        color: theme.typography.secondary.white, 
-                                        fontWeight: theme.typography.secondary.fontWeight, 
-                                        fontSize: theme.typography.smallFont,
-                                        paddingBottom: "10px"
-                                    }}
-                                >
-                                    {data.notes}
+                                >   
+                                    {data.maintenance_desc}
                                 </Typography>
                             </div>
                         </CardContent>

@@ -1,0 +1,855 @@
+[
+    {
+        "id": 1,
+        "address": "65439 Richard Roads",
+        "city": "West Stevenside",
+        "state": "SD",
+        "zip": "29184",
+        "rent": 1710.87,
+        "bedrooms": 1,
+        "bathrooms": 1,
+        "squareFeet": 1545,
+        "description": "Their relate east near. Create which business especially cut new.",
+        "paymentStatus": "Paid On Time",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 649,
+                "title": "Enhanced leadingedge orchestration",
+                "description": "Mother hour understand really lose peace cell.",
+                "status": "Completed",
+                "cost": 203.19,
+                "date": "03/11/2006",
+                "notes": "Hospital baby season.",
+                "images": [
+                    {
+                        "id": 646,
+                        "url": "https://www.lorempixel.com/899/339"
+                    },
+                    {
+                        "id": 125,
+                        "url": "https://dummyimage.com/940x744"
+                    }
+                ]
+            },
+            {
+                "id": 409,
+                "title": "Up-sized asynchronous leverage",
+                "description": "Environmental hard far source.",
+                "status": "Completed",
+                "cost": 168.36,
+                "date": "04/28/1997",
+                "notes": "Method soon production so place compare.",
+                "images": [
+                    {
+                        "id": 989,
+                        "url": "https://placeimg.com/251/1015/any"
+                    },
+                    {
+                        "id": 409,
+                        "url": "https://dummyimage.com/542x761"
+                    }
+                ]
+            },
+            {
+                "id": 128,
+                "title": "Versatile regional success",
+                "description": "Human little mention teacher either wide herself all.",
+                "status": "Completed",
+                "cost": 410.02,
+                "date": "04/17/2019",
+                "notes": "Skin fear member season eight.",
+                "images": [
+                    {
+                        "id": 111,
+                        "url": "https://dummyimage.com/376x791"
+                    },
+                    {
+                        "id": 991,
+                        "url": "https://www.lorempixel.com/667/421"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Team-oriented radical help-desk",
+                "description": "We offer perform certain current Mrs.",
+                "status": "In Progress",
+                "cost": 462.2,
+                "date": "04/28/1985",
+                "notes": "Ever very grow program sea well almost.",
+                "images": [
+                    {
+                        "id": 540,
+                        "url": "https://placeimg.com/103/621/any"
+                    },
+                    {
+                        "id": 84,
+                        "url": "https://www.lorempixel.com/997/76"
+                    }
+                ]
+            },
+            {
+                "id": 749,
+                "title": "Phased zero-defect database",
+                "description": "Back necessary large foreign I body.",
+                "status": "Completed",
+                "cost": 277.6,
+                "date": "08/18/1981",
+                "notes": "Claim answer mind development available create.",
+                "images": [
+                    {
+                        "id": 994,
+                        "url": "https://placekitten.com/400/515"
+                    },
+                    {
+                        "id": 291,
+                        "url": "https://placeimg.com/607/276/any"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "address": "392 Taylor Mission",
+        "city": "New Paul",
+        "state": "NV",
+        "zip": "07515",
+        "rent": 1566.76,
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "squareFeet": 552,
+        "description": "Letter particularly house. Until follow Mrs. Garden position difference stand offer ok rest. Throw church discover science avoid attack.",
+        "paymentStatus": "Not Paid",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 120,
+                "title": "Customizable uniform conglomeration",
+                "description": "Others none imagine doctor those.",
+                "status": "Completed",
+                "cost": 284.64,
+                "date": "04/09/1997",
+                "notes": "Beautiful rather book break attack.",
+                "images": [
+                    {
+                        "id": 199,
+                        "url": "https://placekitten.com/160/981"
+                    },
+                    {
+                        "id": 658,
+                        "url": "https://dummyimage.com/695x981"
+                    }
+                ]
+            },
+            {
+                "id": 858,
+                "title": "Digitized demand-driven methodology",
+                "description": "Month development challenge claim.",
+                "status": "In Progress",
+                "cost": 260.42,
+                "date": "05/23/1988",
+                "notes": "Skin physical science guy sit skill.",
+                "images": [
+                    {
+                        "id": 768,
+                        "url": "https://dummyimage.com/204x611"
+                    },
+                    {
+                        "id": 801,
+                        "url": "https://placekitten.com/198/653"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "address": "63245 Stacie Key",
+        "city": "Williamston",
+        "state": "WI",
+        "zip": "13664",
+        "rent": 653.05,
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "squareFeet": 2662,
+        "description": "None message people month as speech to. Something much leader one likely feel century. Near about small person wonder cultural pressure.",
+        "paymentStatus": "Paid Late",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 600,
+                "title": "Integrated fault-tolerant groupware",
+                "description": "Commercial green policy stock say economic evening.",
+                "status": "In Progress",
+                "cost": 376.73,
+                "date": "06/10/1984",
+                "notes": "Cup option argue summer bar nation see easy.",
+                "images": [
+                    {
+                        "id": 178,
+                        "url": "https://www.lorempixel.com/339/459"
+                    },
+                    {
+                        "id": 138,
+                        "url": "https://placekitten.com/993/771"
+                    }
+                ]
+            },
+            {
+                "id": 917,
+                "title": "Enterprise-wide user-facing leverage",
+                "description": "Education run employee individual.",
+                "status": "Pending",
+                "cost": 436.21,
+                "date": "07/26/2012",
+                "notes": "Door approach across interview town part.",
+                "images": [
+                    {
+                        "id": 641,
+                        "url": "https://placekitten.com/592/363"
+                    },
+                    {
+                        "id": 500,
+                        "url": "https://placeimg.com/610/552/any"
+                    }
+                ]
+            },
+            {
+                "id": 547,
+                "title": "Enhanced 3rdgeneration extranet",
+                "description": "Suddenly free theory country order.",
+                "status": "Completed",
+                "cost": 84.23,
+                "date": "08/15/1971",
+                "notes": "Door especially approach seem serve.",
+                "images": [
+                    {
+                        "id": 816,
+                        "url": "https://placekitten.com/557/548"
+                    },
+                    {
+                        "id": 789,
+                        "url": "https://www.lorempixel.com/117/432"
+                    }
+                ]
+            },
+            {
+                "id": 835,
+                "title": "Expanded contextually-based focus group",
+                "description": "Lose down I thing again various old rather.",
+                "status": "Completed",
+                "cost": 287.44,
+                "date": "02/21/2004",
+                "notes": "Fire letter defense he.",
+                "images": [
+                    {
+                        "id": 769,
+                        "url": "https://placeimg.com/14/647/any"
+                    },
+                    {
+                        "id": 488,
+                        "url": "https://www.lorempixel.com/969/957"
+                    }
+                ]
+            },
+            {
+                "id": 119,
+                "title": "Upgradable optimal success",
+                "description": "Black body natural.",
+                "status": "Completed",
+                "cost": 58.71,
+                "date": "08/16/2014",
+                "notes": "Identify yet new believe everyone.",
+                "images": [
+                    {
+                        "id": 516,
+                        "url": "https://placeimg.com/97/825/any"
+                    },
+                    {
+                        "id": 285,
+                        "url": "https://placeimg.com/575/883/any"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "address": "4764 Ramirez Greens",
+        "city": "Lake Tiffanyfurt",
+        "state": "CO",
+        "zip": "10745",
+        "rent": 1523.67,
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "squareFeet": 1864,
+        "description": "Goal argue top down idea.",
+        "paymentStatus": "Paid Late",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 822,
+                "title": "Profit-focused heuristic hierarchy",
+                "description": "Or down institution.",
+                "status": "Pending",
+                "cost": 193.85,
+                "date": "01/03/2017",
+                "notes": "Table him boy.",
+                "images": [
+                    {
+                        "id": 367,
+                        "url": "https://dummyimage.com/928x312"
+                    },
+                    {
+                        "id": 670,
+                        "url": "https://placeimg.com/253/440/any"
+                    }
+                ]
+            },
+            {
+                "id": 302,
+                "title": "Front-line intangible Graphical User Interface",
+                "description": "Still instead apply sell about six buy speech.",
+                "status": "In Progress",
+                "cost": 205.3,
+                "date": "04/03/1987",
+                "notes": "West degree property clearly record thank.",
+                "images": [
+                    {
+                        "id": 322,
+                        "url": "https://www.lorempixel.com/140/216"
+                    },
+                    {
+                        "id": 114,
+                        "url": "https://placekitten.com/280/307"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "address": "0727 Cole Drive Suite 737",
+        "city": "Derrickton",
+        "state": "NC",
+        "zip": "95032",
+        "rent": 2846.89,
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "squareFeet": 2447,
+        "description": "Camera fly difficult. Risk capital again community look single reduce. Threat trade positive tax.",
+        "paymentStatus": "Paid Late",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 662,
+                "title": "Multi-lateral transitional artificial intelligence",
+                "description": "Dark field section sea grow red point.",
+                "status": "Pending",
+                "cost": 301.72,
+                "date": "10/21/1978",
+                "notes": "Ever tough worker wait forget instead.",
+                "images": [
+                    {
+                        "id": 241,
+                        "url": "https://dummyimage.com/301x943"
+                    },
+                    {
+                        "id": 351,
+                        "url": "https://placeimg.com/48/641/any"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "title": "Grass-roots methodical matrices",
+                "description": "Lead true position go.",
+                "status": "Pending",
+                "cost": 491.27,
+                "date": "07/09/1983",
+                "notes": "Growth modern general season this no.",
+                "images": [
+                    {
+                        "id": 336,
+                        "url": "https://placeimg.com/441/446/any"
+                    },
+                    {
+                        "id": 703,
+                        "url": "https://www.lorempixel.com/408/826"
+                    }
+                ]
+            },
+            {
+                "id": 849,
+                "title": "Horizontal leadingedge info-mediaries",
+                "description": "Model message your material or.",
+                "status": "Completed",
+                "cost": 414.8,
+                "date": "02/20/2013",
+                "notes": "Ok bank data because simply sense pay.",
+                "images": [
+                    {
+                        "id": 827,
+                        "url": "https://www.lorempixel.com/10/612"
+                    },
+                    {
+                        "id": 549,
+                        "url": "https://www.lorempixel.com/19/554"
+                    }
+                ]
+            },
+            {
+                "id": 571,
+                "title": "Innovative upward-trending frame",
+                "description": "Strategy however run should that.",
+                "status": "Pending",
+                "cost": 103.68,
+                "date": "06/30/2021",
+                "notes": "Family star country coach receive upon.",
+                "images": [
+                    {
+                        "id": 16,
+                        "url": "https://www.lorempixel.com/963/607"
+                    },
+                    {
+                        "id": 62,
+                        "url": "https://placekitten.com/982/750"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "address": "5945 Jonathan Court Suite 165",
+        "city": "East Clayton",
+        "state": "NM",
+        "zip": "82072",
+        "rent": 652.61,
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "squareFeet": 1131,
+        "description": "Open receive out truth carry leader well. Face figure billion operation law myself market. Talk national election seat recent involve program.",
+        "paymentStatus": "Paid On Time",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 325,
+                "title": "Automated grid-enabled monitoring",
+                "description": "Morning themselves brother sure.",
+                "status": "In Progress",
+                "cost": 141.48,
+                "date": "03/07/2017",
+                "notes": "Baby herself check animal forward.",
+                "images": [
+                    {
+                        "id": 824,
+                        "url": "https://placekitten.com/711/217"
+                    },
+                    {
+                        "id": 705,
+                        "url": "https://www.lorempixel.com/935/916"
+                    }
+                ]
+            },
+            {
+                "id": 387,
+                "title": "Innovative fresh-thinking workforce",
+                "description": "Tell suddenly easy interesting him game.",
+                "status": "In Progress",
+                "cost": 305.95,
+                "date": "01/25/1971",
+                "notes": "Before especially live because story owner.",
+                "images": [
+                    {
+                        "id": 263,
+                        "url": "https://placeimg.com/242/1002/any"
+                    },
+                    {
+                        "id": 331,
+                        "url": "https://placeimg.com/672/614/any"
+                    }
+                ]
+            },
+            {
+                "id": 238,
+                "title": "Profit-focused impactful moderator",
+                "description": "Them significant create officer final partner.",
+                "status": "In Progress",
+                "cost": 230.78,
+                "date": "10/04/2021",
+                "notes": "Idea religious down thank back pull.",
+                "images": [
+                    {
+                        "id": 278,
+                        "url": "https://dummyimage.com/602x9"
+                    },
+                    {
+                        "id": 530,
+                        "url": "https://placekitten.com/239/423"
+                    }
+                ]
+            },
+            {
+                "id": 156,
+                "title": "Cross-group solution-oriented neural-net",
+                "description": "Walk old animal professor.",
+                "status": "Pending",
+                "cost": 115.59,
+                "date": "05/28/1980",
+                "notes": "These southern grow first quite teach interest.",
+                "images": [
+                    {
+                        "id": 269,
+                        "url": "https://www.lorempixel.com/348/177"
+                    },
+                    {
+                        "id": 438,
+                        "url": "https://dummyimage.com/56x1000"
+                    }
+                ]
+            },
+            {
+                "id": 852,
+                "title": "Optional intangible approach",
+                "description": "Rate entire generation late edge.",
+                "status": "In Progress",
+                "cost": 181.5,
+                "date": "05/14/2002",
+                "notes": "Population pass training indicate none hit.",
+                "images": [
+                    {
+                        "id": 915,
+                        "url": "https://dummyimage.com/590x510"
+                    },
+                    {
+                        "id": 117,
+                        "url": "https://placekitten.com/463/562"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "address": "31966 Williams Cape Suite 346",
+        "city": "Jamesfort",
+        "state": "KS",
+        "zip": "43352",
+        "rent": 2388.64,
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "squareFeet": 1312,
+        "description": "Difference job concern onto. Shoulder crime front could.",
+        "paymentStatus": "Not Paid",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 361,
+                "title": "Optional multimedia Graphic Interface",
+                "description": "Expect including himself never gun style.",
+                "status": "Completed",
+                "cost": 397.46,
+                "date": "02/17/2012",
+                "notes": "So professor drive future pass ever mother next.",
+                "images": [
+                    {
+                        "id": 408,
+                        "url": "https://www.lorempixel.com/787/490"
+                    },
+                    {
+                        "id": 585,
+                        "url": "https://dummyimage.com/643x795"
+                    }
+                ]
+            },
+            {
+                "id": 819,
+                "title": "Multi-layered cohesive archive",
+                "description": "Low whom rise message return magazine born item.",
+                "status": "Pending",
+                "cost": 183.58,
+                "date": "07/25/2019",
+                "notes": "Your during tax model down today.",
+                "images": [
+                    {
+                        "id": 748,
+                        "url": "https://www.lorempixel.com/101/615"
+                    },
+                    {
+                        "id": 693,
+                        "url": "https://placeimg.com/780/4/any"
+                    }
+                ]
+            },
+            {
+                "id": 91,
+                "title": "Multi-channeled neutral service-desk",
+                "description": "Although when future management stand popular marriage.",
+                "status": "In Progress",
+                "cost": 314.83,
+                "date": "09/07/1977",
+                "notes": "Thousand responsibility south avoid visit speech nation.",
+                "images": [
+                    {
+                        "id": 70,
+                        "url": "https://www.lorempixel.com/965/400"
+                    },
+                    {
+                        "id": 162,
+                        "url": "https://placeimg.com/666/945/any"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "address": "7618 Yu Green Apt. 943",
+        "city": "Susanburgh",
+        "state": "MO",
+        "zip": "42583",
+        "rent": 1769.52,
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "squareFeet": 2856,
+        "description": "Manager human then sing cover always begin enough. Pull support teacher break that trial main national. Station actually side affect expect which feeling figure.",
+        "paymentStatus": "Paid On Time",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 613,
+                "title": "Innovative full-range matrices",
+                "description": "Face choice what board training school agree.",
+                "status": "Completed",
+                "cost": 442.68,
+                "date": "05/19/1993",
+                "notes": "Major read address program.",
+                "images": [
+                    {
+                        "id": 450,
+                        "url": "https://placeimg.com/804/482/any"
+                    },
+                    {
+                        "id": 868,
+                        "url": "https://www.lorempixel.com/700/436"
+                    }
+                ]
+            },
+            {
+                "id": 973,
+                "title": "Operative tertiary challenge",
+                "description": "Assume address century then pattern tell may.",
+                "status": "Completed",
+                "cost": 127.72,
+                "date": "01/15/2001",
+                "notes": "Stand play kind.",
+                "images": [
+                    {
+                        "id": 808,
+                        "url": "https://placeimg.com/849/698/any"
+                    },
+                    {
+                        "id": 669,
+                        "url": "https://placekitten.com/600/354"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "address": "68139 Krystal Parks",
+        "city": "New Blake",
+        "state": "GA",
+        "zip": "41957",
+        "rent": 1691.15,
+        "bedrooms": 1,
+        "bathrooms": 3,
+        "squareFeet": 2497,
+        "description": "Office assume ever guess compare necessary those. Leg executive than media. Lead series fill sign back small beat.",
+        "paymentStatus": "Paid On Time",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [
+            {
+                "id": 905,
+                "title": "Persevering reciprocal time-frame",
+                "description": "Buy newspaper note test little PM meet.",
+                "status": "In Progress",
+                "cost": 318.7,
+                "date": "11/05/1995",
+                "notes": "Walk and really population bill.",
+                "images": [
+                    {
+                        "id": 636,
+                        "url": "https://dummyimage.com/767x913"
+                    },
+                    {
+                        "id": 335,
+                        "url": "https://www.lorempixel.com/4/28"
+                    }
+                ]
+            },
+            {
+                "id": 857,
+                "title": "Compatible encompassing contingency",
+                "description": "Bar poor technology fill air energy may.",
+                "status": "In Progress",
+                "cost": 485.25,
+                "date": "06/09/1991",
+                "notes": "Rule grow four admit.",
+                "images": [
+                    {
+                        "id": 138,
+                        "url": "https://placeimg.com/594/274/any"
+                    },
+                    {
+                        "id": 376,
+                        "url": "https://www.lorempixel.com/230/58"
+                    }
+                ]
+            },
+            {
+                "id": 40,
+                "title": "Quality-focused client-driven info-mediaries",
+                "description": "These civil article per push.",
+                "status": "Completed",
+                "cost": 305.18,
+                "date": "01/26/2006",
+                "notes": "Return myself score democratic station him.",
+                "images": [
+                    {
+                        "id": 240,
+                        "url": "https://www.lorempixel.com/1011/645"
+                    },
+                    {
+                        "id": 176,
+                        "url": "https://www.lorempixel.com/919/525"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "address": "6519 Watkins Shore",
+        "city": "Prattmouth",
+        "state": "MS",
+        "zip": "18100",
+        "rent": 2182.83,
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "squareFeet": 2524,
+        "description": "By character foreign television color. Decade military never.",
+        "paymentStatus": "Paid Late",
+        "due": "04/01/2020",
+        "leaseExpiration": "08/01/2024",
+        "maintenanceItems": [   
+            {
+                "id": 512,
+                "title": "Public-key multi-state process improvement",
+                "description": "Performance across put too myself stock.",
+                "status": "In Progress",
+                "cost": 244.69,
+                "date": "01/13/1975",
+                "notes": "Wall performance eight chair center program.",
+                "images": [
+                    {
+                        "id": 410,
+                        "url": "https://www.lorempixel.com/512/231"
+                    },
+                    {
+                        "id": 190,
+                        "url": "https://placekitten.com/206/601"
+                    }
+                ]
+            },
+            {
+                "id": 770,
+                "title": "Versatile needs-based moderator",
+                "description": "Hope against music art account.",
+                "status": "Completed",
+                "cost": 276.69,
+                "date": "01/13/1993",
+                "notes": "Nor usually early.",
+                "images": [
+                    {
+                        "id": 708,
+                        "url": "https://placeimg.com/434/543/any"
+                    },
+                    {
+                        "id": 470,
+                        "url": "https://placekitten.com/143/158"
+                    }
+                ]
+            },
+            {
+                "id": 550,
+                "title": "Configurable stable circuit",
+                "description": "Behind member we manager half whole leader.",
+                "status": "In Progress",
+                "cost": 103.64,
+                "date": "05/29/1987",
+                "notes": "East ground in national hair toward method.",
+                "images": [
+                    {
+                        "id": 397,
+                        "url": "https://placeimg.com/742/820/any"
+                    },
+                    {
+                        "id": 501,
+                        "url": "https://dummyimage.com/995x571"
+                    }
+                ]
+            },
+            {
+                "id": 430,
+                "title": "Grass-roots bifurcated collaboration",
+                "description": "Join particularly school listen off.",
+                "status": "Pending",
+                "cost": 365.77,
+                "date": "08/04/1980",
+                "notes": "Sense owner appear pay already would Democrat tree.",
+                "images": [
+                    {
+                        "id": 98,
+                        "url": "https://dummyimage.com/227x55"
+                    },
+                    {
+                        "id": 341,
+                        "url": "https://placeimg.com/305/536/any"
+                    }
+                ]
+            },
+            {
+                "id": 38,
+                "title": "Public-key even-keeled orchestration",
+                "description": "Specific read summer her begin on.",
+                "status": "In Progress",
+                "cost": 334.09,
+                "date": "08/19/1995",
+                "notes": "Industry send follow him.",
+                "images": [
+                    {
+                        "id": 155,
+                        "url": "https://placeimg.com/659/624/any"
+                    },
+                    {
+                        "id": 12,
+                        "url": "https://placeimg.com/348/41/any"
+                    }
+                ]
+            }
+        ]
+    }
+]

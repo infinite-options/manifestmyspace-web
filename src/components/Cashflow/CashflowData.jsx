@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import { get } from '../utils/api'
 const CashflowData = (props) => {
-    console.log("props", props);
+    // console.log("props", props);
     const role = props.role;
     const userID = props.userID;
     const year = props.year;
@@ -12,7 +12,7 @@ const CashflowData = (props) => {
     const propertyView = false;
 
     const fetchCashflow = async () => {
-        console.log("props fetchCashflow", props);
+        // console.log("props fetchCashflow", props);
         // if (access_token === null || user.role.indexOf("OWNER") === -1) {
         //   navigate("/");
         //   return;
@@ -21,7 +21,7 @@ const CashflowData = (props) => {
         const cashflowResponse = await get(
           `/CashflowOwner?owner_id=${userID}&year=${year}`
         );
-        console.log("props cashflowResponse", cashflowResponse);
+        // console.log("props cashflowResponse", cashflowResponse);
         let currentRev = [];
         let currentRevSummary = [];
         let currentExp = [];
@@ -126,7 +126,7 @@ const CashflowData = (props) => {
                   year: item.year,
                   zip: item.zip,
                 });
-                console.log(resArr);
+                // console.log(resArr);
                 currentExp.push({
                   address: item.address,
                   amount_due: (
@@ -385,7 +385,7 @@ const CashflowData = (props) => {
       };
     
       useEffect(() => {
-        console.log("props useEffect", role)
+        // console.log("props useEffect", role)
         if (role === 'Owner') {
             fetchCashflow();
         }

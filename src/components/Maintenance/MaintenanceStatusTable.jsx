@@ -22,9 +22,11 @@ import theme from '../../theme/theme';
 
 
 
-export default function MaintenanceStatusTable({status, data, color, allData}){
+export default function MaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData}){
     const location = useLocation();
     let navigate = useNavigate();
+
+    // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
 
     const tableTextStyle = {
         backgroundColor: color, 
@@ -34,9 +36,20 @@ export default function MaintenanceStatusTable({status, data, color, allData}){
         fontWeight:600,
     }
 
-    function handleRequestDetailPage(property_uid, maintenance_request_uid){
-        console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
-        navigate('/maintenanceRequestDetail/' + maintenance_request_uid, {state: {data, status, allData}})
+    function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
+        // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
+        // There is some work that needs to be done here.
+        // The maintenanceDataForStatus object is just an array of maintenance requests for a particular status.
+        // Example: "NEW"
+        // We need to pass all the data to it, by status
+        navigate('/maintenanceRequestDetail', {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData,
+            }
+        })
     }
       
     return(
@@ -72,10 +85,10 @@ export default function MaintenanceStatusTable({status, data, color, allData}){
                     paddingLeft: "15px",
                 }}>
                     <p>{status}</p>
-                    <span style={{float: "right", alignContent: "center", alignItems: "center"}}>{data.length}</span>
-                </div>  
+                    <span style={{float: "right", alignContent: "center", alignItems: "center"}}>{maintenanceItemsForStatus.length}</span>
+                </div>
             </AccordionSummary>
-            {data.map((item, index) => 
+            {maintenanceItemsForStatus.map((item, index) => 
                 <AccordionDetails key={index}>
                     <div
                         style={{
@@ -85,14 +98,15 @@ export default function MaintenanceStatusTable({status, data, color, allData}){
                     >
                         <Table>
                             <TableBody>
-                                <TableRow onClick={() => handleRequestDetailPage(item.property_uid, item.maintenance_request_uid)}>
+                                <TableRow onClick={() => handleRequestDetailPage(index, item.property_uid, item.maintenance_request_uid)}>
                                     <TableCell align="left">
-                                    <Typography 
-                                        sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
-                                    >
-                                        {item.property_uid}
-                                    </Typography>
+                                        <Typography 
+                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
+                                        >
+                                            {item.property_address}
+                                        </Typography>
                                     </TableCell>
+                                    {/* <Divider orientation="vertical" flexItem color="white"/> */}
                                     <TableCell align="left"
                                         style={{
                                             verticalAlign: 'middle', // Vertically center the text
@@ -101,20 +115,21 @@ export default function MaintenanceStatusTable({status, data, color, allData}){
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
-                                        {item.request_type}
+                                        {item.maintenance_request_type}
                                         </Typography>
                                     </TableCell>
+                                    {/* <Divider orientation="vertical" color="white"/> */}
                                     <TableCell align="right">
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
-                                            {item.request_created_date}
+                                            {item.maintenance_request_created_date}
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
-                        <Divider />
+                        <Divider color="white"/>
                     </div>
                 </AccordionDetails>
             )}

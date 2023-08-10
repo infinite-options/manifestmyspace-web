@@ -79,8 +79,11 @@ const theme = createTheme({
       high: '#A52A2A',
       medium: '#FF8A00',
       low: '#FFC614',
+      clear: '#3D5CAC',
     }
   },
+
+
   typography: {
       common: {
         fontWeight: 700, // Custom font weight
@@ -94,11 +97,24 @@ const theme = createTheme({
         fontWeight: 700, // Custom font weight
         white: '#FFFFFF', // Custom font color (e.g., red)
       },
+      light: {
+        fontWeight: 500, // Custom font weight
+      },
       largeFont: {
           fontSize: '20px'
       },
       smallFont: {
           fontSize: '14px'
+      },
+      propertyPage: {
+        color: "#160449",
+        fontSize: '16px',
+        fontWeight: 700,
+      },
+      formButton: {
+        background: '#9EAED6',
+        text: '#160449',
+
       }
     },
 
@@ -112,6 +128,6 @@ const theme = createTheme({
       xl: 1920, // Extra large screens (large desktop)
     },
   },
-  });
+});
 
 export default theme;

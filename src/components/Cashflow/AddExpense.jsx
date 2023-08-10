@@ -5,7 +5,7 @@ import theme from '../../theme/theme';
 import File_dock_add from '../../images/File_dock_add.png';
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
-import PropertyListData from '../Property/PropertyList';
+import PropertyData from '../Property/PropertyData';
 
 const AddExpense = (props) => {
     const navigate = useNavigate();
@@ -69,7 +69,7 @@ const AddExpense = (props) => {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
+                <PropertyData setPropertyList={setPropertyList}/>
                 <Box
                     style={{
                         display: 'flex',

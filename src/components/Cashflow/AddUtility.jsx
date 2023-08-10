@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import PropertyListData from '../Property/PropertyList';
+import PropertyData from '../Property/PropertyData';
 import theme from '../../theme/theme';
 import File_dock_add from '../../images/File_dock_add.png';
 import { useNavigate } from "react-router-dom";
@@ -93,7 +93,7 @@ const AddUtility = (props) => {
     return (
         <>
             <ThemeProvider theme={theme}>
-            <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
+            <PropertyData setPropertyList={setPropertyList}/>
                 <Box
                     style={{
                         display: 'flex',

@@ -1,96 +1,321 @@
 import React, { useState, useEffect } from 'react';
-import { get, post } from "../utils/api";
-import {
-    days,
-    descendingComparator as descendingComparator,
-    getComparator as getComparator,
-    stableSort as stableSort,
-} from "../utils/helper";
+import { useLocation, useNavigate } from "react-router-dom";
+import { 
+    Typography, 
+    Box, 
+    Stack,
+    Paper,
+    Button,
+    ThemeProvider,
+    Form,
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Grid,
+    Input,
+    Container,
+    Radio,
+    FormLabel,
+    FormControlLabel,
+    RadioGroup,
+    UploadFile,
+    InputAdornment,
+    InputBase, 
+    IconButton,
+    CardMedia,
+    CardContent,
+    CardActions,
+    ListItemText,
+    ListItem,
+    List,
+    Avatar,
+    Badge
+} from "@mui/material";
 
-const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5MDk5MjQ1NiwianRpIjoiMDlkNjNmM2UtNWJhMC00Yzc3LWIwZWMtYWU0NjBmNGFkZWI3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJ1c2VyX3VpZCI6IjEwMC0wMDAwODIiLCJmaXJzdF9uYW1lIjoiUHJpeWFua2EiLCJsYXN0X25hbWUiOiJDb3JuZWxpdXMiLCJwaG9uZV9udW1iZXIiOiIoNDA4KSAzNTUtODI3NyIsImVtYWlsIjoicHJpeWFua2EwMWNvcm5lbGl1c0BnbWFpbC5jb20iLCJyb2xlIjoiT1dORVIsVEVOQU5ULE1BTkFHRVIsTUFJTlRfRU1QTE9ZRUUsUE1fRU1QTE9ZRUUiLCJnb29nbGVfYXV0aF90b2tlbiI6InlhMjkuYTBBYlZiWTZONjZSeTNVR2FGczFPMkRpNUYzdUFPTl9ndEJNZ1lVTHU4VFp2bGw3SXk4RWJJNGRNYW9yczRyMTNINjV0dVN0M3pSQTV0WnFOVVkwZHk0cFRaODhzYzAxUkw2VWpvZUZ4QXZGM0dsN1U1Qk1MQ3BiR3IwZEpvdG9WdV9kUnlRalFSODQza0YtMnpZUjlfeXpEQTA2UlNyX2N1YUNnWUtBV1VTQVJBU0ZRRldLdlBsYV9UTWtxbHctVENKZ1NpRTFJaFZ6dzAxNjciLCJidXNpbmVzc2VzIjpbeyJidXNpbmVzc191aWQiOiI2MDAtMDAwMDE5IiwiYnVzaW5lc3NfdHlwZSI6Ik1BTkFHRU1FTlQiLCJidXNpbmVzc19uYW1lIjoiUHJpeWFua2EgTWFuYWdlbWVudCBCdXNpbmVzcyIsImJ1c2luZXNzX3Bob25lX251bWJlciI6Iig0MDgpIDM1NS04Mjc3IiwiYnVzaW5lc3NfZW1haWwiOiJwcml5YW5rYTAxY29ybmVsaXVzQGdtYWlsLmNvbSIsImJ1c2luZXNzX2Vpbl9udW1iZXIiOiIxMjMiLCJidXNpbmVzc19zZXJ2aWNlc19mZWVzIjoiW3tcIm9mXCI6IFwiR3Jvc3MgUmVudFwiLCBcImNoYXJnZVwiOiBcIjUlXCIsIFwiZmVlX25hbWVcIjogXCJTZXJ2aWNlIGNoYXJnZVwiLCBcImZlZV90eXBlXCI6IFwiJFwiLCBcImZyZXF1ZW5jeVwiOiBcIldlZWtseVwifV0iLCJidXNpbmVzc19sb2NhdGlvbnMiOiJbe1wiZGlzdGFuY2VcIjogXCIxMFwiLCBcImxvY2F0aW9uXCI6IFwiU2FuIEpvc2VcIn1dIiwiYnVzaW5lc3NfcGF5cGFsIjpudWxsLCJidXNpbmVzc19hcHBsZV9wYXkiOm51bGwsImJ1c2luZXNzX3plbGxlIjoicHJpeWFua2EwMWNvcm5lbGl1c0BnbWFpbC5jb20iLCJidXNpbmVzc192ZW5tbyI6bnVsbCwiYnVzaW5lc3NfYWNjb3VudF9udW1iZXIiOm51bGwsImJ1c2luZXNzX3JvdXRpbmdfbnVtYmVyIjpudWxsLCJidXNpbmVzc19kb2N1bWVudHMiOiJbXSIsImVtcGxveWVlX3JvbGUiOiJPd25lciJ9LHsiYnVzaW5lc3NfdWlkIjoiNjAwLTAwMDAwMiIsImJ1c2luZXNzX3R5cGUiOiJNQUlOVEVOQU5DRSIsImJ1c2luZXNzX25hbWUiOiJBSyBNYWludGVuYW5jZSIsImJ1c2luZXNzX3Bob25lX251bWJlciI6IjIxMzg1ODEzNDQiLCJidXNpbmVzc19lbWFpbCI6ImFudS5zYW5kaHU3ODkzQGdtYWlsLmNvbSIsImJ1c2luZXNzX2Vpbl9udW1iZXIiOiI3NC01NzU0NzQ1IiwiYnVzaW5lc3Nfc2VydmljZXNfZmVlcyI6Ilt7XCJwZXJcIjogXCJIb3VyXCIsIFwiY2hhcmdlXCI6IFwiMTAwXCIsIFwic2VydmljZV9uYW1lXCI6IFwiUGFpbnRpbmcgU2VydmljZXNcIn0sIHtcInBlclwiOiBcIkhvdXJcIiwgXCJjaGFyZ2VcIjogXCIxNTBcIiwgXCJzZXJ2aWNlX25hbWVcIjogXCJQbHVtYmluZyBTZXJ2aWNlc1wifV0iLCJidXNpbmVzc19sb2NhdGlvbnMiOiJbe1wiZGlzdGFuY2VcIjogXCIxMFwiLCBcImxvY2F0aW9uXCI6IFwiTG9uZyBCZWFjaCwgQ0FcIn1dIiwiYnVzaW5lc3NfcGF5cGFsIjoiYWtvd25lciIsImJ1c2luZXNzX2FwcGxlX3BheSI6bnVsbCwiYnVzaW5lc3NfemVsbGUiOm51bGwsImJ1c2luZXNzX3Zlbm1vIjoiYWttYWludCIsImJ1c2luZXNzX2FjY291bnRfbnVtYmVyIjpudWxsLCJidXNpbmVzc19yb3V0aW5nX251bWJlciI6bnVsbCwiYnVzaW5lc3NfZG9jdW1lbnRzIjoiW10iLCJlbXBsb3llZV9yb2xlIjoibWFpbnRlbmFuY2UifSx7ImJ1c2luZXNzX3VpZCI6IjYwMC0wMDAwMDEiLCJidXNpbmVzc190eXBlIjoiTUFOQUdFTUVOVCIsImJ1c2luZXNzX25hbWUiOiJBSyBNYW5hZ2VtZW50IiwiYnVzaW5lc3NfcGhvbmVfbnVtYmVyIjoiMjEzODU4MTM0NCIsImJ1c2luZXNzX2VtYWlsIjoiYW51LnNhbmRodTc4OTNAZ21haWwuY29tIiwiYnVzaW5lc3NfZWluX251bWJlciI6IjEyLTEyMzQ1NjciLCJidXNpbmVzc19zZXJ2aWNlc19mZWVzIjoiW3tcIm9mXCI6IFwiR3Jvc3MgUmVudFwiLCBcImNoYXJnZVwiOiBcIjVcIiwgXCJmZWVfbmFtZVwiOiBcIlNDXCIsIFwiZmVlX3R5cGVcIjogXCIlXCIsIFwiZnJlcXVlbmN5XCI6IFwiTW9udGhseVwifSwge1wib2ZcIjogXCJHcm9zcyBSZW50XCIsIFwiY2hhcmdlXCI6IFwiNzUwXCIsIFwiZmVlX25hbWVcIjogXCJSZW5ld2FsIEZlZVwiLCBcImZlZV90eXBlXCI6IFwiJFwiLCBcImZyZXF1ZW5jeVwiOiBcIkFubnVhbGx5XCJ9XSIsImJ1c2luZXNzX2xvY2F0aW9ucyI6Ilt7XCJkaXN0YW5jZVwiOiBcIjE1XCIsIFwibG9jYXRpb25cIjogXCJMb25nIEJlYWNoLCBDQVwifV0iLCJidXNpbmVzc19wYXlwYWwiOiJha21nbXQiLCJidXNpbmVzc19hcHBsZV9wYXkiOiJha21nbXQiLCJidXNpbmVzc196ZWxsZSI6ImFrbWdtdCIsImJ1c2luZXNzX3Zlbm1vIjoiYWttZ210IiwiYnVzaW5lc3NfYWNjb3VudF9udW1iZXIiOiIxMjM0NTY3OTgiLCJidXNpbmVzc19yb3V0aW5nX251bWJlciI6IjIyMzQ1NyIsImJ1c2luZXNzX2RvY3VtZW50cyI6Ilt7XCJsaW5rXCI6IFwiaHR0cHM6Ly9zMy11cy13ZXN0LTEuYW1hem9uYXdzLmNvbS9pby1wbS9idXNpbmVzc2VzLzYwMC0wMDAwMDEvZG9jXzBcIiwgXCJuYW1lXCI6IFwiYmFjay5wZGZcIiwgXCJzaGFyZWRcIjogZmFsc2UsIFwiZGVzY3JpcHRpb25cIjogXCJ0ZXN0XCIsIFwiY3JlYXRlZF9kYXRlXCI6IFwiMjAyMy0wMy0yM1wifV0iLCJlbXBsb3llZV9yb2xlIjoiZW1wbG95ZWUifV0sInRlbmFudF9pZCI6W3sidGVuYW50X2lkIjoiMzUwLTAwMDA1MiJ9XX0sIm5iZiI6MTY5MDk5MjQ1NiwiZXhwIjoxNjkwOTk2MDU2fQ.voFwr8nKIVJifqRRxHbmLoZhXhIFJ_CfWFSd8CcTWeM';
-const PropertyListData = (props) => {
-    const [daysCompleted, setDaysCompleted] = useState("10");
+import theme from '../../theme/theme';
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
+import propertyImage from './propertyImage.png';
+import maintenanceIcon from './maintenanceIcon.png';
+import samplePropertyData from './samplePropertyData';
 
-    const fetchOwnerDashboard = async () => {
-        // if (access_token === null || user.role.indexOf("OWNER") === -1) {
-        //     navigate("/");
-        //     return;
-        // }
-        const response = await get("/ownerDashboard", access_token);
-        console.log("response ", response);
-        if (response.msg === "Token has expired") {
-            // console.log("here msg");
-            // refresh();
-            return;
-        }
-        props.setPropertyList(response.result)
-        let pu = response.result;
-        pu.forEach((property) => {
-            const forwarded = property.property_manager.filter(
-                (item) => item.management_status === "FORWARDED"
-            );
-            const sent = property.property_manager.filter(
-                (item) => item.management_status === "SENT"
-            );
-            const refused = property.property_manager.filter(
-                (item) => item.management_status === "REFUSED"
-            );
-    
-            const pmendearly = property.property_manager.filter(
-                (item) => item.management_status === "PM END EARLY"
-            );
-            const ownerendearly = property.property_manager.filter(
-                (item) => item.management_status === "OWNER END EARLY"
-            );
-            property.management = {
-                forwarded: forwarded.length,
-                sent: sent.length,
-                refused: refused.length,
-                pmendearly: pmendearly.length,
-                ownerendearly: ownerendearly.length,
-            };
-        });
-        // console.log(pu);
-        // setOwnerData(pu);
-    
-        let requests = [];
-        if (parseInt(daysCompleted) >= 0) {
-            response.result.forEach((res) => {
-                if (res.maintenanceRequests.length > 0) {
-                    res.maintenanceRequests.forEach((mr) => {
-                        if (
-                            days(new Date(mr.request_closed_date), new Date()) >=
-                            parseInt(daysCompleted) &&
-                            mr.request_status === "COMPLETED"
-                        ) {
-                        } else {
-                            requests.push(mr);
-                        }
-                    });
-                }
-            });
-        } else {
-            response.result.forEach((res) => {
-                if (res.maintenanceRequests.length > 0) {
-                    res.maintenanceRequests.forEach((mr) => {
-                        requests.push(mr);
-                    });
-                }
-            });
-        }
-    
-        // setMaintenanceRequests(requests);
-        // setIsLoading(false);
+import { get } from "../utils/api"
+
+const SearchBar = () => {
+    const [searchTerm, setSearchTerm] = React.useState('');
+  
+    const handleSearchChange = (event) => {
+      setSearchTerm(event.target.value);
     };
-    
+  
+    const handleSearch = () => {
+      // Perform the search logic here
+      console.log('Searching for:', searchTerm);
+    };
+  
+    return (
+      <Paper
+        component="form"
+        sx={{
+          p: '2px 4px',
+          alignItems: 'center',
+          backgroundColor: theme.palette.custom.blue,
+        }}
+      >
+        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search" onClick={handleSearch}>
+          <SearchIcon />
+        </IconButton>
+        <InputBase
+          sx={{ ml: 1}}
+          placeholder="Search..."
+          inputProps={{ 'aria-label': 'search' }}
+          value={searchTerm}
+          onChange={handleSearchChange}
+          color={theme.typography.common.blue}
+        />
+      </Paper>
+    );
+  };
+
+export default function PropertyList({}){
+    let navigate = useNavigate();
+    const [propertyList, setPropertyList] = useState([])
+
+    const paymentStatusMap = {
+        "Paid On Time": theme.palette.priority.clear,
+        "Partially Paid": theme.palette.priority.low,
+        "Paid Late": theme.palette.priority.medium,
+        "Not Paid": theme.palette.priority.high
+    }
+
     useEffect(() => {
-        fetchOwnerDashboard();
-    }, [access_token]);
+        const getMaintenaceDataForProperties = async (propertyList) =>{
+            console.log("getMaintenaceDataForProperties")
+            console.log(propertyList)
+            let maintenanceData = {};
+            for (const property of propertyList){
+                console.log("property", property)
+                const data = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_id}`)
+                const propertyMaintenanceData = await data.json();
+                console.log("propertyMaintenanceData", propertyMaintenanceData)
+                maintenanceData[property.property_id] = propertyMaintenanceData
+            }
+            console.log("maintenanceData", maintenanceData)
+            return maintenanceData
+        }
+
+        console.log("PropertyList useEffect")
+        console.log(propertyList)
+        const fetchData = async () => {
+            const data = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
+            const propertyData = await data.json();
+            console.log("propertyData", propertyData.Property)
+            setPropertyList([...propertyData.Property])
+        }
+        fetchData()
+    }, [])
+
+    const getMaintenaceDataForProperties = async (propertyList) =>{
+        console.log("getMaintenaceDataForProperties")
+        console.log(propertyList)
+        let maintenanceData = {};
+        for (const property of propertyList){
+            console.log("property", property)
+            const data = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_id}`)
+            const propertyMaintenanceData = await data.json();
+            console.log("propertyMaintenanceData", propertyMaintenanceData)
+            maintenanceData[property.property_id] = propertyMaintenanceData
+        }
+        console.log("maintenanceData", maintenanceData)
+        return maintenanceData
+    }
+    
+
+    // let nitya = "https://mfrbehiqnb.execute-api.us-west-1.amazonaws.com/dev/api/v2/treatments"
+
+    // useEffect(() => {
+    //     console.log("Nitya Endpoint useEffect Test")
+    //     console.log(nitya)
+    //     const fetchData = async () => {
+    //         const data = await fetch(nitya)
+    //         const nityaData = await data.json();
+    //         console.log("nityaData", nityaData)
+    //     }
+    //     fetchData()
+    // }, [])
+
+    
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         let dataObject = {};
+    //         console.log("in useEffect")
+    //         const data = await get(`/maintenanceRequests`)  
+    //         for (const item of data.result) {
+    //             if (!dataObject[item.request_status]){
+    //                 dataObject[item.request_status] = [];
+    //             }
+    //             dataObject[item.request_status].push(item);
+    //         }
+    //         console.log("dataObject from server", dataObject)
+    //         setMaintenanceData(prevData => ({ ...prevData, ...dataObject }))
+    //     }
+    //     fetchData();
+    // }, []);
+
+    function handlePropertyDetailNavigation(propertyId, index, propertyList){
+        console.log("handlePropertyDetailNavigation")
+        navigate(`/propertyDetail`, {state: {propertyId, index, propertyList}});
+    }
 
     return (
-        <>
-            
-        </>
+        <ThemeProvider theme={theme}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%', // Take up full screen width
+                    minHeight: '100vh', // Set the Box height to full height
+                    marginTop: theme.spacing(2), // Set the margin to 20px
+                }}
+            >
+                <Paper
+                sx={{
+                    margin: '30px',
+                    padding: theme.spacing(2),
+                    backgroundColor: theme.palette.primary.main,
+                    width: '100%', // Occupy full width with 25px margins on each side
+                    maxWidth: '800px', // You can set a max-width if needed
+                }}
+                >
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ padding: theme.spacing(2), position: 'relative' }}
+                    >
+                        <Box sx={{ flex: 1 }} />
+                        <Box position="absolute" left="50%" sx={{ transform: 'translateX(-50%)' }}>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.largeFont,
+                            }}
+                        >
+                            All Properties
+                        </Typography>
+                        </Box>
+                        <Button position="absolute" right={0} onClick={() => console.log('this button should add a property')}>
+                        <AddIcon
+                            onClick={() => navigate('/addProperty')}
+                            sx={{ color: theme.typography.primary.black, fontSize: '30px', margin: '5px' }}
+                        />
+                        </Button>
+                    </Stack>
+                    <Box sx={{ padding: '10px' }}>
+                        <SearchBar sx={{ width: '100%' }} />
+                        <List>
+                            {propertyList.map((property, index) => (
+                                <ListItem
+                                    key={property.id}
+                                    style={{
+                                        justifyContent: 'space-between',
+                                        display: 'flex',
+                                        height: '100%',
+                                        alignItems: 'flex-start',
+                                        backgroundColor: theme.palette.form.main,
+                                        paddingLeft: '10px',
+                                        paddingRight: '10px',
+                                    }}
+                                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                                >
+                                    <Avatar src={propertyImage} alt="property image"
+                                        sx={{
+                                            borderRadius: '0',
+                                            marginRight: '10px',
+                                            width: '75px',
+                                            height: '75px',
+                                        }}
+                                    />
+                                     <Box   
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center", // vertically align items to the center
+                                            justifyContent: "center", // horizontally align items to the center
+                                            height: "100%", // to take full height of its parent
+                                            width: "50%", // to take full width of its parent
+                                        }}
+                                    >
+                                        <Typography 
+                                            sx={{
+                                                color: theme.typography.common.blue,
+                                                fontWeight: theme.typography.primary.fontWeight,
+                                                fontSize: theme.typography.smallFont,
+                                                margin: "0px", // Ensure no margin
+                                                padding: "0px", // Ensure no padding
+                                                textAlign: "center", // Ensure text is centered within itself                   
+                                                verticalAlign: "middle", // Vertically align text in the middle
+                                                alignItems: "center", // vertically align items to the center
+                                            }}
+                                        >
+                                            {property.property_address} <br/>
+                                            {property.property_city + " " + property.property_state + " " + property.property_zip}
+                                        </Typography>
+                                    </Box>
+                                    <Box   
+                                        sx={{
+                                            backgroundColor: paymentStatusMap[property.paymentStatus],
+                                            width: "25%", // Ensure it takes up full width of its parent
+                                            height: "100%", // Ensure it takes up full height of its parent
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            padding: "0px",
+                                            border: "none",
+                                            margin: "0px"
+                                        }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.primary.main,
+                                                fontWeight: theme.typography.primary.fontWeight,
+                                                fontSize: theme.typography.smallFont,
+                                                margin: "0px", // Ensure no margin
+                                                padding: "0px", // Ensure no padding
+                                                textAlign: "center", // Ensure text is centered within itself                                    
+                                            }}
+                                        >
+                                            {property.paymentStatus}
+                                        </Typography>
+                                    </Box>
+                                    <Badge
+                                        overlap="circular"
+                                        color="error"
+                                        badgeContent={0} //{property.maintenanceItems.length}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        style={{
+                                            color: "#000000"
+                                            // color: theme.palette.custom.blue,   
+                                        }}
+                                    >
+                                        <Button onClick={() => navigate('/maintenance')} sx={{border: "none"}}>
+                                            <img src={maintenanceIcon} alt="maintenance icon" style={{width: '50px', height: '50px'}}/>
+                                        </Button>
+                                    </Badge>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </Paper>
+            </Box>
+        </ThemeProvider>
     )
 }
-export default PropertyListData;
+
