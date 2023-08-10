@@ -6,7 +6,7 @@ function SelectProperty(props) {
     const handleClose = props.closeTab;
     const [properties, setProperties] = useState([]);
     useEffect(()=>{
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/100-000003")
+        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003")
         .then((res)=>{
             // console.log(res.data.Property);
             setProperties(res.data.Property);
@@ -21,6 +21,7 @@ function SelectProperty(props) {
             paddingLeft: '20px',
             paddingRight: '20px',
             minWidth: '320px',
+            overflow: 'scroll',
         }}>
             <Box sx={{
                 display: 'flex',
@@ -143,7 +144,7 @@ function PropertyCard(props) {
                 fontWeight: '600',
                 fontSize: '15px',
             }}>
-                {property.property_address}
+                {property.property_address}, {property.property_unit}
             </Box>
 
         </Box>

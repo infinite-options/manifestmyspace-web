@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Modal, Box } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SelectProperty from "./SelectProperty";
@@ -15,9 +15,9 @@ function Leases(props) {
 
     const [leaseStatus, setLeaseStatus] = useState([]);
     useEffect(() => {
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/100-000003")
+        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
             .then((res) => {
-                // console.log(res.data.LeaseStatus);
+                console.log(res.data.LeaseStatus);
                 setLeaseStatus(res.data.LeaseStatus);
             });
     }, []);
@@ -133,17 +133,56 @@ function Leases(props) {
                     <LeaseMonth key={i} data={status} />
                 ))}
             </Box>
-            <Backdrop sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={open}                
+            <Modal sx={{
+                overflowY: 'scroll',
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+            }}
+                open={open}
+                disableScrollLock={false}
             >
-                <SelectProperty closeTab={handleClose} />
-            </Backdrop>
+                <Box sx={{
+                    position: 'absolute',
+                    width: '80%',
+                    height: '80%',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}>
+                    <SelectProperty closeTab={handleClose} />
+                </Box>
+
+            </Modal>
         </Box>
     )
 }
 
 function LeaseMonth(props) {
     const leaseData = props.data;
+    const num = leaseData.num;
+    let [year, month] = ['-', '-'];
+
+    function parseDate(data) {
+        const dateList = data.split('-');
+        function getMonth(num) {
+            const months = [
+                'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+                'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+            ];
+        
+            const index = parseInt(num, 10) - 1;
+        
+            if (index >= 0 && index < months.length) {
+                return months[index];
+            } else {
+                return 'N/A';
+            }
+        }
+        return [dateList[0] , getMonth(dateList[1])]
+    }
+    if(leaseData.lease_end !== null) {
+        [year, month] = parseDate(leaseData.lease_end);
+    }
+
     return (
         <Box sx={{
             display: 'flex',
@@ -164,17 +203,17 @@ function LeaseMonth(props) {
                 color: '#160449',
             }}>
                 <Box>
-                    MAR
+                    {month}
                 </Box>
                 <Box>
-                    2023
+                    {year}
                 </Box>
                 <Box sx={{
                     fontWeight: 'bold',
                     marginTop: 'auto',
                     marginBottom: '0px',
                 }}>
-                    {leaseData.num}
+                    {num}
                 </Box>
             </Box>
             <Box sx={{
