@@ -16,7 +16,7 @@ const theme = createTheme({
         },
     },
 });
-function Profile() {
+function OwnerProfile() {
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{
@@ -318,4 +318,4 @@ function TextBox(props) {
         </Box>
     );
 }
-export default Profile;
+export default OwnerProfile;

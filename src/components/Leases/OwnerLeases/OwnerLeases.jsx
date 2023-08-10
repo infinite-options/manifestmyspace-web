@@ -1,9 +1,9 @@
 import { Accordion, AccordionDetails, AccordionSummary, Modal, Box } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import SelectProperty from "./SelectProperty";
+import SelectProperty from "../SelectProperty";
 
-function Leases(props) {
+function OwnerLeases(props) {
     // Select Property Tab
     const [open, setOpen] = useState(false);
     const handleClose = () => {
@@ -287,4 +287,4 @@ function LeaseMonth(props) {
     );
 }
 
-export default Leases;
+export default OwnerLeases;

@@ -1,4 +1,5 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
+import { useState } from 'react';
 
 const theme = createTheme({
     palette: {
@@ -15,7 +16,13 @@ const theme = createTheme({
     },
 });
 
-function Documents() {
+function OwnerDocuments() {
+    const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
+    const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
+    const [tabStatus, setTabStatus] = useState(0);
+    function getColor(status) {
+        return statusColor[tabStatus];
+    }
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{
@@ -106,20 +113,30 @@ function Documents() {
                         fontSize: '10px',
                         textAlign: 'center',
                     }}>
-                        <NavTab color={'#A52A2A'}>
-                            Applications
+                        <NavTab color={statusColor[0]}>
+                            <Box onClick={() => setTabStatus(0)}>
+                                {statusList[0]}
+                            </Box>
                         </NavTab>
-                        <NavTab color={'#FF8A00'}>
-                            Leases
+                        <NavTab color={statusColor[1]}>
+                            <Box onClick={() => setTabStatus(1)}>
+                                {statusList[1]}
+                            </Box>
                         </NavTab>
-                        <NavTab color={'#FFC614'}>
-                            Agreements
+                        <NavTab color={statusColor[2]}>
+                            <Box onClick={() => setTabStatus(2)}>
+                                {statusList[2]}
+                            </Box>
                         </NavTab>
-                        <NavTab color={'#3D5CAC'}>
-                            Notices
+                        <NavTab color={statusColor[3]}>
+                        <Box onClick={() => setTabStatus(3)}>
+                                {statusList[3]}
+                            </Box>
                         </NavTab>
-                        <NavTab color={'#160449'}>
-                            Contracts
+                        <NavTab color={statusColor[4]}>
+                        <Box onClick={() => setTabStatus(4)}>
+                                {statusList[4]}
+                            </Box>
                         </NavTab>
                     </Box>
                     <Box sx={{
@@ -128,8 +145,9 @@ function Documents() {
                         borderRadius: '10px',
                         bottom: '40px',
                     }}>
+                        {console.log(tabStatus)}
                         <Box sx={{
-                            backgroundColor: '#A52A2A',
+                            backgroundColor: getColor(tabStatus),
                             height: '14px',
                             borderRadius: '9px 9px 0px 0px',
                         }}></Box>
@@ -170,7 +188,7 @@ function NavTab(props) {
 }
 
 function DocumentCard(props) {
-    return(
+    return (
         <Box sx={{
             backgroundColor: '#D6D5DA',
             borderRadius: '10px',
@@ -230,4 +248,4 @@ function DocumentCard(props) {
         </Box>
     );
 }
-export default Documents;
+export default OwnerDocuments;

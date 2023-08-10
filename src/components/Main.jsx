@@ -9,13 +9,15 @@ import PropertyList from "./Property/PropertyList";
 import AddExpense from "./Cashflow/AddExpense";
 import PropertyRentFlow from "./PropertyRentFlow/PropertyRentFlow";
 import PropertyRentDetail from "./PropertyRentFlow/PropertyRentDetail";
-import Announcement from "./Announcement/Announcement"
-import Profile from "./Profile/Profile";
-import Documents from "./Documents/Documents";
-import Leases from "./Leases/Leases";
+
+import Announcement from "./Announcement/Announcement";
 import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
+
+import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
+import OwnerLeases from "./Leases/OwnerLeases/OwnerLeases";
+import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
 function Main() {
     return (
         <>
@@ -28,12 +30,14 @@ function Main() {
                         <Route exact path="/properties" element={<PropertyList />} />
                         <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
                         <Route exact path="/addExpense" element={<AddExpense />} />
-                        <Route exact path="/announcement" element={<Announcement />} />
                         <Route exact path="/propertyRent" element={<PropertyRentFlow />} />
                         <Route exact path="/propertyRentDetail" element={<PropertyRentDetail />} />
-                        <Route exact path="/profile" element={<Profile />} />
-                        <Route exact path="/documents" element={<Documents />} />
-                        <Route exact path="/leases" element={<Leases />} />
+
+                        <Route exact path="/announcement" element={<Announcement />} />
+                        <Route exact path="/ownerProfile" element={<OwnerProfile />} />
+                        <Route exact path="/ownerDocuments" element={<OwnerDocuments />} />
+                        <Route exact path="/ownerLeases" element={<OwnerLeases />} />
+
                         <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
                         <Route exact path="/tenantProfile" element={<TenantProfile />} />
                         <Route exact path="/tenantDashboard" element={<TenantDashboard />} />

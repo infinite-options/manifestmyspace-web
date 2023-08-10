@@ -1,5 +1,5 @@
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
-import { getStatusColor } from "../utils/propertyRentFunctions";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { getStatusColor } from "./propertyRentFunctions";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router";
 

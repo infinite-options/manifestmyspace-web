@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../css/propertyRent.css";
-import { getStatusColor } from "../utils/propertyRentFunctions";
+import { getStatusColor } from "./propertyRentFunctions";
 import { useLocation } from "react-router";
 import axios from "axios";
 
@@ -24,7 +24,7 @@ function PropertyRentDetail() {
             console.log("Cashflow Owner: ", res.data.result);
             setCashflowOwner(res.data.result);
         });
-    }, []);
+    }, [property]);
     return (
         <div className="property-rent-container">
             <div className="property-rent-title-container">
