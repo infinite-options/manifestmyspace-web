@@ -16,7 +16,7 @@ const theme = createTheme({
     },
 });
 
-function OwnerDocuments() {
+function PMDocuments() {
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
@@ -159,6 +159,7 @@ function OwnerDocuments() {
                             <DocumentCard />
                             <DocumentCard />
                             <DocumentCard />
+
                         </Box>
                     </Box>
                 </Box>
@@ -247,4 +248,5 @@ function DocumentCard(props) {
         </Box>
     );
 }
-export default OwnerDocuments;
+
+export default PMDocuments;

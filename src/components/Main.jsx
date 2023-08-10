@@ -18,6 +18,11 @@ import TenantDashboard from "./TenantDashboard/TenantDashboard";
 import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
 import OwnerLeases from "./Leases/OwnerLeases/OwnerLeases";
 import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
+
+import PMProfile from "./Profile/PMProfile/PMProfile";
+import PMLeases from "./Leases/PMLeases/PMLeases";
+import PMContracts from "./Contracts/PMContracts/PMContracts";
+import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 function Main() {
     return (
         <>
@@ -41,6 +46,11 @@ function Main() {
                         <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
                         <Route exact path="/tenantProfile" element={<TenantProfile />} />
                         <Route exact path="/tenantDashboard" element={<TenantDashboard />} />
+
+                        <Route exact path="/pmProfile" element={<PMProfile />} />
+                        <Route exact path="/pmLeases" element={<PMLeases />} />
+                        <Route exact path="/pmContracts" element={<PMContracts />} />
+                        <Route exact path="/pmDocuments" element={<PMDocuments />} />
                     </Routes>
                 </Router>
             </div>
