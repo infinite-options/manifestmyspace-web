@@ -5,6 +5,15 @@ const data = [
   { name: 'Jan', sales: 5000, profit: 2000 },
   { name: 'Feb', sales: 8000, profit: 4000 },
   { name: 'Mar', sales: 10000, profit: 6000 },
+  { name: 'Apr', sales: 9000, profit: 6000 },
+  { name: 'May', sales: 8000, profit: 8000 },
+  { name: 'Jun', sales: 10000, profit: 4000 },
+  { name: 'Jul', sales: 5000, profit: 2000 },
+  { name: 'Aug', sales: 4000, profit: 3000 },
+  { name: 'Sep', sales: 8000, profit: 1000 },
+  { name: 'Oct', sales: 6000, profit: 5000 },
+  { name: 'Nov', sales: 10000, profit: 6000 },
+  { name: 'Dec', sales: 8000, profit: 3000 },
   // Add data for other months (up to 12)
 ];
 

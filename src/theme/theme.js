@@ -29,20 +29,21 @@ const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
+          fontFamily: 'Source Sans Pro',
           borderBottom: 'none',
-          padding: '5px 16px',  
+          padding: '5px 5px',  
         },
       },
     },
     MuiFilledInput: {
       styleOverrides: {
         root: {
-          '&.MuiFilledInput-root': {
-            backgroundColor: '#F2F2F2', // Update the background color here
-            borderRadius: 10,
-            height: 30,
-            marginBlock: 10,
-          },
+          // '&.MuiFilledInput-root': {
+          //   backgroundColor: '#F2F2F2', // Update the background color here
+          //   borderRadius: 10,
+          //   height: 30,
+          //   marginBlock: 10,
+          // },
           '&.MuiFilledInput-root:before, &.MuiFilledInput-root:hover:before, &.MuiFilledInput-root:after': {
             borderBottom: 'none',
           },
@@ -67,10 +68,12 @@ const theme = createTheme({
     },
     custom: {
       blue: '#3D5CAC80', 
+      buttonBlue: '#3D5CAC', 
       grey: '#22222240',
       yellowHighlight: '#FFE3AD',
       yellow: alpha('#FFE3AD', 0.5),
-      pink: alpha('#F87C7A', 0.5)
+      pink: alpha('#F87C7A', 0.5),
+      palePink: alpha('#FE8280', 0.4)
     },
   },
   typography: {

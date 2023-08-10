@@ -1,5 +1,6 @@
 import React, { Component, useEffect, useState } from 'react';
-import { get } from '../utils/api'
+import { get } from '../utils/api';
+import axios from "axios";
 const CashflowData = (props) => {
     console.log("props", props);
     const role = props.role;
@@ -17,7 +18,9 @@ const CashflowData = (props) => {
         //   navigate("/");
         //   return;
         // }
-    
+        const cashflow = await axios.get(
+          'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashFlow'
+        );
         const cashflowResponse = await get(
           `/CashflowOwner?owner_id=${userID}&year=${year}`
         );

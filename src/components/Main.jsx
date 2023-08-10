@@ -5,10 +5,14 @@ import CashflowOwner from './Cashflow/CashflowOwner';
 import Footer from './Footer';
 import SelectMonthComponent from './SelectMonthComponent';
 import MaintenanceWidjet from './MaintenanceWidget';
-import PropertyList from "./Property/PropertyList";
+import PropertyList from "./Property/PropertyData";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
+import ViewTransactionOwner from "./Transactions/ViewTransactionOwner"
+import PaymentsTenant from "./Payments/PaymentsTenant";
+import TransactionHistory from "./Transactions/TransactionHistory";
+import CardDetails from "./Payments/CardDetails";
 function Main(){
     return (
         <>
@@ -23,6 +27,10 @@ function Main(){
               <Route exact path="/addExpense" element={<AddExpense/>}/>
               <Route exact path="/addRevenue" element={<AddRevenue/>}/>
               <Route exact path="/addUtility" element={<AddUtility/>}/>
+              <Route exact path='/transactionHistory' element={<TransactionHistory/>}/>
+              <Route exact path='/viewTransactionOwner' element={<ViewTransactionOwner/>}/>
+              <Route exact path='/paymentsTenant' element={<PaymentsTenant/>}/>
+              <Route exact path='/card' element={<CardDetails/>}/>
             </Routes>
             </Router>
             </div>
