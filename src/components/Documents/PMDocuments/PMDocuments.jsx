@@ -1,5 +1,6 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
     palette: {
@@ -20,8 +21,12 @@ function PMDocuments() {
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
+    const navigate = useNavigate();
     function getColor(status) {
         return statusColor[status];
+    }
+    function navigateTo(url) {
+        navigate(url);
     }
     return (
         <ThemeProvider theme={theme}>
@@ -56,7 +61,8 @@ function PMDocuments() {
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'center',
-                        }}>
+                        }}
+                        onClick={()=>navigateTo('/pmUploadDocuments')}>
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M9 2L9 16" stroke="#160449" stroke-width="3" stroke-linecap="round" />
                                 <path d="M16 9L2 9" stroke="#160449" stroke-width="3" stroke-linecap="round" />

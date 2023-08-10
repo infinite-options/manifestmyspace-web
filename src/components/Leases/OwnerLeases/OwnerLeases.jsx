@@ -17,7 +17,7 @@ function OwnerLeases(props) {
     useEffect(() => {
         axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
             .then((res) => {
-                console.log(res.data.LeaseStatus);
+                // console.log(res.data.LeaseStatus);
                 setLeaseStatus(res.data.LeaseStatus);
             });
     }, []);

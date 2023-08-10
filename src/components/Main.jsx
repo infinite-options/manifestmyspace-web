@@ -23,6 +23,7 @@ import PMProfile from "./Profile/PMProfile/PMProfile";
 import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
+import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
 function Main() {
     return (
         <>
@@ -51,6 +52,7 @@ function Main() {
                         <Route exact path="/pmLeases" element={<PMLeases />} />
                         <Route exact path="/pmContracts" element={<PMContracts />} />
                         <Route exact path="/pmDocuments" element={<PMDocuments />} />
+                        <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
                     </Routes>
                 </Router>
             </div>
