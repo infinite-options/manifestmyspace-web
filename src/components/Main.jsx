@@ -16,6 +16,7 @@ import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
 
 import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
+import OwnerUploadDocuments from "./Documents/OwnerDocuments/OwnerUploadDocuments";
 import OwnerLeases from "./Leases/OwnerLeases/OwnerLeases";
 import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
 
@@ -42,6 +43,7 @@ function Main() {
                         <Route exact path="/announcement" element={<Announcement />} />
                         <Route exact path="/ownerProfile" element={<OwnerProfile />} />
                         <Route exact path="/ownerDocuments" element={<OwnerDocuments />} />
+                        <Route exact path="/ownerUploadDocuments" element={<OwnerUploadDocuments />} />
                         <Route exact path="/ownerLeases" element={<OwnerLeases />} />
 
                         <Route exact path="/tenantDocuments" element={<TenantDoucments />} />

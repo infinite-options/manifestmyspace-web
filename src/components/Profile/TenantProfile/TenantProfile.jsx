@@ -1,7 +1,17 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 function TenantProfile(props) {
 
+    const [profileData, setProfileData] = useState([]);
+    useEffect(()=>{
+        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
+        .then((res)=>{
+            console.log(res.data.Profile[0]);
+            setProfileData(res.data.Profile[0]);
+        });
+    }, []);
     return (
         <Box sx={{
             fontFamily: 'Source Sans Pro',

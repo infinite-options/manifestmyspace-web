@@ -1,7 +1,17 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 function TenantDoucments() {
 
+    const [documentsData, setDocumentsData] = useState([]);
+    useEffect(() => {
+        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000001')
+            .then((res) => {
+                // console.log(res.data.Documents);
+                setDocumentsData(res.data.Documents);
+            });
+    }, []);
     return (
         <Box sx={{
             fontFamily: 'Source Sans Pro',
@@ -141,12 +151,16 @@ function TenantDoucments() {
                         Other documents
                     </Box>
                 </Box>
-                <DocumentCard data={{ title: "View lease - Signed", date: "Jun 22, 23" }} />
-                <DocumentCard data={{ title: "Drivers License", date: "Jun 22, 23" }} />
-                <DocumentCard data={{ title: "123", date: "Jun 22, 23" }} />
-                <DocumentCard data={{ title: "123", date: "Jun 22, 23" }} />
-                <DocumentCard data={{ title: "123", date: "Jun 22, 23" }} />
-                <DocumentCard data={{ title: "123", date: "Jun 22, 23" }} />
+                {documentsData.map((document) => {
+                    const docs = JSON.parse(document.tenant_documents);
+                    return (
+                        <>
+                            {docs.map((doc) => (
+                                <DocumentCard data={{ title: doc.name, date: doc.created_date }} />
+                            ))}
+                        </>
+                    );
+                })}
 
             </Box>
         </Box>
@@ -156,6 +170,30 @@ function TenantDoucments() {
 function DocumentCard(props) {
     const title = props.data.title;
     const date = props.data.date;
+    
+    function parseDate(data) {
+        const dateList = data.split('-');
+        function getMonth(num) {
+            const months = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+
+            const index = parseInt(num, 10) - 1;
+
+            if (index >= 0 && index < months.length) {
+                return months[index];
+            } else {
+                return 'N/A';
+            }
+        }
+        return [getMonth(dateList[1]), dateList[2], dateList[0].slice(2)]
+    }
+    let [month, day, year] = ['-', '-', '-'];
+    if (date !== null) {
+        [month, day, year] = parseDate(date);
+    }
+
     return (
         <Box sx={{
             backgroundColor: '#D9D9D9',
@@ -176,7 +214,7 @@ function DocumentCard(props) {
                 justifyContent: 'space-between',
             }}>
                 <Box>
-                    Added: {date}
+                    Added: {`${month} ${day}, ${year}`}
                 </Box>
                 <Box sx={{
                     display: 'flex',

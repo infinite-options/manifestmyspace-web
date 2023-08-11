@@ -151,7 +151,6 @@ function PMDocuments() {
                         borderRadius: '10px',
                         bottom: '40px',
                     }}>
-                        {console.log(tabStatus)}
                         <Box sx={{
                             backgroundColor: getColor(tabStatus),
                             height: '14px',

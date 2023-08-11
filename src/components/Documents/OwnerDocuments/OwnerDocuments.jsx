@@ -1,5 +1,7 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
     palette: {
@@ -20,9 +22,22 @@ function OwnerDocuments() {
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
+    const navigate = useNavigate();
+    function navigateTo(url) {
+        navigate(url);
+    }
     function getColor(status) {
         return statusColor[status];
     }
+
+    const [documentsData, setDocumentsData] = useState([]);
+    useEffect(() => {
+        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDocuments/110-000003')
+            .then((res) => {
+                // console.log(res.data.Documents);
+                setDocumentsData(res.data.Documents);
+            });
+    }, []);
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{
@@ -56,7 +71,8 @@ function OwnerDocuments() {
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'center',
-                        }}>
+                        }}
+                        onClick={()=>navigateTo('/ownerUploadDocuments')}>
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M9 2L9 16" stroke="#160449" stroke-width="3" stroke-linecap="round" />
                                 <path d="M16 9L2 9" stroke="#160449" stroke-width="3" stroke-linecap="round" />
@@ -129,12 +145,12 @@ function OwnerDocuments() {
                             </Box>
                         </NavTab>
                         <NavTab color={statusColor[3]}>
-                        <Box onClick={() => setTabStatus(3)}>
+                            <Box onClick={() => setTabStatus(3)}>
                                 {statusList[3]}
                             </Box>
                         </NavTab>
                         <NavTab color={statusColor[4]}>
-                        <Box onClick={() => setTabStatus(4)}>
+                            <Box onClick={() => setTabStatus(4)}>
                                 {statusList[4]}
                             </Box>
                         </NavTab>
@@ -145,7 +161,6 @@ function OwnerDocuments() {
                         borderRadius: '10px',
                         bottom: '40px',
                     }}>
-                        {console.log(tabStatus)}
                         <Box sx={{
                             backgroundColor: getColor(tabStatus),
                             height: '14px',
@@ -154,11 +169,37 @@ function OwnerDocuments() {
                         <Box sx={{
                             padding: '13px',
                         }}>
-                            <DocumentCard />
-                            <DocumentCard />
-                            <DocumentCard />
-                            <DocumentCard />
-                            <DocumentCard />
+                            {documentsData.map((document) => {
+                                const address = document.property_address;
+                                const unit = document.property_unit;
+                                let start_date = '';
+                                let end_date = '';
+                                let docs = [];
+                                switch (statusList[tabStatus]) {
+                                    case 'Leases':
+                                        if (document.lease_documents !== null) {
+                                            docs = JSON.parse(document.lease_documents);
+                                            start_date = document.lease_start;
+                                            end_date = document.lease_end;
+                                        }
+                                        break;
+                                    case 'Contracts':
+                                        if (document.contract_documents !== null) {
+                                            docs = JSON.parse(document.contract_documents);
+                                            start_date = document.contract_start_date;
+                                            end_date = document.contract_end_date;
+                                        }
+                                        break;
+                                }
+                                return (
+                                    <>
+                                        {docs.map((doc) => (
+                                            <DocumentCard document={doc} data={[address, unit, start_date, end_date]} />
+                                        ))}
+                                    </>
+                                )
+
+                            })}
                         </Box>
                     </Box>
                 </Box>
@@ -187,6 +228,8 @@ function NavTab(props) {
 }
 
 function DocumentCard(props) {
+    const document = props.document;
+    const [address, unit, start_date, end_date] = props.data;
     return (
         <Box sx={{
             backgroundColor: '#D6D5DA',
@@ -203,7 +246,7 @@ function DocumentCard(props) {
                 <Box sx={{
                     fontWeight: 'bold',
                 }}>
-                    Modified Signed Lease
+                    {document.name}
                 </Box>
                 <Box sx={{
                     display: 'flex',
@@ -225,20 +268,20 @@ function DocumentCard(props) {
                 </Box>
             </Box>
             <Box>
-                103 N. Abel St, Milpitas CA 95035
+                {`${address}, ${unit}`}
             </Box>
             <Box sx={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
             }}>
                 <Box>
-                    Created: 01/25/23
+                    Created: {start_date}
                 </Box>
                 <Box>
                     By: Doolittle Managements
                 </Box>
                 <Box>
-                    Expires: 01/25/24
+                    Expires: {end_date}
                 </Box>
                 <Box>
                     For: Kim Gordon

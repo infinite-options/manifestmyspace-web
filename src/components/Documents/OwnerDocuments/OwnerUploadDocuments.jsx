@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-function PMUploadDocuments(props) {
+function OwnerUploadDocuments(props) {
     const navigate = useNavigate();
     function navigateTo(url) {
         navigate(url);
@@ -34,7 +34,7 @@ function PMUploadDocuments(props) {
                 }}>
                     Upload Document
                 </Box>
-                <Box onClick={()=>navigateTo('/pmDocuments')}>
+                <Box onClick={()=>navigateTo('/ownerDocuments')}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15 5L5 15" stroke="#3D5CAC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M5 5L15 15" stroke="#3D5CAC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
@@ -229,4 +229,4 @@ function PMUploadDocuments(props) {
         </Box>
     )
 }
-export default PMUploadDocuments;
+export default OwnerUploadDocuments;

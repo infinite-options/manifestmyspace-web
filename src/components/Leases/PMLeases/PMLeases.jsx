@@ -178,7 +178,6 @@ function PMLeases(props) {
 function LeaseMonth(props) {
     const leaseData = props.data;
     const num = leaseData.num;
-    let [year, month] = ['-', '-'];
 
     function parseDate(data) {
         const dateList = data.split('-');
@@ -198,6 +197,8 @@ function LeaseMonth(props) {
         }
         return [dateList[0], getMonth(dateList[1])]
     }
+    
+    let [year, month] = ['-', '-'];
     if (leaseData.lease_end !== null) {
         [year, month] = parseDate(leaseData.lease_end);
     }

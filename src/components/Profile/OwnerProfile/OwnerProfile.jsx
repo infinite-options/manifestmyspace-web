@@ -2,6 +2,8 @@ import { Box, ThemeProvider, createTheme } from '@mui/system';
 
 import ChaseIcon from '../Images/ChaseIcon.png';
 import VenmoIcon from '../Images/VenmoIcon.png';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const theme = createTheme({
     palette: {
@@ -17,6 +19,34 @@ const theme = createTheme({
     },
 });
 function OwnerProfile() {
+
+    function getPhoneNumberText(data) {
+        if(data === undefined) {
+            return '';
+        }
+        const num1 = data.slice(0, 3);
+        const num2 = data.slice(3, 6);
+        const num3 = data.slice(6);
+        return `(${num1}) ${num2} - ${num3}`;
+    }
+    function getSSNText(data) {
+        if(data === undefined) {
+            return '***-**-****';
+        }
+        const num1 = data.slice(0, 3);
+        const num2 = data.slice(3, 5);
+        const num3 = data.slice(5);
+        return `${num1}_${num2}_${num3}`;
+    }
+
+    const [profileData, setProfileData] = useState([]);
+    useEffect(()=>{
+        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerProfile/110-000003')
+        .then((res)=>{
+            console.log(res.data.Profile[0]);
+            setProfileData(res.data.Profile[0]);
+        });
+    }, []);
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{
@@ -75,7 +105,7 @@ function OwnerProfile() {
                         fontWeight: 'bold',
                     }}>
                         <TextBox>
-                            Paul McCartney
+                            {profileData.owner_first_name} {profileData.owner_last_name}
                         </TextBox>
                     </Box>
                     <Box sx={{
@@ -113,13 +143,13 @@ function OwnerProfile() {
                     <GrayBox>
                         <FlexBox direction="column">
                             <TextBox fontSize={'16px'} fontWeight={'bold'} decoration={'underline'}>
-                                abbeyroad1969@gmail.com
+                                {profileData.owner_email}
                             </TextBox>
                             <TextBox fontSize={'12px'}>
                                 Email
                             </TextBox>
                             <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                (408)555-4823
+                                {getPhoneNumberText(profileData.owner_phone_number)}
                             </TextBox>
                             <TextBox fontSize={'12px'}>
                                 Phone Number
@@ -150,7 +180,7 @@ function OwnerProfile() {
                                     <Box sx={{
                                         width: '200px',
                                     }}>
-                                        abbeyroad1969@gmail.com
+                                        {profileData.owner_apple_pay}
                                     </Box>
                                 </TextBox>
                                 <Box sx={{
@@ -180,7 +210,7 @@ function OwnerProfile() {
                                     <Box sx={{
                                         width: '200px',
                                     }}>
-                                        abbeyroad1969@gmail.com
+                                        {profileData.owner_paypal}
                                     </Box>
                                 </TextBox>
                                 <Box sx={{
@@ -207,7 +237,7 @@ function OwnerProfile() {
                                     <Box sx={{
                                         width: '200px',
                                     }}>
-                                        @abbeyroad1969
+                                        {profileData.owner_venmo}
                                     </Box>
                                 </TextBox>
                                 <Box sx={{
@@ -232,7 +262,7 @@ function OwnerProfile() {
                                     <Box sx={{
                                         width: '200px',
                                     }}>
-                                        Account #: **-****-*******-238
+                                        {profileData.owner_zelle}
                                     </Box>
                                 </TextBox>
                                 <Box sx={{
@@ -247,7 +277,7 @@ function OwnerProfile() {
                         <FlexBox direction="row">
                             <Box>
                                 <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                    ***-**-****
+                                    {getSSNText(profileData.owner_ssn)}
                                 </TextBox>
                                 <TextBox fontSize={'12px'}>
                                     SSN
@@ -255,7 +285,7 @@ function OwnerProfile() {
                             </Box>
                             <Box>
                                 <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                    No EIN Provided
+                                    {profileData.owner_ein_number === "" ? "No EIN Provided" : profileData.owner_ein_number}
                                 </TextBox>
                                 <TextBox fontSize={'12px'}>
                                     EIN
