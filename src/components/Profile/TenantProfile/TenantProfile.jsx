@@ -155,117 +155,135 @@ function TenantProfile() {
                                 Personal Information
                             </TextBox>
                             <FlexBox direction="row">
-                                <Box>
+                                <Box sx={{
+                                    display: 'inline-block',
+                                    textAlign: 'left',
+                                }}>
                                     <Box sx={{
                                         fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
                                     }}>
                                         Current Salary
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
                                         color: '#160449',
+                                        marginBottom: '7px', 
                                     }}>
                                         {profileData.tenant_current_salary}
                                     </Box>
-                                </Box>
-                                <Box>
                                     <Box sx={{
                                         fontSize: '13px',
-                                    }}>
-                                        Salary Frequency
-                                    </Box>
-                                    <Box sx={{
-                                        fontSize: '13px',
-                                        color: '#160449',
-                                    }}>
-                                        {profileData.tenant_salary_frequency}
-                                    </Box>
-                                </Box>
-                            </FlexBox>
-                            <FlexBox direction="row">
-                                <Box>
-                                    <Box sx={{
-                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
                                     }}>
                                         Company Name
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
                                         color: '#160449',
+                                        marginBottom: '7px', 
                                     }}>
                                         {profileData.tenant_current_job_company}
                                     </Box>
-                                </Box>
-                                <Box>
                                     <Box sx={{
                                         fontSize: '13px',
-                                    }}>
-                                        Job Title
-                                    </Box>
-                                    <Box sx={{
-                                        fontSize: '13px',
-                                        color: '#160449',
-                                    }}>
-                                        {profileData.tenant_current_job_title}
-                                    </Box>
-                                </Box>
-                            </FlexBox>
-                            <FlexBox direction="row">
-                                <Box>
-                                    <Box sx={{
-                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
                                     }}>
                                         Current Address
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
                                         color: '#160449',
+                                        marginBottom: '7px', 
                                     }}>
                                         {profileData.tenant_address}
                                     </Box>
-                                </Box>
-                                <Box>
+                                    <Box sx={{
+                                    display: 'inline-block',
+                                    textAlign: 'left',
+                                }}>
                                     <Box sx={{
                                         fontSize: '13px',
-                                    }}>
-                                        Unit #
-                                    </Box>
-                                    <Box sx={{
-                                        fontSize: '13px',
-                                        color: '#160449',
-                                    }}>
-                                        {profileData.tenant_unit}
-                                    </Box>
-                                </Box>
-                            </FlexBox>
-                            <FlexBox direction="row">
-                                <Box>
-                                    <Box sx={{
-                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
                                     }}>
                                         City/ State
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
                                         color: '#160449',
+                                        marginBottom: '7px', 
                                     }}>
                                         {`${profileData.tenant_city}/${profileData.tenant_state}`}
                                     </Box>
                                 </Box>
-                                <Box>
+                                </Box>
+                                <Box sx={{
+                                    display: 'inline-block',
+                                    textAlign: 'left',
+                                }}>
                                     <Box sx={{
                                         fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        Salary Frequency
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                        {profileData.tenant_salary_frequency}
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        Job Title
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                        {profileData.tenant_current_job_title}
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        Unit #
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                        {profileData.tenant_unit}
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
                                     }}>
                                         Zip Code
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
                                         color: '#160449',
+                                        marginBottom: '7px', 
                                     }}>
                                         {profileData.tenant_zip}
                                     </Box>
                                 </Box>
                             </FlexBox>
+                            
                             <Box sx={{
                                 textAlign: 'center',
                             }}>
