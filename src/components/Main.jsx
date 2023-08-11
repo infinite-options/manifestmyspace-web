@@ -25,6 +25,7 @@ import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
+import TenantProfileEdit from "./Profile/TenantProfile/TenantProfileEdit";
 function Main() {
     return (
         <>
@@ -48,6 +49,7 @@ function Main() {
 
                         <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
                         <Route exact path="/tenantProfile" element={<TenantProfile />} />
+                        <Route exact path="/tenantProfileEdit" element={<TenantProfileEdit />} />
                         <Route exact path="/tenantDashboard" element={<TenantDashboard />} />
 
                         <Route exact path="/pmProfile" element={<PMProfile />} />

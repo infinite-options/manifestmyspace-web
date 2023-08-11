@@ -1,88 +1,108 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { Box, ThemeProvider, createTheme } from '@mui/system';
 
-function TenantProfile(props) {
+import ChaseIcon from '../Images/ChaseIcon.png';
+import VenmoIcon from '../Images/VenmoIcon.png';
+import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const theme = createTheme({
+    palette: {
+        background: {
+            basic: '#000000',
+            gray: '#F2F2F2',
+            blue: '#3D5CAC'
+        },
+        text: {
+            primary: '#3D5CAC',
+            secondary: '#F2F2F2',
+        },
+    },
+});
+function TenantProfile() {
 
     const [profileData, setProfileData] = useState([]);
-    useEffect(()=>{
+    const [adultTenantData, setAdultTenantData] = useState([]);
+    const [childTenantData, setChildTenantData] = useState([]);
+    const [petTenantData, setPetTenantData] = useState([]);
+    const [vehicleTenantData, setVehicleTenantData] = useState([]);
+    useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
-        .then((res)=>{
-            console.log(res.data.Profile[0]);
-            setProfileData(res.data.Profile[0]);
-        });
+            .then((res) => {
+                setProfileData(res.data.Profile[0]);
+                setAdultTenantData(JSON.parse(res.data.Profile[0].tenant_adult_occupants));
+                setChildTenantData(JSON.parse(res.data.Profile[0].tenant_children_occupants));
+                setPetTenantData(JSON.parse(res.data.Profile[0].tenant_pet_occupants));
+                setVehicleTenantData(JSON.parse(res.data.Profile[0].tenant_vehicle_info));
+            });
     }, []);
+    console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
     return (
-        <Box sx={{
-            fontFamily: 'Source Sans Pro',
-
-        }}>
+        <ThemeProvider theme={theme}>
             <Box sx={{
-                backgroundColor: '#3D5CAC',
-                minHeight: '100px',
+                "font-family": 'Source Sans Pro',
+                color: 'text.primary',
             }}>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    paddingTop: '15px',
-                    paddingLeft: '25px',
-                    paddingRight: '25px',
+                    justifyContent: 'center',
+                    backgroundColor: 'background.blue',
+                    padding: '2%',
+                    minHeight: '80px',
+                    boxShadow: '0px 4px 4px #00000032',
                 }}>
-                    <Box>
-                        <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="white" />
+                    <Box sx={{
+                        marginLeft: '0px',
+                        marginRight: 'auto',
+                    }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M13.9838 2.54161C14.0711 2.71093 14.0928 2.92777 14.1361 3.36144C14.2182 4.1823 14.2593 4.59274 14.4311 4.81793C14.649 5.10358 15.0034 5.25038 15.3595 5.20248C15.6402 5.16472 15.9594 4.90352 16.5979 4.38113C16.9352 4.10515 17.1038 3.96716 17.2853 3.90918C17.5158 3.83555 17.7652 3.84798 17.9872 3.94419C18.162 4.01994 18.3161 4.17402 18.6243 4.4822L19.5178 5.37567C19.8259 5.68385 19.98 5.83794 20.0558 6.01275C20.152 6.23478 20.1644 6.48415 20.0908 6.71464C20.0328 6.89612 19.8948 7.06478 19.6188 7.4021C19.0964 8.0406 18.8352 8.35984 18.7975 8.64056C18.7496 8.99662 18.8964 9.35102 19.182 9.56893C19.4072 9.74072 19.8176 9.78176 20.6385 9.86385C21.0722 9.90722 21.2891 9.92891 21.4584 10.0162C21.6734 10.1272 21.841 10.3123 21.9299 10.5373C22 10.7145 22 10.9324 22 11.3682V12.6319C22 13.0676 22 13.2855 21.93 13.4626C21.841 13.6877 21.6734 13.8729 21.4583 13.9838C21.289 14.0711 21.0722 14.0928 20.6386 14.1361L20.6386 14.1361C19.818 14.2182 19.4077 14.2592 19.1825 14.4309C18.8967 14.6489 18.7499 15.0034 18.7979 15.3596C18.8357 15.6402 19.0968 15.9593 19.619 16.5976C19.8949 16.9348 20.0328 17.1034 20.0908 17.2848C20.1645 17.5154 20.152 17.7648 20.0558 17.9869C19.98 18.1617 19.826 18.3157 19.5179 18.6238L18.6243 19.5174C18.3162 19.8255 18.1621 19.9796 17.9873 20.0554C17.7652 20.1516 17.5159 20.164 17.2854 20.0904C17.1039 20.0324 16.9352 19.8944 16.5979 19.6184L16.5979 19.6184C15.9594 19.096 15.6402 18.8348 15.3595 18.7971C15.0034 18.7492 14.649 18.896 14.4311 19.1816C14.2593 19.4068 14.2183 19.8173 14.1362 20.6383C14.0928 21.0722 14.0711 21.2891 13.9837 21.4585C13.8728 21.6735 13.6877 21.8409 13.4628 21.9299C13.2856 22 13.0676 22 12.6316 22H11.3682C10.9324 22 10.7145 22 10.5373 21.9299C10.3123 21.841 10.1272 21.6734 10.0162 21.4584C9.92891 21.2891 9.90722 21.0722 9.86385 20.6385C9.78176 19.8176 9.74072 19.4072 9.56892 19.182C9.35101 18.8964 8.99663 18.7496 8.64057 18.7975C8.35985 18.8352 8.04059 19.0964 7.40208 19.6189L7.40206 19.6189C7.06473 19.8949 6.89607 20.0329 6.71458 20.0908C6.4841 20.1645 6.23474 20.152 6.01272 20.0558C5.8379 19.9801 5.6838 19.826 5.37561 19.5178L4.48217 18.6243C4.17398 18.3162 4.01988 18.1621 3.94414 17.9873C3.84794 17.7652 3.8355 17.5159 3.90913 17.2854C3.96711 17.1039 4.10511 16.9352 4.3811 16.5979C4.90351 15.9594 5.16471 15.6402 5.20247 15.3594C5.25037 15.0034 5.10357 14.649 4.81792 14.4311C4.59273 14.2593 4.1823 14.2182 3.36143 14.1361C2.92776 14.0928 2.71093 14.0711 2.54161 13.9838C2.32656 13.8728 2.15902 13.6877 2.07005 13.4627C2 13.2855 2 13.0676 2 12.6318V11.3683C2 10.9324 2 10.7144 2.07008 10.5372C2.15905 10.3123 2.32654 10.1272 2.54152 10.0163C2.71088 9.92891 2.92777 9.90722 3.36155 9.86384H3.36155H3.36156C4.18264 9.78173 4.59319 9.74068 4.81842 9.56881C5.10395 9.35092 5.2507 8.99664 5.20287 8.64066C5.16514 8.35987 4.90385 8.04052 4.38128 7.40182C4.10516 7.06435 3.96711 6.89561 3.90914 6.71405C3.83557 6.48364 3.848 6.23438 3.94413 6.01243C4.01988 5.83754 4.17403 5.68339 4.48233 5.37509L5.37565 4.48177L5.37566 4.48177C5.68385 4.17357 5.83795 4.01947 6.01277 3.94373C6.23478 3.84753 6.48414 3.8351 6.71463 3.90872C6.89612 3.9667 7.06481 4.10472 7.4022 4.38076C8.04061 4.9031 8.35982 5.16427 8.64044 5.20207C8.99661 5.25003 9.35113 5.10319 9.56907 4.81742C9.74077 4.59227 9.78181 4.18195 9.86387 3.36131C9.90722 2.92776 9.9289 2.71098 10.0162 2.5417C10.1271 2.32658 10.3123 2.15898 10.5374 2.07001C10.7145 2 10.9324 2 11.3681 2H12.6318C13.0676 2 13.2855 2 13.4627 2.07005C13.6877 2.15902 13.8728 2.32656 13.9838 2.54161ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="#F2F2F2" />
                         </svg>
                     </Box>
+
                     <Box sx={{
-                        fontSize: '25px',
+                        color: 'text.secondary',
+                        fontSize: '18px',
                         fontWeight: 'bold',
-                        color: '#FFFFFF',
                     }}>
                         Tenant Profile
                     </Box>
                     <Box sx={{
-                        width: '19px',
-
-                    }}>
-
-                    </Box>
+                        marginLeft: 'auto',
+                        marginRight: '0px%',
+                        width: 24,
+                        height: 24,
+                    }}></Box>
                 </Box>
-            </Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItem: 'center',
-                padding: '12px',
-
-                position: 'relative',
-                bottom: '56px',
-            }}>
                 <Box sx={{
-                    height: '112px',
-                    width: '112px',
-                    backgroundColor: '#bbb',
-                    borderRadius: '50%',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    boxShadow: '0px 4px 4px #00000032',
-                    zIndex: '2',
-                }}></Box>
-
-                <Box sx={{
-                    backgroundColor: '#F2F2F2',
-                    borderRadius: '10px',
-
                     position: 'relative',
-                    bottom: '50px',
-                    paddingTop: '55px',
-                    zIndex: '1',
+                    bottom: '90px',
+                    padding: '25px',
                 }}>
                     <Box sx={{
+                        height: '121px',
+                        width: '121px',
+                        backgroundColor: '#bbb',
+                        borderRadius: '50%',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        boxShadow: '0px 4px 4px #00000032'
+                    }}>
+                        <img src={ProfileImg} alt='Profile' style={{
+                            height: '121px',
+                            width: '121px',
+                        }} />
+                    </Box>
+                    <Box sx={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                    }}>
+                        <TextBox>
+                            {`${profileData.tenant_first_name} ${profileData.tenant_last_name}`}
+                        </TextBox>
+                    </Box>
+                    <Box sx={{
                         fontSize: '14px',
-                        color: '#3D5CAC',
-                        marginBottom: '10px',
                     }}>
                         <Box sx={{
                             display: 'flex',
@@ -113,446 +133,365 @@ function TenantProfile(props) {
                             </Box>
                         </Box>
                     </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                Personal Details
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
-                                <ProfileTextInputField>Name</ProfileTextInputField>
-                                <ProfileTextInputField>Gmail</ProfileTextInputField>
-                                <ProfileTextInputField>Phone #</ProfileTextInputField>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
-                    </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}>
-                                    <Box>
-                                        Identification Details
-                                    </Box>
-                                    <Box sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        backgroundColor: '#A52A2A',
-                                        borderRadius: '10px',
-                                        fontSize: '9px',
-                                        fontWeight: '600',
-                                        color: '#FFFFFF',
-                                        width: '60px',
-                                        height: '13px',
-                                        marginRight: '20px',
-                                    }}>
-                                        Incomplete
-                                    </Box>
-                                </Box>
-
-
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 2,
-                                }}>
-                                    <Box sx={{
-                                        flexGrow: 1,
-                                    }}>
-                                        <ProfileTextInputField>SSN #</ProfileTextInputField>
-                                        <ProfileTextInputField>License #</ProfileTextInputField>
-                                    </Box>
-                                    <Box sx={{
-                                        flexGrow: 1,
-                                    }}>
-                                        <ProfileTextInputField>Licence State</ProfileTextInputField>
-                                    </Box>
-
-                                </Box>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
-                    </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                Current Job Details
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 2,
-                                }}>
-                                    <ProfileTextInputField>Current Salary</ProfileTextInputField>
-                                    <ProfileTextInputField>Salary Frequency</ProfileTextInputField>
-                                </Box>
-                                <ProfileTextInputField>Job title</ProfileTextInputField>
-                                <ProfileTextInputField>Company Name</ProfileTextInputField>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
-                    </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                Current Address
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
-                                <ProfileTextInputField>Address</ProfileTextInputField>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 2,
-                                }}>
-                                    <Box sx={{
-                                        flexGrow: 1,
-                                    }}>
-                                        <Box sx={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            gap: 2,
-                                        }}>
-                                            <ProfileTextInputField>Unit #:</ProfileTextInputField>
-                                            <ProfileTextInputField>City</ProfileTextInputField>
-                                        </Box>
-
-                                        <ProfileTextInputField>Zip Code</ProfileTextInputField>
-                                    </Box>
-                                    <Box sx={{
-                                        flexGrow: 1,
-                                    }}>
-                                        <ProfileTextInputField>State</ProfileTextInputField>
-                                    </Box>
-                                </Box>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
-                    </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                Additional details
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 2,
-                                }}>
-                                    <ProfileTextInputField>lease start date</ProfileTextInputField>
-                                    <ProfileTextInputField>lease end date</ProfileTextInputField>
-                                </Box>
-                                <Box sx={{
-                                    width: '40%',
-                                }}>
-                                    <ProfileTextInputField>Monthly Rent</ProfileTextInputField>
-                                </Box>
-
-                                <ProfileTextInputField>Property Manager Name</ProfileTextInputField>
-                                <ProfileTextInputField>Property Manager phone</ProfileTextInputField>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
-                    </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                Who plans to live in the unit
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
+                    <GrayBox>
+                        <FlexBox direction="column">
+                            <TextBox fontSize={'16px'} fontWeight={'bold'} decoration={'underline'}>
+                                {profileData.tenant_email}
+                            </TextBox>
+                            <TextBox fontSize={'12px'}>
+                                Email
+                            </TextBox>
+                            <TextBox fontSize={'16px'} fontWeight={'bold'}>
+                                {profileData.tenant_phone_number}
+                            </TextBox>
+                            <TextBox fontSize={'12px'}>
+                                Phone Number
+                            </TextBox>
+                        </FlexBox>
+                    </GrayBox>
+                    <GrayBox>
+                        <FlexBox direction="column">
+                            <TextBox fontSize={'16px'} fontWeight={'bold'}>
+                                Personal Information
+                            </TextBox>
+                            <FlexBox direction="row">
                                 <Box>
-                                    {/* <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} widths={['25%', '25%', '25%', '25%']}/>
-                                    <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} widths={['25%', '25%', '25%', '25%']}/>
-                                    <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} widths={['25%', '25%', '25%', '25%']}/>
-                                    <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} widths={['20%', '20%', '20%', '20%', '20%']}/> */}
-                                    <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} />
-                                    <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} />
-                                    <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} />
-                                    <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} />
-                                </Box>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
-                    </Box>
-
-                    <Box>
-                        <ProfileAccordion>
-                            <ProfileAccordionSummary>
-                                Tenant Documents
-                            </ProfileAccordionSummary>
-                            <ProfileAccordionDetail>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
                                     <Box sx={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        backgroundColor: '#3D5CAC',
-                                        borderRadius: '10px',
-                                        width: '150px',
-                                        height: '32px',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        fontSize: '16px',
-                                        color: '#FFFFFF',
-                                        marginBottom: '14px',
+                                        fontSize: '13px',
                                     }}>
-                                        <Box>
-                                            Add Documents
+                                        Current Salary
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_current_salary}
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Salary Frequency
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_salary_frequency}
+                                    </Box>
+                                </Box>
+                            </FlexBox>
+                            <FlexBox direction="row">
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Company Name
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_current_job_company}
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Job Title
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_current_job_title}
+                                    </Box>
+                                </Box>
+                            </FlexBox>
+                            <FlexBox direction="row">
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Current Address
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_address}
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Unit #
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_unit}
+                                    </Box>
+                                </Box>
+                            </FlexBox>
+                            <FlexBox direction="row">
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        City/ State
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {`${profileData.tenant_city}/${profileData.tenant_state}`}
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Zip Code
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        {profileData.tenant_zip}
+                                    </Box>
+                                </Box>
+                            </FlexBox>
+                            <Box sx={{
+                                textAlign: 'center',
+                            }}>
+                                <Box sx={{
+                                    display: 'inline-block',
+                                    textAlign: 'left',
+                                }}>
+                                    <FlexBox direction="column">
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                        }}>
+                                            {adultTenantData.length} Adults
                                         </Box>
                                         <Box sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
+                                            fontSize: '13px',
+                                            color: '#160449',
                                         }}>
-                                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M6.375 9.2085L10.625 9.2085" stroke="white" stroke-linecap="round" />
-                                                <path d="M6.375 6.375L9.20833 6.375" stroke="white" stroke-linecap="round" />
-                                                <path d="M6.375 12.0415L9.20833 12.0415" stroke="white" stroke-linecap="round" />
-                                                <path d="M13.4584 9.20833V9.91667C13.4584 11.7464 13.4584 12.6613 13.0727 13.3466C12.8035 13.8248 12.4082 14.2201 11.93 14.4893C11.2448 14.875 10.3299 14.875 8.50008 14.875V14.875C6.6703 14.875 5.75541 14.875 5.07018 14.4893C4.59192 14.2201 4.19667 13.8248 3.92746 13.3466C3.54175 12.6613 3.54175 11.7464 3.54175 9.91667V6.375C3.54175 5.21147 3.54175 4.6297 3.70096 4.16068C4.00075 3.27751 4.69426 2.58401 5.57743 2.28421C6.04645 2.125 6.62821 2.125 7.79175 2.125V2.125" stroke="white" />
-                                                <path d="M12.75 2.125L12.75 6.375" stroke="white" stroke-linecap="round" />
-                                                <path d="M14.875 4.25L10.625 4.25" stroke="white" stroke-linecap="round" />
-                                            </svg>
+                                            {adultTenantData.map((adult) => (
+                                                <Box>
+                                                    {`${adult.name} | ${adult.relationship} | DOB: ${adult.dob}`}
+                                                </Box>
+                                            ))}
                                         </Box>
-                                    </Box>
-                                    <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} />
-                                    <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} />
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                        }}>
+                                            {childTenantData.length} Child
+                                        </Box>
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                            color: '#160449',
+                                        }}>
+                                            {childTenantData.map((child) => (
+                                                <Box>
+                                                    {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                        }}>
+                                            {petTenantData.length} Pets
+                                        </Box>
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                            color: '#160449',
+                                        }}>
+                                            {petTenantData.map((pet) => (
+                                                <Box>
+                                                    {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                        }}>
+                                            {vehicleTenantData.length} Vehicles
+                                        </Box>
+                                        <Box sx={{
+                                            fontSize: '13px',
+                                            color: '#160449',
+                                        }}>
+                                            {vehicleTenantData.map((vehicle) => (
+                                                <Box>
+                                                    {`${vehicle.make} ${vehicle.model} ${vehicle.year} | CarType | ${vehicle.license} | ${vehicle.state}`}
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </FlexBox>
                                 </Box>
-                            </ProfileAccordionDetail>
-                        </ProfileAccordion>
+                            </Box>
+                        </FlexBox>
+                    </GrayBox>
+                    <GrayBox>
+                        <FlexBox direction="column">
+                            <TextBox fontSize={'16px'} fontWeight={'bold'}>
+                                Lease Details
+                            </TextBox>
+                            <FlexBox direction="row">
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Lease Start Date
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        12/07/22
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Lease End Date
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        12/07/24
+                                    </Box>
+                                </Box>
+                            </FlexBox>
+                            <FlexBox direction="row">
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Monthly Rent
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        $1,300
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                    }}>
+                                        Rent Frequency
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                    }}>
+                                        Monthly
+                                    </Box>
+                                </Box>
+                            </FlexBox>
+                        </FlexBox>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'left',
+                            alignItems: 'center',
+                        }}>
+                            <Box sx={{
+                                margin: '5px',
+                            }}>
+                                <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0V4.8898L7.99999 4.94421C7.99991 5.36828 7.99983 5.7804 8.04553 6.12032C8.09705 6.50352 8.22257 6.9408 8.58579 7.30401C8.949 7.66723 9.38628 7.79275 9.76948 7.84427C10.1094 7.88997 10.5215 7.88989 10.9456 7.88981H10.9456L11 7.8898H16V13.7796C16 16.5635 16 17.9555 15.1213 18.8203C14.2426 19.6851 12.8284 19.6851 10 19.6851H6C3.17157 19.6851 1.75736 19.6851 0.87868 18.8203C0 17.9555 0 16.5635 0 13.7796V5.90554C0 3.12164 0 1.72969 0.87868 0.864847C1.75736 0 3.17157 0 6 0H8ZM10 0.00454802V4.8898C10 5.38947 10.0021 5.66363 10.0277 5.85382L10.0287 5.86111L10.036 5.86211C10.2262 5.88768 10.5003 5.8898 11 5.8898H15.995C15.9843 5.49341 15.9511 5.22903 15.8478 4.98335C15.6955 4.6216 15.4065 4.33712 14.8284 3.76816L12.1716 1.15313C11.5935 0.584169 11.3045 0.299689 10.9369 0.149844C10.684 0.0467413 10.4116 0.0145801 10 0.00454802ZM4 10.8268C4 10.2745 4.44772 9.82683 5 9.82683L11 9.82683C11.5523 9.82683 12 10.2745 12 10.8268C12 11.3791 11.5523 11.8268 11 11.8268L5 11.8268C4.44772 11.8268 4 11.3791 4 10.8268ZM5 13.7639C4.44772 13.7639 4 14.2116 4 14.7639C4 15.3161 4.44772 15.7639 5 15.7639H9C9.55228 15.7639 10 15.3161 10 14.7639C10 14.2116 9.55229 13.7639 9 13.7639H5Z" fill="#3D5CAC" />
+                                </svg>
+                            </Box>
+                            <Box>
+                                View Lease
+                            </Box>
+                        </Box>
+                    </GrayBox>
+                    <GrayBox>
+                        <FlexBox direction="row">
+                            <Box>
+                                <TextBox fontSize={'16px'} fontWeight={'bold'}>
+                                    {profileData.tenant_ssn}
+                                </TextBox>
+                                <TextBox fontSize={'12px'}>
+                                    SSN
+                                </TextBox>
+                            </Box>
+                            <Box>
+                                <TextBox fontSize={'16px'} fontWeight={'bold'}>
+                                    No EIN Provided
+                                </TextBox>
+                                <TextBox fontSize={'12px'}>
+                                    EIN
+                                </TextBox>
+                            </Box>
+                        </FlexBox>
+                    </GrayBox>
+                    <Box sx={{
+                        borderRadius: "10px",
+                        boxShadow: '0px 4px 4px #00000032'
+                    }}>
+                        <GrayBox>
+                            <TextBox fontSize={'15px'} fontWeight={'bold'}>
+                                Edit Profile and Password
+                            </TextBox>
+                        </GrayBox>
                     </Box>
                 </Box>
             </Box>
-
-        </Box>
+        </ThemeProvider>
     );
 }
 
-function ProfileAccordion(props) {
-
+function GrayBox(props) {
     return (
-        <Accordion sx={{
-            color: '#160449',
-            fontWeight: '600',
-            backgroundColor: '#F2F2F2',
-            boxShadow: 'none',
+        <Box sx={{
+            backgroundColor: 'background.gray',
+            borderRadius: "10px",
+            marginTop: "18px",
+            padding: '6px',
         }}>
             {props.children}
-        </Accordion>
-    );
-}
-function ProfileAccordionSummary(props) {
-    return (
-        <AccordionSummary
-            expandIcon={
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4.75 7.125L9.5 11.875L14.25 7.125" stroke="#3D5CAC" stroke-width="2.5" />
-                </svg>
-            }>
-            <Box sx={{
-                fontSize: '16px',
-                width: '100%',
-            }}>
-                {props.children}
-            </Box>
-        </AccordionSummary>
-    );
-}
-function ProfileAccordionDetail(props) {
-    return (
-        <AccordionDetails>
-            <Box sx={{
-                fontSize: '12px',
-            }}>
-                {props.children}
-            </Box>
-        </AccordionDetails>
+        </Box>
     );
 }
 
-function ProfileTextInputField(props) {
-    const inputStyle = {
-        border: 'none',
-        backgroundColor: '#D9D9D980',
-        width: '100%',
-        fontFamily: 'inherit',
-        fontWeight: 'inherit',
-        paddingLeft: '5px',
-        borderRadius: '5px',
-    };
-
+function FlexBox(props) {
     return (
         <Box sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: '7px',
-            width: '100%',
+            display: "flex",
+            flexDirection: props.direction,
+            justifyContent: 'space-evenly',
         }}>
-            <Box sx={{
-                marginRight: '8px',
-                whiteSpace: 'nowrap',
-            }}>
-                {props.children}:
-            </Box>
-            <input type='text' style={inputStyle} />
+            {props.children}
         </Box>
     );
 }
-function DocumentCard(props) {
-    const title = props.data.title;
-    const date = props.data.date;
+
+function TextBox(props) {
     return (
         <Box sx={{
-            backgroundColor: '#D9D9D980',
-            boxShadow: '0px 1px 4px #00000040',
-            marginBottom: '9px',
-            padding: '10px',
-            width: '100%',
-            fontSize: '15px',
+            display: "flex",
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            fontSize: props.fontSize,
+            fontWeight: props.fontWeight,
+            textDecoration: props.decoration,
         }}>
-            <Box sx={{
-                fontWeight: 'bold',
-                color: '#160449',
-            }}>
-                {title}
-            </Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                fontWeight: 'Normal',
-                color: '#00000080',
-            }}>
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                    Added: {date}
-                </Box>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                }}>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginRight: '7px',
-                    }}>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" fill="#3D5CAC" />
-                            <path d="M19.3375 9.7875C18.6024 7.88603 17.3262 6.24164 15.6667 5.05755C14.0072 3.87347 12.0372 3.20161 9.99998 3.125C7.9628 3.20161 5.99272 3.87347 4.33323 5.05755C2.67374 6.24164 1.39758 7.88603 0.662478 9.7875C0.612833 9.92482 0.612833 10.0752 0.662478 10.2125C1.39758 12.114 2.67374 13.7584 4.33323 14.9424C5.99272 16.1265 7.9628 16.7984 9.99998 16.875C12.0372 16.7984 14.0072 16.1265 15.6667 14.9424C17.3262 13.7584 18.6024 12.114 19.3375 10.2125C19.3871 10.0752 19.3871 9.92482 19.3375 9.7875ZM9.99998 14.0625C9.19649 14.0625 8.41105 13.8242 7.74297 13.3778C7.0749 12.9315 6.5542 12.297 6.24672 11.5547C5.93924 10.8123 5.85879 9.99549 6.01554 9.20745C6.17229 8.4194 6.55921 7.69553 7.12736 7.12738C7.69551 6.55923 8.41938 6.17231 9.20742 6.01556C9.99547 5.85881 10.8123 5.93926 11.5546 6.24674C12.297 6.55422 12.9314 7.07492 13.3778 7.743C13.8242 8.41107 14.0625 9.19651 14.0625 10C14.0608 11.0769 13.6323 12.1093 12.8708 12.8708C12.1093 13.6323 11.0769 14.0608 9.99998 14.0625Z" fill="#3D5CAC" />
-                        </svg>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 16L7 11L8.4 9.55L11 12.15V4H13V12.15L15.6 9.55L17 11L12 16ZM6 20C5.45 20 4.979 19.804 4.587 19.412C4.195 19.02 3.99934 18.5493 4 18V15H6V18H18V15H20V18C20 18.55 19.804 19.021 19.412 19.413C19.02 19.805 18.5493 20.0007 18 20H6Z" fill="#3D5CAC" />
-                        </svg>
-                    </Box>
-                </Box>
-            </Box>
+            {props.children}
         </Box>
-    );
-}
-
-function ProfileTenantTable(props) {
-    const title = props.title;
-    const headers = props.headers;
-    // const widthList = props.widths;
-    const tableStyle = {
-        width: '100%',
-        textAlign: 'left',
-    };
-
-    return (
-        <Box>
-            <Box sx={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                paddingLeft: '10px',
-
-            }}>
-                {title}
-            </Box>
-            <Box sx={{
-                fontSize: '10px',
-                fontWeight: '600',
-            }}>
-                <table style={tableStyle}>
-                    <tr>
-                        {headers.map((text) => (
-                            <ProfileTableHeader text={text} />
-                        ))}
-                    </tr>
-                    <tr>
-                        {headers.map((header, i) => (
-                            // <ProfileTableCell style={widthList[i]} />
-                            <ProfileTableCell />
-                        ))}
-                    </tr>
-                    <tr>
-                        {headers.map((header, i) => (
-                            // <ProfileTableCell style={widthList[i]} />
-                            <ProfileTableCell />
-                        ))}
-                    </tr>
-                    <tr>
-                        {headers.map((header, i) => (
-                            // <ProfileTableCell style={widthList[i]} />
-                            <ProfileTableCell />
-                        ))}
-                    </tr>
-                </table>
-            </Box>
-        </Box>
-    );
-}
-function ProfileTableHeader(props) {
-    const tableHeaderStyle = {
-        paddingLeft: '10px',
-    }
-    return (
-        <th style={tableHeaderStyle}>
-            {props.text}
-        </th>
-    );
-}
-function ProfileTableCell(props) {
-    const cellWidth = props.style;
-    const cellStyle = {
-        width: cellWidth,
-    }
-    const inputStyle = {
-        border: 'none',
-        backgroundColor: '#D9D9D980',
-        width: '85%',
-        fontFamily: 'inherit',
-        fontWeight: 'inherit',
-        paddingLeft: '5px',
-        paddingRight: '5px',
-        borderRadius: '5px',
-    };
-    return (
-        <td style={cellStyle}>
-            <input type='text' style={inputStyle} />
-        </td>
     );
 }
 export default TenantProfile;
