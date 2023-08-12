@@ -1,7 +1,5 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
 
-import ChaseIcon from '../Images/ChaseIcon.png';
-import VenmoIcon from '../Images/VenmoIcon.png';
 import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -36,7 +34,7 @@ function TenantProfile() {
                 setVehicleTenantData(JSON.parse(res.data.Profile[0].tenant_vehicle_info));
             });
     }, []);
-    console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
+    // console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{

@@ -100,8 +100,8 @@ function SelectProperty(props) {
             }}>
                 Show All
             </Box>
-            {properties.map((property)=>(
-                <PropertyCard data={property}/>
+            {properties.map((property, i)=>(
+                <PropertyCard key={i} data={property}/>
             ))}
             
         </Box>

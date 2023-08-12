@@ -13,12 +13,24 @@ function OwnerLeases(props) {
         setOpen(true);
     };
 
-    const [leaseStatus, setLeaseStatus] = useState([]);
+    const [leaseDate, setLeaseDate] = useState([]);
     useEffect(() => {
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
+        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003")
             .then((res) => {
-                // console.log(res.data.LeaseStatus);
-                setLeaseStatus(res.data.LeaseStatus);
+                // console.log(res.data['Lease Details']);
+                const fetchData = res.data['Lease Details'];
+                const leases = new Map([]);
+                fetchData.forEach((lease) => {
+                    const date = lease.lease_end.slice(0, 7);
+                    if (leases.get(date) === undefined) {
+                        leases.set(date, [lease]);
+                    } else {
+                        const arr = leases.get(date);
+                        arr.push(lease);
+                        leases.set(date, arr);
+                    }
+                });
+                setLeaseDate(leases);
             });
     }, []);
 
@@ -129,9 +141,12 @@ function OwnerLeases(props) {
                         </Box>
                     </AccordionDetails>
                 </Accordion>
-                {leaseStatus.map((status, i) => (
-                    <LeaseMonth key={i} data={status} />
-                ))}
+                {[...leaseDate.keys()].map((date, i) => {
+                    const leases = leaseDate.get(date);
+                    return (
+                        <LeaseMonth key={i} data={[date, leases]} />
+                    );
+                })}
             </Box>
             <Modal sx={{
                 overflowY: 'scroll',
@@ -157,8 +172,7 @@ function OwnerLeases(props) {
 }
 
 function LeaseMonth(props) {
-    const leaseData = props.data;
-    const num = leaseData.num;
+    const [date, leaseData] = props.data;
     let [year, month] = ['-', '-'];
 
     function parseDate(data) {
@@ -168,19 +182,19 @@ function LeaseMonth(props) {
                 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
                 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
             ];
-        
+
             const index = parseInt(num, 10) - 1;
-        
+
             if (index >= 0 && index < months.length) {
                 return months[index];
             } else {
                 return 'N/A';
             }
         }
-        return [dateList[0] , getMonth(dateList[1])]
+        return [dateList[0], getMonth(dateList[1])]
     }
-    if(leaseData.lease_end !== null) {
-        [year, month] = parseDate(leaseData.lease_end);
+    if (leaseData.lease_end !== null) {
+        [year, month] = parseDate(date);
     }
 
     return (
@@ -213,7 +227,7 @@ function LeaseMonth(props) {
                     marginTop: 'auto',
                     marginBottom: '0px',
                 }}>
-                    {num}
+                    {leaseData.length}
                 </Box>
             </Box>
             <Box sx={{
@@ -221,70 +235,52 @@ function LeaseMonth(props) {
                 flexDirection: 'column',
                 width: '90%',
             }}>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    paddingLeft: '10px',
-                }}>
-                    <Box sx={{
-                        marginLeft: '0px',
-                        marginRight: 'auto',
-                    }}>
-                        <Box sx={{
-                            fontWeight: 'bold',
-                            borderBottomStyle: 'solid',
-                            borderWidth: '1px',
-                            width: 'fit-content',
-                        }}>
-                            103 N. Abel St, Milpitas CA 95035
-                        </Box>
-                        <Box>
-                            03/19/2023: Renewed to 03/18/2024
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        marginLeft: 'auto',
-                        marginRight: '0px',
-                    }}>
-                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" />
-                        </svg>
-                    </Box>
-                </Box>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    paddingLeft: '10px',
-                }}>
-                    <Box sx={{
-                        marginLeft: '0px',
-                        marginRight: 'auto',
-                    }}>
-                        <Box sx={{
-                            fontWeight: 'bold',
-                            borderBottomStyle: 'solid',
-                            borderWidth: '1px',
-                            width: 'fit-content',
-                        }}>
-                            108 N. Abel St, Milpitas CA 95035
-                        </Box>
-                        <Box>
-                            03/29/2023: Moving out
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        marginLeft: 'auto',
-                        marginRight: '0px',
-                    }}>
-                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </Box>
-                </Box>
+                {leaseData.map((lease, i)=>(
+                    <LeaseComponent key={i} data={lease}/>
+                ))}
+                
+                
             </Box>
         </Box>
     );
+}
+
+function LeaseComponent(props) {
+    const leaseData = props.data;
+
+    return (
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            paddingLeft: '10px',
+        }}>
+            <Box sx={{
+                marginLeft: '0px',
+                marginRight: 'auto',
+            }}>
+                <Box sx={{
+                    fontWeight: 'bold',
+                    borderBottomStyle: 'solid',
+                    borderWidth: '1px',
+                    width: 'fit-content',
+                }}>
+                    {`${leaseData.property_address}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
+                </Box>
+                <Box>
+                    {leaseData.lease_end}: [Moving out / Renewed]
+                </Box>
+            </Box>
+            <Box sx={{
+                marginLeft: 'auto',
+                marginRight: '0px',
+            }}>
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </Box>
+        </Box>
+    );    
 }
 
 export default OwnerLeases;

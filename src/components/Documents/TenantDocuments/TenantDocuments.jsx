@@ -1,4 +1,4 @@
-import { Box, ThemeProvider, createTheme } from '@mui/system';
+import { Box } from '@mui/system';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +8,7 @@ function TenantDoucments() {
     useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000001')
             .then((res) => {
-                // console.log(res.data.Documents);
+                // console.log(res.data);
                 setDocumentsData(res.data.Documents);
             });
     }, []);

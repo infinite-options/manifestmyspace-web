@@ -34,7 +34,7 @@ function OwnerDocuments() {
     useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDocuments/110-000003')
             .then((res) => {
-                // console.log(res.data.Documents);
+                // console.log(res.data);
                 setDocumentsData(res.data.Documents);
             });
     }, []);
@@ -189,6 +189,8 @@ function OwnerDocuments() {
                                             start_date = document.contract_start_date;
                                             end_date = document.contract_end_date;
                                         }
+                                        break;
+                                    default:
                                         break;
                                 }
                                 return (
