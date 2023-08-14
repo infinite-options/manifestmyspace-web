@@ -176,7 +176,7 @@ function Card(props) {
 
     useEffect(() => {
         setTrasparency(() => (selected[i] ? '1.0' : lowOpacity));
-    }, [selected, cardIndex]);
+    }, [selected, cardIndex, i]);
 
     return (
         <Box sx={{

@@ -14,8 +14,6 @@ import LeasePDF from './Leases/LeasePDF';
 import FindProperty from './Property/FindProperty';
 
 import MaintenanceWidjet from './MaintenanceWidget';
-import PropertyList from "./Property/PropertyList";
-import AddExpense from "./Cashflow/AddExpense";
 import PropertyRentFlow from "./PropertyRentFlow/PropertyRentFlow";
 import PropertyRentDetail from "./PropertyRentFlow/PropertyRentDetail";
 
@@ -52,11 +50,11 @@ function Main() {
                         <Route exact path="/propertyRentDetail" element={<PropertyRentDetail />} />
                         <Route exact path="/addExpense" element={<AddExpense />} />
                         <Route exact path="/addUtility" element={<AddUtility />} />
+                        <Route exact path="/findProperty" element={<FindProperty />} />
 
                         <Route exact path="/viewLease" element={<ViewLease />} />
                         <Route exact path="/editLease" element={<EditLease />} />
                         <Route exact path="/leaseDocument" element={<LeasePDF />} />
-                        <Route exact path="/findProperty" element={<FindProperty />} />
 
                         <Route exact path="/announcement" element={<Announcement />} />
                         <Route exact path="/ownerProfile" element={<OwnerProfile />} />
