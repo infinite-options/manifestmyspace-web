@@ -9,20 +9,16 @@ import {
     Button,
     TextField,
     InputAdornment,
-    Table,
-    TableBody,
-    TableRow,
-    TableCell,
     Card,
     CardContent,
     CardMedia,
     CardActions,
+    Rating,
 } from '@mui/material';
 import {
     ArrowDropDown,
     LocationOn,
     Search,
-    Star,
     Tune,
     TurnedInNot,
 } from '@mui/icons-material';
@@ -97,56 +93,50 @@ const FindProperty = (props) => {
                             </Button>
                         </Box>
                     </Stack>
-                    <Table>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>
-                                    <TextField
-                                        variant="filled"
-                                        label="Search Place"
-                                        fullWidth
+                    <Stack
+                        justifyContent="center"
+                        alignItems="center"
+                        sx={{ padding: '0 15px' }}
+                    >
+                        <TextField
+                            variant="filled"
+                            label="Search Place"
+                            fullWidth
+                            sx={{
+                                border: '1px solid',
+                                borderRadius: 10,
+                                // backgroundColor: '#A9AAAB',
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment
+                                        position="start"
                                         sx={{
-                                            border: '1px solid',
-                                            borderRadius: 10,
-                                            // backgroundColor: '#A9AAAB',
+                                            color: theme.typography.common.blue,
+                                            fontSize:
+                                                theme.typography.smallFont,
+                                            paddingRight: '5px',
                                         }}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment
-                                                    position="start"
-                                                    sx={{
-                                                        color: theme.typography
-                                                            .common.blue,
-                                                        fontSize:
-                                                            theme.typography
-                                                                .smallFont,
-                                                        paddingRight: '5px',
-                                                    }}
-                                                >
-                                                    <Search />
-                                                </InputAdornment>
-                                            ),
-                                            endAdornment: (
-                                                <InputAdornment
-                                                    position="end"
-                                                    sx={{
-                                                        color: theme.typography
-                                                            .common.blue,
-                                                        fontSize:
-                                                            theme.typography
-                                                                .smallFont,
-                                                        paddingLeft: '5px',
-                                                    }}
-                                                >
-                                                    <Tune />
-                                                </InputAdornment>
-                                            ),
+                                    >
+                                        <Search />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment
+                                        position="end"
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize:
+                                                theme.typography.smallFont,
+                                            paddingLeft: '5px',
                                         }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                    >
+                                        <Tune />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Stack>
                     <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -288,11 +278,11 @@ const FindProperty = (props) => {
                                                 .lightYellow,
                                         }}
                                     >
-                                        <Star />
-                                        <Star />
-                                        <Star />
-                                        <Star />
-                                        <Star />
+                                        <Rating
+                                            name="read-only"
+                                            precision={0.5}
+                                            value={5}
+                                        />
                                         <Typography
                                             sx={{
                                                 color: theme.typography.common

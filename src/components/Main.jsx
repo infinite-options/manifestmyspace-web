@@ -13,6 +13,7 @@ import ViewLease from './Leases/ViewLease';
 import EditLease from './Leases/EditLease';
 import LeasePDF from './Leases/LeasePDF';
 import FindProperty from './Property/FindProperty';
+import PropertyInfo from './Property/PropertyInfo';
 
 function Main() {
     return (
@@ -75,6 +76,11 @@ function Main() {
                             exact
                             path="/findProperty"
                             element={<FindProperty />}
+                        />
+                        <Route
+                            exact
+                            path="/propertyInfo"
+                            element={<PropertyInfo />}
                         />
                     </Routes>
                 </Router>
