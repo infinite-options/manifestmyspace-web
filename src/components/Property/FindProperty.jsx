@@ -16,7 +16,6 @@ import {
     Card,
     CardContent,
     CardMedia,
-    CardActionArea,
     CardActions,
 } from '@mui/material';
 import {
@@ -267,10 +266,11 @@ const FindProperty = (props) => {
                             180 Available
                         </Typography>
                     </Stack>
-                    <Card>
+                    <Card sx={{ margin: 5 }}>
                         <CardMedia
                             image="./../../images/house.png"
-                            sx={{ height: 140 }}
+                            sx={{ height: '180px' }}
+                            title="Property"
                         />
                         <CardContent>
                             <Stack
@@ -447,18 +447,23 @@ const FindProperty = (props) => {
                                 </Stack>
                             </Stack>
                         </CardContent>
-                        <CardActions>
+                        <CardActions
+                            sx={{
+                                justifyContent: 'space-evenly',
+                            }}
+                        >
                             <Stack
                                 alignItems="center"
                                 justifyContent="center"
                                 direction="row"
+                                sx={{ paddingBottom: '10px' }}
                             >
                                 <Button
                                     variant="text"
                                     sx={{
                                         border: '1px solid',
                                         color: theme.typography.common.blue,
-                                        margin: 10,
+                                        marginRight: '5px',
                                     }}
                                 >
                                     Contact Property
@@ -469,7 +474,7 @@ const FindProperty = (props) => {
                                         backgroundColor:
                                             theme.typography.common.blue,
                                         color: theme.typography.secondary.white,
-                                        margin: 10,
+                                        marginLeft: '5px',
                                     }}
                                 >
                                     View Details
