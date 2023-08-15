@@ -8,7 +8,7 @@ function TenantDoucments() {
     useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000001')
             .then((res) => {
-                // console.log(res.data);
+                console.log(res.data);
                 setDocumentsData(res.data.Documents);
             });
     }, []);
@@ -148,7 +148,7 @@ function TenantDoucments() {
                         fontSize: '15px',
                         textAlign: 'center',
                     }}>
-                        Other documents
+                        Documents
                     </Box>
                 </Box>
                 {documentsData.map((document) => {

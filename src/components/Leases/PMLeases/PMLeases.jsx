@@ -14,12 +14,38 @@ function PMLeases(props) {
         setOpen(true);
     };
 
-    const [leaseStatus, setLeaseStatus] = useState([]);
+    const [moveoutCount, setMoveoutCount] = useState(0);
+    const [leaseDate, setLeaseDate] = useState([]);
     useEffect(() => {
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
+        function getMoveoutNum(leases) {
+            let num = 0;
+            for (let i = 0; i < leases.length; i++) {
+                const lease = leases[i];
+                if(lease.lease_renew_status === 'MOVING') {
+                    num++;
+                }
+            }
+            return num;
+        }
+        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/600-000003")
             .then((res) => {
-                console.log(res.data.LeaseStatus);
-                setLeaseStatus(res.data.LeaseStatus);
+                console.log(res.data['Lease Details']);
+                const fetchData = res.data['Lease Details'];
+                const leases = new Map([]);
+                let moveoutNum = 0;
+                fetchData.forEach((lease) => {
+                    const date = lease.lease_end.slice(0, 7);
+                    if (leases.get(date) === undefined) {
+                        leases.set(date, [lease]);
+                    } else {
+                        const arr = leases.get(date);
+                        arr.push(lease);
+                        leases.set(date, arr);
+                        moveoutNum += getMoveoutNum(arr);                        
+                    }
+                });
+                setLeaseDate(leases);
+                setMoveoutCount(moveoutNum);
             });
     }, []);
 
@@ -131,26 +157,56 @@ function PMLeases(props) {
                             marginLeft: 'auto',
                             marginRight: '5px',
                         }}>
-                            5
+                            {moveoutCount}
                         </Box>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <Box>
-                            03/19/2023:
-                        </Box>
-                        <Box sx={{
-                            fontWeight: 'bold',
-                            borderBottomStyle: 'solid',
-                            borderWidth: '1px',
-                            width: 'fit-content',
-                        }}>
-                            103 N. Abel St, Milpitas CA 95035
-                        </Box>
-                    </AccordionDetails>
+                    {[...leaseDate.keys()].map((date, i) => {
+                        const leases = leaseDate.get(date);
+                        return (
+                            <>
+                                {
+                                    leases.map((lease, j) => {
+                                        return (
+                                            <>
+                                                {
+                                                    (lease.lease_renew_status === 'MOVING') ?
+                                                        (<AccordionDetails>
+                                                            <Box>
+                                                                {`${lease.lease_end}:`}
+                                                            </Box>
+                                                            <Box sx={{
+                                                                fontWeight: 'bold',
+                                                                borderBottomStyle: 'solid',
+                                                                borderWidth: '1px',
+                                                                width: 'fit-content',
+                                                            }}>
+                                                                {`${lease.property_address}, ${lease.property_city} ${lease.property_state} ${lease.property_zip}`}
+                                                            </Box>
+                                                        </AccordionDetails>)
+                                                        : (<></>)
+                                                }
+                                            </>
+                                        )
+
+                                    }
+                                    )
+                                }
+                            </>
+                        );
+                    })}
                 </Accordion>
-                {leaseStatus.map((status, i) => (
-                    <LeaseMonth key={i} data={status} />
-                ))}
+                {[...leaseDate.keys()].map((date, i) => {
+                    const leases = leaseDate.get(date);
+                    let tabColor = '#FFFFFF';
+                    if(i === 0) {
+                        tabColor = '#F87C7A'
+                    } else if(i === 1) {
+                        tabColor = '#FFC614'
+                    }
+                    return (
+                        <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} />
+                    );
+                })}
             </Box>
             <Modal sx={{
                 overflowY: 'scroll',
@@ -176,8 +232,9 @@ function PMLeases(props) {
 }
 
 function LeaseMonth(props) {
-    const leaseData = props.data;
-    const num = leaseData.num;
+    const [date, leaseData] = props.data;
+    let [year, month] = ['-', '-'];
+    const [tabColor] = props.style;
 
     function parseDate(data) {
         const dateList = data.split('-');
@@ -197,10 +254,8 @@ function LeaseMonth(props) {
         }
         return [dateList[0], getMonth(dateList[1])]
     }
-    
-    let [year, month] = ['-', '-'];
     if (leaseData.lease_end !== null) {
-        [year, month] = parseDate(leaseData.lease_end);
+        [year, month] = parseDate(date);
     }
 
     return (
@@ -211,7 +266,7 @@ function LeaseMonth(props) {
         }}>
             <Box sx={{
                 width: '10%',
-                backgroundColor: '#F87C7A',
+                backgroundColor: tabColor,
                 borderRadius: '10px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -233,7 +288,7 @@ function LeaseMonth(props) {
                     marginTop: 'auto',
                     marginBottom: '0px',
                 }}>
-                    {num}
+                    {leaseData.length}
                 </Box>
             </Box>
             <Box sx={{
@@ -241,67 +296,81 @@ function LeaseMonth(props) {
                 flexDirection: 'column',
                 width: '90%',
             }}>
+                {leaseData.map((lease, i) => (
+                    <LeaseComponent key={i} data={lease} />
+                ))}
+            </Box>
+        </Box>
+    );
+}
+function LeaseComponent(props) {
+    const leaseData = props.data;
+
+    function getLeaseStatusText(status) {
+        switch (status) {
+            case 'MOVING':
+                return 'Moving out';
+            case 'RENEWED':
+                return 'Renewed to';
+            default:
+                break;
+        }
+    }
+    function getLeaseStatusIcon(status) {
+        const moveoutIcon =
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>;
+        const renewIcon =
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" />
+            </svg>;
+        const nullIcon =
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="1" width="18" height="18" rx="4" stroke="#3D5CAC" stroke-width="2" />
+            </svg>;
+        let outputIcon;
+        switch (status) {
+            case 'MOVING':
+                outputIcon = moveoutIcon;
+                break;
+            case 'RENEWED':
+                outputIcon = renewIcon;
+                break;
+            default:
+                outputIcon = nullIcon;
+                break;
+        }
+        return outputIcon;
+    }
+    return (
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            paddingLeft: '10px',
+        }}>
+            <Box sx={{
+                marginLeft: '0px',
+                marginRight: 'auto',
+            }}>
                 <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    paddingLeft: '10px',
+                    fontWeight: 'bold',
+                    borderBottomStyle: 'solid',
+                    borderWidth: '1px',
+                    width: 'fit-content',
                 }}>
-                    <Box sx={{
-                        marginLeft: '0px',
-                        marginRight: 'auto',
-                    }}>
-                        <Box sx={{
-                            fontWeight: 'bold',
-                            borderBottomStyle: 'solid',
-                            borderWidth: '1px',
-                            width: 'fit-content',
-                        }}>
-                            103 N. Abel St, Milpitas CA 95035
-                        </Box>
-                        <Box>
-                            03/19/2023: Renewed to 03/18/2024
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        marginLeft: 'auto',
-                        marginRight: '0px',
-                    }}>
-                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" />
-                        </svg>
-                    </Box>
+                    {`${leaseData.property_address}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
                 </Box>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    paddingLeft: '10px',
-                }}>
-                    <Box sx={{
-                        marginLeft: '0px',
-                        marginRight: 'auto',
-                    }}>
-                        <Box sx={{
-                            fontWeight: 'bold',
-                            borderBottomStyle: 'solid',
-                            borderWidth: '1px',
-                            width: 'fit-content',
-                        }}>
-                            108 N. Abel St, Milpitas CA 95035
-                        </Box>
-                        <Box>
-                            03/29/2023: Moving out
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        marginLeft: 'auto',
-                        marginRight: '0px',
-                    }}>
-                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </Box>
+                <Box>
+                    {leaseData.lease_end}: {getLeaseStatusText(leaseData.lease_renew_status)}
                 </Box>
+            </Box>
+            <Box sx={{
+                marginLeft: 'auto',
+                marginRight: '0px',
+            }}>
+                {getLeaseStatusIcon(leaseData.lease_renew_status)}
             </Box>
         </Box>
     );

@@ -346,7 +346,7 @@ function TenantProfile() {
                                         }}>
                                             {vehicleTenantData.map((vehicle) => (
                                                 <Box>
-                                                    {`${vehicle.make} ${vehicle.model} ${vehicle.year} | CarType | ${vehicle.license} | ${vehicle.state}`}
+                                                    {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
                                                 </Box>
                                             ))}
                                         </Box>
