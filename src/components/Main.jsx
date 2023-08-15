@@ -2,9 +2,8 @@ import React from 'react';
 import Header from './Header';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CashflowOwner from './Cashflow/CashflowOwner';
-import Footer from './Footer';
+// import Footer from './Footer';
 import SelectMonthComponent from './SelectMonthComponent';
-import MaintenanceWidget from './MaintenanceWidget';
 import PropertyList from './Property/PropertyList';
 import AddExpense from './Cashflow/AddExpense';
 import AddRevenue from './Cashflow/AddRevenue';
@@ -15,17 +14,37 @@ import LeasePDF from './Leases/LeasePDF';
 import FindProperty from './Property/FindProperty';
 import PropertyInfo from './Property/PropertyInfo';
 
+import MaintenanceWidjet from './MaintenanceWidget';
+import PropertyRentFlow from './PropertyRentFlow/PropertyRentFlow';
+import PropertyRentDetail from './PropertyRentFlow/PropertyRentDetail';
+
+import Announcement from './Announcement/Announcement';
+import TenantDoucments from './Documents/TenantDocuments/TenantDocuments';
+import TenantProfile from './Profile/TenantProfile/TenantProfile';
+import TenantDashboard from './TenantDashboard/TenantDashboard';
+
+import OwnerDocuments from './Documents/OwnerDocuments/OwnerDocuments';
+import OwnerUploadDocuments from './Documents/OwnerDocuments/OwnerUploadDocuments';
+import OwnerLeases from './Leases/OwnerLeases/OwnerLeases';
+import OwnerProfile from './Profile/OwnerProfile/OwnerProfile';
+
+import PMProfile from './Profile/PMProfile/PMProfile';
+import PMLeases from './Leases/PMLeases/PMLeases';
+import PMContracts from './Contracts/PMContracts/PMContracts';
+import PMDocuments from './Documents/PMDocuments/PMDocuments';
+import PMUploadDocuments from './Documents/PMDocuments/PMUploadDocuments';
+import TenantProfileEdit from './Profile/TenantProfile/TenantProfileEdit';
 function Main() {
     return (
         <>
             <div>
-                <Header />
+                <Header></Header>
                 <Router>
                     <Routes>
                         <Route
                             exact
                             path="/dashboard"
-                            element={<MaintenanceWidget />}
+                            element={<MaintenanceWidjet />}
                         />
                         <Route
                             exact
@@ -54,9 +73,30 @@ function Main() {
                         />
                         <Route
                             exact
+                            path="/propertyRent"
+                            element={<PropertyRentFlow />}
+                        />
+                        <Route
+                            exact
+                            path="/propertyRentDetail"
+                            element={<PropertyRentDetail />}
+                        />
+                        <Route
+                            exact
+                            path="/addExpense"
+                            element={<AddExpense />}
+                        />
+                        <Route
+                            exact
                             path="/addUtility"
                             element={<AddUtility />}
                         />
+                        <Route
+                            exact
+                            path="/findProperty"
+                            element={<FindProperty />}
+                        />
+
                         <Route
                             exact
                             path="/viewLease"
@@ -72,10 +112,74 @@ function Main() {
                             path="/leaseDocument"
                             element={<LeasePDF />}
                         />
+
                         <Route
                             exact
-                            path="/findProperty"
-                            element={<FindProperty />}
+                            path="/announcement"
+                            element={<Announcement />}
+                        />
+                        <Route
+                            exact
+                            path="/ownerProfile"
+                            element={<OwnerProfile />}
+                        />
+                        <Route
+                            exact
+                            path="/ownerDocuments"
+                            element={<OwnerDocuments />}
+                        />
+                        <Route
+                            exact
+                            path="/ownerUploadDocuments"
+                            element={<OwnerUploadDocuments />}
+                        />
+                        <Route
+                            exact
+                            path="/ownerLeases"
+                            element={<OwnerLeases />}
+                        />
+
+                        <Route
+                            exact
+                            path="/tenantDocuments"
+                            element={<TenantDoucments />}
+                        />
+                        <Route
+                            exact
+                            path="/tenantProfile"
+                            element={<TenantProfile />}
+                        />
+                        <Route
+                            exact
+                            path="/tenantProfileEdit"
+                            element={<TenantProfileEdit />}
+                        />
+                        <Route
+                            exact
+                            path="/tenantDashboard"
+                            element={<TenantDashboard />}
+                        />
+
+                        <Route
+                            exact
+                            path="/pmProfile"
+                            element={<PMProfile />}
+                        />
+                        <Route exact path="/pmLeases" element={<PMLeases />} />
+                        <Route
+                            exact
+                            path="/pmContracts"
+                            element={<PMContracts />}
+                        />
+                        <Route
+                            exact
+                            path="/pmDocuments"
+                            element={<PMDocuments />}
+                        />
+                        <Route
+                            exact
+                            path="/pmUploadDocuments"
+                            element={<PMUploadDocuments />}
                         />
                         <Route
                             exact
