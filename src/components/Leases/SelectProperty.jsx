@@ -21,7 +21,6 @@ function SelectProperty(props) {
             paddingLeft: '20px',
             paddingRight: '20px',
             minWidth: '320px',
-            overflow: 'scroll',
         }}>
             <Box sx={{
                 display: 'flex',
