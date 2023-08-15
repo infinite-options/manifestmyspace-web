@@ -1,5 +1,6 @@
 import React from 'react';
 import theme from '../../theme/theme';
+import { useNavigate } from 'react-router-dom';
 import {
     ThemeProvider,
     Box,
@@ -11,7 +12,6 @@ import {
     InputAdornment,
     Card,
     CardContent,
-    CardMedia,
     CardActions,
     Rating,
 } from '@mui/material';
@@ -22,8 +22,27 @@ import {
     Tune,
     TurnedInNot,
 } from '@mui/icons-material';
+import ReactImageGallery from 'react-image-gallery';
 
 const FindProperty = (props) => {
+    const navigate = useNavigate();
+
+    const handleDetailsButton = () => {
+        navigate('/propertyInfo');
+    };
+
+    const images = [
+        {
+            original: 'https://picsum.photos/id/1018/1000/600/',
+        },
+        {
+            original: 'https://picsum.photos/id/1015/1000/600/',
+        },
+        {
+            original: 'https://picsum.photos/id/1019/1000/600/',
+        },
+    ];
+
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -257,10 +276,11 @@ const FindProperty = (props) => {
                         </Typography>
                     </Stack>
                     <Card sx={{ margin: 5 }}>
-                        <CardMedia
-                            image="./../../images/house.png"
-                            sx={{ height: '180px' }}
-                            title="Property"
+                        <ReactImageGallery
+                            items={images}
+                            showFullscreenButton={false}
+                            showPlayButton={false}
+                            showThumbnails={false}
                         />
                         <CardContent>
                             <Stack
@@ -466,6 +486,7 @@ const FindProperty = (props) => {
                                         color: theme.typography.secondary.white,
                                         marginLeft: '5px',
                                     }}
+                                    onClick={handleDetailsButton}
                                 >
                                     View Details
                                 </Button>

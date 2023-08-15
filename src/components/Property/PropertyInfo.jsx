@@ -9,10 +9,46 @@ import {
     Button,
     ButtonGroup,
     Rating,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
 } from '@mui/material';
-import { LocationOn, TurnedInNot } from '@mui/icons-material';
+import {
+    CheckCircle,
+    ExpandMore,
+    LocationOn,
+    TurnedInNot,
+} from '@mui/icons-material';
+import {
+    DateCalendar,
+    DigitalClock,
+    LocalizationProvider,
+} from '@mui/x-date-pickers';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import ReactImageGallery from 'react-image-gallery';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+dayjs.tz.setDefault('America/Los_Angeles');
 
 const PropertyInfo = (props) => {
+    const images = [
+        {
+            original: 'https://picsum.photos/id/1018/1000/600/',
+        },
+        {
+            original: 'https://picsum.photos/id/1015/1000/600/',
+        },
+        {
+            original: 'https://picsum.photos/id/1019/1000/600/',
+        },
+    ];
+
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -135,27 +171,24 @@ const PropertyInfo = (props) => {
                                 </Button>
                             </ButtonGroup>
                         </Box>
-                        <Box
-                            height={'140px'}
-                            width={'80%'}
-                            sx={{
-                                backgroundColor: '#CCC',
-                                padding: '15px',
-                            }}
-                        >
-                            <Typography>Images</Typography>
-                        </Box>
                     </Stack>
+                    <ReactImageGallery
+                        items={images}
+                        showFullscreenButton={false}
+                        showPlayButton={false}
+                        showThumbnails={false}
+                    />
                     <Stack
                         direction="row"
-                        justifyContent={'space-between'}
+                        justifyContent="space-between"
                         sx={{
                             color: theme.typography.common.blue,
+                            marginTop: '10px',
                         }}
                     >
                         <Box>
                             <Stack
-                                direction={'row'}
+                                direction="row"
                                 sx={{
                                     color: theme.palette.primary.lightYellow,
                                 }}
@@ -184,6 +217,316 @@ const PropertyInfo = (props) => {
                                 6 days ago
                             </Typography>
                         </Box>
+                    </Stack>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{
+                            color: theme.typography.common.blue,
+                            padding: '15px 0',
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                fontSize: '16px',
+                            }}
+                        >
+                            <strong>$3213</strong> Per Month
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                background: '#3D5CAC',
+                                color: theme.palette.background.default,
+                            }}
+                        >
+                            Apply Now
+                        </Button>
+                    </Stack>
+                    <Stack
+                        justifyContent="space-between"
+                        alignItems="center"
+                        direction="row"
+                        sx={{ margin: '5px 10px' }}
+                    >
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: '#7AD15B',
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                                <CheckCircle />
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '12px',
+                                }}
+                            >
+                                Pet Friendly
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 10px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '15px',
+                                }}
+                            >
+                                Condo
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '12px',
+                                }}
+                            >
+                                Type
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 10px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '15px',
+                                }}
+                            >
+                                2
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '12px',
+                                }}
+                            >
+                                Bed
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 10px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '15px',
+                                }}
+                            >
+                                2
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '12px',
+                                }}
+                            >
+                                Bath
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 10px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '15px',
+                                }}
+                            >
+                                1200
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontSize: '12px',
+                                }}
+                            >
+                                Sq Ft
+                            </Typography>
+                        </Stack>
+                    </Stack>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMore sx={{ color: 'white' }} />}
+                            sx={{
+                                backgroundColor: '#97A7CF',
+                                boxShadow: 'none',
+                                color: '#FFF',
+                                padding: '10px',
+                            }}
+                        >
+                            <Typography
+                                sx={{
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Schedule a Tour
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ padding: '10px' }}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <Stack
+                                    direction="row"
+                                    justifyContent="space-between"
+                                >
+                                    <DateCalendar />
+                                    <DigitalClock
+                                        timeStep={60}
+                                        disablePast
+                                        sx={{ width: '50%' }}
+                                    />
+                                </Stack>
+                                <Box
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        sx={{
+                                            backgroundColor: '#97A7CF',
+                                            color: theme.palette.background
+                                                .default,
+                                        }}
+                                    >
+                                        Schedule
+                                    </Button>
+                                </Box>
+                            </LocalizationProvider>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Stack
+                        justifyContent="flex-start"
+                        spacing={2}
+                        sx={{ margin: '25px 0' }}
+                    >
+                        <Typography
+                            sx={{
+                                fontWeight: theme.typography.primary.fontWeight,
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            Description
+                        </Typography>
+                        <Typography sx={{ textAlign: 'justify' }}>
+                            Lorem ipsum, dolor sit amet consectetur adipisicing
+                            elit. Modi beatae doloribus incidunt quidem,
+                            reiciendis ratione praesentium illo deleniti,
+                            molestias sint id ullam laboriosam, culpa molestiae
+                            qui nulla dolores vero cum.
+                        </Typography>
+                        <Typography
+                            sx={{ color: theme.typography.common.blue }}
+                        >
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 14 14"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <g clip-path="url(#clip0_1650_4326)">
+                                    <path
+                                        d="M3.5 13.5H1.5C1.23478 13.5 0.98043 13.3946 0.792893 13.2071C0.605357 13.0196 0.5 12.7652 0.5 12.5V1.5C0.5 1.23478 0.605357 0.98043 0.792893 0.792893C0.98043 0.605357 1.23478 0.5 1.5 0.5H12.5C12.7652 0.5 13.0196 0.605357 13.2071 0.792893C13.3946 0.98043 13.5 1.23478 13.5 1.5V12.5C13.5 12.7652 13.3946 13.0196 13.2071 13.2071C13.0196 13.3946 12.7652 13.5 12.5 13.5H10.5M0.5 3.5H13.5M7 13.5V7"
+                                        stroke="#3D5CAC"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                    <path
+                                        d="M4.5 9.5L7 7L9.5 9.5"
+                                        stroke="#3D5CAC"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_1650_4326">
+                                        <rect
+                                            width="14"
+                                            height="14"
+                                            fill="white"
+                                        />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                            &nbsp; Visit Property Website
+                        </Typography>
+                    </Stack>
+                    <Stack>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                        >
+                            Apartment Amenities
+                        </Typography>
+                        <Box height={'150px'}></Box>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                        >
+                            Community Amenities
+                        </Typography>
+                        <Box height={'150px'}></Box>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                        >
+                            Location
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            103 N. Abel St, Milpitas CA 95035
+                        </Typography>
+                        <Box height={'150px'}></Box>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                        >
+                            Places Nearby
+                        </Typography>
+                        <Box height={'150px'}></Box>
                     </Stack>
                 </Paper>
             </Box>
