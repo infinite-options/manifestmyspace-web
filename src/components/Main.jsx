@@ -14,12 +14,12 @@ import LeasePDF from './Leases/LeasePDF';
 import FindProperty from './Property/FindProperty';
 import PropertyInfo from './Property/PropertyInfo';
 
-import MaintenanceWidjet from './MaintenanceWidget';
+import MaintenanceWidget from './MaintenanceWidget';
 import PropertyRentFlow from './PropertyRentFlow/PropertyRentFlow';
 import PropertyRentDetail from './PropertyRentFlow/PropertyRentDetail';
 
 import Announcement from './Announcement/Announcement';
-import TenantDoucments from './Documents/TenantDocuments/TenantDocuments';
+import TenantDocuments from './Documents/TenantDocuments/TenantDocuments';
 import TenantProfile from './Profile/TenantProfile/TenantProfile';
 import TenantDashboard from './TenantDashboard/TenantDashboard';
 
@@ -44,7 +44,7 @@ function Main() {
                         <Route
                             exact
                             path="/dashboard"
-                            element={<MaintenanceWidjet />}
+                            element={<MaintenanceWidget />}
                         />
                         <Route
                             exact
@@ -142,7 +142,7 @@ function Main() {
                         <Route
                             exact
                             path="/tenantDocuments"
-                            element={<TenantDoucments />}
+                            element={<TenantDocuments />}
                         />
                         <Route
                             exact
