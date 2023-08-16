@@ -94,6 +94,32 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         navigate(-1);
     }
 
+    const handleSubmit = () => {
+        console.log("handleSubmit")
+
+        const payload = {
+            property: property,
+            issue: issue,
+            phoneNumber: phoneNumber,
+            title: title,
+            description: description,
+            priority: toggleGroupValue,
+            completed: toggleGroupValue,
+            file: file
+        }
+
+        const postData = async () => {
+            await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            })
+        }
+        postData();
+    }
+
     
     return(
         <>
@@ -112,6 +138,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                         Add Maintenance
                     </Typography>
                 </Box>
+
                 <Box left={0} direction="column" alignItems="center">
                     <Button onClick={() => closeAddTenantMaintenanceItem()}>
                         {/* <ArrowBackIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/> */}

@@ -8,7 +8,7 @@ export default function Status({colorStatus, maintenanceRequests}){
             <ul className="mt-widget-requests">
                 {colorStatus.map((item, index) => 
                     <li key={index} style={{ backgroundColor: item.color, color: '#FFFFFF', fontFamily: 'Source Sans Pro', fontSize: '12px', fontWeight:600}}>
-                        {item.status} <span style={{float: "right"}}>{maintenanceRequests[item.mapping]?.length}</span>
+                        {item.status} <span style={{float: "right"}}>{maintenanceRequests[index]?.num}</span>
                     </li>
                 )}
             </ul>

@@ -31,6 +31,12 @@ export default function PropertyNavigator({propertyId, index, propertyData}){
         "Paid Late": theme.palette.priority.medium,
         "Not Paid": theme.palette.priority.high
     }
+
+    function getPaymentStatusColor(leaseInfo){
+        const data = JSON.parse(leaseInfo);
+        // return paymentStatusMap[paymentStatus];
+        console.log(data)
+    }
     
     const handleNextCard = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
@@ -215,7 +221,7 @@ export default function PropertyNavigator({propertyId, index, propertyData}){
                         >   
                             <Grid item xs={12}>
                                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                    <b>Rent Status:</b> {item.paymentStatus}
+                                    <b>Rent Status:</b> {getPaymentStatusColor(item.lease_rent)}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -286,7 +292,7 @@ export default function PropertyNavigator({propertyId, index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                Expiring: {item.leaseExpiration}
+                                                Expiring: {item.lease_end}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>

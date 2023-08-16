@@ -100,6 +100,9 @@ const theme = createTheme({
       light: {
         fontWeight: 500, // Custom font weight
       },
+      medium: {
+        fontWeight: 600, // Custom font weight
+      },
       largeFont: {
           fontSize: '20px'
       },
@@ -117,7 +120,21 @@ const theme = createTheme({
 
       }
     },
-
+  colorStatusPMO: [
+      {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
+      {'color': '#D4736D', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'},
+      {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'CANCELLED'},
+      {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULE'},
+      {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
+      {'color': '#173C8D', 'status': 'Paid', 'mapping': 'INFO'}
+  ],
+  colorStatusTenant: [
+    {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
+    {'color': '#D4736D', 'status': 'Reviewed Requests', 'mapping': 'PROCESSING'},
+    {'color': '#DEA19C', 'status': 'Reviewed Requests', 'mapping': 'INFO'},
+    {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULE'},
+    {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
+  ],
   spacing: 2, // Set the spacing unit to 2 to represent 8px (Material-UI's default spacing unit)
   breakpoints: {
     values: {

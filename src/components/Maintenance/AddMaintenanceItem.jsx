@@ -73,6 +73,7 @@ export default function AddMaintenanceItem({}){
     };
 
     const handlePriorityChange = (event, newToggleGroupValue) => {
+        console.log("handlePriorityChange", event.target.value)
         console.log("handleToggleGroupChange", newToggleGroupValue)
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
@@ -94,17 +95,42 @@ export default function AddMaintenanceItem({}){
         navigate(-1);
     }
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const payload = {
+            property: property,
+            issue: issue,
+            priority: toggleGroupValue,
+            cost: cost,
+            title: title,
+            description: description,
+            file: file,
+        }
+        const postData = async () => {
+            await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            })
+        }
+        postData();
+    }
+
 
     return (
         <ThemeProvider theme={theme}>
             <Box
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%', // Take up full screen width
-                minHeight: '100vh', // Set the Box height to full height
-                marginTop: theme.spacing(2), // Set the margin to 20px
-            }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'flex-start',
+                    width: '80%', // Take up full screen width
+                    minHeight: '100vh', // Set the Box height to full height
+                    marginTop: theme.spacing(2), // Set the margin to 20px
+                }}
             >
                 <Paper
                     style={{
@@ -150,6 +176,7 @@ export default function AddMaintenanceItem({}){
                     >
                         <Box
                             component="form"
+                            onSubmit={handleSubmit}
                             noValidate
                             autoComplete="off"
                         >

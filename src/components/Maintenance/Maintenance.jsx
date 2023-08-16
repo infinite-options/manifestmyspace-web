@@ -32,20 +32,28 @@ export default function Maintenance(){
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
+    function handleFilter(){
+        // console.log("handleFilter")
+        //setShowSelectMonth(!showSelectMonth)
+        return true;
+    }
+
     // console.log("numMaintenanceRequests", numMaintenanceRequests)
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
-            const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000029');
+            const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatusByProperty/200-000029');
             const jsonData = await response.json();
             // console.log("jsonData", jsonData)
-            for (const item of jsonData.MaintenanceProjects) {
+            for (const item of jsonData.MaintenanceProjectStatus.result) {
                 if (!dataObject[item.maintenance_request_status]){
                     dataObject[item.maintenance_request_status] = [];
                 }
-                dataObject[item.maintenance_request_status].push(item);
+                if (handleFilter(item)){
+                    dataObject[item.maintenance_request_status].push(item);
+                }
             }
             // console.log("MAINTENANCE dataObject", dataObject)
             setMaintenanceData(prevData => ({

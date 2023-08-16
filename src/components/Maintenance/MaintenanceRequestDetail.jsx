@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import RequestCard from './MaintenanceRequestCard';
@@ -76,8 +76,6 @@ export default function MaintenanceRequestDetail(){
     }
 
     function deactivateTab(key, maintenanceData){
-        console.log("deactivateTab")
-        console.log(key, maintenanceData)
         if(maintenanceData[key]){
             return maintenanceData[key].length > 0 ? false : true;
         }
@@ -87,9 +85,7 @@ export default function MaintenanceRequestDetail(){
     }
 
     function greyOutTab(key, maintenanceData, color){
-        console.log("greyOutTab")
         let greyColor = "#D9D9D9"
-        console.log(key, maintenanceData)
         if(maintenanceData[key]){
             return maintenanceData[key].length > 0 ? color : greyColor;  
         }
@@ -119,7 +115,18 @@ export default function MaintenanceRequestDetail(){
     const maintenanceDataForStatus = location.state.maintenanceItemsForStatus;
     const allData = location.state.allMaintenanceData;
 
-    const [value, setValue] = useState(0);
+    useEffect(() => {
+        console.log("useEffect")
+        console.log("status value", status)
+        colorStatus.find((item, index) => {
+            if(item.status === status){
+                setValue(index);
+            }
+        })
+    }, [status])
+
+
+    const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
 
@@ -268,10 +275,9 @@ export default function MaintenanceRequestDetail(){
                                                 margin: "25px",
 
                                         }}>
-                                            {/* <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={maintenanceDataForStatus} color={item.color} item={item} allData={allData}/> */}
-                                            {allData[item.mapping] ? 
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={allData[item.mapping]} color={item.color} item={item} allData={allData}/> :
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={[]} color={item.color} item={item} allData={allData}/>
+                                            {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
+                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={allData[item.mapping]} color={item.color} item={item} allData={allData}/>
+                                                : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={[]} color={item.color} item={item} allData={allData}/>
                                             }
                                         </Grid>
                                     </CustomTabPanel>

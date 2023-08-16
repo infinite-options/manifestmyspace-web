@@ -35,8 +35,15 @@ export default function AddProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
 
-    const [property, setProperty] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [type, setType] = useState('');
+    const [squareFootage, setSquareFootage] = useState('');
+    const [bedrooms, setBedrooms] = useState('');
+    const [bathrooms, setBathrooms] = useState('');
+
     const [issue, setIssue] = useState('');
+
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('left');
     const [cost, setCost] = useState('');
@@ -45,9 +52,9 @@ export default function AddProperty({}){
     const [file, setFile] = useState('');
 
 
-    const handlePropertyChange = (event) => {
+    const handleAddressChange = (event) => {
         console.log("handlePropertyChange", event.target.value)
-        setProperty(event.target.value);
+        setAddress(event.target.value);
     };
 
     const handleUnitChange = (event) => {
@@ -55,10 +62,15 @@ export default function AddProperty({}){
         setIssue(event.target.value);
     };
 
-    const handleCostChange = (event) => {
+    const handleCityChange = (event) => {
         console.log("handleCostChange", event.target.value)
         setCost(event.target.value);
     };  
+
+    const handleZipCodeChange = (event) => {
+        console.log("handleCostChange", event.target.value)
+        setCost(event.target.value);
+    };
 
     const handleTitleChange = (event) => {
         console.log("handleTitleChange", event.target.value)
@@ -70,16 +82,24 @@ export default function AddProperty({}){
         setDescription(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
-        setToggleGroupValue(newToggleGroupValue);
-        setToggleAlignment(newToggleGroupValue);
+    const handleTypeChange = (event) => {
+        console.log("handleTypeChange", event.target.value) 
+        setType(event.target.value);
     };
 
-    const handleCompletedChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
-        setToggleGroupValue(newToggleGroupValue);
-        setToggleAlignment(newToggleGroupValue);
+    const handleSquareFootageChange = (event) => {
+        console.log("handleSquareFootageChange", event.target.value)
+        setSquareFootage(event.target.value);
+    };
+
+    const handleBedroomsChange = (event) => {
+        console.log("handleBedroomsChange", event.target.value)
+        setBedrooms(event.target.value);
+    };
+
+    const handleBathroomsChange = (event) => {
+        console.log("handleBathroomsChange", event.target.value)
+        setBathrooms(event.target.value);
     };
     
     const handleFileChange = (event) => {
@@ -91,6 +111,35 @@ export default function AddProperty({}){
         console.log("handleBackButton")
         navigate(-1);
     }
+
+    const handleSubmit = (event) => {
+        console.log("handleSubmit")
+        event.preventDefault();
+        console.log(event.target)
+
+        const postData = async () => {
+            await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    address: address,
+                    city: city,
+                    type: type,
+                    squareFootage: squareFootage,
+                    bedrooms: bedrooms,
+                    bathrooms: bathrooms,
+                    issue: issue,
+                    cost: cost,
+                    title: title,
+                    description: description,
+                    file: file,
+                }),
+            })
+        }
+        postData();
+    };
 
 
     return (
@@ -145,6 +194,7 @@ export default function AddProperty({}){
                             justifyContent="center"
                             alignItems="center"
                             padding="25px"
+                            onSubmit={handleSubmit}
                         >
                             <Box
                                 component="form"
@@ -163,7 +213,7 @@ export default function AddProperty({}){
                                             Address
                                         </Typography>
                                         <TextField 
-                                            onChange={handleTitleChange} 
+                                            onChange={handleAddressChange} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
@@ -196,7 +246,7 @@ export default function AddProperty({}){
                                             City
                                         </Typography>
                                         <TextField 
-                                            onChange={handleUnitChange} 
+                                            onChange={handleCityChange} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
@@ -213,6 +263,7 @@ export default function AddProperty({}){
                                         </Typography>
 
                                             <Select 
+                                                
                                                 sx={{
                                                     backgroundColor: 'white',
                                                     borderColor: 'black',
@@ -235,6 +286,7 @@ export default function AddProperty({}){
                                             Zip Code
                                         </Typography>
                                         <TextField
+                                            onChange={handleZipCodeChange}
                                             fullWidth
                                             sx={{
                                                 backgroundColor: 'white',
@@ -250,7 +302,8 @@ export default function AddProperty({}){
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Type
                                         </Typography>
-                                        <Select 
+                                        <Select
+                                            onChange={handleTypeChange} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
@@ -274,6 +327,7 @@ export default function AddProperty({}){
                                         </Typography>
                                         <TextField
                                             fullWidth
+                                            onChange={handleSquareFootageChange}
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
@@ -289,6 +343,7 @@ export default function AddProperty({}){
                                             Bedrooms
                                         </Typography>
                                         <TextField
+                                            onClick={handleBedroomsChange}
                                             fullWidth
                                             sx={{
                                                 backgroundColor: 'white',
@@ -305,6 +360,7 @@ export default function AddProperty({}){
                                             Bathrooms
                                         </Typography>
                                         <TextField
+                                            onClick={handleBathroomsChange}
                                             fullWidth
                                             sx={{
                                                 backgroundColor: 'white',

@@ -84,6 +84,7 @@ const SearchBar = () => {
 export default function PropertyList({}){
     let navigate = useNavigate();
     const [propertyList, setPropertyList] = useState([])
+    const [maintenanceData, setMaintenanceData] = useState([])
 
     const paymentStatusMap = {
         "Paid On Time": theme.palette.priority.clear,
@@ -105,7 +106,7 @@ export default function PropertyList({}){
                 maintenanceData[property.property_id] = propertyMaintenanceData
             }
             console.log("maintenanceData", maintenanceData)
-            return maintenanceData
+            // setMaintenanceData([...maintenanceData])
         }
 
         console.log("PropertyList useEffect")
@@ -117,54 +118,24 @@ export default function PropertyList({}){
             setPropertyList([...propertyData.Property])
         }
         fetchData()
+        getMaintenaceDataForProperties(propertyList)
     }, [])
 
-    const getMaintenaceDataForProperties = async (propertyList) =>{
-        console.log("getMaintenaceDataForProperties")
-        console.log(propertyList)
-        let maintenanceData = {};
-        for (const property of propertyList){
-            console.log("property", property)
-            const data = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_id}`)
-            const propertyMaintenanceData = await data.json();
-            console.log("propertyMaintenanceData", propertyMaintenanceData)
-            maintenanceData[property.property_id] = propertyMaintenanceData
-        }
-        console.log("maintenanceData", maintenanceData)
-        return maintenanceData
-    }
-    
-
-    // let nitya = "https://mfrbehiqnb.execute-api.us-west-1.amazonaws.com/dev/api/v2/treatments"
-
-    // useEffect(() => {
-    //     console.log("Nitya Endpoint useEffect Test")
-    //     console.log(nitya)
-    //     const fetchData = async () => {
-    //         const data = await fetch(nitya)
-    //         const nityaData = await data.json();
-    //         console.log("nityaData", nityaData)
+    // const getMaintenaceDataForProperties = async (propertyList) =>{
+    //     console.log("getMaintenaceDataForProperties")
+    //     console.log(propertyList)
+    //     let maintenanceData = {};
+    //     for (const property of propertyList){
+    //         console.log("property", property)
+    //         const data = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_id}`)
+    //         const propertyMaintenanceData = await data.json();
+    //         console.log("propertyMaintenanceData", propertyMaintenanceData)
+    //         maintenanceData[property.property_id] = propertyMaintenanceData
     //     }
-    //     fetchData()
-    // }, [])
-
+    //     console.log("maintenanceData", maintenanceData)
+    //     return maintenanceData
+    // }
     
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         let dataObject = {};
-    //         console.log("in useEffect")
-    //         const data = await get(`/maintenanceRequests`)  
-    //         for (const item of data.result) {
-    //             if (!dataObject[item.request_status]){
-    //                 dataObject[item.request_status] = [];
-    //             }
-    //             dataObject[item.request_status].push(item);
-    //         }
-    //         console.log("dataObject from server", dataObject)
-    //         setMaintenanceData(prevData => ({ ...prevData, ...dataObject }))
-    //     }
-    //     fetchData();
-    // }, []);
 
     function handlePropertyDetailNavigation(propertyId, index, propertyList){
         console.log("handlePropertyDetailNavigation")

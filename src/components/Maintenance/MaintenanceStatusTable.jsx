@@ -33,7 +33,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         color: '#FFFFFF', 
         fontFamily: 'Source Sans Pro', 
         fontSize: '15px', 
-        fontWeight:600,
+        fontWeight: 600,
     }
 
     function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
@@ -42,6 +42,12 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         // The maintenanceDataForStatus object is just an array of maintenance requests for a particular status.
         // Example: "NEW"
         // We need to pass all the data to it, by status
+
+        console.log("handleRequestDetailPage")
+        console.log("maintenance_request_index", maintenance_request_index)
+        console.log("status", status)
+        console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+        console.log("allMaintenanceData", allMaintenanceData)
         navigate('/maintenanceRequestDetail', {
             state: {
                 maintenance_request_index,

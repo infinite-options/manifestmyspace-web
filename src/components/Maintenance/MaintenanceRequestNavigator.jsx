@@ -80,6 +80,7 @@ export default function MaintenanceRequestNavigator({requestIndex, requestData, 
 
 
     const data = requestData[currentIndex]
+    console.log("current data tab", item.mapping, data)
     // which tab are we on?
     // console.log("requestData", requestData)
     // console.log("data", data)
@@ -251,8 +252,9 @@ export default function MaintenanceRequestNavigator({requestIndex, requestData, 
                                         fontSize:theme.typography.smallFont,
                                         paddingBottom: "10px"
                                     }}
+                                    underline="always"
                                 >
-                                    <u>{data.property_address}</u>
+                                    {data.property_address}
                                 </Typography>
                                 <Typography
                                     sx={{

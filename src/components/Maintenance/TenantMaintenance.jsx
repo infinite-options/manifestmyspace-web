@@ -40,7 +40,7 @@ import {
 } from "@mui/material";
 import theme from '../../theme/theme';
 import TenantMaintenanceMenu from './TenantMaintenanceMenu.png';
-import TenantMaintenanceAccordion from './TenantMaintenanceAccordion';
+import TenantMaintenanceView from './TenantMaintenanceView';
 import AddTenantMaintenanceItem from './AddTenantMaintenanceItem';
 
 
@@ -48,6 +48,7 @@ export default function TenantMaintenance({propertyId}){
     const [filterToggle, setFilterToggle] = useState(false);
     const [tenantMaintenanceData, setTenantMaintenanceData] = useState([]);
     const [newRequestBool, setNewRequestBool] = useState(false);
+
     let navigate = useNavigate();
 
     const color = "#FFFFFF"
@@ -65,26 +66,26 @@ export default function TenantMaintenance({propertyId}){
     //     fontWeight:600,
     // }
 
-    // useEffect(() => {
-    //     const getTenantMaintenanceData = async () => {
-    //         console.log("Getting Tenant Maintenance Data")
-    //         try {
-    //             const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000029');
-    //             const jsonData = await response.json();
-    //             const data = jsonData.MaintenanceProjects;
-    //             console.log(data)
-    //             setTenantMaintenanceData(data);
-    //         } catch (err) {
-    //             console.error(err.message);
-    //         }
-    //     };
-    //     getTenantMaintenanceData();
-    // }, []);
 
+    useEffect(() => {
+        const getTenantMaintenanceData = async () => {
+            console.log("Getting Tenant Maintenance Data")
+            try {
+                const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000029');
+                const jsonData = await response.json();
+                const data = jsonData.MaintenanceProjects.result;
+                setTenantMaintenanceData(data)
+            } catch (err) {
+                console.error(err.message);
+            }
+        };
+        getTenantMaintenanceData();
+    }, []);
 
     function handleNewRequestButton(){
         setNewRequestBool(!newRequestBool)
     }
+
 
 
     return(
@@ -172,17 +173,18 @@ export default function TenantMaintenance({propertyId}){
                         paddingTop: '10px',
                     }}
                 >
-                    {newRequestBool ? 
-                        <AddTenantMaintenanceItem
+                    {newRequestBool ?
+                        (<AddTenantMaintenanceItem
                             closeAddTenantMaintenanceItem={handleNewRequestButton}
-                        /> :
-                        <TenantMaintenanceAccordion 
-                            tenantMaintenanceData={tenantMaintenanceData}
-                            handleNewRequestButton={handleNewRequestButton}
-                            handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
-                            filterToggle={filterToggle}
-                            handleFilterToggle={handleFilterToggle}
-                        />
+                        /> ):(
+                            <TenantMaintenanceView
+                                tenantMaintenanceData={tenantMaintenanceData}
+                                handleNewRequestButton={handleNewRequestButton}
+                                handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
+                                filterToggle={filterToggle}
+                                handleFilterToggle={handleFilterToggle}
+                            />
+                        )
                     }
                 </Paper>
             </Box>
