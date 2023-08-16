@@ -67,7 +67,6 @@ function TenantDoucments() {
             <Box sx={{
                 backgroundColor: '#F2F2F2',
                 borderRadius: '10px',
-
             }}>
                 <Box sx={{
                     display: 'flex',

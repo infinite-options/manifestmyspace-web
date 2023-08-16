@@ -21,6 +21,8 @@ import Announcement from "./Announcement/Announcement";
 import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
+import TenantProfileEdit from "./Profile/TenantProfile/TenantProfileEdit";
+import TenantLeases from './Leases/TenantLeases/TenantLeases';
 
 import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
 import OwnerUploadDocuments from "./Documents/OwnerDocuments/OwnerUploadDocuments";
@@ -32,7 +34,6 @@ import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
-import TenantProfileEdit from "./Profile/TenantProfile/TenantProfileEdit";
 function Main() {
     return (
         <>
@@ -63,6 +64,7 @@ function Main() {
                         <Route exact path="/ownerLeases" element={<OwnerLeases />} />
 
                         <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
+                        <Route exact path="/tenantLeases" element={<TenantLeases />} />
                         <Route exact path="/tenantProfile" element={<TenantProfile />} />
                         <Route exact path="/tenantProfileEdit" element={<TenantProfileEdit />} />
                         <Route exact path="/tenantDashboard" element={<TenantDashboard />} />

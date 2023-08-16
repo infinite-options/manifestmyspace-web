@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
 import {
     Paper,
@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Chat, Visibility } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ViewLease = (props) => {
     const navigate = useNavigate();
@@ -26,7 +27,22 @@ const ViewLease = (props) => {
     const handleRenewLease = () => {
         navigate('/editLease');
     };
+    const leaseID = '300-000001';
 
+    const [fetchData, setFetchData] = useState([]);
+    const [leaseData, setLeaseData] = useState([]);
+    useEffect(()=>{
+        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003')
+        .then((res)=>{
+            const data = res.data['Lease Details'];
+            setFetchData(data);
+            data.forEach((lease) => {
+                if(lease.lease_uid === leaseID) {
+                    setLeaseData(lease);
+                }
+            });
+        });
+    },[]);
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -114,7 +130,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        789 Maple Lane, San Diego, CA 92101, USA
+                                        {`${leaseData.property_address}, ${leaseData.property_city}, ${leaseData.property_state} ${leaseData.property_zip}`}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -130,7 +146,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Owner: Steve Albini
+                                        Owner: {`${leaseData.owner_first_name} ${leaseData.owner_last_name}`}
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
@@ -158,7 +174,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Tenant: Lou Reed
+                                        Tenant: {`${leaseData.tenant_first_name} ${leaseData.tenant_last_name}`}
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
@@ -197,8 +213,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Signed Lease between Steve Albini and
-                                        Lou Reed
+                                        {leaseData.ld_name}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -221,7 +236,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        02/21/2022
+                                        {leaseData.lease_start}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -242,7 +257,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        02/21/2023
+                                        {leaseData.lease_end}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -265,7 +280,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        02/22/2022
+                                        {'?'}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -286,7 +301,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        4
+                                        {'?'}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -309,7 +324,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        $3000
+                                        ${leaseData.charge}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -330,7 +345,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Monthly
+                                        {leaseData.frequency}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -353,7 +368,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        2 days
+                                        {'?'} days
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -374,7 +389,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        $20
+                                        ${leaseData.perDay_late_fee}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -397,7 +412,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        21st of month
+                                        {'?'} of month
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -418,7 +433,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        10 days before
+                                        {'?'} days before
                                     </Typography>
                                 </TableCell>
                             </TableRow>
