@@ -17,9 +17,10 @@ export default function TransactionsOwnerData(props) {
     // }
     const response = await get(`/ownerPayments?owner_id=${'100-000003'}`);
     const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/transactionsByOwnerByProperty/110-000003/200-000029`);
-    console.log("payments",response.result);
+    // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions`);
+    console.log("payments",res.result);
     // setPropertyData(response.result)
-    props.setTransactionList(res.data.Transactions)
+    props.setTransactionList(res.result)
     // setUpcomingPaymentsData(response.result);
     setIsLoading(false);
   };

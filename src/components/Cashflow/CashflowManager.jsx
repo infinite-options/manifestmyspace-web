@@ -13,7 +13,7 @@ import ExpenseTable from './ExpenseTable';
 import ExpectedExpenseTable from './ExpectedExpenseTable';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 
-const CashflowOwner = () => {
+const CashflowManager = () => {
     const navigate = useNavigate();
     const [activeButton, setActiveButton] = useState('Cashflow');
     const [revenueDropdown, setRevenueDropdown] = useState(false);
@@ -104,17 +104,30 @@ const CashflowOwner = () => {
                         <Typography 
                         sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                         >
-                        Select Month / Year
+                        Last 30 Days
                         </Typography>
                     </Button>
                         <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
                     <Button sx={{ textTransform: 'capitalize' }}>
                         <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
-                        Select Property
+                        All Owners
+                        </Typography>
+                    </Button>
+                    <Button sx={{ textTransform: 'capitalize' }}>
+                        <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
+                        Property
                         </Typography>
                     </Button>
                 </Box>
+                <Stack
+                direction="row"
+                justifyContent="center">
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
+                    Steve Albini - All Properties
+                    </Typography>
+                </Stack>
                <Box
                     component="span"
                     m={3}
@@ -259,7 +272,7 @@ const CashflowOwner = () => {
                             //     }, 0)
                             //     .toFixed(2)) : '0.00'
                             totalExpenseByMonth?
-                            totalExpenseByMonth : '0.00'
+                            totalExpenseByMonth.toFixed(2) : '0.00'
                         ) : 
                         (
                             // expenseSummary ?
@@ -269,7 +282,7 @@ const CashflowOwner = () => {
                             //     }, 0)
                             //     .toFixed(2)) : '0.00'
                             expectedExpenseByMonth?
-                            expectedExpenseByMonth : '0.00'
+                            expectedExpenseByMonth.toFixed(2) : '0.00'
                         )}
                     </Typography>
                 </Box>
@@ -294,7 +307,6 @@ const CashflowOwner = () => {
                 <Stack
                 direction="row"
                 justifyContent="center"
-                height={300}
                 >
                <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary} revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
                 </Stack>
@@ -323,4 +335,4 @@ const CashflowOwner = () => {
     };
     
 
-export default CashflowOwner;
+export default CashflowManager;

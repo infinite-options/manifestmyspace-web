@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Typography, Grid, Box, Stack, ThemeProvider } from "@mui/material";
 import "../../../css/cashflow.css";
-import CashflowData from '../../Cashflow/CashflowData';
+import CashflowData from '../../Cashflow/CashflowData1';
 import { useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
+import MixedChart from '../../Graphs/OwnerCashflowGraph';
 
 function CashflowWidget() {
     const navigate = useNavigate();
@@ -13,10 +14,14 @@ function CashflowWidget() {
     const [expense, setExpense] = useState(null);
     const [expenseSummary, setExpenseSummary] = useState(null);
 
+    const [totalRevenueByMonth, setTotalRevenueByMonth] = useState(0);
+    const [totalExpenseByMonth, setTotalExpenseByMonth] = useState(0);
+    const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
+
     return (
         <ThemeProvider theme={theme}>
         <div className="cf-widget-main" onClick={() => navigate('/cashflowOwner')}>
-            <CashflowData year={'2023'} month={'June'} filter={false} role={'Owner'} userID={'100-000003'} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue}></CashflowData>
+            <CashflowData year={'2023'} month={'June'} filter={false} role={'Owner'} userID={'100-000003'} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue} setTotalRevenueByMonth={setTotalRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
             <Stack
@@ -44,14 +49,17 @@ function CashflowWidget() {
                 </Typography>
                 <Typography sx={{color: theme.typography.primary.black, fontWeight:theme.typography.primary.fontWeight}}>
                     ${
-                    revenueSummary && expenseSummary ?
-                    ((revenueSummary.reduce(function (prev, current) {
-                        return prev + +current.amount_paid;
-                    }, 0) -
-                    expenseSummary.reduce(function (prev, current) {
-                        return prev + +current.amount_paid;
-                    }, 0)
-                    ).toFixed(2)) : '0.00'}
+                    // revenueSummary && expenseSummary ?
+                    // ((revenueSummary.reduce(function (prev, current) {
+                    //     return prev + +current.amount_paid;
+                    // }, 0) -
+                    // expenseSummary.reduce(function (prev, current) {
+                    //     return prev + +current.amount_paid;
+                    // }, 0)
+                    // ).toFixed(2)) : '0.00'}
+                    totalRevenueByMonth && totalExpenseByMonth ?
+                            (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : '0.00'
+                    }
                 </Typography>
             </Box>
             <Box
@@ -66,12 +74,15 @@ function CashflowWidget() {
                     Revenue
                 </Typography>
                 <Typography sx={{color: theme.typography.primary.black, fontWeight:theme.typography.primary.fontWeight}}>
-                    ${revenueSummary ?
+                    $
+                    {/* {revenueSummary ?
                     (revenueSummary
                     .reduce(function (prev, current) {
                         return prev + +current.amount_paid;
                     }, 0)
-                    .toFixed(2)) : '0.00'}
+                    .toFixed(2)) : '0.00'} */}
+                    {totalRevenueByMonth?
+                            totalRevenueByMonth.toFixed(2) : '0.00'}
                 </Typography>
             </Box>
             <Box
@@ -86,17 +97,20 @@ function CashflowWidget() {
                     Expenses
                 </Typography>
                 <Typography sx={{color: theme.typography.primary.black, fontWeight:theme.typography.primary.fontWeight}}>
-                    ${expenseSummary ?
+                    $
+                    {/* {expenseSummary ?
                     (expenseSummary
                     .reduce(function (prev, current) {
                         return prev + +current.amount_paid;
                     }, 0)
-                    .toFixed(2)) : '0.00'}
+                    .toFixed(2)) : '0.00'} */}
+                    {totalExpenseByMonth?
+                            totalExpenseByMonth : '0.00'}
                 </Typography>
             </Box>
             </Grid>
             <Grid item xs={6}>
-                
+            <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
             </Grid>
             </Grid>
             {/* <div className="cf-widget-main" onClick={() => navigate('/cashflowOwner')}>

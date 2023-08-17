@@ -9,6 +9,9 @@ const RevenueTable = (props) => {
     const revenueSummary = props.revenueSummary;
     const revenue = props.revenue;
     console.log("props resummary", props.revenueSummary)
+    
+    const expectedRevenueByType = props.expectedRevenueByType;
+    const revenueList = props.revenueList;
     const handleAccordionChange = () => {
         setExpanded(!expanded);
     };
@@ -32,10 +35,11 @@ const RevenueTable = (props) => {
               <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-              {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "RENT")
+              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "RENT")
               ? (revenueSummary
                 .find((reS) => reS.purchase_type === "RENT")
-                .amount_due.toFixed(2)) : '0.00'}
+                .amount_due.toFixed(2)) : '0.00'} */}
+                {expectedRevenueByType  && expectedRevenueByType.expectedRent ? expectedRevenueByType.expectedRent.toFixed(2) : '0.00'}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -45,19 +49,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "RENT" ? (
                     <TableRow>
                     <TableCell align="left">
                       <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
                       <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                      $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                       </Typography>
                     </TableCell>
                     </TableRow>
@@ -88,10 +92,11 @@ const RevenueTable = (props) => {
               <TableCell align="right">
               <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-              {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "EXTRA CHARGES")
+              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "EXTRA CHARGES")
               ? (revenueSummary
                 .find((reS) => reS.purchase_type === "EXTRA CHARGES")
-                .amount_due.toFixed(2)) : '0.00'}
+                .amount_due.toFixed(2)) : '0.00'} */}
+                {expectedRevenueByType  && expectedRevenueByType.expectedExtraCharges ? expectedRevenueByType.expectedExtraCharges.toFixed(2) : '0.00'}
               </Typography>
               </TableCell>
             </TableRow>
@@ -101,19 +106,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "EXTRA CHARGES" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}{" "}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                     </Typography>
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                        $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -157,19 +162,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "DEPOSIT" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}{" "}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                        $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -200,10 +205,11 @@ const RevenueTable = (props) => {
               <TableCell align="right">
               <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-              {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "UTILITY") ?
+              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "UTILITY") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "UTILITY")
-                .amount_due.toFixed(2)) : '0.00'}
+                .amount_due.toFixed(2)) : '0.00'} */}
+                {expectedRevenueByType  && expectedRevenueByType.expectedUtilities ? expectedRevenueByType.expectedUtilities.toFixed(2) : '0.00'}
               </Typography>
               </TableCell>
             </TableRow>
@@ -213,19 +219,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "UTILITY" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}{" "}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                     </Typography>
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                        $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -256,10 +262,11 @@ const RevenueTable = (props) => {
               <TableCell align="right">
               <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-              {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "LATE FEE") ?
+              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "LATE FEE") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "LATE FEE")
-                          .amount_due.toFixed(2)) : '0.00'}
+                          .amount_due.toFixed(2)) : '0.00'} */}
+                {expectedRevenueByType  && expectedRevenueByType.expectedLateFee ? expectedRevenueByType.expectedLateFee.toFixed(2) : '0.00'}
               </Typography>
               </TableCell>
             </TableRow>
@@ -269,19 +276,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "LATE FEE" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}{" "}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                     </Typography>
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                        $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -312,10 +319,11 @@ const RevenueTable = (props) => {
               <TableCell align="right">
               <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-              {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
+              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "MAINTENANCE")
-                .amount_due.toFixed(2)) : '0.00'}
+                .amount_due.toFixed(2)) : '0.00'} */}
+                {expectedRevenueByType  && expectedRevenueByType.expectedMaintenance ? expectedRevenueByType.expectedMaintenance.toFixed(2) : '0.00'}
               </Typography>
               </TableCell>
             </TableRow>
@@ -325,19 +333,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "MAINTENANCE" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}{" "}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                     </Typography>
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                        $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -368,10 +376,11 @@ const RevenueTable = (props) => {
               <TableCell align="right">
               <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-              {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "REPAIRS") ?
+              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "REPAIRS") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "REPAIRS")
-                .amount_due.toFixed(2)) : '0.00'}
+                .amount_due.toFixed(2)) : '0.00'} */}
+                {expectedRevenueByType  && expectedRevenueByType.expectedRepairs ? expectedRevenueByType.expectedRepairs.toFixed(2) : '0.00'}
               </Typography>
               </TableCell>
             </TableRow>
@@ -381,19 +390,19 @@ const RevenueTable = (props) => {
         <AccordionDetails>
         <Table>
           <TableBody>
-            {revenue ? 
-            (revenue.map((rev, i) => {
+            {revenueList ? 
+            (revenueList.map((rev, i) => {
                 return rev.purchase_type === "REPAIRS" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
-                        {rev.address} {rev.unit}, {rev.city}, {rev.state}{" "}
-                        {rev.zip}
+                        {rev.property_address} {rev.property_unit}
+                        {/* {rev.city}, {rev.state},{rev.zip} */}
                     </Typography>
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.amount_due.toFixed(2)}
+                        $ {rev && rev.pur_amount_due ? rev.pur_amount_due : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>

@@ -13,6 +13,8 @@ import ViewTransactionOwner from "./Transactions/ViewTransactionOwner"
 import PaymentsTenant from "./Payments/PaymentsTenant";
 import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
+import CashflowManager from "./Cashflow/CashflowManager"
+import ManagerDashboard from "./Cashflow/ManagerDashboard"
 function Main(){
     return (
         <>
@@ -31,6 +33,8 @@ function Main(){
               <Route exact path='/viewTransactionOwner' element={<ViewTransactionOwner/>}/>
               <Route exact path='/paymentsTenant' element={<PaymentsTenant/>}/>
               <Route exact path='/card' element={<CardDetails/>}/>
+              <Route exact path='/cashflowManager' element={<CashflowManager/>}/>
+              <Route exact path='/managerDashboard' element={<ManagerDashboard/>}/>
             </Routes>
             </Router>
             </div>
