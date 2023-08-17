@@ -5,14 +5,27 @@ import { useEffect, useState } from 'react';
 function TenantLeases(props) {
 
     const [tenantLeases, setTenantLeases] = useState([]);
-    useEffect(()=>{
+    useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000038')
-        .then((res)=>{
-            const fetchData = res.data['Lease Details'];
-            // console.log(fetchData[0]);
-            setTenantLeases(fetchData[0]);
-        });
-    },[])
+            .then((res) => {
+                const fetchData = res.data['Lease Details'];
+                // console.log(fetchData[0]);
+                setTenantLeases(fetchData[0]);
+            });
+    }, [])
+
+    function getDayText(day) {
+        switch (day % 10) {
+            case 1:
+                return day + 'st';
+            case 2:
+                return day + 'nd';
+            case 3:
+                return day + 'rd';
+            default:
+                return day + 'th';
+        }
+    }
     return (
         <Box sx={{
             fontFamily: 'Source Sans Pro',
@@ -136,7 +149,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                               ${tenantLeases.late_fee}
+                                ${tenantLeases.late_fee}
                             </Box>
                         </Box>
                         <Box>
@@ -152,7 +165,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'} of month
+                                {getDayText(tenantLeases.due_by)} of month
                             </Box>
                         </Box>
                         <Box>
@@ -252,7 +265,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'} days before
+                                {tenantLeases.available_topay} days before
                             </Box>
                         </Box>
                         <Box>
@@ -329,7 +342,7 @@ function TenantLeases(props) {
                     flexDirection: 'row',
                     justifyContent: 'left',
                     alignItems: 'center',
-                    width:'90%',
+                    width: '90%',
                     margin: '10px',
                 }}>
                     <Box>

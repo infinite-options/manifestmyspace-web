@@ -35,6 +35,7 @@ const ViewLease = (props) => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003')
         .then((res)=>{
             const data = res.data['Lease Details'];
+            // console.log(data);
             setFetchData(data);
             data.forEach((lease) => {
                 if(lease.lease_uid === leaseID) {
@@ -43,6 +44,19 @@ const ViewLease = (props) => {
             });
         });
     },[]);
+
+    function getDayText(day) {
+        switch (day % 10) {
+            case 1:
+                return day + 'st';
+            case 2:
+                return day + 'nd';
+            case 3:
+                return day + 'rd';
+            default:
+                return day + 'th';
+        }
+    }
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -412,7 +426,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {'?'} of month
+                                        {getDayText(leaseData.due_by)} of month
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -433,7 +447,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {'?'} days before
+                                        {leaseData.available_topay} days before
                                     </Typography>
                                 </TableCell>
                             </TableRow>
