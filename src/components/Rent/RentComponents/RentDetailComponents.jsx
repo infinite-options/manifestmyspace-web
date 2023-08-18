@@ -61,6 +61,14 @@ export function RentDetailBody(props) {
         fontWeight: 'inherit',
     }
 
+    function formatDate(inputDate) {
+        const year = inputDate.substring(0, 4);
+        const month = inputDate.substring(5, 7);
+        const day = inputDate.substring(8, 10);
+
+        return `${month}/${day}/${year}`;
+    }
+
     return (
         <Box sx={{
             position: 'relative',
@@ -136,7 +144,7 @@ export function RentDetailBody(props) {
                             {getProperties(propertyStatus).length > 0 ? (`$ ${getProperties(propertyStatus)[index].pur_amount_due}`) : (<></>)}
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`due ${getProperties(propertyStatus)[index].pur_due_date}`) : (<></>)}
+                            {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(getProperties(propertyStatus)[index].pur_due_date)}`) : (<></>)}
                         </Box>
                         <Box>
                             11 Days Overdue
@@ -210,10 +218,38 @@ function PropertyRow(props) {
         textAlign: 'center',
     }
 
+    function getMonthAbbreviation(monthName) {
+        const monthIndexMap = {
+            "January": 0,
+            "February": 1,
+            "March": 2,
+            "April": 3,
+            "May": 4,
+            "June": 5,
+            "July": 6,
+            "August": 7,
+            "September": 8,
+            "October": 9,
+            "November": 10,
+            "December": 11
+        };
+
+        const months = [
+            "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+        ];
+
+        const index = monthIndexMap[monthName];
+        if (index !== undefined) {
+            return months[index];
+        } else {
+            return "Invalid Month";
+        }
+    }
+
     return (
         <tr>
             <td style={tdStyle}>
-                {month}
+                {getMonthAbbreviation(month)}
             </td>
             <td style={tdStyle}>
                 {paid}
@@ -234,8 +270,13 @@ function PropertyStatus(props) {
     const status = props.data;
     const color = status !== null ? getStatusColor(status) : '#FFFFF';
     return (
-        <div className="property-rent-detail-table-contents-status" style={{ backgroundColor: color }}>
+        <Box sx={{
+            backgroundColor: color,
+            color: '#FFFFFF',
+            textAlign: 'left',
+            paddingLeft: '5px',
+        }}>
             {StatusText(status)}
-        </div>
+        </Box>
     );
 }
