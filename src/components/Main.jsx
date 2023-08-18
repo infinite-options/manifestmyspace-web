@@ -14,8 +14,6 @@ import LeasePDF from './Leases/LeasePDF';
 import FindProperty from './Property/FindProperty';
 
 import MaintenanceWidjet from './MaintenanceWidget';
-import PropertyRentFlow from "./PropertyRentFlow/PropertyRentFlow";
-import PropertyRentDetail from "./PropertyRentFlow/PropertyRentDetail";
 
 import Announcement from "./Announcement/Announcement";
 import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
@@ -28,12 +26,16 @@ import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
 import OwnerUploadDocuments from "./Documents/OwnerDocuments/OwnerUploadDocuments";
 import OwnerLeases from "./Leases/OwnerLeases/OwnerLeases";
 import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
+import OwnerRent from './Rent/OwnerRent/OwnerRent';
 
 import PMProfile from "./Profile/PMProfile/PMProfile";
 import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
+import OwnerRentDetail from './Rent/OwnerRent/OwnerRentDetail';
+import PMRent from './Rent/PMRent/PMRent';
+import PMRentDetail from './Rent/PMRent/PMRentDetail';
 function Main() {
     return (
         <>
@@ -47,8 +49,6 @@ function Main() {
                         <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
                         <Route exact path="/addExpense" element={<AddExpense />} />
                         <Route exact path="/addRevenue" element={<AddRevenue />} />
-                        <Route exact path="/propertyRent" element={<PropertyRentFlow />} />
-                        <Route exact path="/propertyRentDetail" element={<PropertyRentDetail />} />
                         <Route exact path="/addExpense" element={<AddExpense />} />
                         <Route exact path="/addUtility" element={<AddUtility />} />
                         <Route exact path="/findProperty" element={<FindProperty />} />
@@ -62,6 +62,8 @@ function Main() {
                         <Route exact path="/ownerDocuments" element={<OwnerDocuments />} />
                         <Route exact path="/ownerUploadDocuments" element={<OwnerUploadDocuments />} />
                         <Route exact path="/ownerLeases" element={<OwnerLeases />} />
+                        <Route exact path="/ownerRent" element={<OwnerRent />} />
+                        <Route exact path="/ownerRentDetail" element={<OwnerRentDetail />} />
 
                         <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
                         <Route exact path="/tenantLeases" element={<TenantLeases />} />
@@ -74,6 +76,8 @@ function Main() {
                         <Route exact path="/pmContracts" element={<PMContracts />} />
                         <Route exact path="/pmDocuments" element={<PMDocuments />} />
                         <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
+                        <Route exact path="/pmRent" element={<PMRent />} />
+                        <Route exact path="/pmRentDetail" element={<PMRentDetail />} />
                     </Routes>
                 </Router>
             </div>
