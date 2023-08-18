@@ -14,11 +14,10 @@
 }
 
 .main-header-title-logo-container {
-    /* display: inline-block; */
-    margin-left: 50%;
-    /* transform: translateX(-50%); */
-    transform: translateX(-20%);
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
 }
 
 .main-header-title {
@@ -48,8 +47,8 @@
 .main-header-redirect-btns>a {
     color: var(--text-color);
     font-family: 'Source Sans 3', sans-serif;
-    font-weight: 400;
-    font-size: 25px;
+    font-weight: '400';
+    font-size: 16px;
     line-height: 20.11px;
     margin-top: 12px;
     text-decoration: none;
