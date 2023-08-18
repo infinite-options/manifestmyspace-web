@@ -62,6 +62,9 @@ export function RentDetailBody(props) {
     }
 
     function formatDate(inputDate) {
+        if (inputDate === null) {
+            return '';
+        }
         const year = inputDate.substring(0, 4);
         const month = inputDate.substring(5, 7);
         const day = inputDate.substring(8, 10);
