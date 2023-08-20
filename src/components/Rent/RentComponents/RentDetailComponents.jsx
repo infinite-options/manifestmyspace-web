@@ -150,7 +150,7 @@ export function RentDetailBody(props) {
                             {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(getProperties(propertyStatus)[index].pur_due_date)}`) : (<></>)}
                         </Box>
                         <Box>
-                            11 Days Overdue
+                            {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].overdue} Days Overdue`) : (<></>)}
                         </Box>
                     </Box>
                 </Box>
@@ -193,15 +193,24 @@ export function RentDetailBody(props) {
                     {rentDetailsData.length > 0 ? (
                         rentDetailsData.map((rentDetails, i) => {
                             const month = rentDetails.cf_month;
-                            const paid = rentDetails.total_paid !== null ? '$' + rentDetails.total_paid : '$0';;
-                            const amount = rentDetails.pay_amount !== null ? '$' + rentDetails.pay_amount : '$0';
+                            const paid = rentDetails.pur_due_date !== null ? formatDate(rentDetails.pur_due_date).slice(0, 5) : '';
+                            const amount = rentDetails.pur_amount_due !== null ? '$' + rentDetails.pur_amount_due : '$0';
                             const payment_status = rentDetails.payment_status;
+
+                            const id = rentDetails.property_id;
+                            let fee = '';
+                            for (let i = 0; i < rentDetailsData.length; i++) {
+                                const prop2 = rentDetailsData[i];
+                                if(prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
+                                    fee = '+$' + prop2.pur_amount_due;
+                                }
+                            }
 
                             return (
                                 <>
                                     {
-                                        rentDetails.property_id === propertyID ? (
-                                            <PropertyRow data={[month, paid, amount, payment_status, ""]} />
+                                        (propertyID === id && rentDetails.purchase_type === 'RENT')? (
+                                            <PropertyRow data={[month, paid, amount, payment_status, fee]} />
                                         ) : (<></>)
                                     }
                                 </>
