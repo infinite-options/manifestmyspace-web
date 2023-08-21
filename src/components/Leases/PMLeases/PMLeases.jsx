@@ -29,8 +29,8 @@ function PMLeases(props) {
         }
         axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/600-000003")
             .then((res) => {
-                console.log(res.data['Lease Details']);
-                const fetchData = res.data['Lease Details'];
+                // console.log(res.data['Lease Details'].result);
+                const fetchData = res.data['Lease Details'].result;
                 const leases = new Map([]);
                 let moveoutNum = 0;
                 fetchData.forEach((lease) => {

@@ -8,7 +8,7 @@ function TenantLeases(props) {
     useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000038')
             .then((res) => {
-                const fetchData = res.data['Lease Details'];
+                const fetchData = res.data['Lease Details'].result;
                 // console.log(fetchData[0]);
                 setTenantLeases(fetchData[0]);
             });
