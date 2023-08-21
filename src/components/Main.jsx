@@ -74,7 +74,7 @@ function Main() {
           <Routes>
             <Route exact path="/dashboard" element={<MaintenanceWidget />} />
             <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
-            <Route exact path="/properties" element={<PropertyListData />} />
+            {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
             <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
             <Route exact path="/addExpense" element={<AddExpense />} />
             <Route exact path="/addRevenue" element={<AddRevenue />} />
@@ -131,6 +131,7 @@ function Main() {
             <Route exact path="/tenantMaintenance" element={<TenantMaintenance />} />
             <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route exact path="/myProperty" element={<TenantProperty />} />
+            <Route exact path="/properties" element={<PropertyList />} />
             {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
             <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
           </Routes>
