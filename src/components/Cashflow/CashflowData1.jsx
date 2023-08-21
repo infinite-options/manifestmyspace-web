@@ -53,9 +53,9 @@ const CashflowData = (props) => {
             let expectedRevenueByMonth = 0;
             revenueByMonth.forEach((revenue) => {
                 if (revenue.cf_month === currentMonth && revenue.cf_year === currentYear) {
-                    if(revenue['sum(sum_paid_amount)'] !== null){
+                    if(revenue['sum(total_paid)'] !== null){
                         console.log("paidRevenueByMonth ",revenue);
-                        paidRevenueByMonth = paidRevenueByMonth + Number(revenue['sum(sum_paid_amount)'])
+                        paidRevenueByMonth = paidRevenueByMonth + Number(revenue['sum(total_paid)'])
                     }
                     if(revenue['sum(pur_amount_due)'] !== null){
                         console.log("expectedRevenueByMonth ",revenue);
@@ -70,9 +70,9 @@ const CashflowData = (props) => {
             let expectedExpenseByMonth = 0;
             expenseByMonth.forEach((expense) => {
                 if (expense.cf_month === currentMonth && expense.cf_year === currentYear) {
-                    if(expense['sum(sum_paid_amount)'] !== null){
+                    if(expense['sum(total_paid)'] !== null){
                         console.log("paidExpenseByMonth ",expense);
-                        paidExpenseByMonth = paidExpenseByMonth + Number(expense['sum(sum_paid_amount)'])
+                        paidExpenseByMonth = paidExpenseByMonth + Number(expense['sum(total_paid)'])
                     }
                     if(expense['sum(pur_amount_due)'] !== null){
                         console.log("expectedExpenseByMonth ",expense);
@@ -100,9 +100,9 @@ const CashflowData = (props) => {
         let expectedRevenueByMonth = 0;
         revenueByMonth.forEach((revenue) => {
             if (revenue.cf_month === props.month && revenue.cf_year === props.year) {
-                if(revenue['sum(sum_paid_amount)'] !== null){
+                if(revenue['sum(total_paid)'] !== null){
                     console.log("paidRevenueByMonth ",revenue);
-                    paidRevenueByMonth = paidRevenueByMonth + Number(revenue['sum(sum_paid_amount)'])
+                    paidRevenueByMonth = paidRevenueByMonth + Number(revenue['sum(total_paid)'])
                 }
                 if(revenue['sum(pur_amount_due)'] !== null){
                     console.log("expectedRevenueByMonth ",revenue);
@@ -120,9 +120,9 @@ const CashflowData = (props) => {
         let expectedExpenseByMonth = 0;
         expenseByMonth.forEach((expense) => {
             if (expense.cf_month === props.month && expense.cf_year === props.year) {
-                if(expense['sum(sum_paid_amount)'] !== null){
+                if(expense['sum(total_paid)'] !== null){
                     console.log("paidExpenseByMonth ",expense);
-                    paidExpenseByMonth = paidExpenseByMonth + Number(expense['sum(sum_paid_amount)'])
+                    paidExpenseByMonth = paidExpenseByMonth + Number(expense['sum(total_paid)'])
                 }
                 if(expense['sum(pur_amount_due)'] !== null){
                     console.log("expectedExpenseByMonth ",expense);
@@ -157,24 +157,24 @@ const CashflowData = (props) => {
         let expectedRepairs = 0;
         revenueByType.forEach((revenue) => {
             if (revenue.cf_month === props.month && revenue.cf_year === props.year) {
-                if (revenue['sum(sum_paid_amount)'] !== null) {
+                if (revenue['sum(total_paid)'] !== null) {
                     if (revenue.purchase_type === 'RENT' ) {
-                        totalRent = totalRent + Number(revenue['sum(sum_paid_amount)']);
+                        totalRent = totalRent + Number(revenue['sum(total_paid)']);
                     }
                     else if (revenue.purchase_type === 'EXTRA CHARGES') {
-                        totalExtraCharges = totalExtraCharges + Number(revenue['sum(sum_paid_amount)']);
+                        totalExtraCharges = totalExtraCharges + Number(revenue['sum(total_paid)']);
                     }
                     else if (revenue.purchase_type === 'UTILITY') {
-                        totalUtilities = totalUtilities + Number(revenue['sum(sum_paid_amount)']);
+                        totalUtilities = totalUtilities + Number(revenue['sum(total_paid)']);
                     }
                     else if (revenue.purchase_type === 'LATE FEE') {
-                        totalLateFee = totalLateFee + Number(revenue['sum(sum_paid_amount)']);
+                        totalLateFee = totalLateFee + Number(revenue['sum(total_paid)']);
                     }
                     else if (revenue.purchase_type === 'MAINTENANCE') {
-                        totalMaintenance = totalMaintenance + Number(revenue['sum(sum_paid_amount)']);
+                        totalMaintenance = totalMaintenance + Number(revenue['sum(total_paid)']);
                     }
                     else if (revenue.purchase_type === 'REPAIRS') {
-                        totalRepairs = totalRepairs + Number(revenue['sum(sum_paid_amount)']);
+                        totalRepairs = totalRepairs + Number(revenue['sum(total_paid)']);
                     }
                 }
                 if (revenue['sum(pur_amount_due)'] !== null) {
@@ -251,39 +251,39 @@ const CashflowData = (props) => {
         let expectedManagementLateFee = 0;
         expenseByType.forEach((expense) => {
             if (expense.cf_month === props.month && expense.cf_year === props.year) {
-                if (expense['sum(sum_paid_amount)'] !== null) {
+                if (expense['sum(total_paid)'] !== null) {
                     if (expense.purchase_type === 'MAINTENANCE' ) {
-                        totalMaintenance = totalMaintenance + Number(expense['sum(sum_paid_amount)']);
+                        totalMaintenance = totalMaintenance + Number(expense['sum(total_paid)']);
                     }
                     else if (expense.purchase_type === 'REPAIRS') {
-                        totalRepairs = totalRepairs + Number(expense['sum(sum_paid_amount)']);
+                        totalRepairs = totalRepairs + Number(expense['sum(total_paid)']);
                     }
                     else if (expense.purchase_type === 'MORTGAGE') {
-                        totalMortgage = totalMortgage + Number(expense['sum(sum_paid_amount)']);
+                        totalMortgage = totalMortgage + Number(expense['sum(total_paid)']);
                     }
                     else if (expense.purchase_type === 'TAXES') {
-                        totalTaxes = totalTaxes + Number(expense['sum(sum_paid_amount)']);
+                        totalTaxes = totalTaxes + Number(expense['sum(total_paid)']);
                     }
                     else if (expense.purchase_type === 'INSURANCE') {
-                        totalInsurance = totalInsurance + Number(expense['sum(sum_paid_amount)']);
+                        totalInsurance = totalInsurance + Number(expense['sum(total_paid)']);
                     }
                     else if (expense.purchase_type === 'UTILITY') {
-                        totalUtilities = totalUtilities + Number(expense['sum(sum_paid_amount)']);
+                        totalUtilities = totalUtilities + Number(expense['sum(total_paid)']);
                     }
                     // else if (expense.purchase_type === 'OWNER PAYMENT RENT' || expense.purchase_type === 'OWNER PAYMENT LATE FEE' || expense.purchase_type === 'OWNER PAYMENT EXTRA CHARGES') {
-                    //     totalManagement = totalManagement + expense['sum(sum_paid_amount)'];
+                    //     totalManagement = totalManagement + expense['sum(total_paid)'];
                     // }
                     else if (expense.purchase_type.includes("OWNER PAYMENT")) {
-                        totalManagement = totalManagement + Number(expense['sum(sum_paid_amount)']);
+                        totalManagement = totalManagement + Number(expense['sum(total_paid)']);
                     }
                     // else if (expense.purchase_type === 'OWNER PAYMENT MANAGEMENT RENT') {
-                    //     totalManagementRent = totalManagementRent + expense['sum(sum_paid_amount)'];
+                    //     totalManagementRent = totalManagementRent + expense['sum(total_paid)'];
                     // }
                     // else if (expense.purchase_type === 'OWNER PAYMENT MANAGEMENT EXTRA CHARGES') {
-                    //     totalManagementExtraCharges = totalManagementExtraCharges + expense['sum(sum_paid_amount)'];
+                    //     totalManagementExtraCharges = totalManagementExtraCharges + expense['sum(total_paid)'];
                     // }
                     // else if (expense.purchase_type === 'OWNER PAYMENT MANAGEMENT LATE FEE') {
-                    //     totalManagementLateFee = totalManagementLateFee + expense['sum(sum_paid_amount)'];
+                    //     totalManagementLateFee = totalManagementLateFee + expense['sum(total_paid)'];
                     // }
                 }
                 if (expense['sum(pur_amount_due)'] !== null) {

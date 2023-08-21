@@ -15,6 +15,7 @@ import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
 import CashflowManager from "./Cashflow/CashflowManager"
 import ManagerDashboard from "./Cashflow/ManagerDashboard"
+import Settings from "./Settings/SeetingsOwner";
 function Main(){
     return (
         <>
@@ -35,6 +36,7 @@ function Main(){
               <Route exact path='/card' element={<CardDetails/>}/>
               <Route exact path='/cashflowManager' element={<CashflowManager/>}/>
               <Route exact path='/managerDashboard' element={<ManagerDashboard/>}/>
+              <Route exact path='/settingsOwner' element={<Settings/>}/>
             </Routes>
             </Router>
             </div>

@@ -38,7 +38,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "RENT")
               ? (revenueSummary
                 .find((reS) => reS.purchase_type === "RENT")
-                .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                .total_paid.toFixed(2)) : '0.00'} */}
                 {totalRevenueByType && totalRevenueByType.totalRent ? totalRevenueByType.totalRent : '0.00'}
                 </Typography>
               </TableCell>
@@ -51,7 +51,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "RENT" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "RENT" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                       <Typography sx={{fontSize: '12px'}}>
@@ -61,7 +61,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                       <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                       </Typography>
                     </TableCell>
                     </TableRow>
@@ -95,7 +95,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "EXTRA CHARGES")
               ? (revenueSummary
                 .find((reS) => reS.purchase_type === "EXTRA CHARGES")
-                .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                .total_paid.toFixed(2)) : '0.00'} */}
               {totalRevenueByType && totalRevenueByType.totalExtraCharges ? totalRevenueByType.totalExtraCharges : '0.00'}
               </Typography>
               </TableCell>
@@ -108,7 +108,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "EXTRA CHARGES" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "EXTRA CHARGES" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
@@ -118,7 +118,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -152,7 +152,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "DEPOSIT") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "DEPOSIT")
-                .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                .total_paid.toFixed(2)) : '0.00'} */}
               </Typography>
               </TableCell>
             </TableRow>
@@ -164,7 +164,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "DEPOSIT" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "DEPOSIT" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
@@ -174,7 +174,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -208,7 +208,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "UTILITY") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "UTILITY")
-                .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                .total_paid.toFixed(2)) : '0.00'} */}
               {totalRevenueByType && totalRevenueByType.totalUtilities ? totalRevenueByType.totalUtilities : '0.00'}
               </Typography>
               </TableCell>
@@ -221,7 +221,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "UTILITY" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "UTILITY" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
@@ -231,7 +231,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -265,7 +265,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "LATE FEE") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "LATE FEE")
-                          .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                          .total_paid.toFixed(2)) : '0.00'} */}
               {totalRevenueByType && totalRevenueByType.totalLateFee ? totalRevenueByType.totalLateFee : '0.00'}
               </Typography>
               </TableCell>
@@ -278,7 +278,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "LATE FEE" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "LATE FEE" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
@@ -288,7 +288,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -322,7 +322,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "MAINTENANCE")
-                .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                .total_paid.toFixed(2)) : '0.00'} */}
               {totalRevenueByType && totalRevenueByType.totalMaintenance ? totalRevenueByType.totalMaintenance : '0.00'}
               </Typography>
               </TableCell>
@@ -335,7 +335,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "MAINTENANCE" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "MAINTENANCE" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
@@ -345,7 +345,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>
@@ -379,7 +379,7 @@ const RevenueTable = (props) => {
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "REPAIRS") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "REPAIRS")
-                .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                .total_paid.toFixed(2)) : '0.00'} */}
               {totalRevenueByType && totalRevenueByType.totalRepairs ? totalRevenueByType.totalRepairs : '0.00'}
               </Typography>
               </TableCell>
@@ -392,7 +392,7 @@ const RevenueTable = (props) => {
           <TableBody>
             {revenueList ? 
             (revenueList.map((rev, i) => {
-                return rev.purchase_type === "REPAIRS" && rev.payment_status === "PAID" ? (
+                return rev.purchase_type === "REPAIRS" && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                     <Typography sx={{fontSize: '12px'}}>
@@ -402,7 +402,7 @@ const RevenueTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                     <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.sum_paid_amount ? rev.sum_paid_amount : '0.00'}
+                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
                     </Typography>
                     </TableCell>
                     </TableRow>

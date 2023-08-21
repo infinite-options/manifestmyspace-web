@@ -1,107 +1,76 @@
-import React, { useState } from "react";
-import { ScatterChart, Scatter, XAxis, YAxis, ResponsiveContainer, Line, ReferenceLine, ComposedChart } from "recharts";
-import { Component } from "react";
-// import CustomDot from "./CustomDot";
-// import getClickedPoint from "./getClickedPoint";
-
-const data = [
-  { x: 50, y: 200, image: 'https://www.google.com/search?sca_esv=557804163&sxsrf=AB5stBg-wFIGtaAS_-qr_7k4f-sT7WLMFQ:1692289219403&q=svg+image&tbm=isch&source=lnms&sa=X&ved=2ahUKEwizhJ7OjOSAAxWrNzQIHeIXCyIQ0pQJegQICBAB&biw=1600&bih=801&dpr=1.8#imgrc=CgkZMhsew5HKtM' },
-  { x: 70, y: 100, image: 'https://www.google.com/search?sca_esv=557804163&sxsrf=AB5stBg-wFIGtaAS_-qr_7k4f-sT7WLMFQ:1692289219403&q=svg+image&tbm=isch&source=lnms&sa=X&ved=2ahUKEwizhJ7OjOSAAxWrNzQIHeIXCyIQ0pQJegQICBAB&biw=1600&bih=801&dpr=1.8#imgrc=CgkZMhsew5HKtM' },
-  { x: 170, y: 300, image: 'https://www.google.com/search?sca_esv=557804163&sxsrf=AB5stBg-wFIGtaAS_-qr_7k4f-sT7WLMFQ:1692289219403&q=svg+image&tbm=isch&source=lnms&sa=X&ved=2ahUKEwizhJ7OjOSAAxWrNzQIHeIXCyIQ0pQJegQICBAB&biw=1600&bih=801&dpr=1.8#imgrc=CgkZMhsew5HKtM' },
-  { x: 140, y: 250, image: 'https://www.google.com/search?sca_esv=557804163&sxsrf=AB5stBg-wFIGtaAS_-qr_7k4f-sT7WLMFQ:1692289219403&q=svg+image&tbm=isch&source=lnms&sa=X&ved=2ahUKEwizhJ7OjOSAAxWrNzQIHeIXCyIQ0pQJegQICBAB&biw=1600&bih=801&dpr=1.8#imgrc=CgkZMhsew5HKtM' },
-  { x: 150, y: 400, image: 'https://www.google.com/search?sca_esv=557804163&sxsrf=AB5stBg-wFIGtaAS_-qr_7k4f-sT7WLMFQ:1692289219403&q=svg+image&tbm=isch&source=lnms&sa=X&ved=2ahUKEwizhJ7OjOSAAxWrNzQIHeIXCyIQ0pQJegQICBAB&biw=1600&bih=801&dpr=1.8#imgrc=CgkZMhsew5HKtM' },
-  { x: 110, y: 280, image: 'https://www.google.com/search?sca_esv=557804163&sxsrf=AB5stBg-wFIGtaAS_-qr_7k4f-sT7WLMFQ:1692289219403&q=svg+image&tbm=isch&source=lnms&sa=X&ved=2ahUKEwizhJ7OjOSAAxWrNzQIHeIXCyIQ0pQJegQICBAB&biw=1600&bih=801&dpr=1.8#imgrc=CgkZMhsew5HKtM' }
-];
-
-const CustomImageDot = (props) => {
-    const { cx, cy, image } = props;
-    return <image x={cx - 10} y={cy - 10} width={20} height={20} xlinkHref={image} />;
-};
+import React, { Component } from 'react';
+import {
+    ScatterChart,
+    Scatter,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ReferenceLine,
+    Cell,
+    ResponsiveContainer
+  } from "recharts";
   
-// const CustomImageDot = () => (
-//     <defs>
-//       {data.map((entry, index) => (
-//         <pattern
-//           key={`pattern-${index}`}
-//           id={`pattern-${index}`}
-//           x="0"
-//           y="0"
-//           patternUnits="userSpaceOnUse"
-//           width="20"
-//           height="20"
-//         >
-//           <image href={entry.image} x="0" y="0" width="20" height="20" />
-//         </pattern>
-//       ))}
-//     </defs>
-//   );
+  const data = [
+    { x: -100, y: -200, z: 200 },
+    { x: -100, y: 200, z: 200 },
+    { x: 120, y: 100, z: 260 },
+    { x: 120, y: -100, z: 260 },
+    { x: 170, y: 300, z: 400 },
+    { x: -140, y: -250, z: 280 },
+    { x: -140, y: 250, z: 280 },
+    { x: 150, y: 400, z: 500 },
+    { x: 110, y: 280, z: 200 },
+    { x: 110, y: -280, z: 200 }
+  ];
   
-export default function HappinessMatrix(props){
-  const [selectedPoint, setSelectedPoint] = useState({ x: 70, y: 100 });
-  const testline = [{ x: 0, y: 300 }, { x: 20, y: 0 }]
-//   function handleMouseDown(e) {
-//     const { chartX, chartY } = e || {};
-//     const clickedPoint = getClickedPoint(chartX, chartY, data);
-//     if (clickedPoint) {
-//       setSelectedPoint(clickedPoint);
-//     }
-//   }
-
-  return (
-    <ResponsiveContainer>
-        {/* <ComposedChart margin={{ top: 20, right: -10, left: -10, bottom: 5 }}> */}
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "red", "pink"];
+  
+  export default function HappinessMatrix() {
+    return (
+      <ResponsiveContainer>
       <ScatterChart
-        // width={400}
-        // height={400}
-        // margin={{ top: 50 }}
-        // onMouseDown={handleMouseDown}
+        width={500}
+        height={400}
+        margin={{
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 20
+        }}
       >
-        <XAxis
-          axisLine={false}
-          tick={false}
-          type="number"
-          dataKey="x"
-          domain={["dataMin - 20", "dataMax + 20"]}
-        />
-        <YAxis
-        //   yAxisId="left"
-          axisLine={false}
-          tick={false}
-          type="number"
-          dataKey="y"
-          domain={["dataMin - 50", "dataMax + 50"]}
-        />
-        <ReferenceLine 
-            segment={[
-                  { 
-                    x: 0,
-                    y: 0
-                  },
-                  { 
-                    x: 500, 
-                    y: 500 
-                  }]}
+        <CartesianGrid />
+        <XAxis type="number" dataKey="x" name="stature" axisLine={false} tick={false}/>
+        <YAxis type="number" dataKey="y" name="weight" axisLine={false} tick={false}/>
+        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+        <Scatter name="A school" data={data} fill="#8884d8">
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Scatter>
+        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+        <ReferenceLine y={0} stroke="#000000" strokeDasharray="3 3" />
+        <ReferenceLine x={0} stroke="#000000" strokeDasharray="3 3" />
+        <ReferenceLine
+          segment={[
+            { 
+              x: -500,
+              y: -500
+            },
+            { 
+              x: 500, 
+              y: 500 
+            }]}
+        //   label={{
+        //     value: "(0,0)",
+        //     position: "bottom"
+        //   }}
             stroke="#000000"
             strokeWidth={2}
-            ifOverflow="extendDomain" />
-        <ReferenceLine y={200} strokeDasharray="3 3" stroke='#000000' strokeWidth={1} ifOverflow="extendDomain"/>
-        <ReferenceLine x={100} strokeDasharray="3 3" stroke='#000000' strokeWidth={1} ifOverflow="extendDomain"/>
-        <Scatter
-          data={data}
-          shape={<CustomImageDot />}
-        //   shape={<CustomDot selectedPoint={selectedPoint} />}
-        // {...data.map((entry, index) => (
-        //     <Scatter
-        //       key={`dot-${index}`}
-        //       data={[entry]}
-        //       fill={`url(#pattern-${index})`}
-        //     />
-        //   ))}
-        >
-        </Scatter>
-        {/* <Line type="linear" data={testline} dataKey="y" stroke="#000000" dot={false} strokeWidth={2} /> */}
+            ifOverflow="extendDomain" 
+        />
       </ScatterChart>
-      {/* </ComposedChart> */}
-    </ResponsiveContainer>
-  );
-}
+      </ResponsiveContainer>
+    );
+  }
+  

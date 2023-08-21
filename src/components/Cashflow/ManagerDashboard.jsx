@@ -55,7 +55,7 @@ export default function ManagerDashboard(props) {
                 
                 <Paper
                     style={{
-                        margin: '25px',
+                        margin: '1px',
                         padding: 0,
                         backgroundColor: theme.palette.primary.main,
                         height: 200,

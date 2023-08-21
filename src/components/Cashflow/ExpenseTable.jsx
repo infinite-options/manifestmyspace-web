@@ -38,7 +38,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
                 (expenseSummary
                     .find((reS) => reS.purchase_type === "MAINTENANCE")
-                            .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                            .total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalMaintenance ? totalExpenseByType.totalMaintenance : '0.00'}
                 </Typography>
                 </TableCell>
@@ -51,7 +51,7 @@ const ExpenseTable = (props) => {
             <TableBody>
                 {expenseList ? 
                 (expenseList.map((rev, i) => {
-                    return rev.purchase_type === "MAINTENANCE" && rev.payment_status === "PAID" ? (
+                    return rev.purchase_type === "MAINTENANCE" && rev.payment_status !== "UNPAID" ? (
                         <TableRow>
                         <TableCell align="left">
                         <Typography sx={{fontSize: '12px'}}>
@@ -61,7 +61,7 @@ const ExpenseTable = (props) => {
                         </TableCell>
                         <TableCell align="right">
                         <Typography sx={{fontSize: '12px'}}>
-                            $ {rev.sum_paid_amount}
+                            $ {rev.total_paid}
                         </Typography>
                         </TableCell>
                         </TableRow>
@@ -95,7 +95,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "REPAIRS") ?
                 (expenseSummary
                     .find((reS) => reS.purchase_type === "REPAIRS")
-                    .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                    .total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalRepairs ? totalExpenseByType.totalRepairs : '0.00'}
                 </Typography>
                 </TableCell>
@@ -108,7 +108,7 @@ const ExpenseTable = (props) => {
             <TableBody>
                 {expenseList ? 
                 (expenseList.map((rev, i) => {
-                    return rev.purchase_type === "REPAIRS" && rev.payment_status === "PAID" ? (
+                    return rev.purchase_type === "REPAIRS" && rev.payment_status !== "UNPAID" ? (
                         <TableRow>
                         <TableCell align="left">
                         <Typography sx={{fontSize: '12px'}}>
@@ -118,7 +118,7 @@ const ExpenseTable = (props) => {
                         </TableCell>
                         <TableCell align="right">
                         <Typography sx={{fontSize: '12px'}}>
-                            $ {rev.sum_paid_amount}
+                            $ {rev.total_paid}
                         </Typography>
                         </TableCell>
                         </TableRow>
@@ -152,7 +152,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "MORTGAGE") ?
                 (expenseSummary
                     .find((reS) => reS.purchase_type === "MORTGAGE")
-                    .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                    .total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalMortgage ? totalExpenseByType.totalMortgage : '0.00'}
                 </Typography>
                 </TableCell>
@@ -165,7 +165,7 @@ const ExpenseTable = (props) => {
             <TableBody>
                 {expenseList ? 
                 (expenseList.map((rev, i) => {
-                    return rev.purchase_type === "MORTGAGE" && rev.payment_status === "PAID" ? (
+                    return rev.purchase_type === "MORTGAGE" && rev.payment_status !== "UNPAID" ? (
                         <TableRow>
                         <TableCell align="left">
                         <Typography sx={{fontSize: '12px'}}>
@@ -175,7 +175,7 @@ const ExpenseTable = (props) => {
                         </TableCell>
                         <TableCell align="right">
                         <Typography sx={{fontSize: '12px'}}>
-                            $ {rev.sum_paid_amount}
+                            $ {rev.total_paid}
                         </Typography>
                         </TableCell>
                         </TableRow>
@@ -209,7 +209,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "TAXES") ?
                 (expenseSummary
                     .find((reS) => reS.purchase_type === "TAXES")
-                    .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                    .total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalTaxes ? totalExpenseByType.totalTaxes : '0.00'}
                 </Typography>
                 </TableCell>
@@ -222,7 +222,7 @@ const ExpenseTable = (props) => {
             <TableBody>
                 {expenseList ? 
                 (expenseList.map((rev, i) => {
-                    return rev.purchase_type === "TAXES" && rev.payment_status === "PAID" ? (
+                    return rev.purchase_type === "TAXES" && rev.payment_status !== "UNPAID" ? (
                         <TableRow>
                         <TableCell align="left">
                         <Typography sx={{fontSize: '12px'}}>
@@ -232,7 +232,7 @@ const ExpenseTable = (props) => {
                         </TableCell>
                         <TableCell align="right">
                         <Typography sx={{fontSize: '12px'}}>
-                            $ {rev.sum_paid_amount}
+                            $ {rev.total_paid}
                         </Typography>
                         </TableCell>
                         </TableRow>
@@ -266,7 +266,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "INSURANCE") ?
                 (expenseSummary
                     .find((reS) => reS.purchase_type === "INSURANCE")
-                    .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                    .total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalInsurance ? totalExpenseByType.totalInsurance : '0.00'}
                 </Typography>
                 </TableCell>
@@ -279,7 +279,7 @@ const ExpenseTable = (props) => {
             <TableBody>
                 {expenseList ? 
                 (expenseList.map((rev, i) => {
-                    return rev.purchase_type === "INSURANCE" && rev.payment_status === "PAID" ? (
+                    return rev.purchase_type === "INSURANCE" && rev.payment_status !== "UNPAID" ? (
                         <TableRow>
                         <TableCell align="left">
                         <Typography sx={{fontSize: '12px'}}>
@@ -289,7 +289,7 @@ const ExpenseTable = (props) => {
                         </TableCell>
                         <TableCell align="right">
                         <Typography sx={{fontSize: '12px'}}>
-                            $ {rev.sum_paid_amount}
+                            $ {rev.total_paid}
                         </Typography>
                         </TableCell>
                         </TableRow>
@@ -323,7 +323,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "UTILITY") ?
                 (expenseSummary
                     .find((reS) => reS.purchase_type === "UTILITY")
-                    .sum_paid_amount.toFixed(2)) : '0.00'} */}
+                    .total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalUtilities ? totalExpenseByType.totalUtilities : '0.00'}
                 </Typography>
                 </TableCell>
@@ -336,7 +336,7 @@ const ExpenseTable = (props) => {
             <TableBody>
                 {expenseList ? 
                 (expenseList.map((rev, i) => {
-                    return rev.purchase_type === "UTILITY" && rev.payment_status === "PAID" ? (
+                    return rev.purchase_type === "UTILITY" && rev.payment_status !== "UNPAID" ? (
                         <TableRow>
                         <TableCell align="left">
                         <Typography sx={{fontSize: '12px'}}>
@@ -346,7 +346,7 @@ const ExpenseTable = (props) => {
                         </TableCell>
                         <TableCell align="right">
                         <Typography sx={{fontSize: '12px'}}>
-                            $ {rev.sum_paid_amount}
+                            $ {rev.total_paid}
                         </Typography>
                         </TableCell>
                         </TableRow>
@@ -382,7 +382,7 @@ const ExpenseTable = (props) => {
                 {/* {expenseSummary && expenseSummary.find((revS) => revS.purchase_type === "MANAGEMENT") ?
                 (expenseSummary.find(
                   (revS) => revS.purchase_type === "MANAGEMENT"
-                ).sum_paid_amount.toFixed(2)) : '0.00'} */}
+                ).total_paid.toFixed(2)) : '0.00'} */}
                 {totalExpenseByType && totalExpenseByType.totalManagement ? totalExpenseByType.totalManagement : '0.00'}
                 </Typography>
               </TableCell>
@@ -395,7 +395,7 @@ const ExpenseTable = (props) => {
           <TableBody>
             {expenseList ? 
             (expenseList.map((rev, i) => {
-                return rev.purchase_type.includes("OWNER PAYMENT") && rev.payment_status === "PAID" ? (
+                return rev.purchase_type.includes("OWNER PAYMENT") && rev.payment_status !== "UNPAID" ? (
                     <TableRow>
                     <TableCell align="left">
                       <Typography sx={{fontSize: '12px'}}>
@@ -405,7 +405,7 @@ const ExpenseTable = (props) => {
                     </TableCell>
                     <TableCell align="right">
                       <Typography sx={{fontSize: '12px'}}>
-                        $ {rev.sum_paid_amount}
+                        $ {rev.total_paid}
                       </Typography>
                     </TableCell>
                     </TableRow>
