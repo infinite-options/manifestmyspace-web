@@ -4,6 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import PropertyListData from "../Property/PropertyListData";
 import theme from "../../theme/theme";
 import File_dock_add from "../../images/File_dock_add.png";
+// import PropertyData from "../Property/PropertyData";
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
 import { alpha, makeStyles } from "@material-ui/core/styles";

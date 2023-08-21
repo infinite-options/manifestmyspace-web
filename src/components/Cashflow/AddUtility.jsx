@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PropertyListData from "../Property/PropertyListData";
+// import PropertyData from "../Property/PropertyData";
 import AddIcon from "@mui/icons-material/Add";
 import theme from "../../theme/theme";
 import File_dock_add from "../../images/File_dock_add.png";

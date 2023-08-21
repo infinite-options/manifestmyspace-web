@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
 import PropertyListData from "../Property/PropertyListData";
 import { alpha, makeStyles } from "@material-ui/core/styles";
+// import PropertyData from "../Property/PropertyData";
 
 const useStyles = makeStyles((theme) => ({
   root: {

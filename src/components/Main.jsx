@@ -45,10 +45,25 @@ import ManagerDashboard from "./Cashflow/ManagerDashboard";
 import Settings from "./Settings/SeetingsOwner";
 
 import PropertyInfo from "./Property/PropertyInfo";
-import MaintenanceWidget from "./MaintenanceWidget";
+import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
 import ContactDetails from "./Contacts/ContactDetails";
+
+import PropertyList from "./Property/PropertyList";
+import Dashboard from "./Dashboard";
+import Maintenance from "./Maintenance/Maintenance";
+import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
+import MaintenanceRequestDetail from "./Maintenance/MaintenanceRequestDetail";
+import AddProperty from "./Property/AddProperty";
+import EditProperty from "./Property/EditProperty";
+import PropertyDetail from "./Property/PropertyDetail";
+import TenantMaintenance from "./Maintenance/TenantMaintenance";
+import AddTenantMaintenanceItem from "./Maintenance/AddTenantMaintenanceItem";
+import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigator";
+import TenantProperty from "./Property/TenantProperty";
+import TenantMaintenanceItem from "./Maintenance/TenantMaintenanceItem";
+import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
 
 function Main() {
   return (
@@ -103,6 +118,21 @@ function Main() {
             <Route exact path="/propertyInfo" element={<PropertyInfo />} />
             <Route exact path="/contacts" element={<Contacts />} />
             <Route exact path="/contactDetails" element={<ContactDetails />} />
+
+            <Route exact path="/maintenance" element={<Maintenance />} />
+            <Route exact path="/" element={<Dashboard />} />
+
+            <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
+            <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
+            <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
+            <Route exact path="/addProperty" element={<AddProperty />} />
+            <Route exact path="/editProperty" element={<EditProperty />} />
+            <Route exact path="/propertyDetail" element={<PropertyDetail />} />
+            <Route exact path="/tenantMaintenance" element={<TenantMaintenance />} />
+            <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
+            <Route exact path="/myProperty" element={<TenantProperty />} />
+            {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
+            <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
           </Routes>
         </Router>
       </div>
