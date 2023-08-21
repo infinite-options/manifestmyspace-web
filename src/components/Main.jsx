@@ -3,8 +3,9 @@ import Header from "./Header";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CashflowOwner from "./Cashflow/CashflowOwner";
 // import Footer from './Footer';
+
 import SelectMonthComponent from "./SelectMonthComponent";
-import PropertyData from "./Property/PropertyData";
+import PropertyListData from "./Property/PropertyListData";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
@@ -12,8 +13,6 @@ import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
 import FindProperty from "./Property/FindProperty";
-
-import MaintenanceWidjet from "./MaintenanceWidget";
 
 import Announcement from "./Announcement/Announcement";
 import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
@@ -45,6 +44,12 @@ import CashflowManager from "./Cashflow/CashflowManager";
 import ManagerDashboard from "./Cashflow/ManagerDashboard";
 import Settings from "./Settings/SeetingsOwner";
 
+import PropertyInfo from "./Property/PropertyInfo";
+import MaintenanceWidget from "./MaintenanceWidget";
+
+import Contacts from "./Contacts/Contacts";
+import ContactDetails from "./Contacts/ContactDetails";
+
 function Main() {
   return (
     <>
@@ -52,9 +57,9 @@ function Main() {
         <Header></Header>
         <Router>
           <Routes>
-            <Route exact path="/dashboard" element={<MaintenanceWidjet />} />
+            <Route exact path="/dashboard" element={<MaintenanceWidget />} />
             <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
-            <Route exact path="/properties" element={<PropertyData />} />
+            <Route exact path="/properties" element={<PropertyListData />} />
             <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
             <Route exact path="/addExpense" element={<AddExpense />} />
             <Route exact path="/addRevenue" element={<AddRevenue />} />
@@ -94,6 +99,10 @@ function Main() {
             <Route exact path="/cashflowManager" element={<CashflowManager />} />
             <Route exact path="/managerDashboard" element={<ManagerDashboard />} />
             <Route exact path="/settingsOwner" element={<Settings />} />
+
+            <Route exact path="/propertyInfo" element={<PropertyInfo />} />
+            <Route exact path="/contacts" element={<Contacts />} />
+            <Route exact path="/contactDetails" element={<ContactDetails />} />
           </Routes>
         </Router>
       </div>

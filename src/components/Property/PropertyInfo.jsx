@@ -30,10 +30,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import ReactImageGallery from 'react-image-gallery';
-<<<<<<< HEAD
-=======
 import { useLocation } from 'react-router-dom';
->>>>>>> nb_0814
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -41,8 +38,6 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault('America/Los_Angeles');
 
 const PropertyInfo = (props) => {
-<<<<<<< HEAD
-=======
     const location = useLocation();
     const index = location.state.index;
     const property = location.state.data;
@@ -54,7 +49,6 @@ const PropertyInfo = (props) => {
         minimumFractionDigits: 0,
     }).format(property.property_listed_rent);
 
->>>>>>> nb_0814
     const images = [
         {
             original: 'https://picsum.photos/id/1018/1000/600/',
@@ -144,11 +138,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '25px',
                                 }}
                             >
-<<<<<<< HEAD
-                                Pacific Oaks
-=======
                                 {property.property_address}
->>>>>>> nb_0814
                             </Typography>
                             <Box>
                                 <LocationOn /> <TurnedInNot />
@@ -160,9 +150,6 @@ const PropertyInfo = (props) => {
                                 fontSize: '18px',
                             }}
                         >
-<<<<<<< HEAD
-                            103 N. Abel St, Milpitas CA 95035
-=======
                             {property.property_address +
                                 ', ' +
                                 property.property_city +
@@ -170,7 +157,6 @@ const PropertyInfo = (props) => {
                                 property.property_state +
                                 ' ' +
                                 property.property_zip}
->>>>>>> nb_0814
                         </Typography>
                     </Stack>
                     <Stack
@@ -264,11 +250,7 @@ const PropertyInfo = (props) => {
                                 fontSize: '16px',
                             }}
                         >
-<<<<<<< HEAD
-                            <strong>$3213</strong> Per Month
-=======
                             <strong>{listed_rent}</strong> Per Month
->>>>>>> nb_0814
                         </Typography>
                         <Button
                             variant="contained"
@@ -324,11 +306,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '15px',
                                 }}
                             >
-<<<<<<< HEAD
-                                Condo
-=======
                                 {property.property_type}
->>>>>>> nb_0814
                             </Typography>
                             <Typography
                                 sx={{
@@ -353,11 +331,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '15px',
                                 }}
                             >
-<<<<<<< HEAD
-                                2
-=======
                                 {property.property_num_beds}
->>>>>>> nb_0814
                             </Typography>
                             <Typography
                                 sx={{
@@ -382,11 +356,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '15px',
                                 }}
                             >
-<<<<<<< HEAD
-                                2
-=======
                                 {property.property_num_baths}
->>>>>>> nb_0814
                             </Typography>
                             <Typography
                                 sx={{
@@ -411,11 +381,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '15px',
                                 }}
                             >
-<<<<<<< HEAD
-                                1200
-=======
                                 {property.property_area}
->>>>>>> nb_0814
                             </Typography>
                             <Typography
                                 sx={{
@@ -492,15 +458,7 @@ const PropertyInfo = (props) => {
                             Description
                         </Typography>
                         <Typography sx={{ textAlign: 'justify' }}>
-<<<<<<< HEAD
-                            Lorem ipsum, dolor sit amet consectetur adipisicing
-                            elit. Modi beatae doloribus incidunt quidem,
-                            reiciendis ratione praesentium illo deleniti,
-                            molestias sint id ullam laboriosam, culpa molestiae
-                            qui nulla dolores vero cum.
-=======
                             {property.property_description}
->>>>>>> nb_0814
                         </Typography>
                         <Typography
                             sx={{ color: theme.typography.common.blue }}
@@ -571,9 +529,6 @@ const PropertyInfo = (props) => {
                                 color: theme.typography.primary.black,
                             }}
                         >
-<<<<<<< HEAD
-                            103 N. Abel St, Milpitas CA 95035
-=======
                             {property.property_address +
                                 ', ' +
                                 property.property_city +
@@ -581,7 +536,6 @@ const PropertyInfo = (props) => {
                                 property.property_state +
                                 ' ' +
                                 property.property_zip}
->>>>>>> nb_0814
                         </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
