@@ -56,8 +56,6 @@ function Main() {
             <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
             <Route exact path="/addExpense" element={<AddExpense />} />
             <Route exact path="/addRevenue" element={<AddRevenue />} />
-            <Route exact path="/propertyRent" element={<PropertyRentFlow />} />
-            <Route exact path="/propertyRentDetail" element={<PropertyRentDetail />} />
             <Route exact path="/addUtility" element={<AddUtility />} />
             <Route exact path="/findProperty" element={<FindProperty />} />
 
