@@ -246,17 +246,17 @@ export default function MaintenanceRequestDetail(){
                                         let color = greyOutTab(item.mapping, allData, item.color)
                                         return (
                                             <Tab key={index}
-                                            disabled={deactivateTab(item.mapping, allData)}
-                                            {...a11yProps(index)} 
-                                            sx={{
-                                                backgroundColor: color,
-                                                borderTopLeftRadius: '10px',
-                                                borderTopRightRadius: '10px',
-                                                maxHeight: '5px',
-                                                minWidth: '5px',
-                                                padding: '0px',
-                                            }}
-                                        />
+                                                disabled={deactivateTab(item.mapping, allData)}
+                                                {...a11yProps(index)} 
+                                                sx={{
+                                                    backgroundColor: color,
+                                                    borderTopLeftRadius: '10px',
+                                                    borderTopRightRadius: '10px',
+                                                    height: '10%',
+                                                    minWidth: '5px',
+                                                    padding: '0px',
+                                                }}
+                                            />
                                         )
                                     }
                                 )}

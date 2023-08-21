@@ -44,6 +44,7 @@ import maintenanceIcon from './maintenanceIcon.png';
 import samplePropertyData from './samplePropertyData';
 
 import { get } from "../utils/api"
+import PropertyData from './PropertyData';
 
 const SearchBar = () => {
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -81,66 +82,106 @@ const SearchBar = () => {
     );
   };
 
+const paymentStatusColorMap = {
+    "Paid On Time": theme.palette.priority.clear,
+    "Partially Paid": theme.palette.priority.low,
+    "Paid Late": theme.palette.priority.medium,
+    "Not Paid": theme.palette.priority.high,
+    "Vacant": theme.palette.priority.clear
+}
+
+const paymentStatusMap = {
+    "UNPAID": "Not Paid",
+    "PAID LATE": "Paid Late",
+    "PAID": "Paid On Time",
+    "Partial": "Partially Paid",
+    "VACANT": "Vacant"
+}
+
+function getPaymentStatusColor(paymentStatus){
+    if (paymentStatus === null) {
+        return paymentStatusColorMap["Vacant"]
+    } else{
+        const status = paymentStatusMap[paymentStatus]
+        return paymentStatusColorMap[status]
+    }
+}
+
+
+function getPaymentStatus(paymentStatus){
+    if (paymentStatus === null) {
+        return paymentStatusMap["VACANT"]
+    } else{
+        const status = paymentStatusMap[paymentStatus]
+        return status
+    }
+}
+
+
 export default function PropertyList({}){
     let navigate = useNavigate();
     const [propertyList, setPropertyList] = useState([])
     const [maintenanceData, setMaintenanceData] = useState([])
 
-    const paymentStatusMap = {
-        "Paid On Time": theme.palette.priority.clear,
-        "Partially Paid": theme.palette.priority.low,
-        "Paid Late": theme.palette.priority.medium,
-        "Not Paid": theme.palette.priority.high
-    }
 
     useEffect(() => {
-        const getMaintenaceDataForProperties = async (propertyList) =>{
-            console.log("getMaintenaceDataForProperties")
-            console.log(propertyList)
-            let maintenanceData = {};
-            for (const property of propertyList){
-                console.log("property", property)
-                const data = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_id}`)
-                const propertyMaintenanceData = await data.json();
-                console.log("propertyMaintenanceData", propertyMaintenanceData)
-                maintenanceData[property.property_id] = propertyMaintenanceData
-            }
-            console.log("maintenanceData", maintenanceData)
-            // setMaintenanceData([...maintenanceData])
-        }
-
         console.log("PropertyList useEffect")
         console.log(propertyList)
         const fetchData = async () => {
-            const data = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-            const propertyData = await data.json();
-            console.log("propertyData", propertyData.Property)
-            setPropertyList([...propertyData.Property])
+            const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
+            const propertyData = await response.json();
+            console.log("propertyData", propertyData.Property.result)
+            // console.log("propertyData", propertyData.Property)
+            setPropertyList([...propertyData.Property.result])
+            
+            // console.log("getMaintenaceDataForProperties")
+            
+            let maintenanceData = {};
+            const maintenancePromises = propertyData.Property.result.map(async (property) => {
+                // console.log("property", property)
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`)
+                const propertyMaintenanceData = await response.json();
+                const deconstructedData = propertyMaintenanceData.MaintenanceProjects.result
+                // console.log(deconstructedData[0].property_uid, deconstructedData) 
+                return deconstructedData
+            })
+
+
+            const allMaintenanceData = await Promise.all(maintenancePromises);
+            console.log("allMaintenanceData", allMaintenanceData.length, allMaintenanceData)
+            // allMaintenanceData.forEach((propertyMaintenanceData, index) => {
+
+            //     console.log("propertyMaintenanceData", propertyMaintenanceData[0].property_uid, propertyMaintenanceData)
+                
+            //     //if (!maintenanceData[propertyData.Property[index].property_uid]){
+            //     //    maintenanceData[propertyData.Property[index].property_uid] = []
+            //     //}
+            //     maintenanceData[propertyData.Property[index].property_uid].push(propertyMaintenanceData)
+            // })
+
+            // console.log("allMaintenanceData", maintenanceData.length, typeof(maintenanceData))
+            // console.log("allMaintenanceData", maintenanceData)
+            // console.log("propertyList", propertyData.Property.length, typeof(propertyData.Property))
+
+            setMaintenanceData([...allMaintenanceData]);
+
         }
         fetchData()
-        getMaintenaceDataForProperties(propertyList)
     }, [])
 
-    // const getMaintenaceDataForProperties = async (propertyList) =>{
-    //     console.log("getMaintenaceDataForProperties")
-    //     console.log(propertyList)
-    //     let maintenanceData = {};
-    //     for (const property of propertyList){
-    //         console.log("property", property)
-    //         const data = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_id}`)
-    //         const propertyMaintenanceData = await data.json();
-    //         console.log("propertyMaintenanceData", propertyMaintenanceData)
-    //         maintenanceData[property.property_id] = propertyMaintenanceData
-    //     }
-    //     console.log("maintenanceData", maintenanceData)
-    //     return maintenanceData
-    // }
-    
-
-    function handlePropertyDetailNavigation(propertyId, index, propertyList){
+    function handlePropertyDetailNavigation(propertyId, index, propertyList, maintenanceData){
         console.log("handlePropertyDetailNavigation")
-        navigate(`/propertyDetail`, {state: {propertyId, index, propertyList}});
+        navigate(`/propertyDetail`, {state: {propertyId, index, propertyList, maintenanceData}});
     }
+
+    function getCoverPhoto(property){
+        if (property.property_images){
+            let imagesArray = JSON.parse(property.property_images)
+            return imagesArray[0]
+        } else {
+            return propertyImage
+        }
+    }   
 
     return (
         <ThemeProvider theme={theme}>
@@ -192,7 +233,7 @@ export default function PropertyList({}){
                         <List>
                             {propertyList.map((property, index) => (
                                 <ListItem
-                                    key={property.id}
+                                    key={index}
                                     style={{
                                         justifyContent: 'space-between',
                                         display: 'flex',
@@ -202,9 +243,9 @@ export default function PropertyList({}){
                                         paddingLeft: '10px',
                                         paddingRight: '10px',
                                     }}
-                                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList, maintenanceData)}
                                 >
-                                    <Avatar src={propertyImage} alt="property image"
+                                    <Avatar src={getCoverPhoto(property)} alt="property image"
                                         sx={{
                                             borderRadius: '0',
                                             marginRight: '10px',
@@ -239,7 +280,7 @@ export default function PropertyList({}){
                                     </Box>
                                     <Box   
                                         sx={{
-                                            backgroundColor: paymentStatusMap[property.paymentStatus],
+                                            backgroundColor: getPaymentStatusColor(property.payment_status),
                                             width: "25%", // Ensure it takes up full width of its parent
                                             height: "100%", // Ensure it takes up full height of its parent
                                             display: "flex",
@@ -260,13 +301,13 @@ export default function PropertyList({}){
                                                 textAlign: "center", // Ensure text is centered within itself                                    
                                             }}
                                         >
-                                            {property.paymentStatus}
+                                            {getPaymentStatus(property.payment_status)}
                                         </Typography>
                                     </Box>
                                     <Badge
                                         overlap="circular"
                                         color="error"
-                                        badgeContent={0} //{property.maintenanceItems.length}
+                                        badgeContent={(maintenanceData && maintenanceData[index]) ? maintenanceData[index].length : 0}
                                         anchorOrigin={{
                                             vertical: 'top',
                                             horizontal: 'right',
@@ -290,3 +331,4 @@ export default function PropertyList({}){
     )
 }
 
+export { SearchBar, getPaymentStatusColor, getPaymentStatus };

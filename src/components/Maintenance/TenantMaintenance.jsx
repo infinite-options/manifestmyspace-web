@@ -44,10 +44,11 @@ import TenantMaintenanceView from './TenantMaintenanceView';
 import AddTenantMaintenanceItem from './AddTenantMaintenanceItem';
 
 
-export default function TenantMaintenance({propertyId}){
+export default function TenantMaintenance(){
     const [filterToggle, setFilterToggle] = useState(false);
     const [tenantMaintenanceData, setTenantMaintenanceData] = useState([]);
     const [newRequestBool, setNewRequestBool] = useState(false);
+    const [propertyId, setPropertyId] = useState("200-000029")
 
     let navigate = useNavigate();
 
@@ -57,14 +58,6 @@ export default function TenantMaintenance({propertyId}){
     const handleFilterToggle = () => {
         setFilterToggle((prev) => !prev);
     };
-
-    // const tableTextStyle = {
-    //     backgroundColor: color, 
-    //     color: '#FFFFFF', 
-    //     fontFamily: 'Source Sans Pro', 
-    //     fontSize: '15px', 
-    //     fontWeight:600,
-    // }
 
 
     useEffect(() => {
@@ -176,6 +169,7 @@ export default function TenantMaintenance({propertyId}){
                     {newRequestBool ?
                         (<AddTenantMaintenanceItem
                             closeAddTenantMaintenanceItem={handleNewRequestButton}
+                            propertyId={propertyId}
                         /> ):(
                             <TenantMaintenanceView
                                 tenantMaintenanceData={tenantMaintenanceData}

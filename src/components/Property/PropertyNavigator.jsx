@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge } from '@mui/material';
 import theme from '../../theme/theme';
 import propertyImage from './propertyImage.png';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -9,11 +9,13 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import ArrowLeft from './ArrowLeft.png';
 import ArrowRight from './ArrowRight.png';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import LeaseIcon from './leaseIcon.png';
 import CreateIcon from '@mui/icons-material/Create';
+import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 
 
-export default function PropertyNavigator({propertyId, index, propertyData}){
+export default function PropertyNavigator({propertyId, index, propertyData, maintenanceData, paymentStatus, paymentStatusColor}){
     const [currentIndex, setCurrentIndex] = useState(index);
     const [currentId, setCurrentId] = useState(propertyId);
     const [activeStep, setActiveStep] = useState(0);
@@ -22,21 +24,37 @@ export default function PropertyNavigator({propertyId, index, propertyData}){
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const item = propertyData[currentIndex];
+    const maintenanceItems = maintenanceData[currentIndex];
 
-    console.log(propertyData[currentIndex].property_images)
-    
-    const paymentStatusMap = {
-        "Paid On Time": theme.palette.priority.clear,
-        "Partially Paid": theme.palette.priority.low,
-        "Paid Late": theme.palette.priority.medium,
-        "Not Paid": theme.palette.priority.high
+    console.log(item)
+    console.log(maintenanceItems)
+
+    function displayTopMaintenanceItem(maintenanceItems){
+        console.log(maintenanceItems)
+        if(maintenanceItems && maintenanceItems.length > 0){
+            const date = new Date(maintenanceItems[0].maintenance_request_created_date)
+            // console.log(date.toLocaleDateString())
+            const title = maintenanceItems[0].maintenance_title 
+            // console.log(title)
+            return date.toLocaleDateString() + "  " + title
+        } else {
+            return "No Open Maintenance Tickets"
+        }
     }
 
-    function getPaymentStatusColor(leaseInfo){
-        const data = JSON.parse(leaseInfo);
-        // return paymentStatusMap[paymentStatus];
-        console.log(data)
+    function numberOfMaintenanceItems(maintenanceItems){
+        console.log(maintenanceItems)
+        if(maintenanceItems && maintenanceItems.length > 0){
+            return maintenanceItems.length
+        } else {
+            return 0
+        }
     }
+
+    function navigateToMaintenanceAccordion(){
+        console.log("click to maintenance accordion for property")
+    }
+
     
     const handleNextCard = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
@@ -216,12 +234,12 @@ export default function PropertyNavigator({propertyId, index, propertyData}){
                             alignItems="center"
                             direction="column"
                             sx={{
-                                backgroundColor: paymentStatusMap[item.paymentStatus],
+                                backgroundColor: getPaymentStatusColor(item.payment_status),
                             }}
                         >   
                             <Grid item xs={12}>
                                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                    <b>Rent Status:</b> {getPaymentStatusColor(item.lease_rent)}
+                                    <b>Rent Status:</b> {getPaymentStatus(item.payment_status)}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -412,27 +430,45 @@ export default function PropertyNavigator({propertyId, index, propertyData}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
+                                        
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                    paddingRight: "10px"
+                                                }}
+                                            >
+                                                Open Maintenance Tickets
+                                            </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
                                                 color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontWeight: theme.typography.light.fontWeight,
                                                 fontSize:theme.typography.smallFont,
-                                                paddingRight: "10px"
                                             }}
                                         >
-                                            Open Maintenance Tickets
+                                            {displayTopMaintenanceItem(maintenanceItems)}
                                         </Typography>
-                                        <Typography
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: theme.typography.primary.black,
-                                                    fontWeight: theme.typography.light.fontWeight,
-                                                    fontSize:theme.typography.smallFont,
-                                                }}
-                                            >
-                                                05/05/2021: Water Heater
-                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Badge badgeContent={numberOfMaintenanceItems(maintenanceItems)} color="error" width="20px" height="20px" 
+                                            sx={{
+                                                paddingRight:"10px"
+                                            }}
+                                        >
+                                        </Badge>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        {maintenanceItems && maintenanceItems.length > 0 ? (
+                                            <Box display="flex" alignItems="right">
+                                                <KeyboardArrowRightIcon sx={{paddingRight: "10px"}} onClick={() => navigateToMaintenanceAccordion()}/>
+                                            </Box>
+                                        ) : (null)}
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography

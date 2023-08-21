@@ -19,18 +19,26 @@ export default function MaintenanceWidget(){
 
     // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
     useEffect(() => {
+        const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
             const jsonData = await response.json()
-            console.log(jsonData.MaintenanceStatus)
-            // for (const item of jsonData.MaintenanceStatus) {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = item.num;
-            //     }
-            // }
+            console.log(jsonData.MaintenanceStatus.result)
+            for (const item of jsonData.MaintenanceStatus.result) {
+                if (item.maintenance_request_status === null) {
+                    continue
+                }
+                if (!dataObject[item.maintenance_request_status]){
+                    console.log("item.maintenance_request_status", item.maintenance_request_status)
+                    dataObject[item.maintenance_request_status] = item.num;
+                }
+            }
             // console.log("dataObject from server", dataObject)
-            setMaintenanceRequests(prevData => ({ ...prevData, ...jsonData.MaintenanceStatus }))
+            
+
+            console.log(dataObject)
+            setMaintenanceRequests(prevData => ({ ...prevData, ...dataObject }))
         }
         fetchData();
     }, []);

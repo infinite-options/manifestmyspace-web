@@ -43,6 +43,7 @@ export default function AddProperty({}){
     const [bathrooms, setBathrooms] = useState('');
 
     const [issue, setIssue] = useState('');
+    const [unit, setUnit] = useState('');
 
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('left');
@@ -59,7 +60,7 @@ export default function AddProperty({}){
 
     const handleUnitChange = (event) => {
         console.log("handleUnitChange", event.target.value)
-        setIssue(event.target.value);
+        setUnit(event.target.value);
     };
 
     const handleCityChange = (event) => {
@@ -117,25 +118,40 @@ export default function AddProperty({}){
         event.preventDefault();
         console.log(event.target)
 
+        const payload = {
+            "property_owner_id" : "100-000003",
+            "po_owner_percent" : 100,
+            "available_to_rent" : "0",
+            "active_date" : "2023-08-01",
+            "address" : address,
+            "unit" : unit,
+            "city" : city,
+            "state" : "state",
+            "zip" : "zip",
+            "property_type" : type,
+            "bedrooms" : bedrooms,
+            "bathrooms" : bathrooms,
+            "property_area" : squareFootage,
+            "listed" : 0,
+            "deposit" : "deposit",
+            "pets_allowed" : 1,
+            "deposit_for_rent" : 0,
+            "property_images" : "",
+            "property_taxes" : 500,
+            "property_mortgages" : 0,
+            "property_insurance" : 0,
+            "property_featured" : 0,
+            "property_description" : "This is a Tiny Home",
+            "property_notes" : "This is a Really Tiny Home"
+        }
+
         const postData = async () => {
             await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    address: address,
-                    city: city,
-                    type: type,
-                    squareFootage: squareFootage,
-                    bedrooms: bedrooms,
-                    bathrooms: bathrooms,
-                    issue: issue,
-                    cost: cost,
-                    title: title,
-                    description: description,
-                    file: file,
-                }),
+                body: JSON.stringify(payload),
             })
         }
         postData();

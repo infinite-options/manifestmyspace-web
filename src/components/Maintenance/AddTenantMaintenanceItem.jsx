@@ -34,10 +34,11 @@ import theme from '../../theme/theme';
 
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){
+export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, propertyId}){
     const location = useLocation();
     let navigate = useNavigate();
 
+    const [selectedImageList, setSelectedImageList] = useState([]);
     const [property, setProperty] = useState('');
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
@@ -107,17 +108,36 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
             completed: toggleGroupValue,
             file: file
         }
+        const formData = new FormData();
+
+        formData.append("maintenance_property_id", propertyId);
+        formData.append("maintenance_title", title);
+        formData.append("maintenance_desc", description);
+        formData.append("maintenance_request_type", issue);
+        formData.append("maintenance_request_created_by", "600-000003");
+        formData.append("maintenance_priority", toggleAlignment);
+        formData.append("maintenance_can_reschedule", 1);
+        formData.append("maintenance_assigned_business", null);
+        formData.append("maintenance_assigned_worker", null);
+        formData.append("maintenance_scheduled_date", null);
+        formData.append("maintenance_scheduled_time", null);
+        formData.append("maintenance_frequency", "One Time");
+        formData.append("maintenance_notes", null);
+        formData.append("maintenance_request_created_date", new Date().toISOString()); // Convert to ISO string format
+        formData.append("maintenance_request_closed_date", null);
+        formData.append("maintenance_request_adjustment_date", null);
 
         const postData = async () => {
             await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/form-data",
                 },
-                body: JSON.stringify(payload),
+                body: formData,
             })
         }
         postData();
+
     }
 
     
@@ -342,7 +362,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
 
                         {/* File Upload Field */}
                         <Grid item xs={12}>
-                            <ImageUploader/>
+                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
                             {/* <Container fixed sx={{
                                 backgroundColor: 'white',
                                 borderColor: 'black',

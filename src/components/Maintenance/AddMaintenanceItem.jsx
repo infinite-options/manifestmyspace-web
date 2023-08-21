@@ -32,11 +32,12 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ImageUploader from '../ImageUploader';
 
 import theme from '../../theme/theme';
+import { type } from "@testing-library/user-event/dist/type";
 
 export default function AddMaintenanceItem({}){
     const location = useLocation();
     let navigate = useNavigate();
-
+    const [propertyId, setPropertyId] = useState('200-000029')
     const [property, setProperty] = useState('');
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
@@ -45,6 +46,8 @@ export default function AddMaintenanceItem({}){
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [file, setFile] = useState('');
+    const [selectedImageList, setSelectedImageList] = useState([]);
+
 
 
     const handlePropertyChange = (event) => {
@@ -98,23 +101,40 @@ export default function AddMaintenanceItem({}){
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const payload = {
-            property: property,
-            issue: issue,
-            priority: toggleGroupValue,
-            cost: cost,
-            title: title,
-            description: description,
-            file: file,
-        }
+        const formData = new FormData();
+
+        formData.append("maintenance_property_id", propertyId);
+        formData.append("maintenance_title", title);
+        formData.append("maintenance_desc", description);
+        formData.append("maintenance_request_type", issue);
+        formData.append("maintenance_request_created_by", "600-000003");
+        formData.append("maintenance_priority", toggleAlignment);
+        formData.append("maintenance_can_reschedule", 1);
+        formData.append("maintenance_assigned_business", null);
+        formData.append("maintenance_assigned_worker", null);
+        formData.append("maintenance_scheduled_date", null);
+        formData.append("maintenance_scheduled_time", null);
+        formData.append("maintenance_frequency", "One Time");
+        formData.append("maintenance_notes", null);
+        formData.append("maintenance_request_created_date", new Date().toISOString()); // Convert to ISO string format
+        formData.append("maintenance_request_closed_date", null);
+        formData.append("maintenance_request_adjustment_date", null);
+
+        console.log(formData)
+
+
         const postData = async () => {
-            await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/form-data",
                 },
-                body: JSON.stringify(payload),
+                body: formData,
             })
+
+            if(response){
+                console.log(response)
+            }
         }
         postData();
     }
@@ -373,7 +393,7 @@ export default function AddMaintenanceItem({}){
 
                                 {/* File Upload Field */}
                                 <Grid item xs={12}>
-                                    <ImageUploader/>
+                                    <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
                                 </Grid>
 
                                 {/* Submit Button */}

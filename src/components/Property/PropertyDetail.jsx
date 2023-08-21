@@ -29,6 +29,11 @@ export default function PropertyDetail({}){
     const propertyId = location.state.propertyId;
     const index = location.state.index;
     const propertyList = location.state.propertyList;
+    const maintenanceData = location.state.maintenanceData;
+
+    console.log("Maintenance Data in Property Detail", maintenanceData)
+    // console.log("This maintenance data's thing", maintenanceData[index])
+
     
     function handleBackButton(){
         console.log("handleBackButton")
@@ -87,9 +92,6 @@ export default function PropertyDetail({}){
                         direction="column"
                         justifyContent="center"
                         alignItems="center"
-                        // sx={{
-                        //     paddingBottom: "20px"
-                        // }}
                     >
                         <Box>
                             <Button onClick={() => handleBackButton()}>
@@ -111,7 +113,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator propertyId={propertyId} index={index} propertyData={propertyList}/>
+                            <PropertyNavigator propertyId={propertyId} index={index} propertyData={propertyList} maintenanceData={maintenanceData} />
                         </Box>
                     </Stack>
                 </Paper>
