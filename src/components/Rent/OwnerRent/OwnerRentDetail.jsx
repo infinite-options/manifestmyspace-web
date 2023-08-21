@@ -32,11 +32,57 @@ function OwnerRentDetail(props) {
     function incrementIndex() {
         if (index < getProperties(propertyStatus).length - 1) {
             setIndex(index + 1);
+        } else {
+            setIndex(0);
+            switch (propertyStatus) {
+                case 'UNPAID':
+                    setPropertyStatus('PAID PARTIALLY');
+                    break;
+                case 'PAID PARTIALLY':
+                    setPropertyStatus('PAID LATE');
+                    break;
+                case 'PAID LATE':
+                    setPropertyStatus('PAID');
+                    break;
+                case 'PAID':
+                    setPropertyStatus('VACANT');
+                    break;
+                case 'VACANT':
+                    setPropertyStatus('UNPAID');
+                    break;
+                default:
+                    break;
+            }
         }
     }
     function decrementIndex() {
         if (0 < index) {
             setIndex(index - 1);
+        } else {
+            switch (propertyStatus) {
+                case 'UNPAID':
+                    setPropertyStatus('VACANT');
+                    setIndex(getProperties('VACANT').length-1);
+                    break;
+                case 'PAID PARTIALLY':
+                    setPropertyStatus('UNPAID');
+                    setIndex(getProperties('UNPAID').length-1);
+                    break;
+                case 'PAID LATE':
+                    setPropertyStatus('PAID PARTIALLY');
+                    setIndex(getProperties('PAID PARTIALLY').length-1);
+                    break;
+                case 'PAID':
+                    setPropertyStatus('PAID LATE');
+                    setIndex(getProperties('PAID LATE').length-1);
+                    break;
+                case 'VACANT':
+                    setPropertyStatus('PAID');
+                    setIndex(getProperties('PAID').length-1);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -68,7 +114,9 @@ function OwnerRentDetail(props) {
             })
             setRentDetailsData(fetchData);
         });
+    }, [rentData]);
 
+    useEffect(()=>{
         let property;
         switch (propertyStatus) {
             case 'UNPAID':
@@ -93,7 +141,7 @@ function OwnerRentDetail(props) {
         if (property.length > 0) {
             setPropertyID(property[index].property_id);
         }
-    }, [propertyStatus, index, rentData]);
+    }, [index, propertyStatus, rentData]);
 
     // console.log('nav', getProperties(propertyStatus)[index]);
     // console.log('nav', rentDetailsData, propertyID);

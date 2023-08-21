@@ -118,7 +118,17 @@ export function RentDetailBody(props) {
                     </svg>
                 </Box>
                 <Box>
-                    {index + 1} Of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
+                    {getProperties(propertyStatus).length > 0 ?
+                        (
+                            <>
+                                {index + 1} Of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
+                            </>
+                        ) : (
+                            <>
+                                None
+                            </>
+                        )
+                    }
                 </Box>
                 <Box onClick={() => {
                     incrementIndex();
@@ -204,7 +214,7 @@ export function RentDetailBody(props) {
                             Fees
                         </th>
                     </tr>
-                    {rentDetailsData.length > 0 ? (
+                    {rentDetailsData.length > 0 && getProperties(propertyStatus).length > 0 ? (
                         rentDetailsData.map((rentDetails, i) => {
                             const month = rentDetails.cf_month;
                             const paid = rentDetails.payment_date !== null ? (
@@ -221,18 +231,25 @@ export function RentDetailBody(props) {
                                     fee = '+$' + prop2.pur_amount_due;
                                 }
                             }
-
                             return (
                                 <>
                                     {
                                         (propertyID === id && rentDetails.purchase_type === 'RENT') ? (
-                                            <PropertyRow data={[month, paid, amount, payment_status, fee]} />
-                                        ) : (<></>)
+                                            <>
+                                                <PropertyRow data={[month, paid, amount, payment_status, fee]} />
+                                            </>
+
+                                        ) : (
+                                            <></>
+                                        )
                                     }
                                 </>
                             )
                         })
-                    ) : (<></>)
+                    ) : (
+                        <>
+                        </>
+                    )
 
                     }
                 </table>
