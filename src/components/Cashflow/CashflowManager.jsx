@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import CashflowData from './CashflowData1';
+import CashflowData from './CashflowData';
 import theme from '../../theme/theme';
 import RevenueTable from './RevenueTable';
 import ExpectedRevenueTable from './ExpectedRevenueTable'

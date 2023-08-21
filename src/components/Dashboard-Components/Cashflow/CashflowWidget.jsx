@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Typography, Grid, Box, Stack, ThemeProvider } from "@mui/material";
 import "../../../css/cashflow.css";
-import CashflowData from '../../Cashflow/CashflowData1';
+import CashflowData from '../../Cashflow/CashflowData';
 import { useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import MixedChart from '../../Graphs/OwnerCashflowGraph';

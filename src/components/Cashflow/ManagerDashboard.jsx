@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
-import CashflowData from './CashflowData1';
+import CashflowData from './CashflowData';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
