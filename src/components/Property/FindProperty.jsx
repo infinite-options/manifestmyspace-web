@@ -1,5 +1,6 @@
 import React from 'react';
 import theme from '../../theme/theme';
+import { useNavigate } from 'react-router-dom';
 import {
     ThemeProvider,
     Box,
@@ -9,26 +10,39 @@ import {
     Button,
     TextField,
     InputAdornment,
-    Table,
-    TableBody,
-    TableRow,
-    TableCell,
     Card,
     CardContent,
-    CardMedia,
-    CardActionArea,
     CardActions,
+    Rating,
 } from '@mui/material';
 import {
     ArrowDropDown,
     LocationOn,
     Search,
-    Star,
     Tune,
     TurnedInNot,
 } from '@mui/icons-material';
+import ReactImageGallery from 'react-image-gallery';
 
 const FindProperty = (props) => {
+    const navigate = useNavigate();
+
+    const handleDetailsButton = () => {
+        navigate('/propertyInfo');
+    };
+
+    const images = [
+        {
+            original: 'https://picsum.photos/id/1018/1000/600/',
+        },
+        {
+            original: 'https://picsum.photos/id/1015/1000/600/',
+        },
+        {
+            original: 'https://picsum.photos/id/1019/1000/600/',
+        },
+    ];
+
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -98,56 +112,50 @@ const FindProperty = (props) => {
                             </Button>
                         </Box>
                     </Stack>
-                    <Table>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>
-                                    <TextField
-                                        variant="filled"
-                                        label="Search Place"
-                                        fullWidth
+                    <Stack
+                        justifyContent="center"
+                        alignItems="center"
+                        sx={{ padding: '0 15px' }}
+                    >
+                        <TextField
+                            variant="filled"
+                            label="Search Place"
+                            fullWidth
+                            sx={{
+                                border: '1px solid',
+                                borderRadius: 10,
+                                // backgroundColor: '#A9AAAB',
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment
+                                        position="start"
                                         sx={{
-                                            border: '1px solid',
-                                            borderRadius: 10,
-                                            // backgroundColor: '#A9AAAB',
+                                            color: theme.typography.common.blue,
+                                            fontSize:
+                                                theme.typography.smallFont,
+                                            paddingRight: '5px',
                                         }}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment
-                                                    position="start"
-                                                    sx={{
-                                                        color: theme.typography
-                                                            .common.blue,
-                                                        fontSize:
-                                                            theme.typography
-                                                                .smallFont,
-                                                        paddingRight: '5px',
-                                                    }}
-                                                >
-                                                    <Search />
-                                                </InputAdornment>
-                                            ),
-                                            endAdornment: (
-                                                <InputAdornment
-                                                    position="end"
-                                                    sx={{
-                                                        color: theme.typography
-                                                            .common.blue,
-                                                        fontSize:
-                                                            theme.typography
-                                                                .smallFont,
-                                                        paddingLeft: '5px',
-                                                    }}
-                                                >
-                                                    <Tune />
-                                                </InputAdornment>
-                                            ),
+                                    >
+                                        <Search />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment
+                                        position="end"
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize:
+                                                theme.typography.smallFont,
+                                            paddingLeft: '5px',
                                         }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                    >
+                                        <Tune />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Stack>
                     <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -267,10 +275,12 @@ const FindProperty = (props) => {
                             180 Available
                         </Typography>
                     </Stack>
-                    <Card>
-                        <CardMedia
-                            image="./../../images/house.png"
-                            sx={{ height: 140 }}
+                    <Card sx={{ margin: 5 }}>
+                        <ReactImageGallery
+                            items={images}
+                            showFullscreenButton={false}
+                            showPlayButton={false}
+                            showThumbnails={false}
                         />
                         <CardContent>
                             <Stack
@@ -288,11 +298,11 @@ const FindProperty = (props) => {
                                                 .lightYellow,
                                         }}
                                     >
-                                        <Star />
-                                        <Star />
-                                        <Star />
-                                        <Star />
-                                        <Star />
+                                        <Rating
+                                            name="read-only"
+                                            precision={0.5}
+                                            value={5}
+                                        />
                                         <Typography
                                             sx={{
                                                 color: theme.typography.common
@@ -447,18 +457,23 @@ const FindProperty = (props) => {
                                 </Stack>
                             </Stack>
                         </CardContent>
-                        <CardActions>
+                        <CardActions
+                            sx={{
+                                justifyContent: 'space-evenly',
+                            }}
+                        >
                             <Stack
                                 alignItems="center"
                                 justifyContent="center"
                                 direction="row"
+                                sx={{ paddingBottom: '10px' }}
                             >
                                 <Button
                                     variant="text"
                                     sx={{
                                         border: '1px solid',
                                         color: theme.typography.common.blue,
-                                        margin: 10,
+                                        marginRight: '5px',
                                     }}
                                 >
                                     Contact Property
@@ -469,8 +484,9 @@ const FindProperty = (props) => {
                                         backgroundColor:
                                             theme.typography.common.blue,
                                         color: theme.typography.secondary.white,
-                                        margin: 10,
+                                        marginLeft: '5px',
                                     }}
+                                    onClick={handleDetailsButton}
                                 >
                                     View Details
                                 </Button>
