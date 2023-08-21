@@ -35,6 +35,7 @@ import PMDocuments from './Documents/PMDocuments/PMDocuments';
 import PMUploadDocuments from './Documents/PMDocuments/PMUploadDocuments';
 import TenantProfileEdit from './Profile/TenantProfile/TenantProfileEdit';
 import Contacts from './Contacts/Contacts';
+import ContactDetails from './Contacts/ContactDetails';
 function Main() {
     return (
         <>
@@ -188,6 +189,11 @@ function Main() {
                             element={<PropertyInfo />}
                         />
                         <Route exact path="/contacts" element={<Contacts />} />
+                        <Route
+                            exact
+                            path="/contactDetails"
+                            element={<ContactDetails />}
+                        />
                     </Routes>
                 </Router>
             </div>

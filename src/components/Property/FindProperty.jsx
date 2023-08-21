@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,13 +23,10 @@ import {
     TurnedInNot,
 } from '@mui/icons-material';
 import ReactImageGallery from 'react-image-gallery';
+import axios from 'axios';
 
 const FindProperty = (props) => {
-    const navigate = useNavigate();
-
-    const handleDetailsButton = () => {
-        navigate('/propertyInfo');
-    };
+    const [propertyData, setPropertyData] = useState([]);
 
     const images = [
         {
@@ -42,6 +39,35 @@ const FindProperty = (props) => {
             original: 'https://picsum.photos/id/1019/1000/600/',
         },
     ];
+
+    const url =
+        'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
+    // 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003';
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    async function fetchData() {
+        await axios
+            .get(url)
+            .then((resp) => {
+                console.log(resp.status);
+                // console.log(resp.data.Property.result);
+                // console.log([
+                //     resp.data.Property.result[0],
+                //     resp.data.Property.result[1],
+                // ]);
+                // setPropertyData([
+                //     resp.data.Property.result[0],
+                //     resp.data.Property.result[1],
+                // ]);
+                setPropertyData(resp.data.Property.result);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -124,7 +150,6 @@ const FindProperty = (props) => {
                             sx={{
                                 border: '1px solid',
                                 borderRadius: 10,
-                                // backgroundColor: '#A9AAAB',
                             }}
                             InputProps={{
                                 startAdornment: (
@@ -272,231 +297,298 @@ const FindProperty = (props) => {
                                 fontSize: theme.typography.smallFont,
                             }}
                         >
-                            180 Available
+                            {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    <Card sx={{ margin: 5 }}>
-                        <ReactImageGallery
-                            items={images}
-                            showFullscreenButton={false}
-                            showPlayButton={false}
-                            showThumbnails={false}
-                        />
-                        <CardContent>
-                            <Stack
-                                direction="row"
-                                justifyContent={'space-between'}
-                                sx={{
-                                    color: theme.typography.common.blue,
-                                }}
-                            >
-                                <Box>
-                                    <Stack
-                                        direction={'row'}
-                                        sx={{
-                                            color: theme.palette.primary
-                                                .lightYellow,
-                                        }}
-                                    >
-                                        <Rating
-                                            name="read-only"
-                                            precision={0.5}
-                                            value={5}
-                                        />
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.common
-                                                    .blue,
-                                            }}
-                                        >
-                                            (2)
-                                        </Typography>
-                                    </Stack>
-                                </Box>
-                                <Box>
-                                    <LocationOn /> <TurnedInNot />
-                                </Box>
-                            </Stack>
-                            <Stack>
-                                <Typography
-                                    sx={{
-                                        color: theme.typography.common.blue,
-                                        fontWeight:
-                                            theme.typography.common.fontWeight,
-                                        fontSize: '18px',
-                                    }}
-                                >
-                                    Pacific Oaks
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        color: theme.typography.primary.black,
-                                        fontSize: '16px',
-                                    }}
-                                >
-                                    123 Able Street, San Jose, CA 93117
-                                </Typography>
-                                <Stack
-                                    justifyContent={'center'}
-                                    alignItems={'center'}
-                                    direction={'row'}
-                                    sx={{ padding: '5px 10px' }}
-                                >
-                                    <Stack
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        sx={{ margin: '5px 15px' }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            Condo
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            Type
-                                        </Typography>
-                                    </Stack>
-                                    <Stack
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        sx={{ margin: '5px 15px' }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            2
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            Bed
-                                        </Typography>
-                                    </Stack>
-                                    <Stack
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        sx={{ margin: '5px 15px' }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            2
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            Bath
-                                        </Typography>
-                                    </Stack>
-                                    <Stack
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        sx={{ margin: '5px 15px' }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            1200
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary
-                                                    .black,
-
-                                                fontSize: '16px',
-                                            }}
-                                        >
-                                            Sq Ft
-                                        </Typography>
-                                    </Stack>
-                                </Stack>
-                            </Stack>
-                        </CardContent>
-                        <CardActions
-                            sx={{
-                                justifyContent: 'space-evenly',
-                            }}
-                        >
-                            <Stack
-                                alignItems="center"
-                                justifyContent="center"
-                                direction="row"
-                                sx={{ paddingBottom: '10px' }}
-                            >
-                                <Button
-                                    variant="text"
-                                    sx={{
-                                        border: '1px solid',
-                                        color: theme.typography.common.blue,
-                                        marginRight: '5px',
-                                    }}
-                                >
-                                    Contact Property
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    sx={{
-                                        backgroundColor:
-                                            theme.typography.common.blue,
-                                        color: theme.typography.secondary.white,
-                                        marginLeft: '5px',
-                                    }}
-                                    onClick={handleDetailsButton}
-                                >
-                                    View Details
-                                </Button>
-                            </Stack>
-                        </CardActions>
-                    </Card>
+                    {propertyData.map((property, index) => {
+                        return (
+                            <PropertyCard
+                                data={property}
+                                key={index}
+                                images={images}
+                            />
+                        );
+                    })}
                 </Paper>
             </Box>
         </ThemeProvider>
     );
 };
+
+function PropertyCard(props) {
+    const navigate = useNavigate();
+
+    const property = props.data;
+
+    // const ppt_images = property.property_images
+    //     .replace('[', '')
+    //     .replace(']', '')
+    //     .replace('\\', '')
+    //     .replace('"', "'")
+    //     .replace('\n', '')
+    //     .replace(' ', '')
+    //     .split(',');
+
+    // const images = ppt_images.map((data) => {
+    //     try {
+    //         const url = new URL(data);
+    //         return { original: url };
+    //     } catch (e) {
+    //         console.error(e);
+    //         return { original: '' };
+    //     }
+    // });
+
+    // console.log(images);
+
+    const listed_rent = Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+        minimumFractionDigits: 0,
+    }).format(property.property_listed_rent);
+
+    const handleDetailsButton = () => {
+        navigate('/propertyInfo', {
+            state: {
+                index: props.index,
+                data: property,
+            },
+        });
+    };
+
+    return (
+        <Card sx={{ margin: 5 }}>
+            <ReactImageGallery
+                items={props.images}
+                showFullscreenButton={false}
+                showPlayButton={false}
+                showThumbnails={false}
+            />
+            <Box
+                sx={{
+                    backgroundColor: '#8897BA',
+                    color: theme.typography.secondary.white,
+                    boxShadow: '4px 4px 3px #00000009',
+                    zIndex: 5,
+                    width: '50%',
+                    position: 'relative',
+                    borderRadius: '8px',
+                    margin: '-17px 15px 5px',
+                }}
+            >
+                <Typography
+                    sx={{
+                        padding: '10px',
+                        fontSize: '18px',
+                    }}
+                >
+                    {listed_rent}
+                    <span style={{ opacity: '60%' }}> / Month</span>
+                </Typography>
+            </Box>
+            <CardContent>
+                <Stack
+                    direction="row"
+                    justifyContent={'space-between'}
+                    sx={{
+                        color: theme.typography.common.blue,
+                    }}
+                >
+                    <Box>
+                        <Stack
+                            direction={'row'}
+                            sx={{
+                                color: theme.palette.primary.lightYellow,
+                            }}
+                        >
+                            <Rating
+                                name="read-only"
+                                precision={0.5}
+                                value={5}
+                            />
+                            <Typography
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                }}
+                            >
+                                (2)
+                            </Typography>
+                        </Stack>
+                    </Box>
+                    <Box>
+                        <LocationOn /> <TurnedInNot />
+                    </Box>
+                </Stack>
+                <Stack>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.common.fontWeight,
+                            fontSize: '18px',
+                        }}
+                    >
+                        {property.property_address}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.primary.black,
+                            fontSize: '16px',
+                        }}
+                    >
+                        {property.property_address +
+                            ', ' +
+                            property.property_city +
+                            ', ' +
+                            property.property_state +
+                            ' ' +
+                            property.property_zip}
+                    </Typography>
+                    <Stack
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        direction={'row'}
+                        sx={{ padding: '5px 10px' }}
+                    >
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 15px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                                {property.property_type}
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '16px',
+                                }}
+                            >
+                                Type
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 15px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                                {property.property_num_beds}
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '16px',
+                                }}
+                            >
+                                Bed
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 15px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                                {property.property_num_baths}
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '16px',
+                                }}
+                            >
+                                Bath
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ margin: '5px 15px' }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                                {property.property_area}
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+
+                                    fontSize: '16px',
+                                }}
+                            >
+                                Sq Ft
+                            </Typography>
+                        </Stack>
+                    </Stack>
+                </Stack>
+            </CardContent>
+            <CardActions
+                sx={{
+                    justifyContent: 'space-evenly',
+                }}
+            >
+                <Stack
+                    alignItems="center"
+                    justifyContent="center"
+                    direction="row"
+                    sx={{ paddingBottom: '10px' }}
+                >
+                    <Button
+                        variant="text"
+                        sx={{
+                            border: '1px solid',
+                            color: theme.typography.common.blue,
+                            marginRight: '5px',
+                        }}
+                    >
+                        Contact Property
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: theme.typography.common.blue,
+                            color: theme.typography.secondary.white,
+                            marginLeft: '5px',
+                        }}
+                        onClick={handleDetailsButton}
+                    >
+                        View Details
+                    </Button>
+                </Stack>
+            </CardActions>
+        </Card>
+    );
+}
 
 export default FindProperty;
