@@ -27,11 +27,12 @@ function TenantProfile() {
     useEffect(() => {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
             .then((res) => {
-                setProfileData(res.data.Profile[0]);
-                setAdultTenantData(JSON.parse(res.data.Profile[0].tenant_adult_occupants));
-                setChildTenantData(JSON.parse(res.data.Profile[0].tenant_children_occupants));
-                setPetTenantData(JSON.parse(res.data.Profile[0].tenant_pet_occupants));
-                setVehicleTenantData(JSON.parse(res.data.Profile[0].tenant_vehicle_info));
+                // console.log(res.data.Profile.result[0]);
+                setProfileData(res.data.Profile.result[0]);
+                setAdultTenantData(JSON.parse(res.data.Profile.result[0].tenant_adult_occupants));
+                setChildTenantData(JSON.parse(res.data.Profile.result[0].tenant_children_occupants));
+                setPetTenantData(JSON.parse(res.data.Profile.result[0].tenant_pet_occupants));
+                setVehicleTenantData(JSON.parse(res.data.Profile.result[0].tenant_vehicle_info));
             });
     }, []);
     // console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);

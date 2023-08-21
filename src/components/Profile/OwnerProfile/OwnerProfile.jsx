@@ -44,7 +44,7 @@ function OwnerProfile() {
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerProfile/110-000003')
         .then((res)=>{
             // console.log(res.data);
-            setProfileData(res.data.Profile[0]);
+            setProfileData(res.data.Profile.result[0]);
         });
     }, []);
     return (
