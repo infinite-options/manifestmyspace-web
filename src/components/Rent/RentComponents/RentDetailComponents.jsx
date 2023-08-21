@@ -72,6 +72,16 @@ export function RentDetailBody(props) {
         return `${month}/${day}/${year}`;
     }
 
+    function getOverdue() {
+        for (let i = 0; i < rentDetailsData.length; i++) {
+            const rentDetail = rentDetailsData[i];
+            if (rentDetail.property_id === propertyID && rentDetail.purchase_type === 'RENT') {
+                // console.log(rentDetail);
+                return rentDetail.overdue;
+            }
+        }
+    }
+
     return (
         <Box sx={{
             position: 'relative',
@@ -100,7 +110,9 @@ export function RentDetailBody(props) {
                 paddingLeft: '10px',
                 paddingRight: '10px',
             }}>
-                <Box onClick={() => decrementIndex()}>
+                <Box onClick={() => {
+                    decrementIndex();
+                }}>
                     <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z" fill="#160449" />
                     </svg>
@@ -108,7 +120,9 @@ export function RentDetailBody(props) {
                 <Box>
                     {index + 1} Of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
                 </Box>
-                <Box onClick={() => incrementIndex()}>
+                <Box onClick={() => {
+                    incrementIndex();
+                }}>
                     <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z" fill="#160449" />
                     </svg>
@@ -150,7 +164,7 @@ export function RentDetailBody(props) {
                             {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(getProperties(propertyStatus)[index].pur_due_date)}`) : (<></>)}
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].overdue} Days Overdue`) : (<></>)}
+                            {getProperties(propertyStatus).length > 0 ? (`${getOverdue()} Days Overdue`) : (<></>)}
                         </Box>
                     </Box>
                 </Box>
@@ -193,15 +207,17 @@ export function RentDetailBody(props) {
                     {rentDetailsData.length > 0 ? (
                         rentDetailsData.map((rentDetails, i) => {
                             const month = rentDetails.cf_month;
-                            const paid = rentDetails.pur_due_date !== null ? formatDate(rentDetails.pur_due_date).slice(0, 5) : '';
-                            const amount = rentDetails.pur_amount_due !== null ? '$' + rentDetails.pur_amount_due : '$0';
+                            const paid = rentDetails.payment_date !== null ? (
+                                formatDate(rentDetails.payment_date) !== '' ? formatDate(rentDetails.payment_date).slice(0, 5) : '-'
+                            ) : '-';
+                            const amount = rentDetails.pay_amount !== null ? '$' + rentDetails.pay_amount : '-';
                             const payment_status = rentDetails.payment_status;
 
                             const id = rentDetails.property_id;
                             let fee = '';
                             for (let i = 0; i < rentDetailsData.length; i++) {
                                 const prop2 = rentDetailsData[i];
-                                if(prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
+                                if (prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
                                     fee = '+$' + prop2.pur_amount_due;
                                 }
                             }
@@ -209,7 +225,7 @@ export function RentDetailBody(props) {
                             return (
                                 <>
                                     {
-                                        (propertyID === id && rentDetails.purchase_type === 'RENT')? (
+                                        (propertyID === id && rentDetails.purchase_type === 'RENT') ? (
                                             <PropertyRow data={[month, paid, amount, payment_status, fee]} />
                                         ) : (<></>)
                                     }
@@ -254,6 +270,7 @@ function PropertyRow(props) {
         if (index !== undefined) {
             return months[index];
         } else {
+            console.log('ERROR: Month value is', monthName);
             return "Invalid Month";
         }
     }
