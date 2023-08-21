@@ -1,20 +1,32 @@
 import React, { useState } from 'react';
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import PropertyListData from '../Property/PropertyList';
+import PropertyListData from '../Property/PropertyData';
 import theme from '../../theme/theme';
 import File_dock_add from '../../images/File_dock_add.png';
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
+import { alpha, makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        "& .MuiFilledInput-root": {
+            backgroundColor: '#F2F2F2', // Update the background color here
+            borderRadius: 10,
+            height: 30,
+            marginBlock: 10,
+        }
+      }
+}));
 
 const AddRevenue = (props) => {
+    const classes = useStyles();
     const navigate = useNavigate();
     const [category, setCategory] = useState('Deposits');
     const [frequency, setFrequency] = useState('Monthly');
     const [amount, setAmount] = useState('');
     const [propertyList, setPropertyList] = useState([]);
-    const properties = ['Option 1', 'Option 2', 'Option 3', 'Option 4']; // Replace with your array of options
-    
+    const [payable, setPayable] = useState('Property Manager');    
     const [selectedProperty, setSelectedProperty] = useState('');
 
     const handlePropertyChange = (event) => {
@@ -29,6 +41,9 @@ const AddRevenue = (props) => {
     const handleAmountChange = (event) => {
         setAmount(event.target.value);
     }
+    const handlePayableChange = (event) => {
+        setPayable(event.target.name);
+        };
     const handleAddRevenue = async () => {
         console.log("amount ", amount);
         // const expense = {
@@ -121,6 +136,7 @@ const AddRevenue = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Property
                         </Typography>
+                        <FormControl variant="filled" fullWidth className={classes.root}>
                         <Select
                             value={selectedProperty}
                             onChange={handlePropertyChange}
@@ -132,11 +148,12 @@ const AddRevenue = (props) => {
                             </MenuItem>
                             {propertyList.map((option, index) => (
                             <MenuItem key={index} value={option}>
-                            {option.address}{", "}{option.unit}
-                            {/* {option.city}, {option.state}{" "}{option.zip} */}
+                            {option.property_address}{", "}{option.property_unit}{", "}
+                            {option.property_city}, {option.property_state}{" "}{option.property_zip}
                             </MenuItem>
                             ))}
                         </Select>
+                        </FormControl>
                         </Stack>
                         
                         <Stack
@@ -145,7 +162,7 @@ const AddRevenue = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Category
                         </Typography>
-                        <FormControl variant="filled" fullWidth>
+                        <FormControl variant="filled" fullWidth className={classes.root}>
                             <Select
                             labelId="category-label"
                             id="category"
@@ -172,6 +189,7 @@ const AddRevenue = (props) => {
                         </Typography>
                         <TextField 
                         variant='filled' 
+                        className={classes.root}
                         fullWidth 
                         placeholder='$' 
                         type='number'
@@ -186,7 +204,7 @@ const AddRevenue = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Payment Date
                         </Typography>
-                        <TextField type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
+                        <TextField className={classes.root} type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
                         <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Already Received" sx={{color: theme.typography.common.blue}}/>
                         </Stack>
 
@@ -196,7 +214,7 @@ const AddRevenue = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Frequency
                         </Typography>
-                        <FormControl variant="filled" fullWidth>
+                        <FormControl variant="filled" fullWidth className={classes.root}>
                             <Select
                             defaultValue='Monthly'
                             value={frequency}
@@ -214,7 +232,7 @@ const AddRevenue = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Description
                         </Typography>
-                        <TextField variant='filled' fullWidth placeholder='Add Description'></TextField>
+                        <TextField className={classes.root} variant='filled' fullWidth placeholder='Add Description'></TextField>
                         </Stack>
 
                         <Box
@@ -228,8 +246,24 @@ const AddRevenue = (props) => {
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                                 Payable By?
                             </Typography>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Property Manager" sx={{color: theme.typography.common.blue}}/>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Tenant" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                sx={{color: theme.typography.common.blue}}
+                                name='Property Manager'
+                                checked={payable==='Property Manager'}
+                                onChange={handlePayableChange}/>} 
+                            label="Property Manager" 
+                            sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                sx={{color: theme.typography.common.blue}}
+                                name='Tenant'
+                                checked={payable==='Tenant'}
+                                onChange={handlePayableChange}/>} 
+                            label="Tenant" 
+                            sx={{color: theme.typography.common.blue}}/>
                             </Stack>
                             <Stack>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>

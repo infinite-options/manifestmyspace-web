@@ -1,47 +1,68 @@
 import React, { useState } from 'react';
-import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, InputAdornment, Checkbox, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import PropertyListData from '../Property/PropertyList';
+import PropertyListData from '../Property/PropertyData';
+import AddIcon from '@mui/icons-material/Add';
 import theme from '../../theme/theme';
 import File_dock_add from '../../images/File_dock_add.png';
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
+import { alpha, makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        "& .MuiFilledInput-root": {
+            backgroundColor: '#F2F2F2', // Update the background color here
+            borderRadius: 10,
+            height: 30,
+            marginBlock: 10,
+        }
+      }
+}));
 
 const AddUtility = (props) => {
+    const classes = useStyles();
     const navigate = useNavigate();
     const [type, setType] = useState('Electricty');
     const [provider, setProvider] = useState('');
     const [splitMethod, setSplitMethod] = useState('Uniformly');
     const [amount, setAmount] = useState('');
     const [propertyList, setPropertyList] = useState([]);
-    const properties = ['Option 1', 'Option 2', 'Option 3', 'Option 4']; // Replace with your array of options
-    
-    const [selectedProperty, setSelectedProperty] = useState([]);
+    const [payable, setPayable] = useState('Owner');
 
     const [dropdowns, setDropdowns] = useState([{}]);
 
     const handlePropertyChange = (event, index) => {
         const selectedOption = event.target.value;
-        const selectedProperty = event.target.value.address + ',' + event.target.value.unit;
-        console.log("%657 ", selectedOption);
-        setDropdowns((prevDropdowns) =>
-        prevDropdowns.map((dropdown, i) =>
-            i === index ? { ...dropdown, selectedOption } : dropdown
-        )
+        const selectedProperty = `${selectedOption.address}, ${selectedOption.unit}`;
+    
+        // Update the selectedOption for the specific index
+        const updatedDropdowns = dropdowns.map((dropdown, i) =>
+          i === index ? { ...dropdown, selectedOption } : dropdown
         );
-        // console.log("%657 dropdowns",dropdowns)
+    
+        setDropdowns(updatedDropdowns);
     };
-
+    
     const handleAddDropdown = () => {
-        setDropdowns([...dropdowns, {}]);
+    setDropdowns([...dropdowns, {}]);
     };
 
     const handleRemoveDropdown = (index) => {
-        setDropdowns((prevDropdowns) => prevDropdowns.filter((_, i) => i !== index));
+    setDropdowns((prevDropdowns) => prevDropdowns.filter((_, i) => i !== index));
     };
-    // const handlePropertyChange = (event) => {
-    //     setSelectedProperty(event.target.value);
-    // };
+
+    const getAvailableOptions = (index) => {
+    // Get the selected options from all previous dropdowns
+    const selectedOptions = dropdowns.slice(0, index).map((dropdown) => dropdown.selectedOption);
+    
+    // Filter out the selected options from propertyList
+    return propertyList.filter((option) => !selectedOptions.find((selected) => selected === option));
+    };
+
+    const handlePayableChange = (event) => {
+    setPayable(event.target.name);
+    };
     const handleTypeChange = (event) => {
         setType(event.target.value);
     };
@@ -146,62 +167,57 @@ const AddUtility = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Property
                         </Typography>
-                        {/* <Select
-                            multiple
-                            value={selectedProperty}
-                            onChange={handlePropertyChange}
-                            variant="filled"
-                            displayEmpty
-                        >
-                            <MenuItem value="" disabled>
-                            Select Property
-                            </MenuItem>
-                            {propertyList.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                            {option.address}{", "}{option.unit}
-                            </MenuItem>
-                            ))}
-                        </Select> */}
-                        <div>
-      {dropdowns.map((dropdown, index) => (
-        <div key={index}>
-          <Select
-            value={dropdown.selectedOption || ''}
-            onChange={(event) => handlePropertyChange(event, index)}
-            variant="filled"
-            displayEmpty
-          >
-            <MenuItem value="" disabled>
-              Select an option
-            </MenuItem>
-            {propertyList
-              .filter((option) => !dropdowns.find((d) => d.selectedOption === option))
-              .map((option, i) => (
-                <MenuItem key={i} value={option}>
-                  {option.address}{", "}{option.unit}
-                  {/* {option.city}, {option.state}{" "}{option.zip} */}
-                </MenuItem>
-              ))}
-          </Select>
-          {index > 0 && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleRemoveDropdown(index)}
-            >
-              X
-            </Button>
-          )}
-        </div>
-      ))}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleAddDropdown}
-      >
-        +
-      </Button>
-    </div>
+                        <>
+                        <FormControl variant="filled" fullWidth className={classes.root}>
+                        {dropdowns.map((dropdown, index) => (
+                            <div key={index}>
+                            <Select
+                                value={dropdown.selectedOption || ''}
+                                onChange={(event) => handlePropertyChange(event, index)}
+                                variant="filled"
+                                displayEmpty
+                                fullWidth
+                                startAdornment={
+                                    dropdown.selectedOption && index>0 ? (
+                                      <InputAdornment position="start">
+                                        <IconButton
+                                        aria-label="close"
+                                        onClick={() => handleRemoveDropdown(index)}
+                                        sx={{ color: theme.typography.common.blue, padding: 0}}>
+                                        <CloseIcon/>
+                                        </IconButton>
+                                      </InputAdornment>
+                                    ) : null
+                                  }
+                            >
+                                <MenuItem value="" disabled>
+                                Select an option
+                                </MenuItem>
+                                {getAvailableOptions(index).map((option) => (
+                                <MenuItem key={option.id} value={option}>
+                                    {option.property_address}{", "}{option.property_unit}{", "}
+                            {option.property_city}, {option.property_state}{" "}{option.property_zip}
+                                </MenuItem>
+                                ))}
+                            </Select>
+                            </div>
+                        ))}
+                        <Box
+                        display="flex"
+                        justifyContent="flex-end"
+                        alignItems="flex-end">
+                            <Typography sx={{ color: theme.typography.common.blue}}>
+                            Add Addiional Property 
+                            </Typography>
+                            <IconButton
+                                aria-label="close"
+                                onClick={handleAddDropdown}
+                                sx={{ color: theme.typography.common.blue, padding: 0}}>
+                                <AddIcon/>
+                            </IconButton>
+                        </Box>
+                        </FormControl>
+                        </>
                         </Stack>
                         
                         <Stack
@@ -210,7 +226,7 @@ const AddUtility = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Type
                         </Typography>
-                        <FormControl variant="filled" fullWidth>
+                        <FormControl variant="filled" fullWidth className={classes.root}>
                             <Select
                             labelId="category-label"
                             id="category"
@@ -241,6 +257,7 @@ const AddUtility = (props) => {
                         </Typography>
                         <Box width={'98%'}>
                         <TextField 
+                        className={classes.root}
                         variant='filled' 
                         placeholder='$' 
                         type='number'
@@ -257,6 +274,7 @@ const AddUtility = (props) => {
                         </Typography>
                         <Box width={'98%'}>
                         <TextField 
+                        className={classes.root}
                         variant='filled' 
                         placeholder='Add Provider' 
                         value= {provider}
@@ -272,7 +290,7 @@ const AddUtility = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Due By Date
                         </Typography>
-                        <TextField type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
+                        <TextField className={classes.root} type='date' variant='filled' fullWidth placeholder='mm/dd/yyyy'></TextField>
                         <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Pay with rent" sx={{color: theme.typography.common.blue}}/>
                         </Stack>
 
@@ -282,7 +300,7 @@ const AddUtility = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Notes
                         </Typography>
-                        <TextField variant='filled' fullWidth placeholder='Monthly'></TextField>
+                        <TextField className={classes.root} variant='filled' fullWidth placeholder='Monthly'></TextField>
                         </Stack>
 
                         <Stack
@@ -291,7 +309,7 @@ const AddUtility = (props) => {
                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                             Split Method
                         </Typography>
-                        <FormControl variant="filled" fullWidth>
+                        <FormControl variant="filled" fullWidth className={classes.root}>
                             <Select
                             defaultValue='Uniformly'
                             value={splitMethod}
@@ -315,8 +333,24 @@ const AddUtility = (props) => {
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
                                 Payable By?
                             </Typography>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Owner" sx={{color: theme.typography.common.blue}}/>
-                            <FormControlLabel control={<Checkbox sx={{color: theme.typography.common.blue}}/>} label="Tenant" sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                sx={{color: theme.typography.common.blue}}
+                                name='Owner'
+                                checked={payable==='Owner'}
+                                onChange={handlePayableChange}/>} 
+                            label="Owner" 
+                            sx={{color: theme.typography.common.blue}}/>
+                            <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                sx={{color: theme.typography.common.blue}}
+                                name='Tenant'
+                                checked={payable==='Tenant'}
+                                onChange={handlePayableChange}/>}
+                            label="Tenant" 
+                            sx={{color: theme.typography.common.blue}}/>
                             </Stack>
                             <Stack>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
