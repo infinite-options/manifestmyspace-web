@@ -64,6 +64,7 @@ import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigat
 import TenantProperty from "./Property/TenantProperty";
 import TenantMaintenanceItem from "./Maintenance/TenantMaintenanceItem";
 import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
+import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 
 function Main() {
   return (
@@ -88,6 +89,7 @@ function Main() {
             <Route exact path="/announcement" element={<Announcement />} />
             <Route exact path="/ownerProfile" element={<OwnerProfile />} />
             <Route exact path="/ownerDocuments" element={<OwnerDocuments />} />
+            <Route exact path="/ownerDocumentsPDF" element={<DocumentPDF />} />
             <Route exact path="/ownerUploadDocuments" element={<OwnerUploadDocuments />} />
             <Route exact path="/ownerLeases" element={<OwnerLeases />} />
             <Route exact path="/ownerRent" element={<OwnerRent />} />

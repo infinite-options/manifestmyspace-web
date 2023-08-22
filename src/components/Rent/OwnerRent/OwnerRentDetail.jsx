@@ -62,23 +62,23 @@ function OwnerRentDetail(props) {
             switch (propertyStatus) {
                 case 'UNPAID':
                     setPropertyStatus('VACANT');
-                    setIndex(getProperties('VACANT').length-1);
+                    setIndex(getProperties('VACANT').length - 1);
                     break;
                 case 'PAID PARTIALLY':
                     setPropertyStatus('UNPAID');
-                    setIndex(getProperties('UNPAID').length-1);
+                    setIndex(getProperties('UNPAID').length - 1);
                     break;
                 case 'PAID LATE':
                     setPropertyStatus('PAID PARTIALLY');
-                    setIndex(getProperties('PAID PARTIALLY').length-1);
+                    setIndex(getProperties('PAID PARTIALLY').length - 1);
                     break;
                 case 'PAID':
                     setPropertyStatus('PAID LATE');
-                    setIndex(getProperties('PAID LATE').length-1);
+                    setIndex(getProperties('PAID LATE').length - 1);
                     break;
                 case 'VACANT':
                     setPropertyStatus('PAID');
-                    setIndex(getProperties('PAID').length-1);
+                    setIndex(getProperties('PAID').length - 1);
                     break;
                 default:
                     break;
@@ -116,7 +116,7 @@ function OwnerRentDetail(props) {
         });
     }, [rentData]);
 
-    useEffect(()=>{
+    useEffect(() => {
         let property;
         switch (propertyStatus) {
             case 'UNPAID':
