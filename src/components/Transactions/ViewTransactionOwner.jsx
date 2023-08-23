@@ -105,20 +105,6 @@ export default function ViewTransactionOwner(props) {
                         },
                     }}
                 >
-                    {/* <IconButton
-                        aria-label="close"
-                        onClick={() => navigate(-1)}
-                        sx={{
-                            position: 'sticky',
-                            left: '90vw',
-                            top: 1,
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.common.fontWeight
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton> */}
-                    
                     <Stack
                     direction="row"
                     justifyContent="center"
@@ -187,7 +173,11 @@ export default function ViewTransactionOwner(props) {
                             },
                         }}>
                             <Box
-                            sx={{height: '20vh', backgroundColor: theme.palette.custom.palePink}}>
+                            sx=
+                            {{
+                                height: '20vh', 
+                                backgroundColor: txn.pur_cf_type === 'expense' ? theme.palette.custom.palePink : theme.palette.custom.blue
+                            }}>
                                 <Box
                                 component="span"
                                 m={0}
@@ -219,9 +209,10 @@ export default function ViewTransactionOwner(props) {
                                 <Stack
                                 direction="row"
                                 justifyContent="center"
+                                marginTop='10px'
                                 >
                                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                    Paul McCartney
+                                    {txn.payer_user_name}
                                     </Typography>
                                 </Stack>
                                 <Box
@@ -242,7 +233,7 @@ export default function ViewTransactionOwner(props) {
                                 justifyContent="center"
                                 >
                                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                    Doolittle Maintenance
+                                    {txn.receiver_user_name}
                                     </Typography>
                                 </Stack>
                             </Box>
@@ -251,12 +242,13 @@ export default function ViewTransactionOwner(props) {
                             justifyContent="center"
                             >
                                 <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                ${txn.pur_amount_due}
+                                ${txn.total_paid}
                                 </Typography>
                             </Stack>
                             <Stack
                             direction="row"
                             justifyContent="center"
+                            marginTop='10px'
                             >
                                 <Typography sx={{color: theme.typography.primary.black, fontSize:theme.typography.smallFont}}>
                                 Date Paid: {txn.purchase_date}
@@ -265,6 +257,7 @@ export default function ViewTransactionOwner(props) {
                             <Stack
                             direction="row"
                             justifyContent="center"
+                            marginTop='10px'
                             >
                                 <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                                 {txn.purchase_type}
@@ -273,18 +266,33 @@ export default function ViewTransactionOwner(props) {
                             <Stack
                             direction="row"
                             justifyContent="center"
+                            marginTop='10px'
                             >
                                 <Typography sx={{color: theme.typography.common.blue, fontSize:theme.typography.smallFont}}>
                                 {txn.pur_notes}
                                 </Typography>
                             </Stack>
                             <Stack
-                            direction="row"
+                            // direction="row"
                             justifyContent="center"
+                            marginTop='10px'
                             >
-                                <Typography sx={{color: theme.typography.common.black, fontSize:theme.typography.smallFont}}>
-                                Paypal
-                                </Typography>
+                                <Stack
+                                direction="row"
+                                justifyContent="center"
+                                >
+                                    <Typography sx={{color: theme.typography.common.black, fontSize:theme.typography.smallFont}}>
+                                    {txn.payment_type}:{txn.total_paid}
+                                    </Typography>
+                                </Stack>
+                                <Stack
+                                direction="row"
+                                justifyContent="center"
+                                >
+                                    <Typography sx={{color: theme.typography.common.black, fontSize:theme.typography.smallFont}}>
+                                    {txn.pay_charge_id}
+                                    </Typography>
+                                </Stack>                        
                             </Stack>
                             
                             <Box
@@ -293,6 +301,7 @@ export default function ViewTransactionOwner(props) {
                             display="flex"
                             justifyContent="space-between"
                             alignItems="center"
+                            marginTop='10px'
                             >
                                 <Typography sx={{color: theme.typography.common.blue, fontSize:theme.typography.smallFont}}>
                                 Transaction ID: 133
@@ -304,51 +313,6 @@ export default function ViewTransactionOwner(props) {
                         </Paper>
                         ))}
                     </SwipeableViews>
-                    {/* <Box
-                    component="span"
-                    m={0}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    >
-                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                            Back
-                        </Button>
-                        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}
-                        >
-                            Next
-                            <KeyboardArrowRight />
-                        </Button>
-                    </Box> */}
-                    {/* <MobileStepper
-                        steps={maxSteps}
-                        position="static"
-                        activeStep={activeStep}
-                        nextButton={
-                        <Button
-                            size="small"
-                            onClick={handleNext}
-                            disabled={activeStep === maxSteps - 1}
-                        >
-                            Next
-                            {theme.direction === 'rtl' ? (
-                            <KeyboardArrowLeft />
-                            ) : (
-                            <KeyboardArrowRight />
-                            )}
-                        </Button>
-                        }
-                        backButton={
-                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                            {theme.direction === 'rtl' ? (
-                            <KeyboardArrowRight />
-                            ) : (
-                            <KeyboardArrowLeft />
-                            )}
-                            Back
-                        </Button>
-                        }
-                    /> */}
                     </Box>
                     </Paper>
                 </Box>
