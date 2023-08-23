@@ -7,7 +7,6 @@ import TransactionHistory from "./TransactionHistory";
 
 export default function TransactionsOwnerData(props) {
   const navigate = useNavigate();
-  //   const { access_token, user } = userData;
   const [isLoading, setIsLoading] = useState(true);
   const [propertyData, setPropertyData] = useState([]);
   const fetchOwnerPayments = async () => {
@@ -15,13 +14,10 @@ export default function TransactionsOwnerData(props) {
     //   navigate("/");
     //   return;
     // }
-    const response = await get(`/ownerPayments?owner_id=${"100-000003"}`);
-    const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/transactionsByOwnerByProperty/110-000003/200-000029`);
-    // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions`);
-    console.log("payments", res.result);
-    // setPropertyData(response.result)
-    props.setTransactionList(res.result);
-    // setUpcomingPaymentsData(response.result);
+    // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/transactionsByOwnerByProperty/110-000003/200-000029`);
+    const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions`);
+    console.log("payments", res);
+    props.setTransactionList(res.data.Transactions.result);
     setIsLoading(false);
   };
   useEffect(() => {
@@ -31,15 +27,6 @@ export default function TransactionsOwnerData(props) {
 
   return (
     <>
-      {/* {!isLoading ? (
-      <>{propertyData.length !== 0 && (
-        <TransactionHistory data={propertyData} />
-      )}</>
-  ) : (
-    <div className="w-100 d-flex flex-column justify-content-center align-items-center">
-      loading
-    </div>
-  )} */}
     </>
   );
 }

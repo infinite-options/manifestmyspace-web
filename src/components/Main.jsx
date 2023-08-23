@@ -42,7 +42,7 @@ import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
 import CashflowManager from "./Cashflow/CashflowManager";
 import ManagerDashboard from "./Cashflow/ManagerDashboard";
-import Settings from "./Settings/SeetingsOwner";
+import Settings from "./Settings/SettingsOwner";
 
 import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -64,7 +64,7 @@ import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigat
 import TenantProperty from "./Property/TenantProperty";
 import TenantMaintenanceItem from "./Maintenance/TenantMaintenanceItem";
 import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
-
+import EditProfileSettings from "./Settings/EditProfileSettings";
 function Main() {
   return (
     <>
@@ -114,6 +114,7 @@ function Main() {
             <Route exact path="/cashflowManager" element={<CashflowManager />} />
             <Route exact path="/managerDashboard" element={<ManagerDashboard />} />
             <Route exact path="/settingsOwner" element={<Settings />} />
+            <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
 
             <Route exact path="/propertyInfo" element={<PropertyInfo />} />
             <Route exact path="/contacts" element={<Contacts />} />

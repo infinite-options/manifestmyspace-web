@@ -149,14 +149,6 @@ const CashflowManager = () => {
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                         ${
-                        // revenueSummary && expenseSummary ?
-                        // ((revenueSummary.reduce(function (prev, current) {
-                        //     return prev + +current.amount_paid;
-                        // }, 0) -
-                        // expenseSummary.reduce(function (prev, current) {
-                        //     return prev + +current.amount_paid;
-                        // }, 0)
-                        // ).toFixed(2)) : '0.00'}
                         totalRevenueByMonth && totalExpenseByMonth ?
                             (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : '0.00'
                         }
