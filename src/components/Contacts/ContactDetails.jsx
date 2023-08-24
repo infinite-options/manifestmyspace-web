@@ -121,6 +121,37 @@ const ContactDetails = (props) => {
                                     </svg>
                                 </div>
                             </div>
+                            {/* <div className="property-rent-detail-selector-icon-left">
+                                        <svg
+                                            width="33"
+                                            height="33"
+                                            viewBox="0 0 33 33"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
+                                                fill="#160449"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div className="property-rent-detail-selector-icon-text">
+                                        1 Of 3 Not Paid
+                                    </div>
+                                    <div className="property-rent-detail-selector-icon-right">
+                                        <svg
+                                            width="33"
+                                            height="33"
+                                            viewBox="0 0 33 33"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
+                                                fill="#160449"
+                                            />
+                                        </svg>
+                                    </div> */}
                             <div className="property-rent-detail-info-container">
                                 <div className="property-rent-detail-image"></div>
                                 <div className="property-rent-detail-info-text-container">

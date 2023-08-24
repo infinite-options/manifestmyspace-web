@@ -76,7 +76,6 @@ const PropertyInfo = (props) => {
                     direction="row"
                     justifyContent="center"
                     alignItems="center"
-                    sx={{ paddingTop: '25px' }}
                 >
                     <Box>
                         <Button>
