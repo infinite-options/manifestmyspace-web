@@ -58,14 +58,6 @@ function CashflowWidget() {
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
                 $
                 {
-                  // revenueSummary && expenseSummary ?
-                  // ((revenueSummary.reduce(function (prev, current) {
-                  //     return prev + +current.amount_paid;
-                  // }, 0) -
-                  // expenseSummary.reduce(function (prev, current) {
-                  //     return prev + +current.amount_paid;
-                  // }, 0)
-                  // ).toFixed(2)) : '0.00'}
                   totalRevenueByMonth && totalExpenseByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"
                 }
               </Typography>
@@ -74,12 +66,6 @@ function CashflowWidget() {
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Revenue</Typography>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
                 $
-                {/* {revenueSummary ?
-                    (revenueSummary
-                    .reduce(function (prev, current) {
-                        return prev + +current.amount_paid;
-                    }, 0)
-                    .toFixed(2)) : '0.00'} */}
                 {totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
               </Typography>
             </Box>
@@ -87,12 +73,6 @@ function CashflowWidget() {
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Expenses</Typography>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
                 $
-                {/* {expenseSummary ?
-                    (expenseSummary
-                    .reduce(function (prev, current) {
-                        return prev + +current.amount_paid;
-                    }, 0)
-                    .toFixed(2)) : '0.00'} */}
                 {totalExpenseByMonth ? totalExpenseByMonth : "0.00"}
               </Typography>
             </Box>
@@ -101,52 +81,6 @@ function CashflowWidget() {
             <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
           </Grid>
         </Grid>
-        {/* <div className="cf-widget-main" onClick={() => navigate('/cashflowOwner')}>
-            <div className="cf-widget-title-info-container">
-                <div className="cf-widget-title-container">
-                    <h2 className="cf-widget-title">March 2023</h2>
-                </div>
-                <div className="cf-widget-info-container">
-                    <div className="cf-widget-info-cf">Cashflow
-                        <span>
-                        ${
-                        revenueSummary && expenseSummary ?
-                        ((revenueSummary.reduce(function (prev, current) {
-                            return prev + +current.amount_paid;
-                        }, 0) -
-                        expenseSummary.reduce(function (prev, current) {
-                            return prev + +current.amount_paid;
-                        }, 0)
-                        ).toFixed(2)) : '0.00'}
-                        </span>
-                    </div>
-                    <div className="cf-widget-info-revenue">Revenue
-                        <span>
-                        ${revenueSummary ?
-                        (revenueSummary
-                        .reduce(function (prev, current) {
-                            return prev + +current.amount_paid;
-                        }, 0)
-                        .toFixed(2)) : '0.00'}
-                        </span>
-                    </div>
-                    <div className="cf-widget-info-expenses">Expenses 
-                        <span>
-                        ${expenseSummary ?
-                        (expenseSummary
-                        .reduce(function (prev, current) {
-                            return prev + +current.amount_paid;
-                        }, 0)
-                        .toFixed(2)) : '0.00'}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div className="cf-widget-graph-container">
-                <p className="cf-widget-graph-title"></p>
-                <img className="cf-widget-graph"></img>
-            </div>  
-        </div> */}
       </div>
     </ThemeProvider>
   );

@@ -41,7 +41,7 @@ const CashflowData = (props) => {
     for (let i = 0; i < 12; i++) {
       let currentMonth = date.toLocaleString("default", { month: "long" });
       let currentYear = date.getFullYear().toString();
-      console.log("month", currentMonth, currentYear);
+      // console.log("month", currentMonth, currentYear);
 
       // revenue for past 12 months
       let paidRevenueByMonth = 0;
@@ -49,11 +49,11 @@ const CashflowData = (props) => {
       revenueByMonth.forEach((revenue) => {
         if (revenue.cf_month === currentMonth && revenue.cf_year === currentYear) {
           if (revenue["sum(total_paid)"] !== null) {
-            console.log("paidRevenueByMonth ", revenue);
+            // console.log("paidRevenueByMonth ", revenue);
             paidRevenueByMonth = paidRevenueByMonth + Number(revenue["sum(total_paid)"]);
           }
           if (revenue["sum(pur_amount_due)"] !== null) {
-            console.log("expectedRevenueByMonth ", revenue);
+            // console.log("expectedRevenueByMonth ", revenue);
             expectedRevenueByMonth = expectedRevenueByMonth + Number(revenue["sum(pur_amount_due)"]);
           }
         }
@@ -66,11 +66,11 @@ const CashflowData = (props) => {
       expenseByMonth.forEach((expense) => {
         if (expense.cf_month === currentMonth && expense.cf_year === currentYear) {
           if (expense["sum(total_paid)"] !== null) {
-            console.log("paidExpenseByMonth ", expense);
+            // console.log("paidExpenseByMonth ", expense);
             paidExpenseByMonth = paidExpenseByMonth + Number(expense["sum(total_paid)"]);
           }
           if (expense["sum(pur_amount_due)"] !== null) {
-            console.log("expectedExpenseByMonth ", expense);
+            // console.log("expectedExpenseByMonth ", expense);
             expectedExpenseByMonth = expectedExpenseByMonth + Number(expense["sum(pur_amount_due)"]);
           }
         }
@@ -86,7 +86,7 @@ const CashflowData = (props) => {
       });
       date = new Date(date.setMonth(date.getMonth() - 1));
     }
-    console.log("monthly revenue ", revenueCashflowByMonth);
+    // console.log("monthly revenue ", revenueCashflowByMonth);
     revenueCashflowByMonth && props.setRevenueCashflowByMonth(revenueCashflowByMonth);
   };
   const getRevenueByMonth = (revenueByMonth) => {
@@ -95,11 +95,11 @@ const CashflowData = (props) => {
     revenueByMonth.forEach((revenue) => {
       if (revenue.cf_month === props.month && revenue.cf_year === props.year) {
         if (revenue["sum(total_paid)"] !== null) {
-          console.log("paidRevenueByMonth ", revenue);
+          // console.log("paidRevenueByMonth ", revenue);
           paidRevenueByMonth = paidRevenueByMonth + Number(revenue["sum(total_paid)"]);
         }
         if (revenue["sum(pur_amount_due)"] !== null) {
-          console.log("expectedRevenueByMonth ", revenue);
+          // console.log("expectedRevenueByMonth ", revenue);
           expectedRevenueByMonth = expectedRevenueByMonth + Number(revenue["sum(pur_amount_due)"]);
         }
       }
@@ -114,11 +114,11 @@ const CashflowData = (props) => {
     expenseByMonth.forEach((expense) => {
       if (expense.cf_month === props.month && expense.cf_year === props.year) {
         if (expense["sum(total_paid)"] !== null) {
-          console.log("paidExpenseByMonth ", expense);
+          // console.log("paidExpenseByMonth ", expense);
           paidExpenseByMonth = paidExpenseByMonth + Number(expense["sum(total_paid)"]);
         }
         if (expense["sum(pur_amount_due)"] !== null) {
-          console.log("expectedExpenseByMonth ", expense);
+          // console.log("expectedExpenseByMonth ", expense);
           expectedExpenseByMonth = expectedExpenseByMonth + Number(expense["sum(pur_amount_due)"]);
         }
       }

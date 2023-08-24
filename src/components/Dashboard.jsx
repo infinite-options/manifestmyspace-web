@@ -4,7 +4,10 @@ import { PieChart, Pie, Legend, Cell } from 'recharts';
 import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../css/maintenance.css";
+import { useLocation, useNavigate } from "react-router-dom";
 function Dashboard() {
+
+    const navigate = useNavigate();
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
     const rentData = [
         ["Properties", "Rent status"],
@@ -34,7 +37,7 @@ function Dashboard() {
             <CashflowWidget/>
             <div className="mt-container">
                 <MaintenanceWidget/>
-                <div className="mt-prop-widget-container">
+                <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
                     <h2 className="mt-prop-widget-title"> Property Rent</h2>
                     <div className="mt-prop-widget-graph">
                     <PieChart width={200} height={250} >
@@ -77,7 +80,7 @@ function Dashboard() {
                     </div>
                 </div>
             </div>  
-            <div className="mt-widget-expiry">
+            <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
                 {/* <div className="mt-expiry-container"> */}
                     <h2 className="mt-expiry-widget-title"> Leases Expiring by Month </h2>  
                     <div className="months-and-moveouts">
