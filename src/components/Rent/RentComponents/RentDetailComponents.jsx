@@ -82,6 +82,16 @@ export function RentDetailBody(props) {
         }
     }
 
+    function parseImageData(data) {
+        if (data === undefined) {
+            return;
+        }
+        const s = data.indexOf("http");
+        const l = data.indexOf('"', s);
+        const imageString = data.slice(s, l);
+        return imageString;
+    }
+
     return (
         <Box sx={{
             position: 'relative',
@@ -121,7 +131,7 @@ export function RentDetailBody(props) {
                     {getProperties(propertyStatus).length > 0 ?
                         (
                             <>
-                                {index + 1} Of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
+                                {index + 1} of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
                             </>
                         ) : (
                             <>
@@ -151,7 +161,16 @@ export function RentDetailBody(props) {
                         marginRight: '20px',
                         backgroundColor: 'grey',
                     }}
-                />
+                >
+                    {getProperties(propertyStatus).length > 0 ? (
+                        <img src={parseImageData(getProperties(propertyStatus)[index].property_images)} alt="Property Img" style={{
+                            width: '130px',
+                            height: '130px',
+                        }} />
+                    ) : (
+                        <></>
+                    )}
+                </Box>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -160,7 +179,7 @@ export function RentDetailBody(props) {
                         fontSize: '18px',
                         textDecoration: 'underline',
                     }}>
-                        {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}, ${getProperties(propertyStatus)[index].property_unit}`) : (<></>)}
+                        {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)}
                     </Box>
                     <Box sx={{
                         marginBottom: '0px',
