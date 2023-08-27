@@ -42,7 +42,7 @@ import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
 import CashflowManager from "./Cashflow/CashflowManager";
 import ManagerDashboard from "./Cashflow/ManagerDashboard";
-import Settings from "./Settings/SeetingsOwner";
+import Settings from "./Settings/SettingsOwner";
 
 import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -66,6 +66,7 @@ import TenantMaintenanceItem from "./Maintenance/TenantMaintenanceItem";
 import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
 import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 
+import EditProfileSettings from "./Settings/EditProfileSettings";
 function Main() {
   return (
     <>
@@ -75,7 +76,7 @@ function Main() {
           <Routes>
             <Route exact path="/dashboard" element={<MaintenanceWidget />} />
             <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
-            <Route exact path="/properties" element={<PropertyListData />} />
+            {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
             <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
             <Route exact path="/addExpense" element={<AddExpense />} />
             <Route exact path="/addRevenue" element={<AddRevenue />} />
@@ -116,6 +117,7 @@ function Main() {
             <Route exact path="/cashflowManager" element={<CashflowManager />} />
             <Route exact path="/managerDashboard" element={<ManagerDashboard />} />
             <Route exact path="/settingsOwner" element={<Settings />} />
+            <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
 
             <Route exact path="/propertyInfo" element={<PropertyInfo />} />
             <Route exact path="/contacts" element={<Contacts />} />
@@ -133,6 +135,7 @@ function Main() {
             <Route exact path="/tenantMaintenance" element={<TenantMaintenance />} />
             <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route exact path="/myProperty" element={<TenantProperty />} />
+            <Route exact path="/properties" element={<PropertyList />} />
             {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
             <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
           </Routes>

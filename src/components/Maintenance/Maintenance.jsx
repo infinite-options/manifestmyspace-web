@@ -45,37 +45,21 @@ export default function Maintenance(){
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
-            const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-            const propertyData = await propertiesByOwnerResponse.json()
-            for (const item of propertyData.Property.result) {
-                // each property and we need to get the maintenance items for each one.
-                const propertyId = item.property_uid;
-                // console.log(propertyId)
-                const maintenanceStatusByProperty = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/' + propertyId);
-                const maintenanceStatusData = await maintenanceStatusByProperty.json();
-                // console.log("maintenanceStatusData", maintenanceStatusData.MaintenanceProjects.result)
-                for (const item of maintenanceStatusData.MaintenanceProjects.result) {
-                    // console.log(item)
-                    if (!dataObject[item.maintenance_request_status]){
-                        dataObject[item.maintenance_request_status] = [];
-                    }
-                    if (handleFilter(item)){
-                        dataObject[item.maintenance_request_status].push(item);
-                    }
+            // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
+            // const propertyData = await propertiesByOwnerResponse.json()
+
+            const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
+            const maintenanceRequestsData = await maintenanceRequests.json()
+
+            for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
+                if (!dataObject[item.maintenance_request_status]){
+                    dataObject[item.maintenance_request_status] = [];
+                }
+                if (handleFilter(item)){
+                    dataObject[item.maintenance_request_status].push(item);
                 }
             }
-            console.log("dataObject from new api call", dataObject)
-            // const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatusByOwner/110-000003');
-            // const jsonData = await response.json();
-            // for (const item of jsonData.MaintenanceProjectStatus.result) {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     if (handleFilter(item)){
-            //         dataObject[item.maintenance_request_status].push(item);
-            //     }
-            // }
-            // console.log("MAINTENANCE dataObject", dataObject)
+            // console.log("dataObject from new api call", dataObject)
             setMaintenanceData(prevData => ({
                 ...prevData, 
                 ...dataObject

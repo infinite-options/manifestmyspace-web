@@ -12,7 +12,7 @@ export default function MaintenanceWidget(){
         {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
         {'color': '#D4736D', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'},
         {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'CANCELLED'},
-        {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
+        {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULE'},
         {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
         {'color': '#173C8D', 'status': 'Paid', 'mapping': 'PAID'},
     ]
@@ -34,10 +34,9 @@ export default function MaintenanceWidget(){
                     dataObject[item.maintenance_request_status] = item.num;
                 }
             }
-            // console.log("dataObject from server", dataObject)
-            
+            console.log("dataObject from server", dataObject)
 
-            console.log(dataObject)
+            // console.log(dataObject)
             setMaintenanceRequests(prevData => ({ ...prevData, ...dataObject }))
         }
         fetchData();

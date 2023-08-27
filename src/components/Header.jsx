@@ -17,7 +17,7 @@ function Header() {
                     </div>
                 </div>
                 <div className="main-header-redirect-btns">
-                    <a href="/dashboard" className="main-header-redirect-owner">Property Owner</a>
+                    <a href="/" className="main-header-redirect-owner">Property Owner</a>
                     <a href="/tenantDashboard" className="main-header-redirect-tenant">Tenant</a>
                 </div>
 

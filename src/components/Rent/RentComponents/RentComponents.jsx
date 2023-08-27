@@ -258,7 +258,7 @@ export function RentAccordion(props) {
 
             </AccordionSummary>
             {properties.map((property, index) => {
-                const address = property.property_address + ', ' + property.property_city + ' ' + property.property_state + ' ' + property.property_zip;
+                const address = property.property_address + ', ' + (property.property_unit !== '' ? property.property_unit + ', ' : '')+ property.property_city + ' ' + property.property_state + ' ' + property.property_zip;
                 return (
                     <AccordionDetails>
                         <Box

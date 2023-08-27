@@ -35,10 +35,6 @@ const ExpenseTable = (props) => {
                 <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                     $
-                {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "MAINTENANCE")
-                            .pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedMaintenance ? expectedExpenseByType.expectedMaintenance.toFixed(2) : '0.00'}
                 </Typography>
                 </TableCell>
@@ -92,10 +88,6 @@ const ExpenseTable = (props) => {
                 <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                     $
-                {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "REPAIRS") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "REPAIRS")
-                    .pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedRepairs ? expectedExpenseByType.expectedRepairs.toFixed(2) : '0.00'}
                 </Typography>
                 </TableCell>
@@ -149,10 +141,6 @@ const ExpenseTable = (props) => {
                 <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                     $
-                {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "MORTGAGE") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "MORTGAGE")
-                    .pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedMortgage ? expectedExpenseByType.expectedMortgage.toFixed(2) : '0.00'}
                 </Typography>
                 </TableCell>
@@ -206,10 +194,6 @@ const ExpenseTable = (props) => {
                 <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                     $
-                {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "TAXES") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "TAXES")
-                    .pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedTaxes ? expectedExpenseByType.expectedTaxes.toFixed(2) : '0.00'}
                 </Typography>
                 </TableCell>
@@ -263,10 +247,6 @@ const ExpenseTable = (props) => {
                 <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                     $
-                {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "INSURANCE") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "INSURANCE")
-                    .pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedInsurance ? expectedExpenseByType.expectedInsurance.toFixed(2) : '0.00'}
                 </Typography>
                 </TableCell>
@@ -320,10 +300,6 @@ const ExpenseTable = (props) => {
                 <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                     $
-                {/* {expenseSummary && expenseSummary.find((reS) => reS.purchase_type === "UTILITY") ?
-                (expenseSummary
-                    .find((reS) => reS.purchase_type === "UTILITY")
-                    .pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedUtilities ? expectedExpenseByType.expectedUtilities.toFixed(2) : '0.00'}
                 </Typography>
                 </TableCell>
@@ -379,10 +355,6 @@ const ExpenseTable = (props) => {
               <TableCell align="right">
                 <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                 $
-                {/* {expenseSummary && expenseSummary.find((revS) => revS.purchase_type === "MANAGEMENT") ?
-                (expenseSummary.find(
-                  (revS) => revS.purchase_type === "MANAGEMENT"
-                ).pur_amount_due.toFixed(2)) : '0.00'} */}
                 {expectedExpenseByType && expectedExpenseByType.expectedManagement ? expectedExpenseByType.expectedManagement.toFixed(2) : '0.00'}
                 </Typography>
               </TableCell>
