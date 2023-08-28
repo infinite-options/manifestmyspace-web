@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
 import './../../css/contacts.css';
 import {
@@ -15,9 +15,46 @@ import {
 } from '@mui/material';
 import { Message, Search } from '@mui/icons-material';
 import { getStatusColor } from './ContactsFunction';
+import axios from 'axios';
 
 const Contacts = (props) => {
     const [contactsTab, setContactsTab] = useState('Owner');
+    const [ownerData, setOwnerData] = useState([]);
+    const [tenantData, setTenantData] = useState([]);
+    const [maintenanceData, setMaintenanceData] = useState([]);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        const url =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
+        await axios
+            .get(url)
+            .then((resp) => {
+                const data = resp.data['Business Contacts'].result;
+                console.log(data);
+
+                const ownerCon = data.filter((val) => {
+                    return val.contact_uid && val.contact_uid.includes('110-');
+                });
+                setOwnerData(ownerCon);
+
+                const tenantCon = data.filter((val) => {
+                    return val.contact_uid && val.contact_uid.includes('350-');
+                });
+                setTenantData(tenantCon);
+
+                const mainCon = data.filter((val) => {
+                    return val.contact_uid && val.contact_uid.includes('600-');
+                });
+                setMaintenanceData(mainCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+    };
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -174,11 +211,38 @@ const Contacts = (props) => {
                                     }}
                                 />
                                 {contactsTab === 'Owner' ? (
-                                    <OwnerContactsCard />
+                                    <>
+                                        {ownerData.map((owner, index) => {
+                                            return (
+                                                <OwnerContactsCard
+                                                    data={owner}
+                                                    key={index}
+                                                />
+                                            );
+                                        })}
+                                    </>
                                 ) : contactsTab === 'Tenants' ? (
-                                    <TenantContactsCard />
+                                    <>
+                                        {tenantData.map((tenant, index) => {
+                                            return (
+                                                <TenantContactsCard
+                                                    data={tenant}
+                                                    key={index}
+                                                />
+                                            );
+                                        })}
+                                    </>
                                 ) : (
-                                    <MaintenanceContactsCard />
+                                    <>
+                                        {maintenanceData.map((maint, index) => {
+                                            return (
+                                                <MaintenanceContactsCard
+                                                    data={maint}
+                                                    key={index}
+                                                />
+                                            );
+                                        })}
+                                    </>
                                 )}
                             </div>
                         </div>
@@ -190,6 +254,7 @@ const Contacts = (props) => {
 };
 
 const OwnerContactsCard = (props) => {
+    const owner = props.data;
     return (
         <Stack>
             <Card
@@ -208,7 +273,7 @@ const OwnerContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            Krist Novoselic
+                            {owner.contact_first_name} {owner.contact_last_name}
                         </Typography>
                         <Button>
                             <Message
@@ -234,7 +299,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        aberdeen94@gmail.com
+                        {owner.contact_email}
                     </Typography>
                     <Typography
                         sx={{
@@ -242,7 +307,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        (408) 555-4831
+                        {owner.contact_phone_numnber}
                     </Typography>
                 </CardContent>
             </Card>
@@ -251,6 +316,7 @@ const OwnerContactsCard = (props) => {
 };
 
 const TenantContactsCard = (props) => {
+    const tenant = props.data;
     return (
         <Stack>
             <Card
@@ -269,7 +335,8 @@ const TenantContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            Meg White
+                            {tenant.contact_first_name}{' '}
+                            {tenant.contact_last_name}
                         </Typography>
                         <Button>
                             <Message
@@ -286,7 +353,9 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        103 N. Abel St, Milpitas CA 95035
+                        {tenant.contact_address
+                            ? tenant.contact_address
+                            : '103 N. Abel St, Milpitas CA 95035'}
                     </Typography>
                     <Typography
                         sx={{
@@ -294,7 +363,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        redblackwhite@gmail.com
+                        {tenant.contact_email}
                     </Typography>
                     <Typography
                         sx={{
@@ -302,7 +371,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        (408) 555-4831
+                        {tenant.contact_phone_numnber}
                     </Typography>
                 </CardContent>
             </Card>
@@ -311,6 +380,7 @@ const TenantContactsCard = (props) => {
 };
 
 const MaintenanceContactsCard = (props) => {
+    const business = props.data;
     return (
         <Stack>
             <Card
@@ -329,7 +399,8 @@ const MaintenanceContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            Doolittle Maintenance
+                            {business.contact_first_name}{' '}
+                            {business.contact_last_name}
                         </Typography>
                         <Button>
                             <Message
@@ -346,7 +417,7 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        stratosphere1998@gmail.com
+                        {business.contact_email}
                     </Typography>
                     <Typography
                         sx={{
@@ -354,7 +425,7 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        (408) 555-4831
+                        {business.contact_phone_numnber}
                     </Typography>
                     <Typography
                         sx={{
@@ -364,7 +435,9 @@ const MaintenanceContactsCard = (props) => {
                             position: 'absolute',
                         }}
                     >
-                        Plumbing and Landscaping
+                        {business.contact_description
+                            ? business.contact_description
+                            : 'Plumbing and Landscaping'}
                     </Typography>
                 </CardContent>
             </Card>
