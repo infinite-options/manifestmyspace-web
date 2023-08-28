@@ -82,6 +82,16 @@ export function RentDetailBody(props) {
         }
     }
 
+    function parseImageData(data) {
+        if (data === undefined) {
+            return;
+        }
+        const s = data.indexOf("http");
+        const l = data.indexOf('"', s);
+        const imageString = data.slice(s, l);
+        return imageString;
+    }
+
     return (
         <Box sx={{
             position: 'relative',
@@ -118,7 +128,17 @@ export function RentDetailBody(props) {
                     </svg>
                 </Box>
                 <Box>
-                    {index + 1} Of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
+                    {getProperties(propertyStatus).length > 0 ?
+                        (
+                            <>
+                                {index + 1} of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
+                            </>
+                        ) : (
+                            <>
+                                None
+                            </>
+                        )
+                    }
                 </Box>
                 <Box onClick={() => {
                     incrementIndex();
@@ -141,7 +161,16 @@ export function RentDetailBody(props) {
                         marginRight: '20px',
                         backgroundColor: 'grey',
                     }}
-                />
+                >
+                    {getProperties(propertyStatus).length > 0 ? (
+                        <img src={parseImageData(getProperties(propertyStatus)[index].property_images)} alt="Property Img" style={{
+                            width: '130px',
+                            height: '130px',
+                        }} />
+                    ) : (
+                        <></>
+                    )}
+                </Box>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -150,7 +179,7 @@ export function RentDetailBody(props) {
                         fontSize: '18px',
                         textDecoration: 'underline',
                     }}>
-                        {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}, ${getProperties(propertyStatus)[index].property_unit}`) : (<></>)}
+                        {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)}
                     </Box>
                     <Box sx={{
                         marginBottom: '0px',
@@ -204,7 +233,7 @@ export function RentDetailBody(props) {
                             Fees
                         </th>
                     </tr>
-                    {rentDetailsData.length > 0 ? (
+                    {rentDetailsData.length > 0 && getProperties(propertyStatus).length > 0 ? (
                         rentDetailsData.map((rentDetails, i) => {
                             const month = rentDetails.cf_month;
                             const paid = rentDetails.payment_date !== null ? (
@@ -221,18 +250,25 @@ export function RentDetailBody(props) {
                                     fee = '+$' + prop2.pur_amount_due;
                                 }
                             }
-
                             return (
                                 <>
                                     {
                                         (propertyID === id && rentDetails.purchase_type === 'RENT') ? (
-                                            <PropertyRow data={[month, paid, amount, payment_status, fee]} />
-                                        ) : (<></>)
+                                            <>
+                                                <PropertyRow data={[month, paid, amount, payment_status, fee]} />
+                                            </>
+
+                                        ) : (
+                                            <></>
+                                        )
                                     }
                                 </>
                             )
                         })
-                    ) : (<></>)
+                    ) : (
+                        <>
+                        </>
+                    )
 
                     }
                 </table>

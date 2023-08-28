@@ -9,7 +9,7 @@ function SelectProperty(props) {
         axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003")
         .then((res)=>{
             // console.log(res.data.Property);
-            setProperties(res.data.Property);
+            setProperties(res.data.Property.result);
         });
     }, []);
 
