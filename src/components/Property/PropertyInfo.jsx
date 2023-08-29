@@ -41,6 +41,7 @@ const PropertyInfo = (props) => {
     const location = useLocation();
     const index = location.state.index;
     const property = location.state.data;
+    const ppt_images = property.property_images.split(',');
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -49,21 +50,41 @@ const PropertyInfo = (props) => {
         minimumFractionDigits: 0,
     }).format(property.property_listed_rent);
 
-    const images = [
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-        },
-    ];
+    function parseImageData(data) {
+        if (data === undefined) {
+            return;
+        }
+        const s = data.indexOf('http');
+        const l = data.indexOf('"', s);
+        const imageString = data.slice(s, l);
+        return imageString;
+    }
+
+    const images = ppt_images.map((data) => {
+        try {
+            const url = parseImageData(data);
+            return { original: url };
+        } catch (e) {
+            console.error(e);
+            return { original: '' };
+        }
+    });
+
+    // const images = [
+    //     {
+    //         original: 'https://picsum.photos/id/1018/1000/600/',
+    //     },
+    //     {
+    //         original: 'https://picsum.photos/id/1015/1000/600/',
+    //     },
+    //     {
+    //         original: 'https://picsum.photos/id/1019/1000/600/',
+    //     },
+    // ];
 
     return (
         <ThemeProvider theme={theme}>
-            <Box
+            {/* <Box
                 style={{
                     display: 'flex',
                     fontFamily: 'Source Sans Pro',
@@ -96,7 +117,7 @@ const PropertyInfo = (props) => {
                         </Button>
                     </Box>
                 </Stack>
-            </Box>
+            </Box> */}
             <Box
                 style={{
                     display: 'flex',
@@ -267,31 +288,35 @@ const PropertyInfo = (props) => {
                         direction="row"
                         sx={{ margin: '5px 10px' }}
                     >
-                        <Stack
-                            justifyContent="center"
-                            alignItems="center"
-                            sx={{ margin: '5px' }}
-                        >
-                            <Typography
-                                sx={{
-                                    color: '#7AD15B',
-                                    fontWeight:
-                                        theme.typography.primary.fontWeight,
-                                    fontSize: '16px',
-                                }}
+                        {property.property_pets_allowed > 0 ? (
+                            <Stack
+                                justifyContent="center"
+                                alignItems="center"
+                                sx={{ margin: '5px' }}
                             >
-                                <CheckCircle />
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    color: theme.typography.primary.black,
+                                <Typography
+                                    sx={{
+                                        color: '#7AD15B',
+                                        fontWeight:
+                                            theme.typography.primary.fontWeight,
+                                        fontSize: '16px',
+                                    }}
+                                >
+                                    <CheckCircle />
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.primary.black,
 
-                                    fontSize: '12px',
-                                }}
-                            >
-                                Pet Friendly
-                            </Typography>
-                        </Stack>
+                                        fontSize: '12px',
+                                    }}
+                                >
+                                    Pet Friendly
+                                </Typography>
+                            </Stack>
+                        ) : (
+                            <></>
+                        )}
                         <Stack
                             justifyContent="center"
                             alignItems="center"
