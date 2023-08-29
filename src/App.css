@@ -4,12 +4,13 @@
 
 .main-header {
     width: 100%;
-    height: 154px;
+    /* height: 154px; */
+    /* filter: drop-shadow(0 2px 6px #888888); */
 }
 
 .main-header-title-logo {
     background-color: #160449;
-    border: 1px solid var(--text-color);
+    border: 1px solid #160449;
     color: var(--text-color);
 }
 
@@ -103,11 +104,17 @@
     margin-bottom: 2px;
 }
 
-.main-header-logo>.rectangle-5 {
+.main-header-logo>.rectangle-2 {
     height: 7px;
     width: 26.5px;
     border: 1px solid var(--text-color);
     transform: rotate(-44.5deg) translateX(25px);
+}
+
+.footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }
 
 @font-face {

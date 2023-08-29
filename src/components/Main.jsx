@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Box } from "@mui/material";
 import CashflowOwner from "./Cashflow/CashflowOwner";
 // import Footer from './Footer';
 
@@ -67,10 +68,25 @@ import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDeta
 import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 
 import EditProfileSettings from "./Settings/EditProfileSettings";
+import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
+import AddCard from "./Settings/AddCard";
+import CardDetailsSettings from "./Settings/CardDetailsSettings";
+import { Footer } from "./Footer";
 function Main() {
   return (
     <>
-      <div>
+      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Box
+        sx={{
+          flex: "1", // Allow content to take remaining space
+          overflow: "auto", // Enable scrolling when content overflows
+        }}
+      >
+        {/* <Box sx={{display: "flex",
+          flexDirection: "column",
+          // minHeight: "100vh",
+          overflow: "auto", // Enable scrolling when content overflows
+        }}> */}
         <Header></Header>
         <Router>
           <Routes>
@@ -118,6 +134,9 @@ function Main() {
             <Route exact path="/managerDashboard" element={<ManagerDashboard />} />
             <Route exact path="/settingsOwner" element={<Settings />} />
             <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
+            <Route exact path="/changePasswordSettings" element={<ChangePasswordSettings />} />
+            <Route exact path="/addCardSettings" element={<AddCard />} />
+            <Route exact path="/cardDetailsSettings" element={<CardDetailsSettings />} />
 
             <Route exact path="/propertyInfo" element={<PropertyInfo />} />
             <Route exact path="/contacts" element={<Contacts />} />
@@ -140,6 +159,9 @@ function Main() {
             <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
           </Routes>
         </Router>
+        <Footer></Footer>
+        {/* </Box> */}
+        </Box>
       </div>
     </>
   );
