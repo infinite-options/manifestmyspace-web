@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Paper, Box, Modal, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails, IconButton } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -12,6 +12,8 @@ import SelectMonthComponent from '../SelectMonthComponent';
 import ExpenseTable from './ExpenseTable';
 import ExpectedExpenseTable from './ExpectedExpenseTable';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
+import SelectProperty from '../Leases/SelectProperty';
+import AddRevenueIcon from '../../images/AddRevenueIcon.png'
 
 const CashflowOwner = () => {
     const navigate = useNavigate();
@@ -20,8 +22,14 @@ const CashflowOwner = () => {
     const [expenseDropdown, setExpenseDropdown] = useState(false);
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
-    const [month, setMonth] = useState('June');
-    const [year, setYear] = useState('2023');
+    let date = new Date();
+    let currentMonth = date.toLocaleString("default", { month: "long" });
+    let currentYear = date.getFullYear().toString();
+    console.log("currentMonth ",currentMonth, currentYear)
+    const [month, setMonth] = useState(currentMonth);
+    const [year, setYear] = useState(currentYear);
+
+    const [selectedProperty, setSelectedProperty] = useState({});
 
     const [totalRevenueByMonth, setTotalRevenueByMonth] = useState(0);
     const [expectedRevenueByMonth, setExpectedRevenueByMonth] = useState(0);
@@ -46,6 +54,14 @@ const CashflowOwner = () => {
     console.log("cashflow revenueSummary ", revenueSummary, month);
     console.log("cashflow expenseSummary ", expenseSummary);
 
+    const [openSelectProperty, setOpenSelectProperty] = useState(false);
+    const handleClose = () => {
+        setOpenSelectProperty(false);
+    };
+    const handleOpen = () => {
+        setOpenSelectProperty(true);
+    };
+
     const handleButtonClick = (buttonName) => {
         setActiveButton(buttonName);
     };
@@ -57,23 +73,25 @@ const CashflowOwner = () => {
         setExpenseDropdown(!expenseDropdown);
     }
     
+    useEffect(() => {
+     console.log("selectedProperty selectedProperty", selectedProperty)   
+    },[selectedProperty])
     return (
         <ThemeProvider theme={theme}>
-            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={'100-000003'} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
+            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={'100-000003'} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty || null}></CashflowData>
           <Box
             style={{
                 display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 justifyContent: 'center',
                 width: '100%', // Take up full screen width
-                minHeight: '100vh', // Set the Box height to full height
-                marginTop: theme.spacing(2), // Set the margin to 20px
             }}
           >
             <Paper
               style={{
-                margin: '30px',
+                marginTop: '30px',
                 padding: theme.spacing(2),
-                // backgroundColor: theme.palette.primary.main,
                 backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
                 width: '85%', // Occupy full width with 25px margins on each side
                 [theme.breakpoints.down('sm')]: {
@@ -108,7 +126,7 @@ const CashflowOwner = () => {
                         </Typography>
                     </Button>
                     <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
-                    <Button sx={{ textTransform: 'capitalize' }}>
+                    <Button sx={{ textTransform: 'capitalize' }} onClick={handleOpen}>
                         <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
                         Select Property
@@ -124,7 +142,6 @@ const CashflowOwner = () => {
                     alignItems="center"
                     onClick={()=>{handleButtonClick('Cashflow')}}
                     style={{
-                        // backgroundColor: theme.palette.custom.blue,
                         backgroundColor: activeButton === 'Cashflow' ? theme.palette.custom.blue : theme.palette.custom.grey,
                         borderRadius: '5px'
                 }}
@@ -136,15 +153,7 @@ const CashflowOwner = () => {
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                         ${
-                        // revenueSummary && expenseSummary ?
-                        // ((revenueSummary.reduce(function (prev, current) {
-                        //     return prev + +current.amount_paid;
-                        // }, 0) -
-                        // expenseSummary.reduce(function (prev, current) {
-                        //     return prev + +current.amount_paid;
-                        // }, 0)
-                        // ).toFixed(2)) : '0.00'}
-                        totalRevenueByMonth && totalExpenseByMonth ?
+                        totalRevenueByMonth ?
                             (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : '0.00'
                         }
                     </Typography>
@@ -158,7 +167,6 @@ const CashflowOwner = () => {
                     alignItems="center"
                     onClick={()=>{handleButtonClick('ExpectedCashflow')}}
                     style={{
-                        // backgroundColor: theme.palette.custom.grey,
                         backgroundColor: activeButton === 'Cashflow' ? theme.palette.custom.grey : theme.palette.custom.yellowHighlight,
                         borderRadius: '5px',
                 }}
@@ -170,14 +178,6 @@ const CashflowOwner = () => {
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                         ${
-                        // revenueSummary && expenseSummary ?
-                        // ((revenueSummary.reduce(function (prev, current) {
-                        //     return prev + +current.amount_due;
-                        // }, 0) -
-                        // expenseSummary.reduce(function (prev, current) {
-                        //     return prev + +current.amount_due;
-                        // }, 0)
-                        // ).toFixed(2)) : '0.00'}
                         expectedRevenueByMonth && expectedExpenseByMonth ?
                         (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2) : '0.00'
                         }
@@ -185,7 +185,6 @@ const CashflowOwner = () => {
                 </Box>
                 <Accordion 
                 sx={{
-                    // backgroundColor: theme.palette.primary.main, 
                     backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
                     boxShadow: 'none'}}>
                 <Box
@@ -203,21 +202,9 @@ const CashflowOwner = () => {
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
                     $ {activeButton === 'Cashflow' ?
                         (
-                            // revenueSummary ?
-                            //     (revenueSummary
-                            //     .reduce(function (prev, current) {
-                            //         return prev + +current.amount_paid;
-                            //     }, 0)
-                            //     .toFixed(2)) : '0.00'
                             totalRevenueByMonth?
                             totalRevenueByMonth.toFixed(2) : '0.00'
                         ):(
-                            // revenueSummary ?
-                            //     (revenueSummary
-                            //     .reduce(function (prev, current) {
-                            //         return prev + +current.amount_due;
-                            //     }, 0)
-                            //     .toFixed(2)) : '0.00'
                             expectedRevenueByMonth?
                             expectedRevenueByMonth.toFixed(2) : '0.00'
                         )}
@@ -234,7 +221,6 @@ const CashflowOwner = () => {
                 </Accordion>
                 <Accordion 
                 sx={{
-                    // backgroundColor: theme.palette.primary.main, 
                     backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
                     boxShadow: 'none'}}>
                 <Box
@@ -252,22 +238,10 @@ const CashflowOwner = () => {
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
                        $ {activeButton === 'Cashflow' ?
                         (
-                            // expenseSummary ?
-                            //     (expenseSummary
-                            //     .reduce(function (prev, current) {
-                            //         return prev + +current.amount_paid;
-                            //     }, 0)
-                            //     .toFixed(2)) : '0.00'
                             totalExpenseByMonth?
                             totalExpenseByMonth : '0.00'
                         ) : 
                         (
-                            // expenseSummary ?
-                            //     (expenseSummary
-                            //     .reduce(function (prev, current) {
-                            //         return prev + +current.amount_due;
-                            //     }, 0)
-                            //     .toFixed(2)) : '0.00'
                             expectedExpenseByMonth?
                             expectedExpenseByMonth : '0.00'
                         )}
@@ -298,26 +272,61 @@ const CashflowOwner = () => {
                 >
                <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary} revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
                 </Stack>
+                </Paper>
+                <Paper
+                    style={{
+                        margin: '2px',
+                        padding: theme.spacing(2),
+                        boxShadow: "none",
+                        width: '85%', // Occupy full width with 25px margins on each side
+                        [theme.breakpoints.down('sm')]: {
+                          width: '80%',
+                        },
+                        [theme.breakpoints.up('sm')]: {
+                          width: '50%',
+                        },
+                      }}
+                >
                 <Box
-                    component="span"
-                    m={3}
-                    padding={3}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
+                component="span"
+                m={2}
+                marginTop={15}
+                marginBottom={30}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
                 >
                     <Button 
-                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
-                        onClick={()=>{navigate('/addRevenue')}}>Add Revenue</Button>
+                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
+                        onClick={()=>{navigate('/addRevenue')}}> <img src={AddRevenueIcon}></img> Revenue</Button>
                     <Button 
-                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
-                        onClick={()=>{navigate('/addExpense')}}>Add Expense</Button>
+                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
+                        onClick={()=>{navigate('/addExpense')}}> <img src={AddRevenueIcon}></img> Expense</Button>
                     <Button 
-                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}
-                        onClick={()=>{navigate('/addUtility')}}>Add Utility</Button>
+                        sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
+                        onClick={()=>{navigate('/addUtility')}}> <img src={AddRevenueIcon}></img> Utility</Button>
                 </Box>
-            </Paper>
+                </Paper>
           </Box>
+          <Modal sx={{
+                overflowY: 'scroll',
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+            }}
+                open={openSelectProperty}
+                disableScrollLock={false}
+            >
+                <Box sx={{
+                    position: 'absolute',
+                    width: '80%',
+                    height: '80%',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}>
+                    <SelectProperty closeTab={handleClose} setSelectedProperty={setSelectedProperty} />
+                </Box>
+
+            </Modal>
         </ThemeProvider>
       );
     };

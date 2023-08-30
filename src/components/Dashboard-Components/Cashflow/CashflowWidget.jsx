@@ -5,6 +5,7 @@ import CashflowData from "../../Cashflow/CashflowData";
 import { useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
 import MixedChart from "../../Graphs/OwnerCashflowGraph";
+import { months } from "moment";
 
 function CashflowWidget() {
   const navigate = useNavigate();
@@ -18,12 +19,19 @@ function CashflowWidget() {
   const [totalExpenseByMonth, setTotalExpenseByMonth] = useState(0);
   const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
 
+  let date = new Date();
+  let currentMonth = date.toLocaleString("default", { month: "long" });
+  let currentYear = date.getFullYear().toString();
+  console.log("currentMonth ",currentMonth, currentYear)
+  const [month, setMonth] = useState(currentMonth);
+  const [year, setYear] = useState(currentYear);
+
   return (
     <ThemeProvider theme={theme}>
       <div className="cf-widget-main" onClick={() => navigate("/cashflowOwner")}>
         <CashflowData
-          year={"2023"}
-          month={"June"}
+          year={year}
+          month={month}
           filter={false}
           role={"Owner"}
           userID={"100-000003"}
@@ -39,7 +47,7 @@ function CashflowWidget() {
           <Grid item xs={6}>
             <Stack direction="row" justifyContent="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                June 2023
+                {month} {year}
               </Typography>
             </Stack>
             <Box
@@ -58,7 +66,7 @@ function CashflowWidget() {
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
                 $
                 {
-                  totalRevenueByMonth && totalExpenseByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"
+                  totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"
                 }
               </Typography>
             </Box>

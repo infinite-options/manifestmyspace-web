@@ -4,11 +4,15 @@ import axios from "axios";
 
 function SelectProperty(props) {
     const handleClose = props.closeTab;
+    let setSelectedProperty = {}
+    if (props.setSelectedProperty) {
+        setSelectedProperty = props.setSelectedProperty;
+    }
     const [properties, setProperties] = useState([]);
     useEffect(()=>{
         axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003")
         .then((res)=>{
-            // console.log(res.data.Property);
+            console.log("Property list ",res.data.Property.result);
             setProperties(res.data.Property.result);
         });
     }, []);
@@ -99,8 +103,8 @@ function SelectProperty(props) {
             }}>
                 Show All
             </Box>
-            {properties.map((property, i)=>(
-                <PropertyCard key={i} data={property}/>
+            {properties && properties.map((property, i)=>(
+                <PropertyCard key={i} data={property} setSelectedProperty={setSelectedProperty || null} />
             ))}
             
         </Box>
@@ -109,6 +113,10 @@ function SelectProperty(props) {
 
 function PropertyCard(props) {
     const property = props.data;
+    let setSelectedProperty = {};
+    if (props.setSelectedProperty) {
+        setSelectedProperty = props.setSelectedProperty;
+    }
 
     function parseImageData(data) {
         const s = data.indexOf("http");
@@ -125,7 +133,11 @@ function PropertyCard(props) {
             backgroundColor: '#F2F2F2',
             marginTop: '7px',
             height: '40px',
-        }}>
+        }}
+            onClick={() => {
+                console.log("property selected ", property);
+                setSelectedProperty && setSelectedProperty(property);
+            }}>
             <Box sx={{
                 marginLeft: '0px',
                 marginRight: '10px',
@@ -143,7 +155,11 @@ function PropertyCard(props) {
                 fontWeight: '600',
                 fontSize: '15px',
             }}>
-                {property.property_address}, {property.property_unit}
+                {property.property_unit ? (
+                    `${property.property_address}, ${property.property_unit}`
+                ) : (
+                    property.property_address
+                )}
             </Box>
 
         </Box>

@@ -14,7 +14,7 @@ import {
     Button,
     Typography,
     Stack,
-    TableContainer
+    Modal
   } from "@mui/material";
   import CloseIcon from '@mui/icons-material/Close';
   import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -31,6 +31,7 @@ import {
   import { makeStyles } from "@material-ui/core/styles";
   import TransactionsOwnerData from "./TransactionsOwnerData";
 import ViewTransactionOwner from "./ViewTransactionOwner";
+import SelectProperty from "../Leases/SelectProperty";
 
   const useStyles = makeStyles(theme => ({
     cell_long: {
@@ -58,6 +59,15 @@ export default function TransactionHistory(props) {
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
     };
+
+    const [openSelectProperty, setOpenSelectProperty] = useState(false);
+    const handleClose = () => {
+        setOpenSelectProperty(false);
+    };
+    const handleOpen = () => {
+        setOpenSelectProperty(true);
+    };
+
 
     const paymentsOutgoingHeadCell = [
         {
@@ -196,7 +206,7 @@ export default function TransactionHistory(props) {
                             </Typography>
                         </Button>
                             {/* <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent> */}
-                        <Button sx={{ textTransform: 'capitalize' }}>
+                        <Button sx={{ textTransform: 'capitalize' }} onClick={handleOpen}>
                             <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
                             Property
@@ -296,6 +306,25 @@ export default function TransactionHistory(props) {
                     </Stack>
                     </Paper>
                 </Box>
+                <Modal sx={{
+                    overflowY: 'scroll',
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                    open={openSelectProperty}
+                    disableScrollLock={false}
+                >
+                    <Box sx={{
+                        position: 'absolute',
+                        width: '80%',
+                        height: '80%',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}>
+                        <SelectProperty closeTab={handleClose} />
+                    </Box>
+
+                </Modal>
                 </ThemeProvider>
         </>
     )

@@ -15,8 +15,8 @@ const CashflowData = (props) => {
     // }
     const cashflow = await axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/110-000003/TTM");
     console.log("props cashflowResponse", cashflow);
-    props.setTotalRevenueByMonth && getRevenueByMonth(cashflow.data.response_revenue_by_month.result);
-    props.setTotalExpenseByMonth && getExpenseByMonth(cashflow.data.response_expense_by_month.result);
+    if (props.setTotalRevenueByMonth) { props.setTotalRevenueByMonth(0); getRevenueByMonth(cashflow.data.response_revenue_by_month.result); }
+    if (props.setTotalExpenseByMonth) { props.setTotalExpenseByMonth(0); getExpenseByMonth(cashflow.data.response_expense_by_month.result); }
     props.setTotalRevenueByType && getRevenueByType(cashflow.data.response_revenue_by_month_by_type.result);
     props.setTotalExpenseByType && getExpenseByType(cashflow.data.response_expense_by_month_by_type.result);
     props.setRevenueList && getRevenueList(cashflow.data.response_revenue.result);
