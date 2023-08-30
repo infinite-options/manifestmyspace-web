@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
 import theme from '../../theme/theme';
 import './../../css/contacts.css';
-import { ThemeProvider, Box, Paper } from '@mui/material';
+import {
+    ThemeProvider,
+    Box,
+    Paper,
+    Stack,
+    Typography,
+    Button,
+} from '@mui/material';
 import { getStatusColor } from './ContactsFunction';
+import { Email, Message, Phone } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const ContactDetails = (props) => {
     const [contactsTab, setContactsTab] = useState('Owner');
+
+    const navigate = useNavigate();
+
+    const handleBackBtn = () => {
+        navigate('/contacts');
+    };
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -33,36 +48,21 @@ const ContactDetails = (props) => {
                         paddingTop: '10px',
                     }}
                 >
-                    <div className="contacts-title-container">
-                        <div className="property-rent-title-text">
-                            Property Rent
-                        </div>
-                        <div className="property-rent-title-add">
-                            <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 18 18"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                    <Stack alignItems="center">
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontSize: theme.typography.largeFont.fontSize,
+                                fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                        >
+                            {contactsTab} Contacts
+                        </Typography>
+                        <Stack flexDirection="row" justifyContent="center">
+                            <Button
+                                sx={{ padding: '0', minWidth: '50px' }}
+                                onClick={handleBackBtn}
                             >
-                                <path
-                                    d="M9 2L9 16"
-                                    stroke="#160449"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                />
-                                <path
-                                    d="M16 9L2 9"
-                                    stroke="#160449"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                />
-                            </svg>
-                        </div>
-                    </div>
-                    <div className="property-rent-subtext-container">
-                        <div className="property-rent-detail-subtext">
-                            <div className="property-rent-subtext-select-icon">
                                 <svg
                                     width="24"
                                     height="24"
@@ -75,21 +75,41 @@ const ContactDetails = (props) => {
                                         fill="#3D5CAC"
                                     />
                                 </svg>
-                            </div>
-                            Return to Viewing All Listings
-                        </div>
-                    </div>
-                    <div className="property-rent-detail-container">
-                        <div className="property-rent-detail-background">
-                            <div
-                                className="property-rent-detail-status-indicator"
-                                style={{
-                                    backgroundColor:
-                                        getStatusColor(contactsTab),
+                            </Button>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    fontSize:
+                                        theme.typography.smallFont.fontSize,
                                 }}
-                            />
-                            <div className="property-rent-detail-selector-container">
-                                <div className="property-rent-detail-selector-icon-left">
+                            >
+                                Return to Viewing All Listings
+                            </Typography>
+                        </Stack>
+                    </Stack>
+                    <Paper
+                        sx={{
+                            margin: '10px',
+                            borderRadius: '10px',
+                            backgroundColor: theme.palette.form.main,
+                            paddingBottom: '25px',
+                        }}
+                    >
+                        <Stack
+                            sx={{
+                                color: theme.typography.secondary.white,
+                                backgroundColor: getStatusColor(contactsTab),
+                                borderRadius: '10px 10px 0 0',
+                            }}
+                        >
+                            <Stack
+                                flexDirection="row"
+                                justifyContent="space-between"
+                                sx={{
+                                    padding: '5px 10px',
+                                }}
+                            >
+                                <Box>
                                     <svg
                                         width="33"
                                         height="33"
@@ -99,14 +119,24 @@ const ContactDetails = (props) => {
                                     >
                                         <path
                                             d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
-                                            fill="#160449"
+                                            fill={
+                                                theme.typography.secondary.white
+                                            }
                                         />
                                     </svg>
-                                </div>
-                                <div className="property-rent-detail-selector-icon-text">
-                                    1 Of 3 Not Paid
-                                </div>
-                                <div className="property-rent-detail-selector-icon-right">
+                                </Box>
+                                <Box>
+                                    <Typography
+                                        sx={{
+                                            fontWeight:
+                                                theme.typography.primary
+                                                    .fontWeight,
+                                        }}
+                                    >
+                                        1 Of 3 Not Paid
+                                    </Typography>
+                                </Box>
+                                <Box>
                                     <svg
                                         width="33"
                                         height="33"
@@ -116,78 +146,327 @@ const ContactDetails = (props) => {
                                     >
                                         <path
                                             d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
-                                            fill="#160449"
+                                            fill={
+                                                theme.typography.secondary.white
+                                            }
                                         />
                                     </svg>
-                                </div>
-                            </div>
-                            {/* <div className="property-rent-detail-selector-icon-left">
-                                        <svg
-                                            width="33"
-                                            height="33"
-                                            viewBox="0 0 33 33"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
-                                                fill="#160449"
+                                </Box>
+                            </Stack>
+                            <Stack
+                                alignItems="center"
+                                sx={{
+                                    backgroundColor:
+                                        getStatusColor(contactsTab),
+                                    paddingBottom: '70px',
+                                    boxShadow: '0 4px 2px 0 #00000025',
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        fontWeight:
+                                            theme.typography.common.fontWeight,
+                                    }}
+                                >
+                                    Krist Novoselic
+                                </Typography>
+                            </Stack>
+                        </Stack>
+                        <Stack justifyContent="center" alignItems="center">
+                            <Box
+                                sx={{
+                                    backgroundColor: '#A52A2A',
+                                    height: '68px',
+                                    width: '68px',
+                                    borderRadius: '68px',
+                                    marginTop: '-34px',
+                                }}
+                            >
+                                <img
+                                    src={require('./../Profile/Images/PMProfileImagePlaceholder.png')}
+                                    alt="profile placeholder"
+                                    style={{
+                                        height: '60px',
+                                        width: '60px',
+                                        margin: '4px',
+                                    }}
+                                />
+                            </Box>
+                        </Stack>
+                        <Stack sx={{ padding: '10px 15px 0' }}>
+                            <Box>
+                                <Message
+                                    sx={{
+                                        color: theme.typography.common.blue,
+                                        fontSize: '18px',
+                                    }}
+                                />
+                            </Box>
+                        </Stack>
+                        <Stack
+                            flexDirection="row"
+                            justifyContent="space-between"
+                            sx={{ padding: '0 15px' }}
+                        >
+                            <Stack>
+                                <Stack flexDirection="row">
+                                    <Email
+                                        sx={{
+                                            color: '#160449',
+                                            fontSize: '18px',
+                                            paddingRight: '5px',
+                                        }}
+                                    />
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        aberdeen94@gmail.com
+                                    </Typography>
+                                </Stack>
+                                <Stack flexDirection="row">
+                                    <Phone
+                                        sx={{
+                                            color: '#160449',
+                                            fontSize: '18px',
+                                            paddingRight: '5px',
+                                        }}
+                                    />
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        (408) 555-4831
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                            <Stack
+                                sx={{ paddingLeft: '10px' }}
+                                alignItems="flex-end"
+                            >
+                                <Typography
+                                    sx={{
+                                        fontWeight:
+                                            theme.typography.primary.fontWeight,
+                                        fontSize: '13px',
+                                    }}
+                                >
+                                    Manager Since:
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        fontSize: '13px',
+                                    }}
+                                >
+                                    02/15/2022
+                                </Typography>
+                            </Stack>
+                        </Stack>
+                        <Stack flexDirection="row" sx={{ padding: '0 15px' }}>
+                            <Box sx={{ marginTop: '-2px' }}>
+                                <svg
+                                    width="23"
+                                    height="23"
+                                    viewBox="0 0 23 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                        d="M5.27446 10.5314C5 11.152 5 11.8581 5 13.2701V17.6801C5 19.6412 5 20.6217 5.58579 21.2309C6.11733 21.7837 6.94285 21.8349 8.5 21.8396V16.6402C8.5 15.5509 9.35883 14.6002 10.5 14.6002H13.5C14.6412 14.6002 15.5 15.5509 15.5 16.6402V21.8396C17.0572 21.8349 17.8827 21.7837 18.4142 21.2309C19 20.6217 19 19.6412 19 17.6801V13.2701C19 11.8581 19 11.152 18.7255 10.5314C18.4511 9.91081 17.9356 9.45132 16.9047 8.53236L15.9047 7.64093C14.0414 5.97992 13.1098 5.14941 12 5.14941C10.8902 5.14941 9.95857 5.97992 8.09525 7.64094L7.09525 8.53236C6.06437 9.45132 5.54892 9.91081 5.27446 10.5314ZM13.5 21.8401V16.6402C13.5 16.6191 13.4934 16.6066 13.4883 16.6002H10.5117C10.5066 16.6066 10.5 16.6191 10.5 16.6402V21.8401H13.5Z"
+                                        fill="#160449"
+                                    />
+                                </svg>
+                            </Box>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                111 Willow Street, Long Beach, CA 90802, USA
+                            </Typography>
+                        </Stack>
+                        <Stack sx={{ padding: '15px' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight:
+                                        theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Manages 8 of Your Properties
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                123 Oak Street, Los Angeles, CA 90001, USA
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                456 Pine Avenue, San Francisco, CA 94102, USA
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                789 Maple Lane, San Diego, CA 92101, USA
+                            </Typography>
+                        </Stack>
+                        <Stack sx={{ padding: '15px' }}>
+                            <Stack flexDirection="row">
+                                <Box>
+                                    <Stack
+                                        flexDirection="row"
+                                        alignItems="center"
+                                    >
+                                        <Box sx={{ padding: '0 10px' }}>
+                                            <img
+                                                src={require('./../Profile/Images/PaypalIcon.png')}
+                                                alt="chase"
+                                                style={{
+                                                    height: '25px',
+                                                }}
                                             />
-                                        </svg>
-                                    </div>
-                                    <div className="property-rent-detail-selector-icon-text">
-                                        1 Of 3 Not Paid
-                                    </div>
-                                    <div className="property-rent-detail-selector-icon-right">
-                                        <svg
-                                            width="33"
-                                            height="33"
-                                            viewBox="0 0 33 33"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
-                                                fill="#160449"
+                                        </Box>
+                                        <Stack>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '13px',
+                                                }}
+                                            >
+                                                Paypal
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '13px',
+                                                }}
+                                            >
+                                                bossnova43@gmail.com
+                                            </Typography>
+                                        </Stack>
+                                    </Stack>
+                                </Box>
+                                <Stack
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ paddingLeft: '40px' }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                            fontWeight:
+                                                theme.typography.primary
+                                                    .fontWeight,
+                                        }}
+                                    >
+                                        ***-**-****
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        SSN
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                            <Stack flexDirection="row">
+                                <Box>
+                                    <Stack
+                                        flexDirection="row"
+                                        alignItems="center"
+                                    >
+                                        <Box sx={{ padding: '0 10px' }}>
+                                            <img
+                                                src={require('./../Profile/Images/VenmoIcon.png')}
+                                                alt="venmo"
+                                                style={{
+                                                    height: '25px',
+                                                }}
                                             />
-                                        </svg>
-                                    </div> */}
-                            <div className="property-rent-detail-info-container">
-                                <div className="property-rent-detail-image"></div>
-                                <div className="property-rent-detail-info-text-container">
-                                    <div className="property-rent-detail-info-text-title">
-                                        Address
-                                    </div>
-                                    <div className="property-rent-detail-info-text-description">
-                                        <div>$</div>
-                                        <div>due</div>
-                                        <div>11 Days Overdue</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="property-rent-detail-table-container">
-                                <div className="property-rent-detail-table-title">
-                                    Rent History
-                                </div>
-                                <div className="property-rent-detail-table-contents">
-                                    <table>
-                                        <tr
-                                            style={{
-                                                'border-bottom':
-                                                    '1px solid #3D5CAC',
-                                            }}
-                                        >
-                                            <th>Month</th>
-                                            <th>Paid</th>
-                                            <th>Amount</th>
-                                            <th>Rent Status</th>
-                                            <th>Fees</th>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                        </Box>
+                                        <Stack>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '13px',
+                                                }}
+                                            >
+                                                Venmo
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '13px',
+                                                }}
+                                            >
+                                                bossnova43@gmail.com
+                                            </Typography>
+                                        </Stack>
+                                    </Stack>
+                                </Box>
+                                <Stack
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ paddingLeft: '15px' }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                            fontWeight:
+                                                theme.typography.primary
+                                                    .fontWeight,
+                                        }}
+                                    >
+                                        No EIN Provided
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        EIN
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+                        <Stack sx={{ padding: '15px' }}>
+                            <Stack
+                                flexDirection="row"
+                                justifyContent="space-between"
+                            >
+                                <Typography
+                                    sx={{
+                                        fontWeight:
+                                            theme.typography.primary.fontWeight,
+                                    }}
+                                >
+                                    Management Fees
+                                </Typography>
+                                <Box>
+                                    <svg
+                                        width="16"
+                                        height="20"
+                                        viewBox="0 0 16 20"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            clip-rule="evenodd"
+                                            d="M8 0V5L7.99999 5.05441C7.99991 5.47848 7.99983 5.8906 8.04553 6.23052C8.09705 6.61372 8.22257 7.051 8.58579 7.41421C8.949 7.77743 9.38628 7.90295 9.76948 7.95447C10.1094 8.00017 10.5215 8.00009 10.9456 8.00001H10.9456H10.9456H10.9456L11 8H16V14C16 16.8284 16 18.2426 15.1213 19.1213C14.2426 20 12.8284 20 10 20H6C3.17157 20 1.75736 20 0.87868 19.1213C0 18.2426 0 16.8284 0 14V6C0 3.17157 0 1.75736 0.87868 0.87868C1.75736 0 3.17157 0 6 0H8ZM10 0.00462076V5C10 5.49967 10.0021 5.77383 10.0277 5.96402L10.0287 5.97131L10.036 5.97231C10.2262 5.99788 10.5003 6 11 6H15.9954C15.9852 5.58836 15.9525 5.31595 15.8478 5.06306C15.6955 4.69552 15.4065 4.40649 14.8284 3.82843L12.1716 1.17157C11.5935 0.593512 11.3045 0.304482 10.9369 0.152241C10.684 0.0474889 10.4116 0.0148133 10 0.00462076ZM4 11C4 10.4477 4.44772 10 5 10L11 10C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12L5 12C4.44772 12 4 11.5523 4 11ZM5 14C4.44772 14 4 14.4477 4 15C4 15.5523 4.44772 16 5 16H9C9.55228 16 10 15.5523 10 15C10 14.4477 9.55229 14 9 14H5Z"
+                                            fill="#3D5CAC"
+                                        />
+                                    </svg>
+                                </Box>
+                            </Stack>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                Monthly Service Charge: 15% of all rent Tenant
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                Setup Fee: $100
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                Annual Inspection Fee: $200
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                Re-Keying Charge: $200
+                            </Typography>
+                            <Typography sx={{ fontSize: '13px' }}>
+                                Annual Postage and Communication Fee: $20
+                            </Typography>
+                        </Stack>
+                    </Paper>
                 </Paper>
             </Box>
         </ThemeProvider>

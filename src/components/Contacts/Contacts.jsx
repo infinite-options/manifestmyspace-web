@@ -16,6 +16,7 @@ import {
 import { Message, Search } from '@mui/icons-material';
 import { getStatusColor } from './ContactsFunction';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Contacts = (props) => {
     const [contactsTab, setContactsTab] = useState('Owner');
@@ -23,11 +24,18 @@ const Contacts = (props) => {
     const [tenantData, setTenantData] = useState([]);
     const [maintenanceData, setMaintenanceData] = useState([]);
 
+    const navigate = useNavigate();
+    const handleSelectedCard = () => {
+        navigate('/contactDetails');
+    };
+
     useEffect(() => {
         fetchData();
     }, []);
 
     const fetchData = async () => {
+        // 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
+
         const url =
             'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
         await axios
@@ -54,6 +62,42 @@ const Contacts = (props) => {
             .catch((e) => {
                 console.error(e);
             });
+
+        // const ownerUrl =
+        //     'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/600-000003';
+        // await axios
+        //     .get(ownerUrl)
+        //     .then((resp) => {
+        //         const ownerCon = resp.data['Owner Details'].result;
+        //         setOwnerData(ownerCon);
+        //     })
+        //     .catch((e) => {
+        //         console.error(e);
+        //     });
+
+        // const tenantUrl =
+        //     'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/600-000003';
+        // await axios
+        //     .get(tenantUrl)
+        //     .then((resp) => {
+        //         const tenantCon = resp.data['Tenant Details'].result;
+        //         setTenantData(tenantCon);
+        //     })
+        //     .catch((e) => {
+        //         console.error(e);
+        //     });
+
+        // const maintenanceUrl =
+        //     'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/600-000003';
+        // await axios
+        //     .get(maintenanceUrl)
+        //     .then((resp) => {
+        //         const mainCon = resp.data['Maintenance Details'].result;
+        //         setMaintenanceData(mainCon);
+        //     })
+        //     .catch((e) => {
+        //         console.error(e);
+        //     });
     };
     return (
         <ThemeProvider theme={theme}>
@@ -217,6 +261,7 @@ const Contacts = (props) => {
                                                 <OwnerContactsCard
                                                     data={owner}
                                                     key={index}
+                                                    onClick={handleSelectedCard}
                                                 />
                                             );
                                         })}
@@ -228,6 +273,7 @@ const Contacts = (props) => {
                                                 <TenantContactsCard
                                                     data={tenant}
                                                     key={index}
+                                                    onClick={handleSelectedCard}
                                                 />
                                             );
                                         })}
@@ -239,6 +285,7 @@ const Contacts = (props) => {
                                                 <MaintenanceContactsCard
                                                     data={maint}
                                                     key={index}
+                                                    onClick={handleSelectedCard}
                                                 />
                                             );
                                         })}
@@ -255,6 +302,7 @@ const Contacts = (props) => {
 
 const OwnerContactsCard = (props) => {
     const owner = props.data;
+    const handleSelectedCard = props.onClick;
     return (
         <Stack>
             <Card
@@ -273,9 +321,10 @@ const OwnerContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
+                            {owner.owner_first_name} {owner.owner_last_name}
                             {owner.contact_first_name} {owner.contact_last_name}
                         </Typography>
-                        <Button>
+                        <Button onClick={handleSelectedCard}>
                             <Message
                                 sx={{
                                     color: theme.typography.common.blue,

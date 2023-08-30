@@ -28,17 +28,17 @@ import axios from 'axios';
 const FindProperty = (props) => {
     const [propertyData, setPropertyData] = useState([]);
 
-    const images = [
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-        },
-    ];
+    // const images = [
+    //     {
+    //         original: 'https://picsum.photos/id/1018/1000/600/',
+    //     },
+    //     {
+    //         original: 'https://picsum.photos/id/1015/1000/600/',
+    //     },
+    //     {
+    //         original: 'https://picsum.photos/id/1019/1000/600/',
+    //     },
+    // ];
 
     const url =
         'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
@@ -290,6 +290,7 @@ const FindProperty = (props) => {
                             }}
                         >
                             Apartments For Rent In San Jose CA
+                            {/* Units Available for Rent */}
                         </Typography>
                         <Typography
                             sx={{
