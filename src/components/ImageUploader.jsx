@@ -37,7 +37,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 export default function ImageUploader({selectedImageList, setSelectedImageList}){
-    // const [selectedImageList, setSelectedImageList] = useState([]);
+
 
     const handleImageSelect = (event) => {
         console.log("handleImageSelect", event.target.value)

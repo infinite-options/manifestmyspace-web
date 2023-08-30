@@ -79,8 +79,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
   }
 
   const data = requestData[currentIndex];
-  // console.log("current data tab", item.mapping, data);
-  // which tab are we on?
   // console.log("requestData", requestData)
   // console.log("data", data)
 

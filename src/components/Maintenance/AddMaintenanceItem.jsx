@@ -32,7 +32,29 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ImageUploader from '../ImageUploader';
 
 import theme from '../../theme/theme';
+import dataURItoBlob from '../utils/dataURItoBlob'
 import { type } from "@testing-library/user-event/dist/type";
+
+// function dataURItoBlob(dataURI) {
+//     // Split the input to get the mime type and the data itself
+//     const [typeInfo, base64] = dataURI.split(",");
+    
+//     // Decode the base64 string
+//     const byteString = atob(base64);
+    
+//     // Create a Uint8Array to hold the binary data
+//     const arrayBuffer = new ArrayBuffer(byteString.length);
+//     const intArray = new Uint8Array(arrayBuffer);
+    
+//     for (let i = 0; i < byteString.length; i++) {
+//         intArray[i] = byteString.charCodeAt(i);
+//     }
+    
+//     // Create a Blob from the ArrayBuffer
+//     const blob = new Blob([intArray], { type: typeInfo });
+    
+//     return blob;
+// }
 
 export default function AddMaintenanceItem({}){
     const location = useLocation();
@@ -102,6 +124,9 @@ export default function AddMaintenanceItem({}){
         event.preventDefault();
 
         const formData = new FormData();
+        
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
         formData.append("maintenance_property_id", propertyId);
         formData.append("maintenance_title", title);
@@ -116,24 +141,37 @@ export default function AddMaintenanceItem({}){
         formData.append("maintenance_scheduled_time", null);
         formData.append("maintenance_frequency", "One Time");
         formData.append("maintenance_notes", null);
-        formData.append("maintenance_request_created_date", new Date().toISOString()); // Convert to ISO string format
+        formData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
         formData.append("maintenance_request_closed_date", null);
         formData.append("maintenance_request_adjustment_date", null);
+        
+        for (let i = 0; i < selectedImageList.length; i++) {
+            console.log("selectedImageList[i].file", selectedImageList[i].data_url)
+            const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
+            console.log(imageBlob)
+            if(i === 0){
+                formData.append("img_cover", imageBlob);
+            } else{
+                formData.append("img_" + i, imageBlob);
+            }
+        }
 
-        console.log(formData)
+
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);    
+        }
 
 
         const postData = async () => {
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/form-data",
-                },
-                body: formData,
-            })
-
-            if(response){
-                console.log(response)
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: "POST",
+                    body: formData,
+                })
+                const data = await response.json();
+                console.log("data response", data)
+            } catch (err){
+                console.error("Error: ", err.message)
             }
         }
         postData();
@@ -219,6 +257,7 @@ export default function AddMaintenanceItem({}){
                                             <MenuItem value={"6123 Corte de la Reina"}>6123 Corte de la Reina</MenuItem>
                                             <MenuItem value={"9501 Kempler Drive"}>9501 Kempler Drive</MenuItem>
                                             <MenuItem value={"9107 Japonica Court"}>9107 Japonica Court</MenuItem>
+                                            <MenuItem value={propertyId}>5640 W. Sunset Road</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -290,74 +329,74 @@ export default function AddMaintenanceItem({}){
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                         Priority
                                     </Typography>
-                                <ToggleButtonGroup
-                                    exclusive
-                                    fullWidth
-                                    onChange={handlePriorityChange}
-                                    aria-label="Priority"
-                                    size="small"
-                                    sx={{
-                                        '& .MuiToggleButton-root.Mui-selected': {
-                                        backgroundColor: 'lightblue', // Selected background color
-                                        color: 'white', // Selected text color
-                                      },
-                                    }}
-                                >
-                                    <ToggleButton 
-                                        value="low"
+                                    <ToggleButtonGroup
+                                        exclusive
+                                        fullWidth
+                                        onChange={handlePriorityChange}
+                                        aria-label="Priority"
+                                        size="small"
                                         sx={{
-                                            backgroundColor: theme.palette.priority.low,
-                                            borderRadius: '20px',
-                                            color: 'white',
-                                            marginRight: "10px",
-                                            '&.Mui-selected': {
-                                              borderColor: "black",
-                                              backgroundColor: theme.palette.priority.low,
-                                            },
-                                            '&:hover': {
-                                              borderColor: "white",
-                                              backgroundColor: theme.palette.priority.low,
-                                            },
-                                        }}>
-                                        Low
-                                    </ToggleButton>
-                                    <ToggleButton 
-                                        value="medium"
-                                        sx={{
-                                            backgroundColor: theme.palette.priority.medium,
-                                            borderRadius: '20px',
-                                            color: 'white',
-                                            marginRight: "10px",
-                                            '&.Mui-selected': {
-                                              borderColor: "black",
-                                              backgroundColor: theme.palette.priority.medium,
-                                            },
-                                            '&:hover': {
-                                              borderColor: "white",
-                                              backgroundColor: theme.palette.priority.medium,
-                                            },
-                                        }}>
-                                        Medium
-                                    </ToggleButton>
-                                    <ToggleButton 
-                                        value="high"
-                                        sx={{
-                                            backgroundColor: theme.palette.priority.high,
-                                            borderRadius: '20px',
-                                            color: 'white',
-                                            marginRight: "10px",
-                                            '&.Mui-selected': {
-                                              borderColor: "black",
-                                              backgroundColor: theme.palette.priority.high,
-                                            },
-                                            '&:hover': {
-                                              borderColor: "white",
-                                              backgroundColor: theme.palette.priority.high,
-                                            },
-                                        }}>
-                                        High
-                                    </ToggleButton>
-                                </ToggleButtonGroup>
+                                            '& .MuiToggleButton-root.Mui-selected': {
+                                            backgroundColor: 'lightblue', // Selected background color
+                                            color: 'white', // Selected text color
+                                        },
+                                        }}
+                                    >
+                                        <ToggleButton 
+                                            value="low"
+                                            sx={{
+                                                backgroundColor: theme.palette.priority.low,
+                                                borderRadius: '20px',
+                                                color: 'white',
+                                                marginRight: "10px",
+                                                '&.Mui-selected': {
+                                                borderColor: "black",
+                                                backgroundColor: theme.palette.priority.low,
+                                                },
+                                                '&:hover': {
+                                                borderColor: "white",
+                                                backgroundColor: theme.palette.priority.low,
+                                                },
+                                            }}>
+                                            Low
+                                        </ToggleButton>
+                                        <ToggleButton 
+                                            value="medium"
+                                            sx={{
+                                                backgroundColor: theme.palette.priority.medium,
+                                                borderRadius: '20px',
+                                                color: 'white',
+                                                marginRight: "10px",
+                                                '&.Mui-selected': {
+                                                borderColor: "black",
+                                                backgroundColor: theme.palette.priority.medium,
+                                                },
+                                                '&:hover': {
+                                                borderColor: "white",
+                                                backgroundColor: theme.palette.priority.medium,
+                                                },
+                                            }}>
+                                            Medium
+                                        </ToggleButton>
+                                        <ToggleButton 
+                                            value="high"
+                                            sx={{
+                                                backgroundColor: theme.palette.priority.high,
+                                                borderRadius: '20px',
+                                                color: 'white',
+                                                marginRight: "10px",
+                                                '&.Mui-selected': {
+                                                borderColor: "black",
+                                                backgroundColor: theme.palette.priority.high,
+                                                },
+                                                '&:hover': {
+                                                borderColor: "white",
+                                                backgroundColor: theme.palette.priority.high,
+                                                },
+                                            }}>
+                                            High
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
                                 </Grid>
 
                                 {/* Text Field for Description */}
