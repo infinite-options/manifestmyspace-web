@@ -29,6 +29,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ImageUploader from '../ImageUploader';
+import dataURItoBlob from '../utils/dataURItoBlob'
 
 import theme from '../../theme/theme';
 
@@ -39,7 +40,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     let navigate = useNavigate();
 
     const [selectedImageList, setSelectedImageList] = useState([]);
-    const [property, setProperty] = useState('');
+    const [property, setProperty] = useState('200-000029');
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('left');
@@ -49,44 +50,36 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     const [file, setFile] = useState('');
 
     const handlePropertyChange = (event) => {
-        console.log("handlePropertyChange", event.target.value)
         setProperty(event.target.value);
     };
 
     const handleIssueChange = (event) => {
-        console.log("handleIssueCategoryChange", event.target.value)
         setIssue(event.target.value);
     };
 
     const handlePhoneNumberChange = (event) => {
-        console.log("handlePhoneNumberChange", event.target.value)
         setPhoneNumber(event.target.value);
     };
 
     const handleTitleChange = (event) => {
-        console.log("handleTitleChange", event.target.value)
         setTitle(event.target.value);
     };
 
     const handleDescriptionChange = (event) => {
-        console.log("handleDescriptionChange", event.target.value)
         setDescription(event.target.value);
     };
 
     const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
     
     const handleFileChange = (event) => {
-        console.log("handleFileChange", event.target.value)
         setFile(event.target.value);
     };
 
@@ -95,22 +88,18 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         navigate(-1);
     }
 
-    const handleSubmit = () => {
-        console.log("handleSubmit")
+    const handleSubmit = (event) => {
 
-        const payload = {
-            property: property,
-            issue: issue,
-            phoneNumber: phoneNumber,
-            title: title,
-            description: description,
-            priority: toggleGroupValue,
-            completed: toggleGroupValue,
-            file: file
-        }
+        console.log("handleSubmit")
+        event.preventDefault();
+
         const formData = new FormData();
 
-        formData.append("maintenance_property_id", propertyId);
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+
+        formData.append("maintenance_property_id", property);
         formData.append("maintenance_title", title);
         formData.append("maintenance_desc", description);
         formData.append("maintenance_request_type", issue);
@@ -123,21 +112,50 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         formData.append("maintenance_scheduled_time", null);
         formData.append("maintenance_frequency", "One Time");
         formData.append("maintenance_notes", null);
-        formData.append("maintenance_request_created_date", new Date().toISOString()); // Convert to ISO string format
+        formData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
         formData.append("maintenance_request_closed_date", null);
         formData.append("maintenance_request_adjustment_date", null);
 
+        for (let i = 0; i < selectedImageList.length; i++) {
+            console.log("selectedImageList[i].file", selectedImageList[i].data_url)
+            const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
+            console.log(imageBlob)
+            if(i === 0){
+                formData.append("img_cover", imageBlob);
+            } else{
+                formData.append("img_" + (i-1), imageBlob);
+            }
+        }
+
+
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);    
+        }
+        
+
         const postData = async () => {
-            await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/form-data",
-                },
-                body: formData,
-            })
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: "POST",
+                    body: formData,
+                })
+                const data = await response.json();
+                console.log("data response", data)
+            } catch (err) {
+                console.error("Error posting data:", err);
+            }
         }
         postData();
 
+        setSelectedImageList([])
+        setProperty('200-000029')
+        setIssue('')
+        setToggleGroupValue('tenant')
+        setToggleAlignment('left')
+        setPhoneNumber('')
+        setTitle('')
+        setDescription('')
+        navigate('/tenantDashboard');
     }
 
     
@@ -160,11 +178,11 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                 </Box>
 
                 <Box left={0} direction="column" alignItems="center">
-                    <Button onClick={() => closeAddTenantMaintenanceItem()}>
+                    <Button onClick={() => (closeAddTenantMaintenanceItem ? closeAddTenantMaintenanceItem() : handleBackButton())}>
                         {/* <ArrowBackIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/> */}
                         <img src={ReturnButtonIcon} alt="Return Button Icon" style={{width: '25px', height: '25px', marginRight: '10px'}}/>
                             <Typography sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '16px'}}>
-                                    Return to Viewing All Properties
+                                    {closeAddTenantMaintenanceItem ? "Return to Viewing All Properties" : "Return to Dashboard"}
                             </Typography>
                     </Button>
                 </Box>
@@ -179,6 +197,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                     component="form"
                     noValidate
                     autoComplete="off"
+                    onSubmit={handleSubmit}
                 >
                     <Grid container spacing={6}>
                         {/* Select Field for Issue and Cost Estimate */}
@@ -196,7 +215,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                 size="small" 
                             >
                                 {/* <InputLabel>Select Issue Category</InputLabel> */}
-                                <Select onChange={handleIssueChange}>
+                                <Select defaultValue="" onChange={handleIssueChange}>
                                     <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
                                     <MenuItem value={"Electrical"}>Electrical</MenuItem>
                                     <MenuItem value={"Appliance"}>Appliances</MenuItem>
@@ -221,10 +240,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                 size="small"
                             >
                                 {/* <InputLabel>Select Property</InputLabel> */}
-                                <Select onChange={handlePropertyChange}>
-                                    <MenuItem value={"6123 Corte de la Reina"}>6123 Corte de la Reina</MenuItem>
-                                    <MenuItem value={"9501 Kempler Drive"}>9501 Kempler Drive</MenuItem>
-                                    <MenuItem value={"9107 Japonica Court"}>9107 Japonica Court</MenuItem>
+                                <Select defaultValue="" onChange={handlePropertyChange}>
+                                    <MenuItem value={property}>5640 W. Sunset Road</MenuItem>
+                                    {/* <MenuItem value={"9501 Kempler Drive"}>9501 Kempler Drive</MenuItem>
+                                    <MenuItem value={"9107 Japonica Court"}>9107 Japonica Court</MenuItem> */}
                                 </Select>
                             </FormControl>
                         </Grid>

@@ -109,7 +109,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
-                                            {item.property_address}
+                                            {item.property_address} {item.property_unit}
                                         </Typography>
                                     </TableCell>
                                     {/* <Divider orientation="vertical" flexItem color="white"/> */}

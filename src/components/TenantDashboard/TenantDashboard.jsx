@@ -1,7 +1,15 @@
-import { Box } from "@mui/material";
+import { 
+  Box,
+  Button,
+  Typography,
+} from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
+
+import { NavigationType, useLocation, useNavigate } from "react-router-dom";
+
+import theme from '../../theme/theme';
 
 function TenantDashboard(props) {
   const thStyle = {
@@ -9,6 +17,15 @@ function TenantDashboard(props) {
     fontWeight: "600",
     fontSize: "10px",
   };
+
+  const location = useLocation();
+  let navigate = useNavigate();
+
+
+  function handleTenantMaintenanceNavigate(){
+    console.log("Tenant Maintenance Navigate")
+    navigate("/addTenantMaintenanceItem")
+  }
 
   return (
     <Box
@@ -171,6 +188,7 @@ function TenantDashboard(props) {
               marginLeft: "20px",
               marginTop: "10px",
             }}
+            onClick={() => navigate("/tenantMaintenance")}
           >
             Maintenance
           </Box>
@@ -183,9 +201,9 @@ function TenantDashboard(props) {
               borderRadius: "5px",
               paddingLeft: "5px",
               paddingRight: "5px",
-              marginTop: "5px",
+              marginTop: "10px",
               marginRight: "10px",
-              height: "20px",
+              height: "25px",
             }}
           >
             <Box
@@ -197,14 +215,17 @@ function TenantDashboard(props) {
                 <path d="M5.14286 5.71429H0V4.28571H5.14286V0H6.85714V4.28571H12V5.71429H6.85714V10H5.14286V5.71429Z" fill="white" />
               </svg>
             </Box>
-            <Box
+            <Button
               sx={{
-                color: "#FFFFFF80",
-                fontSize: "9px",
+                color: "#FFFFFF",
+                fontSize: "12px",
               }}
+              onClick={() => handleTenantMaintenanceNavigate()}
             >
-              New Requests
-            </Box>
+              <Typography sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}>
+                New Requests
+              </Typography>
+            </Button>
           </Box>
         </Box>
         <Box>

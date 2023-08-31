@@ -5,15 +5,22 @@ import {
     Paper,
     Button,
     ThemeProvider, 
+    OutlinedInput,
+    InputLabel,
+    MenuItem,
+    FormControl,
+    Select,
+    ListItemText,
+    Checkbox,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import MaintenanceStatusTable from './MaintenanceStatusTable';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AddIcon from '@mui/icons-material/Add';
 import SelectMonthComponent from '../SelectMonthComponent';
+import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 
 
 export default function Maintenance(){
@@ -24,22 +31,49 @@ export default function Maintenance(){
     const maintenanceRequests = location.state.maintenanceRequests;
     const colorStatus = location.state.colorStatus;
 
+    console.log("maintenanceRequests", maintenanceRequests)
+
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
+
+    const [filterPropertyList, setFilterPropertyList] = useState([]);
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
     }
 
-    function handleFilter(){
-        // console.log("handleFilter")
-        //setShowSelectMonth(!showSelectMonth)
-        return true;
+    function createdPropertyList(){
+    }
+
+    function handleFilter(maintenanceArray){
+        var filteredArray = []
+
+        
+        // if (filterPropertyList.length !== 0){
+
+        //     for (const item of maintenanceArray){
+        //         if (item.propertyId in filterPropertyList){
+        //             filteredArray.push(item)
+        //         }
+        //     }
+        // } else{
+        //     console.log(maintenanceArray)
+        //     return filteredArray
+        // }
+        return maintenanceArray
     }
 
     // console.log("numMaintenanceRequests", numMaintenanceRequests)
+
+    // useEffect(() => {
+    //     const getPropertyData = async () => {
+    //         const properties = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
+    //         const propertiesData = await properties.json()
+    //         console.log("propertiesData", propertiesData)
+    //     }
+    // }, [filterPropertyList])
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
@@ -52,6 +86,7 @@ export default function Maintenance(){
             const maintenanceRequestsData = await maintenanceRequests.json()
 
             for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
+                console.log(item)
                 if (!dataObject[item.maintenance_request_status]){
                     dataObject[item.maintenance_request_status] = [];
                 }
@@ -67,6 +102,7 @@ export default function Maintenance(){
         }
         getMaintenanceData();
     }, [])
+
 
 
     return(
@@ -128,18 +164,19 @@ export default function Maintenance(){
                                 <Typography 
                                     sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                                 >
-                                    Last 30 days
+                                    Last 30 Days
+                                    {/* { showSelectMonth ? `${month} ${year}` : "Last 30 days"} */}
                                 </Typography>
                             </Button>
                         
                             <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
-                            
-                            <Button sx={{ textTransform: 'capitalize' }}>
+                            {/* <Button sx={{ textTransform: 'capitalize' }}>
                                 <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
                                     Select Property
                                 </Typography>
-                            </Button>
+                            </Button> */}
+                            <SelectPropertyFilter/>
                         </Box>
                         <Box
                             component="span"
@@ -179,7 +216,7 @@ export default function Maintenance(){
                                     key={index}
                                     status={item.status}
                                     color={item.color}
-                                    maintenanceItemsForStatus={maintenanceArray}
+                                    maintenanceItemsForStatus={handleFilter(maintenanceArray)}
                                     allMaintenanceData={maintenanceData}
                                 />
                             );
