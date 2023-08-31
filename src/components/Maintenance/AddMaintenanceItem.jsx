@@ -63,11 +63,10 @@ export default function AddMaintenanceItem({}){
     const [property, setProperty] = useState('');
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
-    const [toggleAlignment, setToggleAlignment] = useState('left');
+    const [toggleAlignment, setToggleAlignment] = useState('low');
     const [cost, setCost] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [file, setFile] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
 
 
@@ -109,11 +108,6 @@ export default function AddMaintenanceItem({}){
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
-    
-    const handleFileChange = (event) => {
-        console.log("handleFileChange", event.target.value)
-        setFile(event.target.value);
-    };
 
     const handleBackButton = () => {
         console.log("handleBackButton")
@@ -144,15 +138,17 @@ export default function AddMaintenanceItem({}){
         formData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
         formData.append("maintenance_request_closed_date", null);
         formData.append("maintenance_request_adjustment_date", null);
-        
+
         for (let i = 0; i < selectedImageList.length; i++) {
             console.log("selectedImageList[i].file", selectedImageList[i].data_url)
             const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
             console.log(imageBlob)
             if(i === 0){
+                console.log("i === 0")
                 formData.append("img_cover", imageBlob);
-            } else{
-                formData.append("img_" + i, imageBlob);
+            } else if (i > 0){
+                console.log("i > 0")
+                formData.append("img_" + (i-1), imageBlob);
             }
         }
 
@@ -170,11 +166,21 @@ export default function AddMaintenanceItem({}){
                 })
                 const data = await response.json();
                 console.log("data response", data)
-            } catch (err){
+            } catch (err){  
                 console.error("Error: ", err.message)
             }
         }
         postData();
+
+        setSelectedImageList([])
+        setProperty('')
+        setIssue('')
+        setToggleGroupValue('')
+        setToggleAlignment('')
+        setCost('')
+        setTitle('')
+        setDescription('')
+        navigate('/maintenance');
     }
 
 
@@ -184,7 +190,7 @@ export default function AddMaintenanceItem({}){
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                     width: '80%', // Take up full screen width
                     minHeight: '100vh', // Set the Box height to full height
                     marginTop: theme.spacing(2), // Set the margin to 20px
@@ -343,7 +349,7 @@ export default function AddMaintenanceItem({}){
                                         }}
                                     >
                                         <ToggleButton 
-                                            value="low"
+                                            value="Low"
                                             sx={{
                                                 backgroundColor: theme.palette.priority.low,
                                                 borderRadius: '20px',
@@ -361,7 +367,7 @@ export default function AddMaintenanceItem({}){
                                             Low
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="medium"
+                                            value="Medium"
                                             sx={{
                                                 backgroundColor: theme.palette.priority.medium,
                                                 borderRadius: '20px',
@@ -379,7 +385,7 @@ export default function AddMaintenanceItem({}){
                                             Medium
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="high"
+                                            value="High"
                                             sx={{
                                                 backgroundColor: theme.palette.priority.high,
                                                 borderRadius: '20px',

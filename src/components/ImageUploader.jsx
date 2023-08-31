@@ -135,8 +135,8 @@ export default function ImageUploader({selectedImageList, setSelectedImageList})
                                             left: 0,
                                             height: '100%',
                                             width: '100%',
-                                            marginRight: '10px',
-                                            marginBottom: '10px',
+                                            marginRight: '5px',
+                                            marginBottom: '5px',
                                             borderRadius: '7px',
                                         }}
                                     />

@@ -50,44 +50,36 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     const [file, setFile] = useState('');
 
     const handlePropertyChange = (event) => {
-        console.log("handlePropertyChange", event.target.value)
         setProperty(event.target.value);
     };
 
     const handleIssueChange = (event) => {
-        console.log("handleIssueCategoryChange", event.target.value)
         setIssue(event.target.value);
     };
 
     const handlePhoneNumberChange = (event) => {
-        console.log("handlePhoneNumberChange", event.target.value)
         setPhoneNumber(event.target.value);
     };
 
     const handleTitleChange = (event) => {
-        console.log("handleTitleChange", event.target.value)
         setTitle(event.target.value);
     };
 
     const handleDescriptionChange = (event) => {
-        console.log("handleDescriptionChange", event.target.value)
         setDescription(event.target.value);
     };
 
     const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
     
     const handleFileChange = (event) => {
-        console.log("handleFileChange", event.target.value)
         setFile(event.target.value);
     };
 
@@ -131,7 +123,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
             if(i === 0){
                 formData.append("img_cover", imageBlob);
             } else{
-                formData.append("img_" + i, imageBlob);
+                formData.append("img_" + (i-1), imageBlob);
             }
         }
 
@@ -154,6 +146,16 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
             }
         }
         postData();
+
+        setSelectedImageList([])
+        setProperty('200-000029')
+        setIssue('')
+        setToggleGroupValue('tenant')
+        setToggleAlignment('left')
+        setPhoneNumber('')
+        setTitle('')
+        setDescription('')
+        navigate('/tenantDashboard');
     }
 
     

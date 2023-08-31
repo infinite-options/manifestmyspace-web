@@ -45,10 +45,14 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
+    console.log("currentIndex", currentIndex)
+    console.log("item", requestData[currentIndex])
   };
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
+    console.log("currentIndex", currentIndex)
+    console.log("item", requestData[currentIndex])
   };
 
   const handleNext = () => {
