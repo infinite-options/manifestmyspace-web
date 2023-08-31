@@ -197,7 +197,7 @@ function ImageUploader(){
 }
 
 
-export default function AddProperty({}){
+export default function EditProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
 
@@ -287,10 +287,13 @@ export default function AddProperty({}){
             <Stack
                 style={{
                     display: 'flex',
-                    // width: '100%', // Take up full screen width
-                    minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
-                    justifyContent: 'center', // Center all children elements on the horizontal axis
+                    flexDirection: 'column', // Stack the content vertically
+                    justifyContent: 'flex-start',  // Start content at the top
+                    alignItems: 'center',  // Center content horizontally
+                    width: '100%',
+                    minHeight: '100vh',
+                    marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
+                    paddingBottom: "25px"
                 }}
                 >
                     <Paper
@@ -547,9 +550,8 @@ export default function AddProperty({}){
                     </Paper>
 
                     <Paper
-                         style={{
-                            marginLeft: '30px',
-                            // marginTop: '30px',
+                        style={{
+                            margin: '30px',
                             padding: theme.spacing(2),
                             backgroundColor: theme.palette.form.main,
                             width: '85%', // Occupy full width with 25px margins on each side
@@ -559,6 +561,7 @@ export default function AddProperty({}){
                             [theme.breakpoints.up('sm')]: {
                                 width: '50%',
                             },
+                            paddingTop: '10px',
                         }}
                     >
                         <Stack
@@ -636,9 +639,8 @@ export default function AddProperty({}){
                     </Paper>
                                     
                     <Paper
-                        style={{
-                            marginLeft: '30px',
-                            marginTop: '30px',
+                         style={{
+                            margin: '30px',
                             padding: theme.spacing(2),
                             backgroundColor: theme.palette.form.main,
                             width: '85%', // Occupy full width with 25px margins on each side
@@ -648,6 +650,7 @@ export default function AddProperty({}){
                             [theme.breakpoints.up('sm')]: {
                                 width: '50%',
                             },
+                            paddingTop: '10px',
                         }}
                     >
                         <Stack
@@ -730,8 +733,7 @@ export default function AddProperty({}){
 
                     <Paper
                         style={{
-                            marginLeft: '30px',
-                            marginTop: '30px',
+                            margin: '30px',
                             padding: theme.spacing(2),
                             backgroundColor: theme.palette.form.main,
                             width: '85%', // Occupy full width with 25px margins on each side
@@ -741,6 +743,7 @@ export default function AddProperty({}){
                             [theme.breakpoints.up('sm')]: {
                                 width: '50%',
                             },
+                            paddingTop: '10px',
                         }}
                     >
                         <Stack
@@ -784,15 +787,6 @@ export default function AddProperty({}){
                         direction="column"
                         justifyContent="center"
                         alignItems="center"
-                        // padding="25px"
-
-                        // sx={{
-                        //     marginLeft: '30px',
-                        //     marginTop: '30px',
-                        //     // display: 'flex',
-                        //     // padding: '4px'
-                        //     // width: '85%', // Occupy full width with 25px margins on each side
-                        // }}
                     >
                         <Box
                             component="form"

@@ -190,15 +190,14 @@ export default function AddMaintenanceItem({}){
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '80%', // Take up full screen width
-                    minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    alignItems: 'flex-start',
+                    width: '100%', // Ensure the box spans the full viewport width
+                    height: '100vh', // Ensure the box spans the full viewport height
                 }}
             >
                 <Paper
                     style={{
-                        margin: '30px',
+                        // margin: '30px',
                         padding: theme.spacing(2),
                         backgroundColor: theme.palette.form.main,
                         width: '85%', // Occupy full width with 25px margins on each side
@@ -244,7 +243,7 @@ export default function AddMaintenanceItem({}){
                             noValidate
                             autoComplete="off"
                         >
-                             <Grid container spacing={3}>
+                             <Grid container spacing={6}>
                                 {/* Select Field for Property */}
                                 <Grid item xs={12}>
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
@@ -443,7 +442,7 @@ export default function AddMaintenanceItem({}){
 
                                 {/* Submit Button */}
                                 <Grid item xs={12}>
-                                    <Button variant="contained" color="primary" type="submit">
+                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColo: "#9EAED6"}}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                                 Add Maintenance
                                         </Typography>

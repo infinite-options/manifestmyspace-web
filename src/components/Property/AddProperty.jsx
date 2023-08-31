@@ -241,9 +241,13 @@ export default function AddProperty({}){
             <Stack
                 style={{
                     display: 'flex',
-                    width: '100%', // Take up full screen width
-                    minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    flexDirection: 'column', // Stack the content vertically
+                    justifyContent: 'flex-start',  // Start content at the top
+                    alignItems: 'center',  // Center content horizontally
+                    width: '100%',
+                    minHeight: '100vh',
+                    marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
+                    paddingBottom: "25px"
                 }}
                 >
                     <Paper
