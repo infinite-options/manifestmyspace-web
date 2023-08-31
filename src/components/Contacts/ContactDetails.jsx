@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import theme from '../../theme/theme';
 import './../../css/contacts.css';
 import {
@@ -11,12 +11,15 @@ import {
 } from '@mui/material';
 import { getStatusColor } from './ContactsFunction';
 import { Email, Message, Phone } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ContactDetails = (props) => {
-    const [contactsTab, setContactsTab] = useState('Owner');
-
     const navigate = useNavigate();
+    const location = useLocation();
+    const contactDetails = location.state.data;
+    const contactsTab = location.state.tab;
+
+    console.log(contactDetails);
 
     const handleBackBtn = () => {
         navigate('/contacts');

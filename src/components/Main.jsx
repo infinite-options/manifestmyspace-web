@@ -5,7 +5,7 @@ import CashflowOwner from "./Cashflow/CashflowOwner";
 // import Footer from './Footer';
 
 import SelectMonthComponent from "./SelectMonthComponent";
-import PropertyListData from "./Property/PropertyListData";
+// import PropertyListData from "./Property/PropertyListData";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
@@ -15,7 +15,7 @@ import LeasePDF from "./Leases/LeasePDF";
 import FindProperty from "./Property/FindProperty";
 
 import Announcement from "./Announcement/Announcement";
-import TenantDoucments from "./Documents/TenantDocuments/TenantDocuments";
+import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
 import TenantProfileEdit from "./Profile/TenantProfile/TenantProfileEdit";
@@ -49,6 +49,7 @@ import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWid
 
 import Contacts from "./Contacts/Contacts";
 import ContactDetails from "./Contacts/ContactDetails";
+import AddContacts from "./Contacts/AddContacts";
 
 import PropertyList from "./Property/PropertyList";
 import Dashboard from "./Dashboard";
@@ -62,12 +63,12 @@ import TenantMaintenance from "./Maintenance/TenantMaintenance";
 import AddTenantMaintenanceItem from "./Maintenance/AddTenantMaintenanceItem";
 import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigator";
 import TenantProperty from "./Property/TenantProperty";
-import TenantMaintenanceItem from "./Maintenance/TenantMaintenanceItem";
+// import TenantMaintenanceItem from "./Maintenance/TenantMaintenanceItem";
 import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
 import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 
 import EditProfileSettings from "./Settings/EditProfileSettings";
-function Main() {
+function Main () {
   return (
     <>
       <div>
@@ -96,7 +97,7 @@ function Main() {
             <Route exact path="/ownerRent" element={<OwnerRent />} />
             <Route exact path="/ownerRentDetail" element={<OwnerRentDetail />} />
 
-            <Route exact path="/tenantDocuments" element={<TenantDoucments />} />
+            <Route exact path="/tenantDocuments" element={<TenantDocuments />} />
             <Route exact path="/tenantLeases" element={<TenantLeases />} />
             <Route exact path="/tenantProfile" element={<TenantProfile />} />
             <Route exact path="/tenantProfileEdit" element={<TenantProfileEdit />} />
@@ -122,6 +123,7 @@ function Main() {
             <Route exact path="/propertyInfo" element={<PropertyInfo />} />
             <Route exact path="/contacts" element={<Contacts />} />
             <Route exact path="/contactDetails" element={<ContactDetails />} />
+            <Route exact path="/addContacts" element={<AddContacts />} />
 
             <Route exact path="/maintenance" element={<Maintenance />} />
             <Route exact path="/" element={<Dashboard />} />

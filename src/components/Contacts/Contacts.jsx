@@ -24,9 +24,35 @@ const Contacts = (props) => {
     const [tenantData, setTenantData] = useState([]);
     const [maintenanceData, setMaintenanceData] = useState([]);
 
+    const [ownerDataDetails, setOwnerDataDetails] = useState([]);
+    const [tenantDataDetails, setTenantDataDetails] = useState([]);
+    const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
+
     const navigate = useNavigate();
+
     const handleSelectedCard = () => {
-        navigate('/contactDetails');
+        if (contactsTab === 'Owner') {
+            navigate('/contactDetails', {
+                state: {
+                    data: ownerDataDetails,
+                    tab: contactsTab,
+                },
+            });
+        } else if (contactsTab === 'Tenants') {
+            navigate('/contactDetails', {
+                state: {
+                    data: tenantDataDetails,
+                    tab: contactsTab,
+                },
+            });
+        } else if (contactsTab === 'Maintenance') {
+            navigate('/contactDetails', {
+                state: {
+                    data: maintenanceDataDetails,
+                    tab: contactsTab,
+                },
+            });
+        }
     };
 
     useEffect(() => {
@@ -34,8 +60,6 @@ const Contacts = (props) => {
     }, []);
 
     const fetchData = async () => {
-        // 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
-
         const url =
             'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
         await axios
@@ -63,42 +87,48 @@ const Contacts = (props) => {
                 console.error(e);
             });
 
-        // const ownerUrl =
-        //     'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/600-000003';
-        // await axios
-        //     .get(ownerUrl)
-        //     .then((resp) => {
-        //         const ownerCon = resp.data['Owner Details'].result;
-        //         setOwnerData(ownerCon);
-        //     })
-        //     .catch((e) => {
-        //         console.error(e);
-        //     });
+        const ownerUrl =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/600-000003';
+        await axios
+            .get(ownerUrl)
+            .then((resp) => {
+                const ownerCon = resp.data['Owner Details'].result;
+                console.log(ownerCon);
+                setOwnerDataDetails(ownerCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
 
-        // const tenantUrl =
-        //     'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/600-000003';
-        // await axios
-        //     .get(tenantUrl)
-        //     .then((resp) => {
-        //         const tenantCon = resp.data['Tenant Details'].result;
-        //         setTenantData(tenantCon);
-        //     })
-        //     .catch((e) => {
-        //         console.error(e);
-        //     });
+        const tenantUrl =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/600-000003';
+        await axios
+            .get(tenantUrl)
+            .then((resp) => {
+                const tenantCon = resp.data['Tenant Details'].result;
+                setTenantDataDetails(tenantCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
 
-        // const maintenanceUrl =
-        //     'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/600-000003';
-        // await axios
-        //     .get(maintenanceUrl)
-        //     .then((resp) => {
-        //         const mainCon = resp.data['Maintenance Details'].result;
-        //         setMaintenanceData(mainCon);
-        //     })
-        //     .catch((e) => {
-        //         console.error(e);
-        //     });
+        const maintenanceUrl =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/600-000003';
+        await axios
+            .get(maintenanceUrl)
+            .then((resp) => {
+                const mainCon = resp.data['Maintenance Details'].result;
+                setMaintenanceDataDetails(mainCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
     };
+
+    const handleAddContact = () => {
+        navigate('/addContacts');
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -150,7 +180,7 @@ const Contacts = (props) => {
                             </Typography>
                         </Box>
                         <Box position="absolute" right={0}>
-                            <Button>
+                            <Button onClick={handleAddContact}>
                                 <svg
                                     width="18"
                                     height="18"
@@ -262,6 +292,9 @@ const Contacts = (props) => {
                                                     data={owner}
                                                     key={index}
                                                     onClick={handleSelectedCard}
+                                                    dataDetails={
+                                                        ownerDataDetails
+                                                    }
                                                 />
                                             );
                                         })}
@@ -303,6 +336,7 @@ const Contacts = (props) => {
 const OwnerContactsCard = (props) => {
     const owner = props.data;
     const handleSelectedCard = props.onClick;
+    const ownerDataDetails = props.dataDetails;
     return (
         <Stack>
             <Card
@@ -340,7 +374,7 @@ const OwnerContactsCard = (props) => {
                             fontWeight: theme.typography.primary.fontWeight,
                         }}
                     >
-                        12 Properties
+                        {ownerDataDetails.length} Properties
                     </Typography>
                     <Typography
                         sx={{
@@ -366,6 +400,7 @@ const OwnerContactsCard = (props) => {
 
 const TenantContactsCard = (props) => {
     const tenant = props.data;
+    const handleSelectedCard = props.onClick;
     return (
         <Stack>
             <Card
@@ -387,7 +422,7 @@ const TenantContactsCard = (props) => {
                             {tenant.contact_first_name}{' '}
                             {tenant.contact_last_name}
                         </Typography>
-                        <Button>
+                        <Button onClick={handleSelectedCard}>
                             <Message
                                 sx={{
                                     color: theme.typography.common.blue,
@@ -430,6 +465,7 @@ const TenantContactsCard = (props) => {
 
 const MaintenanceContactsCard = (props) => {
     const business = props.data;
+    const handleSelectedCard = props.onClick;
     return (
         <Stack>
             <Card
@@ -451,7 +487,7 @@ const MaintenanceContactsCard = (props) => {
                             {business.contact_first_name}{' '}
                             {business.contact_last_name}
                         </Typography>
-                        <Button>
+                        <Button onClick={handleSelectedCard}>
                             <Message
                                 sx={{
                                     color: theme.typography.common.blue,
