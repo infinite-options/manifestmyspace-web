@@ -172,12 +172,6 @@ export default function MaintenanceRequestDetail(){
                         margin: '30px',
                         backgroundColor: theme.palette.primary.main,
                         width: '100%', // Occupy full width with 25px margins on each side
-                        // [theme.breakpoints.down('sm')]: {
-                        //     width: '80%',
-                        // },
-                        // [theme.breakpoints.up('sm')]: {
-                        //     width: '50%',
-                        // },
                         paddingTop: '10px',
                     }}
                 >

@@ -21,12 +21,15 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AddIcon from '@mui/icons-material/Add';
 import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
+import CloseIcon from '@mui/icons-material/Close';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
 
 
 export default function Maintenance(){
     const location = useLocation();
     let navigate = useNavigate();
     const [maintenanceData, setMaintenanceData] = useState({});
+    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const maintenanceRequests = location.state.maintenanceRequests;
     const colorStatus = location.state.colorStatus;
@@ -34,46 +37,118 @@ export default function Maintenance(){
     console.log("maintenanceRequests", maintenanceRequests)
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
-    const [month, setMonth] = useState(new Date().getMonth());
-    const [year, setYear] = useState(new Date().getFullYear());
+    const [showPropertyFilter, setShowPropertyFilter] = useState(false);
+    const [month, setMonth] = useState(null);
+    const [year, setYear] = useState(null);
 
     const [filterPropertyList, setFilterPropertyList] = useState([]);
+
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
     }
 
-    function createdPropertyList(){
-    }
-
-    function handleFilter(maintenanceArray){
-        var filteredArray = []
-
+    useEffect(() => {
+        console.log("maintenanceData", maintenanceData)
+        const propertyList = [];
+        const addedAddresses = [];
+        for (const key in maintenanceData){
+            for (const item of maintenanceData[key]){
+                if (!addedAddresses.includes(item.property_address)){
+                    addedAddresses.push(item.property_address);
+                    if (!propertyList.includes(item.property_address)){
+                        propertyList.push({
+                            "address": item.property_address,
+                            "checked": true
+                        });
+                    }
+                }
+            }
+        }
         
-        // if (filterPropertyList.length !== 0){
+        console.log("filterPropertyList", propertyList)
+        setFilterPropertyList(propertyList);
+    }, [maintenanceData])
 
-        //     for (const item of maintenanceArray){
-        //         if (item.propertyId in filterPropertyList){
-        //             filteredArray.push(item)
-        //         }
-        //     }
-        // } else{
-        //     console.log(maintenanceArray)
-        //     return filteredArray
-        // }
-        return maintenanceArray
+    function convertToStandardFormat(monthName, year) {
+        const months = {
+            January: '01',
+            February: '02',
+            March: '03',
+            April: '04',
+            May: '05',
+            June: '06',
+            July: '07',
+            August: '08',
+            September: '09',
+            October: '10',
+            November: '11',
+            December: '12'
+        };
+    
+        return `${year}-${months[monthName]}`;
     }
 
-    // console.log("numMaintenanceRequests", numMaintenanceRequests)
+    function handleFilter(maintenanceArray, month, year, filterPropertyList){
+        var filteredArray = [];
 
-    // useEffect(() => {
-    //     const getPropertyData = async () => {
-    //         const properties = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-    //         const propertiesData = await properties.json()
-    //         console.log("propertiesData", propertiesData)
-    //     }
-    // }, [filterPropertyList])
+        // Filtering by date
+        if (month && year){
+            const filterFormatDate = convertToStandardFormat(month, year);
+            for (const item of maintenanceArray){
+                if (item.maintenance_request_created_date.startsWith(filterFormatDate)){
+                    filteredArray.push(item);
+                }
+            }
+        } else {
+            filteredArray = maintenanceArray;
+        }
+    
+        // Filtering by property
+        if (filterPropertyList?.length > 0){
+            //filteredArray = filteredArray.filter(item => filterPropertyList.includes(item.property_address));
+            filteredArray = filteredArray.filter(item => {
+                for (const filterItem of filterPropertyList){
+                    if (filterItem.address === item.property_address && filterItem.checked){
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+    
+        //setDisplayMaintenanceData(filteredArray);
+        return filteredArray
+    }
+
+    function displayFilterString(month, year){
+        if(month && year){
+            return month + " " + year
+        } else{
+            return "Last 30 Days"
+        }
+    }
+
+    function displayPropertyFilterTitle(filterPropertyList){
+        var count = 0;
+        for (const item of filterPropertyList){
+            if(item.checked){
+                count++;
+            }
+        }
+        if(count === filterPropertyList.length){
+            return "All Properties"
+        } else{
+            return "Selected " + count + " Properties"
+        }
+    }
+
+    function clearFilters(){
+        setMonth(null);
+        setYear(null);
+        setFilterPropertyList([]);
+    }
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
@@ -86,17 +161,18 @@ export default function Maintenance(){
             const maintenanceRequestsData = await maintenanceRequests.json()
 
             for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-                console.log(item)
                 if (!dataObject[item.maintenance_request_status]){
                     dataObject[item.maintenance_request_status] = [];
                 }
-                if (handleFilter(item)){
-                    dataObject[item.maintenance_request_status].push(item);
-                }
+                dataObject[item.maintenance_request_status].push(item);
             }
             // console.log("dataObject from new api call", dataObject)
             setMaintenanceData(prevData => ({
                 ...prevData, 
+                ...dataObject
+            }));
+            setDisplayMaintenanceData(prevData => ({
+                ...prevData,
                 ...dataObject
             }));
         }
@@ -118,7 +194,6 @@ export default function Maintenance(){
             >
                 <Paper
                     style={{
-                        margin: '30px',
                         padding: theme.spacing(2),
                         backgroundColor: theme.palette.primary.main,
                         width: '85%', // Occupy full width with 25px margins on each side
@@ -164,19 +239,20 @@ export default function Maintenance(){
                                 <Typography 
                                     sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                                 >
-                                    Last 30 Days
-                                    {/* { showSelectMonth ? `${month} ${year}` : "Last 30 days"} */}
+                                    {displayFilterString(month, year)}
+                                </Typography>
+                            </Button>
+                            <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
+                                <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
+                                <Typography 
+                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                                >
+                                    {displayPropertyFilterTitle(filterPropertyList)}
                                 </Typography>
                             </Button>
                         
                             <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
-                            {/* <Button sx={{ textTransform: 'capitalize' }}>
-                                <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
-                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
-                                    Select Property
-                                </Typography>
-                            </Button> */}
-                            <SelectPropertyFilter/>
+                            <SelectPropertyFilter showPropertyFilter={showPropertyFilter} setShowPropertyFilter={setShowPropertyFilter} filterList={filterPropertyList} setFilterList={setFilterPropertyList}/>
                         </Box>
                         <Box
                             component="span"
@@ -184,15 +260,24 @@ export default function Maintenance(){
                             display="flex"
                             justifyContent="center"
                             alignItems="center"
+                            position="relative"
                         >
-                            <Button sx={{ textTransform: 'capitalize' }}>
-                                {/* <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/> */}
-                                <Typography 
-                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
-                                >
-                                All Properties
-                                </Typography>
-                            </Button>
+                            <Typography 
+                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                            >
+                                {displayFilterString(month, year)}
+                                {displayFilterString(month, year) === "Last 30 Days" ? null :(
+                                <Button onClick={() => clearFilters()} sx={{
+                                    padding: "0px",
+                                    position: "absolute", 
+                                    right: 0, 
+                                    opacity: displayFilterString(month, year) === "Last 30 Days" ? 0 : 1,  // Adjust opacity based on condition
+                                    pointerEvents: displayFilterString(month, year) === "Last 30 Days" ? 'none' : 'auto'  // Ensure the button is not clickable when hidden
+                                }}>
+                                    <CloseIcon sx={{color: theme.typography.common.blue, fontSize: "14px"}}/>
+                                </Button>
+                            )}
+                            </Typography>
                         </Box>
                     <div style={{
                         borderRadius: "10px",
@@ -209,14 +294,16 @@ export default function Maintenance(){
                                 mappingKey = item.mapping
                             }
 
-                            let maintenanceArray = maintenanceData[mappingKey] || []
+                            let maintenanceArray = maintenanceData[mappingKey]|| []
+
+                            let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
 
                             return (
                                 <MaintenanceStatusTable 
                                     key={index}
                                     status={item.status}
                                     color={item.color}
-                                    maintenanceItemsForStatus={handleFilter(maintenanceArray)}
+                                    maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={maintenanceData}
                                 />
                             );

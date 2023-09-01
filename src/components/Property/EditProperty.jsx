@@ -24,6 +24,7 @@ import {
     FormControlLabel,
     RadioGroup,
     UploadFile,
+    CardMedia,
     InputAdornment
 } from "@mui/material";
 import theme from '../../theme/theme';
@@ -33,253 +34,136 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ImageUploader from '../ImageUploader';
+import dataURItoBlob from '../utils/dataURItoBlob'
+import defaultHouseImage from './defaultHouseImage.png'
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 import IconButton from '@mui/material/IconButton';
 
-
-function ImageUploader(){
-    const [selectedImageList, setSelectedImageList] = useState([]);
-
-    const handleImageSelect = (event) => {
-        console.log("handleImageSelect", event.target.value)
-        const files = Array.from(event.target.files);
-        setSelectedImageList([...selectedImageList, ...files]);
-        for (let i = 0; i < files.length; i++) {
-            const reader = new FileReader();
-            
-            reader.onloadend = () => {
-                selectedImageList.push({ data_url: reader.result });
-                setSelectedImageList([...selectedImageList]);
-            };
-
-            reader.readAsDataURL(files[i]);
-        }
-    };
-
-    const handleImageFavorite = (event) => {
-        console.log("handleImageFavorite event", event)
-        const index = event
-        const file = selectedImageList[index]
-        if (file.favorite === undefined) file.favorite = true
-        else (file.favorite = !file.favorite)
-        console.log(file.favorite)
-        setSelectedImageList([...selectedImageList]);
-    };
-
-    const handleImageTrash = (event) => {
-        console.log("handleImageTrash", event)
-        const index = event
-        selectedImageList.splice(index, 1);
-        setSelectedImageList([...selectedImageList]);
-    }
-
-    return (
-        <Container fixed sx={{
-            backgroundColor: 'white',
-            borderColor: 'black',
-            borderRadius: '7px',
-            borderStyle: 'dashed',
-            borderColor: theme.typography.common.blue,
-        }}>
-            
-            {selectedImageList.length === 0 && (
-                <Box
-                    justifyContent="center"
-                    alignItems="center"
-                    display="flex"
-                    padding={10}
-                >
-
-                    <Button
-                        component="label"
-                    >
-                        <input
-                            type="file" 
-                            accept="image/*" 
-                            multiple
-                            hidden 
-                            onChange={handleImageSelect}
-                        />
-                        <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                            Add Pictures
-                        </Typography>
-                        </Button>
-                </Box>
-            )} 
-            {selectedImageList.length > 0 && (
-                <Box
-                    justifyContent="center"
-                    alignItems="center"
-                    display="flex"
-                    padding={10}
-                >
-                    <Grid container>
-                        {selectedImageList.map((image, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    position: 'relative',
-                                    height: '75px',
-                                    width: '75px',
-                                    marginRight: '10px',
-                                }}
-                            >
-                                <Grid item xs={2} key={index}>
-                                    <img
-                                        src={image.data_url}
-                                        alt="new"
-                                        key={index}
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            height: '100%',
-                                            width: '100%',
-                                            marginRight: '10px',
-                                            marginBottom: '10px',
-                                            borderRadius: '7px',
-                                        }}
-                                    />
-                                     <Box
-                                        sx={{
-                                            position: 'relative',
-                                            top: "-5px",
-                                            left: "40px",
-                                            zIndex: 1,
-                                        }}
-                                    >
-                                        <IconButton onClick={() => handleImageTrash(index)}>
-                                            <CloseIcon color="error" />
-                                        </IconButton>
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            position: 'relative',
-                                            top: "0px",
-                                            right: "7px",
-                                            zIndex: 2,
-                                        }}
-                                    >
-                                        <IconButton onClick={() => handleImageFavorite(index)}>
-                                            {selectedImageList[index].favorite === true ? (
-                                                <FavoriteIcon color="primary" sx={{
-                                                    color: theme.typography.propertyPage.color,
-                                                }}/>
-                                            ) : (
-                                                <FavoriteBorderIcon color="black"/>
-                                            )}
-                                        </IconButton>
-                                    </Box>
-                                </Grid>
-                            </Box>
-                        ))}
-                        <Grid item xs={2}>
-                            <Button
-                                component="label"
-                            >
-                                <input
-                                    type="file" 
-                                    accept="image/*" 
-                                    multiple
-                                    hidden 
-                                    onChange={handleImageSelect}
-                                />
-                                <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "75px", marginRight: "10px"}}/>
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
-            )}
-        </Container>
-    )
-
-}
-
-
-export default function AddProperty({}){
+export default function EditProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
 
-    const [property, setProperty] = useState('');
-    const [issue, setIssue] = useState('');
-    const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
-    const [toggleAlignment, setToggleAlignment] = useState('left');
-    const [cost, setCost] = useState('');
-    const [title, setTitle] = useState('');
+    const propertyData = location.state.item
+    const propertyId = location.state.propertyId;
+
+    console.log("Property Id", propertyId)
+    console.log("Property Data in Edit Property", propertyData)
+
+
+    const [ownerId, setOwnerId] = useState('110-000003"');
+
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [propertyState, setPropertyState] = useState(propertyData.property_state);
+    const [zip, setZip] = useState('');
+    const [type, setType] = useState(propertyData.property_type);
+    const [squareFootage, setSquareFootage] = useState('');
+    const [bedrooms, setBedrooms] = useState('');
+    const [bathrooms, setBathrooms] = useState('');
+
     const [description, setDescription] = useState('');
-    const [file, setFile] = useState('');
-
-    // const [selectedImageList, setSelectedImageList] = useState([]);
-
-    // const handleImageSelect = (event) => {
-    //     console.log("handleImageSelect", event.target.value)
-    //     const files = Array.from(event.target.files);
-    //     setSelectedImageList([...selectedImageList, ...files]);
-    // };
-
-    // const handleImageFavorite = (event) => {
-    //     console.log("handleImageFavorite", event.target.value)
-        
-    //     const files = Array.from(event.target.files);
-    //     // files[index].favorite = !files[index].favorite;
-    //     // setSelectedImageList([...selectedImageList, ...files]);
-    // };
-
-    // const handleImageTrash = (event) => {
-    //     console.log("handleImageTrash", event.target.value)
-    //     const files = Array.from(event.target.files);
-    //     // files.splice(index, 1);
-    //     // setSelectedImageList([...files]);
-    // }
+    const [selectedImageList, setSelectedImageList] = useState([]);
+    const [activeStep, setActiveStep] = useState(0);
+    const maxSteps = selectedImageList.length;
+    const [coverImage, setCoverImage] = useState(defaultHouseImage);
+    const [deposit, setDeposit] = useState(0);
+    const [petsAllowed, setPetsAllowed] = useState(0);
+    const [depositForRent, setDepositForRent] = useState(0);
+    const [taxes, setTaxes] = useState(0);
+    const [mortgages, setMortgages] = useState(0);
+    const [insurance, setInsurance] = useState(0);
+    const [notes, setNotes] = useState('');
+    const [unit, setUnit] = useState('');
 
 
-    const handlePropertyChange = (event) => {
-        console.log("handlePropertyChange", event.target.value)
-        setProperty(event.target.value);
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      };
+    
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
+
+    useEffect(() => {
+        console.log("useEffect")
+        setCoverImage(selectedImageList[0]?.data_url || coverImage);
+    }, [selectedImageList])
 
     const handleUnitChange = (event) => {
         console.log("handleUnitChange", event.target.value)
-        setIssue(event.target.value);
+        setUnit(event.target.value);
     };
 
-    const handleCostChange = (event) => {
-        console.log("handleCostChange", event.target.value)
-        setCost(event.target.value);
-    };  
-
-    const handleTitleChange = (event) => {
+    const handleAddressChange = (event) => {
         console.log("handleTitleChange", event.target.value)
-        setTitle(event.target.value);
+        setAddress(event.target.value);
     };
 
-    const handleDescriptionChange = (event) => {
-        console.log("handleDescriptionChange", event.target.value)
-        setDescription(event.target.value);
+    const handleCityChange = (event) => {
+        console.log("handleCityChange", event.target.value)
+        setCity(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
-        setToggleGroupValue(newToggleGroupValue);
-        setToggleAlignment(newToggleGroupValue);
+    const handleTypeChange = (event) => {
+        console.log("handleTypeChange", event.target.value)
+        setType(event.target.value);
     };
 
-    const handleCompletedChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
-        setToggleGroupValue(newToggleGroupValue);
-        setToggleAlignment(newToggleGroupValue);
-    };
-    
-    const handleFileChange = (event) => {
-        console.log("handleFileChange", event.target.value)
-        setFile(event.target.value);
-    };
+    const handlePropertyStateChange = (event) => {
+        console.log("handleStateChange", event.target.value)
+        setPropertyState(event.target.value);
+    }
+
+
 
     const handleBackButton = () => {
         console.log("handleBackButton")
         navigate(-1);
     }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("handleSubmit")
+        const formData = new FormData();
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+
+        formData.append('property_owner_id', ownerId);
+        formData.append('available_to_rent', 1);
+        formData.append('active_date', formattedDate);
+        formData.append('property_address', address);
+        formData.append('property_unit', unit);
+        formData.append('property_city', city);
+        formData.append('property_state', propertyState);
+        formData.append('property_zip', zip);
+        formData.append('property_type', type);
+        formData.append('property_num_beds', bedrooms);
+        formData.append('property_num_baths', bathrooms);
+        formData.append('property_area', squareFootage);
+        formData.append('property_listed', 0);
+        formData.append('property_deposit', deposit);
+        formData.append('property_pets_allowed', petsAllowed);
+        formData.append('property_deposit_for_rent', depositForRent);
+        formData.append('property_taxes', taxes);
+        formData.append('property_mortgages', mortgages);
+        formData.append('property_insurance', insurance);
+        formData.append('property_featured', 0);
+        formData.append('property_description', description);
+        formData.append('property_notes', notes);
+
+
+
+        const putData = async () => {
+
+        }
+
+        putData();
+    }
+
 
 
     return (
@@ -287,10 +171,13 @@ export default function AddProperty({}){
             <Stack
                 style={{
                     display: 'flex',
-                    // width: '100%', // Take up full screen width
-                    minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
-                    justifyContent: 'center', // Center all children elements on the horizontal axis
+                    flexDirection: 'column', // Stack the content vertically
+                    justifyContent: 'flex-start',  // Start content at the top
+                    alignItems: 'center',  // Center content horizontally
+                    width: '100%',
+                    minHeight: '100vh',
+                    marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
+                    paddingBottom: "25px"
                 }}
                 >
                     <Paper
@@ -320,7 +207,7 @@ export default function AddProperty({}){
                                 alignItems="center"
                             >
                                 <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                    Add Property
+                                    Edit Property
                                 </Typography>
                             </Box>
                             <Box position="absolute" right={0}>
@@ -338,14 +225,53 @@ export default function AddProperty({}){
                         >
                             <Box
                                 component="form"
-                                sx={{
-                                    // '& .MuiTextField-root': { m: 1, width: '25ch' },
-                                }}
+                                onSubmit={handleSubmit}
                                 noValidate
                                 autoComplete="off"
+                                id="editPropertyForm"
                             >
                                 <Grid container columnSpacing={12} rowSpacing={6}>
                                     {/* Select Field for Property */}
+                                    <Grid item xs={12}>
+                                        <div
+                                            style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: "100%",
+                                            }}
+                                        >
+                                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                                        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                        </Button>
+                                            <CardMedia
+                                            component="img"
+                                            // image={selectedImageList[activeStep]}
+                                            image={coverImage}
+                                            sx={{
+                                                elevation: "0",
+                                                boxShadow: "none",
+                                                maxWidth: "150px",
+                                                minWidth: "150px",
+                                                maxHeight: "150px",
+                                                minHeight: "150px",
+                                                height: "150px",
+                                                objectFit: "cover",
+                                                center: "true",
+                                                alignContent: "center",
+                                                justifyContent: "center",
+                                            }}
+                                            />
+                                            <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                                            {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                        </Button>
+                                        </div>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                    </Grid>
 
                                     {/* Text Field for Title */}
                                     <Grid item xs={12}>
@@ -353,12 +279,13 @@ export default function AddProperty({}){
                                             Address
                                         </Typography>
                                         <TextField 
-                                            onChange={handleTitleChange} 
+                                            onChange={handleAddressChange} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
                                                 borderRadius: '7px',
                                             }}
+                                            placeholder={propertyData.property_address}
                                             size="small"
                                             fullWidth
                                         />
@@ -376,6 +303,7 @@ export default function AddProperty({}){
                                                 borderColor: 'black',
                                                 borderRadius: '7px',
                                             }}
+                                            placeholder={propertyData.property_unit}
                                             size="small"
                                             fullWidth
                                         />
@@ -386,7 +314,7 @@ export default function AddProperty({}){
                                             City
                                         </Typography>
                                         <TextField 
-                                            onChange={handleUnitChange} 
+                                            onChange={handleCityChange} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
@@ -394,6 +322,7 @@ export default function AddProperty({}){
                                             }}
                                             size="small"
                                             fullWidth
+                                            placeholder={propertyData.property_city}
                                         />
                                     </Grid>
 
@@ -410,13 +339,15 @@ export default function AddProperty({}){
                                                 }}
                                                 size="small"
                                                 fullWidth
-                                                // onChange={handleUnitChange} 
+                                                onChange={handlePropertyStateChange}
+                                                value={propertyState}
                                             >
                                                 <MenuItem value={"CA"}>CA</MenuItem>
                                                 <MenuItem value={"TX"}>TX</MenuItem>
                                                 <MenuItem value={"FL"}>FL</MenuItem>
                                                 <MenuItem value={"NY"}>NY</MenuItem>
                                                 <MenuItem value={"IL"}>IL</MenuItem>
+                                                <MenuItem value={"AZ"}>AZ</MenuItem>
                                             </Select>
                                     </Grid>
 
@@ -432,6 +363,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
+                                            placeholder={propertyData.property_zip}
                                             // onChange={handleCostChange}
                                         />
                                     </Grid>
@@ -448,7 +380,8 @@ export default function AddProperty({}){
                                             }}
                                             size="small"
                                             fullWidth
-                                            // onChange={handleUnitChange} 
+                                            onChange={handleTypeChange} 
+                                            value={type}
                                         >
                                             <MenuItem value={"Single Family"}>Single Family</MenuItem>
                                             <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
@@ -470,6 +403,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
+                                            placeholder={propertyData.property_area}
                                             // onChange={handleCostChange}
                                         />
                                     </Grid>
@@ -486,6 +420,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
+                                            placeholder={propertyData.property_num_beds}
                                             // onChange={handleCostChange}
                                         />
                                     </Grid>
@@ -502,6 +437,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
+                                            placeholder={propertyData.property_num_baths}
                                             // onChange={handleCostChange}
                                         />
                                     </Grid>
@@ -538,6 +474,7 @@ export default function AddProperty({}){
                                             }}
                                             size="small"
                                             multiline={true}
+                                            placeholder={propertyData.property_notes}
                                             // onChange={handleCostChange}
                                         />
                                     </Grid>
@@ -547,9 +484,8 @@ export default function AddProperty({}){
                     </Paper>
 
                     <Paper
-                         style={{
-                            marginLeft: '30px',
-                            // marginTop: '30px',
+                        style={{
+                            margin: '30px',
                             padding: theme.spacing(2),
                             backgroundColor: theme.palette.form.main,
                             width: '85%', // Occupy full width with 25px margins on each side
@@ -559,6 +495,7 @@ export default function AddProperty({}){
                             [theme.breakpoints.up('sm')]: {
                                 width: '50%',
                             },
+                            paddingTop: '10px',
                         }}
                     >
                         <Stack
@@ -571,12 +508,9 @@ export default function AddProperty({}){
                             }}
                         >
                             <Box
-                                component="form"
                                 sx={{
                                     display: 'flex',
                                 }}
-                                noValidate
-                                autoComplete="off"
                             >
                                 <Grid container columnSpacing={12} rowSpacing={6}>
 
@@ -636,9 +570,8 @@ export default function AddProperty({}){
                     </Paper>
                                     
                     <Paper
-                        style={{
-                            marginLeft: '30px',
-                            marginTop: '30px',
+                         style={{
+                            margin: '30px',
                             padding: theme.spacing(2),
                             backgroundColor: theme.palette.form.main,
                             width: '85%', // Occupy full width with 25px margins on each side
@@ -648,6 +581,7 @@ export default function AddProperty({}){
                             [theme.breakpoints.up('sm')]: {
                                 width: '50%',
                             },
+                            paddingTop: '10px',
                         }}
                     >
                         <Stack
@@ -660,7 +594,6 @@ export default function AddProperty({}){
                             }}
                         >
                             <Box
-                                component="form"
                                 sx={{
                                     display: 'flex',
                                 }}
@@ -730,8 +663,7 @@ export default function AddProperty({}){
 
                     <Paper
                         style={{
-                            marginLeft: '30px',
-                            marginTop: '30px',
+                            margin: '30px',
                             padding: theme.spacing(2),
                             backgroundColor: theme.palette.form.main,
                             width: '85%', // Occupy full width with 25px margins on each side
@@ -741,6 +673,7 @@ export default function AddProperty({}){
                             [theme.breakpoints.up('sm')]: {
                                 width: '50%',
                             },
+                            paddingTop: '10px',
                         }}
                     >
                         <Stack
@@ -771,9 +704,6 @@ export default function AddProperty({}){
                                             Sun-kissed, beige condo for a family.
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <ImageUploader/>
-                                    </Grid>
                                 </Grid>
                             </Box>
                         </Stack>
@@ -784,33 +714,24 @@ export default function AddProperty({}){
                         direction="column"
                         justifyContent="center"
                         alignItems="center"
-                        // padding="25px"
-
-                        // sx={{
-                        //     marginLeft: '30px',
-                        //     marginTop: '30px',
-                        //     // display: 'flex',
-                        //     // padding: '4px'
-                        //     // width: '85%', // Occupy full width with 25px margins on each side
-                        // }}
+                        sx={{
+                            display: 'flex',
+                        }}
                     >
                         <Box
-                            component="form"
                             sx={{
                                 // marginLeft: '30px',
                                 marginTop: '30px',
                                 width: '100%',
+                                paddingBottom: '30px'
                             }}
-                            noValidate
-                            autoComplete="off"
                         >
                         <Grid container>
                             <Grid item xs={12}>
-                                <Button variant="contained" type="submit" sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
+                                <Button variant="contained" type="submit" form="editPropertyForm" sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
                                     <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Save Property
+                                            Update Property
                                     </Typography>
-                                    <input type="file" hidden/>
                                 </Button>
                             </Grid>
                         </Grid>
