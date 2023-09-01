@@ -160,7 +160,14 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
     
     return(
-        <>
+        <Paper
+            style={{
+                margin: '30px',
+                padding: theme.spacing(2),
+                backgroundColor: theme.palette.primary.main,
+                paddingTop: '10px',
+            }}
+        >
             <Stack
                 direction="column"
                 justifyContent="center"
@@ -427,6 +434,6 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                     </Grid>
                 </Box>
             </Stack>
-        </>
+        </Paper>
     )
 }

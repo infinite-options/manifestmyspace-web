@@ -173,29 +173,29 @@ export default function TenantMaintenance(){
                         {/* {tenantMaintenanceData[0].propertyAddress} {tenantMaintenanceData[0].unit} */}
                     </Typography>
                 </Stack>
-                <Paper
-                    style={{
-                        margin: '30px',
-                        padding: theme.spacing(2),
-                        backgroundColor: theme.palette.primary.main,
-                        paddingTop: '10px',
-                    }}
-                >
                     {newRequestBool ?
                         (<AddTenantMaintenanceItem
                             closeAddTenantMaintenanceItem={handleNewRequestButton}
                             propertyId={propertyId}
                         /> ):(
-                            <TenantMaintenanceView
-                                tenantMaintenanceData={tenantMaintenanceData}
-                                handleNewRequestButton={handleNewRequestButton}
-                                handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
-                                filterToggle={filterToggle}
-                                handleFilterToggle={handleFilterToggle}
-                            />
+                            <Paper
+                                style={{
+                                    margin: '30px',
+                                    padding: theme.spacing(2),
+                                    backgroundColor: theme.palette.primary.main,
+                                    paddingTop: '10px',
+                                }}
+                            >
+                                <TenantMaintenanceView
+                                    tenantMaintenanceData={tenantMaintenanceData}
+                                    handleNewRequestButton={handleNewRequestButton}
+                                    handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
+                                    filterToggle={filterToggle}
+                                    handleFilterToggle={handleFilterToggle}
+                                />
+                            </Paper>
                         )
                     }
-                </Paper>
             </Box>
         </ThemeProvider>
     )

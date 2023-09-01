@@ -80,9 +80,9 @@ export default function AddProperty({}){
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       };
     
-      const handleBack = () => {
+    const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-      };
+    };
 
     const handleAddressChange = (event) => {
         setAddress(event.target.value);
@@ -247,7 +247,7 @@ export default function AddProperty({}){
                     width: '100%',
                     minHeight: '100vh',
                     marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
-                    paddingBottom: "25px"
+                    paddingBottom: "50px"
                 }}
                 >
                     <Paper

@@ -193,6 +193,7 @@ export default function AddMaintenanceItem({}){
                     alignItems: 'flex-start',
                     width: '100%', // Ensure the box spans the full viewport width
                     height: '100vh', // Ensure the box spans the full viewport height
+                    paddingTop: "30px"
                 }}
             >
                 <Paper
