@@ -30,31 +30,6 @@ const Contacts = (props) => {
 
     const navigate = useNavigate();
 
-    const handleSelectedCard = () => {
-        if (contactsTab === 'Owner') {
-            navigate('/contactDetails', {
-                state: {
-                    data: ownerDataDetails,
-                    tab: contactsTab,
-                },
-            });
-        } else if (contactsTab === 'Tenants') {
-            navigate('/contactDetails', {
-                state: {
-                    data: tenantDataDetails,
-                    tab: contactsTab,
-                },
-            });
-        } else if (contactsTab === 'Maintenance') {
-            navigate('/contactDetails', {
-                state: {
-                    data: maintenanceDataDetails,
-                    tab: contactsTab,
-                },
-            });
-        }
-    };
-
     useEffect(() => {
         fetchData();
     }, []);
@@ -65,8 +40,8 @@ const Contacts = (props) => {
         await axios
             .get(url)
             .then((resp) => {
-                const data = resp.data['Business Contacts'].result;
-                console.log(data);
+                const data = resp.data['Business_Contacts'].result;
+                // console.log(data);
 
                 const ownerCon = data.filter((val) => {
                     return val.contact_uid && val.contact_uid.includes('110-');
@@ -92,9 +67,18 @@ const Contacts = (props) => {
         await axios
             .get(ownerUrl)
             .then((resp) => {
-                const ownerCon = resp.data['Owner Details'].result;
-                console.log(ownerCon);
-                setOwnerDataDetails(ownerCon);
+                const ownerCon = resp.data['Owner_Details'].result;
+                // console.log(ownerCon);
+                const uniqueValues = {};
+
+                const uniqueContacts = ownerCon.filter((item) => {
+                    if (!uniqueValues[item.contract_name]) {
+                        uniqueValues[item.contract_name] = true;
+                        return true;
+                    }
+                    return false;
+                });
+                setOwnerDataDetails(uniqueContacts);
             })
             .catch((e) => {
                 console.error(e);
@@ -105,7 +89,7 @@ const Contacts = (props) => {
         await axios
             .get(tenantUrl)
             .then((resp) => {
-                const tenantCon = resp.data['Tenant Details'].result;
+                const tenantCon = resp.data['Tenant_Details'].result;
                 setTenantDataDetails(tenantCon);
             })
             .catch((e) => {
@@ -117,7 +101,7 @@ const Contacts = (props) => {
         await axios
             .get(maintenanceUrl)
             .then((resp) => {
-                const mainCon = resp.data['Maintenance Details'].result;
+                const mainCon = resp.data['Maintenance_Details'].result;
                 setMaintenanceDataDetails(mainCon);
             })
             .catch((e) => {
@@ -127,6 +111,40 @@ const Contacts = (props) => {
 
     const handleAddContact = () => {
         navigate('/addContacts');
+    };
+
+    const handleSetSelectedCard = (selectedData, index) => {
+        if (contactsTab === 'Owner') {
+            navigate('/contactDetails', {
+                state: {
+                    dataDetails: ownerDataDetails,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: ownerData,
+                },
+            });
+        } else if (contactsTab === 'Tenants') {
+            navigate('/contactDetails', {
+                state: {
+                    dataDetails: tenantDataDetails,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: tenantData,
+                },
+            });
+        } else if (contactsTab === 'Maintenance') {
+            navigate('/contactDetails', {
+                state: {
+                    dataDetails: maintenanceDataDetails,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: maintenanceData,
+                },
+            });
+        }
     };
 
     return (
@@ -291,9 +309,12 @@ const Contacts = (props) => {
                                                 <OwnerContactsCard
                                                     data={owner}
                                                     key={index}
-                                                    onClick={handleSelectedCard}
+                                                    index={index}
+                                                    selected={
+                                                        handleSetSelectedCard
+                                                    }
                                                     dataDetails={
-                                                        ownerDataDetails
+                                                        ownerDataDetails.length
                                                     }
                                                 />
                                             );
@@ -306,7 +327,10 @@ const Contacts = (props) => {
                                                 <TenantContactsCard
                                                     data={tenant}
                                                     key={index}
-                                                    onClick={handleSelectedCard}
+                                                    index={index}
+                                                    selected={
+                                                        handleSetSelectedCard
+                                                    }
                                                 />
                                             );
                                         })}
@@ -318,7 +342,10 @@ const Contacts = (props) => {
                                                 <MaintenanceContactsCard
                                                     data={maint}
                                                     key={index}
-                                                    onClick={handleSelectedCard}
+                                                    index={index}
+                                                    selected={
+                                                        handleSetSelectedCard
+                                                    }
                                                 />
                                             );
                                         })}
@@ -335,8 +362,15 @@ const Contacts = (props) => {
 
 const OwnerContactsCard = (props) => {
     const owner = props.data;
-    const handleSelectedCard = props.onClick;
-    const ownerDataDetails = props.dataDetails;
+    const handleSetSelectedCard = props.selected;
+    const ownerDataDetailsLength = props.dataDetails;
+    const index = props.index;
+
+    const handleSelection = () => {
+        console.log(index);
+        handleSetSelectedCard(owner, index);
+    };
+
     return (
         <Stack>
             <Card
@@ -346,6 +380,7 @@ const OwnerContactsCard = (props) => {
                     margin: '10px',
                     color: '#160449',
                 }}
+                onClick={handleSelection}
             >
                 <CardContent>
                     <Stack flexDirection="row" justifyContent="space-between">
@@ -355,10 +390,9 @@ const OwnerContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {owner.owner_first_name} {owner.owner_last_name}
                             {owner.contact_first_name} {owner.contact_last_name}
                         </Typography>
-                        <Button onClick={handleSelectedCard}>
+                        <Button>
                             <Message
                                 sx={{
                                     color: theme.typography.common.blue,
@@ -374,7 +408,7 @@ const OwnerContactsCard = (props) => {
                             fontWeight: theme.typography.primary.fontWeight,
                         }}
                     >
-                        {ownerDataDetails.length} Properties
+                        {ownerDataDetailsLength} Properties
                     </Typography>
                     <Typography
                         sx={{
@@ -400,7 +434,14 @@ const OwnerContactsCard = (props) => {
 
 const TenantContactsCard = (props) => {
     const tenant = props.data;
-    const handleSelectedCard = props.onClick;
+    const handleSetSelectedCard = props.selected;
+    const index = props.index;
+
+    const handleSelection = () => {
+        console.log(index);
+        handleSetSelectedCard(tenant, index);
+    };
+
     return (
         <Stack>
             <Card
@@ -410,6 +451,7 @@ const TenantContactsCard = (props) => {
                     margin: '10px',
                     color: '#160449',
                 }}
+                onClick={handleSelection}
             >
                 <CardContent>
                     <Stack flexDirection="row" justifyContent="space-between">
@@ -422,7 +464,7 @@ const TenantContactsCard = (props) => {
                             {tenant.contact_first_name}{' '}
                             {tenant.contact_last_name}
                         </Typography>
-                        <Button onClick={handleSelectedCard}>
+                        <Button>
                             <Message
                                 sx={{
                                     color: theme.typography.common.blue,
@@ -465,7 +507,12 @@ const TenantContactsCard = (props) => {
 
 const MaintenanceContactsCard = (props) => {
     const business = props.data;
-    const handleSelectedCard = props.onClick;
+    const handleSetSelectedCard = props.selected;
+    const index = props.index;
+
+    const handleSelection = () => {
+        handleSetSelectedCard(business, index);
+    };
     return (
         <Stack>
             <Card
@@ -475,6 +522,7 @@ const MaintenanceContactsCard = (props) => {
                     margin: '10px',
                     color: '#160449',
                 }}
+                onClick={handleSelection}
             >
                 <CardContent>
                     <Stack flexDirection="row" justifyContent="space-between">
@@ -487,7 +535,7 @@ const MaintenanceContactsCard = (props) => {
                             {business.contact_first_name}{' '}
                             {business.contact_last_name}
                         </Typography>
-                        <Button onClick={handleSelectedCard}>
+                        <Button>
                             <Message
                                 sx={{
                                     color: theme.typography.common.blue,

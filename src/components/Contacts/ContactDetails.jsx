@@ -16,10 +16,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const ContactDetails = (props) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const contactDetails = location.state.data;
+    const contactDetails = location.state.dataDetails;
     const contactsTab = location.state.tab;
+    const selectedData = location.state.selectedData;
+    const index = location.state.index;
+    const passedData = location.state.viewData;
 
     console.log(contactDetails);
+    console.log(selectedData);
+    console.log(index);
+
+    const uniqueValues = {};
+
+    const uniqueContacts = contactDetails.filter((item) => {
+        if (!uniqueValues[item.contract_name]) {
+            uniqueValues[item.contract_name] = true;
+            return true;
+        }
+        return false;
+    });
 
     const handleBackBtn = () => {
         navigate('/contacts');
@@ -85,6 +100,7 @@ const ContactDetails = (props) => {
                                     fontSize:
                                         theme.typography.smallFont.fontSize,
                                 }}
+                                onClick={handleBackBtn}
                             >
                                 Return to Viewing All Listings
                             </Typography>
@@ -136,7 +152,8 @@ const ContactDetails = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                                        1 Of 3 Not Paid
+                                        {index + 1} Of {passedData.length}{' '}
+                                        {contactsTab}
                                     </Typography>
                                 </Box>
                                 <Box>
@@ -171,7 +188,8 @@ const ContactDetails = (props) => {
                                             theme.typography.common.fontWeight,
                                     }}
                                 >
-                                    Krist Novoselic
+                                    {selectedData.contact_first_name}{' '}
+                                    {selectedData.contact_last_name}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -225,7 +243,7 @@ const ContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        aberdeen94@gmail.com
+                                        {selectedData.contact_email}
                                     </Typography>
                                 </Stack>
                                 <Stack flexDirection="row">
@@ -241,31 +259,36 @@ const ContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        (408) 555-4831
+                                        {selectedData.contact_phone_numnber}
                                     </Typography>
                                 </Stack>
                             </Stack>
-                            <Stack
-                                sx={{ paddingLeft: '10px' }}
-                                alignItems="flex-end"
-                            >
-                                <Typography
-                                    sx={{
-                                        fontWeight:
-                                            theme.typography.primary.fontWeight,
-                                        fontSize: '13px',
-                                    }}
+                            {contactsTab === 'Owner' ? (
+                                <Stack
+                                    sx={{ paddingLeft: '10px' }}
+                                    alignItems="flex-end"
                                 >
-                                    Manager Since:
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        fontSize: '13px',
-                                    }}
-                                >
-                                    02/15/2022
-                                </Typography>
-                            </Stack>
+                                    <Typography
+                                        sx={{
+                                            fontWeight:
+                                                theme.typography.primary
+                                                    .fontWeight,
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        Client Since:
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        02/15/2022
+                                    </Typography>
+                                </Stack>
+                            ) : (
+                                <></>
+                            )}
                         </Stack>
                         <Stack flexDirection="row" sx={{ padding: '0 15px' }}>
                             <Box sx={{ marginTop: '-2px' }}>
@@ -285,7 +308,12 @@ const ContactDetails = (props) => {
                                 </svg>
                             </Box>
                             <Typography sx={{ fontSize: '13px' }}>
-                                111 Willow Street, Long Beach, CA 90802, USA
+                                {selectedData.contact_address}
+                                {', '}
+                                {selectedData.contact_city}
+                                {', '}
+                                {selectedData.contact_state}{' '}
+                                {selectedData.contact_zip}
                             </Typography>
                         </Stack>
                         <Stack sx={{ padding: '15px' }}>
@@ -295,17 +323,19 @@ const ContactDetails = (props) => {
                                         theme.typography.primary.fontWeight,
                                 }}
                             >
-                                Manages 8 of Your Properties
+                                {uniqueContacts.length} Properties
                             </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                123 Oak Street, Los Angeles, CA 90001, USA
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                456 Pine Avenue, San Francisco, CA 94102, USA
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                789 Maple Lane, San Diego, CA 92101, USA
-                            </Typography>
+
+                            {uniqueContacts.map((contact, index) => {
+                                return (
+                                    <Typography
+                                        sx={{ fontSize: '13px' }}
+                                        key={index}
+                                    >
+                                        {contact.contract_name}
+                                    </Typography>
+                                );
+                            })}
                         </Stack>
                         <Stack sx={{ padding: '15px' }}>
                             <Stack flexDirection="row">
@@ -423,7 +453,7 @@ const ContactDetails = (props) => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                        <Stack sx={{ padding: '15px' }}>
+                        {/* <Stack sx={{ padding: '15px' }}>
                             <Stack
                                 flexDirection="row"
                                 justifyContent="space-between"
@@ -468,7 +498,7 @@ const ContactDetails = (props) => {
                             <Typography sx={{ fontSize: '13px' }}>
                                 Annual Postage and Communication Fee: $20
                             </Typography>
-                        </Stack>
+                        </Stack> */}
                     </Paper>
                 </Paper>
             </Box>
