@@ -6,8 +6,6 @@ import {
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
-import { useNavigate } from "react-router-dom";
-
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 
 import theme from '../../theme/theme';
@@ -21,8 +19,6 @@ function TenantDashboard(props) {
   };
 
   const location = useLocation();
-  let navigate = useNavigate();
-
 
   function handleTenantMaintenanceNavigate(){
     console.log("Tenant Maintenance Navigate")
