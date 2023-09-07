@@ -17,6 +17,7 @@ import { Message, Search } from '@mui/icons-material';
 import { getStatusColor } from './ContactsFunction';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { formattedPhoneNumber } from '../utils/privacyMasking';
 
 const Contacts = (props) => {
     const [contactsTab, setContactsTab] = useState('Owner');
@@ -72,7 +73,10 @@ const Contacts = (props) => {
                 const uniqueValues = {};
 
                 const uniqueContacts = ownerCon.filter((item) => {
-                    if (!uniqueValues[item.contract_name]) {
+                    if (
+                        !uniqueValues[item.contract_name] &&
+                        item.contract_status === 'ACTIVE'
+                    ) {
                         uniqueValues[item.contract_name] = true;
                         return true;
                     }
@@ -125,7 +129,7 @@ const Contacts = (props) => {
                 },
             });
         } else if (contactsTab === 'Tenants') {
-            navigate('/contactDetails', {
+            navigate('/tenantContactDetails', {
                 state: {
                     dataDetails: tenantDataDetails,
                     tab: contactsTab,
@@ -424,7 +428,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {owner.contact_phone_numnber}
+                        {formattedPhoneNumber(owner.contact_phone_numnber)}
                     </Typography>
                 </CardContent>
             </Card>
@@ -497,7 +501,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_phone_numnber}
+                        {formattedPhoneNumber(tenant.contact_phone_numnber)}
                     </Typography>
                 </CardContent>
             </Card>
@@ -558,7 +562,7 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {business.contact_phone_numnber}
+                        {formattedPhoneNumber(business.contact_phone_numnber)}
                     </Typography>
                     <Typography
                         sx={{

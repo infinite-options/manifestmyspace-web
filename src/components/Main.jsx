@@ -51,6 +51,7 @@ import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWid
 import Contacts from "./Contacts/Contacts";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
+import TenantContactDetails from './Contacts/TenantContactDetails';
 
 import PropertyList from "./Property/PropertyList";
 import Dashboard from "./Dashboard";
@@ -143,6 +144,7 @@ function Main () {
               <Route exact path="/contacts" element={<Contacts />} />
               <Route exact path="/contactDetails" element={<ContactDetails />} />
               <Route exact path="/addContacts" element={<AddContacts />} />
+              <Route exact path="/tenantContactDetails" element={<TenantContactDetails />} />
 
               <Route exact path="/maintenance" element={<Maintenance />} />
               <Route exact path="/" element={<Dashboard />} />
