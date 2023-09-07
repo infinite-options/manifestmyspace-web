@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
 import PropertyListData from "../Property/PropertyListData";
 import { alpha, makeStyles } from "@material-ui/core/styles";
+import axios from "axios";
 // import PropertyData from "../Property/PropertyData";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,6 +17,10 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 10,
       height: 30,
       marginBlock: 10,
+      paddingBottom: '15px', // Add this line for vertically center alignment
+      "&:hover, &:focus, &:active": {
+        backgroundColor: "#F2F2F2", // Change background color on hover, focus and active states
+      },
     },
   },
 }));
@@ -26,6 +31,8 @@ const AddExpense = (props) => {
   const [category, setCategory] = useState("Insurance");
   const [frequency, setFrequency] = useState("Monthly");
   const [amount, setAmount] = useState("");
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
   const [propertyList, setPropertyList] = useState([]);
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
@@ -43,43 +50,51 @@ const AddExpense = (props) => {
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+  const handleDateChange = (event) => {
+    setDate(event.target.value);
+  };
   const handlePayableChange = (event) => {
     setPayable(event.target.name);
   };
   const handleAddExpense = async () => {
     console.log("amount ", amount);
-    // const expense = {
-    //     pur_property_id: '200-000057',
-    //     payer: 'TENANT',
-    //     receiver: '200-000057',
-    //     purchase_type: category,
-    //     // title: title,
-    //     description: 1,
-    //     amount_due: amount,
-    //     purchase_frequency: frequency,
-    //     payment_frequency: 1,
-    //     next_payment: '2023-12-08',
 
-    //     pur_property_id: "200-000057",
-    //     payer: "TENANT",
-    //     payerID: "100-000082",
-    //     ownerID: "100-000002",
-    //     managerID: "600-000001",
-    //     tenantID: '100-000007',
-    //     splitPercentManager: "40",
-    //     splitPercentOwner: "60",
-    //     splitPercentTenant: "0",
-    //     purchase_type: category,
-    //     description: "Test 1",
-    //     amount_due: amount,
-    //     purchase_frequency: "One-time",
-    //     payment_frequency: "One-time",
-    //     next_payment: "2023-12-08",
-    //     purchase_status: "UNPAID"
-    //   };
-
-    // console.log(newExpense);
-    //   const response = await post("/createExpenses", expense);
+    let data = JSON.stringify({
+      "pur_property_id": selectedProperty.property_uid,
+      "purchase_type": category,
+      "pur_cf_type": "expense",
+      "purchase_date": date,
+      "pur_due_date": date,
+      "pur_amount_due": Number(amount),
+      "purchase_status": "COMPLETED",
+      "pur_notes": "This is just a note",
+      "pur_description": description,
+      "pur_receiver": "110-000003",
+      "pur_initiator": "110-000003",
+      "pur_payer": null
+    });
+    
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addExpense',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    
     navigate(-1);
   };
   return (
@@ -164,12 +179,31 @@ const AddExpense = (props) => {
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Amount</Typography>
-              <TextField variant="filled" fullWidth placeholder="$" type="number" value={amount} className={classes.root} onChange={handleAmountChange}></TextField>
+              <TextField
+                variant="filled"
+                fullWidth
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                placeholder="$"
+                type="number"
+                value={amount}
+                className={classes.root}
+                onChange={handleAmountChange}>
+              </TextField>
             </Stack>
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Payment Date</Typography>
-              <TextField className={classes.root} type="date" variant="filled" fullWidth placeholder="mm/dd/yyyy"></TextField>
+              <TextField
+                className={classes.root}
+                type="date"
+                variant="filled"
+                fullWidth
+                placeholder="mm/dd/yyyy"
+                value={date}
+                onChange={handleDateChange}>
+              </TextField>
               <FormControlLabel control={<Checkbox sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
             </Stack>
 
@@ -185,7 +219,18 @@ const AddExpense = (props) => {
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Description</Typography>
-              <TextField className={classes.root} variant="filled" fullWidth placeholder="Add Description"></TextField>
+              <TextField
+                className={classes.root}
+                variant="filled"
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                fullWidth
+                placeholder="Add Description"
+                value={description}
+                onChange={handleDescriptionChange}
+              >
+              </TextField>
             </Stack>
 
             <Box
