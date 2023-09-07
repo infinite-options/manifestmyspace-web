@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -90,7 +90,8 @@ function SelectProperty(props) {
                     </svg>
                 </Box>
             </Box>
-            <Box sx={{
+            <Box 
+            sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -100,18 +101,20 @@ function SelectProperty(props) {
                 color: '#160449',
                 fontSize: '15px',
                 fontWeight: '600',
-            }}>
+            }}
+            onClick={()=>{setSelectedProperty({}); console.log("selectedProperty set to blank")}}
+            >
                 Show All
             </Box>
             {properties && properties.map((property, i)=>(
                 <PropertyCard key={i} data={property} setSelectedProperty={setSelectedProperty || null} />
             ))}
-            
         </Box>
     );
 }
 
 function PropertyCard(props) {
+    const [selected, setSelected]=useState({});
     const property = props.data;
     let setSelectedProperty = {};
     if (props.setSelectedProperty) {
@@ -130,12 +133,13 @@ function PropertyCard(props) {
             display: 'flex',
             flexDirection: 'row',
             alignContent: 'center',
-            backgroundColor: '#F2F2F2',
+            backgroundColor: selected === property ? '#3D5CAC' : '#F2F2F2',
             marginTop: '7px',
             height: '40px',
         }}
             onClick={() => {
                 console.log("property selected ", property);
+                setSelected(property);
                 setSelectedProperty && setSelectedProperty(property);
             }}>
             <Box sx={{

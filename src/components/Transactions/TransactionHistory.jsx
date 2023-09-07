@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moment from 'moment';
 import {
     Table,
@@ -61,12 +61,16 @@ export default function TransactionHistory(props) {
     };
 
     const [openSelectProperty, setOpenSelectProperty] = useState(false);
+    const [selectedProperty, setSelectedProperty] = useState({});
     const handleClose = () => {
         setOpenSelectProperty(false);
     };
     const handleOpen = () => {
         setOpenSelectProperty(true);
     };
+    useEffect(() => {
+        console.log("selectedProperty selectedProperty", selectedProperty)   
+       },[selectedProperty])
 
 
     const paymentsOutgoingHeadCell = [
@@ -144,7 +148,7 @@ export default function TransactionHistory(props) {
     return (
         <>
             <ThemeProvider theme={theme}>
-            <TransactionsOwnerData setTransactionList={setTransactionList}></TransactionsOwnerData>
+            <TransactionsOwnerData setTransactionList={setTransactionList} selectedProperty={selectedProperty}></TransactionsOwnerData>
             <Box
                 style={{
                     display: 'flex',
@@ -167,21 +171,7 @@ export default function TransactionHistory(props) {
                             width: '50%',
                         },
                     }}
-                >
-                    {/* <IconButton
-                        aria-label="close"
-                        onClick={() => navigate(-1)}
-                        sx={{
-                            position: 'sticky',
-                            left: '90vw',
-                            top: 1,
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.common.fontWeight
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton> */}
-                    
+                >                    
                     <Stack
                     direction="row"
                     justifyContent="center"
@@ -291,8 +281,10 @@ export default function TransactionHistory(props) {
                                             row.property_zip}
                                             {/* </TableRow> */}
                                         </TableCell>
-                                        <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 12 }}>
-                                        ${Math.abs(row.pur_amount_due).toFixed(2)}
+                                        <TableCell align="left" className={classes.cell_short}>
+                                            <Typography sx={{color: row.pur_cf_type === 'expense' ? theme.palette.custom.pinkText : theme.palette.custom.bgBlue, fontSize: 12}}>
+                                                {row.pur_cf_type === 'expense' && '-'}${Math.abs(row.pur_amount_due).toFixed(2)}
+                                            </Typography>
                                         </TableCell>
                                     </TableRow>
                                    ) : (
@@ -321,7 +313,7 @@ export default function TransactionHistory(props) {
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                     }}>
-                        <SelectProperty closeTab={handleClose} />
+                        <SelectProperty closeTab={handleClose} setSelectedProperty={setSelectedProperty}/>
                     </Box>
 
                 </Modal>

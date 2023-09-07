@@ -44,8 +44,8 @@ export default function MaintenanceWidget(){
 
 
     return(
-        <div className="mt-widget-requests-container">  
-            <h2 className="mt-widget-title" onClick={() => navigate('/maintenance', {state: { colorStatus, maintenanceRequests }})}>Maintenance</h2>
+        <div className="mt-widget-requests-container" onClick={() => navigate('/maintenance', { state: { colorStatus, maintenanceRequests } })}>  
+            <h2 className="mt-widget-title">Maintenance</h2>
             <Status colorStatus={colorStatus} maintenanceRequests={maintenanceRequests}/>
         </div>
     )

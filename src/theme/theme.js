@@ -66,6 +66,7 @@ const theme = createTheme({
       yellow: alpha("#FFE3AD", 0.5),
       pink: alpha("#F87C7A", 0.5),
       palePink: alpha("#FE8280", 0.4),
+      pinkText: "#FE8280",
       red: "#A52A2A",
     },
     priority: {
