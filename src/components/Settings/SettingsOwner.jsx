@@ -164,7 +164,7 @@ export default function Settings() {
                     </Typography>
                     <AddIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    onClick={()=>{navigate('/addCardSettings')}}/>
+                    onClick={()=>{navigate('/cardDetailsSettings')}}/>
                     </Box>                    
                     <Box
                     component="span"

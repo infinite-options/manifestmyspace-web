@@ -23,7 +23,7 @@
     font-family: 'Source Sans Pro';
     text-align: center;
     color: #160449;
-    
+    font-size: 20px;
 }
 
 .mt-widget-requests-container{
@@ -34,6 +34,7 @@
     height: 392px;
     /* transform: translateX(11%); */
     border-radius: 10px;
+    cursor: pointer;
     position: relative;
 }
 #mt-all-requests{
@@ -60,11 +61,13 @@
     margin-top: 30px;
     height: 392px;
     width: 42.75%;
+    cursor: pointer;
 }
 .mt-prop-widget-title {
     font-family: 'Source Sans Pro';
     text-align: center;
     color: #160449;
+    font-size: 20px;
 }
 .mt-prop-widget-graph {
     display: block;
@@ -81,12 +84,14 @@
     height: 187px;
     width: 90%;
     margin-top: 30px;
+    padding: 3px;
+    cursor: pointer;
 }
 .mt-expiry-widget-title {
     font-family: 'Source Sans Pro';
     text-align: center;
     color: #160449;
-    font-size: 19px;
+    font-size: 20px;
 }
 
 #first-row,
@@ -120,7 +125,7 @@
     width: 68%;
 }
 .moveouts {
-    margin-top: -34px;
+    margin-top: -28px;
 }
 .big-box {
     
@@ -144,7 +149,7 @@
     color: #160449;
     font-size: 14px;
     font-weight: 800;
-    /* margin-bottom: 2px; */
+    margin-bottom: 3px;
     /* margin-top: -7px; */
 }
 .bottom-buttons {

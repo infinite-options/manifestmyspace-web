@@ -10,6 +10,7 @@
     padding: 5px;
     /* height:150px; */
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .cf-widget-title-info-container{

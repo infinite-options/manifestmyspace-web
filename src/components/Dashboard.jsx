@@ -24,6 +24,8 @@ function Dashboard() {
     const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
     const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
     const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
+    const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
+    const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
     const rentData = [
         ["Properties", "Rent status"],
@@ -73,11 +75,20 @@ function Dashboard() {
             let paidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID') : 0;
             paidCount = paidCount ? paidCount.num : 0;
             setPaidRentStatusCount(paidCount);
+            let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount;
+            setTotalPropertiesCount(totalPropertiesCount);
 
             let leaseStatus = jsonData.LeaseStatus.result;
             const currentYear = new Date().getFullYear();
             const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
             const leaseStatusDictionary = {};
+
+            // Date object for today
+            const today = new Date();
+            // Date object for six weeks from now
+            const sixWeeksLater = new Date();
+            sixWeeksLater.setDate(today.getDate() + 6 * 7); // Adding 6 weeks worth of days
+            let moveoutsInSixWeeks = 0;
 
             leaseStatus.forEach(item => {
             if (item.lease_end) {
@@ -100,9 +111,17 @@ function Dashboard() {
                         leaseStatusDictionary[ny_month] += item.num;
                     }
                 }
+
+                if (leaseEndDate >= today && leaseEndDate <= sixWeeksLater) {
+                    moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
+                    console.log('The date is within the next six weeks.');
+                  } else {
+                    console.log('The date is not within the next six weeks.');
+                  }
             }
             });
             setLeaseStatus(leaseStatusDictionary);
+            setMoveoutsInSixWeeks(moveoutsInSixWeeks);
             console.log("leaseStatusDictionary ", leaseStatusDictionary)
 
             // let date = new Date();
@@ -146,19 +165,22 @@ function Dashboard() {
                             ))}
                         
                         </Pie>
+                        <text
+                        x={85}
+                        y={100}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        style={{
+                            fontFamily: 'Source Sans Pro',
+                            fontSize: '9px',
+                            fill: '#160449',
+                            fontWeight: '600',
+                          }}
+                    >
+                        View All {totalPropertiesCount}
+                        <tspan x={85} y={110}>properties</tspan>
+                    </text>
                     </PieChart>
-                     <Button
-                        color="primary"
-                        style={{    position: 'absolute', 
-                                    top: '32%', left: '50%', 
-                                    transform: 'translate(-50%, -50%)', 
-                                    textTransform: 'inherit', 
-                                    fontFamily: 'Source Sans Pro',
-                                    fontSize: '9px',
-                                    color: '#160449',
-                                    fontWeight: 600,}}>
-                        View All 63 <br />properties
-                    </Button>
                     </div>
                 </div>
             </div>  
@@ -296,7 +318,7 @@ function Dashboard() {
                         <div className="moveouts">
                                 <h2 className="move-out-title"> Move-outs</h2>
                                 <div className="big-box"> 
-                                    <div>5 </div>
+                                    <div> {moveoutsInSixWeeks} </div>
                                     <div> IN NEXT </div> 
                                     <div> 6 WEEKS </div>
                                 </div>
