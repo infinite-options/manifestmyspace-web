@@ -148,7 +148,9 @@ export default function Settings() {
                     <Typography sx={{color: theme.typography.primary.black}}>
                     Change password
                     </Typography>
-                    <ArrowForwardIosIcon sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}/>
+                    <ArrowForwardIosIcon 
+                    sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
+                    onClick={()=>{navigate('/changePasswordSettings')}}/>
                     </Box>                    
                     <Box
                     component="span"
@@ -160,7 +162,9 @@ export default function Settings() {
                     <Typography sx={{color: theme.typography.primary.black}}>
                     Add a payment method
                     </Typography>
-                    <AddIcon sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}/>
+                    <AddIcon 
+                    sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
+                    onClick={()=>{navigate('/addCardSettings')}}/>
                     </Box>                    
                     <Box
                     component="span"

@@ -37,7 +37,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 export default function ImageUploader({selectedImageList, setSelectedImageList}){
-    // const [selectedImageList, setSelectedImageList] = useState([]);
+
 
     const handleImageSelect = (event) => {
         console.log("handleImageSelect", event.target.value)
@@ -135,8 +135,8 @@ export default function ImageUploader({selectedImageList, setSelectedImageList})
                                             left: 0,
                                             height: '100%',
                                             width: '100%',
-                                            marginRight: '10px',
-                                            marginBottom: '10px',
+                                            marginRight: '5px',
+                                            marginBottom: '5px',
                                             borderRadius: '7px',
                                         }}
                                     />

@@ -109,6 +109,9 @@
     color: #160449;
     font-family: "Source Sans Pro";
 }
+/* .curr-box {
+    background-color: #F87C7A;
+} */
 .months-and-moveouts {
     display: flex;
     justify-content: space-evenly;
@@ -146,9 +149,13 @@
 }
 .bottom-buttons {
     width: 90%;
-    margin: 0 auto;
+    margin-left : auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 60px;
     display: flex;
     justify-content: space-between;
+    font-size: 13px;
 }
 #revenue, #expense, #maintenance {
     border-color: #f2f2f2;
@@ -157,6 +164,7 @@
     font-family: "Source Sans Pro";
     text-transform: inherit;
     font-weight: 800;
-    font-size: medium;
+    font-size: small;
+    border-radius: 10px;
 }
 

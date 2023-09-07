@@ -8,45 +8,51 @@ import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
+
+function getInitialImages(requestData, currentIndex) {
+  if (requestData[currentIndex].maintenance_images != "[]") {
+    console.log(JSON.parse(requestData[currentIndex].maintenance_images))
+    return JSON.parse(requestData[currentIndex].maintenance_images);
+  }
+  return [maintenanceRequestImage];
+}
+
 export default function MaintenanceRequestNavigator({ requestIndex, requestData, color, item, allData }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
+  const [images, setImages] = useState([maintenanceRequestImage]);
+  // const [maxSteps, setMaxSteps] = useState(images.length);
 
-  console.log("RequestNavigator");
-  console.log("requestIndex", requestIndex);
-  console.log("requestData", requestData);
-  console.log("color", color);
-  console.log("item", item);
-  console.log("allData", allData);
+  useEffect(() => {
+    const initialImages = getInitialImages(requestData, currentIndex);
+    setImages(initialImages);
+    setActiveStep(0);
+  }, [currentIndex]);
 
-  const images = [
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-  ];
+  // console.log("RequestNavigator");
+  // console.log("requestIndex", requestIndex);
+  // console.log("requestData", requestData);
+  // console.log("currentIndex", currentIndex);
+  // console.log("color", color);
+  // console.log("item", item);
+  // console.log("allData", allData);
+
   const maxSteps = images.length;
+
+  // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
+    console.log("currentIndex", currentIndex)
+    console.log("item", requestData[currentIndex])
   };
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
+    console.log("currentIndex", currentIndex)
+    console.log("item", requestData[currentIndex])
   };
 
   const handleNext = () => {
@@ -77,8 +83,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
   }
 
   const data = requestData[currentIndex];
-  console.log("current data tab", item.mapping, data);
-  // which tab are we on?
   // console.log("requestData", requestData)
   // console.log("data", data)
 
@@ -162,11 +166,16 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 </Button>
                 <CardMedia
                   component="img"
-                  image={images[activeStep].imgPath}
+                  image={images[activeStep]}
                   sx={{
                     elevation: "0",
                     boxShadow: "none",
-                    maxWidth: "450px",
+                    maxWidth: "500px",
+                    minWidth: "300px",
+                    maxHeight: "500px",
+                    minHeight: "100px",
+                    height: "300px",
+                    objectFit: "cover",
                     center: "true",
                     alignContent: "center",
                     justifyContent: "center",

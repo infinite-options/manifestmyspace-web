@@ -67,7 +67,7 @@ export default function TenantMaintenanceItem({color, request}){
                             <Typography 
                                 sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                             >
-                                {request.property_uid}
+                                {request.maintenance_request_uid}
                             </Typography>
                         </TableCell>
                         {/* <Divider orientation="vertical" flexItem color="white"/> */}

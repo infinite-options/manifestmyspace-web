@@ -23,12 +23,20 @@ import {
     FormControlLabel,
     RadioGroup,
     UploadFile,
+    CardMedia,
     InputAdornment
 } from "@mui/material";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ImageUploader from '../ImageUploader';
+import dataURItoBlob from '../utils/dataURItoBlob'
+import defaultHouseImage from './defaultHouseImage.png'
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+
+
 
 
 export default function AddProperty({}){
@@ -37,75 +45,75 @@ export default function AddProperty({}){
 
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
     const [type, setType] = useState('');
     const [squareFootage, setSquareFootage] = useState('');
     const [bedrooms, setBedrooms] = useState('');
     const [bathrooms, setBathrooms] = useState('');
 
-    const [issue, setIssue] = useState('');
+    const [deposit, setDeposit] = useState(0);
+    const [petsAllowed, setPetsAllowed] = useState(0);
+    const [depositForRent, setDepositForRent] = useState(0);
+    const [taxes, setTaxes] = useState(0);
+    const [mortgages, setMortgages] = useState(0);
+    const [insurance, setInsurance] = useState(0);
+    const [notes, setNotes] = useState('');
+    const [coverImage, setCoverImage] = useState(defaultHouseImage);
+    const [activeStep, setActiveStep] = useState(0);
+
+
+    const [ownerId, setOwnerId] = useState('110-000003"');
+
     const [unit, setUnit] = useState('');
 
-    const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
-    const [toggleAlignment, setToggleAlignment] = useState('left');
-    const [cost, setCost] = useState('');
-    const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [file, setFile] = useState('');
+    const [selectedImageList, setSelectedImageList] = useState([]);
+    const maxSteps = selectedImageList.length;
 
+    useEffect(() => {
+        console.log("useEffect")
+        setCoverImage(selectedImageList[0]?.data_url || coverImage);
+    }, [selectedImageList])
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      };
+    
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
 
     const handleAddressChange = (event) => {
-        console.log("handlePropertyChange", event.target.value)
         setAddress(event.target.value);
     };
 
     const handleUnitChange = (event) => {
-        console.log("handleUnitChange", event.target.value)
         setUnit(event.target.value);
     };
 
     const handleCityChange = (event) => {
-        console.log("handleCostChange", event.target.value)
-        setCost(event.target.value);
+        setCity(event.target.value);
     };  
 
     const handleZipCodeChange = (event) => {
-        console.log("handleCostChange", event.target.value)
-        setCost(event.target.value);
-    };
-
-    const handleTitleChange = (event) => {
-        console.log("handleTitleChange", event.target.value)
-        setTitle(event.target.value);
-    };
-
-    const handleDescriptionChange = (event) => {
-        console.log("handleDescriptionChange", event.target.value)
-        setDescription(event.target.value);
+        setZip(event.target.value);
     };
 
     const handleTypeChange = (event) => {
-        console.log("handleTypeChange", event.target.value) 
         setType(event.target.value);
     };
 
     const handleSquareFootageChange = (event) => {
-        console.log("handleSquareFootageChange", event.target.value)
         setSquareFootage(event.target.value);
     };
 
     const handleBedroomsChange = (event) => {
-        console.log("handleBedroomsChange", event.target.value)
         setBedrooms(event.target.value);
     };
 
     const handleBathroomsChange = (event) => {
-        console.log("handleBathroomsChange", event.target.value)
         setBathrooms(event.target.value);
-    };
-    
-    const handleFileChange = (event) => {
-        console.log("handleFileChange", event.target.value)
-        setFile(event.target.value);
     };
 
     const handleBackButton = () => {
@@ -113,48 +121,118 @@ export default function AddProperty({}){
         navigate(-1);
     }
 
+    const handleStateChange = (event) => {
+        setState(event.target.value);
+    };
+
+    const handleDepositChange = (event) => {
+        setDeposit(event.target.value);
+    };
+
+    const handlePetsAllowedChange = (event) => {
+        setPetsAllowed(event.target.value);
+    };
+
+    const handleDepositForRentChange = (event) => {
+        setDepositForRent(event.target.value);
+    };
+
+    const handleTaxesChange = (event) => {
+        setTaxes(event.target.value);
+    };
+
+    const handleMortgagesChange = (event) => {
+        setMortgages(event.target.value);
+    };
+
+    const handleInsuranceChange = (event) => {
+        setInsurance(event.target.value);
+    };
+
+    const handleNotesChange = (event) => {
+        setNotes(event.target.value);
+    };
+
     const handleSubmit = (event) => {
-        console.log("handleSubmit")
         event.preventDefault();
         console.log(event.target)
 
-        const payload = {
-            "property_owner_id" : "100-000003",
-            "po_owner_percent" : 100,
-            "available_to_rent" : "0",
-            "active_date" : "2023-08-01",
-            "address" : address,
-            "unit" : unit,
-            "city" : city,
-            "state" : "state",
-            "zip" : "zip",
-            "property_type" : type,
-            "bedrooms" : bedrooms,
-            "bathrooms" : bathrooms,
-            "property_area" : squareFootage,
-            "listed" : 0,
-            "deposit" : "deposit",
-            "pets_allowed" : 1,
-            "deposit_for_rent" : 0,
-            "property_images" : "",
-            "property_taxes" : 500,
-            "property_mortgages" : 0,
-            "property_insurance" : 0,
-            "property_featured" : 0,
-            "property_description" : "This is a Tiny Home",
-            "property_notes" : "This is a Really Tiny Home"
+        const formData = new FormData();
+
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+        formData.append('property_owner_id', ownerId);
+        formData.append('available_to_rent', 1);
+        formData.append('active_date', formattedDate);
+        formData.append('property_address', address);
+        formData.append('property_unit', unit);
+        formData.append('property_city', city);
+        formData.append('property_state', state);
+        formData.append('property_zip', zip);
+        formData.append('property_type', type);
+        formData.append('property_num_beds', bedrooms);
+        formData.append('property_num_baths', bathrooms);
+        formData.append('property_area', squareFootage);
+        formData.append('property_listed', 0);
+        formData.append('property_deposit', deposit);
+        formData.append('property_pets_allowed', petsAllowed);
+        formData.append('property_deposit_for_rent', depositForRent);
+        formData.append('property_taxes', taxes);
+        formData.append('property_mortgages', mortgages);
+        formData.append('property_insurance', insurance);
+        formData.append('property_featured', 0);
+        formData.append('property_description', description);
+        formData.append('property_notes', notes);
+
+        for (let i = 0; i < selectedImageList.length; i++) {
+            console.log("selectedImageList[i].file", selectedImageList[i].data_url)
+            const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
+            console.log(imageBlob)
+            if(i === 0){
+                formData.append("img_cover", imageBlob);
+            } else{
+                formData.append("img_" + (i-1), imageBlob);
+            }
+        }
+
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);    
         }
 
         const postData = async () => {
-            await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            })
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
+                    method: "POST",
+                    body: formData,
+                })
+                const data = await response.json();
+                console.log("data response", data)
+            } catch (error) {
+                console.log("Error posting data:", error);
+            }
         }
         postData();
+
+        setAddress('');
+        setCity('');
+        setState('');
+        setZip('');
+        setType('');
+        setSquareFootage('');
+        setBedrooms('');
+        setBathrooms('');
+        setDeposit(0);
+        setPetsAllowed(0);
+        setDepositForRent(0);
+        setTaxes(0);
+        setMortgages(0);
+        setInsurance(0);
+        setNotes('');
+        setCoverImage(defaultHouseImage);
+        setSelectedImageList([]);
+        setActiveStep(0);
+        navigate('/properties');
     };
 
 
@@ -163,9 +241,13 @@ export default function AddProperty({}){
             <Stack
                 style={{
                     display: 'flex',
-                    width: '100%', // Take up full screen width
-                    minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    flexDirection: 'column', // Stack the content vertically
+                    justifyContent: 'flex-start',  // Start content at the top
+                    alignItems: 'center',  // Center content horizontally
+                    width: '100%',
+                    minHeight: '100vh',
+                    marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
+                    paddingBottom: "50px"
                 }}
                 >
                     <Paper
@@ -219,9 +301,52 @@ export default function AddProperty({}){
                                 }}
                                 noValidate
                                 autoComplete="off"
+                                id="addPropertyForm"
                             >
                                 <Grid container columnSpacing={12} rowSpacing={6}>
                                     {/* Select Field for Property */}
+
+
+                                    <Grid item xs={12}>
+                                        <div
+                                            style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: "100%",
+                                            }}
+                                        >
+                                                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                                            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                        </Button>
+                                            <CardMedia
+                                            component="img"
+                                            // image={selectedImageList[activeStep]}
+                                            image={coverImage}
+                                            sx={{
+                                                elevation: "0",
+                                                boxShadow: "none",
+                                                maxWidth: "150px",
+                                                minWidth: "150px",
+                                                maxHeight: "150px",
+                                                minHeight: "150px",
+                                                height: "150px",
+                                                objectFit: "cover",
+                                                center: "true",
+                                                alignContent: "center",
+                                                justifyContent: "center",
+                                            }}
+                                            />
+                                                                                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                                            {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                        </Button>
+                                        </div>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                    </Grid>
 
                                     {/* Text Field for Title */}
                                     <Grid item xs={12}>
@@ -287,7 +412,7 @@ export default function AddProperty({}){
                                                 }}
                                                 size="small"
                                                 fullWidth
-                                                // onChange={handleUnitChange} 
+                                                onChange={handleStateChange} 
                                             >
                                                 <MenuItem value={"CA"}>CA</MenuItem>
                                                 <MenuItem value={"TX"}>TX</MenuItem>
@@ -387,46 +512,7 @@ export default function AddProperty({}){
                                             // onChange={handleCostChange}
                                         />
                                     </Grid>
-                                </Grid>
-                            </Box>
-                        </Stack>
-                    </Paper>
-
-                    <Paper
-                        style={{
-                            margin: '30px',
-                            padding: theme.spacing(2),
-                            backgroundColor: theme.palette.form.main,
-                            width: '85%', // Occupy full width with 25px margins on each side
-                            [theme.breakpoints.down('sm')]: {
-                                width: '80%',
-                            },
-                            [theme.breakpoints.up('sm')]: {
-                                width: '50%',
-                            },
-                            paddingTop: '10px',
-                        }}
-                    >
-                        <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            padding="25px"
-                            sx={{
-                                display: 'flex',
-                            }}
-                        >
-                            <Box
-                                component="form"
-                                sx={{
-                                    display: 'flex',
-                                }}
-                                noValidate
-                                autoComplete="off"
-                            >
-                                <Grid container columnSpacing={12} rowSpacing={6}>
-
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Property Value
                                         </Typography>
@@ -459,34 +545,10 @@ export default function AddProperty({}){
                                             }}
                                             size="small"
                                             multiline={true}
-                                            // onChange={handleCostChange}
+                                            onChange={handleNotesChange}
                                         />
                                     </Grid>
-
-                                    <Grid item xs={12}>
-                                    <Container fixed sx={{
-                                        backgroundColor: 'white',
-                                        borderColor: 'black',
-                                        borderRadius: '7px',
-                                        borderStyle: 'dashed',
-                                        borderColor: theme.typography.common.blue,
-                                    }}>
-                                        <Box
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            display="flex"
-                                            padding={10}
-                                        >
-                                            <Button>
-                                                <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
-                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                    Upload File
-                                                </Typography>
-                                            </Button>
-                                        </Box>
-                                    </Container>
-                                    </Grid>
-                                </Grid>
+                                </Grid>                              
                             </Box>
                         </Stack>
                     </Paper>
@@ -495,13 +557,11 @@ export default function AddProperty({}){
                         direction="column"
                         justifyContent="center"
                         alignItems="center"
-                        padding="25px"
                         sx={{
                             display: 'flex',
                         }}
                     >
                         <Box
-                            component="form"
                             sx={{
                                 display: 'flex',
                             }}
@@ -510,11 +570,10 @@ export default function AddProperty({}){
                         >
                         <Grid container columnSpacing={12} rowSpacing={6} sx={{display: 'flex'}}>
                             <Grid item xs={12}>
-                                <Button variant="contained" color="primary" type="submit">
-                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                <Button variant="contained" type="submit" form="addPropertyForm" sx={{backgroundColor: "#9EAED6"}}>
+                                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Save Property
                                     </Typography>
-                                    <input type="file" hidden/>
                                 </Button>
                             </Grid>
                         </Grid>

@@ -39,6 +39,7 @@ import {
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from '@mui/icons-material/Close';
 import propertyImage from "./propertyImage.png";
 import maintenanceIcon from "./maintenanceIcon.png";
 import samplePropertyData from "./samplePropertyData";
@@ -46,16 +47,26 @@ import samplePropertyData from "./samplePropertyData";
 import { get } from "../utils/api";
 // import PropertyData from './PropertyData';
 
-const SearchBar = () => {
-  const [searchTerm, setSearchTerm] = React.useState("");
+const SearchBar = ({ propertyList, setFilteredItems }) => {
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+    const query = event.target.value;
+    setSearchTerm(query);
+    if (query.trim() === "") {
+      setFilteredItems(propertyList);  // Reset to the original list if the search bar is cleared
+    } else{
+      const terms = query.split(" ").map(term => term.toLowerCase());  // Split the search term into individual terms
+      const filtered = propertyList.filter(item => 
+        terms.some(term => item.property_address.toLowerCase().includes(term))
+      );
+      setFilteredItems(filtered);  // Updating the state with filtered items
+    }
+  }
 
-  const handleSearch = () => {
-    // Perform the search logic here
-    console.log("Searching for:", searchTerm);
+  const clearSearch = () => {
+    setSearchTerm("");
+    setFilteredItems(propertyList);
   };
 
   return (
@@ -64,38 +75,43 @@ const SearchBar = () => {
       sx={{
         p: "2px 4px",
         alignItems: "center",
-        backgroundColor: theme.palette.custom.blue,
+        backgroundColor: theme.palette.form.main,
       }}
     >
-      <IconButton type="submit" sx={{ p: "10px" }} aria-label="search" onClick={handleSearch}>
+      <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
         <SearchIcon />
       </IconButton>
       <InputBase
-        sx={{ ml: 1 }}
+        sx={{ ml: 1, zIndex: 1000, flexGrow: 1}}
         placeholder="Search..."
         inputProps={{ "aria-label": "search" }}
         value={searchTerm}
         onChange={handleSearchChange}
         color={theme.typography.common.blue}
       />
+       {searchTerm && (
+        <IconButton aria-label="clear" onClick={clearSearch}>
+          <CloseIcon />
+        </IconButton>
+      )}
     </Paper>
   );
 };
 
 const paymentStatusColorMap = {
   "Paid On Time": theme.palette.priority.clear,
-  "Partially Paid": theme.palette.priority.low,
-  "Paid Late": theme.palette.priority.medium,
+  "Partially Paid": theme.palette.priority.medium,
+  "Paid Late": theme.palette.priority.low,
   "Not Paid": theme.palette.priority.high,
-  Vacant: theme.palette.priority.clear,
+  "Vacant": "#160449",
 };
 
 const paymentStatusMap = {
-  UNPAID: "Not Paid",
+  "UNPAID": "Not Paid",
   "PAID LATE": "Paid Late",
-  PAID: "Paid On Time",
-  Partial: "Partially Paid",
-  VACANT: "Vacant",
+  "PAID": "Paid On Time",
+  "Partial": "Partially Paid",
+  "VACANT": "Vacant",
 };
 
 function getPaymentStatusColor(paymentStatus) {
@@ -119,47 +135,17 @@ function getPaymentStatus(paymentStatus) {
 export default function PropertyList({}) {
   let navigate = useNavigate();
   const [propertyList, setPropertyList] = useState([]);
+  const [displayedItems, setDisplayedItems] = useState([]);
   const [maintenanceData, setMaintenanceData] = useState([]);
 
   useEffect(() => {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
-      const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003");
+      const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
       const propertyData = await response.json();
-      console.log("propertyData", propertyData.Property.result);
-      // console.log("propertyData", propertyData.Property)
-      setPropertyList([...propertyData.Property.result]);
-
-      // console.log("getMaintenaceDataForProperties")
-
-      let maintenanceData = {};
-      const maintenancePromises = propertyData.Property.result.map(async (property) => {
-        // console.log("property", property)
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);
-        const propertyMaintenanceData = await response.json();
-        const deconstructedData = propertyMaintenanceData.MaintenanceProjects.result;
-        // console.log(deconstructedData[0].property_uid, deconstructedData)
-        return deconstructedData;
-      });
-
-      const allMaintenanceData = await Promise.all(maintenancePromises);
-      console.log("allMaintenanceData", allMaintenanceData.length, allMaintenanceData);
-      // allMaintenanceData.forEach((propertyMaintenanceData, index) => {
-
-      //     console.log("propertyMaintenanceData", propertyMaintenanceData[0].property_uid, propertyMaintenanceData)
-
-      //     //if (!maintenanceData[propertyData.Property[index].property_uid]){
-      //     //    maintenanceData[propertyData.Property[index].property_uid] = []
-      //     //}
-      //     maintenanceData[propertyData.Property[index].property_uid].push(propertyMaintenanceData)
-      // })
-
-      // console.log("allMaintenanceData", maintenanceData.length, typeof(maintenanceData))
-      // console.log("allMaintenanceData", maintenanceData)
-      // console.log("propertyList", propertyData.Property.length, typeof(propertyData.Property))
-
-      setMaintenanceData([...allMaintenanceData]);
+      setPropertyList([...propertyData["Property Dashboard"].result]);
+      setDisplayedItems([...propertyData["Property Dashboard"].result]);
     };
     fetchData();
   }, []);
@@ -167,6 +153,10 @@ export default function PropertyList({}) {
   function handlePropertyDetailNavigation(propertyId, index, propertyList, maintenanceData) {
     console.log("handlePropertyDetailNavigation");
     navigate(`/propertyDetail`, { state: { propertyId, index, propertyList, maintenanceData } });
+  }
+
+  function getBadgeContent(index) {
+    return propertyList?.[index]?.num_open_maintenace_req ?? 0;
   }
 
   function getCoverPhoto(property) {
@@ -216,9 +206,9 @@ export default function PropertyList({}) {
             </Button>
           </Stack>
           <Box sx={{ padding: "10px" }}>
-            <SearchBar sx={{ width: "100%" }} />
+            <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
             <List>
-              {propertyList.map((property, index) => (
+              {displayedItems.map((property, index) => (
                 <ListItem
                   key={index}
                   style={{
@@ -269,7 +259,7 @@ export default function PropertyList({}) {
                   </Box>
                   <Box
                     sx={{
-                      backgroundColor: getPaymentStatusColor(property.payment_status),
+                      backgroundColor: getPaymentStatusColor(property.rent_status),
                       width: "25%", // Ensure it takes up full width of its parent
                       height: "100%", // Ensure it takes up full height of its parent
                       display: "flex",
@@ -290,13 +280,13 @@ export default function PropertyList({}) {
                         textAlign: "center", // Ensure text is centered within itself
                       }}
                     >
-                      {getPaymentStatus(property.payment_status)}
+                      {getPaymentStatus(property.rent_status)}
                     </Typography>
                   </Box>
                   <Badge
                     overlap="circular"
                     color="error"
-                    badgeContent={maintenanceData && maintenanceData[index] ? maintenanceData[index].length : 0}
+                    badgeContent={getBadgeContent(index)}
                     anchorOrigin={{
                       vertical: "top",
                       horizontal: "right",

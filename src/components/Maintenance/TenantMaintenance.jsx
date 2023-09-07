@@ -48,6 +48,7 @@ export default function TenantMaintenance(){
     const [filterToggle, setFilterToggle] = useState(false);
     const [tenantMaintenanceData, setTenantMaintenanceData] = useState([]);
     const [newRequestBool, setNewRequestBool] = useState(false);
+    const [propertyAddress, setPropertyAddress] = useState("")
     const [propertyId, setPropertyId] = useState("200-000029")
 
     let navigate = useNavigate();
@@ -61,6 +62,18 @@ export default function TenantMaintenance(){
 
 
     useEffect(() => {
+
+        // const getPropertyDetails = async () => {
+        //     console.log("Getting Property Details")
+        //     try {
+        //         const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/Property/' + propertyId);
+        //         const jsonData = await response.json();
+        //         const data = jsonData.PropertyDetails.result;
+        //     } catch (err) {
+        //         console.error(err.message);
+        //     }
+        // };
+
         const getTenantMaintenanceData = async () => {
             console.log("Getting Tenant Maintenance Data")
             try {
@@ -73,6 +86,7 @@ export default function TenantMaintenance(){
             }
         };
         getTenantMaintenanceData();
+        // getPropertyDetails();
     }, []);
 
     function handleNewRequestButton(){
@@ -154,33 +168,34 @@ export default function TenantMaintenance(){
                         fontSize:theme.typography.mediumFont,
                         paddingLeft: "10px"
                     }}>
-                        Property Address
+                        {/* Property Address */}
+                        {propertyAddress}
                         {/* {tenantMaintenanceData[0].propertyAddress} {tenantMaintenanceData[0].unit} */}
                     </Typography>
                 </Stack>
-                <Paper
-                    style={{
-                        margin: '30px',
-                        padding: theme.spacing(2),
-                        backgroundColor: theme.palette.primary.main,
-                        paddingTop: '10px',
-                    }}
-                >
                     {newRequestBool ?
                         (<AddTenantMaintenanceItem
                             closeAddTenantMaintenanceItem={handleNewRequestButton}
                             propertyId={propertyId}
                         /> ):(
-                            <TenantMaintenanceView
-                                tenantMaintenanceData={tenantMaintenanceData}
-                                handleNewRequestButton={handleNewRequestButton}
-                                handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
-                                filterToggle={filterToggle}
-                                handleFilterToggle={handleFilterToggle}
-                            />
+                            <Paper
+                                style={{
+                                    margin: '30px',
+                                    padding: theme.spacing(2),
+                                    backgroundColor: theme.palette.primary.main,
+                                    paddingTop: '10px',
+                                }}
+                            >
+                                <TenantMaintenanceView
+                                    tenantMaintenanceData={tenantMaintenanceData}
+                                    handleNewRequestButton={handleNewRequestButton}
+                                    handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
+                                    filterToggle={filterToggle}
+                                    handleFilterToggle={handleFilterToggle}
+                                />
+                            </Paper>
                         )
                     }
-                </Paper>
             </Box>
         </ThemeProvider>
     )

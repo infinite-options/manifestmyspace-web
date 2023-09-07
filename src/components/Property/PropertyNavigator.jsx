@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge } from '@mui/material';
 import theme from '../../theme/theme';
 import propertyImage from './propertyImage.png';
@@ -16,6 +17,7 @@ import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 
 
 export default function PropertyNavigator({propertyId, index, propertyData, maintenanceData, paymentStatus, paymentStatusColor}){
+    const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(index);
     const [currentId, setCurrentId] = useState(propertyId);
     const [activeStep, setActiveStep] = useState(0);
@@ -234,12 +236,12 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                             alignItems="center"
                             direction="column"
                             sx={{
-                                backgroundColor: getPaymentStatusColor(item.payment_status),
+                                backgroundColor: getPaymentStatusColor(item.rent_status),
                             }}
                         >   
                             <Grid item xs={12}>
                                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                    <b>Rent Status:</b> {getPaymentStatus(item.payment_status)}
+                                    <b>Rent Status:</b> {getPaymentStatus(item.rent_status)}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -313,7 +315,7 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                                                 Expiring: {item.lease_end}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={4}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -335,6 +337,53 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                                             >
                                                 $527,000 (2022)
 
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography
+                                            sx={{
+                                                textTransform: 'none',
+                                                color: theme.typography.primary.black,
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize:theme.typography.smallFont,
+                                                paddingRight: "10px"
+                                            }}
+                                        >
+                                            $ Per Sqft
+                                        </Typography>
+                                        <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.light.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
+                                            >
+                                                ${(1300/830).toFixed(2)}
+
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography
+                                            sx={{
+                                                textTransform: 'none',
+                                                color: theme.typography.primary.black,
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize:theme.typography.smallFont,
+                                                paddingRight: "10px"
+                                            }}
+                                        >
+                                            <Button
+                                                sx={{
+                                                    paddingLeft: "0px"
+                                                }}
+                                                onClick={() => {navigate('/editProperty', {state:{ currentId, item }})}}
+                                            >
+                                                <CreateIcon sx={{
+                                                    color: theme.typography.common.blue,
+                                                    paddingLeft: "0px"
+                                                }}/>
+                                            </Button>
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={3}>
@@ -495,26 +544,15 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography
-                                            sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                                paddingRight: "10px"
-                                            }}
-                                        >
-                                            Property Manager
-                                            <Button
                                                 sx={{
-                                                    paddingLeft: "0px"
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                    paddingRight: "10px"
                                                 }}
-                                                onClick={() => {console.log("edit property manager")}}
                                             >
-                                                <CreateIcon sx={{
-                                                    color: theme.typography.common.blue,
-                                                    paddingLeft: "0px"
-                                                }}/>
-                                            </Button>
+                                            Property Manager
                                         </Typography>
                                         <Typography
                                                 sx={{
