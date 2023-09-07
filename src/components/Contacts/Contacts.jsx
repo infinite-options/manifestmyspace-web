@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
 import './../../css/contacts.css';
 import {
@@ -10,12 +10,147 @@ import {
     Button,
     InputAdornment,
     TextField,
+    Card,
+    CardContent,
 } from '@mui/material';
-import { Add, Search } from '@mui/icons-material';
+import { Message, Search } from '@mui/icons-material';
 import { getStatusColor } from './ContactsFunction';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { formattedPhoneNumber } from '../utils/privacyMasking';
 
 const Contacts = (props) => {
     const [contactsTab, setContactsTab] = useState('Owner');
+    const [ownerData, setOwnerData] = useState([]);
+    const [tenantData, setTenantData] = useState([]);
+    const [maintenanceData, setMaintenanceData] = useState([]);
+
+    const [ownerDataDetails, setOwnerDataDetails] = useState([]);
+    const [tenantDataDetails, setTenantDataDetails] = useState([]);
+    const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        const url =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
+        await axios
+            .get(url)
+            .then((resp) => {
+                const data = resp.data['Business_Contacts'].result;
+                // console.log(data);
+
+                const ownerCon = data.filter((val) => {
+                    return val.contact_uid && val.contact_uid.includes('110-');
+                });
+                setOwnerData(ownerCon);
+
+                const tenantCon = data.filter((val) => {
+                    return val.contact_uid && val.contact_uid.includes('350-');
+                });
+                setTenantData(tenantCon);
+
+                const mainCon = data.filter((val) => {
+                    return val.contact_uid && val.contact_uid.includes('600-');
+                });
+                setMaintenanceData(mainCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+
+        const ownerUrl =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/600-000003';
+        await axios
+            .get(ownerUrl)
+            .then((resp) => {
+                const ownerCon = resp.data['Owner_Details'].result;
+                // console.log(ownerCon);
+                const uniqueValues = {};
+
+                const uniqueContacts = ownerCon.filter((item) => {
+                    if (
+                        !uniqueValues[item.contract_name] &&
+                        item.contract_status === 'ACTIVE'
+                    ) {
+                        uniqueValues[item.contract_name] = true;
+                        return true;
+                    }
+                    return false;
+                });
+                setOwnerDataDetails(uniqueContacts);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+
+        const tenantUrl =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/600-000003';
+        await axios
+            .get(tenantUrl)
+            .then((resp) => {
+                const tenantCon = resp.data['Tenant_Details'].result;
+                setTenantDataDetails(tenantCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+
+        const maintenanceUrl =
+            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/600-000003';
+        await axios
+            .get(maintenanceUrl)
+            .then((resp) => {
+                const mainCon = resp.data['Maintenance_Details'].result;
+                setMaintenanceDataDetails(mainCon);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+    };
+
+    const handleAddContact = () => {
+        navigate('/addContacts');
+    };
+
+    const handleSetSelectedCard = (selectedData, index) => {
+        if (contactsTab === 'Owner') {
+            navigate('/contactDetails', {
+                state: {
+                    dataDetails: ownerDataDetails,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: ownerData,
+                },
+            });
+        } else if (contactsTab === 'Tenants') {
+            navigate('/tenantContactDetails', {
+                state: {
+                    dataDetails: tenantDataDetails,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: tenantData,
+                },
+            });
+        } else if (contactsTab === 'Maintenance') {
+            navigate('/contactDetails', {
+                state: {
+                    dataDetails: maintenanceDataDetails,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: maintenanceData,
+                },
+            });
+        }
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -67,7 +202,7 @@ const Contacts = (props) => {
                             </Typography>
                         </Box>
                         <Box position="absolute" right={0}>
-                            <Button>
+                            <Button onClick={handleAddContact}>
                                 <svg
                                     width="18"
                                     height="18"
@@ -131,7 +266,11 @@ const Contacts = (props) => {
                                             getStatusColor('Owner'),
                                     }}
                                     onClick={() => setContactsTab('Owner')}
-                                />
+                                >
+                                    <div className="contacts-detail-text">
+                                        Owners
+                                    </div>
+                                </div>
                                 <div
                                     className="contacts-detail-navbar"
                                     style={{
@@ -139,7 +278,11 @@ const Contacts = (props) => {
                                             getStatusColor('Tenants'),
                                     }}
                                     onClick={() => setContactsTab('Tenants')}
-                                />
+                                >
+                                    <div className="contacts-detail-text">
+                                        Tenants
+                                    </div>
+                                </div>
                                 <div
                                     className="contacts-detail-navbar"
                                     style={{
@@ -149,7 +292,11 @@ const Contacts = (props) => {
                                     onClick={() =>
                                         setContactsTab('Maintenance')
                                     }
-                                />
+                                >
+                                    <div className="contacts-detail-text">
+                                        Maintenance
+                                    </div>
+                                </div>
                             </div>
                             <div className="contacts-detail-background">
                                 <div
@@ -159,45 +306,279 @@ const Contacts = (props) => {
                                             getStatusColor(contactsTab),
                                     }}
                                 />
-                                <div className="property-rent-detail-selector-container">
-                                    <div className="property-rent-detail-selector-icon-left">
-                                        <svg
-                                            width="33"
-                                            height="33"
-                                            viewBox="0 0 33 33"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
-                                                fill="#160449"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="property-rent-detail-selector-icon-text">
-                                        1 Of 3 Not Paid
-                                    </div>
-                                    <div className="property-rent-detail-selector-icon-right">
-                                        <svg
-                                            width="33"
-                                            height="33"
-                                            viewBox="0 0 33 33"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
-                                                fill="#160449"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
+                                {contactsTab === 'Owner' ? (
+                                    <>
+                                        {ownerData.map((owner, index) => {
+                                            return (
+                                                <OwnerContactsCard
+                                                    data={owner}
+                                                    key={index}
+                                                    index={index}
+                                                    selected={
+                                                        handleSetSelectedCard
+                                                    }
+                                                    dataDetails={
+                                                        ownerDataDetails.length
+                                                    }
+                                                />
+                                            );
+                                        })}
+                                    </>
+                                ) : contactsTab === 'Tenants' ? (
+                                    <>
+                                        {tenantData.map((tenant, index) => {
+                                            return (
+                                                <TenantContactsCard
+                                                    data={tenant}
+                                                    key={index}
+                                                    index={index}
+                                                    selected={
+                                                        handleSetSelectedCard
+                                                    }
+                                                />
+                                            );
+                                        })}
+                                    </>
+                                ) : (
+                                    <>
+                                        {maintenanceData.map((maint, index) => {
+                                            return (
+                                                <MaintenanceContactsCard
+                                                    data={maint}
+                                                    key={index}
+                                                    index={index}
+                                                    selected={
+                                                        handleSetSelectedCard
+                                                    }
+                                                />
+                                            );
+                                        })}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
                 </Paper>
             </Box>
         </ThemeProvider>
+    );
+};
+
+const OwnerContactsCard = (props) => {
+    const owner = props.data;
+    const handleSetSelectedCard = props.selected;
+    const ownerDataDetailsLength = props.dataDetails;
+    const index = props.index;
+
+    const handleSelection = () => {
+        console.log(index);
+        handleSetSelectedCard(owner, index);
+    };
+
+    return (
+        <Stack>
+            <Card
+                sx={{
+                    backgroundColor: '#D6D5DA',
+                    borderRadius: '10px',
+                    margin: '10px',
+                    color: '#160449',
+                }}
+                onClick={handleSelection}
+            >
+                <CardContent>
+                    <Stack flexDirection="row" justifyContent="space-between">
+                        <Typography
+                            sx={{
+                                fontSize: '16px',
+                                fontWeight: theme.typography.common.fontWeight,
+                            }}
+                        >
+                            {owner.contact_first_name} {owner.contact_last_name}
+                        </Typography>
+                        <Button>
+                            <Message
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    fontSize: '15px',
+                                }}
+                            />
+                        </Button>
+                    </Stack>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                            fontWeight: theme.typography.primary.fontWeight,
+                        }}
+                    >
+                        {ownerDataDetailsLength} Properties
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {owner.contact_email}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {formattedPhoneNumber(owner.contact_phone_numnber)}
+                    </Typography>
+                </CardContent>
+            </Card>
+        </Stack>
+    );
+};
+
+const TenantContactsCard = (props) => {
+    const tenant = props.data;
+    const handleSetSelectedCard = props.selected;
+    const index = props.index;
+
+    const handleSelection = () => {
+        console.log(index);
+        handleSetSelectedCard(tenant, index);
+    };
+
+    return (
+        <Stack>
+            <Card
+                sx={{
+                    backgroundColor: '#D6D5DA',
+                    borderRadius: '10px',
+                    margin: '10px',
+                    color: '#160449',
+                }}
+                onClick={handleSelection}
+            >
+                <CardContent>
+                    <Stack flexDirection="row" justifyContent="space-between">
+                        <Typography
+                            sx={{
+                                fontSize: '16px',
+                                fontWeight: theme.typography.common.fontWeight,
+                            }}
+                        >
+                            {tenant.contact_first_name}{' '}
+                            {tenant.contact_last_name}
+                        </Typography>
+                        <Button>
+                            <Message
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    fontSize: '15px',
+                                }}
+                            />
+                        </Button>
+                    </Stack>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {tenant.contact_address
+                            ? tenant.contact_address
+                            : '103 N. Abel St, Milpitas CA 95035'}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {tenant.contact_email}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {formattedPhoneNumber(tenant.contact_phone_numnber)}
+                    </Typography>
+                </CardContent>
+            </Card>
+        </Stack>
+    );
+};
+
+const MaintenanceContactsCard = (props) => {
+    const business = props.data;
+    const handleSetSelectedCard = props.selected;
+    const index = props.index;
+
+    const handleSelection = () => {
+        handleSetSelectedCard(business, index);
+    };
+    return (
+        <Stack>
+            <Card
+                sx={{
+                    backgroundColor: '#D6D5DA',
+                    borderRadius: '10px',
+                    margin: '10px',
+                    color: '#160449',
+                }}
+                onClick={handleSelection}
+            >
+                <CardContent>
+                    <Stack flexDirection="row" justifyContent="space-between">
+                        <Typography
+                            sx={{
+                                fontSize: '16px',
+                                fontWeight: theme.typography.common.fontWeight,
+                            }}
+                        >
+                            {business.contact_first_name}{' '}
+                            {business.contact_last_name}
+                        </Typography>
+                        <Button>
+                            <Message
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    fontSize: '15px',
+                                }}
+                            />
+                        </Button>
+                    </Stack>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {business.contact_email}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                        }}
+                    >
+                        {formattedPhoneNumber(business.contact_phone_numnber)}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: '14px',
+                            right: '25px',
+                            position: 'absolute',
+                        }}
+                    >
+                        {business.contact_description
+                            ? business.contact_description
+                            : 'Plumbing and Landscaping'}
+                    </Typography>
+                </CardContent>
+            </Card>
+        </Stack>
     );
 };
 

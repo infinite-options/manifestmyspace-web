@@ -11,13 +11,9 @@ import {
 import { getStatusColor } from './ContactsFunction';
 import { Email, Message, Phone } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-    maskSSN,
-    maskEIN,
-    formattedPhoneNumber,
-} from '../utils/privacyMasking';
+import { formattedPhoneNumber } from '../utils/privacyMasking';
 
-const ContactDetails = (props) => {
+const TenantContactDetails = (props) => {
     const navigate = useNavigate();
     const location = useLocation();
     const contactDetails = location.state.dataDetails;
@@ -43,6 +39,8 @@ const ContactDetails = (props) => {
         return false;
     });
 
+    console.log(uniqueContacts);
+
     const owner_object = Object.values(uniqueValues)[0];
 
     console.log(owner_object);
@@ -50,6 +48,7 @@ const ContactDetails = (props) => {
     const handleBackBtn = () => {
         navigate('/contacts');
     };
+
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -320,26 +319,26 @@ const ContactDetails = (props) => {
                                     />
                                 </svg>
                             </Box>
-                            <Typography sx={{ fontSize: '13px' }}>
+                            {/* <Typography sx={{ fontSize: '13px' }}>
                                 {selectedData.contact_address}
                                 {', '}
                                 {selectedData.contact_city}
                                 {', '}
                                 {selectedData.contact_state}{' '}
                                 {selectedData.contact_zip}
-                            </Typography>
+                            </Typography> */}
                         </Stack>
                         <Stack sx={{ padding: '15px' }}>
-                            <Typography
+                            {/* <Typography
                                 sx={{
                                     fontWeight:
                                         theme.typography.primary.fontWeight,
                                 }}
                             >
                                 {uniqueContacts.length} Properties
-                            </Typography>
+                            </Typography> */}
 
-                            {uniqueContacts.map((contact, index) => {
+                            {/* {uniqueContacts.map((contact, index) => {
                                 return (
                                     <Typography
                                         sx={{ fontSize: '13px' }}
@@ -348,7 +347,7 @@ const ContactDetails = (props) => {
                                         {contact.contract_name}
                                     </Typography>
                                 );
-                            })}
+                            })} */}
                         </Stack>
                         <Stack sx={{ padding: '15px' }}>
                             <Stack flexDirection="row">
@@ -379,7 +378,8 @@ const ContactDetails = (props) => {
                                                     fontSize: '12px',
                                                 }}
                                             >
-                                                {owner_object.owner_paypal}
+                                                {/* {owner_object.owner_paypal} */}
+                                                bossnova96@gmail.com
                                             </Typography>
                                         </Stack>
                                     </Stack>
@@ -389,7 +389,7 @@ const ContactDetails = (props) => {
                                     alignItems="center"
                                     sx={{ paddingLeft: '30px' }}
                                 >
-                                    {owner_object.owner_ssn === '' ? (
+                                    {/* {owner_object.owner_ssn === '' ? (
                                         <Typography
                                             sx={{
                                                 fontSize: '13px',
@@ -400,18 +400,19 @@ const ContactDetails = (props) => {
                                         >
                                             No SSN Provided
                                         </Typography>
-                                    ) : (
-                                        <Typography
-                                            sx={{
-                                                fontSize: '13px',
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                            }}
-                                        >
-                                            {maskSSN(owner_object.owner_ssn)}
-                                        </Typography>
-                                    )}
+                                    ) : ( */}
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                            fontWeight:
+                                                theme.typography.primary
+                                                    .fontWeight,
+                                        }}
+                                    >
+                                        {/* {maskSSN(owner_object.owner_ssn)} */}
+                                        '***-**-****'
+                                    </Typography>
+                                    {/* )} */}
                                     <Typography
                                         sx={{
                                             fontSize: '13px',
@@ -444,7 +445,7 @@ const ContactDetails = (props) => {
                                             >
                                                 Venmo
                                             </Typography>
-                                            {owner_object.owner_venmo === '' ? (
+                                            {/* {owner_object.owner_venmo === '' ? (
                                                 <Box
                                                     sx={{
                                                         marginRight: '130px',
@@ -455,15 +456,15 @@ const ContactDetails = (props) => {
                                                         &nbsp;{' '}
                                                     </Typography>
                                                 </Box>
-                                            ) : (
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: '12px',
-                                                    }}
-                                                >
-                                                    {owner_object.owner_venmo}
-                                                </Typography>
-                                            )}
+                                            ) : ( */}
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '12px',
+                                                }}
+                                            >
+                                                bossnova96@gmail.com
+                                            </Typography>
+                                            {/* )} */}
                                         </Stack>
                                     </Stack>
                                 </Box>
@@ -472,7 +473,7 @@ const ContactDetails = (props) => {
                                     alignItems="center"
                                     sx={{ paddingLeft: '15px' }}
                                 >
-                                    {owner_object.owner_ein_number === '' ? (
+                                    {/* {owner_object.owner_ein_number === '' ? (
                                         <Typography
                                             sx={{
                                                 fontSize: '13px',
@@ -483,20 +484,18 @@ const ContactDetails = (props) => {
                                         >
                                             No EIN Provided
                                         </Typography>
-                                    ) : (
-                                        <Typography
-                                            sx={{
-                                                fontSize: '13px',
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                            }}
-                                        >
-                                            {maskEIN(
-                                                owner_object.owner_ein_number
-                                            )}
-                                        </Typography>
-                                    )}
+                                    ) : ( */}
+                                    <Typography
+                                        sx={{
+                                            fontSize: '13px',
+                                            fontWeight:
+                                                theme.typography.primary
+                                                    .fontWeight,
+                                        }}
+                                    >
+                                        12-3456789
+                                    </Typography>
+                                    {/* )} */}
                                     <Typography
                                         sx={{
                                             fontSize: '13px',
@@ -560,4 +559,4 @@ const ContactDetails = (props) => {
     );
 };
 
-export default ContactDetails;
+export default TenantContactDetails;

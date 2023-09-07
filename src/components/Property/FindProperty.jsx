@@ -28,17 +28,17 @@ import axios from 'axios';
 const FindProperty = (props) => {
     const [propertyData, setPropertyData] = useState([]);
 
-    const images = [
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-        },
-    ];
+    // const images = [
+    //     {
+    //         original: 'https://picsum.photos/id/1018/1000/600/',
+    //     },
+    //     {
+    //         original: 'https://picsum.photos/id/1015/1000/600/',
+    //     },
+    //     {
+    //         original: 'https://picsum.photos/id/1019/1000/600/',
+    //     },
+    // ];
 
     const url =
         'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
@@ -290,6 +290,7 @@ const FindProperty = (props) => {
                             }}
                         >
                             Apartments For Rent In San Jose CA
+                            {/* Units Available for Rent */}
                         </Typography>
                         <Typography
                             sx={{
@@ -301,13 +302,7 @@ const FindProperty = (props) => {
                         </Typography>
                     </Stack>
                     {propertyData.map((property, index) => {
-                        return (
-                            <PropertyCard
-                                data={property}
-                                key={index}
-                                images={images}
-                            />
-                        );
+                        return <PropertyCard data={property} key={index} />;
                     })}
                 </Paper>
             </Box>
@@ -320,24 +315,27 @@ function PropertyCard(props) {
 
     const property = props.data;
 
-    // const ppt_images = property.property_images
-    //     .replace('[', '')
-    //     .replace(']', '')
-    //     .replace('\\', '')
-    //     .replace('"', "'")
-    //     .replace('\n', '')
-    //     .replace(' ', '')
-    //     .split(',');
+    const ppt_images = property.property_images.split(',');
 
-    // const images = ppt_images.map((data) => {
-    //     try {
-    //         const url = new URL(data);
-    //         return { original: url };
-    //     } catch (e) {
-    //         console.error(e);
-    //         return { original: '' };
-    //     }
-    // });
+    function parseImageData(data) {
+        if (data === undefined) {
+            return;
+        }
+        const s = data.indexOf('http');
+        const l = data.indexOf('"', s);
+        const imageString = data.slice(s, l);
+        return imageString;
+    }
+
+    const images = ppt_images.map((data) => {
+        try {
+            const url = parseImageData(data);
+            return { original: url };
+        } catch (e) {
+            console.error(e);
+            return { original: '' };
+        }
+    });
 
     // console.log(images);
 
@@ -360,11 +358,12 @@ function PropertyCard(props) {
     return (
         <Card sx={{ margin: 5 }}>
             <ReactImageGallery
-                items={props.images}
+                items={images}
                 showFullscreenButton={false}
                 showPlayButton={false}
                 showThumbnails={false}
             />
+
             <Box
                 sx={{
                     backgroundColor: '#8897BA',
