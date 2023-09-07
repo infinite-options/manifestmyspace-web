@@ -62,7 +62,7 @@ function OwnerProfile() {
                         marginRight: 'auto',
                         cursor: 'pointer'
                     }}
-                    onClick={() => navigate('/settingsOwner')}
+                    onClick={() => { console.log("navigate"); navigate('/settingsOwner') }}
                 >
                         <img src={Setting_fill} alt='Settings icon' />
                     </Box>
