@@ -146,8 +146,8 @@ function Main() {
             <Route exact path="/" element={<Dashboard />} />
 
             <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
-            <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
-            <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
+            <Route exact path="/maintenance/detail" element={<MaintenanceRequestDetail />} />
+            {/* <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} /> */}
             <Route exact path="/addProperty" element={<AddProperty />} />
             <Route exact path="/editProperty" element={<EditProperty />} />
             <Route exact path="/propertyDetail" element={<PropertyDetail />} />

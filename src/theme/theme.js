@@ -111,13 +111,21 @@ const theme = createTheme({
       text: "#160449",
     },
   },
-  colorStatusPMO: [
+  colorStatusPMO_old: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },
     { color: "#D4736D", status: "Quotes Requested", mapping: "PROCESSING" },
     { color: "#DEA19C", status: "Quotes Accepted", mapping: "CANCELLED" },
     { color: "#92A9CB", status: "Scheduled", mapping: "SCHEDULE" },
     { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
     { color: "#173C8D", status: "Paid", mapping: "INFO" },
+  ],
+  colorStatusPMO: [
+    {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
+    {'color': '#D4736D', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'},
+    {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'CANCELLED'},
+    {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULE'},
+    {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
+    {'color': '#173C8D', 'status': 'Paid', 'mapping': 'PAID'},
   ],
   colorStatusTenant: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },

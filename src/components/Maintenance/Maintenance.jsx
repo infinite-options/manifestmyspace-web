@@ -31,10 +31,50 @@ export default function Maintenance(){
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
-    const maintenanceRequests = location.state.maintenanceRequests;
-    const colorStatus = location.state.colorStatus;
+    const colorStatus = theme.colorStatusPMO
 
-    console.log("maintenanceRequests", maintenanceRequests)
+    // if(location.state){
+    //     if(location.state.maintenanceRequests){
+    //         setMaintenanceData(location.state.maintenanceRequests)
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     if (!location.state.maintenanceRequests){
+    //         // go fetch the maintenanceData
+    //         const dataObject = {};
+    //         const fetchData = async () => {
+    //             console.log("in useEffect")
+    //             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
+    //             const jsonData = await response.json()
+    //             console.log(jsonData.MaintenanceStatus.result)
+    //             for (const item of jsonData.MaintenanceStatus.result) {
+    //                 if (item.maintenance_request_status === null) {
+    //                     continue
+    //                 }
+    //                 if (!dataObject[item.maintenance_request_status]){
+    //                     console.log("item.maintenance_request_status", item.maintenance_request_status)
+    //                     dataObject[item.maintenance_request_status] = item.num;
+    //                 }
+    //             }
+    //             console.log("dataObject from server", dataObject)
+    
+    //             // console.log(dataObject)
+    //             setMaintenanceData(prevData => ({ ...prevData, ...dataObject }))
+    //         }
+    //         fetchData();
+
+    //     }
+    //     if (!location.state.colorStatus || colorStatus == null){
+    //         // go fetch the colorStatus
+    //         colorStatus = theme.colorStatusPMO
+    //     }
+    // }, [])
+
+
+
+    // console.log("maintenanceRequests", maintenanceRequests)
+    // console.log("colorStatus", colorStatus)
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -50,25 +90,27 @@ export default function Maintenance(){
     }
 
     useEffect(() => {
-        console.log("maintenanceData", maintenanceData)
-        const propertyList = [];
-        const addedAddresses = [];
-        for (const key in maintenanceData){
-            for (const item of maintenanceData[key]){
-                if (!addedAddresses.includes(item.property_address)){
-                    addedAddresses.push(item.property_address);
-                    if (!propertyList.includes(item.property_address)){
-                        propertyList.push({
-                            "address": item.property_address,
-                            "checked": true
-                        });
+        if (maintenanceData){
+            console.log("maintenanceData", maintenanceData)
+            const propertyList = [];
+            const addedAddresses = [];
+            for (const key in maintenanceData){
+                for (const item of maintenanceData[key]){
+                    if (!addedAddresses.includes(item.property_address)){
+                        addedAddresses.push(item.property_address);
+                        if (!propertyList.includes(item.property_address)){
+                            propertyList.push({
+                                "address": item.property_address,
+                                "checked": true
+                            });
+                        }
                     }
                 }
             }
+            
+            console.log("filterPropertyList", propertyList)
+            setFilterPropertyList(propertyList);
         }
-        
-        console.log("filterPropertyList", propertyList)
-        setFilterPropertyList(propertyList);
     }, [maintenanceData])
 
     function convertToStandardFormat(monthName, year) {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, Button, Box, Stack } from "@mui/material";
 import theme from "../../theme/theme";
 import maintenanceRequestImage from "./maintenanceRequest.png";
@@ -24,6 +25,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
   const [images, setImages] = useState([maintenanceRequestImage]);
   // const [maxSteps, setMaxSteps] = useState(images.length);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
@@ -31,13 +33,13 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
     setActiveStep(0);
   }, [currentIndex]);
 
-  // console.log("RequestNavigator");
-  // console.log("requestIndex", requestIndex);
-  // console.log("requestData", requestData);
-  // console.log("currentIndex", currentIndex);
-  // console.log("color", color);
-  // console.log("item", item);
-  // console.log("allData", allData);
+  console.log("RequestNavigator");
+  console.log("requestIndex", requestIndex);
+  console.log("requestData", requestData);
+  console.log("currentIndex", currentIndex);
+  console.log("color", color);
+  console.log("item", item);
+  console.log("allData", allData);
 
   const maxSteps = images.length;
 
@@ -45,12 +47,21 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
+    let nextMaintenanceId = requestData[currentIndex].maintenance_request_uid;
+    // navigate(`/maintenance/${nextMaintenanceId}`, { replace: true,   state: {
+    //     requestIndex,
+    //     status,
+    //     maintenanceItemsForStatus,
+    //     allData,
+    // }});
     console.log("currentIndex", currentIndex)
     console.log("item", requestData[currentIndex])
   };
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
+    let previousMaintenanceId = requestData[currentIndex].maintenance_request_uid;
+    // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
     console.log("currentIndex", currentIndex)
     console.log("item", requestData[currentIndex])
   };
@@ -130,7 +141,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
             <ArrowForwardIcon />
           </Button>
         </Stack>
-        <Stack alignItems="center" justifyContent="center">
+        <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card
             sx={{
               backgroundColor: color,
@@ -141,6 +152,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              padding: "0px"
             }}
           >
             <CardContent
@@ -150,6 +162,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
+                paddingBottom: "0px",
               }}
             >
               <div
@@ -209,12 +222,12 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 alignItems: "left",
                 justifyContent: "left",
                 width: "100%",
+                padding: "0px"
               }}
             >
               <div
                 style={{
-                  paddingTop: "10px",
-                  paddingLeft: "10px",
+                  // paddingLeft: "10px",
                   alignContent: "left",
                   justifyContent: "left",
                   alignItems: "left",
@@ -277,7 +290,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
                     fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
                   }}
                 >
                   {data.maintenance_desc}

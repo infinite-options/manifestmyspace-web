@@ -76,6 +76,7 @@ const SearchBar = ({ propertyList, setFilteredItems }) => {
         p: "2px 4px",
         alignItems: "center",
         backgroundColor: theme.palette.form.main,
+        display: "flex"
       }}
     >
       <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
@@ -144,8 +145,8 @@ export default function PropertyList({}) {
     const fetchData = async () => {
       const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
       const propertyData = await response.json();
-      setPropertyList([...propertyData["Property Dashboard"].result]);
-      setDisplayedItems([...propertyData["Property Dashboard"].result]);
+      setPropertyList([...propertyData.Property_Dashboard.result]);
+      setDisplayedItems([...propertyData.Property_Dashboard.result]);
     };
     fetchData();
   }, []);

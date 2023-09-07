@@ -55,6 +55,7 @@ function Dashboard() {
             console.log("in useEffect")
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
             const jsonData = await response.json()
+            console.log(jsonData)
             console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);
             let rentStatus = jsonData.RentStatus.result;
@@ -119,46 +120,48 @@ function Dashboard() {
             <CashflowWidget/>
             <div className="mt-container">
                 <MaintenanceWidget/>
-                <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
-                    <h2 className="mt-prop-widget-title"> Property Rent</h2>
+                <div className="mt-prop-widget-container">
+                    <h2 className="mt-prop-widget-title" onClick={() => navigate("/ownerRent")}> Property Rent</h2>
                     <div className="mt-prop-widget-graph">
-                    <PieChart width={200} height={250} >
-                        <Legend
-                        height={36}
-                        iconType="circle"
-                        layout="vertical"
-                        verticalAlign="bottom"
-                        iconSize={5}
-                        padding={5}
-                        formatter={renderColorfulLegendText}
-                        />
-                        <Pie
-                        data={data}
-                        cx={80}
-                        cy={100}
-                        innerRadius={35}
-                        outerRadius={50}
-                        paddingAngle={0}
-                        dataKey="number"
+                        <PieChart width={200} height={250} >
+                            <Legend
+                            height={36}
+                            iconType="circle"
+                            layout="vertical"
+                            verticalAlign="bottom"
+                            iconSize={5}
+                            padding={5}
+                            formatter={renderColorfulLegendText}
+                            />
+                            <Pie
+                            data={data}
+                            cx={80}
+                            cy={100}
+                            innerRadius={35}
+                            outerRadius={50}
+                            paddingAngle={0}
+                            dataKey="number"
+                            >
+                                {data.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                            
+                            </Pie>
+                        </PieChart>
+                        <Button
+                            color="primary"
+                            style={{    position: 'absolute', 
+                                        top: '32%', left: '50%', 
+                                        transform: 'translate(-50%, -50%)', 
+                                        textTransform: 'inherit', 
+                                        fontFamily: 'Source Sans Pro',
+                                        fontSize: '9px',
+                                        color: '#160449',
+                                        fontWeight: 600,}}
+                            onClick={() => navigate("/properties")}
                         >
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.fill} />
-                            ))}
-                        
-                        </Pie>
-                    </PieChart>
-                     <Button
-                        color="primary"
-                        style={{    position: 'absolute', 
-                                    top: '32%', left: '50%', 
-                                    transform: 'translate(-50%, -50%)', 
-                                    textTransform: 'inherit', 
-                                    fontFamily: 'Source Sans Pro',
-                                    fontSize: '9px',
-                                    color: '#160449',
-                                    fontWeight: 600,}}>
-                        View All 63 <br />properties
-                    </Button>
+                            View All 63 <br />properties
+                        </Button>
                     </div>
                 </div>
             </div>  

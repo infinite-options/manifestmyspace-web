@@ -26,6 +26,7 @@ import AddIcon from '@mui/icons-material/Add';
 import SelectMonthComponent from '../SelectMonthComponent';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import NewRequestAction from './Manager/NewRequestAction';
 
 
 function CustomTabPanel(props) {
@@ -169,10 +170,11 @@ export default function MaintenanceRequestDetail(){
             >
                 <Paper
                     style={{
-                        margin: '30px',
+                        margin: '10px',
                         backgroundColor: theme.palette.primary.main,
                         width: '100%', // Occupy full width with 25px margins on each side
                         paddingTop: '10px',
+                        paddingBottom: '30px',
                     }}
                 >
                      <Stack
@@ -180,10 +182,12 @@ export default function MaintenanceRequestDetail(){
                         justifyContent="center"
                         alignItems="center"
                         sx={{
-                            paddingBottom: "20px"
+                            paddingBottom: "20px",
+                            paddingLeft: "0px",
+                            paddingRight: "0px",
                         }}
                     >
-                         <Box position="absolute" left={30}>
+                        <Box position="absolute" left={30}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
                             </Button>
@@ -213,7 +217,7 @@ export default function MaintenanceRequestDetail(){
                     >
                         <Box sx={{ 
                             borderBottom: 0,
-                            width: '75%',
+                            width: '95%',
                         }}>
                             <Tabs 
                                 variant="fullWidth" 
@@ -259,14 +263,15 @@ export default function MaintenanceRequestDetail(){
                                 <div key={index}>
                                     <CustomTabPanel key={index} value={value} index={index} style={{
                                         backgroundColor: item.color,
-                                        paddingBottom: '10px',
 
                                     }}>
                                         <Grid
                                             sx={{
                                                 backgroundColor: item.color,
                                                 justifyContent: "center",
-                                                margin: "25px",
+                                                marginLeft: "25px",
+                                                marginRight: "25px",
+                                                paddingBottom: "0px"
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
@@ -277,6 +282,16 @@ export default function MaintenanceRequestDetail(){
                                     </CustomTabPanel>
                                 </div>
                             )}
+                            <Box
+                                sx={{
+                                    // justifyContent: 'center',
+                                    // alignItems: 'center',
+                                    paddingBottom: "20px",
+                                    paddingTop: "20px",
+                                }}
+                            >
+                                <NewRequestAction/>
+                            </Box>
                         </Box>
                     </Stack>
                 </Paper>
