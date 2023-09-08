@@ -74,6 +74,9 @@ import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import { Footer } from "./Footer";
+import PMAddProperty from "./Property/PMAddProperty";
+import PMEditProperty from "./Property/PMEditProperty";
+
 function Main () {
   return (
     <>
@@ -92,7 +95,6 @@ function Main () {
           <Header></Header>
           <Router>
             <Routes>
-              <Route exact path="/dashboard" element={<MaintenanceWidget />} />
               <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
               {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
               <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
@@ -127,6 +129,8 @@ function Main () {
               <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
               <Route exact path="/pmRent" element={<PMRent />} />
               <Route exact path="/pmRentDetail" element={<PMRentDetail />} />
+              <Route exact path="/pm/property/add" element={<PMAddProperty/>} />
+              <Route exact path="/pm/property/edit" element={<PMEditProperty/>} />
 
               <Route exact path="/transactionHistory" element={<TransactionHistory />} />
               <Route exact path="/viewTransactionOwner" element={<ViewTransactionOwner />} />

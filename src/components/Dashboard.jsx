@@ -138,7 +138,7 @@ function Dashboard() {
             <CashflowWidget/>
             <div className="mt-container">
                 <MaintenanceWidget/>
-                <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
+                <div className="mt-prop-widget-container" onClick={() => navigate("/properties")}>
                     <h2 className="mt-prop-widget-title"> Property Rent</h2>
                     <div className="mt-prop-widget-graph">
                     <PieChart width={200} height={250} >
