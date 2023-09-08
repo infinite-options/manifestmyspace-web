@@ -94,7 +94,20 @@ const Contacts = (props) => {
             .get(tenantUrl)
             .then((resp) => {
                 const tenantCon = resp.data['Tenant_Details'].result;
-                setTenantDataDetails(tenantCon);
+
+                const uniqueValues = {};
+
+                const uniqueContacts = tenantCon.filter((item) => {
+                    if (
+                        !uniqueValues[item.tenant_uid] &&
+                        item.contract_status !== 'TERMINATED'
+                    ) {
+                        uniqueValues[item.tenant_uid] = item;
+                        return true;
+                    }
+                    return false;
+                });
+                setTenantDataDetails(uniqueContacts);
             })
             .catch((e) => {
                 console.error(e);
