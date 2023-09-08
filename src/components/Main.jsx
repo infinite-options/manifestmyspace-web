@@ -74,6 +74,14 @@ import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import { Footer } from "./Footer";
+
+import SettingsACH1 from "./SettingsACH/SettingsACH1";
+import SettingsACH2 from "./SettingsACH/SettingsACH2";
+import SettingsACH3 from "./SettingsACH/SettingsACH3";
+import SettingsACH4 from "./SettingsACH/SettingsACH4";
+import SettingsACH5 from "./SettingsACH/SettingsACH5";
+import POContracts from "./Contracts/POContracts/POContracts";
+
 function Main () {
   return (
     <>
@@ -161,6 +169,14 @@ function Main () {
               <Route exact path="/properties" element={<PropertyList />} />
               {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
               <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
+
+              <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
+            <Route exact path="/settingsManagerACH2" element={<SettingsACH2 />} />
+            <Route exact path="/settingsManagerACH3" element={<SettingsACH3 />} />
+            <Route exact path="/settingsManagerACH4" element={<SettingsACH4 />} />
+            <Route exact path="/settingsManagerACH5" element={<SettingsACH5 />} />
+
+            <Route exact path="/poContracts" element={<POContracts />} />
             </Routes>
           </Router>
           <Footer></Footer>
