@@ -175,7 +175,8 @@ function Dashboard() {
                             fontSize: '9px',
                             fill: '#160449',
                             fontWeight: '600',
-                          }}
+                        }}
+                                    onClick={(e) => { e.stopPropagation(); navigate('/properties')}}
                     >
                         View All {totalPropertiesCount}
                         <tspan x={85} y={110}>properties</tspan>
