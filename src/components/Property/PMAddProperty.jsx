@@ -38,7 +38,7 @@ function Deposit(){
 
     return (
         <Box>
-            <Box justifyContent="left" paddinLeft="24px" paddingTop="12px">
+            <Box justifyContent="left" paddingTop="12px">
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                     Deposit can be used for last month’s rent
                 </Typography>
@@ -103,7 +103,7 @@ function PetsAllowed(){
 
     return (
         <Box>
-            <Box justifyContent="left" paddinLeft="24px" paddingTop="12px">
+            <Box justifyContent="left" paddingTop="12px">
                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                     Pets Allowed
                 </Typography>
@@ -268,9 +268,9 @@ export default function PMAddProperty(){
     const [propertyValue, setPropertyValue] = useState("");
     const [notes, setNotes] = useState("");
     const [description, setDescription] = useState("");
-
-    const [electricityOwner, setElectricityOwner] = useState(true);
-    const [electricityTenant, setElectricityTenant] = useState(false)
+    const [activeDate, setActiveDate] = useState("");
+    const [deposit, setDeposit] = useState("");
+    const [rent, setRent] = useState("");
 
 
     const [activeStep, setActiveStep] = useState(0);
@@ -287,7 +287,7 @@ export default function PMAddProperty(){
     };
 
     const handleBackButton = () => {
-        navigate("/dashboard");
+        navigate("/properties");
     }
 
     const navigate = useNavigate();
@@ -304,6 +304,9 @@ export default function PMAddProperty(){
     const handlePropertyValueChange = (event) => { setPropertyValue(event.target.value) };
     const handleNotesChange = (event) => { setNotes(event.target.value) };
     const handleDescriptionChange = (event) => { setDescription(event.target.value) };
+    const handleActiveDate = (event) => { setActiveDate(event.target.value) };
+    const handleDepositChange = (event) => { setDeposit(event.target.value) };
+    const handleRentChange = (event) => { setRent(event.target.value) };
 
 
     const handleSubmit = (event) => {
@@ -316,28 +319,23 @@ export default function PMAddProperty(){
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
-        // formData.append('property_owner_id', ownerId);
-        // formData.append('available_to_rent', 1);
-        // formData.append('active_date', formattedDate);
-        // formData.append('property_address', address);
-        // formData.append('property_unit', unit);
-        // formData.append('property_city', city);
-        // formData.append('property_state', state);
-        // formData.append('property_zip', zip);
-        // formData.append('property_type', type);
-        // formData.append('property_num_beds', bedrooms);
-        // formData.append('property_num_baths', bathrooms);
-        // formData.append('property_area', squareFootage);
-        // formData.append('property_listed', 0);
-        // formData.append('property_deposit', deposit);
-        // formData.append('property_pets_allowed', petsAllowed);
-        // formData.append('property_deposit_for_rent', depositForRent);
-        // formData.append('property_taxes', taxes);
-        // formData.append('property_mortgages', mortgages);
-        // formData.append('property_insurance', insurance);
-        // formData.append('property_featured', 0);
-        // formData.append('property_description', description);
-        // formData.append('property_notes', notes);
+        
+        formData.append('address', address);
+        formData.append('unit', unit);
+        formData.append('city', city);
+        formData.append('state', state);
+        formData.append('zipCode', zipCode);
+        formData.append('type', type);
+        formData.append('squareFootage', squareFootage);
+        formData.append('bedrooms', bedrooms);
+        formData.append('bathrooms', bathrooms);
+        formData.append('propertyValue', propertyValue);
+        formData.append('notes', notes);
+        formData.append('description', description);
+        formData.append('activeDate', activeDate);
+        formData.append('deposit', deposit);
+        formData.append('rent', rent);
+        
 
 
         // for (let i = 0; i < selectedImageList.length; i++) {
@@ -390,550 +388,536 @@ export default function PMAddProperty(){
 
     return (
         <ThemeProvider theme={theme}>
-            <Stack
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column', // Stack the content vertically
-                    justifyContent: 'flex-start',  // Start content at the top
-                    alignItems: 'center',  // Center content horizontally
-                    width: '100%',
-                    minHeight: '100vh',
-                    marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
-                    paddingBottom: "50px"
-                }}
-                >
-                    <Paper
-                        style={{
-                            margin: '30px',
-                            padding: theme.spacing(2),
-                            backgroundColor: theme.palette.form.main,
-                            width: '85%', // Occupy full width with 25px margins on each side
-                            [theme.breakpoints.down('sm')]: {
-                                width: '80%',
-                            },
-                            [theme.breakpoints.up('sm')]: {
-                                width: '50%',
-                            },
-                            paddingTop: '10px',
-                        }}
+            <form onSubmit={handleSubmit} id="addPropertyForm">
+                <Stack
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column', // Stack the content vertically
+                        justifyContent: 'center',  // Center content vertically
+                        alignItems: 'center',  // Center content horizontally
+                        width: '100%',
+                        minHeight: '100vh',
+                        marginTop: theme.spacing(2),  // Adjust this for desired distance from the top
+                        paddingBottom: "50px",
+                    }}
                     >
-                        <Stack
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="center"
-                            position="relative"
-                        >
-                            <Box
-                                direction="row"
-                                justifyContent="center"
-                                alignItems="center"
-                            >
-                                <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                    Add Property 
-                                </Typography>
-                            </Box>
-                            <Box position="absolute" right={0}>
-                                <Button onClick={() => handleBackButton()}>
-                                    <CloseIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/>
-                                </Button>
-                            </Box>
-                        </Stack>
-
-                        <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            padding="25px"
-                            onSubmit={handleSubmit}
-                        >
-                            <Box
-                                component="form"
-                                sx={{
-                                    // '& .MuiTextField-root': { m: 1, width: '25ch' },
+                            <Paper
+                                style={{
+                                    margin: 'auto',
+                                    backgroundColor: theme.palette.form.main,
+                                    width: '85%', 
+                                    [theme.breakpoints.down('sm')]: {
+                                        width: '80%',
+                                    },
+                                    [theme.breakpoints.up('sm')]: {
+                                        width: '50%',
+                                    },
+                                    paddingBottom:'25px'
                                 }}
-                                noValidate
-                                autoComplete="off"
-                                id="addPropertyForm"
                             >
-                                <Grid container columnSpacing={12} rowSpacing={6}>
-                                    {/* Select Field for Property */}
-
-
-                                    {/* <Grid item xs={12}>
-                                        <div
-                                            style={{
-                                            display: "flex",
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            width: "100%",
-                                            }}
-                                        >
-                                                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                                            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                <Stack
+                                    direction="row"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    position="relative"
+                                >
+                                    <Box
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="center"
+                                    >
+                                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                            Add Property 
+                                        </Typography>
+                                    </Box>
+                                    <Box position="absolute" right={0}>
+                                        <Button onClick={() => handleBackButton()}>
+                                            <CloseIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/>
                                         </Button>
-                                            <CardMedia
-                                            component="img"
-                                            // image={selectedImageList[activeStep]}
-                                            image={coverImage}
-                                            sx={{
-                                                elevation: "0",
-                                                boxShadow: "none",
-                                                maxWidth: "150px",
-                                                minWidth: "150px",
-                                                maxHeight: "150px",
-                                                minHeight: "150px",
-                                                height: "150px",
-                                                objectFit: "cover",
-                                                center: "true",
-                                                alignContent: "center",
-                                                justifyContent: "center",
-                                            }}
-                                            />
-                                                                                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                                            {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                        </Button>
-                                        </div>
-                                    </Grid>
+                                    </Box>
+                                </Stack>
 
-                                    <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
-                                    </Grid> */}
+                                <Stack
+                                    direction="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    padding="25px"
+                                >
+                                    <Box
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <Grid container columnSpacing={12} rowSpacing={6}>
+                                            {/* Select Field for Property */}
 
-                                    {/* Text Field for Title */}
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Address
-                                        </Typography>
-                                        <TextField 
-                                            onChange={handleAddressChange} 
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            fullWidth
-                                        />
-                                    </Grid>
 
-                                    {/* Select Field for Issue and Cost Estimate */}
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Unit
-                                        </Typography>
-                                        <TextField 
-                                            onChange={handleUnitChange} 
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            fullWidth
-                                        />
-                                    </Grid>
+                                            <Grid item xs={12}>
+                                                <div
+                                                    style={{
+                                                    display: "flex",
+                                                    flexDirection: "row",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    width: "100%",
+                                                    }}
+                                                >
+                                                    <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                                                    {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                                </Button>
+                                                    <CardMedia
+                                                    component="img"
+                                                    // image={selectedImageList[activeStep]}
+                                                    image={coverImage}
+                                                    sx={{
+                                                        elevation: "0",
+                                                        boxShadow: "none",
+                                                        maxWidth: "150px",
+                                                        minWidth: "150px",
+                                                        maxHeight: "150px",
+                                                        minHeight: "150px",
+                                                        height: "150px",
+                                                        objectFit: "cover",
+                                                        center: "true",
+                                                        alignContent: "center",
+                                                        justifyContent: "center",
+                                                    }}
+                                                    />
+                                                                                            <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                                                    {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                                </Button>
+                                                </div>
+                                            </Grid>
 
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            City
-                                        </Typography>
-                                        <TextField 
-                                            onChange={handleCityChange} 
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            fullWidth
-                                        />
-                                    </Grid>
+                                            <Grid item xs={12}>
+                                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                            </Grid>
 
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            State
-                                        </Typography>
+                                            {/* Text Field for Title */}
+                                            <Grid item xs={12}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Address
+                                                </Typography>
+                                                <TextField 
+                                                    onChange={handleAddressChange} 
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    fullWidth
+                                                />
+                                            </Grid>
 
-                                            <Select 
-                                                
-                                                sx={{
-                                                    backgroundColor: 'white',
-                                                    borderColor: 'black',
-                                                    borderRadius: '7px',
-                                                }}
-                                                size="small"
-                                                fullWidth
-                                                onChange={handleStateChange} 
-                                            >
-                                                <MenuItem value={"CA"}>CA</MenuItem>
-                                                <MenuItem value={"TX"}>TX</MenuItem>
-                                                <MenuItem value={"FL"}>FL</MenuItem>
-                                                <MenuItem value={"NY"}>NY</MenuItem>
-                                                <MenuItem value={"IL"}>IL</MenuItem>
-                                            </Select>
-                                    </Grid>
+                                            {/* Select Field for Issue and Cost Estimate */}
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Unit
+                                                </Typography>
+                                                <TextField 
+                                                    onChange={handleUnitChange} 
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    fullWidth
+                                                />
+                                            </Grid>
 
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Zip Code
-                                        </Typography>
-                                        <TextField
-                                            onChange={handleZipCodeChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            // onChange={handleCostChange}
-                                        />
-                                    </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    City
+                                                </Typography>
+                                                <TextField 
+                                                    onChange={handleCityChange} 
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    fullWidth
+                                                />
+                                            </Grid>
 
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Type
-                                        </Typography>
-                                        <Select
-                                            onChange={handleTypeChange} 
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            fullWidth
-                                            // onChange={handleUnitChange} 
-                                        >
-                                            <MenuItem value={"Single Family"}>Single Family</MenuItem>
-                                            <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
-                                            <MenuItem value={"Condo"}>Condo</MenuItem>
-                                            <MenuItem value={"Apartment"}>Apartment</MenuItem>
-                                            <MenuItem value={"Tiny Home"}>Tiny Home</MenuItem>
-                                        </Select>
-                                    </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    State
+                                                </Typography>
 
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Square Footage
-                                        </Typography>
-                                        <TextField
-                                            fullWidth
-                                            onChange={handleSquareFootageChange}
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            // onChange={handleCostChange}
-                                        />
-                                    </Grid>
+                                                    <Select 
+                                                        
+                                                        sx={{
+                                                            backgroundColor: 'white',
+                                                            borderColor: 'black',
+                                                            borderRadius: '7px',
+                                                        }}
+                                                        size="small"
+                                                        fullWidth
+                                                        onChange={handleStateChange} 
+                                                    >
+                                                        <MenuItem value={"CA"}>CA</MenuItem>
+                                                        <MenuItem value={"TX"}>TX</MenuItem>
+                                                        <MenuItem value={"FL"}>FL</MenuItem>
+                                                        <MenuItem value={"NY"}>NY</MenuItem>
+                                                        <MenuItem value={"IL"}>IL</MenuItem>
+                                                    </Select>
+                                            </Grid>
 
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Bedrooms
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleBedroomsChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            // onChange={handleCostChange}
-                                        />
-                                    </Grid>
-                                            
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Bathrooms
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleBathroomsChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            placeholder="# of bedrooms"
-                                        />
-                                    </Grid>
-                                </Grid>                              
-                            </Box>
-                        </Stack>
-                    </Paper>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Zip Code
+                                                </Typography>
+                                                <TextField
+                                                    onChange={handleZipCodeChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    // onChange={handleCostChange}
+                                                />
+                                            </Grid>
 
-                    <Paper
-                        style={{
-                            margin: '30px',
-                            padding: theme.spacing(2),
-                            backgroundColor: theme.palette.form.main,
-                            width: '85%', // Occupy full width with 25px margins on each side
-                            [theme.breakpoints.down('sm')]: {
-                                width: '80%',
-                            },
-                            [theme.breakpoints.up('sm')]: {
-                                width: '50%',
-                            },
-                            paddingTop: '10px',
-                        }}
-                    >
-                        <Stack
-                           direction="column"
-                           justifyContent="center"
-                           alignItems="center"
-                           padding="25px"
-                           onSubmit={handleSubmit}
-                        >
-                            <Box
-                                component="form"
-                                noValidate
-                                autoComplete="off"
-                                id="addPropertyForm"    
-                            >
-                                <Grid container columnSpacing={12} rowSpacing={6}>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Active Date
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleBedroomsChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            placeholder="MM/DD/YYYY"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Property Value
-                                        </Typography>
-                                        <TextField
-                                            onClick={handlePropertyValueChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">$</InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Deposit
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleBedroomsChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">$</InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Rent
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleBedroomsChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">$</InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                        </Stack>
-                    </Paper>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Type
+                                                </Typography>
+                                                <Select
+                                                    onChange={handleTypeChange} 
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    fullWidth
+                                                    // onChange={handleUnitChange} 
+                                                >
+                                                    <MenuItem value={"Single Family"}>Single Family</MenuItem>
+                                                    <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
+                                                    <MenuItem value={"Condo"}>Condo</MenuItem>
+                                                    <MenuItem value={"Apartment"}>Apartment</MenuItem>
+                                                    <MenuItem value={"Tiny Home"}>Tiny Home</MenuItem>
+                                                </Select>
+                                            </Grid>
 
-                    <Paper
-                        style={{
-                            margin: '30px',
-                            padding: theme.spacing(2),
-                            backgroundColor: theme.palette.form.main,
-                            width: '85%', // Occupy full width with 25px margins on each side
-                            [theme.breakpoints.down('sm')]: {
-                                width: '80%',
-                            },
-                            [theme.breakpoints.up('sm')]: {
-                                width: '50%',
-                            },
-                            paddingTop: '10px',
-                        }}
-                    >
-                        <Stack
-                           direction="column"
-                           justifyContent="center"
-                           alignItems="center"
-                           padding="25px"
-                           onSubmit={handleSubmit}
-                        >
-                            <Box
-                                component="form"
-                                sx={{
-                                    // '& .MuiTextField-root': { m: 1, width: '25ch' },
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Square Footage
+                                                </Typography>
+                                                <TextField
+                                                    fullWidth
+                                                    onChange={handleSquareFootageChange}
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    // onChange={handleCostChange}
+                                                />
+                                            </Grid>
+
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Bedrooms
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleBedroomsChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    // onChange={handleCostChange}
+                                                />
+                                            </Grid>
+                                                    
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Bathrooms
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleBathroomsChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    placeholder="# of bedrooms"
+                                                />
+                                            </Grid>
+                                        </Grid>                              
+                                    </Box>
+                                </Stack>
+                            </Paper>
+
+                            <Paper
+                                style={{
+                                    margin: 'auto',
+                                    backgroundColor: theme.palette.form.main,
+                                    width: '85%', 
+                                    [theme.breakpoints.down('sm')]: {
+                                        width: '80%',
+                                    },
+                                    [theme.breakpoints.up('sm')]: {
+                                        width: '50%',
+                                    },
+                                    paddingTop: '10px',
                                 }}
-                                noValidate
-                                autoComplete="off"
-                                id="addPropertyForm"    
                             >
-                                <UtilityPaymentResponsibility/>
-                            </Box>
-                        </Stack>
-                    </Paper>
+                                <Stack
+                                    paddingLeft="25px"
+                                    paddingRight="25px"
+                                    paddingTop="10px"
+                                    paddingBottom="10px"
+                                >
+                                    <Box
+                                        noValidate
+                                        autoComplete="off"   
+                                    >
+                                        <Grid container columnSpacing={12} rowSpacing={6}>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Active Date
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleActiveDate}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    placeholder="MM/DD/YYYY"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Property Value
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handlePropertyValueChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">$</InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Deposit
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleDepositChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">$</InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Rent
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleRentChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">$</InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Box>
+                                </Stack>
+                            </Paper>
 
-                    <Paper
-                        style={{
-                            margin: '30px',
-                            padding: theme.spacing(2),
-                            backgroundColor: theme.palette.form.main,
-                            width: '85%', // Occupy full width with 25px margins on each side
-                            [theme.breakpoints.down('sm')]: {
-                                width: '80%',
-                            },
-                            [theme.breakpoints.up('sm')]: {
-                                width: '50%',
-                            },
-                            paddingTop: '10px',
-                        }}
-                    >
-                        <Stack
-                           paddingLeft="25px"
-                           paddingRight="25px"
-                           paddingTop="10px"
-                           paddingBottom="10px"
-                        >
-                            <Box>
-                                <Deposit/>
-                                <PetsAllowed/>
-                            </Box>
-                        </Stack>
-                    </Paper>
+                            <Paper
+                                style={{
+                                    margin: 'auto',
+                                    backgroundColor: theme.palette.form.main,
+                                    width: '85%', 
+                                    [theme.breakpoints.down('sm')]: {
+                                        width: '80%',
+                                    },
+                                    [theme.breakpoints.up('sm')]: {
+                                        width: '50%',
+                                    },
+                                    paddingTop: '10px',
+                                }}
+                            >
+                                <Stack
+                                    direction="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    padding="25px"
+                                >
+                                    <Box
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <UtilityPaymentResponsibility/>
+                                    </Box>
+                                </Stack>
+                            </Paper>
 
-                    <Paper
-                        style={{
-                            margin: '30px',
-                            padding: theme.spacing(2),
-                            backgroundColor: theme.palette.form.main,
-                            width: '85%', // Occupy full width with 25px margins on each side
-                            [theme.breakpoints.down('sm')]: {
-                                width: '80%',
-                            },
-                            [theme.breakpoints.up('sm')]: {
-                                width: '50%',
-                            },
-                            paddingTop: '10px',
-                        }}
-                    >
-                        <Stack
-                            paddingLeft="25px"
-                            paddingRight="25px"
-                            paddingTop="10px"
-                            paddingBottom="10px"
-                        >
-                            <Box>
-                                 <Grid container columnSpacing={12} rowSpacing={6}>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Property Description
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleDescriptionChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            placeholder="Add description"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Owner Notes
-                                        </Typography>
-                                        <TextField
-                                            onClick={handleNotesChange}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            placeholder="Add notes"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                        </Stack>
-                    </Paper>
+                            <Paper
+                                style={{
+                                    margin: 'auto',
+                                    backgroundColor: theme.palette.form.main,
+                                    width: '85%', 
+                                    [theme.breakpoints.down('sm')]: {
+                                        width: '80%',
+                                    },
+                                    [theme.breakpoints.up('sm')]: {
+                                        width: '50%',
+                                    },
+                                    paddingTop: '10px',
+                                }}
+                            >
+                                <Stack
+                                    paddingLeft="25px"
+                                    paddingRight="25px"
+                                    paddingTop="10px"
+                                    paddingBottom="10px"
+                                >
+                                    <Box>
+                                        <Deposit/>
+                                        <PetsAllowed/>
+                                    </Box>
+                                </Stack>
+                            </Paper>
 
-                    {/* Submit Button */}
+                        <Paper
+                                style={{
+                                    margin: 'auto',
+                                    backgroundColor: theme.palette.form.main,
+                                    width: '85%', 
+                                    [theme.breakpoints.down('sm')]: {
+                                        width: '80%',
+                                    },
+                                    [theme.breakpoints.up('sm')]: {
+                                        width: '50%',
+                                    },
+                                    paddingTop: '10px',
+                                }}
+                            >
+                                <Stack
+                                    paddingLeft="25px"
+                                    paddingRight="25px"
+                                    paddingTop="10px"
+                                    paddingBottom="10px"
+                                >
+                                    <Box>
+                                        <Grid container columnSpacing={12} rowSpacing={6}>
+                                            <Grid item xs={12}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Property Description
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleDescriptionChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    placeholder="Add description"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                    Owner Notes
+                                                </Typography>
+                                                <TextField
+                                                    onClick={handleNotesChange}
+                                                    fullWidth
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    placeholder="Add notes"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Box>
+                                </Stack>
+                        </Paper>
+                            {/* Submit Button */}
                     <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="center"
-                        sx={{
-                            display: 'flex',
-                        }}
+                        paddingLeft="25px"
+                        paddingRight="25px"
+                        paddingTop="10px"
+                        paddingBottom="100px"
                     >
                         <Box
-                            sx={{
-                                display: 'flex',
+                            style={{
+                                
                             }}
                             noValidate
                             autoComplete="off"
                         >
-                        <Grid container columnSpacing={12} rowSpacing={6} sx={{display: 'flex'}}>
-                            <Grid item xs={12}>
-                                <Button variant="contained" type="submit" form="addPropertyForm" sx={{backgroundColor: "#9EAED6"}}>
-                                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Save Property
-                                    </Typography>
-                                </Button>
+                            <Grid container columnSpacing={12} rowSpacing={6} sx={{display: 'flex'}}>
+                                <Grid item xs={12}>
+                                    <Button 
+                                        variant="contained"     
+                                        type="submit"
+                                        form="addPropertyForm" 
+                                        sx={{ 
+                                            backgroundColor: "#9EAED6", 
+                                            display: 'flex', 
+                                            width: '100%'  // Set the button's width to 100%
+
+                                        }}
+                                    >
+                                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                Save Property
+                                        </Typography>
+                                    </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Box>
+                        </Box>
+                    </Stack>
                 </Stack>
-            </Stack>
+            </form>
         </ThemeProvider>
     )
 }
