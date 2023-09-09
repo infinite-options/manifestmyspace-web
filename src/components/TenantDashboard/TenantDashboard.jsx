@@ -8,10 +8,48 @@ import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 
+import { useEffect, useState } from "react";
+
 import theme from '../../theme/theme';
 
 function TenantDashboard(props) {
   const navigate = useNavigate();
+
+  const [paymentData, setPaymentData] = useState({
+        currency: "usd",
+        customer_uid: "100-000125",
+        business_code: "IOTEST",
+        item_uid: "320-000054",
+        payment_summary: {
+          total: "0.0"
+        },
+  })
+
+  const [total, setTotal] = useState("1300.00");
+
+  useEffect(() => {
+    console.log("TenantDashboard useEffect")
+
+    let paymentData = createPaymentdata(total)
+    console.log(paymentData)
+    setPaymentData(paymentData)
+
+  }, [total])
+
+  function createPaymentdata(total){
+    return {
+        currency: "usd",
+        customer_uid: "100-000125",
+        business_code: "IOTEST",
+        item_uid: "320-000054",
+        payment_summary: {
+          total: total
+        },
+    }
+  }
+
+
+
   const thStyle = {
     color: "#160449",
     fontWeight: "600",
@@ -23,6 +61,27 @@ function TenantDashboard(props) {
   function handleTenantMaintenanceNavigate(){
     console.log("Tenant Maintenance Navigate")
     navigate("/addTenantMaintenanceItem")
+  }
+
+  const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
+
+  const handleStripePayment = async (e) => {
+    console.log("Stripe Payment")
+    try {
+        //const stripe = await stripePromise;
+        const response = await fetch(API_CALL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentData),
+        });
+        const checkoutURL = await response.text();
+        //console.log(response.text());
+        window.location.href = checkoutURL;
+      } catch (error) {
+        console.log(error);
+      }
   }
 
   return (
@@ -119,7 +178,7 @@ function TenantDashboard(props) {
                 margin: "10px",
               }}
             >
-              $ 1,300
+              ${total}
             </Box>
             <Box
               sx={{
@@ -163,6 +222,7 @@ function TenantDashboard(props) {
                 paddingRight: "20px",
                 paddingLeft: "20px",
               }}
+              onClick={() => handleStripePayment()}
             >
               Make a Payment
             </Box>
