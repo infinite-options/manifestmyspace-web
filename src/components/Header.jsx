@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 
 //update this variable with the actual roles for a user after login
-const userRoles = ['Owner', 'Manager', 'Tenant', 'Maintenance']; //roles from API
+const userRoles = ['Manager', 'Owner', 'Tenant', 'Maintenance']; //roles from API
 
 function Header() {
     const [selectedRole, setSelectedRole] = useState(0);
