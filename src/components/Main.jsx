@@ -175,8 +175,8 @@ function Main () {
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
             </Routes>
+            <Footer></Footer>
           </Router>
-          <Footer></Footer>
         </Box>
       </div>
     </>

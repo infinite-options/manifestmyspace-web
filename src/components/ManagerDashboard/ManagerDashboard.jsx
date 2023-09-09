@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider } from '@mui/material';
+import { Button, Box, ThemeProvider, CircularProgress } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
@@ -15,6 +15,7 @@ function ManagerDashboard() {
 
     const navigate = useNavigate();
     let date = new Date();
+    const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
@@ -58,6 +59,7 @@ function ManagerDashboard() {
             const jsonData = await response.json()
             console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);
+            setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
             unpaidCount = unpaidCount ? unpaidCount.num : 0;
@@ -128,242 +130,248 @@ function ManagerDashboard() {
 
     return (
         <ThemeProvider theme={theme}>
-        <div className="mt-widget-main">
-            {/* <CashflowWidget/> */}
-            <div className="mt-container">
-                <MaintenanceWidget/>
-                <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
-                    <h2 className="mt-prop-widget-title"> Property Rent</h2>
-                    <div className="mt-prop-widget-graph">
-                    <PieChart width={200} height={250} >
-                        <Legend
-                        height={36}
-                        iconType="circle"
-                        layout="vertical"
-                        verticalAlign="bottom"
-                        iconSize={5}
-                        padding={5}
-                        formatter={renderColorfulLegendText}
-                        />
-                        <Pie
-                        data={data}
-                        cx={80}
-                        cy={100}
-                        innerRadius={35}
-                        outerRadius={50}
-                        paddingAngle={0}
-                        dataKey="number"
-                        >
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.fill} />
-                            ))}
+        {loading && 
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            {loading && <CircularProgress color="inherit" />}
+            </div>    
+        }
+            {!loading &&
+                <div className="mt-widget-main">
+                    <div className="mt-container">
+                        <MaintenanceWidget />
+                        <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
+                            <h2 className="mt-prop-widget-title"> Property Rent</h2>
+                            <div className="mt-prop-widget-graph">
+                                <PieChart width={200} height={250} >
+                                    <Legend
+                                        height={36}
+                                        iconType="circle"
+                                        layout="vertical"
+                                        verticalAlign="bottom"
+                                        iconSize={5}
+                                        padding={5}
+                                        formatter={renderColorfulLegendText}
+                                    />
+                                    <Pie
+                                        data={data}
+                                        cx={80}
+                                        cy={100}
+                                        innerRadius={35}
+                                        outerRadius={50}
+                                        paddingAngle={0}
+                                        dataKey="number"
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                        ))}
                         
-                        </Pie>
-                        <text
-                        x={85}
-                        y={100}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        cursor="pointer"
-                        style={{
-                            fontFamily: 'Source Sans Pro',
-                            fontSize: '9px',
-                            fill: '#160449',
-                            fontWeight: '600',
-                        }}
-                        onClick={(e) => { e.stopPropagation(); navigate('/properties')}}
-                    >
-                        View All {totalPropertiesCount}
-                        <tspan x={85} y={110}>properties</tspan>
-                    </text>
-                    </PieChart>
-                    </div>
-                </div>
-            </div>  
-            <div className="mt-widget-expiry" onClick={() => navigate("/pmLeases")}>
-                {/* <div className="mt-expiry-container"> */}
-                    <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>  
-                    <div className="months-and-moveouts">
-                        <div className="months">
-                                <div id="first-row">
-                                <div className="box" style={{backgroundColor: (currentMonth===1 && '#F87C7A') || (currentMonth+1===1 && '#FFC85C') }}>
-                                <div style={{ fontSize: '14px' }}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[1] ? leaseStatus[1] : 0
-                                    }
-                                    </b>
-                                </div>
-                                <div> JAN </div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===2 && '#F87C7A') || (currentMonth+1===2 && '#FFC85C') }}>
-                                <div style={{ fontSize: '14px' }}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[2] ? leaseStatus[2] : 0
-                                    }
-                                    </b></div>
-                                    <div>FEB</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===3 && '#F87C7A') || (currentMonth+1===3 && '#FFC85C') }}>
-                                <div style={{ fontSize: '14px' }}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[3] ? leaseStatus[3] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>MAR</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===4 && '#F87C7A') || (currentMonth+1===4 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[4] ? leaseStatus[4] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>APR</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===5 && '#F87C7A') || (currentMonth+1===5 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[5] ? leaseStatus[5] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>MAY</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===6 && '#F87C7A') || (currentMonth+1===6 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[6] ? leaseStatus[6] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>JUN</div>
-                                </div>
-                            </div>
-                            <br />
-                            <br />
-                            <div id="second-row">
-                                <div className="box" style={{backgroundColor: (currentMonth===7 && '#F87C7A') || (currentMonth+1===7 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[7] ? leaseStatus[7] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>JUL</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: currentMonth===8 && '#F87C7A' || currentMonth+1===8 && '#FFC85C' }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[8] ? leaseStatus[8] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>AUG</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: currentMonth===9 && '#F87C7A' || currentMonth+1===9 && '#FFC85C' }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[9] ? leaseStatus[9] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>SEP</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===10 && '#F87C7A') || (currentMonth+1===10 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[10] ? leaseStatus[10] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>OCT</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===11 && '#F87C7A') || (currentMonth+1===11 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[11] ? leaseStatus[11] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>NOV</div>
-                                </div>
-                                <div className="box" style={{backgroundColor: (currentMonth===12 && '#F87C7A') || (currentMonth+1===12 && '#FFC85C') }}>
-                                    <div style={{fontSize: '14px'}}>
-                                    <b>
-                                    {
-                                        leaseStatus && leaseStatus[12] ? leaseStatus[12] : 0
-                                    }
-                                    </b>
-                                    </div>
-                                    <div>DEC</div>
-                                </div>
+                                    </Pie>
+                                    <text
+                                        x={85}
+                                        y={100}
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                        cursor="pointer"
+                                        style={{
+                                            fontFamily: 'Source Sans Pro',
+                                            fontSize: '9px',
+                                            fill: '#160449',
+                                            fontWeight: '600',
+                                        }}
+                                        onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
+                                    >
+                                        View All {totalPropertiesCount}
+                                        <tspan x={85} y={110}>properties</tspan>
+                                    </text>
+                                </PieChart>
                             </div>
                         </div>
-                        <div className="moveouts">
+                    </div>
+                    <div className="mt-widget-expiry" onClick={() => navigate("/pmLeases")}>
+                        {/* <div className="mt-expiry-container"> */}
+                        <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
+                        <div className="months-and-moveouts">
+                            <div className="months">
+                                <div id="first-row">
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 1 && '#F87C7A') || (currentMonth + 1 === 1 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[1] ? leaseStatus[1] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div> JAN </div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 2 && '#F87C7A') || (currentMonth + 1 === 2 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[2] ? leaseStatus[2] : 0
+                                                }
+                                            </b></div>
+                                        <div>FEB</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 3 && '#F87C7A') || (currentMonth + 1 === 3 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[3] ? leaseStatus[3] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>MAR</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 4 && '#F87C7A') || (currentMonth + 1 === 4 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[4] ? leaseStatus[4] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>APR</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 5 && '#F87C7A') || (currentMonth + 1 === 5 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[5] ? leaseStatus[5] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>MAY</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 6 && '#F87C7A') || (currentMonth + 1 === 6 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[6] ? leaseStatus[6] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>JUN</div>
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                                <div id="second-row">
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 7 && '#F87C7A') || (currentMonth + 1 === 7 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[7] ? leaseStatus[7] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>JUL</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: currentMonth === 8 && '#F87C7A' || currentMonth + 1 === 8 && '#FFC85C' }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[8] ? leaseStatus[8] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>AUG</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: currentMonth === 9 && '#F87C7A' || currentMonth + 1 === 9 && '#FFC85C' }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[9] ? leaseStatus[9] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>SEP</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 10 && '#F87C7A') || (currentMonth + 1 === 10 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[10] ? leaseStatus[10] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>OCT</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 11 && '#F87C7A') || (currentMonth + 1 === 11 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[11] ? leaseStatus[11] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>NOV</div>
+                                    </div>
+                                    <div className="box" style={{ backgroundColor: (currentMonth === 12 && '#F87C7A') || (currentMonth + 1 === 12 && '#FFC85C') }}>
+                                        <div style={{ fontSize: '14px' }}>
+                                            <b>
+                                                {
+                                                    leaseStatus && leaseStatus[12] ? leaseStatus[12] : 0
+                                                }
+                                            </b>
+                                        </div>
+                                        <div>DEC</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="moveouts">
                                 <h2 className="move-out-title"> Move-outs</h2>
-                                <div className="big-box"> 
+                                <div className="big-box">
                                     <div> {moveoutsInSixWeeks} </div>
-                                    <div> IN NEXT </div> 
+                                    <div> IN NEXT </div>
                                     <div> 6 WEEKS </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
-            </div>
-            <br />
+                    <br />
             
-            <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
-                <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
-            </div>
-            <br/>
+                    <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
+                        <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
+                    </div>
+                    <br />
             
-            <div className="bottom-buttons-level1">
-            <Button 
-                variant="outlined"
-                id="revenue"
-                className="bottom-item"
-                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Owner</Button>
-            <Button 
-                variant="outlined"
-                id="expense"
-                className="bottom-item"
-                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Tenant</Button>
-            <Button 
-                variant="outlined"
-                id="maintenance"
-                className="bottom-item"
-                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Maintenance</Button>
-            </div>
-            <div className="bottom-buttons-level2">
-            <Button 
-                variant="outlined"
-                id="revenue"
-                className="bottom-item"
-                onClick={()=>{navigate('/transactionHistory')}}> <img src={Dollar}></img> Transactions</Button>
-            <Button 
-                variant="outlined"
-                id="expense"
-                className="bottom-item"
-                onClick={()=>{navigate('/pmDocuments')}}> <img src={File_dock_fill}></img> Documents</Button>
-            <Button 
-                variant="outlined"
-                id="maintenance"
-                className="bottom-item"
-                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Add Ticket</Button>
-            </div>
-            <br/>
-        </div>
+                    <div className="bottom-buttons-level1">
+                        <Button
+                            variant="outlined"
+                            id="revenue"
+                            className="bottom-item"
+                            onClick={() => { navigate() }}> <img src={User_fill_dark}></img> Owner</Button>
+                        <Button
+                            variant="outlined"
+                            id="expense"
+                            className="bottom-item"
+                            onClick={() => { navigate() }}> <img src={User_fill_dark}></img> Tenant</Button>
+                        <Button
+                            variant="outlined"
+                            id="maintenance"
+                            className="bottom-item"
+                            onClick={() => { navigate() }}> <img src={User_fill_dark}></img> Maintenance</Button>
+                    </div>
+                    <div className="bottom-buttons-level2">
+                        <Button
+                            variant="outlined"
+                            id="revenue"
+                            className="bottom-item"
+                            onClick={() => { navigate('/transactionHistory') }}> <img src={Dollar}></img> Transactions</Button>
+                        <Button
+                            variant="outlined"
+                            id="expense"
+                            className="bottom-item"
+                            onClick={() => { navigate('/pmDocuments') }}> <img src={File_dock_fill}></img> Documents</Button>
+                        <Button
+                            variant="outlined"
+                            id="maintenance"
+                            className="bottom-item"
+                            onClick={() => { navigate() }}> <img src={User_fill_dark}></img> Add Ticket</Button>
+                    </div>
+                    <br />
+                </div>
+            }
         </ThemeProvider>
     )
 }

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-
-//update this variable with the actual roles for a user after login
-const userRoles = ['Manager', 'Owner', 'Tenant', 'Maintenance']; //roles from API
+import { useUser } from '../contexts/UserContext';
 
 function Header() {
+    const { user, setUser } = useUser();
+    const userRoles = user.roles;
     const [selectedRole, setSelectedRole] = useState(0);
     const navigate = useNavigate();
 
@@ -34,6 +34,10 @@ function Header() {
 
     const handleButtonClick = (index) => {
         setSelectedRole(index);
+
+        // Update the user state with the selected role
+        const updatedUser = { ...user, selectedRole: userRoles[index] };
+        setUser(updatedUser);
     };
     return (
         <>

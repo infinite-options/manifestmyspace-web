@@ -5,8 +5,8 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({
-    roles: ['Manager', 'Owner', 'Tenant', 'Maintenance'], // Array of roles
-    selectedRole: roles[0], // Default selected role
+    roles: ['Manager','Owner', 'Tenant', 'Maintenance'], // Array of roles
+    selectedRole: 'Manager', // Default selected role
     userId: '', // User ID
     // Add other user-related information here
   });

@@ -228,8 +228,6 @@ export default function TransactionHistory(props) {
                     direction="row"
                     justifyContent="center"
                     >
-                        {/* <TableContainer> */}
-                        {/* <Table stickyHeader> */}
                         <Table>
                         <EnhancedTableHeadOutgoingPayments
                                 order={order}
@@ -302,7 +300,6 @@ export default function TransactionHistory(props) {
                             </TableBody>
                         )}
                         </Table>
-                        {/* </TableContainer> */}
                     </Stack>}
                     </Paper>
                 </Box>
