@@ -57,15 +57,16 @@ function OwnerProfile() {
                 fontFamily: 'Source Sans Pro',
                 color: 'text.primary',
             }}>
+                <a href='/settingsOwner'>
                     <Box sx={{
                         marginLeft: '3px',
                         marginRight: 'auto',
                         cursor: 'pointer'
                     }}
-                    onClick={() => { console.log("navigate"); navigate('/settingsOwner') }}
+                    onClick={(e) => {navigate('/settingsOwner') }}
                 >
-                        <img src={Setting_fill} alt='Settings icon' />
-                    </Box>
+                    <img src={Setting_fill} alt='Settings icon' />
+                    </Box></a>
 
                     <Box sx={{
                         marginLeft: 'auto',

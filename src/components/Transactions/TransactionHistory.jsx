@@ -14,7 +14,8 @@ import {
     Button,
     Typography,
     Stack,
-    Modal
+    Modal,
+    CircularProgress
   } from "@mui/material";
   import CloseIcon from '@mui/icons-material/Close';
   import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -51,6 +52,7 @@ export default function TransactionHistory(props) {
     const [history, setTransactionList] = useState([]);
     console.log("history ", history);
     // const [transactionList, setTransactionList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [order, setOrder] = useState("asc");
     const [orderBy, setOrderBy] = useState("payment_date");
     const [searchOutgoing, setSearchOutgoing] = useState("");
@@ -148,7 +150,7 @@ export default function TransactionHistory(props) {
     return (
         <>
             <ThemeProvider theme={theme}>
-            <TransactionsOwnerData setTransactionList={setTransactionList} selectedProperty={selectedProperty}></TransactionsOwnerData>
+            <TransactionsOwnerData setTransactionList={setTransactionList} selectedProperty={selectedProperty} setLoading={setLoading}></TransactionsOwnerData>
             <Box
                 style={{
                     display: 'flex',
@@ -216,6 +218,12 @@ export default function TransactionHistory(props) {
                             }}
                         />
                     </Box>
+                    {loading && 
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                            {loading && <CircularProgress color="inherit" />}
+                          </div>    
+                        }
+                    {!loading &&
                     <Stack
                     direction="row"
                     justifyContent="center"
@@ -232,7 +240,7 @@ export default function TransactionHistory(props) {
                         {history.filter((row) => row.purchase_status === "COMPLETED").length ===
                         0 ? (
                             <TableRow>
-                            <div>No Payment History</div>
+                            <div>No Payment History</div> 
                             </TableRow>
                         ) : (
                             <TableBody>
@@ -295,7 +303,7 @@ export default function TransactionHistory(props) {
                         )}
                         </Table>
                         {/* </TableContainer> */}
-                    </Stack>
+                    </Stack>}
                     </Paper>
                 </Box>
                 <Modal sx={{
