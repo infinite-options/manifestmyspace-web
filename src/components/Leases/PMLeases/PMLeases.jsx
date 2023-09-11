@@ -7,6 +7,7 @@ import AllOwnerIcon from './AllOwnerIcon.png';
 function PMLeases(props) {
     // Select Property Tab
     const [open, setOpen] = useState(false);
+    const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     const handleClose = () => {
         setOpen(false);
     };
@@ -30,7 +31,26 @@ function PMLeases(props) {
         axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/600-000003")
             .then((res) => {
                 // console.log(res.data['Lease Details'].result);
-                const fetchData = res.data['Lease Details'].result;
+                const fetchData = res.data['Lease_Details'].result;
+                console.log("leases fetchData", fetchData)
+
+                // Parse lease_end strings to Date objects
+                fetchData.forEach((obj) => {
+                    obj.lease_end = new Date(obj.lease_end);
+                });
+                
+                // Sort the array by lease_end Date objects
+                fetchData.sort((a, b) => a.lease_end - b.lease_end);
+                
+                // Convert the Date objects back to the original string format
+                fetchData.forEach((obj) => {
+                    const year = obj.lease_end.getFullYear();
+                    const month = String(obj.lease_end.getMonth() + 1).padStart(2, "0");
+                    const day = String(obj.lease_end.getDate()).padStart(2, "0");
+                    obj.lease_end = `${year}-${month}-${day}`;
+                });
+                console.log("leases sorted FetchData", fetchData)
+
                 const leases = new Map([]);
                 let moveoutNum = 0;
                 fetchData.forEach((lease) => {
@@ -198,9 +218,11 @@ function PMLeases(props) {
                 {[...leaseDate.keys()].map((date, i) => {
                     const leases = leaseDate.get(date);
                     let tabColor = '#FFFFFF';
-                    if(i === 0) {
+                    const endMonth = date.split('-')[1];
+                    // console.log("lease endDate ", date, Number(endMonth), Number(currentMonth))
+                    if(Number(currentMonth) === Number(endMonth)){
                         tabColor = '#F87C7A'
-                    } else if(i === 1) {
+                    } else if(Number(currentMonth+1) === Number(endMonth+1)){
                         tabColor = '#FFC614'
                     }
                     return (
@@ -360,7 +382,7 @@ function LeaseComponent(props) {
                     borderWidth: '1px',
                     width: 'fit-content',
                 }}>
-                    {`${leaseData.property_address}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
+                    {`${leaseData.property_address} ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
                 </Box>
                 <Box>
                     {leaseData.lease_end}: {getLeaseStatusText(leaseData.lease_renew_status)}

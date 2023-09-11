@@ -22,6 +22,8 @@ const data1 = [
 
 const MixedChart = (props) => {
   const data = props.revenueCashflowByMonth;
+  const activeButton = props.activeButton;
+  const selectedProperty = props.selectedProperty;
   return (
     <ThemeProvider theme={theme}>
     <ResponsiveContainer>
@@ -38,6 +40,7 @@ const MixedChart = (props) => {
             yAxisId="left"
             axisLine={false}
             tickCount={8}
+            // domain={selectedProperty!=={} ? [-2000,7000] : [-5000, 30000]}
             domain={[-5000, 30000]}
             tickFormatter={(value) => `$${value}`}
             style={{
@@ -48,19 +51,19 @@ const MixedChart = (props) => {
         <Legend />
         <Bar 
             yAxisId="left"
-            dataKey="cashflow"
+            dataKey= {activeButton === "ExpectedCashflow" ? "expectedCashflow" : "cashflow"}
             fill={theme.typography.common.blue}
             barCategoryGap={10}
             barSize={15}
             name="Cashflow">
             {data.map((entry, index) => (
-            <Cell fill={entry.cashflow < 0 ? theme.palette.custom.red : theme.typography.common.blue }/>
+            <Cell fill={(activeButton === "ExpectedCashflow" && entry.expectedCashflow<0) || (activeButton === "Cashflow" && entry.cashflow < 0) ? theme.palette.custom.red : theme.typography.common.blue }/>
             ))}
           </Bar>
         <Line 
             yAxisId="left"
             type="monotone"
-            dataKey="revenue"
+            dataKey= {activeButton === "ExpectedCashflow" ? "expectedRevenue" : "revenue"}
             stroke={theme.palette.primary.mustardYellow}
             strokeWidth={5}
             name="Revenue"

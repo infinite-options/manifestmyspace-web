@@ -6,12 +6,50 @@ import {
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
-
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
+
+import { useEffect, useState } from "react";
 
 import theme from '../../theme/theme';
 
 function TenantDashboard(props) {
+  const navigate = useNavigate();
+
+  const [paymentData, setPaymentData] = useState({
+        currency: "usd",
+        customer_uid: "100-000125",
+        business_code: "IOTEST",
+        item_uid: "320-000054",
+        payment_summary: {
+          total: "0.0"
+        },
+  })
+
+  const [total, setTotal] = useState("1300.00");
+
+  useEffect(() => {
+    console.log("TenantDashboard useEffect")
+
+    let paymentData = createPaymentdata(total)
+    console.log(paymentData)
+    setPaymentData(paymentData)
+
+  }, [total])
+
+  function createPaymentdata(total){
+    return {
+        currency: "usd",
+        customer_uid: "100-000125",
+        business_code: "IOTEST",
+        item_uid: "320-000054",
+        payment_summary: {
+          total: total
+        },
+    }
+  }
+
+
+
   const thStyle = {
     color: "#160449",
     fontWeight: "600",
@@ -19,12 +57,31 @@ function TenantDashboard(props) {
   };
 
   const location = useLocation();
-  let navigate = useNavigate();
-
 
   function handleTenantMaintenanceNavigate(){
     console.log("Tenant Maintenance Navigate")
     navigate("/addTenantMaintenanceItem")
+  }
+
+  const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
+
+  const handleStripePayment = async (e) => {
+    console.log("Stripe Payment")
+    try {
+        //const stripe = await stripePromise;
+        const response = await fetch(API_CALL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentData),
+        });
+        const checkoutURL = await response.text();
+        //console.log(response.text());
+        window.location.href = checkoutURL;
+      } catch (error) {
+        console.log(error);
+      }
   }
 
   return (
@@ -38,12 +95,12 @@ function TenantDashboard(props) {
         sx={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "center",
           paddingLeft: "10px",
           paddingRight: "10px",
         }}
       >
-        <Box>
+        {/* <Box>
           <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               fill-rule="evenodd"
@@ -52,7 +109,7 @@ function TenantDashboard(props) {
               fill="#160449"
             />
           </svg>
-        </Box>
+        </Box> */}
         <Box
           sx={{
             fontSize: "22px",
@@ -121,7 +178,7 @@ function TenantDashboard(props) {
                 margin: "10px",
               }}
             >
-              $ 1,300
+              ${total}
             </Box>
             <Box
               sx={{
@@ -165,6 +222,7 @@ function TenantDashboard(props) {
                 paddingRight: "20px",
                 paddingLeft: "20px",
               }}
+              onClick={() => handleStripePayment()}
             >
               Make a Payment
             </Box>
@@ -402,6 +460,49 @@ function TenantDashboard(props) {
             }}
           >
             View Lease
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100px",
+            height: "35px",
+            backgroundColor: "#DEDFE3",
+            color: "#160449",
+            fontWeight: "bold",
+            fontSize: "12px",
+            boxShadow: "3px 2px 4px #00000019",
+            borderRadius: "10px",
+          }}
+          onClick={()=>navigate('/tenantDocuments')}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingLeft: "10px",
+            }}
+          >
+            <svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M9.20833 1.08333C9.20833 1.02808 9.18638 0.97509 9.14731 0.936019C9.10824 0.896949 9.05525 0.875 9 0.875H3.16667C2.55888 0.875 1.97598 1.11644 1.54621 1.54621C1.11644 1.97598 0.875 2.55888 0.875 3.16667V14.8333C0.875 15.4411 1.11644 16.024 1.54621 16.4538C1.97598 16.8836 2.55888 17.125 3.16667 17.125H11.5C12.1078 17.125 12.6907 16.8836 13.1205 16.4538C13.5502 16.024 13.7917 15.4411 13.7917 14.8333V6.6225C13.7917 6.56725 13.7697 6.51426 13.7306 6.47519C13.6916 6.43612 13.6386 6.41417 13.5833 6.41417H9.83333C9.66757 6.41417 9.5086 6.34832 9.39139 6.23111C9.27418 6.1139 9.20833 5.95493 9.20833 5.78917V1.08333ZM9.83333 9.20833C9.99909 9.20833 10.1581 9.27418 10.2753 9.39139C10.3925 9.5086 10.4583 9.66757 10.4583 9.83333C10.4583 9.99909 10.3925 10.1581 10.2753 10.2753C10.1581 10.3925 9.99909 10.4583 9.83333 10.4583H4.83333C4.66757 10.4583 4.5086 10.3925 4.39139 10.2753C4.27418 10.1581 4.20833 9.99909 4.20833 9.83333C4.20833 9.66757 4.27418 9.5086 4.39139 9.39139C4.5086 9.27418 4.66757 9.20833 4.83333 9.20833H9.83333ZM9.83333 12.5417C9.99909 12.5417 10.1581 12.6075 10.2753 12.7247C10.3925 12.8419 10.4583 13.0009 10.4583 13.1667C10.4583 13.3324 10.3925 13.4914 10.2753 13.6086C10.1581 13.7258 9.99909 13.7917 9.83333 13.7917H4.83333C4.66757 13.7917 4.5086 13.7258 4.39139 13.6086C4.27418 13.4914 4.20833 13.3324 4.20833 13.1667C4.20833 13.0009 4.27418 12.8419 4.39139 12.7247C4.5086 12.6075 4.66757 12.5417 4.83333 12.5417H9.83333Z"
+                fill="#160449"
+              />
+            </svg>
+          </Box>
+          <Box
+            sx={{
+              paddingRight: "10px",
+            }}
+          >
+            Documents
           </Box>
         </Box>
       </Box>

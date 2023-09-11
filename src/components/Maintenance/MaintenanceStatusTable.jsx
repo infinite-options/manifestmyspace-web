@@ -22,7 +22,7 @@ import theme from '../../theme/theme';
 
 
 
-export default function MaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData}){
+export default function MaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
     const location = useLocation();
     let navigate = useNavigate();
 
@@ -92,7 +92,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     paddingLeft: "15px",
                 }}>
                     <p>{status}</p>
-                    <span style={{float: "right", alignContent: "center", alignItems: "center"}}>{maintenanceItemsForStatus.length}</span>
+                        <span style={{ float: "right", alignContent: "center", alignItems: "center" }}>{maintenanceItemsForStatus ? maintenanceItemsForStatus.length : ( maintenanceRequestsCount ? maintenanceRequestsCount : 0 )}</span>
                 </div>
             </AccordionSummary>
             {maintenanceItemsForStatus.map((item, index) => 

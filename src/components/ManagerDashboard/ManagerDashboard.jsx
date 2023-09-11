@@ -1,18 +1,17 @@
 import { Chart } from "react-google-charts";
 import { Button, Box, ThemeProvider } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
-import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
-import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
-import "../css/maintenance.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
+import "../../css/maintenance.css";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import theme from "../theme/theme";
-import Dollar from '../images/Dollar.png'
-import File_dock_fill from '../images/File_dock_fill.png'
-import User_fill_dark from '../images/User_fill_dark.png'
+import theme from "../../theme/theme";
+import Dollar from '../../images/Dollar.png'
+import File_dock_fill from '../../images/File_dock_fill.png'
+import User_fill_dark from '../../images/User_fill_dark.png'
 
 
-function Dashboard() {
+function ManagerDashboard() {
 
     const navigate = useNavigate();
     let date = new Date();
@@ -57,7 +56,6 @@ function Dashboard() {
             console.log("in useEffect")
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
             const jsonData = await response.json()
-            console.log(jsonData)
             console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);
             let rentStatus = jsonData.RentStatus.result;
@@ -124,11 +122,6 @@ function Dashboard() {
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
             console.log("leaseStatusDictionary ", leaseStatusDictionary)
-
-            // let date = new Date();
-            // setCurrentMonth(date.getMonth()+1);
-            // let currentYear = date.getFullYear().toString();
-            // console.log("month, year", currentMonth)
         }
         fetchData();
     }, []);
@@ -136,54 +129,36 @@ function Dashboard() {
     return (
         <ThemeProvider theme={theme}>
         <div className="mt-widget-main">
-            <CashflowWidget/>
+            {/* <CashflowWidget/> */}
             <div className="mt-container">
                 <MaintenanceWidget/>
-                <div className="mt-prop-widget-container">
-                    <h2 className="mt-prop-widget-title" onClick={() => navigate("/ownerRent")}> Property Rent</h2>
+                <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
+                    <h2 className="mt-prop-widget-title"> Property Rent</h2>
                     <div className="mt-prop-widget-graph">
-                        <PieChart width={200} height={250} >
-                            <Legend
-                            height={36}
-                            iconType="circle"
-                            layout="vertical"
-                            verticalAlign="bottom"
-                            iconSize={5}
-                            padding={5}
-                            formatter={renderColorfulLegendText}
-                            />
-                            <Pie
-                            data={data}
-                            cx={80}
-                            cy={100}
-                            innerRadius={35}
-                            outerRadius={50}
-                            paddingAngle={0}
-                            dataKey="number"
-                            >
-                                {data.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                                ))}
-                            
-                            </Pie>
-                        </PieChart>
-                        <Button
-                            color="primary"
-                            style={{    position: 'absolute', 
-                                        top: '32%', left: '50%', 
-                                        transform: 'translate(-50%, -50%)', 
-                                        textTransform: 'inherit', 
-                                        fontFamily: 'Source Sans Pro',
-                                        fontSize: '9px',
-                                        color: '#160449',
-                                        fontWeight: 600,}}
-                            onClick={() => navigate("/properties")}
+                    <PieChart width={200} height={250} >
+                        <Legend
+                        height={36}
+                        iconType="circle"
+                        layout="vertical"
+                        verticalAlign="bottom"
+                        iconSize={5}
+                        padding={5}
+                        formatter={renderColorfulLegendText}
+                        />
+                        <Pie
+                        data={data}
+                        cx={80}
+                        cy={100}
+                        innerRadius={35}
+                        outerRadius={50}
+                        paddingAngle={0}
+                        dataKey="number"
                         >
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                             ))}
                         
-                        {/* </Pie> */}
+                        </Pie>
                         <text
                         x={85}
                         y={100}
@@ -201,11 +176,11 @@ function Dashboard() {
                         View All {totalPropertiesCount}
                         <tspan x={85} y={110}>properties</tspan>
                     </text>
-                    {/* </PieChart> */}
+                    </PieChart>
                     </div>
                 </div>
             </div>  
-            <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
+            <div className="mt-widget-expiry" onClick={() => navigate("/pmLeases")}>
                 {/* <div className="mt-expiry-container"> */}
                     <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>  
                     <div className="months-and-moveouts">
@@ -347,7 +322,30 @@ function Dashboard() {
                     </div>
             </div>
             <br />
-            <div className="bottom-buttons">
+            
+            <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
+                <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
+            </div>
+            <br/>
+            
+            <div className="bottom-buttons-level1">
+            <Button 
+                variant="outlined"
+                id="revenue"
+                className="bottom-item"
+                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Owner</Button>
+            <Button 
+                variant="outlined"
+                id="expense"
+                className="bottom-item"
+                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Tenant</Button>
+            <Button 
+                variant="outlined"
+                id="maintenance"
+                className="bottom-item"
+                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Maintenance</Button>
+            </div>
+            <div className="bottom-buttons-level2">
             <Button 
                 variant="outlined"
                 id="revenue"
@@ -357,12 +355,12 @@ function Dashboard() {
                 variant="outlined"
                 id="expense"
                 className="bottom-item"
-                onClick={()=>{navigate('/ownerDocuments')}}> <img src={File_dock_fill}></img> Documents</Button>
+                onClick={()=>{navigate('/pmDocuments')}}> <img src={File_dock_fill}></img> Documents</Button>
             <Button 
                 variant="outlined"
                 id="maintenance"
                 className="bottom-item"
-                onClick={()=>{navigate('/contacts')}}> <img src={User_fill_dark}></img> Contacts</Button>
+                onClick={()=>{navigate()}}> <img src={User_fill_dark}></img> Add Ticket</Button>
             </div>
             <br/>
         </div>
@@ -370,4 +368,4 @@ function Dashboard() {
     )
 }
 
-export default Dashboard;
+export default ManagerDashboard;

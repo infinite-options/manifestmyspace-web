@@ -347,6 +347,7 @@ export default function Maintenance(){
                                     color={item.color}
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={maintenanceData}
+                                    maintenanceRequestsCount={maintenanceRequests[item.mapping]}
                                 />
                             );
                         })}

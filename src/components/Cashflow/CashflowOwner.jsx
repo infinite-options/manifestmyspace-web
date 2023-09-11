@@ -73,12 +73,12 @@ const CashflowOwner = () => {
         setExpenseDropdown(!expenseDropdown);
     }
     
-    useEffect(() => {
-     console.log("selectedProperty selectedProperty", selectedProperty)   
-    },[selectedProperty])
+    // useEffect(() => {
+    //  console.log("selectedProperty selectedProperty", selectedProperty)   
+    // },[selectedProperty])
     return (
         <ThemeProvider theme={theme}>
-            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={'100-000003'} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty || null}></CashflowData>
+            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={'100-000003'} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty}></CashflowData>
           <Box
             style={{
                 display: 'flex',
@@ -153,7 +153,7 @@ const CashflowOwner = () => {
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                         ${
-                        totalRevenueByMonth ?
+                        (totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined) ?
                             (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : '0.00'
                         }
                     </Typography>
@@ -178,7 +178,7 @@ const CashflowOwner = () => {
                     </Typography>
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                         ${
-                        expectedRevenueByMonth && expectedExpenseByMonth ?
+                        (expectedRevenueByMonth !== null && expectedRevenueByMonth !== undefined && expectedExpenseByMonth !== null && expectedExpenseByMonth !== undefined) ?
                         (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2) : '0.00'
                         }
                     </Typography>
@@ -262,7 +262,7 @@ const CashflowOwner = () => {
                 justifyContent="center"
                 >
                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                    Cashflow and Revenue by Month
+                    {activeButton==='ExpectedCashflow' && 'Expected'} Cashflow and Revenue
                     </Typography>
                 </Stack>
                 <Stack
@@ -270,7 +270,7 @@ const CashflowOwner = () => {
                 justifyContent="center"
                 height={300}
                 >
-               <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary} revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
+               <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary} revenueCashflowByMonth={revenueCashflowByMonth} activeButton={activeButton} selectedProperty={selectedProperty}></MixedChart>
                 </Stack>
                 </Paper>
                 <Paper

@@ -57,13 +57,18 @@
 
 .main-header-redirect-owner {
     float: left;
-    width: 50%;
+    width: 25%;
     text-align: center;
 }
+.main-header-redirect-owner.selected {
+    font-weight: 400; /* Increase font-weight for the selected element */
+    /* other styles for the selected state */
+    text-align: left;
+  }
 
 .main-header-redirect-tenant {
-    float: right;
-    width: 50%;
+    float: left;
+    width: 25%;
     text-align: center;
 }
 
