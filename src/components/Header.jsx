@@ -8,55 +8,9 @@ import { useUser } from '../contexts/UserContext';
 function Header() {
     const { user, setUser } = useUser();
     const userRoles = user.roles;
-    // const [selectedRole, setSelectedRole] = useState(0);
-    // console.log("storedSelectedRole selectedRole",selectedRole)
+    
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     // Perform the initial navigation when the component mounts
-    //     const initialRole = userRoles[selectedRole];
-    //     switch (initialRole) {
-    //       case 'Owner':
-    //         navigate('/ownerDashboard');
-    //         break;
-    //       case 'Manager':
-    //         navigate('/managerDashboard');
-    //         break;
-    //       case 'Tenant':
-    //         navigate('/tenantDashboard');
-    //         break;
-    //       case 'Maintenance':
-    //         navigate('/ownerDashboard');
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }, [selectedRole]);
-    
-
-    // const handleButtonClick = (index) => {
-    //     setSelectedRole(index);
-
-    //     // Update the user state with the selected role
-    //     const updatedUser = { ...user, selectedRole: userRoles[index] };
-    //     setUser(updatedUser);
-    // };
-  
-    // const handleButtonClick = (event) => {
-    //   const newRole = event.target.value;
-    //   // Update the selectedRole in the UserContext
-    //   setUser((prevUser) => ({
-    //     ...prevUser,
-    //     selectedRole: newRole,
-    //   }));
-      
-    //   // You can also update the selectedRole in localStorage here if needed
-    //   localStorage.setItem('selectedRole', newRole);
-      
-    //   // Redirect to the home route for the new role
-    //   navigate(`/${newRole.toLowerCase()}Dashboard`);
-    // };
-    
     useEffect(() => {
       // Perform the initial navigation when the component mounts
       switch (user.selectedRole) {
@@ -107,20 +61,6 @@ function Header() {
                 <AppBar position="static" style={{ backgroundColor: '#3D5CAC' }}>
                 <Toolbar style={{ display: 'flex', justifyContent: 'center' }}>
                     {userRoles.map((role, index) => (
-                    // <Button 
-                    // key={index}
-                    // color="inherit"
-                    // style={{
-                    // fontWeight: selectedRole === index ? 800 : 300,
-                    // fontSize: '16px',
-                    // fontFamily: 'Source Sans 3, sans-serif',
-                    // margin: '0 10px',
-                    // textTransform: 'none'
-                    // }}
-                    // onClick={() => handleButtonClick(index)}>
-                    //     {role}
-                    // </Button>
-                    
                     <Button
                     key={role}
                     color="inherit"
