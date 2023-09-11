@@ -17,20 +17,21 @@ import { useLocation, useNavigate } from "react-router-dom";
 // import theme from '../../theme/theme';
 import theme from '../../theme/theme';
 // import ImageUploader from '../../ImageUploader';
-import ImageUploader from "../ImageUploader";
-import { styled } from '@mui/material/styles';
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import CloseIcon from '@mui/icons-material/Close';
+// import ImageUploader from "../ImageUploader";
+// import { styled } from '@mui/material/styles';
+// import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+// import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+// import CloseIcon from '@mui/icons-material/Close';
 
 
-export default function PMAddProperty(){ 
+export default function PMEditProperty(){ 
+    // const navigate = useNavigate();
 
-    const handleBackButton = () => {
-        navigate("/dashboard");
-    }
+    // const handleBackButton = () => {
+    //     navigate("/managerDashboard");
+    // }
 
-    const navigate = useNavigate();
+    console.log("PMEDITPROPERTY")
 
     return (
         <ThemeProvider theme={theme}>
@@ -76,11 +77,11 @@ export default function PMAddProperty(){
                                 Edit Property
                             </Typography>
                         </Box>
-                        <Box position="absolute" right={0}>
+                        {/* <Box position="absolute" right={0}>
                             <Button onClick={() => handleBackButton()}>
                                 <CloseIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/>
                             </Button>
-                        </Box>
+                        </Box> */}
                     </Stack>
                 </Paper>
             </Stack>

@@ -251,7 +251,7 @@ function UtilityPaymentResponsibility() {
   }  
 
 
-export default function PMAddProperty(){ 
+export default function AddPropertyForManager(){ 
 
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [coverImage, setCoverImage] = useState("");
@@ -550,6 +550,7 @@ export default function PMAddProperty(){
                                                         <MenuItem value={"FL"}>FL</MenuItem>
                                                         <MenuItem value={"NY"}>NY</MenuItem>
                                                         <MenuItem value={"IL"}>IL</MenuItem>
+                                                        <MenuItem value={"AZ"}>AZ</MenuItem>
                                                     </Select>
                                             </Grid>
 
@@ -590,6 +591,9 @@ export default function PMAddProperty(){
                                                     <MenuItem value={"Condo"}>Condo</MenuItem>
                                                     <MenuItem value={"Apartment"}>Apartment</MenuItem>
                                                     <MenuItem value={"Tiny Home"}>Tiny Home</MenuItem>
+                                                    <MenuItem value={"Townhome"}>Townhome</MenuItem>
+                                                    <MenuItem value={"Mobile Home"}>Mobile Home</MenuItem>
+                                                    <MenuItem value={""}>""</MenuItem>
                                                 </Select>
                                             </Grid>
 

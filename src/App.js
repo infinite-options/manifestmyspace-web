@@ -5,7 +5,7 @@ import {SettingsACHContextProvider} from '../src/contexts/SettingsACHContext';
 function App() {
   return (
     <SettingsACHContextProvider>
-    <Main></Main>
+      <Main/>
     </SettingsACHContextProvider>
   )
 }

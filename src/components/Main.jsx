@@ -74,10 +74,10 @@ import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import { Footer } from "./Footer";
-<<<<<<< HEAD
-import PMAddProperty from "./Property/PMAddProperty";
-import PMEditProperty from "./Property/PMEditProperty";
-=======
+// import PMAddProperty from "./Property/PMAddProperty";
+// import PMEditProperty from "./Property/PMEditProperty";
+import AddPropertyForManager from "./Property/AddPropertyForManager";
+
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
 
 import SettingsACH1 from "./SettingsACH/SettingsACH1";
@@ -86,11 +86,10 @@ import SettingsACH3 from "./SettingsACH/SettingsACH3";
 import SettingsACH4 from "./SettingsACH/SettingsACH4";
 import SettingsACH5 from "./SettingsACH/SettingsACH5";
 import POContracts from "./Contracts/POContracts/POContracts";
->>>>>>> 0112135bd12d58674be77ce1686e3890590a8112
 
 function Main () {
   return (
-    <>
+    <Router>
       <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <Box
           sx={{
@@ -98,7 +97,6 @@ function Main () {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          <Router>
           <Header></Header>
             <Routes>
               <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
@@ -135,8 +133,7 @@ function Main () {
               <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
               <Route exact path="/pmRent" element={<PMRent />} />
               <Route exact path="/pmRentDetail" element={<PMRentDetail />} />
-              <Route exact path="/pm/property/add" element={<PMAddProperty/>} />
-              <Route exact path="/pm/property/edit" element={<PMEditProperty/>} />
+              <Route exact path="/pmAddProperty" element={<AddPropertyForManager/>} />
 
               <Route exact path="/transactionHistory" element={<TransactionHistory />} />
               <Route exact path="/viewTransactionOwner" element={<ViewTransactionOwner />} />
@@ -169,7 +166,6 @@ function Main () {
               <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
               <Route exact path="/myProperty" element={<TenantProperty />} />
               <Route exact path="/properties" element={<PropertyList />} />
-              {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
               <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
 
               <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
@@ -181,11 +177,10 @@ function Main () {
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
             </Routes>
-          </Router>
-          <Footer></Footer>
+          <Footer/>
         </Box>
       </div>
-    </>
+    </Router>
   );
 }
 export default Main;
