@@ -146,7 +146,6 @@ export default function EditProfileSettings() {
                     <PhotoIcon sx={{ fontSize: theme.typography.largeFont, color: theme.typography.common.blue }} />
                 </Box>
                 <Typography
-                    variant="body1"
                     component="div"
                     style={{
                     textAlign: 'center',

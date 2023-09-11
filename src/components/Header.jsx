@@ -3,38 +3,89 @@ import { useNavigate } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-
-//update this variable with the actual roles for a user after login
-const userRoles = ['Owner', 'Manager', 'Tenant', 'Maintenance']; //roles from API
+import { useUser } from '../contexts/UserContext';
 
 function Header() {
-    const [selectedRole, setSelectedRole] = useState(0);
+    const { user, setUser } = useUser();
+    const userRoles = user.roles;
+    // const [selectedRole, setSelectedRole] = useState(0);
+    // console.log("storedSelectedRole selectedRole",selectedRole)
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // Perform the initial navigation when the component mounts
-        const initialRole = userRoles[selectedRole];
-        switch (initialRole) {
-          case 'Owner':
-            navigate('/');
-            break;
-          case 'Manager':
-            navigate('/managerDashboard');
-            break;
-          case 'Tenant':
-            navigate('/tenantDashboard');
-            break;
-          case 'Maintenance':
-            navigate('/');
-            break;
-          default:
-            break;
-        }
-      }, [selectedRole]);
+    // useEffect(() => {
+    //     // Perform the initial navigation when the component mounts
+    //     const initialRole = userRoles[selectedRole];
+    //     switch (initialRole) {
+    //       case 'Owner':
+    //         navigate('/ownerDashboard');
+    //         break;
+    //       case 'Manager':
+    //         navigate('/managerDashboard');
+    //         break;
+    //       case 'Tenant':
+    //         navigate('/tenantDashboard');
+    //         break;
+    //       case 'Maintenance':
+    //         navigate('/ownerDashboard');
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //   }, [selectedRole]);
+    
 
-    const handleButtonClick = (index) => {
-        setSelectedRole(index);
+    // const handleButtonClick = (index) => {
+    //     setSelectedRole(index);
+
+    //     // Update the user state with the selected role
+    //     const updatedUser = { ...user, selectedRole: userRoles[index] };
+    //     setUser(updatedUser);
+    // };
+  
+    // const handleButtonClick = (event) => {
+    //   const newRole = event.target.value;
+    //   // Update the selectedRole in the UserContext
+    //   setUser((prevUser) => ({
+    //     ...prevUser,
+    //     selectedRole: newRole,
+    //   }));
+      
+    //   // You can also update the selectedRole in localStorage here if needed
+    //   localStorage.setItem('selectedRole', newRole);
+      
+    //   // Redirect to the home route for the new role
+    //   navigate(`/${newRole.toLowerCase()}Dashboard`);
+    // };
+    
+    useEffect(() => {
+      // Perform the initial navigation when the component mounts
+      switch (user.selectedRole) {
+        case 'Owner':
+          navigate('/ownerDashboard');
+          break;
+        case 'Manager':
+          navigate('/managerDashboard');
+          break;
+        case 'Tenant':
+          navigate('/tenantDashboard');
+          break;
+        case 'Maintenance':
+          navigate('/ownerDashboard');
+          break;
+        default:
+          break;
+      }
+    }, [user.selectedRole]);
+  
+    const handleButtonClick = (role) => {
+      // Update the user state with the selected role
+      setUser((prevUser) => ({
+        ...prevUser,
+        selectedRole: role,
+      }));
     };
+  
+  
     return (
         <>
             <div className="main-header">
@@ -52,28 +103,38 @@ function Header() {
 
                     </div>
                 </div>
-                {/* <div className="main-header-redirect-btns">
-                    <a href="/" className="main-header-redirect-owner">Owner</a>
-                    <a href="/managerDashboard" className="main-header-redirect-owner">Manager</a>
-                    <a href="/tenantDashboard" className="main-header-redirect-owner">Tenant</a>
-                    <a href="/" className="main-header-redirect-owner selected">Maintenance</a>
-                </div> */}
+                
                 <AppBar position="static" style={{ backgroundColor: '#3D5CAC' }}>
                 <Toolbar style={{ display: 'flex', justifyContent: 'center' }}>
                     {userRoles.map((role, index) => (
-                    <Button 
-                    key={index}
+                    // <Button 
+                    // key={index}
+                    // color="inherit"
+                    // style={{
+                    // fontWeight: selectedRole === index ? 800 : 300,
+                    // fontSize: '16px',
+                    // fontFamily: 'Source Sans 3, sans-serif',
+                    // margin: '0 10px',
+                    // textTransform: 'none'
+                    // }}
+                    // onClick={() => handleButtonClick(index)}>
+                    //     {role}
+                    // </Button>
+                    
+                    <Button
+                    key={role}
                     color="inherit"
                     style={{
-                    fontWeight: selectedRole === index ? 800 : 300,
-                    fontSize: '16px',
-                    fontFamily: 'Source Sans 3, sans-serif',
-                    margin: '0 10px',
-                    textTransform: 'none'
+                      fontWeight: user.selectedRole === role ? 800 : 300,
+                      fontSize: '16px',
+                      fontFamily: 'Source Sans 3, sans-serif',
+                      margin: '0 10px',
+                      textTransform: 'none',
                     }}
-                    onClick={() => handleButtonClick(index)}>
-                        {role}
-                    </Button>
+                    onClick={() => handleButtonClick(role)}
+                  >
+                    {role}
+                  </Button>
                     ))}
                 </Toolbar>
                 </AppBar>

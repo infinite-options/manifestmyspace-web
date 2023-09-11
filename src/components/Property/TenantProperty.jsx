@@ -40,7 +40,8 @@ import PhoneIcon from './phoneIcon.png';
 
 
 
-export default function TenantProperty({}){
+export default function TenantProperty({ }) {
+    const navigate = useNavigate()
     const [activeStep, setActiveStep] = useState(0);
 
     const paymentStatusMap = {
@@ -361,7 +362,7 @@ export default function TenantProperty({}){
                                                                 sx={{
                                                                     padding: "0px"
                                                                 }}
-                                                                onClick={() => {console.log("View Lease")}}
+                                                                onClick={() => { console.log("View Lease"); navigate('/tenantLeases')}}
                                                             >
                                                                 <Typography
                                                                     sx={{

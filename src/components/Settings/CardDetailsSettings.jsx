@@ -264,11 +264,12 @@ export default function CardDetailsSettings() {
                 <Box
                     component="span"
                     m={2}
+                    p={2}
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     className={classes.typography}>
-                        <Typography>Connect credit card</Typography>
+                        <Typography sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}>Connect credit card</Typography>
                         <ArrowForwardIosIcon 
                         sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                         onClick={()=>{navigate('/addCardSettings')}}/>
@@ -276,14 +277,15 @@ export default function CardDetailsSettings() {
                 <Box
                     component="span"
                     m={2}
+                    p={2}
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     className={classes.typography}>
-                        <Typography>Connect bank account</Typography>
+                        <Typography sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}>Setup ACH Transfer</Typography>
                         <ArrowForwardIosIcon 
                         sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                        onClick={()=>{navigate('/addCardSettings')}}/>
+                        onClick={()=>{navigate('/settingsManagerACH1')}}/>
                 </Box>
             </Paper>
             </Box>
