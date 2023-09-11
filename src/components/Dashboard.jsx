@@ -178,7 +178,7 @@ function Dashboard() {
                                         color: '#160449',
                                         fontWeight: 600,}}
                             onClick={() => navigate("/properties")}
-                        >
+                        />
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                             ))}
