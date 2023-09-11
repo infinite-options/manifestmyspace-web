@@ -340,7 +340,7 @@ function ManagerDashboard() {
                             variant="outlined"
                             id="revenue"
                             className="bottom-item"
-                            onClick={() => { navigate() }}> <img src={User_fill_dark}></img> Owner</Button>
+                            onClick={() => { navigate('/contacts') }}> <img src={User_fill_dark}></img> Owner</Button>
                         <Button
                             variant="outlined"
                             id="expense"
@@ -367,7 +367,7 @@ function ManagerDashboard() {
                             variant="outlined"
                             id="maintenance"
                             className="bottom-item"
-                            onClick={() => { navigate() }}> <img src={User_fill_dark}></img> Add Ticket</Button>
+                            onClick={() => { navigate('/addMaintenanceItem') }}> <img src={User_fill_dark}></img> Add Ticket</Button>
                     </div>
                     <br />
                 </div>

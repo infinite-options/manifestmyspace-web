@@ -1,15 +1,25 @@
 // UserContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    roles: ['Manager','Owner', 'Tenant', 'Maintenance'], // Array of roles
-    selectedRole: 'Manager', // Default selected role
-    userId: '', // User ID
-    // Add other user-related information here
+  const [user, setUser] = useState(()=>{
+    const storedSelectedRole = localStorage.getItem('selectedRole');
+    console.log("storedSelectedRole ",storedSelectedRole)
+
+    return {
+      roles: ['Manager', 'Owner', 'Tenant', 'Maintenance'], // Array of roles
+      selectedRole: storedSelectedRole || 'Manager', // Default selected role
+      userId: '', // User ID
+      // Add other user-related information here
+    }
   });
+
+  // Update localStorage when the selected role changes
+  useEffect(() => {
+    localStorage.setItem('selectedRole', user.selectedRole);
+  }, [user.selectedRole]);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

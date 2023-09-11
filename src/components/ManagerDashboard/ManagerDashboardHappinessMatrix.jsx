@@ -17,8 +17,10 @@ import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useNavigate } from 'react-router-dom';
 
 export default function ManagerDashboardHappinessMatrix(props) {
+    const navigate = useNavigate();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
     let date = new Date();
     let month = date.toLocaleString('default', { month: 'long' });
@@ -83,6 +85,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                             width: '50%',
                         },
                     }}
+                    onClick={()=>navigate('/cashflow')}
                 >
                     <Stack
                         direction="row"

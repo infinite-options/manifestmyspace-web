@@ -71,7 +71,7 @@ export default function TransactionHistory(props) {
         setOpenSelectProperty(true);
     };
     useEffect(() => {
-        console.log("selectedProperty selectedProperty", selectedProperty)   
+        console.log("selectedProperty", selectedProperty)   
        },[selectedProperty])
 
 
@@ -233,7 +233,7 @@ export default function TransactionHistory(props) {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={history.length}
+                                rowCount={history ? history.length : 0}
                             />
                         {history.filter((row) => row.purchase_status === "COMPLETED").length ===
                         0 ? (
@@ -244,13 +244,18 @@ export default function TransactionHistory(props) {
                             <TableBody>
                                 {stableSort(history, getComparator(order, orderBy))
                                 .filter((val) => {
+                                    if (!val) return false;
                                     const query = searchOutgoing.toLowerCase();
+                                    const propertyAddress = val.property_address || '';
+                                    const propertyUnit = String(val.property_unit) || '';
+                                    const propertyCity = val.property_city || '';
+                                    const propertyZip = val.property_zip || '';
                 
                                     return (
-                                    val.property_address.toLowerCase().includes(query) ||
-                                    String(val.property_unit).toLowerCase().includes(query) ||
-                                    val.property_city.toLowerCase().includes(query) ||
-                                    val.property_zip.toLowerCase().includes(query)
+                                        propertyAddress.toLowerCase().includes(query) ||
+                                        propertyUnit.toLowerCase().includes(query) ||
+                                        propertyCity.toLowerCase().includes(query) ||
+                                        propertyZip.toLowerCase().includes(query)
                                     );
                                 })
                                 .map((row, index) => {

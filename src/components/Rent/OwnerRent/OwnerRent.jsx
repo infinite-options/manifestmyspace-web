@@ -2,8 +2,10 @@ import { Box } from "@mui/system";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CalendarIcon, HomeIcon, MainContainer, RentAccordionView, RentTitle, ViewAllButton, ViewOptionContainer, ViewOptionText } from "../RentComponents/RentComponents";
+import { useNavigate } from "react-router-dom";
 
 function OwnerRent(props) {
+    const navigate = useNavigate();
     const [dataNum, setDataNum] = useState(0);
     const [rentData, setRentData] = useState({});
 
@@ -78,6 +80,16 @@ function OwnerRent(props) {
             }}>
                 <RentAccordionView data={rentData} link={'/ownerRentDetail'} />
             </Box>
+
+            <Box sx={{
+                marginTop: '20px',
+            }}
+            onClick={()=>{navigate('/findProperty')}}>
+                <ViewAllButton>
+                    View 8 Property Listings
+                </ViewAllButton>
+            </Box>
+            
         </MainContainer>
     )
 }
