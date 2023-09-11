@@ -42,7 +42,7 @@ import PaymentsTenant from "./Payments/PaymentsTenant";
 import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
 import CashflowManager from "./Cashflow/CashflowManager";
-import ManagerDashboard from "./Cashflow/ManagerDashboard";
+import ManagerDashboardHappinessMatrix from "./ManagerDashboard/ManagerDashboardHappinessMatrix";
 import Settings from "./Settings/SettingsOwner";
 
 import PropertyInfo from "./Property/PropertyInfo";
@@ -74,8 +74,19 @@ import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import { Footer } from "./Footer";
+<<<<<<< HEAD
 import PMAddProperty from "./Property/PMAddProperty";
 import PMEditProperty from "./Property/PMEditProperty";
+=======
+import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
+
+import SettingsACH1 from "./SettingsACH/SettingsACH1";
+import SettingsACH2 from "./SettingsACH/SettingsACH2";
+import SettingsACH3 from "./SettingsACH/SettingsACH3";
+import SettingsACH4 from "./SettingsACH/SettingsACH4";
+import SettingsACH5 from "./SettingsACH/SettingsACH5";
+import POContracts from "./Contracts/POContracts/POContracts";
+>>>>>>> 0112135bd12d58674be77ce1686e3890590a8112
 
 function Main () {
   return (
@@ -87,13 +98,8 @@ function Main () {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          {/* <Box sx={{display: "flex",
-          flexDirection: "column",
-          // minHeight: "100vh",
-          overflow: "auto", // Enable scrolling when content overflows
-        }}> */}
-          <Header></Header>
           <Router>
+          <Header></Header>
             <Routes>
               <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
               {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
@@ -137,7 +143,7 @@ function Main () {
               <Route exact path="/paymentsTenant" element={<PaymentsTenant />} />
               <Route exact path="/card" element={<CardDetails />} />
               <Route exact path="/cashflowManager" element={<CashflowManager />} />
-              <Route exact path="/managerDashboard" element={<ManagerDashboard />} />
+              <Route exact path="/managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
               <Route exact path="/settingsOwner" element={<Settings />} />
               <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
               <Route exact path="/changePasswordSettings" element={<ChangePasswordSettings />} />
@@ -165,10 +171,18 @@ function Main () {
               <Route exact path="/properties" element={<PropertyList />} />
               {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
               <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
+
+              <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
+              <Route exact path="/settingsManagerACH2" element={<SettingsACH2 />} />
+              <Route exact path="/settingsManagerACH3" element={<SettingsACH3 />} />
+              <Route exact path="/settingsManagerACH4" element={<SettingsACH4 />} />
+              <Route exact path="/settingsManagerACH5" element={<SettingsACH5 />} />
+
+              <Route exact path="/poContracts" element={<POContracts />} />
+              <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
             </Routes>
           </Router>
           <Footer></Footer>
-          {/* </Box> */}
         </Box>
       </div>
     </>

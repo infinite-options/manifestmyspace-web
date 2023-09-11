@@ -94,6 +94,18 @@
     font-size: 20px;
 }
 
+.mt-widget-owner-happiness {
+    background-color: var(--light-gray-bg);
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    height: 150px;
+    width: 90%;
+    margin-top: 15px;
+    padding: 3px;
+    cursor: pointer;
+}
+
 #first-row,
 #second-row {
   display: flex;
@@ -157,6 +169,26 @@
     margin-left : auto;
     margin-right: auto;
     margin-top: 15px;
+    margin-bottom: 60px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+.bottom-buttons-level1 {
+    width: 90%;
+    margin-left : auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+.bottom-buttons-level2 {
+    width: 90%;
+    margin-left : auto;
+    margin-right: auto;
+    margin-top: 0px;
     margin-bottom: 60px;
     display: flex;
     justify-content: space-between;

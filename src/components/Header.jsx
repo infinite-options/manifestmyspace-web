@@ -1,4 +1,40 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+
+//update this variable with the actual roles for a user after login
+const userRoles = ['Owner', 'Manager', 'Tenant', 'Maintenance']; //roles from API
+
 function Header() {
+    const [selectedRole, setSelectedRole] = useState(0);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Perform the initial navigation when the component mounts
+        const initialRole = userRoles[selectedRole];
+        switch (initialRole) {
+          case 'Owner':
+            navigate('/');
+            break;
+          case 'Manager':
+            navigate('/managerDashboard');
+            break;
+          case 'Tenant':
+            navigate('/tenantDashboard');
+            break;
+          case 'Maintenance':
+            navigate('/');
+            break;
+          default:
+            break;
+        }
+      }, [selectedRole]);
+
+    const handleButtonClick = (index) => {
+        setSelectedRole(index);
+    };
     return (
         <>
             <div className="main-header">
@@ -16,10 +52,31 @@ function Header() {
 
                     </div>
                 </div>
-                <div className="main-header-redirect-btns">
-                    <a href="/" className="main-header-redirect-owner">Property Owner</a>
-                    <a href="/tenantDashboard" className="main-header-redirect-tenant">Tenant</a>
-                </div>
+                {/* <div className="main-header-redirect-btns">
+                    <a href="/" className="main-header-redirect-owner">Owner</a>
+                    <a href="/managerDashboard" className="main-header-redirect-owner">Manager</a>
+                    <a href="/tenantDashboard" className="main-header-redirect-owner">Tenant</a>
+                    <a href="/" className="main-header-redirect-owner selected">Maintenance</a>
+                </div> */}
+                <AppBar position="static" style={{ backgroundColor: '#3D5CAC' }}>
+                <Toolbar style={{ display: 'flex', justifyContent: 'center' }}>
+                    {userRoles.map((role, index) => (
+                    <Button 
+                    key={index}
+                    color="inherit"
+                    style={{
+                    fontWeight: selectedRole === index ? 800 : 300,
+                    fontSize: '16px',
+                    fontFamily: 'Source Sans 3, sans-serif',
+                    margin: '0 10px',
+                    textTransform: 'none'
+                    }}
+                    onClick={() => handleButtonClick(index)}>
+                        {role}
+                    </Button>
+                    ))}
+                </Toolbar>
+                </AppBar>
 
             </div>
         </>

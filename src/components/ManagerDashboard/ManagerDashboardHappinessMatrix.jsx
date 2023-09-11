@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
-import CashflowData from './CashflowData';
+import CashflowData from '../Cashflow/CashflowData';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-export default function ManagerDashboard(props) {
+export default function ManagerDashboardHappinessMatrix(props) {
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
     let date = new Date();
     let month = date.toLocaleString('default', { month: 'long' });
