@@ -12,6 +12,8 @@ import {
     Button,
     Grid,
     TextField,
+    MenuItem,
+    Select,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -29,6 +31,7 @@ export default function QuoteRequestForm(){
     const maintenanceItem = location.state.maintenanceItem;
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [additionalInfo, setAdditionalInfo] = useState("")
+    const [maintenanceContact, setMaintenanceContact] = useState("Doolittle Maintenance")
 
     console.log(maintenanceItem)
 
@@ -36,6 +39,11 @@ export default function QuoteRequestForm(){
         console.log("handleSubmit")
         console.log("need to implement navigation")
         navigate("/maintenance")
+    }
+
+    const handleStateChange = (event) => {
+        console.log("handleStateChange")
+        setMaintenanceContact(event.target.value)
     }
 
     return (
@@ -86,7 +94,7 @@ export default function QuoteRequestForm(){
                         <Grid item xs={12}>
                             <Card
                                 sx={{
-                                    backgroundColor: "#C06A6A",
+                                    backgroundColor: "#A52A2A",
                                     borderRadius: "10px",
                                     width: "85%",
                                     height: "100%",
@@ -130,6 +138,22 @@ export default function QuoteRequestForm(){
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                 View All Maintenance Contacts
                             </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Select 
+                                sx={{
+                                    backgroundColor: 'white',
+                                    borderColor: 'black',
+                                    borderRadius: '7px',
+                                }}
+                                size="small"
+                                fullWidth
+                                onChange={handleStateChange} 
+                            >
+                                <MenuItem value={"Doolittle Maintenance"}>Doolittle Maintenance</MenuItem>
+                                <MenuItem value={"Kim Deal"}>Kim Deal</MenuItem>
+                                <MenuItem value={"Invite +"}>Invite +</MenuItem>
+                            </Select>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>

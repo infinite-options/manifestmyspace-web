@@ -27,7 +27,6 @@ import theme from '../../../theme/theme';
 function DateTimePicker() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(new Date());
-  const [radioValue, setRadioValue] = useState('option1');
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
@@ -37,9 +36,6 @@ function DateTimePicker() {
     setSelectedTime(newTime);
   };
 
-  const handleRadioChange = (event) => {
-    setRadioValue(event.target.value);
-  };
 
   return (
     <Stack spacing={3}>
@@ -56,22 +52,6 @@ function DateTimePicker() {
         onChange={handleTimeChange}
         renderInput={(params) => <TextField fullWidth {...params} />}
       />
-      {/* <RadioGroup
-        aria-label="options"
-        value={radioValue}
-        onChange={handleRadioChange}
-      >
-        <FormControlLabel value="option1" control={<Radio />} label="Option 1" />
-        <FormControlLabel value="option2" control={<Radio />} label="Option 2" />
-      </RadioGroup>
-      <TextField
-        fullWidth
-        label="Summary"
-        value={`Date: ${selectedDate.toLocaleDateString()}, Time: ${selectedTime.toLocaleTimeString()}, Option: ${radioValue}`}
-        InputProps={{
-          readOnly: true,
-        }}
-      /> */}
     </Stack>
   );
 }
@@ -82,6 +62,12 @@ export default function RescheduleMaintenance(){
     const location = useLocation();
     const navigate = useNavigate();
     const maintenanceItem = location.state.maintenanceItem;
+
+    const [radioValue, setRadioValue] = useState('option1');
+
+    const handleRadioChange = (event) => {
+        setRadioValue(event.target.value);
+      };
 
     function handleSubmit(){
         navigate("/maintenance", {state: {maintenanceItem: maintenanceItem}});
@@ -154,7 +140,7 @@ export default function RescheduleMaintenance(){
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={0}
+                    <Grid container spacing={5}
                         alignContent="center"
                         justifyContent="center"
                         alignItems="center"
@@ -179,6 +165,19 @@ export default function RescheduleMaintenance(){
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateTimePicker/>
                             </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={12}>
+                        <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Can Tenant Reschedule?
+                            </Typography>
+                            <RadioGroup
+                                aria-label="options"
+                                value={radioValue}
+                                onChange={handleRadioChange}
+                            >
+                                <FormControlLabel value="option1" control={<Radio />} label="Option 1" />
+                                <FormControlLabel value="option2" control={<Radio />} label="Option 2" />
+                            </RadioGroup>
                         </Grid>
                         <Grid item xs={12}>
                             <Button

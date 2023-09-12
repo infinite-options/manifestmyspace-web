@@ -29,6 +29,20 @@ export default function QuoteAcceptForm(){
     const maintenanceItem = location.state.maintenanceItem;
     const [selectedImageList, setSelectedImageList] = useState([]);
 
+    const [maintenanceQuote, setMaintenanceQuotes] = useState([
+        {
+            maintenanceContact: "Doolittle Maintenance",
+            maintenanceQuote: "Estimated Cost: $2400-$3000\nEstimated Time: 4 days - 2 weeks\nEarliest Availability: 05/03/2023",
+            maintenanceNotes: "I will have to replace all of the pipes. This is the worst plumbing I have ever seen. All of the flooring should be replaced due to water damage as well, which I can take care of too. See you soon, Timberlake"
+        },
+        {
+            maintenanceContact: "Kim Deal",
+            maintenanceQuote: "Estimated Cost: $100-$120\nEstimated Time: 30 minutes\nEarliest Availability: 04/19/22",
+            maintenanceNotes: "Hi John, The pipe seems to only have a minor leak, so I should be able to get it patched up without replacing it. I don’t see any water damage yet but it should be fixed urgently. Thanks, Kim"
+        }
+    ])
+
+
     console.log(maintenanceItem)
 
     const handleSubmit = () => {
@@ -146,7 +160,7 @@ export default function QuoteAcceptForm(){
                             </Container>
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                                 Notes
                             </Typography>
                             <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
