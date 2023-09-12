@@ -1,10 +1,11 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles'
 import ReturnArrow from '../../../images/refund_back.png'
 import ArrowDown from '../../../images/ArrowDown.png'
 import theme from '../../../theme/theme';
+import axios from "axios";
 import {
     Typography,
     Button
@@ -26,6 +27,8 @@ import {
 // });
 function POContracts(props) {
     
+    const [managers, setManagers] = useState([]);
+
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
@@ -65,6 +68,14 @@ function POContracts(props) {
             location: "San Jose"
         }
     ];
+
+    useEffect(() => {
+        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager")
+            .then((res) => {
+                setManagers(res.data.result);
+                console.log(res.data.result);
+            });
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
