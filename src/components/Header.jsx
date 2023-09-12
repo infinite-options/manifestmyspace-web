@@ -13,22 +13,22 @@ function Header() {
 
     // useEffect(() => {
     //   // Perform the initial navigation when the component mounts
-    //   switch (user.selectedRole) {
-    //     case 'Owner':
-    //       navigate('/ownerDashboard');
-    //       break;
-    //     case 'Manager':
-    //       navigate('/managerDashboard');
-    //       break;
-    //     case 'Tenant':
-    //       navigate('/tenantDashboard');
-    //       break;
-    //     case 'Maintenance':
-    //       navigate('/ownerDashboard');
-    //       break;
-    //     default:
-    //       break;
-    //   }
+    //     switch (user.selectedRole) {
+    //       case 'Owner':
+    //         navigate('/ownerDashboard');
+    //         break;
+    //       case 'Manager':
+    //         navigate('/managerDashboard');
+    //         break;
+    //       case 'Tenant':
+    //         navigate('/tenantDashboard');
+    //         break;
+    //       case 'Maintenance':
+    //         navigate('/ownerDashboard');
+    //         break;
+    //       default:
+    //         break;
+    //     }
     // }, [user.selectedRole]);
   
     const handleButtonClick = (role) => {
