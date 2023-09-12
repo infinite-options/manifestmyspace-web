@@ -88,17 +88,17 @@ import { useUser } from "../contexts/UserContext";
 function Main() {
   const { user } = useUser(); // Get the user context
 
-  // Define the role-specific routes
-  const roleRoutes = {
-    Manager: "/managerDashboard", // Change this to the Manager's home route
-    Owner: "/ownerDashboard", // Change this to the Owner's home route
-    Tenant: "/tenantDashboard", // Change this to the Tenant's home route
-    Maintenance: "/ownerDashboard", // Change this to the Maintenance's home route
-  };
+  // // Define the role-specific routes
+  // const roleRoutes = {
+  //   Manager: "/managerDashboard", // Change this to the Manager's home route
+  //   Owner: "/ownerDashboard", // Change this to the Owner's home route
+  //   Tenant: "/tenantDashboard", // Change this to the Tenant's home route
+  //   Maintenance: "/ownerDashboard", // Change this to the Maintenance's home route
+  // };
 
-  // Get the route for the selected user role
-  const selectedRoleRoute = roleRoutes[user.selectedRole];
-  console.log("storedSelectedRole selectedRoleRoute ", selectedRoleRoute)
+  // // Get the route for the selected user role
+  // const selectedRoleRoute = roleRoutes[user.selectedRole];
+  // console.log("storedSelectedRole selectedRoleRoute ", selectedRoleRoute)
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -111,7 +111,7 @@ function Main() {
           <Router>
           <Header></Header>
             <Routes>
-              <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
+              {/* <Route path="/" element={<Navigate to={selectedRoleRoute} />} /> */}
               <Route exact path="/dashboard" element={<MaintenanceWidget />} />
               <Route exact path="/cashflow" element={<CashflowOwner />} />
               {/* <Route exact path="/properties" element={<PropertyListData />} /> */}

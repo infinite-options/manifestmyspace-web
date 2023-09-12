@@ -11,9 +11,29 @@ function Header() {
     
     const navigate = useNavigate();
 
-    useEffect(() => {
-      // Perform the initial navigation when the component mounts
-      switch (user.selectedRole) {
+    // useEffect(() => {
+    //   // Perform the initial navigation when the component mounts
+    //   switch (user.selectedRole) {
+    //     case 'Owner':
+    //       navigate('/ownerDashboard');
+    //       break;
+    //     case 'Manager':
+    //       navigate('/managerDashboard');
+    //       break;
+    //     case 'Tenant':
+    //       navigate('/tenantDashboard');
+    //       break;
+    //     case 'Maintenance':
+    //       navigate('/ownerDashboard');
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    // }, [user.selectedRole]);
+  
+    const handleButtonClick = (role) => {
+      
+      switch (role) {
         case 'Owner':
           navigate('/ownerDashboard');
           break;
@@ -29,9 +49,6 @@ function Header() {
         default:
           break;
       }
-    }, [user.selectedRole]);
-  
-    const handleButtonClick = (role) => {
       // Update the user state with the selected role
       setUser((prevUser) => ({
         ...prevUser,
