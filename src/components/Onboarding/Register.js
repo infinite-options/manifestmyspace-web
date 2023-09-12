@@ -120,7 +120,7 @@ function Register() {
                                 borderRadius: '15px',
                                 fontSize:theme.typography.smallFont,
                                 fontWeight: theme.typography.primary.fontWeight, 
-                            }} >Sign Up</Button>                      
+                            }} onClick={()=>{navigate('/ownerDashboard')}} >Sign Up</Button>                      
                 <Stack spacing={-20} m={12}>
                 <Typography 
                     sx={{
