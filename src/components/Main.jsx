@@ -83,6 +83,12 @@ import SettingsACH4 from "./SettingsACH/SettingsACH4";
 import SettingsACH5 from "./SettingsACH/SettingsACH5";
 import POContracts from "./Contracts/POContracts/POContracts";
 
+import Onboarding from "./Onboarding/Onboarding";
+import NewUser from "./Onboarding/NewUser";
+import Register from "./Onboarding/Register";
+import ReturningUser from "./Onboarding/ReturningUser";
+import UserLogin from "./Onboarding/UserLogin";
+
 import { useUser } from "../contexts/UserContext";
 
 function Main() {
@@ -190,6 +196,13 @@ function Main() {
 
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
+            <Route exact path="/onboarding" element={<Onboarding />} />
+            
+            <Route exact path="/newUser" element={<NewUser />} />
+            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/returningUser" element={<ReturningUser />} />
+            <Route exact path="/userLogin" element={<UserLogin />} />
+
             </Routes>
             <Footer></Footer>
           </Router>
