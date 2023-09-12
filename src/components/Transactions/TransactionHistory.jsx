@@ -14,7 +14,8 @@ import {
     Button,
     Typography,
     Stack,
-    Modal
+    Modal,
+    CircularProgress
   } from "@mui/material";
   import CloseIcon from '@mui/icons-material/Close';
   import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -51,6 +52,7 @@ export default function TransactionHistory(props) {
     const [history, setTransactionList] = useState([]);
     console.log("history ", history);
     // const [transactionList, setTransactionList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [order, setOrder] = useState("asc");
     const [orderBy, setOrderBy] = useState("payment_date");
     const [searchOutgoing, setSearchOutgoing] = useState("");
@@ -69,7 +71,7 @@ export default function TransactionHistory(props) {
         setOpenSelectProperty(true);
     };
     useEffect(() => {
-        console.log("selectedProperty selectedProperty", selectedProperty)   
+        console.log("selectedProperty", selectedProperty)   
        },[selectedProperty])
 
 
@@ -148,7 +150,7 @@ export default function TransactionHistory(props) {
     return (
         <>
             <ThemeProvider theme={theme}>
-            <TransactionsOwnerData setTransactionList={setTransactionList} selectedProperty={selectedProperty}></TransactionsOwnerData>
+            <TransactionsOwnerData setTransactionList={setTransactionList} selectedProperty={selectedProperty} setLoading={setLoading}></TransactionsOwnerData>
             <Box
                 style={{
                     display: 'flex',
@@ -216,35 +218,44 @@ export default function TransactionHistory(props) {
                             }}
                         />
                     </Box>
+                    {loading && 
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                            {loading && <CircularProgress color="inherit" />}
+                          </div>    
+                        }
+                    {!loading &&
                     <Stack
                     direction="row"
                     justifyContent="center"
                     >
-                        {/* <TableContainer> */}
-                        {/* <Table stickyHeader> */}
                         <Table>
                         <EnhancedTableHeadOutgoingPayments
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={history.length}
+                                rowCount={history ? history.length : 0}
                             />
                         {history.filter((row) => row.purchase_status === "COMPLETED").length ===
                         0 ? (
                             <TableRow>
-                            <div>No Payment History</div>
+                            <div>No Payment History</div> 
                             </TableRow>
                         ) : (
                             <TableBody>
                                 {stableSort(history, getComparator(order, orderBy))
                                 .filter((val) => {
+                                    if (!val) return false;
                                     const query = searchOutgoing.toLowerCase();
+                                    const propertyAddress = val.property_address || '';
+                                    const propertyUnit = String(val.property_unit) || '';
+                                    const propertyCity = val.property_city || '';
+                                    const propertyZip = val.property_zip || '';
                 
                                     return (
-                                    val.property_address.toLowerCase().includes(query) ||
-                                    String(val.property_unit).toLowerCase().includes(query) ||
-                                    val.property_city.toLowerCase().includes(query) ||
-                                    val.property_zip.toLowerCase().includes(query)
+                                        propertyAddress.toLowerCase().includes(query) ||
+                                        propertyUnit.toLowerCase().includes(query) ||
+                                        propertyCity.toLowerCase().includes(query) ||
+                                        propertyZip.toLowerCase().includes(query)
                                     );
                                 })
                                 .map((row, index) => {
@@ -294,8 +305,7 @@ export default function TransactionHistory(props) {
                             </TableBody>
                         )}
                         </Table>
-                        {/* </TableContainer> */}
-                    </Stack>
+                    </Stack>}
                     </Paper>
                 </Box>
                 <Modal sx={{

@@ -28,7 +28,7 @@ function CashflowWidget() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="cf-widget-main" onClick={() => navigate("/cashflowOwner")} sx={{cursor: 'pointer'}}>
+      <div className="cf-widget-main" onClick={() => navigate("/cashflow")}>
         <CashflowData
           year={year}
           month={month}

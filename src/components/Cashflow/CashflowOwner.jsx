@@ -14,8 +14,13 @@ import ExpectedExpenseTable from './ExpectedExpenseTable';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import SelectProperty from '../Leases/SelectProperty';
 import AddRevenueIcon from '../../images/AddRevenueIcon.png'
+import AllOwnerIcon from '../Rent/RentComponents/AllOwnerIcon.png'
+import { useUser } from '../../contexts/UserContext'; // Import the UserContext
 
 const CashflowOwner = () => {
+    const { user } = useUser(); // Access the user object from UserContext
+    const selectedRole = user.selectedRole; // Get the selected role from user object
+
     const navigate = useNavigate();
     const [activeButton, setActiveButton] = useState('Cashflow');
     const [revenueDropdown, setRevenueDropdown] = useState(false);
@@ -120,16 +125,27 @@ const CashflowOwner = () => {
                     <Button sx={{ textTransform: 'capitalize' }} onClick={()=>setShowSelectMonth(true)}>
                         <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/>
                         <Typography 
-                        sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                        sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}
                         >
                         Select Month / Year
                         </Typography>
                     </Button>
                     <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
+                    
+                    {selectedRole === 'Manager' && <Button sx={{ textTransform: 'capitalize' }} onClick={()=>{}}>
+                        <img src={AllOwnerIcon} alt='All Owners' style={{ width: '10px', height: '10px' }}/>
+                        <Typography 
+                        sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}
+                        >
+                        All Owners
+                        </Typography>
+                    </Button>
+                    }
+                    
                     <Button sx={{ textTransform: 'capitalize' }} onClick={handleOpen}>
                         <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
-                        Select Property
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}>
+                        Property
                         </Typography>
                     </Button>
                 </Box>

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {CircularProgress } from "@mui/material";
 // import * as ReactBootStrap from "react-bootstrap";
 import { get } from "../utils/api";
 import TransactionHistory from "./TransactionHistory";
@@ -15,12 +16,11 @@ export default function TransactionsOwnerData(props) {
     //   navigate("/");
     //   return;
     // }
-    // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/transactionsByOwnerByProperty/110-000003/200-000029`);
     const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions`);
     console.log("payments", res);
     setTransactionsResult(res.data.Transactions.result);
     props.setTransactionList(res.data.Transactions.result);
-    setIsLoading(false);
+    props.setLoading(false);
   };
 
   const filterOwnerTransactions = async () => {
@@ -43,7 +43,6 @@ export default function TransactionsOwnerData(props) {
         }
       }
   }, [selectedProperty]);
-
   return (
     <>
     </>

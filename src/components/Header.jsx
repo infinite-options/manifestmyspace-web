@@ -1,4 +1,62 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+import { useUser } from '../contexts/UserContext';
+
 function Header() {
+    const { user, setUser } = useUser();
+    const userRoles = user.roles;
+    
+    const navigate = useNavigate();
+
+    // useEffect(() => {
+    //   // Perform the initial navigation when the component mounts
+    //     switch (user.selectedRole) {
+    //       case 'Owner':
+    //         navigate('/ownerDashboard');
+    //         break;
+    //       case 'Manager':
+    //         navigate('/managerDashboard');
+    //         break;
+    //       case 'Tenant':
+    //         navigate('/tenantDashboard');
+    //         break;
+    //       case 'Maintenance':
+    //         navigate('/ownerDashboard');
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    // }, [user.selectedRole]);
+  
+    const handleButtonClick = (role) => {
+      
+      switch (role) {
+        case 'Owner':
+          navigate('/ownerDashboard');
+          break;
+        case 'Manager':
+          navigate('/managerDashboard');
+          break;
+        case 'Tenant':
+          navigate('/tenantDashboard');
+          break;
+        case 'Maintenance':
+          navigate('/ownerDashboard');
+          break;
+        default:
+          break;
+      }
+      // Update the user state with the selected role
+      setUser((prevUser) => ({
+        ...prevUser,
+        selectedRole: role,
+      }));
+    };
+  
+  
     return (
         <>
             <div className="main-header">
@@ -16,10 +74,27 @@ function Header() {
 
                     </div>
                 </div>
-                <div className="main-header-redirect-btns">
-                    <a href="/" className="main-header-redirect-owner">Property Owner</a>
-                    <a href="/tenantDashboard" className="main-header-redirect-tenant">Tenant</a>
-                </div>
+                
+                <AppBar position="static" style={{ backgroundColor: '#3D5CAC' }}>
+                <Toolbar style={{ display: 'flex', justifyContent: 'center' }}>
+                    {userRoles.map((role, index) => (
+                    <Button
+                    key={role}
+                    color="inherit"
+                    style={{
+                      fontWeight: user.selectedRole === role ? 800 : 300,
+                      fontSize: '16px',
+                      fontFamily: 'Source Sans 3, sans-serif',
+                      margin: '0 10px',
+                      textTransform: 'none',
+                    }}
+                    onClick={() => handleButtonClick(role)}
+                  >
+                    {role}
+                  </Button>
+                    ))}
+                </Toolbar>
+                </AppBar>
 
             </div>
         </>

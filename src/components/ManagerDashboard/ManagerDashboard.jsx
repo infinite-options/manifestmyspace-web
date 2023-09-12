@@ -1,19 +1,37 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider, CircularProgress } from '@mui/material';
+import { Button, Box, ThemeProvider, CircularProgress, Grid } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
-import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
-import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
-import "../css/maintenance.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
+import "../../css/maintenance.css";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import theme from "../theme/theme";
-import Dollar from '../images/Dollar.png'
-import File_dock_fill from '../images/File_dock_fill.png'
-import User_fill_dark from '../images/User_fill_dark.png'
+import { makeStyles } from "@material-ui/core";
+import theme from "../../theme/theme";
+import Dollar from '../../images/Dollar.png'
+import File_dock_fill from '../../images/File_dock_fill.png'
+import User_fill_dark from '../../images/User_fill_dark.png'
 
+const useStyles = makeStyles({
+    button: {
+      width: '100%',
+      fontSize: '13px',
+      marginBottom: '10px', // Adjust the spacing between buttons as needed
+    },
+    container: {
+      width: '90%',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    row: {
+        marginBottom: '20px', // Adjust the spacing between rows
+      },
+  });
 
-function Dashboard() {
-
+function ManagerDashboard() {
+    const classes = useStyles();
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);
@@ -125,11 +143,6 @@ function Dashboard() {
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
             console.log("leaseStatusDictionary ", leaseStatusDictionary)
-
-            // let date = new Date();
-            // setCurrentMonth(date.getMonth()+1);
-            // let currentYear = date.getFullYear().toString();
-            // console.log("month, year", currentMonth)
         }
         fetchData();
     }, []);
@@ -143,10 +156,9 @@ function Dashboard() {
         }
             {!loading &&
                 <div className="mt-widget-main">
-                    <CashflowWidget />
                     <div className="mt-container">
                         <MaintenanceWidget />
-                        <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
+                        <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">
                                 <PieChart width={200} height={250} >
@@ -194,7 +206,7 @@ function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
+                    <div className="mt-widget-expiry" onClick={() => navigate("/pmLeases")}>
                         {/* <div className="mt-expiry-container"> */}
                         <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
                         <div className="months-and-moveouts">
@@ -336,28 +348,102 @@ function Dashboard() {
                         </div>
                     </div>
                     <br />
-                    <div className="bottom-buttons">
+            
+                    <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
+                        <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
+                    </div>
+                    <br />
+            
+                    <div className={classes.container}>
+                    <Grid container spacing={2} className={classes.row}>
+                        <Grid item xs={4}>
                         <Button
                             variant="outlined"
                             id="revenue"
-                            className="bottom-item"
-                            onClick={() => { navigate('/transactionHistory') }}> <img src={Dollar}></img> Transactions</Button>
+                            className={classes.button}
+                            onClick={() => {
+                            navigate('/contacts');
+                            }}
+                        >
+                            <img src={User_fill_dark} alt="Owner" />
+                            Owner
+                        </Button>
+                        </Grid>
+                        <Grid item xs={4}>
                         <Button
                             variant="outlined"
                             id="expense"
-                            className="bottom-item"
-                            onClick={() => { navigate('/ownerDocuments') }}> <img src={File_dock_fill}></img> Documents</Button>
+                            className={classes.button}
+                            onClick={() => {
+                            navigate();
+                            }}
+                        >
+                            <img src={User_fill_dark} alt="Tenant" />
+                            Tenant
+                        </Button>
+                        </Grid>
+                        <Grid item xs={4}>
                         <Button
                             variant="outlined"
                             id="maintenance"
-                            className="bottom-item"
-                            onClick={() => { navigate('/contacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
+                            className={classes.button}
+                            onClick={() => {
+                            navigate();
+                            }}
+                        >
+                            <img src={User_fill_dark} alt="Maintenance" />
+                            Maintenance
+                        </Button>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2} className={classes.row}>
+                        <Grid item xs={4}>
+                        <Button
+                            variant="outlined"
+                            id="revenue"
+                            className={classes.button}
+                            onClick={() => {
+                            navigate('/transactionHistory');
+                            }}
+                        >
+                            <img src={Dollar} alt="Transactions" />
+                            Transactions
+                        </Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                        <Button
+                            variant="outlined"
+                            id="expense"
+                            className={classes.button}
+                            onClick={() => {
+                            navigate('/pmDocuments');
+                            }}
+                        >
+                            <img src={File_dock_fill} alt="Documents" />
+                            Documents
+                        </Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                        <Button
+                            variant="outlined"
+                            id="maintenance"
+                            className={classes.button}
+                            onClick={() => {
+                            navigate('/addMaintenanceItem');
+                            }}
+                        >
+                            <img src={User_fill_dark} alt="Add Ticket" />
+                            Add Ticket
+                        </Button>
+                        </Grid>
+                    </Grid>
                     </div>
-                    <br />
+                <br />
+                <br />
                 </div>
             }
         </ThemeProvider>
     )
 }
 
-export default Dashboard;
+export default ManagerDashboard;

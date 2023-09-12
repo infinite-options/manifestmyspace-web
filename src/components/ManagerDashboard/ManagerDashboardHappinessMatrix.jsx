@@ -12,13 +12,15 @@ import {
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
-import CashflowData from './CashflowData';
+import CashflowData from '../Cashflow/CashflowData';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useNavigate } from 'react-router-dom';
 
-export default function ManagerDashboard(props) {
+export default function ManagerDashboardHappinessMatrix(props) {
+    const navigate = useNavigate();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
     let date = new Date();
     let month = date.toLocaleString('default', { month: 'long' });
@@ -83,6 +85,7 @@ export default function ManagerDashboard(props) {
                             width: '50%',
                         },
                     }}
+                    onClick={()=>navigate('/cashflow')}
                 >
                     <Stack
                         direction="row"
