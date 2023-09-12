@@ -241,7 +241,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     paddingBottom: "10px",
                   }}
                 >
-                  {data.maintenance_priority} Priority
+                  {data?.maintenance_priority} Priority
                 </Typography>
                 <Typography
                   sx={{

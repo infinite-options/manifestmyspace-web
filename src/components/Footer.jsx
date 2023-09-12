@@ -1,4 +1,5 @@
 import { Grid, Box, Paper, ThemeProvider, Button } from '@mui/material';
+import { Link } from "react-router-dom";
 import theme from '../theme/theme';
 import Home_fill from '../images/Home_fill.png'
 import Bell_fill from '../images/Bell_fill.png'
@@ -16,7 +17,7 @@ export function Footer() {
                     justifyContent: 'center',
                     width: '100%',
                     backgroundColor: theme.palette.priority.clear,
-                    marginTop: '55px',
+                    marginTop: '20px',
                     height: '40px'
                 }}
             >
@@ -30,17 +31,27 @@ export function Footer() {
                 >
                     <Grid item xs={3}>
                     <Box>
-                    <a href='/'><img src={Home_fill} alt="Home Icon" style={{ display: 'block', margin: '0 auto' }} /></a>
+                    {/* <a href='/'><img src={Home_fill} alt="Home Icon" style={{ display: 'block', margin: '0 auto' }} /></a> */}
+                    <Link to="/">
+                        <img src={Home_fill} alt="Home Icon" style={{ display: 'block', margin: '0 auto' }} />
+                    </Link>
                     </Box>
                     </Grid>
                     <Grid item xs={3}>
-                        <a href='/ownerProfile'><img src={User_fill} alt="User Icon" style={{ display: 'block', margin: '0 auto' }}/></a>
+                        {/* <a href='/ownerProfile'><img src={User_fill} alt="User Icon" style={{ display: 'block', margin: '0 auto' }}/></a> */}
+                        <Link to="/ownerProfile">
+                            <img src={User_fill} alt="User Icon" style={{ display: 'block', margin: '0 auto' }} />
+                        </Link>
                     </Grid>
                     <Grid item xs={3}>
-                        <img src={Bell_fill} alt="Bell Icon" style={{ display: 'block', margin: '0 auto' }} />
+                        <Link to="/">
+                            <img src={Bell_fill} alt="Bell Icon" style={{ display: 'block', margin: '0 auto' }} />
+                        </Link>
                     </Grid>
                     <Grid item xs={3}>
-                        <img src={comment_fill} alt="Comment Icon" style={{ display: 'block', margin: '0 auto' }}/>
+                        <Link to="/">
+                            <img src={comment_fill} alt="Comment Icon" style={{ display: 'block', margin: '0 auto' }}/>
+                        </Link>
                     </Grid>
                     </Grid>
             </Box>

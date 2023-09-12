@@ -164,9 +164,10 @@ function Dashboard() {
                                 {data.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
                                 ))}
-                            
                             </Pie>
+
                         </PieChart>
+
                         <Button
                             color="primary"
                             style={{    position: 'absolute', 
@@ -178,30 +179,31 @@ function Dashboard() {
                                         color: '#160449',
                                         fontWeight: 600,}}
                             onClick={() => navigate("/properties")}
-                        />
+                        >
+                            View All {totalPropertiesCount} properties
+                        </Button>
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                             ))}
-                        
-                        {/* </Pie> */}
-                        <text
-                        x={85}
-                        y={100}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        cursor="pointer"
-                        style={{
-                            fontFamily: 'Source Sans Pro',
-                            fontSize: '9px',
-                            fill: '#160449',
-                            fontWeight: '600',
-                        }}
-                        onClick={(e) => { e.stopPropagation(); navigate('/properties')}}
-                    >
-                        View All {totalPropertiesCount}
-                        <tspan x={85} y={110}>properties</tspan>
-                    </text>
-                    {/* </PieChart> */}
+                        {/* <svg width="200" height="200">
+                            <text
+                                x={85}
+                                y={100}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                cursor="pointer"
+                                style={{
+                                    fontFamily: 'Source Sans Pro',
+                                    fontSize: '9px',
+                                    fill: '#160449',
+                                    fontWeight: '600',
+                                }}
+                                onClick={(e) => { e.stopPropagation(); navigate('/properties')}}
+                            >
+                                View All {totalPropertiesCount}
+                                <tspan x={85} y={110}>properties</tspan>
+                            </text>
+                        </svg> */}
                     </div>
                 </div>
             </div>  

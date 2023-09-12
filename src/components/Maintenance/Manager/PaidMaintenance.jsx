@@ -1,3 +1,4 @@
+
 import { 
     ThemeProvider, 
     Typography,
@@ -21,14 +22,14 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 
 
-export default function NewRequestAction({maintenanceItem}){
+export default function CompletedM({maintenanceItem}){
     const navigate = useNavigate();
 
 
     function handleNavigateToQuotesRequested(){
 
         console.log("NewRequestAction", maintenanceItem)
-        navigate("/quoteRequest", {
+        navigate("/quoterequest", {
             state:{
                 maintenanceItem
             }
@@ -105,7 +106,7 @@ export default function NewRequestAction({maintenanceItem}){
                         </Typography>
                     </Button>
                 </Grid>
-                <Grid item xs={6} sx={{
+                <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
@@ -113,45 +114,16 @@ export default function NewRequestAction({maintenanceItem}){
                         variant="contained"
                         disableElevation
                         sx={{
-                            backgroundColor: "#9EAED6",
+                            backgroundColor: "#3D5CAC",
                             textTransform: "none",
                             paddingRight: "0px",
                             borderRadius: "10px",
                             display: 'flex',
                             width: "100%",
-                            // '&:hover': {
-                            //     backgroundColor: darken("#9EAED6", 0.2)
-                            // }
                         }}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Schedule Repair
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#C06A6A",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                            // '&:hover': {
-                            //     backgroundColor: darken("#C06A6A", 0.2)
-                            // }
-                        }}
-                        onClick={() => handleNavigateToQuotesRequested()}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Request Quotes
+                            Contact Maintenance - Kim Deal
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>

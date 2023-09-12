@@ -145,14 +145,9 @@ export default function PropertyList({}) {
     const fetchData = async () => {
       const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
       const propertyData = await response.json();
-<<<<<<< HEAD
-      setPropertyList([...propertyData.Property_Dashboard.result]);
-      setDisplayedItems([...propertyData.Property_Dashboard.result]);
-=======
       console.log(propertyData)
       setPropertyList([...propertyData["Property_Dashboard"].result]);
       setDisplayedItems([...propertyData["Property_Dashboard"].result]);
->>>>>>> 0112135bd12d58674be77ce1686e3890590a8112
     };
     fetchData();
   }, []);

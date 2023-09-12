@@ -11,29 +11,31 @@ function Header() {
     const [selectedRole, setSelectedRole] = useState(0);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // Perform the initial navigation when the component mounts
-        const initialRole = userRoles[selectedRole];
-        switch (initialRole) {
-          case 'Owner':
-            navigate('/');
-            break;
-          case 'Manager':
-            navigate('/managerDashboard');
-            break;
-          case 'Tenant':
-            navigate('/tenantDashboard');
-            break;
-          case 'Maintenance':
-            navigate('/');
-            break;
-          default:
-            break;
-        }
-      }, [selectedRole]);
+    // useEffect(() => {
+    //     // Perform the initial navigation when the component mounts
+    //     const initialRole = userRoles[selectedRole];
+    //     switch (initialRole) {
+    //       case 'Owner':
+    //         navigate('/');
+    //         break;
+    //       case 'Manager':
+    //         navigate('/managerDashboard');
+    //         break;
+    //       case 'Tenant':
+    //         navigate('/tenantDashboard');
+    //         break;
+    //       case 'Maintenance':
+    //         navigate('/');
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //   }, [selectedRole]);
 
     const handleButtonClick = (index) => {
-        setSelectedRole(index);
+        // setSelectedRole(index);
+        setSelectedRole('Owner')
+
     };
     return (
         <>
