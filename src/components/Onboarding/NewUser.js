@@ -54,7 +54,7 @@ function NewUser() {
                     <hr/>
             </Box>
             <Stack spacing={-6} m={12}>
-            <Box>
+            <Box onClick={()=>{navigate('/ownerDashboard')}}>
                 <img src={Google}/>
             </Box>   
             </Stack>

@@ -64,7 +64,7 @@ function ReturningUser() {
                               fontWeight: theme.typography.primary.fontWeight, 
                           }} onClick={()=>{navigate('/userLogin')}} >Log In With Email</Button>  
           <Stack spacing={-6} m={12}>
-          <Box>
+          <Box onClick={()=>{navigate('/ownerDashboard')}}>
               <img src={Google}/>
           </Box>   
           </Stack>
