@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "./Header";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import CashflowOwner from "./Cashflow/CashflowOwner";
 // import Footer from './Footer';
@@ -75,7 +75,36 @@ import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import { Footer } from "./Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
-function Main () {
+
+import SettingsACH1 from "./SettingsACH/SettingsACH1";
+import SettingsACH2 from "./SettingsACH/SettingsACH2";
+import SettingsACH3 from "./SettingsACH/SettingsACH3";
+import SettingsACH4 from "./SettingsACH/SettingsACH4";
+import SettingsACH5 from "./SettingsACH/SettingsACH5";
+import POContracts from "./Contracts/POContracts/POContracts";
+
+import Onboarding from "./Onboarding/Onboarding";
+import NewUser from "./Onboarding/NewUser";
+import Register from "./Onboarding/Register";
+import ReturningUser from "./Onboarding/ReturningUser";
+import UserLogin from "./Onboarding/UserLogin";
+
+import { useUser } from "../contexts/UserContext";
+
+function Main() {
+  const { user } = useUser(); // Get the user context
+
+  // Define the role-specific routes
+  const roleRoutes = {
+    Manager: "/managerDashboard", // Change this to the Manager's home route
+    Owner: "/ownerDashboard", // Change this to the Owner's home route
+    Tenant: "/tenantDashboard", // Change this to the Tenant's home route
+    Maintenance: "/ownerDashboard", // Change this to the Maintenance's home route
+  };
+
+  // Get the route for the selected user role
+  const selectedRoleRoute = roleRoutes[user.selectedRole];
+  console.log("storedSelectedRole selectedRoleRoute ", selectedRoleRoute)
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -88,8 +117,9 @@ function Main () {
           <Router>
           <Header></Header>
             <Routes>
+              <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
               <Route exact path="/dashboard" element={<MaintenanceWidget />} />
-              <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
+              <Route exact path="/cashflow" element={<CashflowOwner />} />
               {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
               <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
               <Route exact path="/addExpense" element={<AddExpense />} />
@@ -143,7 +173,7 @@ function Main () {
               <Route exact path="/tenantContactDetails" element={<TenantContactDetails />} />
 
               <Route exact path="/maintenance" element={<Maintenance />} />
-              <Route exact path="/" element={<Dashboard />} />
+              <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
               <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
               <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
@@ -157,10 +187,25 @@ function Main () {
               <Route exact path="/properties" element={<PropertyList />} />
               {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
               <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
+
+              <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
+              <Route exact path="/settingsManagerACH2" element={<SettingsACH2 />} />
+              <Route exact path="/settingsManagerACH3" element={<SettingsACH3 />} />
+              <Route exact path="/settingsManagerACH4" element={<SettingsACH4 />} />
+              <Route exact path="/settingsManagerACH5" element={<SettingsACH5 />} />
+
+              <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
+            <Route exact path="/onboarding" element={<Onboarding />} />
+            
+            <Route exact path="/newUser" element={<NewUser />} />
+            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/returningUser" element={<ReturningUser />} />
+            <Route exact path="/userLogin" element={<UserLogin />} />
+
             </Routes>
+            <Footer></Footer>
           </Router>
-          <Footer></Footer>
         </Box>
       </div>
     </>
