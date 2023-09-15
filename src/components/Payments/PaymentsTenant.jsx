@@ -29,6 +29,7 @@ export default function PaymentsTenant(props) {
 
     const [paymentDueResult, setPaymentDueResult] = useState([]);
 
+    const [paymentNotes, setPaymentNotes] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
     const [total, setTotal] = useState(0);
 
@@ -38,7 +39,8 @@ export default function PaymentsTenant(props) {
     const [paymentData, setPaymentData] = useState({
         currency: "usd",
         customer_uid: "100-000125",
-        business_code: "IOTEST",
+       // business_code: "IOTEST",
+        business_code: paymentNotes,
         item_uid: "320-000054",
         payment_summary: {
             total: "0.0"
@@ -132,6 +134,10 @@ export default function PaymentsTenant(props) {
     //     }
     // }
 
+    const handlePaymentNotesChange = (event) => {
+        setPaymentNotes(event.target.value);
+    };
+    
     const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
     const handleStripePayment = async (e) => {
@@ -140,10 +146,13 @@ export default function PaymentsTenant(props) {
             // Update paymentData with the latest total value
             const updatedPaymentData = {
                 ...paymentData,
+                business_code:paymentNotes,
                 payment_summary: {
                 total: total.toFixed(2), // Format the total as a string with 2 decimal places
                 },
             };
+
+            console.log(updatedPaymentData)
 
             //const stripe = await stripePromise;
             const response = await fetch(API_CALL, {
@@ -305,8 +314,8 @@ export default function PaymentsTenant(props) {
                                 InputProps={{ className: classes.input }}
                                 fullWidth={true}
                                 multiline={true}
-                                value={props.content}
-                                onChange={(e) => { }}
+                                value={paymentNotes}
+                                onChange={handlePaymentNotesChange}
                                 label="Payment Notes"
                             />
                         </Stack>

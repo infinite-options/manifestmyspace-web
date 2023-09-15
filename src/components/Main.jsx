@@ -90,6 +90,15 @@ import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
 
 import { useUser } from "../contexts/UserContext";
+import SelectRole from "./Onboarding/SelectRole";
+
+import PMProfileDisplay from "./Onboarding/PMProfileDisplay";
+import PMProfilePayment from "./Onboarding/PMProfilePayment";
+import PMProfileName from "./Onboarding/PMProfileName";
+
+import POProfileDisplay from "./Onboarding/POProfileDisplay";
+import POProfilePayment from "./Onboarding/POProfilePayment";
+import POProfileName from "./Onboarding/POProfileName";
 
 function Main() {
   const { user } = useUser(); // Get the user context
@@ -196,13 +205,22 @@ function Main() {
 
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
-            <Route exact path="/onboarding" element={<Onboarding />} />
+              <Route exact path="/onboarding" element={<Onboarding />} />
             
             <Route exact path="/newUser" element={<NewUser />} />
             <Route exact path="/register" element={<Register />} />
             <Route exact path="/returningUser" element={<ReturningUser />} />
             <Route exact path="/userLogin" element={<UserLogin />} />
+            <Route exact path="/selectRole" element={<SelectRole />} />
 
+            <Route exact path="/pmProfileName" element={<PMProfileName />} />
+            <Route exact path="/pmProfileDisplay" element={<PMProfileDisplay />} />
+            <Route exact path="/pmProfilePayment" element={<PMProfilePayment/>} />
+         
+            <Route exact path="/poProfileName" element={<POProfileName />} />
+            <Route exact path="/poProfileDisplay" element={<POProfileDisplay />} />
+            <Route exact path="/poProfilePayment" element={<POProfilePayment/>} />
+         
             </Routes>
             <Footer></Footer>
           </Router>
