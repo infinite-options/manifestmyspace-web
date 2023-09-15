@@ -110,7 +110,7 @@ function GoogleSignup(props) {
                         google_auth_token: at,
                         google_refresh_token: rt,
                         social_id: si,
-                        access_expires_in: ax,
+                        access_expires_in: String(ax),
                       };
                       axios
                         .post(
