@@ -62,9 +62,9 @@ function ReturningUser() {
                               borderRadius: '15px',
                               fontSize:theme.typography.smallFont,
                               fontWeight: theme.typography.primary.fontWeight, 
-                          }} onClick={()=>{navigate('/userLogin')}} >Log In With Email</Button>  
+                          }} onClick={()=>{navigate('/email-login')}} >Log In With Email</Button>  
           <Stack spacing={-6} m={12}>
-          <Box onClick={()=>{navigate('/ownerDashboard')}}>
+          <Box onClick={()=>{navigate('/google-login')}}>
               <img src={Google}/>
           </Box>   
           </Stack>

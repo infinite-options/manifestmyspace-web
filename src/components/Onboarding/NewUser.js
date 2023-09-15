@@ -54,7 +54,7 @@ function NewUser() {
                     <hr/>
             </Box>
             <Stack spacing={-6} m={12}>
-            <Box onClick={()=>{navigate('/ownerDashboard')}}>
+            <Box onClick={()=>{navigate('/google-signup')}}>
                 <img src={Google}/>
             </Box>   
             </Stack>
@@ -68,7 +68,7 @@ function NewUser() {
                                 borderRadius: '15px',
                                 fontSize:theme.typography.smallFont,
                                 fontWeight: theme.typography.primary.fontWeight, 
-                            }} onClick={()=>{navigate('/register')}}>Sign Up With Email</Button>  
+                            }} onClick={()=>{navigate('/email-signup')}}>Sign Up With Email</Button>  
            
             <Stack spacing={-20} m={12}>
                 <Typography 

@@ -88,6 +88,10 @@ import NewUser from "./Onboarding/NewUser";
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
+import EmailLogin from "./Onboarding/Login/EmailLogin";
+import EmailSignup from "./Onboarding/Signup/EmailSignup";
+import GoogleLogin from "./Onboarding/Login/GoogleLogin";
+import GoogleSignup from "./Onboarding/Signup/GoogleSignup";
 
 import { useUser } from "../contexts/UserContext";
 
@@ -202,6 +206,10 @@ function Main() {
             <Route exact path="/register" element={<Register />} />
             <Route exact path="/returningUser" element={<ReturningUser />} />
             <Route exact path="/userLogin" element={<UserLogin />} />
+            <Route exact path="/email-login" element={<EmailLogin />} />
+            <Route exact path="/email-signup" element={<EmailSignup />} />
+            <Route exact path="/google-login" element={<GoogleLogin />} />
+            <Route exact path="/google-signup" element={<GoogleSignup />} />
 
             </Routes>
             <Footer></Footer>
