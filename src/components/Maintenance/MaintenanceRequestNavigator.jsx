@@ -284,6 +284,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
+                {data.maintenance}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",
@@ -292,7 +293,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {data.maintenance_desc}
+                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null}
                 </Typography>
               </div>
             </CardContent>

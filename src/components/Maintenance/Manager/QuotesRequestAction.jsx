@@ -11,6 +11,7 @@ import {
     Stack,
     Button,
     Grid,
+    responsiveFontSizes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -37,7 +38,7 @@ export default function QuotesRequestAction({maintenanceItem}){
         });
     }
 
-    function handleCancel(id){
+    async function handleCancel(id){
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
@@ -51,19 +52,16 @@ export default function QuotesRequestAction({maintenanceItem}){
     }
 
     async function handleComplete(id){
-        CompleteTicket(id).then(response => {
-            console.log("handleComplete", response);
-            if (response){
-                console.log("Ticket Completed")
-                alert("Ticket Completed")
-                navigate('/maintenance')
-            } else{
-                console.log("Ticket Not Completed")
-                alert("Error: Ticket Not Completed")
-            }
-        }).catch(error => {
-            console.log("handleComplete", error);
-        });
+        let response = CompleteTicket(id);
+        console.log("handleComplete", response);
+        if (response){
+            console.log("Ticket Completed")
+            alert("Ticket Completed")
+            navigate('/maintenance')
+        } else{
+            console.log("Ticket Not Completed")
+            alert("Error: Ticket Not Completed")
+        }
     }
 
     return(

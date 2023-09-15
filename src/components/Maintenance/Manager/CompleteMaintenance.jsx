@@ -38,7 +38,7 @@ export default function CompleteMaintenance({maintenanceItem}){
         })
     }
 
-    function handleCancel(id){
+    async function handleCancel(id){
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
@@ -52,19 +52,16 @@ export default function CompleteMaintenance({maintenanceItem}){
     }
 
     async function handleComplete(id){
-        CompleteTicket(id).then(response => {
-            console.log("handleComplete", response);
-            if (response){
-                console.log("Ticket Completed")
-                alert("Ticket Completed")
-                navigate('/maintenance')
-            } else{
-                console.log("Ticket Not Completed")
-                alert("Error: Ticket Not Completed")
-            }
-        }).catch(error => {
-            console.log("handleComplete", error);
-        });
+        let response = CompleteTicket(id);
+        console.log("handleComplete", response);
+        if (response){
+            console.log("Ticket Completed")
+            alert("Ticket Completed")
+            navigate('/maintenance')
+        } else{
+            console.log("Ticket Not Completed")
+            alert("Error: Ticket Not Completed")
+        }
     }
 
     return(
@@ -174,7 +171,7 @@ export default function CompleteMaintenance({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.id)}
+                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >
                         <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -197,7 +194,7 @@ export default function CompleteMaintenance({maintenanceItem}){
                             display: 'flex',
                             width: "100%"
                         }}
-                        onClick={() => handleComplete(maintenanceItem.id)}
+                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

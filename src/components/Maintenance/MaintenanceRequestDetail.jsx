@@ -101,14 +101,16 @@ export default function MaintenanceRequestDetail(){
         }
     }
 
-    const colorStatus = [
-        {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
-        {'color': '#BC6666', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'}, // #D4736D
-        {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'CANCELLED'}, 
-        {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULE'},
-        {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
-        {'color': '#173C8D', 'status': 'Paid', 'mapping': 'INFO'}
-    ]
+    // const colorStatus = [
+    //     {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
+    //     {'color': '#BC6666', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'}, // #D4736D
+    //     {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'CANCELLED'}, 
+    //     {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
+    //     {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
+    //     {'color': '#173C8D', 'status': 'Paid', 'mapping': 'INFO'}
+    // ]
+
+    const colorStatus = theme.colorStatusPMO
 
     // console.log("Maintenance Request Detail", location.state.numOfRequests)
     // console.log("index", location.state.maintenance_request_index)

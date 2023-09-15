@@ -284,14 +284,16 @@ export default function Maintenance(){
                     }}>
                         {colorStatus.map((item, index) => {
                             // construct mapping key if it doesn't exist
-                            var mappingKey = ""
-                            if (item.mapping === "SCHEDULED") { // a known key with color mapping
-                                mappingKey = "SCHEDULE" // a mapped key to the maintenanceData object
-                            } else if (item.mapping == "PAID"){
-                                mappingKey = "INFO"
-                            } else{
-                                mappingKey = item.mapping
-                            }
+                            // var mappingKey = ""
+                            // if (item.mapping === "SCHEDULED") { // a known key with color mapping
+                            //     mappingKey = "SCHEDULED" // a mapped key to the maintenanceData object
+                            // } else if (item.mapping == "PAID"){
+                            //     mappingKey = "PAID"
+                            // } else{
+                            //     mappingKey = item.mapping
+                            // }
+
+                            let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
 

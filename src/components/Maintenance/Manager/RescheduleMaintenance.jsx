@@ -23,6 +23,8 @@ import { LocalizationProvider } from '@mui/lab';
 import AdapterDayjs from '@mui/lab/AdapterDayjs';
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIcon from '@mui/icons-material/Add';
 
 function DateTimePicker() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -62,14 +64,43 @@ export default function RescheduleMaintenance(){
     const location = useLocation();
     const navigate = useNavigate();
     const maintenanceItem = location.state.maintenanceItem;
+    const [month, setMonth] = useState(new Date().getMonth());
+    const [year, setYear] = useState(new Date().getFullYear());
 
-    const [radioValue, setRadioValue] = useState('option1');
+    console.log("RescheduleMaintenance", maintenanceItem)
 
-    const handleRadioChange = (event) => {
-        setRadioValue(event.target.value);
-      };
+    const [selectedValue, setSelectedValue] = useState("no");
+
+    const handleChange = (value) => {
+        console.log("Changing selectedValue to", value)
+        setSelectedValue(value)
+    };
+
 
     function handleSubmit(){
+        
+        const date = "12-15-2023"
+        const time = "09:00:00"
+
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "SCHEDULED",
+                        "maintenance_scheduled_date": date,
+                        "maintenance_scheduled_time": time
+                    })
+                });
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+        changeMaintenanceRequestStatus()
         navigate("/maintenance", {state: {maintenanceItem: maintenanceItem}});
     }
 
@@ -79,6 +110,32 @@ export default function RescheduleMaintenance(){
         } else{
             return maintenanceItem.maintenance_images.length
         }
+    }
+
+    function displaySchedulingButton(){
+        if (maintenanceItem && (maintenanceItem.maintenance_scheduled_date !== '' && maintenanceItem.maintenance_scheduled_date !== null) && (maintenanceItem.maintenance_scheduled_time !== '' && maintenanceItem.maintenance_scheduled_time !== null)){
+            return "Reschedule"
+        } else{
+            return "Schedule"
+        }
+    }
+
+    function currentScheduledDate(){
+        if (maintenanceItem && (maintenanceItem.maintenance_scheduled_date !== '' && maintenanceItem.maintenance_schedule_date !== null) && (maintenanceItem.maintenance_scheduled_time !== '' && maintenanceItem.maintenance_scheduled_time !== null)){
+            return "Scheduled for " + maintenanceItem.maintenance_scheduled_date + " at " + maintenanceItem.maintenance_scheduled_time
+        } else{
+            return "Not Scheduled"
+        }
+    }
+
+    function handleBackButton(){
+        console.log("handleBackButton")
+        navigate(-1); 
+    }
+
+    function navigateToAddMaintenanceItem(){
+        console.log("navigateToAddMaintenanceItem")
+        navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     return (
@@ -101,7 +158,7 @@ export default function RescheduleMaintenance(){
                     paddingBottom: '30px',
                 }}
             >
-                    <Stack
+                <Stack
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
@@ -111,15 +168,36 @@ export default function RescheduleMaintenance(){
                         paddingRight: "0px",
                     }}
                 >
-                        <Box
+                    <Stack
                         direction="row"
                         justifyContent="center"
                         alignItems="center"
+                        sx={{
+                            paddingBottom: "20px",
+                            paddingLeft: "0px",
+                            paddingRight: "0px",
+                        }}
                     >
-                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                            Maintenance
-                        </Typography>
-                    </Box>
+                        <Box position="absolute" left={30}>
+                            <Button onClick={() => handleBackButton()}>
+                                <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                        <Box
+                            direction="row"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                Maintenance
+                            </Typography>
+                        </Box>
+                        <Box position="absolute" right={30}>
+                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                    </Stack>
                     <Grid container spacing={5}
                         alignContent="center"
                         justifyContent="center"
@@ -200,7 +278,7 @@ export default function RescheduleMaintenance(){
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={5}
+                    <Grid container spacing={0}
                         alignContent="center"
                         justifyContent="center"
                         alignItems="center"
@@ -215,12 +293,18 @@ export default function RescheduleMaintenance(){
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={5}
+                    <Grid container spacing={2}
                         alignContent="center"
                         justifyContent="center"
                         alignItems="center"
                         direction="column"
+                        sx={{paddingTop: "10px"}}
                     >
+                        <Grid item xs={12}>
+                            <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                {currentScheduledDate()}
+                            </Typography>
+                        </Grid>
                         <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateTimePicker/>
@@ -232,11 +316,40 @@ export default function RescheduleMaintenance(){
                             </Typography>
                             <RadioGroup
                                 aria-label="options"
-                                value={radioValue}
-                                onChange={handleRadioChange}
+                                value={selectedValue}
                             >
-                                <FormControlLabel value="option1" control={<Radio />} label="Option 1" />
-                                <FormControlLabel value="option2" control={<Radio />} label="Option 2" />
+                                <FormControlLabel 
+                                    value="yes" 
+                                    control={
+                                        <Radio 
+                                            color="primary" 
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: '#3D5CAC',
+                                                }
+                                            }}
+                                        />
+                                    } 
+                                    label="Yes"
+                                    checked={selectedValue === "yes"}
+                                    onChange={() => handleChange("yes")}
+                                />
+                                <FormControlLabel 
+                                    value="no" 
+                                    control={
+                                        <Radio 
+                                            color="primary" 
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: '#3D5CAC',
+                                                }
+                                            }}
+                                        />
+                                    } 
+                                    label="No" 
+                                    checked={selectedValue === "no"}
+                                    onChange={() => handleChange("no")}
+                                />
                             </RadioGroup>
                         </Grid>
                         <Grid item xs={12}>
@@ -257,7 +370,7 @@ export default function RescheduleMaintenance(){
                                     fontWeight: theme.typography.primary.fontWeight, 
                                     fontSize: "14px"
                                 }}>
-                                    Schedule
+                                    {displaySchedulingButton()}
                                 </Typography>
                             </Button>
                         </Grid>

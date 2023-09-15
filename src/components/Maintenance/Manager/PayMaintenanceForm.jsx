@@ -29,8 +29,32 @@ export default function PayMaintenanceForm(){
     const maintenanceItem = location.state.maintenanceItem;
     const handleSubmit = () => {
         console.log("handleSubmit")
-        console.log("need to implement navigation")
-        navigate("/maintenance")
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "PAID"
+                    })
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    navigate("/maintenance")
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+        changeMaintenanceRequestStatus()
     }
 
 

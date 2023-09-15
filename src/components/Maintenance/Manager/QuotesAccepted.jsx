@@ -22,6 +22,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 
 export default function QuotesAccepted({maintenanceItem}){
@@ -38,7 +39,7 @@ export default function QuotesAccepted({maintenanceItem}){
         });
     }
 
-    function handleCancel(id){
+    async function handleCancel(id){
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
@@ -52,19 +53,39 @@ export default function QuotesAccepted({maintenanceItem}){
     }
 
     async function handleComplete(id){
-        CompleteTicket(id).then(response => {
-            console.log("handleComplete", response);
-            if (response){
-                console.log("Ticket Completed")
-                alert("Ticket Completed")
+        let response = CompleteTicket(id);
+        console.log("handleComplete", response);
+        if (response){
+            console.log("Ticket Completed")
+            alert("Ticket Completed")
+            navigate('/maintenance')
+        } else{
+            console.log("Ticket Not Completed")
+            alert("Error: Ticket Not Completed")
+        }
+    }
+
+    async function handleScheduleStatusChange(){
+        try {
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                    "maintenance_request_status": "SCHEDULED"
+                })
+            });
+            const responseData = await response.json();
+            if (responseData.code === 200){
+                console.log("Ticket Status Changed")
+                alert("Ticket Status Changed")
                 navigate('/maintenance')
-            } else{
-                console.log("Ticket Not Completed")
-                alert("Error: Ticket Not Completed")
             }
-        }).catch(error => {
-            console.log("handleComplete", error);
-        });
+        } catch (error){
+            console.log("error", error)
+        }
     }
 
     return(
@@ -173,7 +194,7 @@ export default function QuotesAccepted({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.id)}
+                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >
                         <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -196,11 +217,34 @@ export default function QuotesAccepted({maintenanceItem}){
                             display: 'flex',
                             width: "100%"
                         }}
-                        onClick={() => handleComplete(maintenanceItem.id)}
+                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
                             Complete Ticket
+                        </Typography>
+                    </Button>
+                </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+
+                }}>
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#97A7CF",
+                            textTransform: "none",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%"
+                        }}
+                        onClick={() => handleScheduleStatusChange()}
+                    >
+                        <CalendarMonthIcon sx={{color: "#FFFFFF"}}/>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                            Ready for Scheduling
                         </Typography>
                     </Button>
                 </Grid>

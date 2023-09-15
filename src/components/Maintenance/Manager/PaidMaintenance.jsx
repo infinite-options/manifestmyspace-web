@@ -39,6 +39,7 @@ export default function CompletedM({maintenanceItem}){
     }
 
     function handleCancel(id){
+        console.log("handleCancel", id)
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
@@ -54,7 +55,7 @@ export default function CompletedM({maintenanceItem}){
     async function handleComplete(id){
         CompleteTicket(id).then(response => {
             console.log("handleComplete", response);
-            if (response){
+            if (response.ok){
                 console.log("Ticket Completed")
                 alert("Ticket Completed")
                 navigate('/maintenance')
