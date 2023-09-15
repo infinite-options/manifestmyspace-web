@@ -33,6 +33,15 @@ export default function PayMaintenanceForm(){
         navigate("/maintenance")
     }
 
+
+    function numImages(){
+        if (maintenanceItem.maintenance_images == "[]"){
+            return 0
+        } else{
+            return maintenanceItem.maintenance_images.length
+        }
+    }
+
     return (
         <Box
         style={{
@@ -88,14 +97,64 @@ export default function PayMaintenanceForm(){
                                     padding: "10px",
                                     margin: "10px",
                                 }}>
-                                {Object.entries(maintenanceItem).map(([key, value], index) => (
+                                    <Grid item xs={12}>
+                                        <Grid container spacing={2} justifyContent="center">
+                                            {numImages() > 0 ? 
+                                                (
+                                                    Array.isArray(maintenanceItem.maintenance_images) && maintenanceItem.maintenance_images.length > 0 ? 
+                                                    maintenanceItem.maintenance_images.map((image, index) => (
+                                                        <Grid item key={index}>
+                                                            <img 
+                                                                src={image} 
+                                                                alt={`Image ${index}`} 
+                                                                style={{ width: '50px', height: '50px' }} 
+                                                            />
+                                                        </Grid>
+                                                    ))
+                                                    : 
+                                                    null
+                                                )
+                                            : null }
+                                        </Grid>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                            { numImages() > 0 ? numImages() + " Images" : "No Images" }
+                                        </Typography>
+                                    </Grid>
+                                     <Grid item xs={12}>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                            <b>{maintenanceItem.maintenance_priority} Priority</b>
+                                        </Typography>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                            <u>{maintenanceItem.property_address}, {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}</u>
+                                        </Typography>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                            <b>{maintenanceItem.maintenance_title}</b>
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                            <b>{maintenanceItem.maintenance_desc}</b>
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                            Estimated Cost: <b>{maintenanceItem.maintenance_desc}</b>
+                                        </Typography>
+                                    </Grid>
+                                {/* {Object.entries(maintenanceItem).map(([key, value], index) => (
                                         <Grid item xs={12}>
                                             <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                                                 <b>{key} : {value}</b>
                                             </Typography>
                                         </Grid>
                                     )
-                                )}
+                                )} */}
                             </Card>
                         </Grid>
                     </Grid>

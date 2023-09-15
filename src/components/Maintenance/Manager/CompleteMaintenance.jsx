@@ -19,6 +19,8 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
+import CancelTicket from "../../utils/CancelTicket";
+import CompleteTicket from "../../utils/CompleteTicket";
 
 
 export default function CompleteMaintenance({maintenanceItem}){
@@ -34,6 +36,35 @@ export default function CompleteMaintenance({maintenanceItem}){
 
             }
         })
+    }
+
+    function handleCancel(id){
+        let response = CancelTicket(id);
+        console.log("handleCancel", response)
+        if (response){
+            console.log("Ticket Cancelled")
+            alert("Ticket Cancelled")
+            navigate('/maintenance')
+        } else{
+            console.log("Ticket Not Cancelled")
+            alert("Error: Ticket Not Cancelled")
+        }
+    }
+
+    async function handleComplete(id){
+        CompleteTicket(id).then(response => {
+            console.log("handleComplete", response);
+            if (response){
+                console.log("Ticket Completed")
+                alert("Ticket Completed")
+                navigate('/maintenance')
+            } else{
+                console.log("Ticket Not Completed")
+                alert("Error: Ticket Not Completed")
+            }
+        }).catch(error => {
+            console.log("handleComplete", error);
+        });
     }
 
     return(
@@ -143,6 +174,7 @@ export default function CompleteMaintenance({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
+                        onClick={() => handleCancel(maintenanceItem.id)}
                     >
                         <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -165,6 +197,7 @@ export default function CompleteMaintenance({maintenanceItem}){
                             display: 'flex',
                             width: "100%"
                         }}
+                        onClick={() => handleComplete(maintenanceItem.id)}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
