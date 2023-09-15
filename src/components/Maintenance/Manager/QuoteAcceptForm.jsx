@@ -20,6 +20,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ImageUploader from "../../ImageUploader";
 import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function QuoteAcceptForm(){
 
@@ -27,6 +29,8 @@ export default function QuoteAcceptForm(){
     const navigate = useNavigate();
     const location = useLocation();
     const maintenanceItem = location.state.maintenanceItem;
+    const [month, setMonth] = useState(new Date().getMonth());
+    const [year, setYear] = useState(new Date().getFullYear());
     const [selectedImageList, setSelectedImageList] = useState([]);
 
     const [maintenanceQuote, setMaintenanceQuotes] = useState([
@@ -41,6 +45,17 @@ export default function QuoteAcceptForm(){
             maintenanceNotes: "Hi John, The pipe seems to only have a minor leak, so I should be able to get it patched up without replacing it. I don’t see any water damage yet but it should be fixed urgently. Thanks, Kim"
         }
     ])
+
+    function navigateToAddMaintenanceItem(){
+        console.log("navigateToAddMaintenanceItem")
+        navigate('/addMaintenanceItem', {state: {month, year}})
+    }
+
+    function handleBackButton(){
+        console.log("handleBackButton")
+        navigate(-1); 
+    }
+
 
 
     console.log(maintenanceItem)
@@ -89,15 +104,36 @@ export default function QuoteAcceptForm(){
                         paddingRight: "0px",
                     }}
                 >
-                        <Box
+                                           <Stack
                         direction="row"
                         justifyContent="center"
                         alignItems="center"
+                        sx={{
+                            paddingBottom: "20px",
+                            paddingLeft: "0px",
+                            paddingRight: "0px",
+                        }}
                     >
-                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                            Maintenance
-                        </Typography>
-                    </Box>
+                        <Box position="absolute" left={30}>
+                            <Button onClick={() => handleBackButton()}>
+                                <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                        <Box
+                            direction="row"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                Maintenance
+                            </Typography>
+                        </Box>
+                        <Box position="absolute" right={30}>
+                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                    </Stack>
                     <Grid container spacing={3}
                         alignContent="center"
                         justifyContent="center"
