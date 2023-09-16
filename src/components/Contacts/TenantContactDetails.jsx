@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
 import {
     ThemeProvider,
@@ -28,28 +28,32 @@ const TenantContactDetails = (props) => {
     console.log(selectedData);
     console.log(index);
 
-    const uniqueValues = {};
+    // const uniqueValues = {};
 
-    const uniqueContacts = contactDetails.filter((item) => {
-        if (
-            !uniqueValues[item.tenant_uid] &&
-            item.contract_status !== 'TERMINATED'
-        ) {
-            uniqueValues[item.tenant_uid] = item;
-            return true;
-        }
-        return false;
-    });
+    // const uniqueContacts = contactDetails.filter((item) => {
+    //     if (
+    //         !uniqueValues[item.tenant_uid] &&
+    //         item.contract_status !== 'TERMINATED'
+    //     ) {
+    //         uniqueValues[item.tenant_uid] = item;
+    //         return true;
+    //     }
+    //     return false;
+    // });
 
-    console.log(uniqueContacts);
+    // console.log(uniqueContacts);
 
-    const tenant_object = Object.values(uniqueValues)[index];
+    // const tenant_object = Object.values(uniqueValues)[index];
 
-    console.log(tenant_object);
+    // console.log(tenant_object);
 
     const handleBackBtn = () => {
         navigate('/contacts');
     };
+
+    useEffect(() => {
+        setCurrentViewData(selectedData);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -271,9 +275,7 @@ const TenantContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {formattedPhoneNumber(
-                                            selectedData.contact_phone_numnber
-                                        )}
+                                        {selectedData.contact_phone_numnber}
                                     </Typography>
                                 </Stack>
                             </Stack>

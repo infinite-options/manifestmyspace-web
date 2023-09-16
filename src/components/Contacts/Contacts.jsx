@@ -339,18 +339,20 @@ const Contacts = (props) => {
                                     </>
                                 ) : contactsTab === 'Tenants' ? (
                                     <>
-                                        {tenantData.map((tenant, index) => {
-                                            return (
-                                                <TenantContactsCard
-                                                    data={tenant}
-                                                    key={index}
-                                                    index={index}
-                                                    selected={
-                                                        handleSetSelectedCard
-                                                    }
-                                                />
-                                            );
-                                        })}
+                                        {tenantDataDetails.map(
+                                            (tenant, index) => {
+                                                return (
+                                                    <TenantContactsCard
+                                                        data={tenant}
+                                                        key={index}
+                                                        index={index}
+                                                        selected={
+                                                            handleSetSelectedCard
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                        )}
                                     </>
                                 ) : (
                                     <>
@@ -478,8 +480,9 @@ const TenantContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {tenant.contact_first_name}{' '}
-                            {tenant.contact_last_name}
+                            {/* {tenant.contact_first_name}{' '}
+                            {tenant.contact_last_name} */}
+                            {tenant.tenant_first_name} {tenant.tenant_last_name}
                         </Typography>
                         <Button>
                             <Message
@@ -496,8 +499,8 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_address
-                            ? tenant.contact_address
+                        {tenant.tenant_address
+                            ? tenant.tenant_address
                             : '103 N. Abel St, Milpitas CA 95035'}
                     </Typography>
                     <Typography
@@ -506,7 +509,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_email}
+                        {tenant.tenant_email}
                     </Typography>
                     <Typography
                         sx={{
@@ -514,7 +517,10 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {formattedPhoneNumber(tenant.contact_phone_numnber)}
+                        {tenant.tenant_phone_number.indexOf('(') > -1
+                            ? tenant.tenant_phone_number
+                            : formattedPhoneNumber(tenant.tenant_phone_number)}
+                        {/* {formattedPhoneNumber(tenant.tenant_phone_number)} */}
                     </Typography>
                 </CardContent>
             </Card>
