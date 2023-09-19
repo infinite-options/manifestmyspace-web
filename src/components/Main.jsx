@@ -234,6 +234,12 @@ function Main() {
             <Route exact path="/google-login" element={<GoogleLogin />} />
             <Route exact path="/google-signup" element={<GoogleSignup />} />
 
+            <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
+            <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
+            <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
+            <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
+            <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
             </Routes>
             <Footer></Footer>
         </Box>

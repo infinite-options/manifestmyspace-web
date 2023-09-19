@@ -323,7 +323,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  Estimated Cost: {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"}
+                  Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
                 </Typography>
                 <Typography
                   sx={{
