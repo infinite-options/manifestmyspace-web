@@ -31,10 +31,7 @@ export default function Maintenance(){
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
-    const maintenanceRequests = location.state.maintenanceRequests;
-    const colorStatus = location.state.colorStatus;
-
-    console.log("maintenanceRequests", maintenanceRequests)
+    const colorStatus = theme.colorStatusPMO
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -50,25 +47,27 @@ export default function Maintenance(){
     }
 
     useEffect(() => {
-        console.log("maintenanceData", maintenanceData)
-        const propertyList = [];
-        const addedAddresses = [];
-        for (const key in maintenanceData){
-            for (const item of maintenanceData[key]){
-                if (!addedAddresses.includes(item.property_address)){
-                    addedAddresses.push(item.property_address);
-                    if (!propertyList.includes(item.property_address)){
-                        propertyList.push({
-                            "address": item.property_address,
-                            "checked": true
-                        });
+        if (maintenanceData){
+            console.log("maintenanceData", maintenanceData)
+            const propertyList = [];
+            const addedAddresses = [];
+            for (const key in maintenanceData){
+                for (const item of maintenanceData[key]){
+                    if (!addedAddresses.includes(item.property_address)){
+                        addedAddresses.push(item.property_address);
+                        if (!propertyList.includes(item.property_address)){
+                            propertyList.push({
+                                "address": item.property_address,
+                                "checked": true
+                            });
+                        }
                     }
                 }
             }
+            
+            console.log("filterPropertyList", propertyList)
+            setFilterPropertyList(propertyList);
         }
-        
-        console.log("filterPropertyList", propertyList)
-        setFilterPropertyList(propertyList);
     }, [maintenanceData])
 
     function convertToStandardFormat(monthName, year) {
@@ -285,14 +284,16 @@ export default function Maintenance(){
                     }}>
                         {colorStatus.map((item, index) => {
                             // construct mapping key if it doesn't exist
-                            var mappingKey = ""
-                            if (item.mapping === "SCHEDULED") { // a known key with color mapping
-                                mappingKey = "SCHEDULE" // a mapped key to the maintenanceData object
-                            } else if (item.mapping == "PAID"){
-                                mappingKey = "INFO"
-                            } else{
-                                mappingKey = item.mapping
-                            }
+                            // var mappingKey = ""
+                            // if (item.mapping === "SCHEDULED") { // a known key with color mapping
+                            //     mappingKey = "SCHEDULED" // a mapped key to the maintenanceData object
+                            // } else if (item.mapping == "PAID"){
+                            //     mappingKey = "PAID"
+                            // } else{
+                            //     mappingKey = item.mapping
+                            // }
+
+                            let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
 
@@ -305,7 +306,7 @@ export default function Maintenance(){
                                     color={item.color}
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={maintenanceData}
-                                    maintenanceRequestsCount={maintenanceRequests[item.mapping]}
+                                    maintenanceRequestsCount={maintenanceArray}
                                 />
                             );
                         })}

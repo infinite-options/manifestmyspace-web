@@ -76,6 +76,7 @@ const SearchBar = ({ propertyList, setFilteredItems }) => {
         p: "2px 4px",
         alignItems: "center",
         backgroundColor: theme.palette.form.main,
+        display: "flex"
       }}
     >
       <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">

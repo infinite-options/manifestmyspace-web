@@ -57,7 +57,7 @@ const MixedChart = (props) => {
             barSize={15}
             name="Cashflow">
             {data.map((entry, index) => (
-            <Cell fill={(activeButton === "ExpectedCashflow" && entry.expectedCashflow<0) || (activeButton === "Cashflow" && entry.cashflow < 0) ? theme.palette.custom.red : theme.typography.common.blue }/>
+              <Cell key={index} fill={(activeButton === "ExpectedCashflow" && entry.expectedCashflow<0) || (activeButton === "Cashflow" && entry.cashflow < 0) ? theme.palette.custom.red : theme.typography.common.blue }/>
             ))}
           </Bar>
         <Line 

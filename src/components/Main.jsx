@@ -82,6 +82,11 @@ import SettingsACH3 from "./SettingsACH/SettingsACH3";
 import SettingsACH4 from "./SettingsACH/SettingsACH4";
 import SettingsACH5 from "./SettingsACH/SettingsACH5";
 import POContracts from "./Contracts/POContracts/POContracts";
+import theme from "../theme/theme";
+import QuoteAcceptForm from "./Maintenance/Manager/QuoteAcceptForm";
+import QuoteRequestForm from "./Maintenance/Manager/QuoteRequestForm";
+import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
+import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
 import NewUser from "./Onboarding/NewUser";
@@ -127,7 +132,6 @@ function Main() {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          <Router>
           <Header></Header>
             <Routes>
               <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
@@ -189,7 +193,7 @@ function Main() {
               <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
               <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
-              <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
+              <Route exact path="/maintenance/detail" element={<MaintenanceRequestDetail />} />
               <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
               <Route exact path="/addProperty" element={<AddProperty />} />
               <Route exact path="/editProperty" element={<EditProperty />} />
@@ -232,7 +236,6 @@ function Main() {
 
             </Routes>
             <Footer></Footer>
-          </Router>
         </Box>
       </div>
     </>

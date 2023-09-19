@@ -205,6 +205,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                     noValidate
                     autoComplete="off"
                     onSubmit={handleSubmit}
+                    id="addTenantMaintenanceItemForm"
                 >
                     <Grid container spacing={6}>
                         {/* Select Field for Issue and Cost Estimate */}
@@ -377,11 +378,6 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     borderRadius: '7px',
                                 }}
                                 size="small"
-                                // InputProps={{
-                                //     startAdornment: (
-                                //         <InputAdornment position="start">$</InputAdornment>
-                                //     ),
-                                // }}
                                 onChange={handlePhoneNumberChange}
                             />
                         </Grid>
@@ -389,27 +385,6 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                         {/* File Upload Field */}
                         <Grid item xs={12}>
                             <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
-                            {/* <Container fixed sx={{
-                                backgroundColor: 'white',
-                                borderColor: 'black',
-                                borderRadius: '7px',
-                                borderStyle: 'dashed',
-                                borderColor: theme.typography.common.blue,
-                            }}>
-                                <Box
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    display="flex"
-                                    padding={10}
-                                >
-                                    <Button>
-                                        <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Add Photos
-                                        </Typography>
-                                    </Button>
-                                </Box>
-                            </Container> */}
                         </Grid>
 
                         {/* Submit Button */}
@@ -418,6 +393,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                 width: "100%",
                                 backgroundColor: theme.typography.common.blue,
                                 color: "#FFFFFF",
+                                form:"addTenantMaintenanceItemForm"
                             }}>
                                 <Typography sx={{
                                     color: theme.typography.common.white, 
