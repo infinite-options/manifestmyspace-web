@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TextField,
   RadioGroup,
@@ -17,46 +17,67 @@ import {
   Button,
   Grid,  
 } from '@mui/material';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
-import { LocalizationProvider } from '@mui/lab';
-import AdapterDayjs from '@mui/lab/AdapterDayjs';
+
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopDateTimePicker } from '@mui/x-date-pickers';
+
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 
-function DateTimePicker() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState(new Date());
 
-  const handleDateChange = (newDate) => {
-    setSelectedDate(newDate);
-  };
+// function DateTimePicker() {
+//   const [selectedDate, setSelectedDate] = useState(new Date());
+//   const [selectedTime, setSelectedTime] = useState(new Date());
 
-  const handleTimeChange = (newTime) => {
-    setSelectedTime(newTime);
-  };
+//   const handleDateChange = (newDate) => {
+//     setSelectedDate(newDate);
+//   };
+
+//   const handleTimeChange = (newTime) => {
+//     setSelectedTime(newTime);
+//   };
 
 
-  return (
-    <Stack spacing={3}>
-      <MobileDatePicker
-        label="Date picker"
-        inputFormat="MM/dd/yyyy"
-        value={selectedDate}
-        onChange={handleDateChange}
-        renderInput={(params) => <TextField fullWidth {...params} />}
-      />
-      <MobileTimePicker
-        label="Time picker"
-        value={selectedTime}
-        onChange={handleTimeChange}
-        renderInput={(params) => <TextField fullWidth {...params} />}
-      />
-    </Stack>
-  );
-}
+//   return (
+//     <Stack spacing={3}>
+//       <MobileDatePicker
+//         label="Date picker"
+//         inputFormat="MM/dd/yyyy"
+//         value={selectedDate}
+//         onChange={handleDateChange}
+//         renderInput={(params) => <TextField fullWidth {...params} />}
+//       />
+//       <MobileTimePicker
+//         label="Time picker"
+//         value={selectedTime}
+//         onChange={handleTimeChange}
+//         renderInput={(params) => <TextField fullWidth {...params} />}
+//       />
+//     </Stack>
+//   );
+// }
+
+// function DateTimePicker() {
+//     const [selectedDate, handleDateChange] = useState(new Date());
+
+//     console.log('DATE TIME PICKER')
+  
+//     return (
+//       <LocalizationProvider dateAdapter={AdapterDayjs}>
+//         <DesktopDateTimePicker
+//           label="Date & Time"
+//           inputFormat="MM/dd/yyyy hh:mm a"
+//           value={selectedDate}
+//           onChange={handleDateChange}
+//           renderInput={(params) => <TextField {...params} />}
+//         />
+//       </LocalizationProvider>
+//     );
+//   }
+
 
 export default function RescheduleMaintenance(){
 
@@ -66,6 +87,7 @@ export default function RescheduleMaintenance(){
     const maintenanceItem = location.state.maintenanceItem;
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
+    const [displayImages, setDisplayImages] = useState([])
 
     console.log("RescheduleMaintenance", maintenanceItem)
 
@@ -75,6 +97,12 @@ export default function RescheduleMaintenance(){
         console.log("Changing selectedValue to", value)
         setSelectedValue(value)
     };
+
+    useEffect(() => {
+        let imageArray = JSON.parse(maintenanceItem.maintenance_images)
+
+        setDisplayImages(imageArray)
+    }, [])
 
 
     function handleSubmit(){
@@ -105,10 +133,10 @@ export default function RescheduleMaintenance(){
     }
 
     function numImages(){
-        if (maintenanceItem.maintenance_images == "[]"){
+        if (displayImages.length == 0){
             return 0
         } else{
-            return maintenanceItem.maintenance_images.length
+            return displayImages.length
         }
     }
 
@@ -220,8 +248,8 @@ export default function RescheduleMaintenance(){
                                         <Grid container spacing={2} justifyContent="center">
                                             {numImages() > 0 ? 
                                                 (
-                                                    Array.isArray(maintenanceItem.maintenance_images) && maintenanceItem.maintenance_images.length > 0 ? 
-                                                    maintenanceItem.maintenance_images.map((image, index) => (
+                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
+                                                    displayImages.map((image, index) => (
                                                         <Grid item key={index}>
                                                             <img 
                                                                 src={image} 
@@ -306,9 +334,7 @@ export default function RescheduleMaintenance(){
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker/>
-                            </LocalizationProvider>
+                            {/* <DateTimePicker/> */}
                         </Grid>
                         <Grid item xs={12}>
                         <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>

@@ -119,7 +119,8 @@ export default function MaintenanceRequestDetail(){
     // console.log("allData", location.state.allMaintenanceData)
 
     // const requestData = location.state.numOfRequests;
-    const maintenanceRequestIndex = location.state.maintenance_request_index;
+    // const maintenanceRequestIndex = location.state.maintenance_request_index;
+    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
     // const status = location.state.status;
     const [status, setStatus] = useState(location.state.status);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
@@ -142,15 +143,20 @@ export default function MaintenanceRequestDetail(){
         })
     }, [status])
 
-    // useEffect(() => {
-    //     setStatus(colorStatus[value].status)
-    // }, [value])
-
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
+        setMaintenanceRequestIndex(0);
     };
+
+    const handleMaintenaceRequestIndexChange = (index) => {
+        setMaintenanceRequestIndex(index);  
+    }
+
+    useEffect(() => {
+        console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
+    }, [maintenanceRequestIndex])
 
     // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
@@ -292,8 +298,8 @@ export default function MaintenanceRequestDetail(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
-                                                : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
+                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
+                                                : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
                                             }
                                         </Grid>
                                     </CustomTabPanel>
@@ -309,23 +315,23 @@ export default function MaintenanceRequestDetail(){
                                     <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null 
                                 }
-                                {colorStatus[value].status === "Quotes Requested" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value].status === "Quotes Requested" ?
                                     <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Quotes Accepted" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value].status === "Quotes Accepted" ?
                                     <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Scheduled" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value].status === "Scheduled" ?
                                     <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Completed" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value].status === "Completed" ?
                                     <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Paid" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value].status === "Paid" ?
                                     <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/> 
                                     : null
                                 }

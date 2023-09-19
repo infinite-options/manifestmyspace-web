@@ -20,6 +20,8 @@ import {
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIcon from '@mui/icons-material/Add';
 
 
 export default function PayMaintenanceForm(){
@@ -27,6 +29,10 @@ export default function PayMaintenanceForm(){
     const navigate = useNavigate();
     const location = useLocation();
     const maintenanceItem = location.state.maintenanceItem;
+    const [displayImages, setDisplayImages] = useState([])
+    const [month, setMonth] = useState(new Date().getMonth());
+    const [year, setYear] = useState(new Date().getFullYear());
+
     const handleSubmit = () => {
         console.log("handleSubmit")
         const changeMaintenanceRequestStatus = async () => {
@@ -57,13 +63,29 @@ export default function PayMaintenanceForm(){
         changeMaintenanceRequestStatus()
     }
 
+    useEffect(() => {
+        let imageArray = JSON.parse(maintenanceItem.maintenance_images)
+
+        setDisplayImages(imageArray)
+    }, [])
+
 
     function numImages(){
-        if (maintenanceItem.maintenance_images == "[]"){
+        if (displayImages.length == 0){
             return 0
         } else{
-            return maintenanceItem.maintenance_images.length
+            return displayImages.length
         }
+    }
+
+    function navigateToAddMaintenanceItem(){
+        console.log("navigateToAddMaintenanceItem")
+        navigate('/addMaintenanceItem', {state: {month, year}})
+    }
+
+    function handleBackButton(){
+        console.log("handleBackButton")
+        navigate(-1); 
     }
 
     return (
@@ -96,15 +118,36 @@ export default function PayMaintenanceForm(){
                         paddingRight: "0px",
                     }}
                 >
-                        <Box
+                    <Stack
                         direction="row"
                         justifyContent="center"
                         alignItems="center"
+                        sx={{
+                            paddingBottom: "20px",
+                            paddingLeft: "0px",
+                            paddingRight: "0px",
+                        }}
                     >
-                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                            Maintenance
-                        </Typography>
-                    </Box>
+                        <Box position="absolute" left={30}>
+                            <Button onClick={() => handleBackButton()}>
+                                <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                        <Box
+                            direction="row"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                Maintenance
+                            </Typography>
+                        </Box>
+                        <Box position="absolute" right={30}>
+                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                    </Stack>
                     <Grid container spacing={3}
                         alignContent="center"
                         justifyContent="center"
@@ -125,8 +168,8 @@ export default function PayMaintenanceForm(){
                                         <Grid container spacing={2} justifyContent="center">
                                             {numImages() > 0 ? 
                                                 (
-                                                    Array.isArray(maintenanceItem.maintenance_images) && maintenanceItem.maintenance_images.length > 0 ? 
-                                                    maintenanceItem.maintenance_images.map((image, index) => (
+                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
+                                                    displayImages.map((image, index) => (
                                                         <Grid item key={index}>
                                                             <img 
                                                                 src={image} 
@@ -146,7 +189,7 @@ export default function PayMaintenanceForm(){
                                     </Grid>
                                      <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem.maintenance_priority} Priority</b>
+                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
                                         </Typography>
                                     </Grid>
 

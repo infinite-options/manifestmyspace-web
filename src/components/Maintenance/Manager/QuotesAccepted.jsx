@@ -28,6 +28,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 export default function QuotesAccepted({maintenanceItem}){
     const navigate = useNavigate();
 
+    console.log("QuotesAccepted maintenanceItem", maintenanceItem)
+
 
     function handleNavigateToQuotesRequested(){
 
@@ -78,6 +80,7 @@ export default function QuotesAccepted({maintenanceItem}){
                 })
             });
             const responseData = await response.json();
+            console.log(responseData)
             if (responseData.code === 200){
                 console.log("Ticket Status Changed")
                 alert("Ticket Status Changed")

@@ -22,6 +22,17 @@ import ImageUploader from "../../ImageUploader";
 import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+
+
+function QuoteNavigator({ onPrevious, onNext }) {
+    return (
+        <div>
+            <button onClick={onPrevious}>Previous</button>
+            <button onClick={onNext}>Next</button>
+        </div>
+    );
+}
 
 export default function QuoteAcceptForm(){
 
@@ -31,9 +42,9 @@ export default function QuoteAcceptForm(){
     const maintenanceItem = location.state.maintenanceItem;
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
-    const [selectedImageList, setSelectedImageList] = useState([]);
-
-    const [maintenanceQuote, setMaintenanceQuotes] = useState([
+    const [displayImages, setDisplayImages] = useState([])
+    const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
+    const [maintenanceQuotes, setMaintenanceQuotes] = useState([
         {
             maintenanceContact: "Doolittle Maintenance",
             maintenanceQuote: "Estimated Cost: $2400-$3000\nEstimated Time: 4 days - 2 weeks\nEarliest Availability: 05/03/2023",
@@ -46,6 +57,16 @@ export default function QuoteAcceptForm(){
         }
     ])
 
+    const handleNextQuote = () => {
+        setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % maintenanceQuotes.length);
+    };
+    
+    const handlePreviousQuote = () => {
+        setCurrentQuoteIndex((prevIndex) => (prevIndex - 1 + maintenanceQuotes.length) % maintenanceQuotes.length);
+    };
+
+    const currentQuote = maintenanceQuotes[currentQuoteIndex];
+
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
@@ -56,9 +77,6 @@ export default function QuoteAcceptForm(){
         navigate(-1); 
     }
 
-
-
-    console.log(maintenanceItem)
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -94,12 +112,19 @@ export default function QuoteAcceptForm(){
     }
 
     function numImages(){
-        if (maintenanceItem.maintenance_images == "[]"){
+        if (displayImages.length == 0){
             return 0
         } else{
-            return maintenanceItem.maintenance_images.length
+            return displayImages.length
         }
     }
+
+    useEffect(() => {
+        let imageArray = JSON.parse(maintenanceItem.maintenance_images)
+        setDisplayImages(imageArray)
+
+
+    }, [])
 
     return (
         <Box
@@ -182,8 +207,8 @@ export default function QuoteAcceptForm(){
                                         <Grid container spacing={2} justifyContent="center">
                                             {numImages() > 0 ? 
                                                 (
-                                                    Array.isArray(maintenanceItem.maintenance_images) && maintenanceItem.maintenance_images.length > 0 ? 
-                                                    maintenanceItem.maintenance_images.map((image, index) => (
+                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
+                                                    displayImages.map((image, index) => (
                                                         <Grid item key={index}>
                                                             <img 
                                                                 src={image} 
@@ -247,11 +272,41 @@ export default function QuoteAcceptForm(){
                         sx={{
                             backgroundColor: "#C06A6A",
                         }}
-                    >   
+                    > 
                         <Grid item xs={12}>
                             <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                <b>Viewing Quotes From Doolittle Maintenance</b>
+                                <b>Viewing Quotes {currentQuoteIndex + 1} of {maintenanceQuotes.length}</b>
                             </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={0}>
+                        <Grid item xs={2}>
+                            <Button 
+                                onClick={handlePreviousQuote} 
+                                disabled={currentQuoteIndex == 0}
+                                style={{
+                                    color: 'grey',            // change text/icon color if desired
+                                    width: '100%',             // to make the button fill the Grid item's width
+                                    height: '100%'             // to make the button fill the Grid item's height
+                                }}
+                            >
+                                <ArrowBackIcon/>
+                            </Button>
+                        </Grid>
+                        <Grid item xs={8}>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Button 
+                                onClick={handleNextQuote} 
+                                disabled={currentQuoteIndex == maintenanceQuotes.length}
+                                style={{
+                                    color: 'grey',            // change text/icon color if desired
+                                    width: '100%',             // to make the button fill the Grid item's width
+                                    height: '100%'             // to make the button fill the Grid item's height
+                                }}
+                            >
+                                <ArrowForwardIcon />
+                            </Button>
                         </Grid>
                     </Grid>
                     <Grid container spacing={3}
@@ -262,16 +317,14 @@ export default function QuoteAcceptForm(){
                     >
                         
                         <Grid item xs={12}>
-                            Doolittle Maintenance
+                            {currentQuote.maintenanceContact}
                         </Grid>
                         <Grid item xs={12}>
                             <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
                                 <TextField
                                     multiline
                                     rows={10}
-                                    defaultValue="Estimated Cost: $2400-$3000
-                                    Estimated Time: 4 days - 2 weeks
-                                    Earliest Availability: 05/03/2023"
+                                    value={currentQuote.maintenanceQuote}
                                     variant="outlined"
                                     fullWidth
                                     InputProps={{
@@ -289,8 +342,7 @@ export default function QuoteAcceptForm(){
                                 <TextField
                                     multiline
                                     rows={10}
-                                    defaultValue="I will have to replace all of the pipes. This is the worst plumbing I have ever seen. All of the flooring should be replaced due to water damage as well, which I can take care of too. 
-                                    See you soon, Timberlake"
+                                    value={currentQuote.maintenanceNotes}
                                     variant="outlined"
                                     fullWidth
                                     InputProps={{
@@ -311,7 +363,7 @@ export default function QuoteAcceptForm(){
                                     display: 'flex',
                                     width: "100%",
                                 }}
-                                onClick={() => handleSubmit()}
+                                onClick={() => handleSubmit("CANCELLED")}
                                 >
                                 <Typography sx={{
                                     color: "#160449",

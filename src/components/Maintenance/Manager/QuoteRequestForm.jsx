@@ -41,9 +41,11 @@ export default function QuoteRequestForm(){
     const [success, setSuccess] = useState(false)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
+    const [displayImages, setDisplayImages] = useState([])
 
 
     console.log(maintenanceItem)
+ 
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
@@ -95,6 +97,8 @@ export default function QuoteRequestForm(){
                     formData.append(`img_${i}`, imageBlob)
                 }
             }
+
+            // also make a put request to the maintenanceRequest endpoint to update the images there
 
             let maintenanceContactIds = []
             if (maintenanceContacts.length > 0){
@@ -163,10 +167,10 @@ export default function QuoteRequestForm(){
     }
 
     function numImages(){
-        if (maintenanceItem.maintenance_images == "[]"){
+        if (displayImages.length == 0){
             return 0
         } else{
-            return maintenanceItem.maintenance_images.length
+            return displayImages.length
         }
     }
 
@@ -196,6 +200,11 @@ export default function QuoteRequestForm(){
             setContactList(workers)
         }
         getMaintenanceWorkers().then(() => setLoadingContacts(false))
+
+        let imageArray = JSON.parse(maintenanceItem.maintenance_images)
+
+        setDisplayImages(imageArray)
+
     }, [])
 
     return (
@@ -283,8 +292,8 @@ export default function QuoteRequestForm(){
                                         <Grid container spacing={2} justifyContent="center">
                                             {numImages() > 0 ? 
                                                 (
-                                                    Array.isArray(maintenanceItem.maintenance_images) && maintenanceItem.maintenance_images.length > 0 ? 
-                                                    maintenanceItem.maintenance_images.map((image, index) => (
+                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
+                                                    displayImages.map((image, index) => (
                                                         <Grid item key={index}>
                                                             <img 
                                                                 src={image} 
