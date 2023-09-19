@@ -95,8 +95,8 @@ import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
 import EmailLogin from "./Onboarding/Login/EmailLogin";
 import EmailSignup from "./Onboarding/Signup/EmailSignup";
-import GoogleLogin from "./Onboarding/Login/GoogleLogin";
-import GoogleSignup from "./Onboarding/Signup/GoogleSignup";
+import GoogleLogin from "./Onboarding/GoogleLogin";
+import GoogleSignup from "./Onboarding/GoogleSignup";
 
 import { useUser } from "../contexts/UserContext";
 import SelectRole from "./Onboarding/SelectRole";
@@ -134,7 +134,8 @@ function Main() {
         >
           <Header></Header>
             <Routes>
-              <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
+              {/* <Route path="/" element={<Navigate to={selectedRoleRoute} />} /> */}
+              <Route exact path="/" element={<Onboarding />} />
               <Route exact path="/dashboard" element={<MaintenanceWidget />} />
               <Route exact path="/cashflow" element={<CashflowOwner />} />
               {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
@@ -213,7 +214,7 @@ function Main() {
 
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
-              <Route exact path="/onboarding" element={<Onboarding />} />
+              {/* <Route exact path="/onboarding" element={<Onboarding />} /> */}
             
             <Route exact path="/newUser" element={<NewUser />} />
             <Route exact path="/register" element={<Register />} />
