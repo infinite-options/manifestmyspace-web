@@ -132,7 +132,6 @@ function Main() {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          <Router>
           <Header></Header>
             <Routes>
               <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
@@ -194,7 +193,7 @@ function Main() {
               <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
               <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
-              <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
+              <Route exact path="/maintenance/detail" element={<MaintenanceRequestDetail />} />
               <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
               <Route exact path="/addProperty" element={<AddProperty />} />
               <Route exact path="/editProperty" element={<EditProperty />} />
@@ -237,7 +236,6 @@ function Main() {
 
             </Routes>
             <Footer></Footer>
-          </Router>
         </Box>
       </div>
     </>
