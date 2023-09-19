@@ -1,8 +1,8 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
-
 import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
     palette: {
@@ -19,6 +19,7 @@ const theme = createTheme({
 });
 function TenantProfile() {
 
+    const navigate = useNavigate()
     const [profileData, setProfileData] = useState([]);
     const [adultTenantData, setAdultTenantData] = useState([]);
     const [childTenantData, setChildTenantData] = useState([]);
@@ -461,9 +462,11 @@ function TenantProfile() {
                         boxShadow: '0px 4px 4px #00000032'
                     }}>
                         <GrayBox>
+                            <Box onClick={()=>navigate('/tenantProfileEdit')}>
                             <TextBox fontSize={'15px'} fontWeight={'bold'}>
                                 Edit Profile and Password
                             </TextBox>
+                            </Box>
                         </GrayBox>
                     </Box>
                 </Box>

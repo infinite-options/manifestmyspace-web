@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./Header";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Box, ThemeProvider } from "@mui/material";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Box } from "@mui/material";
 import CashflowOwner from "./Cashflow/CashflowOwner";
 // import Footer from './Footer';
 
@@ -88,105 +88,159 @@ import QuoteRequestForm from "./Maintenance/Manager/QuoteRequestForm";
 import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
 import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
-function Main () {
+import Onboarding from "./Onboarding/Onboarding";
+import NewUser from "./Onboarding/NewUser";
+import Register from "./Onboarding/Register";
+import ReturningUser from "./Onboarding/ReturningUser";
+import UserLogin from "./Onboarding/UserLogin";
+import EmailLogin from "./Onboarding/Login/EmailLogin";
+import EmailSignup from "./Onboarding/Signup/EmailSignup";
+import GoogleLogin from "./Onboarding/Login/GoogleLogin";
+import GoogleSignup from "./Onboarding/Signup/GoogleSignup";
+
+import { useUser } from "../contexts/UserContext";
+import SelectRole from "./Onboarding/SelectRole";
+
+import PMProfileDisplay from "./Onboarding/PMProfileDisplay";
+import PMProfilePayment from "./Onboarding/PMProfilePayment";
+import PMProfileName from "./Onboarding/PMProfileName";
+
+import POProfileDisplay from "./Onboarding/POProfileDisplay";
+import POProfilePayment from "./Onboarding/POProfilePayment";
+import POProfileName from "./Onboarding/POProfileName";
+
+function Main() {
+  const { user } = useUser(); // Get the user context
+
+  // Define the role-specific routes
+  const roleRoutes = {
+    Manager: "/managerDashboard", // Change this to the Manager's home route
+    Owner: "/ownerDashboard", // Change this to the Owner's home route
+    Tenant: "/tenantDashboard", // Change this to the Tenant's home route
+    Maintenance: "/ownerDashboard", // Change this to the Maintenance's home route
+  };
+
+  // Get the route for the selected user role
+  const selectedRoleRoute = roleRoutes[user.selectedRole];
+  console.log("storedSelectedRole selectedRoleRoute ", selectedRoleRoute)
   return (
-      <ThemeProvider theme={theme}>
-        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-          <Box
-            sx={{
-              flex: "1", // Allow content to take remaining space
-              overflow: "auto", // Enable scrolling when content overflows
-            }}
-          >
-            <Header/>
-              <Routes>
-                <Route exact path="/dashboard" element={<MaintenanceWidget />} />
-                <Route exact path="/cashflowOwner" element={<CashflowOwner />} />
-                {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
-                <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
-                <Route exact path="/addExpense" element={<AddExpense />} />
-                <Route exact path="/addRevenue" element={<AddRevenue />} />
-                <Route exact path="/addUtility" element={<AddUtility />} />
-                <Route exact path="/findProperty" element={<FindProperty />} />
+    <>
+      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <Box
+          sx={{
+            flex: "1", // Allow content to take remaining space
+            overflow: "auto", // Enable scrolling when content overflows
+          }}
+        >
+          <Router>
+          <Header></Header>
+            <Routes>
+              <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
+              <Route exact path="/dashboard" element={<MaintenanceWidget />} />
+              <Route exact path="/cashflow" element={<CashflowOwner />} />
+              {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
+              <Route exact path="/selectMonthComponent" element={<SelectMonthComponent />} />
+              <Route exact path="/addExpense" element={<AddExpense />} />
+              <Route exact path="/addRevenue" element={<AddRevenue />} />
+              <Route exact path="/addUtility" element={<AddUtility />} />
+              <Route exact path="/findProperty" element={<FindProperty />} />
 
-                <Route exact path="/viewLease" element={<ViewLease />} />
-                <Route exact path="/editLease" element={<EditLease />} />
-                <Route exact path="/leaseDocument" element={<LeasePDF />} />
+              <Route exact path="/viewLease" element={<ViewLease />} />
+              <Route exact path="/editLease" element={<EditLease />} />
+              <Route exact path="/leaseDocument" element={<LeasePDF />} />
 
-                <Route exact path="/announcement" element={<Announcement />} />
-                <Route exact path="/ownerProfile" element={<OwnerProfile />} />
-                <Route exact path="/ownerDocuments" element={<OwnerDocuments />} />
-                <Route exact path="/ownerDocumentsPDF" element={<DocumentPDF />} />
-                <Route exact path="/ownerUploadDocuments" element={<OwnerUploadDocuments />} />
-                <Route exact path="/ownerLeases" element={<OwnerLeases />} />
-                <Route exact path="/ownerRent" element={<OwnerRent />} />
-                <Route exact path="/ownerRentDetail" element={<OwnerRentDetail />} />
+              <Route exact path="/announcement" element={<Announcement />} />
+              <Route exact path="/ownerProfile" element={<OwnerProfile />} />
+              <Route exact path="/ownerDocuments" element={<OwnerDocuments />} />
+              <Route exact path="/ownerDocumentsPDF" element={<DocumentPDF />} />
+              <Route exact path="/ownerUploadDocuments" element={<OwnerUploadDocuments />} />
+              <Route exact path="/ownerLeases" element={<OwnerLeases />} />
+              <Route exact path="/ownerRent" element={<OwnerRent />} />
+              <Route exact path="/ownerRentDetail" element={<OwnerRentDetail />} />
 
-                <Route exact path="/tenantDocuments" element={<TenantDocuments />} />
-                <Route exact path="/tenantLeases" element={<TenantLeases />} />
-                <Route exact path="/tenantProfile" element={<TenantProfile />} />
-                <Route exact path="/tenantProfileEdit" element={<TenantProfileEdit />} />
-                <Route exact path="/tenantDashboard" element={<TenantDashboard />} />
+              <Route exact path="/tenantDocuments" element={<TenantDocuments />} />
+              <Route exact path="/tenantLeases" element={<TenantLeases />} />
+              <Route exact path="/tenantProfile" element={<TenantProfile />} />
+              <Route exact path="/tenantProfileEdit" element={<TenantProfileEdit />} />
+              <Route exact path="/tenantDashboard" element={<TenantDashboard />} />
 
-                <Route exact path="/pmProfile" element={<PMProfile />} />
-                <Route exact path="/pmLeases" element={<PMLeases />} />
-                <Route exact path="/pmContracts" element={<PMContracts />} />
-                <Route exact path="/pmDocuments" element={<PMDocuments />} />
-                <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
-                <Route exact path="/pmRent" element={<PMRent />} />
-                <Route exact path="/pmRentDetail" element={<PMRentDetail />} />
+              <Route exact path="/pmProfile" element={<PMProfile />} />
+              <Route exact path="/pmLeases" element={<PMLeases />} />
+              <Route exact path="/pmContracts" element={<PMContracts />} />
+              <Route exact path="/pmDocuments" element={<PMDocuments />} />
+              <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
+              <Route exact path="/pmRent" element={<PMRent />} />
+              <Route exact path="/pmRentDetail" element={<PMRentDetail />} />
 
-                <Route exact path="/transactionHistory" element={<TransactionHistory />} />
-                <Route exact path="/viewTransactionOwner" element={<ViewTransactionOwner />} />
-                <Route exact path="/paymentsTenant" element={<PaymentsTenant />} />
-                <Route exact path="/card" element={<CardDetails />} />
-                <Route exact path="/cashflowManager" element={<CashflowManager />} />
-                <Route exact path="/managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
-                <Route exact path="/settingsOwner" element={<Settings />} />
-                <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
-                <Route exact path="/changePasswordSettings" element={<ChangePasswordSettings />} />
-                <Route exact path="/addCardSettings" element={<AddCard />} />
-                <Route exact path="/cardDetailsSettings" element={<CardDetailsSettings />} />
+              <Route exact path="/transactionHistory" element={<TransactionHistory />} />
+              <Route exact path="/viewTransactionOwner" element={<ViewTransactionOwner />} />
+              <Route exact path="/paymentsTenant" element={<PaymentsTenant />} />
+              <Route exact path="/card" element={<CardDetails />} />
+              <Route exact path="/cashflowManager" element={<CashflowManager />} />
+              <Route exact path="/managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
+              <Route exact path="/settingsOwner" element={<Settings />} />
+              <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
+              <Route exact path="/changePasswordSettings" element={<ChangePasswordSettings />} />
+              <Route exact path="/addCardSettings" element={<AddCard />} />
+              <Route exact path="/cardDetailsSettings" element={<CardDetailsSettings />} />
 
-                <Route exact path="/propertyInfo" element={<PropertyInfo />} />
-                <Route exact path="/contacts" element={<Contacts />} />
-                <Route exact path="/contactDetails" element={<ContactDetails />} />
-                <Route exact path="/addContacts" element={<AddContacts />} />
-                <Route exact path="/tenantContactDetails" element={<TenantContactDetails />} />
+              <Route exact path="/propertyInfo" element={<PropertyInfo />} />
+              <Route exact path="/contacts" element={<Contacts />} />
+              <Route exact path="/contactDetails" element={<ContactDetails />} />
+              <Route exact path="/addContacts" element={<AddContacts />} />
+              <Route exact path="/tenantContactDetails" element={<TenantContactDetails />} />
 
-                <Route exact path="/maintenance" element={<Maintenance />} />
-                <Route exact path="/" element={<Dashboard />} />
+              <Route exact path="/maintenance" element={<Maintenance />} />
+              <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
-                <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
-                <Route exact path="/maintenance/detail" element={<MaintenanceRequestDetail />} />
-                <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
-                <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
-                <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance/>}/>
-                <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
-                <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
-                <Route exact path="/addProperty" element={<AddProperty />} />
-                <Route exact path="/editProperty" element={<EditProperty />} />
-                <Route exact path="/propertyDetail" element={<PropertyDetail />} />
-                <Route exact path="/tenantMaintenance" element={<TenantMaintenance />} />
-                <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
-                <Route exact path="/myProperty" element={<TenantProperty />} />
-                <Route exact path="/properties" element={<PropertyList />} />
-                {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
-                <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
+              <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
+              <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
+              <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
+              <Route exact path="/addProperty" element={<AddProperty />} />
+              <Route exact path="/editProperty" element={<EditProperty />} />
+              <Route exact path="/propertyDetail" element={<PropertyDetail />} />
+              <Route exact path="/tenantMaintenance" element={<TenantMaintenance />} />
+              <Route exact path="/addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
+              <Route exact path="/myProperty" element={<TenantProperty />} />
+              <Route exact path="/properties" element={<PropertyList />} />
+              {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
+              <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
 
-                <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
-                <Route exact path="/settingsManagerACH2" element={<SettingsACH2 />} />
-                <Route exact path="/settingsManagerACH3" element={<SettingsACH3 />} />
-                <Route exact path="/settingsManagerACH4" element={<SettingsACH4 />} />
-                <Route exact path="/settingsManagerACH5" element={<SettingsACH5 />} />
+              <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
+              <Route exact path="/settingsManagerACH2" element={<SettingsACH2 />} />
+              <Route exact path="/settingsManagerACH3" element={<SettingsACH3 />} />
+              <Route exact path="/settingsManagerACH4" element={<SettingsACH4 />} />
+              <Route exact path="/settingsManagerACH5" element={<SettingsACH5 />} />
 
-                <Route exact path="/poContracts" element={<POContracts />} />
-                <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
-              </Routes>
-            <Footer/>
-          </Box>
-        </div>
-      </ThemeProvider>
+              <Route exact path="/poContracts" element={<POContracts />} />
+              <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
+              <Route exact path="/onboarding" element={<Onboarding />} />
+            
+            <Route exact path="/newUser" element={<NewUser />} />
+            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/returningUser" element={<ReturningUser />} />
+            <Route exact path="/userLogin" element={<UserLogin />} />
+            <Route exact path="/selectRole" element={<SelectRole />} />
+
+            <Route exact path="/pmProfileName" element={<PMProfileName />} />
+            <Route exact path="/pmProfileDisplay" element={<PMProfileDisplay />} />
+            <Route exact path="/pmProfilePayment" element={<PMProfilePayment/>} />
+         
+            <Route exact path="/poProfileName" element={<POProfileName />} />
+            <Route exact path="/poProfileDisplay" element={<POProfileDisplay />} />
+            <Route exact path="/poProfilePayment" element={<POProfilePayment/>} />
+            
+            <Route exact path="/email-login" element={<EmailLogin />} />
+            <Route exact path="/email-signup" element={<EmailSignup />} />
+            <Route exact path="/google-login" element={<GoogleLogin />} />
+            <Route exact path="/google-signup" element={<GoogleSignup />} />
+
+            </Routes>
+            <Footer></Footer>
+          </Router>
+        </Box>
+      </div>
+    </>
   );
 }
 export default Main;

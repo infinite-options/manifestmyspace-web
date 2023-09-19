@@ -143,6 +143,7 @@ function TenantDashboard(props) {
             fontSize: "11px",
             fontWeight: "600",
           }}
+          onClick={()=>{navigate('/myProperty')}}
         >
           103 N. Abel St unit #104
         </Box>
@@ -222,7 +223,10 @@ function TenantDashboard(props) {
                 paddingRight: "20px",
                 paddingLeft: "20px",
               }}
-              onClick={() => handleStripePayment()}
+              onClick={() => {
+                // handleStripePayment()
+                navigate('/paymentsTenant')
+              }}
             >
               Make a Payment
             </Box>
@@ -329,6 +333,7 @@ function TenantDashboard(props) {
               color: "#007AFF",
               fontSize: "10px",
             }}
+            onClick={()=>{navigate('/announcement')}}
           >
             View all (3)
           </Box>
@@ -458,6 +463,7 @@ function TenantDashboard(props) {
             sx={{
               paddingRight: "10px",
             }}
+            onClick={()=>navigate('/tenantLeases')}
           >
             View Lease
           </Box>
