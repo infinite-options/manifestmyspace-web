@@ -137,7 +137,7 @@ export default function PropertyList({}) {
   let navigate = useNavigate();
   const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
-  const [maintenanceData, setMaintenanceData] = useState([]);
+  // const [maintenanceData, setMaintenanceData] = useState([]);
 
   useEffect(() => {
     console.log("PropertyList useEffect");
@@ -152,9 +152,11 @@ export default function PropertyList({}) {
     fetchData();
   }, []);
 
-  function handlePropertyDetailNavigation(propertyId, index, propertyList, maintenanceData) {
+  function handlePropertyDetailNavigation(property, index, propertyList) {
+
+    console.log("theoretically property", property)
     console.log("handlePropertyDetailNavigation");
-    navigate(`/propertyDetail`, { state: { propertyId, index, propertyList, maintenanceData } });
+    navigate(`/propertyDetail`, { state: { property, index, propertyList } });
   }
 
   function getBadgeContent(index) {
@@ -222,7 +224,7 @@ export default function PropertyList({}) {
                     paddingLeft: "10px",
                     paddingRight: "10px",
                   }}
-                  onClick={() => handlePropertyDetailNavigation(property, index, propertyList, maintenanceData)}
+                  onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
                 >
                   <Avatar
                     src={getCoverPhoto(property)}

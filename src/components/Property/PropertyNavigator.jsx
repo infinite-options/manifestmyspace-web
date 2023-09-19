@@ -16,27 +16,44 @@ import CreateIcon from '@mui/icons-material/Create';
 import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 
 
-export default function PropertyNavigator({propertyId, index, propertyData, maintenanceData, paymentStatus, paymentStatusColor}){
+export default function PropertyNavigator({property, index, propertyData, paymentStatus, paymentStatusColor}){
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(index);
-    const [currentId, setCurrentId] = useState(propertyId);
+    const [currentId, setCurrentId] = useState(property.property_id);
     const [activeStep, setActiveStep] = useState(0);
+    const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
 
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const item = propertyData[currentIndex];
-    const maintenanceItems = maintenanceData[currentIndex];
-
+    const propertyObject = property;
     console.log(item)
-    console.log(maintenanceItems)
 
-    function displayTopMaintenanceItem(maintenanceItems){
-        console.log(maintenanceItems)
-        if(maintenanceItems && maintenanceItems.length > 0){
-            const date = new Date(maintenanceItems[0].maintenance_request_created_date)
+    useEffect(() => {
+        const getMintenanceForProperty = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${propertyObject.property_id}`);
+                if(!response.ok){
+                    console.log("Error fetching maintenance data")
+                }
+                const data = await response.json();
+                console.log("Maintenance Data", data)
+                setMaintenanceData(data["MaintenanceProjects"].result);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getMintenanceForProperty();
+    }, []);
+
+    function displayTopMaintenanceItem(){
+
+        console.log(maintenanceData)
+        if(maintenanceData && maintenanceData.length > 0){
+            const date = new Date(maintenanceData[0].maintenance_request_created_date)
             // console.log(date.toLocaleDateString())
-            const title = maintenanceItems[0].maintenance_title 
+            const title = maintenanceData[0].maintenance_title 
             // console.log(title)
             return date.toLocaleDateString() + "  " + title
         } else {
@@ -55,6 +72,9 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
 
     function navigateToMaintenanceAccordion(){
         console.log("click to maintenance accordion for property")
+        navigate("/maintenance")
+
+        // TODO: Need to send props to /maintenance to navigate to correct tab and item
     }
 
     
@@ -479,7 +499,7 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -491,6 +511,21 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                                             >
                                                 Open Maintenance Tickets
                                             </Typography>
+                                            <Badge 
+                                                badgeContent={numberOfMaintenanceItems(maintenanceData)} 
+                                                color="error"
+                                                sx={{
+                                                    paddingRight:"10px"
+                                                }}
+                                            />
+                                            <div style={{paddingLeft: "20px"}}>
+                                                {maintenanceData && maintenanceData.length > 0 ? (
+                                                    <Box display="flex" alignItems="right">
+                                                        <KeyboardArrowRightIcon sx={{paddingRight: "10px"}} onClick={() => navigateToMaintenanceAccordion()}/>
+                                                    </Box>
+                                                ) : (null)}
+                                            </div>
+                                        </div>
                                     </Grid>
                                     <Grid item xs={4}>
                                         <Typography
@@ -501,24 +536,24 @@ export default function PropertyNavigator({propertyId, index, propertyData, main
                                                 fontSize:theme.typography.smallFont,
                                             }}
                                         >
-                                            {displayTopMaintenanceItem(maintenanceItems)}
+                                            {displayTopMaintenanceItem()}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={2}>
-                                        <Badge badgeContent={numberOfMaintenanceItems(maintenanceItems)} color="error" width="20px" height="20px" 
+                                    {/* <Grid item xs={2}>
+                                        <Badge badgeContent={numberOfMaintenanceItems(maintenanceData)} color="error" width="20px" height="20px" 
                                             sx={{
                                                 paddingRight:"10px"
                                             }}
                                         >
                                         </Badge>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        {maintenanceItems && maintenanceItems.length > 0 ? (
+                                    </Grid> */}
+                                    {/* <Grid item xs={6}>
+                                        {maintenanceData && maintenanceData.length > 0 ? (
                                             <Box display="flex" alignItems="right">
                                                 <KeyboardArrowRightIcon sx={{paddingRight: "10px"}} onClick={() => navigateToMaintenanceAccordion()}/>
                                             </Box>
                                         ) : (null)}
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={12}>
                                         <Typography
                                             sx={{
