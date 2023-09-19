@@ -27,9 +27,13 @@ function GoogleLogin(props) {
     codeClient.requestCode();
   }
 
-  const socialGoogle = async (e) => {
+  const socialGoogle = async (e, u) => {
     setShowSpinner(true);
-
+    navigate("/register", {
+      state: {
+        user: u,
+      },
+    });
     setLoginSuccessful(true);
     setShowSpinner(false);
   };
@@ -115,7 +119,7 @@ function GoogleLogin(props) {
                             social_id: si,
                             access_expires_in: ax,
                           };
-                          navigate("/managerDashboard", {
+                          navigate("/register", {
                             state: {
                               user: user,
                             },
