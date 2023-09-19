@@ -8,7 +8,7 @@ import { Select} from "@mui/material";
 import { Grid } from '@mui/material';
 import { MenuItem} from "@mui/material";
 import { useContext } from 'react';
-import { useMyContext } from '../../contexts/SettingsACHContext';
+import { useMyContext } from '../../contexts/POProfileContext';
 import StatusBarPM2 from '../../images/onboarding/status_bar_pm1.png';
 import NewProfilePicture from '../../images/onboarding/new_profile_picture.png';
 
@@ -27,6 +27,26 @@ const useStyles = makeStyles((theme) => ({
 function POProfileName() {
     const classes = useStyles();
     const navigate = useNavigate();
+
+    const { 
+      owner_first_name, update_owner_first_name,
+      owner_last_name, update_owner_last_name,
+    } = useMyContext(); 
+
+    const handleNextStep = () => {
+
+      console.log("owner_first_name",owner_first_name);
+      console.log("owner_last_name",owner_last_name);
+
+      console.log("Click Button- Next page ")
+      navigate('/poProfileDisplay')
+    };
+
+    const handleChange1 = (event) => {
+      update_owner_first_name(event.target.value);
+      update_owner_last_name(event.target.value);
+    };
+
 
     return (        
         <ThemeProvider theme={theme}>
@@ -104,7 +124,7 @@ function POProfileName() {
                   </Box>
                   </>
               </Box>
-              <TextField name="first_last_name"   variant="filled" fullWidth placeholder="Enter your first and last name" className={classes.root}></TextField>
+              <TextField name="owner_first_name" value={owner_first_name} onChange={handleChange1}  variant="filled" fullWidth placeholder="Enter your first and last name" className={classes.root}></TextField>
               <Box sx={{paddingTop: '10%'}}></Box>
               <Box sx={{
                     justifySelf: 'center',
@@ -134,7 +154,7 @@ function POProfileName() {
                   left: `14px`,
                   top: `4px`,
                   borderRadius: '10px 10px 10px 10px'
-              }}onClick={()=>{navigate('/poProfileDisplay')}} >Next Step</Button>
+              }} onClick={handleNextStep} >Next Step</Button>
               
               <Stack spacing={-8} m={12}></Stack>
           </Paper>

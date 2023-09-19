@@ -1,14 +1,20 @@
 import './App.css';
 import Main from './components/Main';
 import {SettingsACHContextProvider} from '../src/contexts/SettingsACHContext';
+import {PMProfileContextProvider} from '../src/contexts/PMProfileContext';
 import { UserProvider } from './contexts/UserContext';
+import { POProfileContextProvider } from './contexts/POProfileContext';
 
 function App() {
   return (
     <UserProvider>
+    <PMProfileContextProvider>
+    <POProfileContextProvider>
     <SettingsACHContextProvider>
     <Main></Main>
     </SettingsACHContextProvider>
+    </POProfileContextProvider>
+    </PMProfileContextProvider>
     </UserProvider>
   )
 }
