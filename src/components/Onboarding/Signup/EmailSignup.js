@@ -5,7 +5,7 @@ import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { formatPhoneNumber } from "../helper";
 import { red, pillButton, boldSmall } from "../styles";
-import UserAlreadyExistsModal from "./UserAlreadyExistsModal";
+import UserAlreadyExistsModal from "../UserAlreadyExistsModal";
 
 export default function EmailSignup() {
   const navigate = useNavigate();

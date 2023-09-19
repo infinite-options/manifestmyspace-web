@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
 import Google from '../../images/onboarding/continue_with_google.png'
+import GoogleLogin from './GoogleLogin';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,8 +65,8 @@ function ReturningUser() {
                               fontWeight: theme.typography.primary.fontWeight, 
                           }} onClick={()=>{navigate('/email-login')}} >Log In With Email</Button>  
           <Stack spacing={-6} m={12}>
-          <Box onClick={()=>{navigate('/google-login')}}>
-              <img src={Google}/>
+          <Box>
+              <GoogleLogin />
           </Box>   
           </Stack>
           <Stack spacing={-20} m={12}>
