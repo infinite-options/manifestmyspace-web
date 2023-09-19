@@ -64,6 +64,8 @@ export default function AddMaintenanceItem({}){
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('low');
+    const [priority, setPriority] = useState('Low');
+    const [completed, setCompleted] = useState('');
     const [cost, setCost] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -98,13 +100,15 @@ export default function AddMaintenanceItem({}){
 
     const handlePriorityChange = (event, newToggleGroupValue) => {
         console.log("handlePriorityChange", event.target.value)
-        console.log("handleToggleGroupChange", newToggleGroupValue)
-        setToggleGroupValue(newToggleGroupValue);
-        setToggleAlignment(newToggleGroupValue);
+        // console.log("handleToggleGroupChange", newToggleGsroupValue)
+        setPriority(event.target.value)
+        // setToggleGroupValue(newToggleGroupValue);
+        // setToggleAlignment(newToggleGroupValue);
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
         console.log("handleToggleGroupChange", newToggleGroupValue)
+        setCompleted(event.target.value)
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
@@ -121,6 +125,8 @@ export default function AddMaintenanceItem({}){
         
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+        console.log("toggleAlignment", toggleAlignment)
 
         formData.append("maintenance_property_id", propertyId);
         formData.append("maintenance_title", title);
@@ -343,9 +349,9 @@ export default function AddMaintenanceItem({}){
                                         size="small"
                                         sx={{
                                             '& .MuiToggleButton-root.Mui-selected': {
-                                            backgroundColor: 'lightblue', // Selected background color
-                                            color: 'white', // Selected text color
-                                        },
+                                                backgroundColor: 'lightblue', // Selected background color
+                                                color: 'white', // Selected text color
+                                            },
                                         }}
                                     >
                                         <ToggleButton 
@@ -355,13 +361,16 @@ export default function AddMaintenanceItem({}){
                                                 borderRadius: '20px',
                                                 color: 'white',
                                                 marginRight: "10px",
+                                                borderWidth: "3px",
+                                                borderColor: theme.palette.priority.low,
                                                 '&.Mui-selected': {
-                                                borderColor: "black",
-                                                backgroundColor: theme.palette.priority.low,
+                                                    borderColor: "white",
+                                                    color: "white",
+                                                    backgroundColor: theme.palette.priority.low
                                                 },
                                                 '&:hover': {
-                                                borderColor: "white",
-                                                backgroundColor: theme.palette.priority.low,
+                                                    borderColor: "white",
+                                                    backgroundColor: theme.palette.priority.low,
                                                 },
                                             }}>
                                             Low
@@ -373,13 +382,17 @@ export default function AddMaintenanceItem({}){
                                                 borderRadius: '20px',
                                                 color: 'white',
                                                 marginRight: "10px",
+                                                borderWidth: "3px",
+                                                borderColor: theme.palette.priority.medium,
                                                 '&.Mui-selected': {
-                                                borderColor: "black",
-                                                backgroundColor: theme.palette.priority.medium,
+                                                    borderColor: "white",
+                                                    color: "white",
+                                                    backgroundColor: theme.palette.priority.medium,
+                                                    zIndex: 2,
                                                 },
                                                 '&:hover': {
-                                                borderColor: "white",
-                                                backgroundColor: theme.palette.priority.medium,
+                                                    borderColor: "white",
+                                                    backgroundColor: theme.palette.priority.medium,
                                                 },
                                             }}>
                                             Medium
@@ -391,13 +404,16 @@ export default function AddMaintenanceItem({}){
                                                 borderRadius: '20px',
                                                 color: 'white',
                                                 marginRight: "10px",
+                                                borderWidth: "3px",
+                                                borderColor: theme.palette.priority.high,
                                                 '&.Mui-selected': {
-                                                borderColor: "black",
-                                                backgroundColor: theme.palette.priority.high,
+                                                    borderWidth: "3px",
+                                                    color: "white",
+                                                    backgroundColor: theme.palette.priority.high,
                                                 },
                                                 '&:hover': {
-                                                borderColor: "white",
-                                                backgroundColor: theme.palette.priority.high,
+                                                    borderColor: "white",
+                                                    backgroundColor: theme.palette.priority.high,
                                                 },
                                             }}>
                                             High
@@ -430,8 +446,8 @@ export default function AddMaintenanceItem({}){
                                     </Typography>
                                     <FormControl component="fieldset">
                                         <RadioGroup column onChange={handleCompletedChange}>
-                                        <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-                                        <FormControlLabel value="no" control={<Radio />} label="No" />
+                                            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                            <FormControlLabel value="no" control={<Radio />} label="No" />
                                         </RadioGroup>
                                     </FormControl>
                                 </Grid>

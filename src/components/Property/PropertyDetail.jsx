@@ -26,12 +26,14 @@ export default function PropertyDetail({}){
     const location = useLocation();
     let navigate = useNavigate(); 
 
-    const propertyId = location.state.propertyId;
+    const property = location.state.property
     const index = location.state.index;
     const propertyList = location.state.propertyList;
-    const maintenanceData = location.state.maintenanceData;
+    // const maintenanceData = location.state.maintenanceData;
 
-    console.log("Maintenance Data in Property Detail", maintenanceData)
+    console.log("property from PropertyDetail", property)
+
+    // console.log("Maintenance Data in Property Detail", maintenanceData)
     // console.log("This maintenance data's thing", maintenanceData[index])
 
     
@@ -113,7 +115,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator propertyId={propertyId} index={index} propertyData={propertyList} maintenanceData={maintenanceData} />
+                            <PropertyNavigator property={property} index={index} propertyData={propertyList}/>
                         </Box>
                     </Stack>
                 </Paper>

@@ -2,6 +2,7 @@ import './App.css';
 import Main from './components/Main';
 import {SettingsACHContextProvider} from '../src/contexts/SettingsACHContext';
 import {PMProfileContextProvider} from '../src/contexts/PMProfileContext';
+import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from './contexts/UserContext';
 import { POProfileContextProvider } from './contexts/POProfileContext';
 
@@ -11,7 +12,9 @@ function App() {
     <PMProfileContextProvider>
     <POProfileContextProvider>
     <SettingsACHContextProvider>
-    <Main></Main>
+      <BrowserRouter>
+        <Main/>
+      </BrowserRouter>
     </SettingsACHContextProvider>
     </POProfileContextProvider>
     </PMProfileContextProvider>
