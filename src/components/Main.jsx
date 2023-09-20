@@ -132,7 +132,7 @@ function Main() {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          <Header></Header>
+          <Header/>
             <Routes>
               {/* <Route path="/" element={<Navigate to={selectedRoleRoute} />} /> */}
               <Route exact path="/" element={<Onboarding />} />
@@ -235,8 +235,14 @@ function Main() {
             <Route exact path="/google-login" element={<GoogleLogin />} />
             <Route exact path="/google-signup" element={<GoogleSignup />} />
 
+            <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
+            <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
+            <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
+            <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
+            <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
             </Routes>
-            <Footer></Footer>
+            <Footer/>
         </Box>
       </div>
     </>

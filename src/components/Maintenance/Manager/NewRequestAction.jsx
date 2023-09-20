@@ -24,16 +24,18 @@ import CompleteTicket from "../../utils/CompleteTicket";
 
 
 
-export default function NewRequestAction({maintenanceItem}){
+export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
 
         console.log("NewRequestAction", maintenanceItem)
+        console.log(navigateParams)
         navigate("/quoteRequest", {
             state:{
-                maintenanceItem
+                maintenanceItem,
+                navigateParams
             }
         });
     }

@@ -67,6 +67,14 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
           updateRequestIndex(newIndex)
           return newIndex;
       });
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //         maintenance_request_index,
+    //         status,
+    //         maintenanceItemsForStatus,
+    //         allMaintenanceData,
+    //     }
+    // })
   };
 
   const handlePreviousCard = () => {
@@ -323,7 +331,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  Estimated Cost: {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"}
+                  Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
                 </Typography>
                 <Typography
                   sx={{
@@ -335,7 +343,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
-                {data.maintenance}
+                  {data.maintenance}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",

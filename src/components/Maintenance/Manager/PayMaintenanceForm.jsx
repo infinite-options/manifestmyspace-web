@@ -29,9 +29,15 @@ export default function PayMaintenanceForm(){
     const navigate = useNavigate();
     const location = useLocation();
     const maintenanceItem = location.state.maintenanceItem;
+    const navigationParams = location.state.navigateParams;
     const [displayImages, setDisplayImages] = useState([])
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
+
+    let maintenance_request_index = navigationParams.maintenanceRequestIndex
+    let status = navigationParams.status
+    let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
+    let allMaintenanceData = navigationParams.allData
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -61,6 +67,14 @@ export default function PayMaintenanceForm(){
             }
         }
         changeMaintenanceRequestStatus()
+        navigate("/maintenance/detail", {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData,
+            }
+        }); 
     }
 
     useEffect(() => {
@@ -85,7 +99,14 @@ export default function PayMaintenanceForm(){
 
     function handleBackButton(){
         console.log("handleBackButton")
-        navigate(-1); 
+        navigate("/maintenance/detail", {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData,
+            }
+        }); 
     }
 
     return (
@@ -195,7 +216,7 @@ export default function PayMaintenanceForm(){
 
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <u>{maintenanceItem.property_address}, {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}</u>
+                                            <u>{maintenanceItem?.property_address}, {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}</u>
                                         </Typography>
                                     </Grid>
 

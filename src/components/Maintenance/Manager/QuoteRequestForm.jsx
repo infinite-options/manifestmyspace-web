@@ -32,6 +32,9 @@ export default function QuoteRequestForm(){
     const location = useLocation();
     const navigate = useNavigate();
     const maintenanceItem = location.state.maintenanceItem;
+
+    const navigationParams = location.state.navigateParams
+
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [additionalInfo, setAdditionalInfo] = useState("")
     const [contactList, setContactList] = useState([])
@@ -54,7 +57,18 @@ export default function QuoteRequestForm(){
 
     function handleBackButton(){
         console.log("handleBackButton")
-        navigate(-1); 
+        let maintenance_request_index = navigationParams.maintenanceRequestIndex
+        let status = navigationParams.status
+        let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
+        let allMaintenanceData = navigationParams.allData
+        navigate("/maintenance/detail", {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData
+            }
+        }); 
     }
 
     // const getMaintenanceDataForNavigate = async () = {
@@ -286,6 +300,7 @@ export default function QuoteRequestForm(){
                                     height: "100%",
                                     padding: "10px",
                                     margin: "10px",
+                                    paddingTop: "25px"
                                 }}>
 
                                     <Grid item xs={12}>
