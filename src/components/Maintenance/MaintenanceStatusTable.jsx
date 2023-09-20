@@ -48,7 +48,8 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         console.log("status", status)
         console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
         console.log("allMaintenanceData", allMaintenanceData)
-        navigate('/maintenanceRequestDetail', {
+
+        navigate(`/maintenance/detail`, {
             state: {
                 maintenance_request_index,
                 status,

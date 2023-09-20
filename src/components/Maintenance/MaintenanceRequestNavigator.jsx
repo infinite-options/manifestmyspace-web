@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, Button, Box, Stack } from "@mui/material";
 import theme from "../../theme/theme";
 import maintenanceRequestImage from "./maintenanceRequest.png";
@@ -11,19 +12,20 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 function getInitialImages(requestData, currentIndex) {
   if (requestData[currentIndex].maintenance_images != "[]") {
-    console.log(JSON.parse(requestData[currentIndex].maintenance_images))
+    // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
     return JSON.parse(requestData[currentIndex].maintenance_images);
   }
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator({ requestIndex, requestData, color, item, allData }) {
+export default function MaintenanceRequestNavigator({ requestIndex, updateRequestIndex, requestData, color, item, allData }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
   const [images, setImages] = useState([maintenanceRequestImage]);
   // const [maxSteps, setMaxSteps] = useState(images.length);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
@@ -44,16 +46,77 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
   // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
-    console.log("currentIndex", currentIndex)
-    console.log("item", requestData[currentIndex])
+      setCurrentIndex((prevIndex) => {
+          const newIndex = (prevIndex + 1) % requestData.length;
+          let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+          
+          // navigate(`/maintenance/${nextMaintenanceId}`, { 
+          //     replace: true,   
+          //     state: {
+          //         requestIndex,
+          //         status,
+          //         maintenanceItemsForStatus,
+          //         allData,
+          //     }
+          // });
+
+          console.log("currentIndex", newIndex);
+          console.log("allData", allData);
+          console.log("requestData", requestData);
+          console.log("requestData[newIndex]", requestData[newIndex]);
+          updateRequestIndex(newIndex)
+          return newIndex;
+      });
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //         maintenance_request_index,
+    //         status,
+    //         maintenanceItemsForStatus,
+    //         allMaintenanceData,
+    //     }
+    // })
   };
 
   const handlePreviousCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
-    console.log("currentIndex", currentIndex)
-    console.log("item", requestData[currentIndex])
+      setCurrentIndex((prevIndex) => {
+          const newIndex = (prevIndex - 1 + requestData.length) % requestData.length;
+          let previousMaintenanceId = requestData[newIndex].maintenance_request_uid;
+
+          // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
+
+          console.log("currentIndex", newIndex);
+          console.log("allData", allData);
+          console.log("requestData", requestData);
+          console.log("requestData[newIndex]", requestData[newIndex]);
+          updateRequestIndex(newIndex)
+          return newIndex;
+      });
   };
+
+
+  // const handleNextCard = () => {
+  //   setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
+  //   let nextMaintenanceId = requestData[currentIndex].maintenance_request_uid;
+  //   // navigate(`/maintenance/${nextMaintenanceId}`, { replace: true,   state: {
+  //   //     requestIndex,
+  //   //     status,
+  //   //     maintenanceItemsForStatus,
+  //   //     allData,
+  //   // }});
+  //   console.log("currentIndex", currentIndex)
+  //   console.log("allData", allData)
+  //   console.log("requestData", requestData)
+  //   // console.log("item", allData[requestData.mapping][currentIndex])
+  //   console.log("requestData[currentIndex]", requestData[currentIndex])
+  // };
+
+  // const handlePreviousCard = () => {
+  //   setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
+  //   let previousMaintenanceId = requestData[currentIndex].maintenance_request_uid;
+  //   // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
+  //   console.log("currentIndex", currentIndex)
+  //   console.log("item", allData[requestData.mapping][currentIndex])
+  // };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -77,7 +140,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
       const diffInMilliseconds = currentDate.getTime() - postDate.getTime();
       openTime = Math.floor(diffInMilliseconds / (1000 * 3600 * 24));
     }
-    console.log("formattedDate", formattedDate, "openTime", openTime);
+    // console.log("formattedDate", formattedDate, "openTime", openTime);
     setNumOpenRequestDays(openTime);
     setFormattedDate(formattedDate);
   }
@@ -130,7 +193,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
             <ArrowForwardIcon />
           </Button>
         </Stack>
-        <Stack alignItems="center" justifyContent="center">
+        <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card
             sx={{
               backgroundColor: color,
@@ -141,6 +204,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              padding: "0px"
             }}
           >
             <CardContent
@@ -150,6 +214,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
+                paddingBottom: "0px",
               }}
             >
               <div
@@ -161,9 +226,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                   width: "100%",
                 }}
               >
-                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                  {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                </Button>
                 <CardMedia
                   component="img"
                   image={images[activeStep]}
@@ -181,9 +243,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     justifyContent: "center",
                   }}
                 />
-                <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                  {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                </Button>
               </div>
               <MobileStepper
                 steps={maxSteps}
@@ -191,6 +250,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 activeStep={activeStep}
                 variant="text"
                 sx={{
+                  color: "white",
                   backgroundColor: color,
                   width: "100%",
                   justifyContent: "center",
@@ -199,8 +259,20 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                   elevation: "0",
                   boxShadow: "none",
                 }}
-                nextButton={<></>}
-                backButton={<></>}
+                nextButton={
+                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1} 
+                    sx={{color: "white"}}
+                  > 
+                    <KeyboardArrowRight sx={{color: "white"}} />
+                  </Button>
+                }
+                backButton={
+                  <Button size="small" onClick={handleBack} disabled={activeStep === 0} 
+                    sx={{color: "white"}}
+                  >
+                  <KeyboardArrowLeft sx={{color: "white"}} />
+                </Button>
+                }
               />
             </CardContent>
             <CardContent
@@ -209,12 +281,12 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 alignItems: "left",
                 justifyContent: "left",
                 width: "100%",
+                padding: "0px"
               }}
             >
               <div
                 style={{
-                  paddingTop: "10px",
-                  paddingLeft: "10px",
+                  // paddingLeft: "10px",
                   alignContent: "left",
                   justifyContent: "left",
                   alignItems: "left",
@@ -228,7 +300,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     paddingBottom: "10px",
                   }}
                 >
-                  {data.maintenance_priority} Priority
+                  {data?.maintenance_priority} Priority
                 </Typography>
                 <Typography
                   sx={{
@@ -239,7 +311,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                   }}
                   underline="always"
                 >
-                  {data.property_address}
+                  {data?.property_address}
                 </Typography>
                 <Typography
                   sx={{
@@ -249,7 +321,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     paddingBottom: "10px",
                   }}
                 >
-                  {data.maintenance_title}
+                  {data?.maintenance_title}
                 </Typography>
                 <Typography
                   sx={{
@@ -259,7 +331,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                     paddingBottom: "10px",
                   }}
                 >
-                  Estimated Cost: {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"}
+                  Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
                 </Typography>
                 <Typography
                   sx={{
@@ -271,16 +343,16 @@ export default function MaintenanceRequestNavigator({ requestIndex, requestData,
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
+                  {data.maintenance}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
                     fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
                   }}
                 >
-                  {data.maintenance_desc}
+                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null}
                 </Typography>
               </div>
             </CardContent>

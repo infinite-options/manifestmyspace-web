@@ -82,6 +82,11 @@ import SettingsACH3 from "./SettingsACH/SettingsACH3";
 import SettingsACH4 from "./SettingsACH/SettingsACH4";
 import SettingsACH5 from "./SettingsACH/SettingsACH5";
 import POContracts from "./Contracts/POContracts/POContracts";
+import theme from "../theme/theme";
+import QuoteAcceptForm from "./Maintenance/Manager/QuoteAcceptForm";
+import QuoteRequestForm from "./Maintenance/Manager/QuoteRequestForm";
+import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
+import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
 import NewUser from "./Onboarding/NewUser";
@@ -90,8 +95,8 @@ import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
 import EmailLogin from "./Onboarding/Login/EmailLogin";
 import EmailSignup from "./Onboarding/Signup/EmailSignup";
-import GoogleLogin from "./Onboarding/Login/GoogleLogin";
-import GoogleSignup from "./Onboarding/Signup/GoogleSignup";
+import GoogleLogin from "./Onboarding/GoogleLogin";
+import GoogleSignup from "./Onboarding/GoogleSignup";
 
 import { useUser } from "../contexts/UserContext";
 import SelectRole from "./Onboarding/SelectRole";
@@ -127,10 +132,10 @@ function Main() {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          <Router>
-          <Header></Header>
+          <Header/>
             <Routes>
-              <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
+              {/* <Route path="/" element={<Navigate to={selectedRoleRoute} />} /> */}
+              <Route exact path="/" element={<Onboarding />} />
               <Route exact path="/dashboard" element={<MaintenanceWidget />} />
               <Route exact path="/cashflow" element={<CashflowOwner />} />
               {/* <Route exact path="/properties" element={<PropertyListData />} /> */}
@@ -189,7 +194,7 @@ function Main() {
               <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
               <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
-              <Route exact path="/maintenanceRequestDetail" element={<MaintenanceRequestDetail />} />
+              <Route exact path="/maintenance/detail" element={<MaintenanceRequestDetail />} />
               <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
               <Route exact path="/addProperty" element={<AddProperty />} />
               <Route exact path="/editProperty" element={<EditProperty />} />
@@ -209,7 +214,7 @@ function Main() {
 
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
-              <Route exact path="/onboarding" element={<Onboarding />} />
+              {/* <Route exact path="/onboarding" element={<Onboarding />} /> */}
             
             <Route exact path="/newUser" element={<NewUser />} />
             <Route exact path="/register" element={<Register />} />
@@ -230,9 +235,14 @@ function Main() {
             <Route exact path="/google-login" element={<GoogleLogin />} />
             <Route exact path="/google-signup" element={<GoogleSignup />} />
 
+            <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
+            <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
+            <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
+            <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
+            <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
             </Routes>
-            <Footer></Footer>
-          </Router>
+            <Footer/>
         </Box>
       </div>
     </>

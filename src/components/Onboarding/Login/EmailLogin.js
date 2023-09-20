@@ -3,8 +3,8 @@ import axios from "axios";
 import * as ReactBootStrap from "react-bootstrap";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import PasswordModal from "./PasswordModal";
-import UserDoesNotExistModal from "./UserDoesNotExistModal";
+import PasswordModal from "../PasswordModal";
+import UserDoesNotExistModal from "../UserDoesNotExistModal";
 import { red, pillButton, boldSmall, hidden, small } from "../styles";
 
 export default function EmailLogin() {

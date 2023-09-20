@@ -58,6 +58,7 @@ function Dashboard() {
             console.log("in useEffect")
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
             const jsonData = await response.json()
+            console.log(jsonData)
             console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);
             setLoading(false);

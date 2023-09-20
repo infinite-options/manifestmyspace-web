@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from "axios";
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
+import PasswordModal from './PasswordModal';
+import UserDoesNotExistModal from './UserDoesNotExistModal';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,6 +24,141 @@ function UserLogin() {
 
     const classes = useStyles();
     const navigate = useNavigate();
+    const [passModal, setpassModal] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showSpinner, setShowSpinner] = useState(false);
+
+    const [loginSuccessful, setLoginSuccessful] = useState(false);
+    const [userDoesntExist, setUserDoesntExist] = useState(false);
+    const submitForm = async () => {
+        if (email === "" || password === "") {
+        setErrorMessage("Please fill out all fields");
+        return;
+        }
+        setShowSpinner(true);
+        axios
+        .post(
+            "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE",
+            {
+            email: email,
+            }
+        )
+        .then((res) => {
+            let saltObject = res;
+            if (saltObject.data.code === 200) {
+            let hashAlg = saltObject.data.result[0].password_algorithm;
+            let salt = saltObject.data.result[0].password_salt;
+
+            if (hashAlg != null && salt != null) {
+                // Make sure the data exists
+                if (hashAlg !== "" && salt !== "") {
+                // Rename hash algorithm so client can understand
+                switch (hashAlg) {
+                    case "SHA256":
+                    hashAlg = "SHA-256";
+                    break;
+                    default:
+                    break;
+                }
+                // Salt plain text password
+                let saltedPassword = password + salt;
+                // Encode salted password to prepare for hashing
+                const encoder = new TextEncoder();
+                const data = encoder.encode(saltedPassword);
+                //Hash salted password
+                crypto.subtle.digest(hashAlg, data).then((res) => {
+                    let hash = res;
+                    // Decode hash with hex digest
+                    let hashArray = Array.from(new Uint8Array(hash));
+                    let hashedPassword = hashArray
+                    .map((byte) => {
+                        return byte.toString(16).padStart(2, "0");
+                    })
+                    .join("");
+                    console.log(hashedPassword);
+                    let loginObject = {
+                    email: email,
+                    password: hashedPassword,
+                    };
+                    console.log(JSON.stringify(loginObject));
+                    axios
+                    .post(
+                        "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE",
+                        loginObject
+                    )
+                    .then((response) => {
+                        console.log(response.data.message);
+                        if (response.data.message === "Incorrect password") {
+                        setErrorMessage(response.data.message);
+                        setShowSpinner(false);
+                        } else if (
+                        response.data.message === "Email doesn't exist"
+                        ) {
+                        setUserDoesntExist(true);
+                        setShowSpinner(false);
+                        } else if (response.data.message === "Login successful") {
+                        setErrorMessage("");
+                        setLoginSuccessful(true);
+                        navigate("/managerDashboard", {
+                            state: {
+                              email: email,
+                              tokens: response.data.result,
+                              user: response.data.result.user,
+                            },
+                          });
+                        }
+                    })
+                    .catch((err) => {
+                        if (err.response) {
+                        console.log(err.response);
+                        }
+                        console.log(err);
+                    });
+                });
+                }
+            }
+            } else {
+            setUserDoesntExist(true);
+            setShowSpinner(false);
+            }
+        });
+    };
+
+    const onReset = async () => {
+        if (email == "") {
+        setErrorMessage("Please enter an email");
+        return;
+        }
+        setShowSpinner(true);
+        axios
+        .post(
+            "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/SetTempPassword/MYSPACE",
+            {
+            email: email,
+            }
+        )
+        .then((response) => {
+            if (response.data.message === "A temporary password has been sent") {
+            setErrorMessage("");
+            setShowSpinner(false);
+            setpassModal(true);
+            }
+            if (response.data.code === 280) {
+            console.log(response);
+            setErrorMessage("No account found with that email.");
+            return;
+            }
+        });
+    };
+    const onCancel = () => {
+        setpassModal(false);
+    };
+
+    const onCancelModal = () => {
+        setUserDoesntExist(false);
+    };
 
     return (        
       <ThemeProvider theme={theme}>
@@ -35,6 +173,12 @@ function UserLogin() {
                 justifyContent: 'flex-start', // Align items at the top
             }}
           >
+            <PasswordModal isOpen={passModal} onCancel={onCancel} />
+            <UserDoesNotExistModal
+            isOpen={userDoesntExist}
+            onCancel={onCancelModal}
+            email={email}
+            />
             <Box style={{
                 paddingTop: '10%',
                 width: '80%',
@@ -89,7 +233,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                    <TextField name="returning_user_email"   placeholder="Email"   fullWidth className={classes.root}></TextField>
+                    <TextField value={email} onChange={(e) => setEmail(e.target.value)}   placeholder="Email"   fullWidth className={classes.root}></TextField>
                 </Box></Stack>
 
                 <Stack spacing={-2} m={5}>
@@ -97,7 +241,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                <TextField name="returning_user_password"   placeholder="Password"   fullWidth className={classes.root}></TextField>
+                <TextField value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password"   fullWidth className={classes.root}></TextField>
                 </Box>
                 </Stack>
 
@@ -113,7 +257,7 @@ function UserLogin() {
                                 fontSize:theme.typography.smallFont,
                                 fontWeight: theme.typography.primary.fontWeight, 
                                 textTransform: 'none'
-                            }} onClick={()=>{navigate('/selectRole')}} >Log In</Button>                      
+                            }} onClick={submitForm} >Log In</Button>                      
                 <Stack spacing={-20} m={12}>
                 <Typography 
                     sx={{
@@ -123,7 +267,7 @@ function UserLogin() {
                         fontSize:theme.typography.primary.smallFont}}>
                     <Box>
                         <u><a href="/newUser">Sign Up?</a></u>
-                        <u><a href="#">Forgot Password?</a></u>
+                        <u onClick={onReset}>Forgot Password?</u>
                     </Box>
                     </Typography>
                 </Stack>     

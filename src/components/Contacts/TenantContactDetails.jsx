@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
 import {
     ThemeProvider,
@@ -22,32 +22,38 @@ const TenantContactDetails = (props) => {
     const index = location.state.index;
     const passedData = location.state.viewData;
 
+    const [currentViewData, setCurrentViewData] = useState();
+
     console.log(contactDetails);
     console.log(selectedData);
     console.log(index);
 
-    const uniqueValues = {};
+    // const uniqueValues = {};
 
-    const uniqueContacts = contactDetails.filter((item) => {
-        if (
-            !uniqueValues[item.contract_name] &&
-            item.contract_status === 'ACTIVE'
-        ) {
-            uniqueValues[item.contract_name] = item;
-            return true;
-        }
-        return false;
-    });
+    // const uniqueContacts = contactDetails.filter((item) => {
+    //     if (
+    //         !uniqueValues[item.tenant_uid] &&
+    //         item.contract_status !== 'TERMINATED'
+    //     ) {
+    //         uniqueValues[item.tenant_uid] = item;
+    //         return true;
+    //     }
+    //     return false;
+    // });
 
-    console.log(uniqueContacts);
+    // console.log(uniqueContacts);
 
-    const owner_object = Object.values(uniqueValues)[0];
+    // const tenant_object = Object.values(uniqueValues)[index];
 
-    console.log(owner_object);
+    // console.log(tenant_object);
 
     const handleBackBtn = () => {
         navigate('/contacts');
     };
+
+    useEffect(() => {
+        setCurrentViewData(selectedData);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -84,7 +90,7 @@ const TenantContactDetails = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
-                            {contactsTab} Contacts
+                            Tenant Contacts
                         </Typography>
                         <Stack flexDirection="row" justifyContent="center">
                             <Button
@@ -269,56 +275,15 @@ const TenantContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {formattedPhoneNumber(
-                                            selectedData.contact_phone_numnber
-                                        )}
+                                        {selectedData.contact_phone_numnber}
                                     </Typography>
                                 </Stack>
                             </Stack>
-                            {contactsTab === 'Owner' ? (
-                                <Stack
-                                    sx={{ paddingLeft: '10px' }}
-                                    alignItems="flex-end"
-                                >
-                                    <Typography
-                                        sx={{
-                                            fontWeight:
-                                                theme.typography.primary
-                                                    .fontWeight,
-                                            fontSize: '13px',
-                                        }}
-                                    >
-                                        Client Since:
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            fontSize: '13px',
-                                        }}
-                                    >
-                                        02/15/2022
-                                    </Typography>
-                                </Stack>
-                            ) : (
-                                <></>
-                            )}
                         </Stack>
-                        <Stack flexDirection="row" sx={{ padding: '0 15px' }}>
-                            <Box sx={{ marginTop: '-2px' }}>
-                                <svg
-                                    width="23"
-                                    height="23"
-                                    viewBox="0 0 23 23"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        clip-rule="evenodd"
-                                        d="M5.27446 10.5314C5 11.152 5 11.8581 5 13.2701V17.6801C5 19.6412 5 20.6217 5.58579 21.2309C6.11733 21.7837 6.94285 21.8349 8.5 21.8396V16.6402C8.5 15.5509 9.35883 14.6002 10.5 14.6002H13.5C14.6412 14.6002 15.5 15.5509 15.5 16.6402V21.8396C17.0572 21.8349 17.8827 21.7837 18.4142 21.2309C19 20.6217 19 19.6412 19 17.6801V13.2701C19 11.8581 19 11.152 18.7255 10.5314C18.4511 9.91081 17.9356 9.45132 16.9047 8.53236L15.9047 7.64093C14.0414 5.97992 13.1098 5.14941 12 5.14941C10.8902 5.14941 9.95857 5.97992 8.09525 7.64094L7.09525 8.53236C6.06437 9.45132 5.54892 9.91081 5.27446 10.5314ZM13.5 21.8401V16.6402C13.5 16.6191 13.4934 16.6066 13.4883 16.6002H10.5117C10.5066 16.6066 10.5 16.6191 10.5 16.6402V21.8401H13.5Z"
-                                        fill="#160449"
-                                    />
-                                </svg>
-                            </Box>
+                        <Stack
+                            flexDirection="row"
+                            sx={{ padding: '15px 15px 0' }}
+                        >
                             {/* <Typography sx={{ fontSize: '13px' }}>
                                 {selectedData.contact_address}
                                 {', '}
@@ -327,92 +292,80 @@ const TenantContactDetails = (props) => {
                                 {selectedData.contact_state}{' '}
                                 {selectedData.contact_zip}
                             </Typography> */}
-                        </Stack>
-                        <Stack sx={{ padding: '15px' }}>
-                            {/* <Typography
+                            <Typography
                                 sx={{
                                     fontWeight:
                                         theme.typography.primary.fontWeight,
                                 }}
                             >
-                                {uniqueContacts.length} Properties
-                            </Typography> */}
-
-                            {/* {uniqueContacts.map((contact, index) => {
-                                return (
-                                    <Typography
-                                        sx={{ fontSize: '13px' }}
-                                        key={index}
-                                    >
-                                        {contact.contract_name}
-                                    </Typography>
-                                );
-                            })} */}
+                                103 N. Abel St, Milpitas CA 95035
+                            </Typography>
+                        </Stack>
+                        <Stack spacing={3} sx={{ padding: '15px' }}>
+                            <Stack>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    2 Adults
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Meg White | Tenant | DOB: 02/16/1989
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Jack White | Brother | DOB: 10/03/1991
+                                </Typography>
+                            </Stack>
+                            <Stack>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    1 Child
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Walter White | Son | DOB: 08/24/2018
+                                </Typography>
+                            </Stack>
+                            <Stack>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    2 Pets
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Otto | Cat | 16 lbs
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Senna | Cat | 8 lbs
+                                </Typography>
+                            </Stack>{' '}
+                            <Stack>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    2 Vehicles
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Mercedes Benz 380SL | Sports Car | 5DVM405 |
+                                    CA
+                                </Typography>
+                                <Typography sx={{ fontSize: '13px' }}>
+                                    Toyota Celica | Sedan | K76HEP | CA
+                                </Typography>
+                            </Stack>
                         </Stack>
                         <Stack sx={{ padding: '15px' }}>
-                            <Stack flexDirection="row">
-                                <Box>
-                                    <Stack
-                                        flexDirection="row"
-                                        alignItems="center"
-                                    >
-                                        <Box sx={{ padding: '0 10px' }}>
-                                            <img
-                                                src={require('./../Profile/Images/PaypalIcon.png')}
-                                                alt="chase"
-                                                style={{
-                                                    height: '25px',
-                                                }}
-                                            />
-                                        </Box>
-                                        <Stack>
-                                            <Typography
-                                                sx={{
-                                                    fontSize: '13px',
-                                                }}
-                                            >
-                                                Paypal
-                                            </Typography>
-                                            <Typography
-                                                sx={{
-                                                    fontSize: '12px',
-                                                }}
-                                            >
-                                                {/* {owner_object.owner_paypal} */}
-                                                bossnova96@gmail.com
-                                            </Typography>
-                                        </Stack>
-                                    </Stack>
-                                </Box>
-                                <Stack
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ paddingLeft: '30px' }}
-                                >
-                                    {/* {owner_object.owner_ssn === '' ? (
-                                        <Typography
-                                            sx={{
-                                                fontSize: '13px',
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                            }}
-                                        >
-                                            No SSN Provided
-                                        </Typography>
-                                    ) : ( */}
+                            <Stack
+                                flexDirection="row"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                sx={{
+                                    paddingLeft: '30px',
+                                    paddingRight: '30px',
+                                }}
+                            >
+                                <Stack>
                                     <Typography
                                         sx={{
                                             fontSize: '13px',
                                             fontWeight:
-                                                theme.typography.primary
+                                                theme.typography.common
                                                     .fontWeight,
                                         }}
                                     >
-                                        {/* {maskSSN(owner_object.owner_ssn)} */}
-                                        '***-**-****'
+                                        ***-**-****
                                     </Typography>
-                                    {/* )} */}
                                     <Typography
                                         sx={{
                                             fontSize: '13px',
@@ -421,137 +374,31 @@ const TenantContactDetails = (props) => {
                                         SSN
                                     </Typography>
                                 </Stack>
-                            </Stack>
-                            <Stack flexDirection="row">
-                                <Box>
-                                    <Stack
-                                        flexDirection="row"
-                                        alignItems="center"
-                                    >
-                                        <Box sx={{ padding: '0 10px' }}>
-                                            <img
-                                                src={require('./../Profile/Images/VenmoIcon.png')}
-                                                alt="venmo"
-                                                style={{
-                                                    height: '25px',
-                                                }}
-                                            />
-                                        </Box>
-                                        <Stack>
-                                            <Typography
-                                                sx={{
-                                                    fontSize: '13px',
-                                                }}
-                                            >
-                                                Venmo
-                                            </Typography>
-                                            {/* {owner_object.owner_venmo === '' ? (
-                                                <Box
-                                                    sx={{
-                                                        marginRight: '130px',
-                                                    }}
-                                                >
-                                                    <Typography>
-                                                        {' '}
-                                                        &nbsp;{' '}
-                                                    </Typography>
-                                                </Box>
-                                            ) : ( */}
-                                            <Typography
-                                                sx={{
-                                                    fontSize: '12px',
-                                                }}
-                                            >
-                                                bossnova96@gmail.com
-                                            </Typography>
-                                            {/* )} */}
-                                        </Stack>
-                                    </Stack>
-                                </Box>
                                 <Stack
                                     justifyContent="space-between"
                                     alignItems="center"
-                                    sx={{ paddingLeft: '15px' }}
+                                    sx={{ paddingLeft: '30px' }}
                                 >
-                                    {/* {owner_object.owner_ein_number === '' ? (
-                                        <Typography
-                                            sx={{
-                                                fontSize: '13px',
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                            }}
-                                        >
-                                            No EIN Provided
-                                        </Typography>
-                                    ) : ( */}
                                     <Typography
                                         sx={{
                                             fontSize: '13px',
                                             fontWeight:
-                                                theme.typography.primary
+                                                theme.typography.common
                                                     .fontWeight,
                                         }}
                                     >
-                                        12-3456789
+                                        A999000680 CA
                                     </Typography>
-                                    {/* )} */}
                                     <Typography
                                         sx={{
                                             fontSize: '13px',
                                         }}
                                     >
-                                        EIN
+                                        License Number / State
                                     </Typography>
                                 </Stack>
                             </Stack>
                         </Stack>
-                        {/* <Stack sx={{ padding: '15px' }}>
-                            <Stack
-                                flexDirection="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography
-                                    sx={{
-                                        fontWeight:
-                                            theme.typography.primary.fontWeight,
-                                    }}
-                                >
-                                    Management Fees
-                                </Typography>
-                                <Box>
-                                    <svg
-                                        width="16"
-                                        height="20"
-                                        viewBox="0 0 16 20"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            clip-rule="evenodd"
-                                            d="M8 0V5L7.99999 5.05441C7.99991 5.47848 7.99983 5.8906 8.04553 6.23052C8.09705 6.61372 8.22257 7.051 8.58579 7.41421C8.949 7.77743 9.38628 7.90295 9.76948 7.95447C10.1094 8.00017 10.5215 8.00009 10.9456 8.00001H10.9456H10.9456H10.9456L11 8H16V14C16 16.8284 16 18.2426 15.1213 19.1213C14.2426 20 12.8284 20 10 20H6C3.17157 20 1.75736 20 0.87868 19.1213C0 18.2426 0 16.8284 0 14V6C0 3.17157 0 1.75736 0.87868 0.87868C1.75736 0 3.17157 0 6 0H8ZM10 0.00462076V5C10 5.49967 10.0021 5.77383 10.0277 5.96402L10.0287 5.97131L10.036 5.97231C10.2262 5.99788 10.5003 6 11 6H15.9954C15.9852 5.58836 15.9525 5.31595 15.8478 5.06306C15.6955 4.69552 15.4065 4.40649 14.8284 3.82843L12.1716 1.17157C11.5935 0.593512 11.3045 0.304482 10.9369 0.152241C10.684 0.0474889 10.4116 0.0148133 10 0.00462076ZM4 11C4 10.4477 4.44772 10 5 10L11 10C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12L5 12C4.44772 12 4 11.5523 4 11ZM5 14C4.44772 14 4 14.4477 4 15C4 15.5523 4.44772 16 5 16H9C9.55228 16 10 15.5523 10 15C10 14.4477 9.55229 14 9 14H5Z"
-                                            fill="#3D5CAC"
-                                        />
-                                    </svg>
-                                </Box>
-                            </Stack>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Monthly Service Charge: 15% of all rent Tenant
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Setup Fee: $100
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Annual Inspection Fee: $200
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Re-Keying Charge: $200
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Annual Postage and Communication Fee: $20
-                            </Typography>
-                        </Stack> */}
                     </Paper>
                 </Paper>
             </Box>

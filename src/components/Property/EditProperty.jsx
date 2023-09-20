@@ -53,30 +53,31 @@ export default function EditProperty({}){
     console.log("Property Data in Edit Property", propertyData)
 
 
-    const [ownerId, setOwnerId] = useState('110-000003"');
+    const [ownerId, setOwnerId] = useState('110-000003');
 
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
+    const [address, setAddress] = useState(propertyData.property_address);
+    const [city, setCity] = useState(propertyData.property_city);
     const [propertyState, setPropertyState] = useState(propertyData.property_state);
-    const [zip, setZip] = useState('');
-    const [type, setType] = useState(propertyData.property_type);
-    const [squareFootage, setSquareFootage] = useState('');
-    const [bedrooms, setBedrooms] = useState('');
-    const [bathrooms, setBathrooms] = useState('');
+    const [zip, setZip] = useState(propertyData.property_zip);
+    const [propertyType, setPropertyType] = useState(propertyData.property_type);
+    const [squareFootage, setSquareFootage] = useState(0);
+    const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
+    const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
     const [description, setDescription] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
+    const [notes, setNotes] = useState(propertyData.property_notes);
+    const [unit, setUnit] = useState(propertyData.property_unit);
+    const [propertyValue, setPropertyValue] = useState(0);
     const [deposit, setDeposit] = useState(0);
     const [petsAllowed, setPetsAllowed] = useState(0);
     const [depositForRent, setDepositForRent] = useState(0);
     const [taxes, setTaxes] = useState(0);
     const [mortgages, setMortgages] = useState(0);
     const [insurance, setInsurance] = useState(0);
-    const [notes, setNotes] = useState('');
-    const [unit, setUnit] = useState('');
 
 
     const handleNext = () => {
@@ -96,27 +97,6 @@ export default function EditProperty({}){
         console.log("handleUnitChange", event.target.value)
         setUnit(event.target.value);
     };
-
-    const handleAddressChange = (event) => {
-        console.log("handleTitleChange", event.target.value)
-        setAddress(event.target.value);
-    };
-
-    const handleCityChange = (event) => {
-        console.log("handleCityChange", event.target.value)
-        setCity(event.target.value);
-    };
-
-    const handleTypeChange = (event) => {
-        console.log("handleTypeChange", event.target.value)
-        setType(event.target.value);
-    };
-
-    const handlePropertyStateChange = (event) => {
-        console.log("handleStateChange", event.target.value)
-        setPropertyState(event.target.value);
-    }
-
 
 
     const handleBackButton = () => {
@@ -140,7 +120,7 @@ export default function EditProperty({}){
         formData.append('property_city', city);
         formData.append('property_state', propertyState);
         formData.append('property_zip', zip);
-        formData.append('property_type', type);
+        formData.append('property_type', propertyType);
         formData.append('property_num_beds', bedrooms);
         formData.append('property_num_baths', bathrooms);
         formData.append('property_area', squareFootage);
@@ -156,9 +136,21 @@ export default function EditProperty({}){
         formData.append('property_notes', notes);
 
 
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);    
+        }
 
         const putData = async () => {
-
+            try{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
+                    method: "PUT",
+                    body: formData
+                })
+                const data = await response.json();
+                console.log("data", data)
+            } catch(error){
+                console.log("Error posting data:", error)
+            }
         }
 
         putData();
@@ -279,13 +271,14 @@ export default function EditProperty({}){
                                             Address
                                         </Typography>
                                         <TextField 
-                                            onChange={handleAddressChange} 
+                                            onChange={(e) => setAddress(e.target.value)}
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
                                                 borderRadius: '7px',
                                             }}
-                                            placeholder={propertyData.property_address}
+                                            placeholder={address}
+                                            value={address}
                                             size="small"
                                             fullWidth
                                         />
@@ -297,13 +290,14 @@ export default function EditProperty({}){
                                             Unit
                                         </Typography>
                                         <TextField 
-                                            onChange={handleUnitChange} 
+                                            onChange={(e) => setUnit(e.target.value)} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
                                                 borderRadius: '7px',
                                             }}
-                                            placeholder={propertyData.property_unit}
+                                            placeholder={unit}
+                                            value={unit}
                                             size="small"
                                             fullWidth
                                         />
@@ -314,7 +308,7 @@ export default function EditProperty({}){
                                             City
                                         </Typography>
                                         <TextField 
-                                            onChange={handleCityChange} 
+                                            onChange={(e) => setCity(e.target.value)} 
                                             sx={{
                                                 backgroundColor: 'white',
                                                 borderColor: 'black',
@@ -323,6 +317,7 @@ export default function EditProperty({}){
                                             size="small"
                                             fullWidth
                                             placeholder={propertyData.property_city}
+                                            value={city}
                                         />
                                     </Grid>
 
@@ -339,7 +334,7 @@ export default function EditProperty({}){
                                                 }}
                                                 size="small"
                                                 fullWidth
-                                                onChange={handlePropertyStateChange}
+                                                onChange={(e) => setPropertyState(e.target.value)}
                                                 value={propertyState}
                                             >
                                                 <MenuItem value={"CA"}>CA</MenuItem>
@@ -363,8 +358,8 @@ export default function EditProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            placeholder={propertyData.property_zip}
-                                            // onChange={handleCostChange}
+                                            onChange={(e) => setZip(e.target.value)}
+                                            value={zip}
                                         />
                                     </Grid>
 
@@ -380,8 +375,8 @@ export default function EditProperty({}){
                                             }}
                                             size="small"
                                             fullWidth
-                                            onChange={handleTypeChange} 
-                                            value={type}
+                                            onChange={(e) => setPropertyType(e.target.value)} 
+                                            value={propertyType}
                                         >
                                             <MenuItem value={"Single Family"}>Single Family</MenuItem>
                                             <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
@@ -403,8 +398,9 @@ export default function EditProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            placeholder={propertyData.property_area}
-                                            // onChange={handleCostChange}
+                                            placeholder={squareFootage}
+                                            onChange={(e) => setSquareFootage(e.target.value)}
+                                            value={squareFootage}
                                         />
                                     </Grid>
 
@@ -420,8 +416,9 @@ export default function EditProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            placeholder={propertyData.property_num_beds}
-                                            // onChange={handleCostChange}
+                                            placeholder={bedrooms}
+                                            onChange={(e) => setBedrooms(e.target.value)}
+                                            value={bedrooms}
                                         />
                                     </Grid>
                                             
@@ -437,8 +434,9 @@ export default function EditProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            placeholder={propertyData.property_num_baths}
-                                            // onChange={handleCostChange}
+                                            placeholder={bathrooms}
+                                            onChange={(e) => setBathrooms(e.target.value)}
+                                            value={bathrooms}
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
@@ -458,7 +456,8 @@ export default function EditProperty({}){
                                                     <InputAdornment position="start">$</InputAdornment>
                                                 ),
                                             }}
-                                            // onChange={handleCostChange}
+                                            onChange={(e) => setPropertyValue(e.target.value)}
+                                            value={propertyValue}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -474,8 +473,9 @@ export default function EditProperty({}){
                                             }}
                                             size="small"
                                             multiline={true}
-                                            placeholder={propertyData.property_notes}
-                                            // onChange={handleCostChange}
+                                            placeholder={notes}
+                                            onChange={(e) => setNotes(e.target.value)}
+                                            value={notes}
                                         />
                                     </Grid>
                                 </Grid>
@@ -720,15 +720,15 @@ export default function EditProperty({}){
                     >
                         <Box
                             sx={{
-                                // marginLeft: '30px',
-                                marginTop: '30px',
+                                marginBottom: '30px',
                                 width: '100%',
                                 paddingBottom: '30px'
                             }}
                         >
                         <Grid container>
                             <Grid item xs={12}>
-                                <Button variant="contained" type="submit" form="editPropertyForm" sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
+                                {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
+                                <Button variant="contained" type="submit" form="editPropertyForm"  sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
                                     <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Update Property
                                     </Typography>

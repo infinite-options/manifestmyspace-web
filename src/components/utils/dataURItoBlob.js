@@ -1,6 +1,3 @@
-
-
-
 export default function dataURItoBlob(dataURI) {
     // Split the input to get the mime type and the data itself
     const [typeInfo, base64] = dataURI.split(",");
