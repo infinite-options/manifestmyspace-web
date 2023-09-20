@@ -23,7 +23,7 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 
 
-export default function CompleteMaintenance({maintenanceItem}){
+export default function CompleteMaintenance({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
 
 
@@ -32,8 +32,8 @@ export default function CompleteMaintenance({maintenanceItem}){
 
         navigate("/payMaintenance", {
             state:{
-                maintenanceItem
-
+                maintenanceItem,
+                navigateParams
             }
         })
     }

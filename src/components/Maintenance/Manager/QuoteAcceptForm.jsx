@@ -40,6 +40,8 @@ export default function QuoteAcceptForm(){
     const navigate = useNavigate();
     const location = useLocation();
     const maintenanceItem = location.state.maintenanceItem;
+    const navigationParams = location.state.navigateParams
+    console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
@@ -74,7 +76,25 @@ export default function QuoteAcceptForm(){
 
     function handleBackButton(){
         console.log("handleBackButton")
-        navigate(-1); 
+        let maintenance_request_index = navigationParams.maintenanceRequestIndex
+        let status = navigationParams.status
+        let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
+        let allMaintenanceData = navigationParams.allData
+        console.log("-----navigationParams-----")
+        console.log("maintenance_request_index", maintenance_request_index)
+        console.log("status", status)
+        console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+        console.log("allMaintenanceData", allMaintenanceData)
+        console.log("--------------------------")
+
+        navigate("/maintenance/detail", {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData,
+            }
+        }); 
     }
 
 
@@ -90,7 +110,7 @@ export default function QuoteAcceptForm(){
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
                         "maintenance_request_status": "ACCEPTED"
                     })
                 });
@@ -120,10 +140,8 @@ export default function QuoteAcceptForm(){
     }
 
     useEffect(() => {
-        let imageArray = JSON.parse(maintenanceItem.maintenance_images)
+        let imageArray = JSON.parse(maintenanceItem?.maintenance_images)
         setDisplayImages(imageArray)
-
-
     }, [])
 
     return (
@@ -201,6 +219,7 @@ export default function QuoteAcceptForm(){
                                     height: "100%",
                                     padding: "10px",
                                     margin: "10px",
+                                    paddingTop: "25px"
                                 }}>
 
                                     <Grid item xs={12}>
@@ -228,29 +247,29 @@ export default function QuoteAcceptForm(){
                                     </Grid>
                                      <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem.maintenance_priority} Priority</b>
+                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
                                         </Typography>
                                     </Grid>
 
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <u>{maintenanceItem.property_address}, {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}</u>
+                                            <u>{maintenanceItem?.property_address}, {maintenanceItem?.property_city} {maintenanceItem?.property_state} {maintenanceItem?.property_zip}</u>
                                         </Typography>
                                     </Grid>
 
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem.maintenance_title}</b>
+                                            <b>{maintenanceItem?.maintenance_title}</b>
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem.maintenance_desc}</b>
+                                            <b>{maintenanceItem?.maintenance_desc}</b>
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            Estimated Cost: <b>{maintenanceItem.maintenance_desc}</b>
+                                            Estimated Cost: <b>{maintenanceItem?.maintenance_desc}</b>
                                         </Typography>
                                     </Grid>
                                 {/* {Object.entries(maintenanceItem).map(([key, value], index) => (

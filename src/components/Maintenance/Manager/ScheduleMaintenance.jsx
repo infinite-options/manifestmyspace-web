@@ -24,16 +24,18 @@ import CompleteTicket from "../../utils/CompleteTicket";
 
 
 
-export default function ScheduleMaintenance({maintenanceItem}){
+export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
     
     const location = useLocation();
     const navigate = useNavigate();
 
     function handleNavigate(){
         console.log("navigate to Rescheduling Maintenance")
+        console.log("navigateParams to /scheduleMaintenance", navigateParams)
         navigate("/scheduleMaintenance", {
             state:{
-                maintenanceItem
+                maintenanceItem,
+                navigateParams
             }
         })
     }

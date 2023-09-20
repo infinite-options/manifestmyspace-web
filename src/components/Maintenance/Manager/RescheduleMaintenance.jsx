@@ -85,9 +85,16 @@ export default function RescheduleMaintenance(){
     const location = useLocation();
     const navigate = useNavigate();
     const maintenanceItem = location.state.maintenanceItem;
+    const navigationParams = location.state.navigateParams;
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
+
+    let maintenance_request_index = navigationParams.maintenanceRequestIndex
+    let status = navigationParams.status
+    let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
+    let allMaintenanceData = navigationParams.allData
+
 
     console.log("RescheduleMaintenance", maintenanceItem)
 
@@ -109,7 +116,6 @@ export default function RescheduleMaintenance(){
         
         const date = "12-15-2023"
         const time = "09:00:00"
-
         const changeMaintenanceRequestStatus = async () => {
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
@@ -129,7 +135,14 @@ export default function RescheduleMaintenance(){
             }
         }
         changeMaintenanceRequestStatus()
-        navigate("/maintenance", {state: {maintenanceItem: maintenanceItem}});
+        navigate("/maintenance/detail", {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData,
+            }
+        }); 
     }
 
     function numImages(){
@@ -158,7 +171,14 @@ export default function RescheduleMaintenance(){
 
     function handleBackButton(){
         console.log("handleBackButton")
-        navigate(-1); 
+        navigate("/maintenance/detail", {
+            state: {
+                maintenance_request_index,
+                status,
+                maintenanceItemsForStatus,
+                allMaintenanceData,
+            }
+        }); 
     }
 
     function navigateToAddMaintenanceItem(){
@@ -242,6 +262,7 @@ export default function RescheduleMaintenance(){
                                     height: "100%",
                                     padding: "10px",
                                     margin: "10px",
+                                    paddingTop: "25px"
                                 }}>
 
                                     <Grid item xs={12}>

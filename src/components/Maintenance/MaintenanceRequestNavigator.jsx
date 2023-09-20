@@ -67,6 +67,14 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
           updateRequestIndex(newIndex)
           return newIndex;
       });
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //         maintenance_request_index,
+    //         status,
+    //         maintenanceItemsForStatus,
+    //         allMaintenanceData,
+    //     }
+    // })
   };
 
   const handlePreviousCard = () => {
@@ -335,7 +343,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
-                {data.maintenance}
+                  {data.maintenance}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",

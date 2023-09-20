@@ -25,21 +25,11 @@ import CompleteTicket from "../../utils/CompleteTicket";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 
-export default function QuotesAccepted({maintenanceItem}){
+export default function QuotesAccepted({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
 
     console.log("QuotesAccepted maintenanceItem", maintenanceItem)
-
-
-    function handleNavigateToQuotesRequested(){
-
-        console.log("NewRequestAction", maintenanceItem)
-        navigate("/quoterequest", {
-            state:{
-                maintenanceItem
-            }
-        });
-    }
+    console.log("QuotesAccepted navigateParams", navigateParams)
 
     async function handleCancel(id){
         let response = CancelTicket(id);

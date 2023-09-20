@@ -132,7 +132,7 @@ function Main() {
             overflow: "auto", // Enable scrolling when content overflows
           }}
         >
-          <Header></Header>
+          <Header/>
             <Routes>
               <Route path="/" element={<Navigate to={selectedRoleRoute} />} />
               <Route exact path="/dashboard" element={<MaintenanceWidget />} />
@@ -241,7 +241,7 @@ function Main() {
             <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
 
             </Routes>
-            <Footer></Footer>
+            <Footer/>
         </Box>
       </div>
     </>
