@@ -1,0 +1,55 @@
+http://localhost:3000/maintenance
+Properties can be clicked, hovered mouse shape must change
+
+http://localhost:3000/addMaintenanceItem
+Putting the submit button (Add MAINTENANCE) in the center
+
+http://localhost:3000/maintenanceRequestDetail
+Labels 
+
+http://localhost:3000/ownerDashboard
+Rounded Corners for MAINTENANCE Exp widget
+Expanses Revenue Cashflow Clicks
+
+
+http://localhost:3000/contacts
+Search-Bar functionality
+
+http://localhost:3000/managerDashboard
+Items are clickable in an unnoticeable way
+Add Ticket, Transaction Functionalities
+
+
+http://localhost:3000/addTenantMaintenanceItem
+Selected Priority is not visible
+
+http://localhost:3000/tenantLeases
+End Lease, Renew Lease buttons functionalities
+
+http://localhost:3000/tenantDashboard
+View Details and Urgent MAINTENANCE  buttons functionalities
+
+http://localhost:3000/addTenantMaintenanceItem
+Beautiful photo upload box
+
+
+
+
+
+http://localhost:3000/cashflow
+select property (search functionality)
+
+
+http://localhost:3000/myProperty
+Call, Email, Open Maps Functionality
+
+
+
+
+http://localhost:3000/pmRent
+Last30 Days, Select Property Functionalities
+
+
+http://localhost:3000/announcement
+searchbar, filter
+

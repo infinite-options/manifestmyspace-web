@@ -416,9 +416,10 @@ function ManagerDashboard() {
                             id="expense"
                             className={classes.button}
                             onClick={() => {
-                            navigate('/pmDocuments');
+                            navigate('/ownerDocuments');
                             }}
-                        >
+                            >
+
                             <img src={File_dock_fill} alt="Documents" />
                             Documents
                         </Button>

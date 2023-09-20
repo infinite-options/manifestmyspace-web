@@ -2,9 +2,14 @@ import { Accordion, AccordionDetails, AccordionSummary, Modal, Box } from "@mui/
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SelectProperty from "../SelectProperty";
+import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 
 function OwnerLeases(props) {
+    
+  
+    
     // Select Property Tab
+    
     const [open, setOpen] = useState(false);
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     const handleClose = () => {
@@ -68,6 +73,8 @@ function OwnerLeases(props) {
                 setMoveoutCount(moveoutNum);
             });
     }, []);
+
+
     
     return (
         <Box>
@@ -349,8 +356,37 @@ function LeaseComponent(props) {
         }
         return outputIcon;
     }
+    const navigate = useNavigate();
+
+    function handlePropertyDetailNavigation(propertyId, index, propertyList, maintenanceData) {
+        console.log("handlePropertyDetailNavigation");
+        navigate(`/propertyDetail`, { state: { propertyId, index, propertyList, maintenanceData } });
+      }
+    
+        // Adding data to link to the Property Detail Page 
+  const [propertyList, setPropertyList] = useState([]);
+  const [displayedItems, setDisplayedItems] = useState([]);
+  const [maintenanceData, setMaintenanceData] = useState([]);
+
+  useEffect(() => {
+    console.log("PropertyList useEffect");
+    console.log(propertyList);
+    const fetchData = async () => {
+      const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
+      const propertyData = await response.json();
+      console.log(propertyData)
+      setPropertyList([...propertyData["Property_Dashboard"].result]);
+      setDisplayedItems([...propertyData["Property_Dashboard"].result]);
+    };
+    fetchData();
+  }, []);
+   // End of getting data for the link 
+
     return (
-        <Box sx={{
+        <Box 
+            
+
+            sx={{
             display: 'flex',
             flexDirection: 'row',
             paddingLeft: '10px',
@@ -359,13 +395,23 @@ function LeaseComponent(props) {
                 marginLeft: '0px',
                 marginRight: 'auto',
             }}>
-                <Box sx={{
+                <Box  
+                        onClick={() => {
+                // handleStripePayment()
+                let indx= displayedItems.findIndex(p=> p.property_id===leaseData.lease_property_id );
+                console.log(displayedItems)
+                handlePropertyDetailNavigation(leaseData.lease_property_Id, indx, propertyList, maintenanceData)
+                
+              }}
+            //   onClick={() => handlePropertyDetailNavigation(props.leaseData.lease_property_Id, props.index, props.propertyList, props.maintenanceData)}
+
+                    sx={{
                     fontWeight: 'bold',
                     borderBottomStyle: 'solid',
                     borderWidth: '1px',
                     width: 'fit-content',
                 }}>
-                    {`${leaseData.property_address} ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
+                    {`${leaseData.property_address}  ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
                 </Box>
                 <Box>
                     {leaseData.lease_end}: {getLeaseStatusText(leaseData.lease_renew_status)}
