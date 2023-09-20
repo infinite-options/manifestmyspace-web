@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from "axios";
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate } from "react-router-dom";
@@ -21,6 +22,63 @@ function Register() {
 
     const classes = useStyles();
     const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    // const [firstName, setFirstName] = useState("");
+    // const [lastName, setLastName] = useState("");
+    // const [phoneNumber, setPhoneNumber] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showSpinner, setShowSpinner] = useState(false);
+    const [signupSuccessful, setSignupSuccessful] = useState(false);
+    const [userAlreadyExists, setUserAlreadyExists] = useState(false);
+    const submitForm = async () => {
+        if (email === "" || password === "" || confirmPassword === "") {
+        setErrorMessage("Please fill out all fields");
+        return;
+        }
+
+        if (password !== confirmPassword) {
+        setErrorMessage("Passwords must match");
+        return;
+        } else if (password === confirmPassword) {
+        setErrorMessage("");
+        }
+        setShowSpinner(true);
+        const user = {
+        // first_name: firstName,
+        // last_name: lastName,
+        // phone_number: phoneNumber,
+        email: email,
+        password: password,
+        role: "",
+        };
+        axios
+        .post(
+            "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/FINDME",
+            user
+        )
+        .then((response) => {
+            console.log(response);
+            if (response.data.message == "User already exists") {
+            setUserAlreadyExists(!userAlreadyExists);
+            return;
+            // add validation
+            } else {
+            setSignupSuccessful(true);
+            navigate("/selectRole", {
+                state: {
+                  email: email,
+                  tokens: response.data.result,
+                  user: response.data.result.user,
+                },
+              });
+            }
+        });
+    };
+    const onCancel = () => {
+        setUserAlreadyExists(false);
+    };
 
     return (        
       <ThemeProvider theme={theme}>
@@ -89,7 +147,7 @@ function Register() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                    <TextField name="new_user_email"   placeholder="Email"   fullWidth className={classes.root}></TextField>
+                    <TextField value={email} onChange={(e) => setEmail(e.target.value)}  placeholder="Email"   fullWidth className={classes.root}></TextField>
                 </Box></Stack>
 
                 <Stack spacing={-2} m={5}>
@@ -97,7 +155,7 @@ function Register() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                <TextField name="new_user_password"   placeholder="Password"   fullWidth className={classes.root}></TextField>
+                <TextField value={password} onChange={(e) => setPassword(e.target.value)}   placeholder="Password"   fullWidth className={classes.root}></TextField>
                 </Box>
                 </Stack>
 
@@ -106,7 +164,7 @@ function Register() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                <TextField name="new_user_re_password"   placeholder="Re Enter Password"  fullWidth className={classes.root}></TextField>
+                <TextField value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}   placeholder="Re Enter Password"  fullWidth className={classes.root}></TextField>
                 </Box>
                 </Stack>  
                 <Button 
@@ -121,7 +179,7 @@ function Register() {
                                 fontSize:theme.typography.smallFont,
                                 fontWeight: theme.typography.primary.fontWeight, 
                                 textTransform: 'none'
-                            }} onClick={()=>{navigate('/selectRole')}} >Sign Up</Button>                      
+                            }} onClick={submitForm} >Sign Up</Button>                      
                 <Stack spacing={-20} m={12}>
                 <Typography 
                     sx={{

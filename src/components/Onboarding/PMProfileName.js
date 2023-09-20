@@ -8,7 +8,7 @@ import { Select} from "@mui/material";
 import { Grid } from '@mui/material';
 import { MenuItem} from "@mui/material";
 import { useContext } from 'react';
-import { useMyContext } from '../../contexts/SettingsACHContext';
+import { useMyContext } from '../../contexts/PMProfileContext';
 import StatusBarPM2 from '../../images/onboarding/status_bar_pm1.png';
 import NewProfilePicture from '../../images/onboarding/new_profile_picture.png';
 
@@ -22,12 +22,30 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: '15px',
       },
     },
-  }));
+}));
 
 function PMProfileName() {
+
     const classes = useStyles();
     const navigate = useNavigate();
 
+    const handleNextStep = () => {
+
+      //console.log("business_type",business_type);
+      console.log("business_name",business_name);
+
+      console.log("Click Button- Next page ")
+      navigate('/pmProfileDisplay')
+    };
+
+    const { 
+      business_name, update_business_name,
+    } = useMyContext(); 
+
+    const handleChange1 = (event) => {
+      update_business_name(event.target.value);
+    };
+  
     return (        
         <ThemeProvider theme={theme}>
         <Box
@@ -39,17 +57,14 @@ function PMProfileName() {
               height: '100vh', // Set the Box height to full view height
               justifyContent: 'flex-start', // Align items at the top
           }}
-        >
-          
+        > 
               <Box
-              component="span"
-              display= 'flex'
-              margin='10px'
-              justifyContent= 'center'
-              alignItems= 'center'
-              position= 'relative'>
-                 
-                  
+                component="span"
+                display= 'flex'
+                margin='10px'
+                justifyContent= 'center'
+                alignItems= 'center'
+                position= 'relative'>  
               </Box>
           <Paper 
             style={{
@@ -104,7 +119,7 @@ function PMProfileName() {
                   </Box>
                   </>
               </Box>
-              <TextField name="first_last_name"   variant="filled" fullWidth placeholder="Enter your first and last name" className={classes.root}></TextField>
+              <TextField name="business_name" value={business_name} onChange={handleChange1}  variant="filled" fullWidth placeholder="Enter your first and last name" className={classes.root}></TextField>
               <Box sx={{paddingTop: '10%'}}></Box>
               <Box sx={{
                     justifySelf: 'center',
@@ -134,13 +149,11 @@ function PMProfileName() {
                   left: `14px`,
                   top: `4px`,
                   borderRadius: '10px 10px 10px 10px'
-              }} onClick={()=>{navigate('/pmProfileDisplay')}}>Next Step</Button>
+              }} onClick={handleNextStep}>Next Step</Button>
               
               <Stack spacing={-8} m={12}></Stack>
           </Paper>
           </Box>
-          
-
       </ThemeProvider>
     )
 }

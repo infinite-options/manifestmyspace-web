@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
 import Google from '../../images/onboarding/continue_with_google.png';
+import GoogleSignup from './GoogleSignup';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,8 +55,8 @@ function NewUser() {
                     <hr/>
             </Box>
             <Stack spacing={-6} m={12}>
-            <Box onClick={()=>{navigate('/google-signup')}}>
-                <img src={Google}/>
+            <Box>
+                <GoogleSignup />
             </Box>   
             </Stack>
             <Button 
@@ -68,7 +69,7 @@ function NewUser() {
                                 borderRadius: '15px',
                                 fontSize:theme.typography.smallFont,
                                 fontWeight: theme.typography.primary.fontWeight, 
-                            }} onClick={()=>{navigate('/email-signup')}}>Sign Up With Email</Button>  
+                            }} onClick={()=>{navigate('/register')}}>Sign Up With Email</Button>  
            
             <Stack spacing={-20} m={12}>
                 <Typography 
