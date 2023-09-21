@@ -108,6 +108,7 @@ import PMProfileName from "./Onboarding/PMProfileName";
 import POProfileDisplay from "./Onboarding/POProfileDisplay";
 import POProfilePayment from "./Onboarding/POProfilePayment";
 import POProfileName from "./Onboarding/POProfileName";
+import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
 
 function Main() {
   const { user } = useUser(); // Get the user context
@@ -240,6 +241,9 @@ function Main() {
             <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
+            <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
+            <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
 
             </Routes>
             <Footer/>
