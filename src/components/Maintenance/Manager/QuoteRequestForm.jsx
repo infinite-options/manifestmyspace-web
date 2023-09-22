@@ -24,6 +24,7 @@ import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import dataURItoBlob from "../../utils/dataURItoBlob";
+import userIcon from "./User_fill.png"
 
 export default function QuoteRequestForm(){
 
@@ -380,9 +381,12 @@ export default function QuoteRequestForm(){
                     >
                         <Grid item xs={12}>
                             <img 
-                                src="src/components/Maintenance/Manager/User_fill.png" 
+                                src={userIcon}
                                 alt="User Icon" 
-                                style={{ marginRight: '8px' }}  // Adds some spacing between the image and the text
+                                style={{ 
+                                    marginRight: '8px',
+                                    width: "20px",
+                                    height: "20px" }}
                             />
                             <Typography component="span" sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                 View All Maintenance Contacts
@@ -394,18 +398,24 @@ export default function QuoteRequestForm(){
                                     Loading Contacts
                                 </Typography>
                             ) : (
-                                <Select 
-                                    sx={{
-                                        backgroundColor: 'white',
-                                        borderColor: 'black',
-                                        borderRadius: '7px',
-                                    }}
-                                    size="small"
-                                    fullWidth
-                                    onChange={e => handleMaintenanceChange(e)} 
-                                >
-                                    {displayContactList()}
-                                </Select>
+                                <>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Contacts
+                                    </Typography>
+                                    <Select 
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderColor: 'black',
+                                            borderRadius: '7px',
+                                        }}
+                                        size="small"
+                                        fullWidth
+                                        onChange={e => handleMaintenanceChange(e)}
+                                        // renderValue={(selected) => selected.join(', ')}
+                                    >
+                                        {displayContactList()}
+                                    </Select>
+                                </>
                             )}
 
                         </Grid>

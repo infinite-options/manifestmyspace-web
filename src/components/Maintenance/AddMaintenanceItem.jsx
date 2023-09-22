@@ -24,7 +24,10 @@ import {
     InputAdornment
 } from "@mui/material";
 
-import { useState } from "react";
+import { darken } from '@mui/system';
+
+
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -60,6 +63,7 @@ export default function AddMaintenanceItem({}){
     const location = useLocation();
     let navigate = useNavigate();
     const [propertyId, setPropertyId] = useState('200-000029')
+    const [properties, setProperties] = useState([])
     const [property, setProperty] = useState('');
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
@@ -115,6 +119,25 @@ export default function AddMaintenanceItem({}){
         console.log("handleBackButton")
         navigate(-1);
     }
+
+    useEffect(() => {
+
+        const getProperties = async () => {
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
+
+            const propertyData = await response.json();
+            // console.log("data", data)
+            // const propertyData = data.Property.result
+            console.log("properties", propertyData)
+            // setProperties(properties)
+            setProperties([...propertyData["Property_Dashboard"].result]);
+        }
+
+        getProperties();
+
+    }, [])
+
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -263,11 +286,20 @@ export default function AddMaintenanceItem({}){
                                         size="small"
                                     >
                                         {/* <InputLabel>Select Property</InputLabel> */}
-                                        <Select onChange={handlePropertyChange}>
-                                            <MenuItem value={"6123 Corte de la Reina"}>6123 Corte de la Reina</MenuItem>
-                                            <MenuItem value={"9501 Kempler Drive"}>9501 Kempler Drive</MenuItem>
-                                            <MenuItem value={"9107 Japonica Court"}>9107 Japonica Court</MenuItem>
-                                            <MenuItem value={propertyId}>5640 W. Sunset Road</MenuItem>
+                                        <Select 
+                                            onChange={handlePropertyChange}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: '250px',  // you can adjust this value as needed
+                                                        overflow: 'auto'
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            {properties.map((property) => (
+                                                <MenuItem key={property.property_uid} value={property.property_uid}>{property.property_address} {property?.property_unit}</MenuItem>
+                                            ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -346,10 +378,14 @@ export default function AddMaintenanceItem({}){
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
-                                            '& .MuiToggleButton-root.Mui-selected': {
-                                                backgroundColor: 'lightblue', // Selected background color
-                                                color: 'white', // Selected text color
-                                            },
+                                            // '& .MuiToggleButton-root.Mui-selected': {
+                                            //     backgroundColor: 'lightblue', // Selected background color
+                                            //     color: 'white', // Selected text color
+                                            // },
+                                            // display: "grid",
+                                            // gridTemplateColumns: "auto auto auto auto",
+                                            // gridGap: "50px",
+                                            // padding: "10px",
                                         }}
                                     >
                                         <ToggleButton 
@@ -364,11 +400,12 @@ export default function AddMaintenanceItem({}){
                                                 '&.Mui-selected': {
                                                     borderColor: "white",
                                                     color: "white",
-                                                    backgroundColor: theme.palette.priority.low
+                                                    backgroundColor: theme.palette.priority.low,
+                                                    borderWidth: "3px"  // Ensure consistent border width
                                                 },
                                                 '&:hover': {
                                                     borderColor: "white",
-                                                    backgroundColor: theme.palette.priority.low,
+                                                    backgroundColor: darken(theme.palette.priority.low, 0.3),
                                                 },
                                             }}>
                                             Low
@@ -386,11 +423,14 @@ export default function AddMaintenanceItem({}){
                                                     borderColor: "white",
                                                     color: "white",
                                                     backgroundColor: theme.palette.priority.medium,
-                                                    zIndex: 2,
+                                                    borderWidth: "3px"  // Ensure consistent border width
                                                 },
                                                 '&:hover': {
                                                     borderColor: "white",
-                                                    backgroundColor: theme.palette.priority.medium,
+                                                    backgroundColor: darken(theme.palette.priority.medium, 0.3),
+                                                },
+                                                '&.Mui-selected + .MuiToggleButton-root': {
+                                                    borderLeftColor: 'white',
                                                 },
                                             }}>
                                             Medium
@@ -405,13 +445,17 @@ export default function AddMaintenanceItem({}){
                                                 borderWidth: "3px",
                                                 borderColor: theme.palette.priority.high,
                                                 '&.Mui-selected': {
-                                                    borderWidth: "3px",
+                                                    borderColor: "white",
                                                     color: "white",
                                                     backgroundColor: theme.palette.priority.high,
+                                                    borderWidth: "3px"  // Ensure consistent border width
                                                 },
                                                 '&:hover': {
                                                     borderColor: "white",
-                                                    backgroundColor: theme.palette.priority.high,
+                                                    backgroundColor: darken(theme.palette.priority.high, 0.3),
+                                                },
+                                                '&.Mui-selected + .MuiToggleButton-root': {
+                                                    borderLeftColor: 'white',
                                                 },
                                             }}>
                                             High

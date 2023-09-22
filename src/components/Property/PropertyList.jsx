@@ -172,6 +172,46 @@ export default function PropertyList({}) {
     }
   }
 
+  function displayAddress(property){
+    if (property.property_unit !== ""){
+      return (
+        <Typography
+            sx={{
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: theme.typography.smallFont,
+              margin: "0px", // Ensure no margin
+              padding: "0px", // Ensure no padding
+              textAlign: "center", // Ensure text is centered within itself
+              verticalAlign: "middle", // Vertically align text in the middle
+              alignItems: "center", // vertically align items to the center
+            }}
+          >
+          {property.property_address}  #{property.property_unit}<br />
+          {property.property_city + " " + property.property_state + " " + property.property_zip}
+        </Typography>
+      )
+    } else {
+      return (
+        <Typography
+          sx={{
+            color: theme.typography.common.blue,
+            fontWeight: theme.typography.primary.fontWeight,
+            fontSize: theme.typography.smallFont,
+            margin: "0px", // Ensure no margin
+            padding: "0px", // Ensure no padding
+            textAlign: "center", // Ensure text is centered within itself
+            verticalAlign: "middle", // Vertically align text in the middle
+            alignItems: "center", // vertically align items to the center
+          }}
+        >
+        {property.property_address} <br />
+        {property.property_city + " " + property.property_state + " " + property.property_zip}
+        </Typography>
+      )
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -245,7 +285,7 @@ export default function PropertyList({}) {
                       width: "50%", // to take full width of its parent
                     }}
                   >
-                    <Typography
+                    {/* <Typography
                       sx={{
                         color: theme.typography.common.blue,
                         fontWeight: theme.typography.primary.fontWeight,
@@ -256,10 +296,12 @@ export default function PropertyList({}) {
                         verticalAlign: "middle", // Vertically align text in the middle
                         alignItems: "center", // vertically align items to the center
                       }}
-                    >
-                      {property.property_address} <br />
+                    > */}
+                      {/* {property.property_address}  #{property.property_unit}<br />
                       {property.property_city + " " + property.property_state + " " + property.property_zip}
-                    </Typography>
+                       */}
+                      {displayAddress(property)}
+                    {/* </Typography> */}
                   </Box>
                   <Box
                     sx={{
