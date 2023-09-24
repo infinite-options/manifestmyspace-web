@@ -30,7 +30,7 @@ function GoogleLogin(props) {
 
   const socialGoogle = async (e, u) => {
     setShowSpinner(true);
-    navigate("/register", {
+    navigate("/managerDashboard", {
       state: {
         user: u,
       },
