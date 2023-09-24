@@ -16,9 +16,14 @@ function SelectRole() {
     const [roles, setRoles] = useState([]);
 
     const handleNextStep = () => {
+        const role = roles.join(',');
+        const payload = {
+            ...user,
+            role,
+        }
         axios.post(
             "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE",
-            user
+            payload
         )
         .then((response) => {
             const userData = response.data;
