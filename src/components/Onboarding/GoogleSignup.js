@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "react-bootstrap/Button";
+import Button from "@mui/material/Button";
 import axios from "axios";
+import googleImg from "../../images/onboarding/continue_with_google.png";
 
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -22,7 +23,7 @@ const GoogleSignup = () => {
   //   run onclick for authorization and eventually sign up
   function getAuthorizationCode() {
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
-    codeClient.requestCode();
+    if (window.google) codeClient.requestCode();
   }
 
   useEffect(() => {
@@ -143,14 +144,19 @@ const GoogleSignup = () => {
             <Button
               onClick={() => getAuthorizationCode()}
               role="button"
-              style={{ textTransform: "none", borderRadius: "50px" }}
+              sx={{
+                textTransform: "none",
+                "&:hover, &:focus, &:active": {
+                  backgroundColor: "white",
+                },
+              }}
             >
               <img
                 style={{
-                  width: "2rem",
+                  width: "100%",
                 }}
                 alt="Google sign-up"
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                src={googleImg}
               />
             </Button>
           </div>

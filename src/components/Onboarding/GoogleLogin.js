@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Button from "react-bootstrap/Button";
+import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
+import googleImg from "../../images/onboarding/continue_with_google.png";
 
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -174,7 +175,7 @@ function GoogleLogin(props) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "2rem",
+        paddingTop: "5%",
       }}
     >
       <div className="w-100">
@@ -187,40 +188,22 @@ function GoogleLogin(props) {
               role="button"
               sx={{
                 textTransform: "none",
-                backgroundColor: "white",
-                color: "#000000",
-                width: "92vw",
-                height: "44px",
-                "&.MuiButtonBase-root:hover, &.Mui-selected": {
+                "&:hover, &:focus, &:active": {
                   backgroundColor: "white",
                 },
               }}
             >
               <img
                 style={{
-                  width: "3rem",
-                  padding: "1rem",
+                  width: "100%",
                 }}
                 alt="Google sign-up"
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                src={googleImg}
               />
-              {"Sign in with Google"}
             </Button>
           </div>
         </div>
         <div></div>
-        <Typography
-          variant="body1"
-          sx={{
-            color: "white",
-            width: "92vw",
-            fontSize: 18,
-            my: 3,
-          }}
-          align="center"
-        >
-          {"OR"}
-        </Typography>
       </div>
     </div>
   );

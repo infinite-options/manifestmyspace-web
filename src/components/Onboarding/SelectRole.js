@@ -1,20 +1,50 @@
-import React from 'react';
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import React, { useState } from 'react';
+import axios from "axios";
+import { Paper, Box, Stack, ThemeProvider, Button, Typography} from '@mui/material';
 import theme from '../../theme/theme';
-import { useNavigate } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import { TextField } from '@mui/material';
-import { Select} from "@mui/material";
-import { Grid } from '@mui/material';
-import { MenuItem} from "@mui/material";
-import { useContext } from 'react';
-import { useMyContext } from '../../contexts/SettingsACHContext';
-import StatusBar from '../../images/status_bar_1.png'
-
+import { useNavigate, useLocation } from "react-router-dom";
+import UserAlreadyExistsModal from "./UserAlreadyExistsModal";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 function SelectRole() {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = location.state;
+    const [userAlreadyExists, setUserAlreadyExists] = useState(false);
+    const [roles, setRoles] = useState([]);
+
+    const handleNextStep = () => {
+        axios.post(
+            "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE",
+            user
+        )
+        .then((response) => {
+            const userData = response.data;
+            if (userData.message == "User already exists") {
+            setUserAlreadyExists(!userAlreadyExists);
+            return;
+            } else {
+            navigate("/pmProfileName", {
+                state: {
+                user: {
+                    ...user,
+                    ...userData,
+                },
+                },
+            });
+            }
+        });
+    };
+
+    const onCancel = () => {
+        setUserAlreadyExists(false);
+    };
+
+    const handleRolesChange = (event, selectedRoles) => {
+        setRoles(selectedRoles);
+    };
 
     return (        
         <ThemeProvider theme={theme}>
@@ -28,6 +58,12 @@ function SelectRole() {
                 height: '100vh', // Set the Box height to full view height
                 justifyContent: 'flex-start', // Align items at the top
             }}>
+
+            <UserAlreadyExistsModal
+                isOpen={userAlreadyExists}
+                onCancel={onCancel}
+                email={user.email}
+            />
 
             <Box style={{paddingBottom: '10%'}}></Box>
             
@@ -64,103 +100,30 @@ function SelectRole() {
                     </Stack>
                     </>
                 </Box>
-              
-                <Stack spacing={-2} m={5}>
-                <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `15%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                textTransform: 'none' 
-                            }} onClick={()=>{navigate('/pmProfileName')}} >Property Manager</Button> 
-                    
-                </Stack>  
-                <Stack spacing={-2} m={5}>
-                <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `15%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight, 
-                                textTransform: 'none'
-                            }} onClick={()=>{navigate('/ownerDashboard')}} >Property Manager - Employee</Button> 
-                    </Stack>
-                    <Stack spacing={-2} m={5}>
-                <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `15%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                textTransform: 'none' 
-                            }} onClick={()=>{navigate('/ownerDashboard')}} >Property Owner</Button> 
-                    
-                </Stack>  
-                <Stack spacing={-2} m={5}>
-                <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `15%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight, 
-                                textTransform: 'none'
-                            }} onClick={()=>{navigate('/ownerDashboard')}} >Tenant</Button> 
-                    </Stack>
-
-                <Stack spacing={-2} m={5}>
-                <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `15%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight, 
-                                textTransform: 'none'
-                            }} onClick={()=>{navigate('/ownerDashboard')}} >Maintenance</Button> 
-                    
-                </Stack>  
-                <Stack spacing={-2} m={5}>
-                <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `20%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight, 
-                                textTransform: 'none'
-                            }} onClick={()=>{navigate('/ownerDashboard')}} >Maintenance - Employee</Button> 
-                    </Stack>
-                    <Box style={{paddingBottom: '60%'}}></Box>
-
+                <ToggleButtonGroup
+                    orientation="vertical"
+                    value={roles}
+                    onChange={handleRolesChange}
+                >
+                    <ToggleButton value="MANAGER">
+                        {"Property Manager"}
+                    </ToggleButton>
+                    <ToggleButton value="PM_EMPLOYEE">
+                        {"Property Manager - Employee"}
+                    </ToggleButton>
+                    <ToggleButton value="OWNER">
+                        {"Property Owner"}
+                    </ToggleButton>
+                    <ToggleButton value="TENANT">
+                        {"Tenant"}
+                    </ToggleButton>
+                    <ToggleButton value="MAINTENANCE">
+                        {"Maintenance"}
+                    </ToggleButton>
+                    <ToggleButton value="MAINT_EMPLOYEE">
+                        {"Maintenance - Employee"}
+                    </ToggleButton>
+                </ToggleButtonGroup>
                 <Button 
                 variant="contained"
                 sx={{
@@ -169,7 +132,7 @@ function SelectRole() {
                     width: `100%`,
                     height: `8%`,
                     borderRadius: '10px 10px 10px 10px'
-                }} onClick={()=>{navigate('/pmProfileName')}}>Next Step</Button>
+                }} onClick={handleNextStep}>Next Step</Button>
                 <Stack spacing={-8} m={5}></Stack>
             </Paper>
             </Box>

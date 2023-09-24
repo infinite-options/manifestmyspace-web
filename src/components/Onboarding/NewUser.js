@@ -6,7 +6,6 @@ import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
-import Google from '../../images/onboarding/continue_with_google.png';
 import GoogleSignup from './GoogleSignup';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,10 +60,10 @@ function NewUser() {
             </Stack>
             <Button 
                             sx={{
-                                padding:'2%',
+                                m:'2%',
                                 background: '#3D5CAC',
                                 color: theme.palette.background.default,
-                                width: `80%`,
+                                width: `326px`,
                                 height: `7%`,
                                 borderRadius: '15px',
                                 fontSize:theme.typography.smallFont,
