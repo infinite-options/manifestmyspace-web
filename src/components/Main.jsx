@@ -73,6 +73,8 @@ import EditProfileSettings from "./Settings/EditProfileSettings";
 import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
+import SelectPayment from "./Settings/SelectPayment";
+import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
 
@@ -183,6 +185,9 @@ function Main() {
               <Route exact path="/changePasswordSettings" element={<ChangePasswordSettings />} />
               <Route exact path="/addCardSettings" element={<AddCard />} />
               <Route exact path="/cardDetailsSettings" element={<CardDetailsSettings />} />
+              
+              <Route exact path="/SelectPayment" element={<SelectPayment />} />
+              <Route exact path="/PaymentConfirmation" element={<PaymentConfirmation />} />
 
               <Route exact path="/propertyInfo" element={<PropertyInfo />} />
               <Route exact path="/contacts" element={<Contacts />} />

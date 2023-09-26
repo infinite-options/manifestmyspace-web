@@ -286,8 +286,8 @@ export default function PaymentsTenant(props) {
                                             padding: "10px",
                                         }}
                                         onClick={() => {
-                                            handleStripePayment()
-                                            // navigate('/paymentsTenant')
+                                            paymentData.business_code=paymentNotes;
+                                             navigate('/SelectPayment', {state: {paymentData, total}})
                                         }}
                                     >
                                         Make a Payment
