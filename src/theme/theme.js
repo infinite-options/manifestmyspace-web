@@ -182,6 +182,14 @@ const theme = createTheme({
     { color: "#92A9CB", status: "Scheduled", mapping: "SCHEDULED" },
     { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
   ],
+  colorStatusMM: [
+    {'color': '#DB9687', 'status': 'Quotes Requested', 'mapping': 'REQUESTED'},
+    {'color': '#CEA892', 'status': 'Quotes Submitted', 'mapping': 'SUBMITTED'},
+    {'color': '#BAAC7A', 'status': 'Quotes Accepted', 'mapping': 'ACCEPTED'},
+    {'color': '#959A76', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
+    {'color': '#598A96', 'status': 'Finished', 'mapping': 'FINISHED'},
+    {'color': '#6588AC', 'status': 'Paid', 'mapping': 'COMPLETED'}, //COMPLETED
+  ],
   spacing: 2, // Set the spacing unit to 2 to represent 8px (Material-UI's default spacing unit)
   breakpoints: {
     values: {

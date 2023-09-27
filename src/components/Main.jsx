@@ -109,6 +109,9 @@ import POProfileDisplay from "./Onboarding/POProfileDisplay";
 import POProfilePayment from "./Onboarding/POProfilePayment";
 import POProfileName from "./Onboarding/POProfileName";
 
+import Maintenance01 from "./Maintenance/Maintainance01/Maintainance01";
+import MaintenanceRequestDetail01 from "./Maintenance/Maintainance01/MaintenanceRequestDetail01";
+
 function Main() {
   const { user } = useUser(); // Get the user context
 
@@ -240,6 +243,9 @@ function Main() {
             <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
+            <Route exact path="/maintenance01" element={<Maintenance01 />} />
+            <Route exact path="/maintenance01/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>
