@@ -38,7 +38,6 @@ export default function BusinessQuoteForm({acceptBool}){
     console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
-
     // const maintenanceItem = location.state.maintenanceItem;
     // const navigationParams = location.state.navigateParams
 
@@ -105,10 +104,21 @@ export default function BusinessQuoteForm({acceptBool}){
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [checked, setChecked] = useState(true);
 
+    const [part, setPart] = useState('');
+    const [partCost, setPartCost] = useState('');
+    const [availabilityDate, setAvailabilityDate] = useState('');
+    const [availabilityTime, setAvailabilityTime] = useState('');
+    const [notes, setNotes] = useState('');
+
     const handleChange = (event) => {
         console.log("handleChange", event.target.checked)
         setChecked(event.target.checked);
     };
+
+    const handleNotesChange = (event) => {
+        console.log("handleNotesChange", event.target.value)
+        setNotes(event.target.value);
+    }
 
 
     function navigateToAddMaintenanceItem(){
@@ -141,37 +151,59 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
 
-    const handleSubmit = () => {
+    const handleSubmit = (status) => {
         console.log("handleSubmit")
         
         
-        // const changeMaintenanceRequestStatus = async () => {
-        //     try {
-        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
-        //                 "maintenance_request_status": "ACCEPTED"
-        //             })
-        //         });
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
+                        "maintenance_request_status": "ACCEPTED"
+                    })
+                });
 
-        //         const responseData = await response.json();
-        //         console.log(responseData);
-        //         if (response.status === 200) {
-        //             console.log("success")
-        //             navigate("/maintenance")
-        //         } else{
-        //             console.log("error setting status")
-        //         }
-        //     } catch (error){
-        //         console.log("error", error)
-        //     }
-        // }
-        // changeMaintenanceRequestStatus()
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    navigate("/maintenance")
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
 
+        const changeQuoteStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quotes", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "quote_maintenance_request_id": quoteRequest?.maintenance_quote_uid,
+                        "quote_maintenance_contacts": quoteRequest?.quote_business_id,
+                        "quote_notes": notes,
+                        "quote_status": status
+                    })
+                });
+
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+
+
+        changeMaintenanceRequestStatus()
+        changeQuoteStatus()
     }
 
     function numImages(){
@@ -207,7 +239,7 @@ export default function BusinessQuoteForm({acceptBool}){
                     paddingBottom: '30px',
                 }}
             >
-                    <Stack
+                <Stack
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
@@ -379,7 +411,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     />
                                                 </Grid>
                                             {/* </Grid> */}
-                                            <Grid>
+                                            <Grid item xs={12}>
                                                 <Button sx={{
                                                     color: "#3D5CAC",
                                                     textTransform: "none",
@@ -426,6 +458,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                                 borderColor: '#000000'
                                                             }
                                                         }}
+                                                        onChange={handleNotesChange}
                                                     />
                                                 </div>
                                             </Grid>
@@ -470,7 +503,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         display: 'flex',
                                                         width: "100%",
                                                     }}
-                                                    onClick={() => handleSubmit()}
+                                                    onClick={() => handleSubmit("SENT")}
                                                     >
                                                     <Typography sx={{
                                                         fontWeight: theme.typography.primary.fontWeight, 
@@ -518,7 +551,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         display: 'flex',
                                                         width: "100%",
                                                     }}
-                                                    onClick={() => handleSubmit()}
+                                                    onClick={() => handleSubmit("REFUSED")}
                                                     >
                                                     <Typography sx={{
                                                         fontWeight: theme.typography.primary.fontWeight, 
@@ -534,141 +567,6 @@ export default function BusinessQuoteForm({acceptBool}){
                                     )}
                                 </Grid>
                             </Card>
-                        {/* </Grid>
-                    </Grid> */}
-                    {/* <Grid container spacing={0}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
-                        direction="column"
-                        sx={{
-                            backgroundColor: "#C06A6A",
-                        }}
-                    > 
-                        <Grid item xs={12}>
-                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                <b>Viewing Quotes {currentQuoteIndex + 1} of {maintenanceQuotes.length}</b>
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={0}>
-                        <Grid item xs={2}>
-                            <Button 
-                                onClick={handlePreviousQuote} 
-                                disabled={currentQuoteIndex == 0}
-                                style={{
-                                    color: 'grey',            // change text/icon color if desired
-                                    width: '100%',             // to make the button fill the Grid item's width
-                                    height: '100%'             // to make the button fill the Grid item's height
-                                }}
-                            >
-                                <ArrowBackIcon/>
-                            </Button>
-                        </Grid>
-                        <Grid item xs={8}>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Button 
-                                onClick={handleNextQuote} 
-                                disabled={currentQuoteIndex == maintenanceQuotes.length}
-                                style={{
-                                    color: 'grey',            // change text/icon color if desired
-                                    width: '100%',             // to make the button fill the Grid item's width
-                                    height: '100%'             // to make the button fill the Grid item's height
-                                }}
-                            >
-                                <ArrowForwardIcon />
-                            </Button>
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={3}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
-                        direction="column"
-                    >
-                        
-                        <Grid item xs={12}>
-                            {currentQuote.maintenanceContact}
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
-                                    multiline
-                                    rows={10}
-                                    value={currentQuote.maintenanceQuote}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                />
-                            </Container>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Notes
-                            </Typography>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
-                                    multiline
-                                    rows={10}
-                                    value={currentQuote.maintenanceNotes}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                />
-                            </Container>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#CB8E8E",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit("CANCELLED")}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Decline Quote
-                                </Typography>
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#9EAED6",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit()}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Accept Quote
-                                </Typography>
-                            </Button>
-                        </Grid>
-                    </Grid> */}
                 </Stack> 
             </Paper>
         </Box>

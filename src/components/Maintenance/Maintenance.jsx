@@ -159,6 +159,8 @@ export default function Maintenance(){
             const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
             const maintenanceRequestsData = await maintenanceRequests.json()
 
+            console.log("maintenanceRequestsData", maintenanceRequestsData)
+
             for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
                 if (!dataObject[item.maintenance_request_status]){
                     dataObject[item.maintenance_request_status] = [];

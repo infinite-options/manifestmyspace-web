@@ -109,6 +109,7 @@ import POProfileDisplay from "./Onboarding/POProfileDisplay";
 import POProfilePayment from "./Onboarding/POProfilePayment";
 import POProfileName from "./Onboarding/POProfileName";
 import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
+import BusinessInvoiceForm from "./Maintenance/Business/BusinessInvoiceForm";
 
 function Main() {
   const { user } = useUser(); // Get the user context
@@ -244,6 +245,7 @@ function Main() {
 
             <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
             <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
+            <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
 
             </Routes>
             <Footer/>
