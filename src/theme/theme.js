@@ -37,8 +37,55 @@ const theme = createTheme({
     MuiFilledInput: {
       styleOverrides: {
         root: {
-          "&.MuiFilledInput-root:before, &.MuiFilledInput-root:hover:before, &.MuiFilledInput-root:after": {
-            borderBottom: "none",
+          "&.MuiFilledInput-root:before, &.MuiFilledInput-root:hover:before, &.MuiFilledInput-root:after":
+            {
+              borderBottom: "none",
+            },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:hover, &:focus, &:active": {
+            backgroundColor: "#160449",
+          },
+        },
+      },
+    },
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          paddingLeft: "2%",
+          paddingRight: "2%",
+          width: "96%",
+          borderRadius: "10px",
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          marginBottom: 15,
+          background: "#3D5CAC",
+          color: "#FFFFFF",
+          width: "100%",
+          height: `15%`,
+          borderRadius: "10px",
+          fontSize: "14px",
+          fontWeight: 600,
+          textTransform: "none",
+          "&.MuiToggleButtonGroup-grouped": {
+            borderRadius: "10px !important",
+          },
+          "&.Mui-selected, &.Mui-selected:hover": {
+            color: "#FFFFFF",
+            borderRadius: "10px",
+            backgroundColor: "#160449",
+          },
+          "&:hover": {
+            backgroundColor: "#160449",
+            color: "#FFFFFF",
           },
         },
       },
@@ -121,12 +168,12 @@ const theme = createTheme({
     { color: "#173C8D", status: "Paid", mapping: "INFO" },
   ],
   colorStatusPMO: [
-    {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
-    {'color': '#D4736D', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'},
-    {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'ACCEPTED'},
-    {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
-    {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
-    {'color': '#173C8D', 'status': 'Paid', 'mapping': 'PAID'},
+    { color: "#B62C2A", status: "New Requests", mapping: "NEW" },
+    { color: "#D4736D", status: "Quotes Requested", mapping: "PROCESSING" },
+    { color: "#DEA19C", status: "Quotes Accepted", mapping: "ACCEPTED" },
+    { color: "#92A9CB", status: "Scheduled", mapping: "SCHEDULED" },
+    { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
+    { color: "#173C8D", status: "Paid", mapping: "PAID" },
   ],
   colorStatusTenant: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },
