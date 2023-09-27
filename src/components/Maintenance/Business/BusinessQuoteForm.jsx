@@ -15,6 +15,7 @@ import {
     TextField,
     Checkbox,
     FormControlLabel,
+    MenuItem,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -28,8 +29,28 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import refundIcon from './../../Property/refundIcon.png';
 import documentIcon from './Subtract.png'
 import maintenanceRequestImage from "./../maintenanceRequest.png";
+import { Select } from "@material-ui/core";
 
 
+
+function CostPartsTable(){
+    return (
+        <>
+            <Grid item xs={6} sx={{paddingTop: "10px"}}>
+                <TextField
+                    label="Part"
+                    size="small"
+                />
+            </Grid>
+            <Grid item xs={6} sx={{paddingTop: "10px"}}>
+                <TextField
+                    label="Part Cost"
+                    size="small"
+                />
+            </Grid>
+        </>
+    )
+}
 
 // /businessDeclineQuoteForm
 // /businessAcceptQuoteForm
@@ -109,6 +130,7 @@ export default function BusinessQuoteForm({acceptBool}){
     const [availabilityDate, setAvailabilityDate] = useState('');
     const [availabilityTime, setAvailabilityTime] = useState('');
     const [notes, setNotes] = useState('');
+    const [numberOfHours, setNumberOfHours] = useState("");
 
     const handleChange = (event) => {
         console.log("handleChange", event.target.checked)
@@ -183,7 +205,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         const changeQuoteStatus = async () => {
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quotes", {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuote", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -381,16 +403,44 @@ export default function BusinessQuoteForm({acceptBool}){
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                                     # of hours
                                                 </Typography>
+                                                <Select
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    size="small"
+                                                    fullWidth
+                                                    onChange={(e) => setNumberOfHours(e.target.value)}
+                                                    value={numberOfHours}
+                                                    placeholder="Select # of hours"
+                                                >
+                                                    <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
+                                                    <MenuItem value={"1 hour"}>1 hour</MenuItem>
+                                                    <MenuItem value={"2 hours"}>2 hours</MenuItem>
+                                                    <MenuItem value={"3 hours"}>3 hours</MenuItem>
+                                                    <MenuItem value={"4 hours"}>4 hours</MenuItem>
+                                                    <MenuItem value={"5 hours"}>5 hours</MenuItem>
+                                                    <MenuItem value={"Custom"}>Custom</MenuItem>
+                                                </Select>
                                             </Grid>
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                                     Charge/Hour
                                                 </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    fullWidth
+                                                />
                                             </Grid>
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                                     Total Cost
                                                 </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    fullWidth
+                                                />
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>

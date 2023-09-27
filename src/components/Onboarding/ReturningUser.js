@@ -51,23 +51,22 @@ function ReturningUser() {
                   </Typography>
                   <hr/>
           </Box>
-          
-          <Button 
-                          sx={{
-                              padding:'2%',
-                              background: '#3D5CAC',
-                              color: theme.palette.background.default,
-                              width: `80%`,
-                              height: `7%`,
-                              borderRadius: '15px',
-                              fontSize:theme.typography.smallFont,
-                              fontWeight: theme.typography.primary.fontWeight, 
-                          }} onClick={()=>{navigate('/userLogin')}} >Log In With Email</Button>  
           <Stack spacing={-6} m={12}>
           <Box>
             <GoogleLogin />
           </Box>   
           </Stack>
+          <Button 
+                          sx={{
+                              m:'2%',
+                              background: '#3D5CAC',
+                              color: theme.palette.background.default,
+                              width: `326px`,
+                              height: `7%`,
+                              borderRadius: '15px',
+                              fontSize:theme.typography.smallFont,
+                              fontWeight: theme.typography.primary.fontWeight, 
+                          }} onClick={()=>{navigate('/userLogin')}} >Log In With Email</Button>  
           <Stack spacing={-20} m={12}>
               <Typography 
                   sx={{
