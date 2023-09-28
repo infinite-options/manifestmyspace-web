@@ -88,7 +88,7 @@ function Header() {
                       margin: '0 10px',
                       textTransform: 'none',
                     }}
-                    onClick={() => handleButtonClick(role)}
+                    onClick={() => {handleButtonClick(role)}}
                   >
                     {role}
                   </Button>
