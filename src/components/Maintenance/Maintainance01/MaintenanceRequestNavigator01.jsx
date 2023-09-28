@@ -10,11 +10,27 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 
-function getInitialImages(requestData, currentIndex) {
+async function getInitialImages(requestData, currentIndex) {
   // if (requestData[currentIndex].maintenance_images != "[]") {
   //   // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
   //   return JSON.parse(requestData[currentIndex].maintenance_images);
   // }
+
+  // call api to get images
+
+  // var images = []
+
+  // try {
+  //   const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests/${requestData[currentIndex].quote_maintenance_request_id}`);
+  //   const jsonData = await response.json();
+  //   console.log("jsonData", jsonData);
+  //   if (jsonData.result[0].quote_images !== "[]") {
+  //     return JSON.parse(jsonData.result[0].quote_images);
+  //   }
+  // } catch (error) {
+  //   console.log("error", error);
+  // }
+
   return [maintenanceRequestImage];
 }
 
@@ -28,10 +44,15 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
   const navigate = useNavigate();
 
   useEffect(() => {
-    const initialImages = getInitialImages(requestData, currentIndex);
-    setImages(initialImages);
-    setActiveStep(0);
-  }, [currentIndex]);
+    const fetchImages = async () => {
+        const initialImages = await getInitialImages(requestData, currentIndex);
+        setImages(initialImages);
+        setActiveStep(0);
+    };
+    
+    fetchImages();
+}, [currentIndex]);
+
 
   // console.log("RequestNavigator");
   // console.log("requestIndex", requestIndex);
@@ -291,6 +312,16 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
                   alignItems: "left",
                 }}
               >
+                 <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                  {data?.maintenance_title} - {data?.maintenance_request_uid}
+                </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -299,7 +330,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_priority} Priority - {data?.maintenance_request_uid}
+                  {data?.maintenance_priority} Priority
                 </Typography>
                 <Typography
                   sx={{

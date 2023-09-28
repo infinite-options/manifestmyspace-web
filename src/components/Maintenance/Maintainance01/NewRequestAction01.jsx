@@ -35,43 +35,55 @@ export default function NewRequestAction01({maintenanceItem}){
     }
 
    // let notes = 
-    function handleNavigateToQuotesRequested(){
+    // function handleNavigateToQuotesRequested(){
 
-        console.log("NewRequestAction", maintenanceItem)
-        navigate("/quoteRequest", {
+    //     console.log("NewRequestAction", maintenanceItem)
+    //     navigate("/quoteRequest", {
+    //         state:{
+    //             maintenanceItem
+    //         }
+    //     });
+    // }
+
+    function handleDecline(id){
+
+        navigate("/businessDeclineQuoteForm", {
             state:{
                 maintenanceItem
             }
-        });
-    }
-
-    function handleDecline(id){
-        let response = CancelTicket(id);
-        console.log("handleDecline", response)
-        if (response){
-            console.log("Ticket Declined")
-            alert("Ticket Declined")
-            navigate('/maintenance01')
-        } else{
-            console.log("Ticket Not Declined")
-            alert("Error: Ticket Not Declined")
-        }
+        })
+        // let response = CancelTicket(id);
+        // console.log("handleDecline", response)
+        // if (response){
+        //     console.log("Ticket Declined")
+        //     alert("Ticket Declined")
+        //     navigate('/maintenance01')
+        // } else{
+        //     console.log("Ticket Not Declined")
+        //     alert("Error: Ticket Not Declined")
+        // }
     }
 
     async function handleComplete(id){
-        CompleteTicket(id).then(response => {
-            console.log("handleComplete", response);
-            if (response){
-                console.log("Ticket Completed")
-                alert("Ticket Completed")
-                navigate('/maintenance')
-            } else{
-                console.log("Ticket Not Completed")
-                alert("Error: Ticket Not Completed")
+
+        navigate("/businessAcceptQuoteForm", {
+            state:{
+                maintenanceItem
             }
-        }).catch(error => {
-            console.log("handleComplete", error);
-        });
+        })
+        // CompleteTicket(id).then(response => {
+        //     console.log("handleComplete", response);
+        //     if (response){
+        //         console.log("Ticket Completed")
+        //         alert("Ticket Completed")
+        //         navigate('/maintenance')
+        //     } else{
+        //         console.log("Ticket Not Completed")
+        //         alert("Error: Ticket Not Completed")
+        //     }
+        // }).catch(error => {
+        //     console.log("handleComplete", error);
+        // });
     }
 
     return(

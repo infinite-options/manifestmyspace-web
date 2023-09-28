@@ -16,6 +16,7 @@ import {
     Checkbox,
     FormControlLabel,
     MenuItem,
+    InputAdornment
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -29,24 +30,116 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import refundIcon from './../../Property/refundIcon.png';
 import documentIcon from './Subtract.png'
 import maintenanceRequestImage from "./../maintenanceRequest.png";
+import xIcon from './Close_round.png'
 import { Select } from "@material-ui/core";
 
 
 
-function CostPartsTable(){
+function CostPartsTable({parts, setParts}){
+
+    function addRow(){
+        console.log("addRow")
+        let newPart = {
+            part: "",
+            quantity: "",
+            cost: ""
+        }
+        setParts(prevParts => [...prevParts, newPart]);
+    }
+
+    function handlePartChange(event, index){
+        console.log("handlePartChange", event.target.value)
+        let newParts = [...parts]
+        newParts[index].part = event.target.value
+        setParts(newParts)
+    }
+
+    function handleQuantityChange(event, index){
+        console.log("handleQuantityChange", event.target.value)
+        let newParts = [...parts]
+        newParts[index].quantity = event.target.value
+        setParts(newParts)
+    }
+
+    function handleCostChange(event, index){
+        console.log("handleCostChange", event.target.value)
+        let newParts = [...parts]
+        newParts[index].cost = event.target.value
+        setParts(newParts)
+    }
+
+    function deleteRow(index){
+        console.log("deleteRow", index)
+        let newParts = [...parts]
+        newParts.splice(index, 1)
+        setParts(newParts)
+    }
+    
+
     return (
         <>
-            <Grid item xs={6} sx={{paddingTop: "10px"}}>
-                <TextField
-                    label="Part"
-                    size="small"
-                />
+            <Grid item xs={12} sx={{paddingTop: "10px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                    Cost of Parts
+                </Typography>
             </Grid>
-            <Grid item xs={6} sx={{paddingTop: "10px"}}>
-                <TextField
-                    label="Part Cost"
-                    size="small"
-                />
+            {parts.map((part, index) => (
+                <Grid container key={index} rowSpacing={1} sx={{paddingTop: "10px"}}>
+                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                        <TextField
+                            label="Part"
+                            size="small"
+                            value={part.part}
+                            onChange={(e) => handlePartChange(e, index)}
+                        />
+                    </Grid>
+                    <Grid item xs={3} sx={{paddingTop: "10px"}}>
+                        <TextField
+                            label="Quantity"
+                            size="small"
+                            value={part.quantity}
+                            onChange={(e) => handleQuantityChange(e, index)}
+                        />
+                    </Grid>
+                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                        <TextField
+                            label="Part Cost"
+                            size="small"
+                            value={part.cost}
+                            onChange={(e) => handleCostChange(e, index)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">$</InputAdornment>
+                                ),
+                                // This will remove the underline styling
+                                disableUnderline: true
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={1} sx={{paddingTop: "10px", paddingLeft: "0px"}} alignContent="center" alignItems="center">
+                        <Button
+                            onClick={() => deleteRow(index)}
+                            sx={{padding: "0px", margin: "0px"}}
+                        >
+                            <img src={xIcon} style={{width: '25px', height: '25px', padding:"0px"}}/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            ))}
+            
+            <Grid item xs={12}>
+                <Button 
+                    sx={{
+                        color: "#3D5CAC",
+                        textTransform: "none",
+                    }}
+                    onClick={() => addRow()}
+                >
+                    <AddIcon/> 
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                        Add Row
+                    </Typography>
+                </Button>
             </Grid>
         </>
     )
@@ -59,64 +152,7 @@ export default function BusinessQuoteForm({acceptBool}){
     console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
-    // const maintenanceItem = location.state.maintenanceItem;
-    // const navigationParams = location.state.navigateParams
-
-    const quoteRequest = {
-        maintenance_quote_uid: "MQ12345678",
-        quote_maintenance_request_id: "MR12345678",
-        quote_business_id: "BIZ1234567",
-        quote_services_expenses: JSON.stringify({
-            labor: 150.50,
-            parts: [
-                { name: "Pipe", cost: 25.00 },
-                { name: "Valve", cost: 10.50 }
-            ],
-            taxes: 18.75,
-            total: 204.75
-        }),
-        quote_earliest_availability: new Date().toISOString(),
-        quote_event_type: "Repair",
-        quote_event_duration: "2 hours",
-        quote_notes: "Pipe leakage repair",
-        quote_status: "Pending",
-        quote_created_date: new Date().toISOString(),
-        quote_total_estimate: "$204.75",
-        quote_maintenance_images: JSON.stringify([
-            maintenanceRequestImage,
-            maintenanceRequestImage
-        ]),
-        quote_adjustment_date: new Date().toISOString()
-    }
-
-    const maintenanceItem = {
-        maintenance_request_uid: "MR12345678",
-        maintenance_property_id: "PROP123456",
-        maintenance_title: "Pipe Leakage",
-        maintenance_desc: "There's a leakage in the pipe located in the bathroom, causing water to spill over.",
-        maintenance_images: JSON.stringify([
-            "https://example.com/maintenance_image1.jpg",
-            "https://example.com/maintenance_image2.jpg"
-        ]),
-        maintenance_request_type: "Repair",
-        maintenance_request_created_by: "JohnDoe45",
-        maintenance_priority: "High",
-        maintenance_can_reschedule: 1, // Assuming 1 is true and 0 is false
-        maintenance_assigned_business: "BIZ1234567",
-        maintenance_assigned_worker: "WRK1234567",
-        maintenance_scheduled_date: "2023-09-25",
-        maintenance_scheduled_time: "15:30",
-        maintenance_frequency: "One-time",
-        maintenance_notes: "The leak seems to be from a broken seal. Might require replacement parts.",
-        maintenance_request_status: "Scheduled",
-        maintenance_request_created_date: new Date("2023-09-18T10:30:00").toISOString(),
-        maintenance_request_closed_date: null, // Assuming it's not closed yet
-        maintenance_request_adjustment_date: new Date("2023-09-18T11:00:00").toISOString(),
-        maintenance_callback_number: "123-456-7890",
-        maintenance_estimated_cost: "$150"
-    };
-
-
+    const maintenanceItem = location.state.maintenanceItem;
 
     //console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
@@ -125,27 +161,102 @@ export default function BusinessQuoteForm({acceptBool}){
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [checked, setChecked] = useState(true);
 
-    const [part, setPart] = useState('');
-    const [partCost, setPartCost] = useState('');
     const [availabilityDate, setAvailabilityDate] = useState('');
     const [availabilityTime, setAvailabilityTime] = useState('');
+    const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState('');
-    const [numberOfHours, setNumberOfHours] = useState("");
+    const [jobType, setJobType] = useState("");
 
-    const handleChange = (event) => {
-        console.log("handleChange", event.target.checked)
+    const [partsObject, setPartsObject] = useState([
+        {
+            part: "",
+            quantity: "",
+            cost: ""
+        }
+    ]);
+
+    function computeTotalCost({hours, rate}){
+        if (hours === "Fixed Bid" || hours === "Custom"){
+            return "TBD"
+        } else{
+            return hours * rate
+        }
+    }
+
+    function compileExpenseObject(){
+        let expenseObject = {
+            "per Hour Charge": rate,
+            "event_type": jobType,
+            "service_name": "Labor",
+            'total_estimate': computeTotalCost({hours: jobType, rate: rate})
+
+        }
+        return JSON.stringify(expenseObject)
+    }
+
+
+    function formatDateToCustomString() {
+        const date = new Date(2000, 3, 23);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+      
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
+    
+
+    const handleCheckChange = (event) => {
+        // console.log("handleCheckChange", event.target.checked)
         setChecked(event.target.checked);
     };
 
     const handleNotesChange = (event) => {
-        console.log("handleNotesChange", event.target.value)
+        // console.log("handleNotesChange", event.target.value)
         setNotes(event.target.value);
     }
 
+    const handleTimeChange = (event) => {
+        // console.log("handleTimeChange", event.target.value)
+        setAvailabilityTime(event.target.value);
+    }
+
+    const handleDateChange = (event) => {
+        // console.log("handleDateChange", event.target.value)
+        setAvailabilityDate(event.target.value);
+    }
+
+    const handleRateChange = (event) => {
+        // console.log("handleRateChange", event.target.value)
+        setRate(event.target.value);
+    }
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
+    }
+
+    function createEventType(){
+        if (jobType === "Fixed Bid" || jobType === "Custom"){
+            return jobType
+        } else {
+            return `${jobType} Hour Job`
+        }
+    }
+
+    function computeTotalEstimate(){
+        var total = 0
+        if(jobType !== "Fixed Bid" && jobType !== "Custom"){
+            total += computeTotalCost({hours: jobType, rate: rate})
+        }
+        partsObject.forEach(part => {
+            if(part.cost !== ""){
+                total += parseInt(part.cost)
+            }
+        })    
+        return total        
     }
 
     function handleBackButton(){
@@ -177,24 +288,68 @@ export default function BusinessQuoteForm({acceptBool}){
         console.log("handleSubmit")
         
         
-        const changeMaintenanceRequestStatus = async () => {
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
-                        "maintenance_request_status": "ACCEPTED"
-                    })
-                });
+        // const changeMaintenanceRequestStatus = async (status) => {
+        //     try {
+        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+        //             method: 'PUT',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({
+        //                 "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
+        //                 "maintenance_request_status": "QUOTING"
+        //             })
+        //         });
 
+        //         const responseData = await response.json();
+        //         console.log(responseData);
+        //         if (response.status === 200) {
+        //             console.log("success - changeMaintenanceRequestStatus")
+        //         } else{
+        //             console.log("error setting status")
+        //         }
+        //     } catch (error){
+        //         console.log("error", error)
+        //     }
+        // }
+
+        const changeQuoteStatus = async (status) => {
+
+            var formData = new FormData();
+
+            if (status === "SENT"){
+                formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
+                formData.append("quote_maintenance_request_id", maintenanceItem?.quote_maintenance_request_id); // 800-xxx
+                formData.append("quote_business_id", "600-000012")
+                formData.append("quote_services_expenses", compileExpenseObject())
+                formData.append("quote_notes", notes);
+                formData.append("quote_status", status);
+                formData.append("quote_event_type", createEventType())
+                formData.append("quote_total_estimate", String(computeTotalEstimate()));
+                formData.append("quote_created_date", formatDateToCustomString())
+
+            } else if (status === "REFUSED"){
+                formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
+                formData.append("quote_maintenance_request_id", maintenanceItem?.quote_maintenance_request_id); // 800-xxx
+                formData.append("quote_notes", notes);
+                formData.append("quote_status", status);
+            }
+            
+            // print out formData 
+            console.log("trying to print form data")
+            for (var pair of formData.entries()) {
+                console.log(pair[0]+ ' => ' + pair[1]); 
+            }
+
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
                 const responseData = await response.json();
                 console.log(responseData);
                 if (response.status === 200) {
-                    console.log("success")
-                    navigate("/maintenance")
+                    console.log("success - changeQuoteStatus")
                 } else{
                     console.log("error setting status")
                 }
@@ -203,33 +358,17 @@ export default function BusinessQuoteForm({acceptBool}){
             }
         }
 
-        const changeQuoteStatus = async () => {
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuote", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "quote_maintenance_request_id": quoteRequest?.maintenance_quote_uid,
-                        "quote_maintenance_contacts": quoteRequest?.quote_business_id,
-                        "quote_notes": notes,
-                        "quote_status": status
-                    })
-                });
 
-            } catch (error){
-                console.log("error", error)
-            }
-        }
-
-
-        changeMaintenanceRequestStatus()
-        changeQuoteStatus()
+        // changeMaintenanceRequestStatus(status)
+        changeQuoteStatus(status)
+        navigate("/maintenance01")
     }
 
     function numImages(){
-        if (displayImages.length == 0){
+        if (displayImages == null){
+            return 0
+        }
+        else if (displayImages.length == 0){
             return 0
         } else{
             return displayImages.length
@@ -237,7 +376,7 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
     useEffect(() => {
-        let imageArray = JSON.parse(quoteRequest?.quote_maintenance_images)
+        let imageArray = JSON.parse(maintenanceItem?.quote_maintenance_images)
         setDisplayImages(imageArray)
     }, [])
 
@@ -286,7 +425,7 @@ export default function BusinessQuoteForm({acceptBool}){
                             <Button onClick={() => handleBackButton()}>
                                 <img src={refundIcon} style={{width: '25px', height: '25px', margin:'5px'}}/>
                                 <Typography sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '14px'}}>
-                                    Return to Viewing All Properties
+                                    Return to Viewing All Maintenance Requests
                                 </Typography>
                             </Button>
                         </Box>
@@ -296,13 +435,6 @@ export default function BusinessQuoteForm({acceptBool}){
                             </Button>
                         </Box>
                     </Stack>
-                    {/* <Grid container spacing={3}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
-                        direction="column"
-                     >
-                        <Grid item xs={12}> */}
                             <Card
                                 sx={{
                                     backgroundColor: "#FFFFFF",
@@ -322,13 +454,13 @@ export default function BusinessQuoteForm({acceptBool}){
                                 >
                                     <Grid item xs={12}>
                                         <Grid container spacing={2} justifyContent="center">
-                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "15px"}}>
+                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
                                                 {maintenanceItem.maintenance_title}
                                             </Typography>
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Grid container spacing={2} justifyContent="center" sx={{padding: "0px"}}>
+                                        <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
                                             {numImages() > 0 ? 
                                                 (
                                                     Array.isArray(displayImages) && displayImages.length > 0 ? 
@@ -345,15 +477,16 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     null
                                                 )
                                             : null }
+                                            <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                                { numImages() > 0 ? numImages() + " Images" : "No Images" }
+                                            </Typography>
                                         </Grid>
-                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                            { numImages() > 0 ? numImages() + " Images" : "No Images" }
-                                        </Typography>
-                                    </Grid>
-                                     <Grid item xs={12}>
-                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
-                                        </Typography>
+
+                                        <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                                    <b>{maintenanceItem?.maintenance_priority} Priority</b>
+                                                </Typography>
+                                        </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
@@ -361,7 +494,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                         </Typography>
                                         <div style={{paddingLeft: "10px"}}>
                                             <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                103 N. Abel St, Milpitas CA 95035
+                                                {maintenanceItem.property_address} {maintenanceItem.property_unit} {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}
                                             </Typography>
                                         </div>
                                     </Grid>
@@ -371,7 +504,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                         </Typography>
                                         <div style={{paddingLeft: "10px"}}>
                                             <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                04/17/22
+                                                {maintenanceItem.quote_created_date}
                                             </Typography>
                                         </div>
                                     </Grid>
@@ -385,13 +518,13 @@ export default function BusinessQuoteForm({acceptBool}){
                                             </Typography>
                                         </div>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={12} sx={{paddingBottom: "20px"}}>
                                          <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                             <b>Description</b>
                                         </Typography>
                                         <div style={{paddingLeft: "10px"}}>
                                             <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                Urgent maintenance is required due to a broken pipe. The pipe has suffered damage, resulting in water leakage and potential water damage. Immediate attention is needed to repair the pipe and prevent further complications 
+                                                {maintenanceItem.maintenance_desc}
                                             </Typography>
                                         </div>
                                     </Grid>
@@ -411,16 +544,16 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     }}
                                                     size="small"
                                                     fullWidth
-                                                    onChange={(e) => setNumberOfHours(e.target.value)}
-                                                    value={numberOfHours}
+                                                    onChange={(e) => setJobType(e.target.value)}
+                                                    value={jobType}
                                                     placeholder="Select # of hours"
                                                 >
                                                     <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
-                                                    <MenuItem value={"1 hour"}>1 hour</MenuItem>
-                                                    <MenuItem value={"2 hours"}>2 hours</MenuItem>
-                                                    <MenuItem value={"3 hours"}>3 hours</MenuItem>
-                                                    <MenuItem value={"4 hours"}>4 hours</MenuItem>
-                                                    <MenuItem value={"5 hours"}>5 hours</MenuItem>
+                                                    <MenuItem value={1}>1 hour</MenuItem>
+                                                    <MenuItem value={2}>2 hours</MenuItem>
+                                                    <MenuItem value={3}>3 hours</MenuItem>
+                                                    <MenuItem value={4}>4 hours</MenuItem>
+                                                    <MenuItem value={5}>5 hours</MenuItem>
                                                     <MenuItem value={"Custom"}>Custom</MenuItem>
                                                 </Select>
                                             </Grid>
@@ -431,6 +564,8 @@ export default function BusinessQuoteForm({acceptBool}){
                                                 <TextField
                                                     size="small"
                                                     fullWidth
+                                                    value={rate}
+                                                    onChange={handleRateChange}
                                                 />
                                             </Grid>
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
@@ -440,38 +575,18 @@ export default function BusinessQuoteForm({acceptBool}){
                                                 <TextField
                                                     size="small"
                                                     fullWidth
+                                                    readOnly
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">$</InputAdornment>
+                                                        ),
+                                                        // This will remove the underline styling
+                                                        disableUnderline: true
+                                                    }}
+                                                    value={computeTotalCost({hours: jobType, rate: rate})}
                                                 />
                                             </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                                    Cost of Parts
-                                                </Typography>
-                                            </Grid>
-                                            {/* <Grid container spacing={1}> */}
-                                                <Grid item xs={6} sx={{paddingTop: "10px"}}>
-                                                    <TextField
-                                                        label="Part"
-                                                        size="small"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sx={{paddingTop: "10px"}}>
-                                                    <TextField
-                                                        label="Part Cost"
-                                                        size="small"
-                                                    />
-                                                </Grid>
-                                            {/* </Grid> */}
-                                            <Grid item xs={12}>
-                                                <Button sx={{
-                                                    color: "#3D5CAC",
-                                                    textTransform: "none",
-                                                }}>
-                                                    <AddIcon/> 
-                                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                        Add Row
-                                                    </Typography>
-                                                </Button>
-                                            </Grid>
+                                            <CostPartsTable parts={partsObject} setParts={setPartsObject}/>
                                             <Grid item xs={12}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                                     Earliest Availability
@@ -481,43 +596,45 @@ export default function BusinessQuoteForm({acceptBool}){
                                                 <TextField
                                                     label="Date"
                                                     size="small"
+                                                    onChange={handleDateChange}
+                                                    placeholder="MM/DD/YYYY"
                                                 />
                                             </Grid>
                                             <Grid item xs={6} sx={{paddingTop: "10px"}}>
                                                 <TextField
                                                     label="Time"
                                                     size="small"
+                                                    onChange={handleTimeChange}
+                                                    placeholder="HH:MM:SS"
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                                     Notes
                                                 </Typography>
-                                                <div style={{paddingLeft: "10px"}}>
-                                                    <TextField
-                                                        multiline
-                                                        required
-                                                        rows={2}
-                                                        borderRadius="10px"
-                                                        variant="outlined"
-                                                        fullWidth 
-                                                        InputProps={{
-                                                            readOnly: false,
-                                                            style: { 
-                                                                backgroundColor: 'white',
-                                                                borderColor: '#000000'
-                                                            }
-                                                        }}
-                                                        onChange={handleNotesChange}
-                                                    />
-                                                </div>
+                                                <TextField
+                                                    multiline
+                                                    required
+                                                    rows={2}
+                                                    borderRadius="10px"
+                                                    variant="outlined"
+                                                    fullWidth 
+                                                    InputProps={{
+                                                        readOnly: false,
+                                                        style: { 
+                                                            backgroundColor: 'white',
+                                                            borderColor: '#000000'
+                                                        }
+                                                    }}
+                                                    onChange={handleNotesChange}
+                                                />
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                                 <FormControlLabel
                                                     control={
                                                         <Checkbox
                                                             checked={checked}
-                                                            onChange={handleChange}
+                                                            onChange={handleCheckChange}
                                                             color="primary"
                                                             sx={{
                                                                 color: "#3D5CAC"
@@ -572,23 +689,23 @@ export default function BusinessQuoteForm({acceptBool}){
                                                 <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                                     Notes
                                                 </Typography>
-                                                <div style={{paddingLeft: "10px"}}>
-                                                    <TextField
-                                                        multiline
-                                                        required
-                                                        rows={5}
-                                                        borderRadius="10px"
-                                                        variant="outlined"
-                                                        fullWidth 
-                                                        InputProps={{
-                                                            readOnly: false,
-                                                            style: { 
-                                                                backgroundColor: 'white',
-                                                                borderColor: '#000000'
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
+                                                <TextField
+                                                    multiline
+                                                    required
+                                                    rows={5}
+                                                    borderRadius="10px"
+                                                    variant="outlined"
+                                                    fullWidth 
+                                                    InputProps={{
+                                                        readOnly: false,
+                                                        style: { 
+                                                            backgroundColor: 'white',
+                                                            borderColor: '#000000'
+                                                        }
+                                                    }}
+                                                    onChange={handleNotesChange}
+                                                    value={notes}
+                                                />
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                                 <Button

@@ -103,12 +103,12 @@ export default function QuoteRequestForm(){
             const formData = new FormData();
 
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid)
-            formData.append("quote_notes", additionalInfo)
+            formData.append("maintenance_pm_notes", additionalInfo)
 
             if (selectedImageList.length > 0){
                 for (let i = 0; i < selectedImageList.length; i++){
                     const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-                    console.log(imageBlob)
+                    // console.log(imageBlob)
                     formData.append(`img_${i}`, imageBlob)
                 }
             }
@@ -116,7 +116,7 @@ export default function QuoteRequestForm(){
             // also make a put request to the maintenanceRequest endpoint to update the images there
 
             let maintenanceContactIds = []
-            console.log("maintenanceContactIds", maintenanceContactIds)
+            // console.log("maintenanceContactIds", maintenanceContactIds)
             if (maintenanceContacts.length > 0){
                 for(let i = 0; i < maintenanceContacts.length; i++){
                     console.log("maintenanceContacts[i].maintenance_contact_uid", maintenanceContacts[i].business_uid)
@@ -193,9 +193,9 @@ export default function QuoteRequestForm(){
     }
 
     function displayContactList(){
-        console.log("displayContactList")
-        console.log("contactList length", contactList.length)
-        console.log("contactList", contactList)
+        // console.log("displayContactList")
+        // console.log("contactList length", contactList.length)
+        // console.log("contactList", contactList)
         if(contactList.length > 0){
             return (contactList.map((contact, index) => (
                 <MenuItem key={index} value={contact}> {contact.business_name} </MenuItem>

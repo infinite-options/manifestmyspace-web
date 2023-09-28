@@ -160,12 +160,12 @@ export default function Maintenance01(){
             let array5 = maintenanceRequestsData1.result.FINISHED.maintenance_items;
             let array6 = maintenanceRequestsData1.result.PAID.maintenance_items;
            
-            console.log("len 1 "+array1.length)
-            console.log("len 2 "+array2.length)
-            console.log("len 3 "+array3.length)
-            console.log("len 4 "+array4.length)
-            console.log("len 5 "+array5.length)
-            console.log("len 6 "+array6.length)
+            // console.log("len 1 "+array1.length)
+            // console.log("len 2 "+array2.length)
+            // console.log("len 3 "+array3.length)
+            // console.log("len 4 "+array4.length)
+            // console.log("len 5 "+array5.length)
+            // console.log("len 6 "+array6.length)
 
             dataObject["REQUESTED"] = [];
             dataObject["SUBMITTED"] = [];
@@ -182,7 +182,7 @@ export default function Maintenance01(){
             // dataObject["PAID"].push(array6);
 
             for (const item of array1) {
-                console.log(item.maintenance_request_uid)
+                // console.log(item.maintenance_request_uid)
                 dataObject["REQUESTED"].push(item);
             }
             for (const item of array2) {
@@ -359,11 +359,11 @@ export default function Maintenance01(){
                             let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
-                            console.log("Before filter "+mappingKey +" "+maintenanceArray.length)
+                            // console.log("Before filter "+mappingKey +" "+maintenanceArray.length)
 
                             let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
 
-                            console.log("After filter "+mappingKey +" "+filteredArray.length)
+                            // console.log("After filter "+mappingKey +" "+filteredArray.length)
                             
                             return (
                                 <MaintenanceStatusTable01

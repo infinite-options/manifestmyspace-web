@@ -46,13 +46,7 @@ export default function QuoteAcceptForm(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-    const [maintenanceQuotes, setMaintenanceQuotes] = useState([
-        {
-            maintenanceContact: "No Maintenance Quotes",
-            maintenanceQuote: "N/A",
-            maintenanceNotes: "N/A"
-        },
-    ])
+    const [maintenanceQuotes, setMaintenanceQuotes] = useState([])
 
     useEffect(() => {
         
@@ -78,6 +72,7 @@ export default function QuoteAcceptForm(){
     };
 
     const currentQuote = maintenanceQuotes[currentQuoteIndex];
+    console.log(currentQuote)
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
@@ -137,7 +132,34 @@ export default function QuoteAcceptForm(){
                 console.log("error", error)
             }
         }
+
+        const changeMaintenanceQuoteStatus = async () => {
+
+            var formData = new FormData();
+
+            formData.append("maintenance_quote_uid", currentQuote?.maintenance_quote_uid);
+            formData.append("quote_status", "ACCEPTED");
+
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData,
+                });            
+                let responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    navigate("/maintenance")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+
         changeMaintenanceRequestStatus()
+        // PUT /maintenanceQuotes/{maintenance_quote_uid}
+        changeMaintenanceQuoteStatus()
+
 
     }
 
@@ -346,7 +368,8 @@ export default function QuoteAcceptForm(){
                     >
                         
                         <Grid item xs={12}>
-                            {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id}
+                            {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
+                            {currentQuote?.quote_status ? currentQuote?.quote_status + " from business id:" + currentQuote?.quote_business_id : "no quote status found for " + currentQuote?.quote_business_id}
                         </Grid>
                         <Grid item xs={12}>
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
@@ -356,7 +379,7 @@ export default function QuoteAcceptForm(){
                                 <TextField
                                     multiline
                                     rows={10}
-                                    value={currentQuote.maintenanceQuote}
+                                    value={currentQuote?.quote_services_expenses}
                                     variant="outlined"
                                     fullWidth
                                     InputProps={{
@@ -374,7 +397,7 @@ export default function QuoteAcceptForm(){
                                 <TextField
                                     multiline
                                     rows={10}
-                                    value={currentQuote.maintenanceNotes}
+                                    value={currentQuote?.quote_notes}
                                     variant="outlined"
                                     fullWidth
                                     InputProps={{

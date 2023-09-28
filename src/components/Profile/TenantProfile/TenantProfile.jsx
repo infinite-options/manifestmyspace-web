@@ -26,6 +26,7 @@ function TenantProfile() {
     const [petTenantData, setPetTenantData] = useState([]);
     const [vehicleTenantData, setVehicleTenantData] = useState([]);
     useEffect(() => {
+        console.log("TENANT PROFILE USE EFFECT")
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
             .then((res) => {
                 // console.log(res.data.Profile.result[0]);

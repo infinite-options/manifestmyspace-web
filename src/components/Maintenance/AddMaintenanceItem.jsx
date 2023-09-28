@@ -153,7 +153,7 @@ export default function AddMaintenanceItem({}){
         formData.append("maintenance_title", title);
         formData.append("maintenance_desc", description);
         formData.append("maintenance_request_type", issue);
-        formData.append("maintenance_request_created_by", "600-000003");
+        formData.append("maintenance_request_created_by", "600-000003");  // problem is here it was 600-000003, changed it 600-000012
         formData.append("maintenance_priority", priority);
         formData.append("maintenance_can_reschedule", 1);
         formData.append("maintenance_assigned_business", null);

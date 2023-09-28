@@ -6,6 +6,7 @@ function TenantProfileEdit(props) {
 
     const [profileData, setProfileData] = useState([]);
     useEffect(()=>{
+        console.log("TENANT EDIT USE EFFECT")
         axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
         .then((res)=>{
             console.log(res.data.Profile[0]);
