@@ -24,7 +24,7 @@ import CompleteTicket from "../../utils/CompleteTicket";
 
 
 
-export default function NewRequestAction01({maintenanceItem}){
+export default function QuotesRequestedAction01({maintenanceItem}){
     const navigate = useNavigate();
 
     console.log("NewRequestAction", maintenanceItem)
@@ -51,7 +51,7 @@ export default function NewRequestAction01({maintenanceItem}){
         if (response){
             console.log("Ticket Declined")
             alert("Ticket Declined")
-            navigate('/maintenance01')
+            navigate('/maintenanceMM')
         } else{
             console.log("Ticket Not Declined")
             alert("Error: Ticket Not Declined")
@@ -128,57 +128,6 @@ export default function NewRequestAction01({maintenanceItem}){
                     </Button>
                 </Grid>
                 
-                {/* <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#9EAED6",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                            // '&:hover': {
-                            //     backgroundColor: darken("#9EAED6", 0.2)
-                            // }
-                        }}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Schedule Repair
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#C06A6A",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                            // '&:hover': {
-                            //     backgroundColor: darken("#C06A6A", 0.2)
-                            // }
-                        }}
-                        onClick={() => handleNavigateToQuotesRequested()}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Request Quotes
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
-                </Grid>*/}
                 <Grid item xs={4} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -219,7 +168,7 @@ export default function NewRequestAction01({maintenanceItem}){
                     >   
                        
                         <Typography sx={{color: "#3D5CAC",  fontSize:theme.typography.smallFont}}>
-                            Request More Info
+                            Request more info
                         </Typography>
                     </Button>
                 </Grid> 
@@ -238,7 +187,7 @@ export default function NewRequestAction01({maintenanceItem}){
                             display: 'flex',
                             width: "100%"
                         }}
-                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
+                        // onClick={() => handleQuote(maintenanceItem.maintenance_request_uid)}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

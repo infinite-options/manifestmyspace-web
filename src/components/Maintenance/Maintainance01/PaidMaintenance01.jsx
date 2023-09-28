@@ -129,20 +129,31 @@ export default function PaidMaintenance01({maintenanceItem}){
                         variant="contained"
                         disableElevation
                         sx={{
+                            flexDirection: "column",
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
                             paddingRight: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                        {/* Estimated Cost: {maintenanceItem.quote_total_estimate} <br/>
-                        Estimated Parts Cost : {maintenanceItem.quote_services_expenses}<br/>
-                        Estimated Time: {maintenanceItem.quote_services_expenses}<br/>
-                        Earliest Availability: {maintenanceItem.quote_earliest_availability}<br/>
-                   */}
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Cost: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Parts Cost :
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Time: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Earliest Availability: 
+                        </Typography>   
+                                           
                     </Box>
                     
                 </Grid>
@@ -150,7 +161,7 @@ export default function PaidMaintenance01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    Notes
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -159,13 +170,108 @@ export default function PaidMaintenance01({maintenanceItem}){
                             textTransform: "none",
                             paddingRight: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                  {maintenanceItem.quote_notes}   </Box>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        {maintenanceItem.quote_notes}
+                        </Typography>
+                       </Box>
+                </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Invoice</Typography>
+                <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            flexDirection: "column",
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Total Amount Due:  
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Pay by: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Payment Method: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        View Documents: 
+                        </Typography>   
+                    </Box>
                     
+                </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Payment Details</Typography>
+
+                    <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            flexDirection: "column",
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}
+                    >
+                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                         Paid On: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Method:
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Amount: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        View Documents 
+                        </Typography>   
+                    </Box>
+                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes from Manager</Typography>
+                    <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        {maintenanceItem.quote_notes}
+                        </Typography>
+                       </Box>
                 </Grid>
             </Grid>
         </Box>

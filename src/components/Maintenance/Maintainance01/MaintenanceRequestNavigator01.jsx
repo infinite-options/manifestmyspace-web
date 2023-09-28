@@ -176,7 +176,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
             justifyContent="center"
             alignItems="center"
             // width= "100%" // Take up full screen width
-            spacing={2}
+            spacing={1}
           >
             <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
               {item.status}
@@ -189,9 +189,13 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
             <ArrowForwardIcon />
           </Button>
         </Stack>
+        <Stack
+         justifyContent="center"
+         alignItems="center">
         <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              { data!== undefined ? (data.maintenance_request_type!==undefined ? data.maintenance_request_type :"No Data") : "No data"}
+              { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"}
         </Typography>
+        </Stack>
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card
             sx={{

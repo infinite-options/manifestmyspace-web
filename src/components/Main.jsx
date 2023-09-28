@@ -244,8 +244,8 @@ function Main() {
             <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
 
-            <Route exact path="/maintenance01" element={<Maintenance01 />} />
-            <Route exact path="/maintenance01/detail" element={<MaintenanceRequestDetail01 />} />
+            <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
+            <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>

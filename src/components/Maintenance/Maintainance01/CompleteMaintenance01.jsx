@@ -21,6 +21,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import { AttachMoney } from "@mui/icons-material";
 
 
 export default function CompleteMaintenance01({maintenanceItem}){
@@ -124,28 +125,36 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         variant="contained"
                         disableElevation
                         sx={{
+                            flexDirection: "column",
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
                             paddingRight: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
                             display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                         {/* Estimated Cost: {maintenanceItem.quote_total_estimate} <br/>
-                        Estimated Parts Cost : {maintenanceItem.quote_services_expenses}<br/>
-                        Estimated Time: {maintenanceItem.quote_services_expenses}<br/>
-                        Earliest Availability: {maintenanceItem.quote_earliest_availability}<br/>
-                   */}
+                            width: "95%",
+                        }}>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Cost: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Parts Cost :
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Time: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Earliest Availability: 
+                        </Typography>      
                     </Box>
-                    
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    Notes
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -154,15 +163,54 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             textTransform: "none",
                             paddingRight: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                    {maintenanceItem.quote_notes}
-                            </Box>
-                    
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        {maintenanceItem.quote_notes}
+                        </Typography>
+                       </Box>
                 </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Invoice</Typography>
+                
+                    <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            flexDirection: "column",
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Total Amount Due:  
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Pay by: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Payment Method: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        View Documents: 
+                        </Typography>   
+                    </Box>
+                </Grid>
+                
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -179,7 +227,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         }}
                         onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >   
-                        <CloseIcon sx={{color: "#3D5CAC"}}/>
+                        <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
                            Mark Paid
                         </Typography>
@@ -201,7 +249,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         }}
                         onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >   
-                       
+                       <AttachMoney sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
                             Request Payment
                         </Typography>
