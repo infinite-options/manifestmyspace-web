@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Box, Stack, ThemeProvider, Button, Typography,
   FormControlLabel,  Checkbox } from '@mui/material';
-import theme from '../../theme/theme';
+import theme from '../../../theme/theme';
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
@@ -9,14 +9,14 @@ import { Select} from "@mui/material";
 import { Grid } from '@mui/material';
 import { MenuItem} from "@mui/material";
 import { useContext } from 'react';
-import { useMyContext } from '../../contexts/SettingsACHContext';
-import StatusBarPM3 from '../../images/onboarding/status_bar_pm3.png';
-import PayPal from '../../images/PayPal.png'
-import Zelle from '../../images/Zelle.png'
-import Venmo from '../../images/Venmo.png'
-import Chase from '../../images/Chase.png'
-import Stripe from '../../images/Stripe.png'
-import ApplePay from '../../images/ApplePay.png'
+import { useMyContext } from '../../../contexts/SettingsACHContext';
+import StatusBarPM3 from '../../../images/onboarding/status_bar_pm3.png';
+import PayPal from '../../../images/PayPal.png'
+import Zelle from '../../../images/Zelle.png'
+import Venmo from '../../../images/Venmo.png'
+import Chase from '../../../images/Chase.png'
+import Stripe from '../../../images/Stripe.png'
+import ApplePay from '../../../images/ApplePay.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -227,7 +227,7 @@ function PMProfilePayment() {
                   left: `14px`,
                   top: `4px`,
                   borderRadius: '10px 10px 10px 10px'
-              }} onClick={()=>{navigate('/poProfileName')}} >Next Step</Button>
+              }} onClick={()=>{navigate('/onboardingRouter')}} >Next Step</Button>
               
               <Stack spacing={-8} m={12}></Stack>
               <Stack spacing={-8} m={12}></Stack>

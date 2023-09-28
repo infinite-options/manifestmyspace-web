@@ -24,6 +24,7 @@ export function POProfileContextProvider({ children }) {
   const [owner_city, set_owner_city] = useState();
   const [owner_state, set_owner_state] = useState();
   const [owner_zip, set_owner_zip] = useState();
+  const [owner_photo, set_owner_photo] = useState();
   
   const update_owner_user_id = (newData) => { set_owner_user_id(newData); };
 	const update_owner_first_name = (newData) => { set_owner_first_name(newData); };
@@ -37,6 +38,8 @@ export function POProfileContextProvider({ children }) {
 	const update_owner_city = (newData) => { set_owner_city(newData); };
 	const update_owner_state = (newData) => { set_owner_state(newData); };
 	const update_owner_zip = (newData) => { set_owner_zip(newData); };
+	const update_owner_photo = (newData) => { set_owner_photo(newData); };
+
     return (
         <POProfileContext.Provider value = {
             {
@@ -52,6 +55,7 @@ export function POProfileContextProvider({ children }) {
               owner_city, update_owner_city,
               owner_state, update_owner_state,
               owner_zip, update_owner_zip,
+              owner_photo, update_owner_photo,
             }}>
           {children}
         </POProfileContext.Provider>

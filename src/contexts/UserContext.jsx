@@ -1,28 +1,34 @@
-// UserContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(()=>{
-    const storedSelectedRole = localStorage.getItem('selectedRole');
-    console.log("storedSelectedRole ",storedSelectedRole)
-
-    return {
-      roles: ['Manager', 'Owner', 'Tenant', 'Maintenance'], // Array of roles
-      selectedRole: storedSelectedRole || 'Manager', // Default selected role
-      userId: '', // User ID
-      // Add other user-related information here
-    }
-  });
-
-  // Update localStorage when the selected role changes
-  useEffect(() => {
-    localStorage.setItem('selectedRole', user.selectedRole);
-  }, [user.selectedRole]);
-
+  const [user, setUser] = useState();
+  const [accessToken, setAccessToken] = useState();
+  const [refreshToken, setRefreshToken] = useState();
+  const [selectedRole, setSelectedRole] = useState();
+  const [onboardingState, setOnboardingState] = useState();
+  const setAuthData = (data) => {
+    setUser(data.user);
+    setAccessToken(data.access_token);
+    setRefreshToken(data.refresh_token);
+  };
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider
+      value={{
+        user,
+        setUser,
+        accessToken,
+        setAccessToken,
+        refreshToken,
+        setRefreshToken,
+        selectedRole,
+        setSelectedRole,
+        setAuthData,
+        onboardingState,
+        setOnboardingState,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -31,7 +37,20 @@ export const UserProvider = ({ children }) => {
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
+};
+
+export const profileRoutesMap = {
+  MANAGER: { onboardUrl: "/pmProfileName", dashboardUrl: "/managerDashboard" },
+  OWNER: { onboardUrl: "/poProfileName", dashboardUrl: "/ownerDashboard" },
+  TENANT: {
+    onboardUrl: "/tenantProfileName",
+    dashboardUrl: "/tenantDashboard",
+  },
+  MAINTENANCE: {
+    onboardUrl: "/maintenanceProfileName",
+    dashboardUrl: "/maintenanceDashboard",
+  },
 };

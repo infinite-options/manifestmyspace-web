@@ -21,4 +21,19 @@ const formatPhoneNumber = (value) => {
   )}-${phoneNumber.slice(6, 10)}`;
 };
 
-export { MaskCharacter, formatPhoneNumber };
+const maskNumber = (value) => {
+  const len = value.length;
+  const mask = "***-**-****";
+  if (len < 4) return mask.slice(0, len);
+  if (len < 6) return mask.slice(0, len+1);
+  return mask.slice(0, len+2);
+};
+
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "*",
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Credentials": "*",
+};
+
+export { MaskCharacter, formatPhoneNumber, headers, maskNumber };

@@ -23,7 +23,7 @@ const GoogleSignup = () => {
   //   run onclick for authorization and eventually sign up
   function getAuthorizationCode() {
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
-    if (window.google) codeClient.requestCode();
+    codeClient.requestCode();
   }
 
   useEffect(() => {
@@ -102,6 +102,7 @@ const GoogleSignup = () => {
                         google_refresh_token: rt,
                         social_id: si,
                         access_expires_in: String(ax),
+                        phone_number: "",
                       };
                       navigate("/selectRole", {
                         state: {

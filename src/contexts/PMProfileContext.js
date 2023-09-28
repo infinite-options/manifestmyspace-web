@@ -14,6 +14,9 @@ export function PMProfileContextProvider({ children }) {
 
     const [business_user_id, set_business_user_id] = useState();
     const [business_type, set_business_type] = useState();
+    // const [business_first_name, set_business_first_name] = useState();
+    // const [business_last_name, set_business_last_name] = useState();
+    const [business_photo, set_business_photo] = useState();
     const [business_name, set_business_name] = useState();
     const [business_phone_number, set_business_phone_number] = useState();
     const [business_email, set_business_email] = useState();
@@ -21,13 +24,16 @@ export function PMProfileContextProvider({ children }) {
     const [business_services_fees, set_business_services_fees] = useState();
     const [business_locations, set_business_locations] = useState();
     const [business_address, set_business_address] = useState();
-	const [business_unit, set_business_unit] = useState();
+	  const [business_unit, set_business_unit] = useState();
     const [business_city, set_business_city] = useState();
     const [business_state, set_business_state] = useState();
     const [business_zip, set_business_zip] = useState();
     
 	const update_business_user_id = (newData) => { set_business_user_id(newData); };
 	const update_business_type = (newData) => { set_business_type(newData); };
+	// const update_business_first_name = (newData) => { set_business_first_name(newData); };
+	// const update_business_last_name = (newData) => { set_business_last_name(newData); };
+	const update_business_photo = (newData) => { set_business_photo(newData); };
 	const update_business_name = (newData) => { set_business_name(newData); };
 	const update_business_phone_number = (newData) => { set_business_phone_number(newData); };
 	const update_business_email = (newData) => { set_business_email(newData); };
@@ -45,6 +51,9 @@ export function PMProfileContextProvider({ children }) {
             {
                 business_user_id, update_business_user_id,
                 business_type, update_business_type,
+                // business_first_name, update_business_first_name,
+                // business_last_name, update_business_last_name,
+                business_photo, update_business_photo,
                 business_name, update_business_name,
                 business_phone_number, update_business_phone_number,
                 business_email, update_business_email,

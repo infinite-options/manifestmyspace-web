@@ -70,7 +70,7 @@ const theme = createTheme({
           background: "#3D5CAC",
           color: "#FFFFFF",
           width: "100%",
-          height: `15%`,
+          height: "37px",
           borderRadius: "10px",
           fontSize: "14px",
           fontWeight: 600,
@@ -84,8 +84,18 @@ const theme = createTheme({
             backgroundColor: "#160449",
           },
           "&:hover": {
-            backgroundColor: "#160449",
+            backgroundColor: "#3D5CAC",
             color: "#FFFFFF",
+          },
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: "#3D5CAC",
+          "&.Mui-checked": {
+            color: "#3D5CAC",
           },
         },
       },
