@@ -15,6 +15,10 @@ import {
   Grid,
   FormControl,
 } from "@mui/material";
+import StripeFeesDialog from "./StripeFeesDialog";
+import StripePayment from "./StripePayment";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import theme from "../../theme/theme";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
@@ -55,11 +59,15 @@ export default function SelectPayment(props) {
   const navigate = useNavigate();
   let balance = location.state.total;
   let [paymentData, setPaymentData] = useState(location.state.paymentData);
-
+  console.log("business_code", paymentData.business_code);
   let [convenience_fee, set_convenience_fee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
   let totalBalance = balance + convenience_fee;
 
+  const [stripePayment, setStripePayment] = useState(false);
+  const [paymentConfirm, setPaymentConfirm] = useState(false);
+
+  const [stripeDialogShow, setStripeDialogShow] = useState(false);
   const payment_url = {
     "Credit Card":
       "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent",
@@ -86,7 +94,7 @@ export default function SelectPayment(props) {
             "(1 PaymentDetails) Stripe-key then result (1): " +
               JSON.stringify(result)
           );
-          setSelectedMethod(result.data.PUBLISHABLE_KEY);
+          // setSelectedMethod(result.data.PUBLISHABLE_KEY);
           //let tempStripePromise = loadStripe(result.data.publicKey);
 
           // console.log("(1 PaymentDetails) setting state with stripePromise");
@@ -137,7 +145,10 @@ export default function SelectPayment(props) {
         });
     }
   }
-
+  const submit = () => {
+    // cancel();
+    setPaymentConfirm(true);
+  };
   //CreditCardHandler
 
   async function bank_transfer_handler() {
@@ -186,16 +197,38 @@ export default function SelectPayment(props) {
   };
 
   const handleSubmit = async (e) => {
+    console.log("selectedMethod", selectedMethod);
     e.preventDefault();
     paymentData.payment_summary.total = parseFloat(totalBalance.toFixed(2));
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
-    else if (selectedMethod === "Credit Card")
-      credit_card_handler(paymentData.business_code);
-  };
+    else if (selectedMethod === "Credit Card") {
+      console.log("in else if");
+      toggleKeys();
 
+      setStripeDialogShow(true);
+    }
+    // credit_card_handler(paymentData.business_code);
+  };
+  const toggleKeys = async () => {
+    console.log("inside toggle keys");
+    const url =
+      paymentData.business_code === "PMTEST"
+        ? "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+    let response = await fetch(url);
+    const responseData = await response.json();
+    const stripePromise = loadStripe(responseData.publicKey);
+    setStripePromise(stripePromise);
+  };
   return (
     <div>
+      <StripeFeesDialog
+        stripeDialogShow={stripeDialogShow}
+        setStripeDialogShow={setStripeDialogShow}
+        toggleKeys={toggleKeys}
+        setStripePayment={setStripePayment}
+      />
       <Stack direction="row" justifyContent="center">
         <Typography
           sx={{
@@ -370,6 +403,16 @@ export default function SelectPayment(props) {
       >
         Make Payment
       </Button>
+      <div hidden={!stripePayment} STYLE={{ marginBottom: "10rem" }}>
+        <Elements stripe={stripePromise}>
+          <StripePayment
+            submit={submit}
+            message={paymentData.business_code}
+            amount={paymentData.payment_summary.total}
+            paidBy={paymentData.customer_id}
+          />
+        </Elements>
+      </div>
     </div>
   );
 }
