@@ -21,6 +21,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import CalendarToday from "@mui/icons-material/CalendarToday";
 
 
 
@@ -124,20 +125,31 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                         variant="contained"
                         disableElevation
                         sx={{
+                            flexDirection: "column",
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
                             paddingRight: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                        {/* Estimated Cost: {maintenanceItem.quote_total_estimate} <br/>
-                        Estimated Parts Cost : {maintenanceItem.quote_services_expenses}<br/>
-                        Estimated Time: {maintenanceItem.quote_services_expenses}<br/>
-                        Earliest Availability: {maintenanceItem.quote_earliest_availability}<br/>
-                   */}
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Cost: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Parts Cost :
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Time: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Earliest Availability: 
+                        </Typography>   
+                                           
                     </Box>
                     
                 </Grid>
@@ -145,7 +157,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    Notes
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -154,13 +166,17 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                             textTransform: "none",
                             paddingRight: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                  {maintenanceItem.quote_notes}   </Box>
-                    
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        {maintenanceItem.quote_notes}
+                        </Typography>
+                       </Box>
                 </Grid>
                 <Grid item xs={6} sx={{
                     alignItems: "center",
@@ -178,7 +194,10 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                         }}
                         onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >   
-                        {/* <CloseIcon sx={{color: "#3D5CAC"}}/> */}
+                         <CalendarToday sx={{
+                            color: "#3D5CAC",
+                            paddingRight: "10%"
+                        }}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
                            Reschedule
                         </Typography>
@@ -200,7 +219,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                         }}
                         onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >   
-                       
+                       <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
                             Complete Ticket
                         </Typography>

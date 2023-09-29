@@ -23,21 +23,14 @@ import theme from '../../../theme/theme';
 import RequestCard from '../MaintenanceRequestCard';
 import AddIcon from '@mui/icons-material/Add';
 
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import NewRequestAction from '../Manager/NewRequestAction';
-import QuotesRequestAction from '../Manager/QuotesRequestAction';
-import QuotesAccepted from '../Manager/QuotesAccepted';
-import ScheduleMaintenance from '../Manager/ScheduleMaintenance';
-import RescheduleMaintenance from "../Manager/RescheduleMaintenance";
-import CompleteMaintenance from "../Manager/CompleteMaintenance";
 import PaidMaintenance01 from "./PaidMaintenance01";
 import MaintenanceRequestNavigator01 from "./MaintenanceRequestNavigator01";
-import NewRequestAction01 from "./NewRequestAction01";
 import QuotesRequestAction01 from "./QuotesRequestAction01";
 import QuotesAccepted01 from "./QuotesAccepted01";
 import ScheduleMaintenance01 from "./ScheduleMaintenance01";
 import CompleteMaintenance01 from "./CompleteMaintenance01";
+import QuotesRequestedAction01 from "./NewRequestAction01";
+import QuotesSubmittedAction01 from "./QuotesRequestAction01";
 
 
 function CustomTabPanel(props) {
@@ -225,7 +218,7 @@ export default function MaintenanceRequestDetail01(){
                             justifyContent="center"
                             alignItems="center"
                         >
-                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                            <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                                 Maintenance Quote
                             </Typography>
                         </Box>
@@ -318,20 +311,12 @@ export default function MaintenanceRequestDetail01(){
                                 }}
                             >
 
-{/* {'color': '#DB9687', 'status': 'Quotes Requested', 'mapping': 'REQUESTED'},
-    {'color': '#CEA892', 'status': 'Quotes Submitted', 'mapping': 'SUBMITTED'},
-    {'color': '#BAAC7A', 'status': 'Quotes Accepted', 'mapping': 'ACCEPTED'},
-    {'color': '#959A76', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
-    {'color': '#598A96', 'status': 'Finished', 'mapping': 'FINISHED'},
-    {'color': '#6588AC', 'status': 'Paid', 'mapping': 'COMPLETED'}, //COMPLETED
- */}
-
                                 {colorStatus[value].status === "Quotes Requested" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
-                                    <NewRequestAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <QuotesRequestedAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null 
                                 }
                                 {colorStatus[value].status === "Quotes Submitted" ?
-                                    <QuotesRequestAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <QuotesSubmittedAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
                                  {colorStatus[value].status === "Quotes Accepted" ?
@@ -342,7 +327,7 @@ export default function MaintenanceRequestDetail01(){
                                     <ScheduleMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Completed" ?
+                                {colorStatus[value].status === "Finished" ?
                                     <CompleteMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }

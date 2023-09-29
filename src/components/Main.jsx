@@ -249,8 +249,8 @@ function Main() {
             <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
             <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
             <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
-            <Route exact path="/maintenance01" element={<Maintenance01 />} />
-            <Route exact path="/maintenance01/detail" element={<MaintenanceRequestDetail01 />} />
+            <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
+            <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>

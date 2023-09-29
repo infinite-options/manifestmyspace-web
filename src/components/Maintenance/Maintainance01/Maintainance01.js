@@ -124,7 +124,7 @@ export default function Maintenance01(){
         }
     }
 
-    function displayPropertyFilterTitle(filterPropertyList){
+    function displayPriorityFilterTitle(filterPropertyList){
         var count = 0;
         for (const item of filterPropertyList){
             if(item.checked){
@@ -200,21 +200,7 @@ export default function Maintenance01(){
             for (const item of array6) {
                 dataObject["PAID"].push(item);
             }
-            //for (const item of array) {
-            //for (const item of maintenanceRequestsData1.MaintenanceStatus.result) {
             
-                // if (!dataObject[item.maintenance_request_status]){
-                //     dataObject[item.maintenance_request_status] = [];
-                // }
-                // dataObject[item.maintenance_request_status].push(item);
-
-                // if (!dataObject[item.quote_status]){
-                //     dataObject[item.quote_status] = [];
-                // }
-                // dataObject[item.quote_status].push(item);
-           // }
-
-           //setState(newObject)
             console.log("dataObject from new api call", dataObject)
             setMaintenanceData(prevData => ({
                 ...prevData, 
@@ -266,7 +252,7 @@ export default function Maintenance01(){
                             justifyContent="center"
                             alignItems="center"
                         >
-                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                            <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
                                 Maintenance
                             </Typography>
                         </Box>
@@ -309,7 +295,7 @@ export default function Maintenance01(){
                                 <Typography 
                                     sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                                 >
-                                    {displayPropertyFilterTitle(filterPropertyList)}
+                                    {displayPriorityFilterTitle(filterPropertyList)}
                                 </Typography>
                             </Button>
                         
@@ -359,12 +345,9 @@ export default function Maintenance01(){
                             let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
-                            // console.log("Before filter "+mappingKey +" "+maintenanceArray.length)
-
+                          
                             let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
-
-                            // console.log("After filter "+mappingKey +" "+filteredArray.length)
-                            
+  
                             return (
                                 <MaintenanceStatusTable01
                                     key={index}

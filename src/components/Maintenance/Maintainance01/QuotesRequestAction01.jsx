@@ -24,7 +24,7 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 
 
-export default function QuotesRequestAction01({maintenanceItem}){
+export default function QuotesSubmittedAction01({maintenanceItem}){
     
     const navigate = useNavigate();
 
@@ -124,19 +124,31 @@ export default function QuotesRequestAction01({maintenanceItem}){
                         variant="contained"
                         disableElevation
                         sx={{
+                            flexDirection: "column",
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
                             paddingRight: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                        {/* Estimated Cost: {maintenanceItem.quote_total_estimate} <br/>
-                        Estimated Parts Cost : {maintenanceItem.quote_services_expenses}<br/>
-                        Estimated Time: {maintenanceItem.quote_services_expenses}<br/>
-                        Earliest Availability: {maintenanceItem.quote_earliest_availability}<br/> */}
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Cost: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Parts Cost :
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Time: 
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Earliest Availability: 
+                        </Typography>   
+                                           
                     </Box>
                     
                 </Grid>
@@ -144,7 +156,7 @@ export default function QuotesRequestAction01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    Notes
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -153,12 +165,16 @@ export default function QuotesRequestAction01({maintenanceItem}){
                             textTransform: "none",
                             paddingRight: "10px",
                             borderRadius: "10px",
-                            paddingLeft: "30px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
                     >
-                      {maintenanceItem.quote_notes}
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        {maintenanceItem.quote_notes}
+                        </Typography>
                        </Box>
                 </Grid>
             </Grid>
