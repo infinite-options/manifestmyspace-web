@@ -292,6 +292,16 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   alignItems: "left",
                 }}
               >
+                 <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                  {data?.maintenance_title} - {data?.maintenance_request_uid}
+                </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -321,16 +331,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_title}
-                </Typography>
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
-                  }}
-                >
                   Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
                 </Typography>
                 <Typography
@@ -343,7 +343,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
-                  {data.maintenance}
+                  {/* {data.maintenance} */}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",

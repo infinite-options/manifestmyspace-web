@@ -156,18 +156,60 @@ export default function Maintenance(){
             // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
             // const propertyData = await propertiesByOwnerResponse.json()
 
-            const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
+            // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
+            const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003')
             const maintenanceRequestsData = await maintenanceRequests.json()
 
-            console.log("maintenanceRequestsData", maintenanceRequestsData)
+            let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
+            let array2 = maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items
+            let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
+            let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
+            let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
+            let array6 = maintenanceRequestsData.result["PAID"].maintenance_items
 
-            for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-                if (!dataObject[item.maintenance_request_status]){
-                    dataObject[item.maintenance_request_status] = [];
-                }
-                dataObject[item.maintenance_request_status].push(item);
+            dataObject["NEW REQUEST"] = [];
+            dataObject["QUOTES REQUESTED"] = [];
+            dataObject["QUOTES ACCEPTED"] = [];
+            dataObject["SCHEDULED"] = [];
+            dataObject["COMPLETED"] = [];
+            dataObject["PAID"] = [];
+
+            for (const item of array1) {
+                // console.log(item.maintenance_request_uid)
+                dataObject["NEW REQUEST"].push(item);
             }
+            for (const item of array2) {
+                dataObject["QUOTES REQUESTED"].push(item);
+            }
+            for (const item of array3) {
+                dataObject["QUOTES ACCEPTED"].push(item);
+            }
+            for (const item of array4) {
+                dataObject["SCHEDULED"].push(item);
+            }
+            for (const item of array5) {
+                dataObject["COMPLETED"].push(item);
+            }
+            for (const item of array6) {
+                dataObject["PAID"].push(item);
+            }
+            // console.log("maintenanceRequestsData", maintenanceRequestsData)
+
+            // for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
+            //     if (!dataObject[item.maintenance_request_status]){
+            //         dataObject[item.maintenance_request_status] = [];
+            //     }
+            //     dataObject[item.maintenance_request_status].push(item);
+            // }
             // console.log("dataObject from new api call", dataObject)
+
+            // maintenanceRequestsData.MaintenanceProjects.result.forEach(item => {
+            //     if (!dataObject[item.maintenance_request_status]){
+            //         dataObject[item.maintenance_request_status] = [];
+            //     }
+            //     dataObject[item.maintenance_request_status].push(item);
+            // }
+
             setMaintenanceData(prevData => ({
                 ...prevData, 
                 ...dataObject

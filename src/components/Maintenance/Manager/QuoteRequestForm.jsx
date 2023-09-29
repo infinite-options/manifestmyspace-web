@@ -103,7 +103,7 @@ export default function QuoteRequestForm(){
             const formData = new FormData();
 
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid)
-            formData.append("maintenance_pm_notes", additionalInfo)
+            formData.append("quote_pm_notes", additionalInfo)
 
             if (selectedImageList.length > 0){
                 for (let i = 0; i < selectedImageList.length; i++){

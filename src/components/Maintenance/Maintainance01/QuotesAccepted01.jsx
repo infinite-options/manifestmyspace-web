@@ -41,17 +41,74 @@ export default function QuotesAccepted01({maintenanceItem}){
         });
     }
 
-    async function handleCancel(id){
+    async function handleCancel(id){ // Change
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            navigate('/maintenanceMM')
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
         }
+    }
+
+    async function handleScheduleChange(id){
+
+        console.log("handleScheduleChange", id)
+
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "SCHEDULED",
+                        "maintenance_scheduled_date": "10/30/2023",
+                        "maintenance_scheduled_time": "10:00:00"
+
+                    })
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    changeQuoteStatus()
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+
+        const changeQuoteStatus = async () => {
+
+            var formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_status", "SCHEDULED");
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
+                const responseData = await response.json();
+                console.log(responseData)
+                if (responseData.code === 200){
+                    console.log("Ticket Status Changed")
+                    alert("Ticket Status Changed to SCHEDULED")
+                    navigate('/maintenanceMM')
+                }
+            } catch(error){
+                console.log("error", error)
+            }
+        }
+        changeMaintenanceRequestStatus()
     }
 
     async function handleComplete(id){
@@ -240,7 +297,7 @@ export default function QuotesAccepted01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleScheduleChange(maintenanceItem.maintenance_request_uid)}
                     >   
                         <CalendarTodayIcon sx={{
                             color: "#3D5CAC",

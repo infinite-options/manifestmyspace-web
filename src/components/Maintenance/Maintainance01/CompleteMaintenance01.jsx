@@ -52,6 +52,11 @@ export default function CompleteMaintenance01({maintenanceItem}){
         }
     }
 
+    function handleMarkPaid(id){
+        console.log("Mark Paid Not Implemented", id)
+        alert("Mark Paid Not Implemented")
+    }
+
     async function handleComplete(id){
         let response = CompleteTicket(id);
         console.log("handleComplete", response);
@@ -63,6 +68,14 @@ export default function CompleteMaintenance01({maintenanceItem}){
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
         }
+    }
+
+    const handleNavigateToInvoice = () => {
+        navigate("/businessInvoiceForm", {
+            state:{
+                maintenanceItem
+            }
+        });
     }
 
     return(
@@ -225,7 +238,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleMarkPaid(maintenanceItem.maintenance_request_uid)}
                     >   
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -247,11 +260,11 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleNavigateToInvoice()}
                     >   
                        <AttachMoney sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Request Payment
+                            Create Invoice
                         </Typography>
                     </Button>
                 </Grid> 

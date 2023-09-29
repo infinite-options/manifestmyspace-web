@@ -361,7 +361,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
-        navigate("/maintenance01")
+        navigate("/maintenanceMM")
     }
 
     function numImages(){

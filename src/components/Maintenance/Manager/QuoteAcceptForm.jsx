@@ -107,31 +107,31 @@ export default function QuoteAcceptForm(){
         console.log("handleSubmit")
         
         
-        const changeMaintenanceRequestStatus = async () => {
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
-                        "maintenance_request_status": "ACCEPTED"
-                    })
-                });
+        // const changeMaintenanceRequestStatus = async () => {
+        //     try {
+        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+        //             method: 'PUT',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({
+        //                 "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
+        //                 "maintenance_request_status": "ACCEPTED"
+        //             })
+        //         });
 
-                const responseData = await response.json();
-                console.log(responseData);
-                if (response.status === 200) {
-                    console.log("success")
-                    navigate("/maintenance")
-                } else{
-                    console.log("error setting status")
-                }
-            } catch (error){
-                console.log("error", error)
-            }
-        }
+        //         const responseData = await response.json();
+        //         console.log(responseData);
+        //         if (response.status === 200) {
+        //             console.log("success")
+        //             navigate("/maintenance")
+        //         } else{
+        //             console.log("error setting status")
+        //         }
+        //     } catch (error){
+        //         console.log("error", error)
+        //     }
+        // }
 
         const changeMaintenanceQuoteStatus = async () => {
 
@@ -156,7 +156,7 @@ export default function QuoteAcceptForm(){
             }
         }
 
-        changeMaintenanceRequestStatus()
+        // changeMaintenanceRequestStatus()
         // PUT /maintenanceQuotes/{maintenance_quote_uid}
         changeMaintenanceQuoteStatus()
 

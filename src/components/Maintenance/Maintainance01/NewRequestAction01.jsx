@@ -45,7 +45,7 @@ export default function QuotesRequestedAction01({maintenanceItem}){
     //     });
     // }
 
-    function handleDecline(id){
+    function declineQuote(id){
 
         navigate("/businessDeclineQuoteForm", {
             state:{
@@ -64,7 +64,7 @@ export default function QuotesRequestedAction01({maintenanceItem}){
         // }
     }
 
-    async function handleComplete(id){
+    async function createQuote(id){
 
         navigate("/businessAcceptQuoteForm", {
             state:{
@@ -154,7 +154,7 @@ export default function QuotesRequestedAction01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleDecline(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => declineQuote(maintenanceItem.maintenance_request_uid)}
                     >   
                         <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -200,6 +200,7 @@ export default function QuotesRequestedAction01({maintenanceItem}){
                             width: "100%"
                         }}
                         // onClick={() => handleQuote(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => createQuote(maintenanceItem.maintenance_request_uid)}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

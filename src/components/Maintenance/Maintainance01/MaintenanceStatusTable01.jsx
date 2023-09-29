@@ -106,27 +106,36 @@ export default function MaintenanceStatusTable01({status, color, maintenanceItem
                         <Table>
                             <TableBody>
                                 <TableRow onClick={() => handleRequestDetailPage(index, item.property_uid, item.maintenance_request_uid)}>
-                                    <TableCell align="left">
+                                    <TableCell align="left" sx={{width: "250px"}}>
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
                                             {item.property_address} {item.property_unit}
                                         </Typography>
                                     </TableCell>
-                                    {/* <Divider orientation="vertical" flexItem color="white"/> */}
-                                    <TableCell align="left"
-                                        style={{
-                                            verticalAlign: 'middle', // Vertically center the text
-                                            ...tableTextStyle // Include your existing styles
-                                        }}>
+                                    <TableCell align="left" sx={{width: "100px"}}>
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
                                         {item.maintenance_request_type}
                                         </Typography>
                                     </TableCell>
+                                    <TableCell align="left" sx={{width: "350px"}}>
+                                        <Typography 
+                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
+                                        >
+                                        {item.maintenance_title}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell align="left" sx={{width: "250px"}}>
+                                        <Typography 
+                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
+                                        >
+                                        {item.maintenance_request_uid}
+                                        </Typography>
+                                    </TableCell>
                                     {/* <Divider orientation="vertical" color="white"/> */}
-                                    <TableCell align="right">
+                                    <TableCell align="right" sx={{width: "250px"}}>
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >

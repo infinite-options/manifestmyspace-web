@@ -39,31 +39,63 @@ export default function ScheduleMaintenance01({maintenanceItem}){
         })
     }
 
-    async function handleCancel(id){
-        let response = CancelTicket(id);
-        console.log("handleCancel", response)
-        if (response){
-            console.log("Ticket Cancelled")
-            alert("Ticket Cancelled")
-            navigate('/maintenance')
-        } else{
-            console.log("Ticket Not Cancelled")
-            alert("Error: Ticket Not Cancelled")
-        }
+    // async function handleCancel(id){
+    //     let response = CancelTicket(id);
+    //     console.log("handleCancel", response)
+    //     if (response){
+    //         console.log("Ticket Cancelled")
+    //         alert("Ticket Cancelled")
+    //         navigate('/maintenanceMM')
+    //     } else{
+    //         console.log("Ticket Not Cancelled")
+    //         alert("Error: Ticket Not Cancelled")
+    //     }
+    // }
+
+    async function handleReSchedule(id){
+        console.log("reschedule not implemented yet")
+        alert("RESCHEDULE NOT IMPLEMENTED YET")
+
     }
 
     async function handleComplete(id){
-        let response = CompleteTicket(id);
-        console.log("handleComplete", response);
-        if (response){
-            console.log("Ticket Completed")
-            alert("Ticket Completed")
-            navigate('/maintenance')
-        } else{
-            console.log("Ticket Not Completed")
-            alert("Error: Ticket Not Completed")
+
+
+        const changeMaintenanceQuoteStatus = async () => {
+
+            var formData = new FormData();
+
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_status", "FINISHED");
+
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData,
+                });            
+                let responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    let response = CompleteTicket(id);
+                    console.log("handleComplete", response);
+                    if (response){
+                        console.log("Ticket Completed")
+                        alert("Ticket Completed")
+                        
+                    } else{
+                        console.log("Ticket Not Completed")
+                        alert("Error: Ticket Not Completed")
+                    }
+                }
+            } catch (error){
+                console.log("error", error)
+            }
         }
+
+        changeMaintenanceQuoteStatus();
     }
+
 
     return(
         <Box 
@@ -192,7 +224,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleReSchedule(maintenanceItem.maintenance_request_uid)}
                     >   
                          <CalendarToday sx={{
                             color: "#3D5CAC",
@@ -217,7 +249,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
                     >   
                        <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

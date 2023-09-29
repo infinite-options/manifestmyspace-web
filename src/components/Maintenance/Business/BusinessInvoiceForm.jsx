@@ -27,11 +27,14 @@ import ImageUploader from "../../ImageUploader";
 import documentIcon from "./Subtract.png"
 
 
-function PartRow({partName, partCost}){
+function PartRow({partName, partCost, }){
     const [selected, setSelected] = useState(false);
 
     const handleToggle = () => {
         setSelected(!selected);
+        // update parts array in parent
+
+
     }
 
     return(
@@ -43,7 +46,6 @@ function PartRow({partName, partCost}){
                     onClick={handleToggle}
                     color="primary"
                 />
-               
                
             </Grid>
             <Grid item xs={4}>
@@ -63,30 +65,94 @@ function PartRow({partName, partCost}){
 
 export default function BusinessInvoiceForm({}){
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
+
+    const maintenanceItem = location.state.maintenanceItem;
+    console.log(maintenanceItem)
+    
+
     const [parts, setParts] = useState([
         {
             partName: "Part 1",
             partCost: "$100.00",
+            selected: false,
         },
         {
             partName: "Part 2",
             partCost: "$200.00",
+            selected: false,
         },
         {
             partName: "Part 3",
             partCost: "$300.00",
+            selected: false,
         },
         {
             partName: "Part 4",
             partCost: "$400.00",
+            selected: false,
         },
         {
             partName: "Part 5",
             partCost: "$500.00",
+            selected: false,
         },
     ]);
     const [numParts, setNumParts] = useState(parts.length);
     const [selectedImageList, setSelectedImageList] = useState([]);
+    const [amountDue, setAmountDue] = useState(0);
+
+    const [total, setTotal] = useState(0);
+
+    function computeTotal(){
+        let total = 0;
+        for(let i = 0; i < parts.length; i++){
+            if (parts[i].selected){
+                total += parts[i].partCost;
+            }
+        }
+        return total + amountDue;
+    }
+
+    const handleSendInvoice = () => {
+        console.log("handleSendInvoice")
+        console.log("selectedImageList", selectedImageList)
+        console.log("amountDue", amountDue)
+        console.log("parts", parts)
+        console.log("total", total)
+
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "PAID"
+                    })
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    navigate("/maintenance")
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+    }
+
+    // useEffect(() => {
+    //     setTotal(computeTotal());
+    // }, [amountDue, parts]);
 
     return (
         <div style={{
@@ -141,7 +207,9 @@ export default function BusinessInvoiceForm({}){
                             <Button sx={{
                                 color: "#3D5CAC",
                                 textTransform: "none",
-                            }}>
+                            }}
+                            onClick={() => navigate(-1)}
+                            >
                                 <CloseIcon/>
                             </Button>
                         </Box>   
@@ -167,6 +235,7 @@ export default function BusinessInvoiceForm({}){
                                                 borderColor: '#000000'
                                             }
                                         }}
+                                        onChange={(e) => setAmountDue(e.target.value)}
                                     />
                                 </div>
                             </Grid>
@@ -238,6 +307,7 @@ export default function BusinessInvoiceForm({}){
                                     variant="outlined"
                                     fullWidth
                                     size="small"
+                                    readOnly
                                     InputProps={{
                                         readOnly: false,
                                         style: { 
@@ -245,6 +315,7 @@ export default function BusinessInvoiceForm({}){
                                             borderColor: '#000000'
                                         }
                                     }}
+                                    value={total}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -314,6 +385,7 @@ export default function BusinessInvoiceForm({}){
                                         display: 'flex',
                                         width: "100%",
                                     }}
+                                    onClick={() => handleSendInvoice()}
                                 >
                                     <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                         Send Invoice
