@@ -36,7 +36,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         fontWeight: 600,
     }
 
-    function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
+    function handleRequestDetailPage(maintenance_request_index, maintenance_item, maintenance_request_uid){
         // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
         // There is some work that needs to be done here.
         // The maintenanceDataForStatus object is just an array of maintenance requests for a particular status.
@@ -45,12 +45,16 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
 
         console.log("handleRequestDetailPage")
         console.log("maintenance_request_index", maintenance_request_index)
+        console.log("maintenance_request_uid", maintenance_request_uid)
         console.log("status", status)
         console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
         console.log("allMaintenanceData", allMaintenanceData)
 
+        console.log("Maintenance Item Clicked On at Index: " + maintenance_request_index, maintenanceItemsForStatus[maintenance_request_index])
+
         navigate(`/maintenance/detail`, {
             state: {
+                maintenance_item,
                 maintenance_request_index,
                 status,
                 maintenanceItemsForStatus,
@@ -96,7 +100,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                 </div>
             </AccordionSummary>
             {maintenanceItemsForStatus.map((item, index) => 
-                <AccordionDetails key={index}>
+                <AccordionDetails key={item.maintenance_request_uid}>
                     <div
                         style={{
                             paddingLeft: "15px",
@@ -105,7 +109,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     >
                         <Table>
                             <TableBody>
-                                <TableRow onClick={() => handleRequestDetailPage(index, item.property_uid, item.maintenance_request_uid)}>
+                                <TableRow onClick={() => handleRequestDetailPage(index, item, item.maintenance_request_uid)}>
                                     <TableCell align="left" sx={{width: "250px"}}>
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}

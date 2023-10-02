@@ -104,8 +104,10 @@ export default function MaintenanceRequestDetail(){
     const colorStatus = theme.colorStatusPMO
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    // const status = location.state.status;
+    console.log("maintenanceRequestIndex", maintenanceRequestIndex)
     const [status, setStatus] = useState(location.state.status);
+    const [mapping, setMapping] = useState("");
+    const [maintenanceRequestUID, setMaintenanceRequestUID] = useState(location.state.maintenance_request_uid);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
@@ -116,6 +118,7 @@ export default function MaintenanceRequestDetail(){
         console.log("useEffect")
         console.log("status value", status)
         console.log("maintenanceRequestIndex", maintenanceRequestIndex)
+        console.log("maintenanceRequestUID", maintenanceRequestUID)
 
         setNavParams({
             maintenanceRequestIndex,
@@ -137,6 +140,7 @@ export default function MaintenanceRequestDetail(){
             if(item.status === status){
                 console.log("status", item.status, "===", status)
                 setValue(index);
+                setMapping(item.mapping)
             }
         })
     }, [status])
@@ -281,7 +285,7 @@ export default function MaintenanceRequestDetail(){
                                     }
                                 )}
                             </Tabs>
-                            {colorStatus.map((item, index) =>
+                            {/* {colorStatus.map((item, index) =>
                                 <div key={index}>
                                     <CustomTabPanel key={index} value={value} index={index} style={{
                                         backgroundColor: item.color,
@@ -296,6 +300,11 @@ export default function MaintenanceRequestDetail(){
                                                 paddingBottom: "0px"
 
                                         }}>
+                                            {console.log("maintenanceRequestIndex", maintenanceRequestIndex)}
+                                            {console.log("colorStatus item", item)}
+                                            {console.log("allData[item.mapping]", allData[item.mapping])}
+                                            {console.log("allData", allData)}
+                                            {console.log("allData[item.mapping][maintenanceRequestIndex]",  allData[item.mapping][maintenanceRequestIndex])}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
                                                 : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
@@ -303,7 +312,58 @@ export default function MaintenanceRequestDetail(){
                                         </Grid>
                                     </CustomTabPanel>
                                 </div>
-                            )}
+                            )} */}
+
+                            {/* The actual issue is that in the loop item sometimes doesn't have the correct corresponding status/items array when we click on it. */}
+                            {/* {colorStatus.map((item, index) => {
+                                {console.log(index, item, allData[item.mapping], maintenanceRequestIndex)}
+                            })} */}
+
+
+                            {console.log("---DEBUG---", status, allData[colorStatus[value].mapping], allData[colorStatus[value].mapping][maintenanceRequestIndex])}
+                            {console.log("---DEBUG--- what we are sending as 'item'", allData[colorStatus[value].mapping][maintenanceRequestIndex])}
+                            <Grid
+                                    sx={{
+                                        backgroundColor: colorStatus[value].color,
+                                        justifyContent: "center",
+                                        marginLeft: "25px",
+                                        marginRight: "25px",
+                                        paddingBottom: "0px"
+
+                                }}>
+                                <MaintenanceRequestNavigator 
+                                    requestIndex={maintenanceRequestIndex} 
+                                    updateRequestIndex={handleMaintenaceRequestIndexChange}
+                                    requestData={maintenanceItemsForStatus}
+                                    status={status}
+                                    color={colorStatus[value].color}
+                                    item={maintenanceItemsForStatus[maintenanceRequestIndex]} 
+                                    allData={allData}
+                                />
+                            </Grid>
+                            {/* <CustomTabPanel value={value} index={value} style={{
+                                backgroundColor: item.color,
+                            }}>
+                                <Grid
+                                    sx={{
+                                        backgroundColor: item.color,
+                                        justifyContent: "center",
+                                        marginLeft: "25px",
+                                        marginRight: "25px",
+                                        paddingBottom: "0px"
+
+                                }}>
+                                    {console.log("maintenanceRequestIndex", maintenanceRequestIndex)}
+                                    {console.log("colorStatus item", item)}
+                                    {console.log("allData[item.mapping]", allData[item.mapping])}
+                                    {console.log("allData", allData)}
+                                    {console.log("allData[item.mapping][maintenanceRequestIndex]",  allData[item.mapping][maintenanceRequestIndex])}
+                                    {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
+                                        <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
+                                        : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
+                                    }
+                                </Grid>
+                            </CustomTabPanel> */}
                             <Box
                                 sx={{
                                     paddingBottom: "20px",

@@ -34,7 +34,6 @@ export default function CompleteMaintenance01({maintenanceItem}){
         navigate("/payMaintenance", {
             state:{
                 maintenanceItem
-
             }
         })
     }
@@ -77,6 +76,37 @@ export default function CompleteMaintenance01({maintenanceItem}){
             }
         });
     }
+
+    const [estimatedCost, setEstimatedCost] = useState(0);
+    const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
+    const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
+    const [estimatedTime, setEstimatedTime] = useState("");
+    const [earliestAvailability, setEarliestAvailability] = useState("");
+    const [invoiceCreated, setInvoiceCreated] = useState(false);
+
+    useEffect(() => {
+        const parseServicesExpenses = (expenses) => {
+            let servicesObject = JSON.parse(expenses)
+            var partsCost = 0
+            for (const item in servicesObject?.parts){
+                partsCost += parseInt(servicesObject.parts[item].cost)
+            }
+            setEstimatedLaborCost(servicesObject.total_estimate)
+            setEstimatedPartsCost(partsCost)
+            setEstimatedCost(servicesObject.total_estimate + partsCost)
+        }
+        
+        parseServicesExpenses(maintenanceItem.quote_services_expenses)
+        setEstimatedTime(maintenanceItem.quote_event_type)
+        setEarliestAvailability(maintenanceItem.quote_earliest_availability)
+
+    }, [maintenanceItem])
+
+    useEffect(() => {
+        if (maintenanceItem.bill_uid){
+            setInvoiceCreated(true)
+        }
+    })
 
     return(
         <Box 
@@ -149,18 +179,22 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "95%",
                         }}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Cost: 
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                        Estimated Total: ${estimatedCost}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Parts Cost :
+                        Estimated Labor Cost: ${estimatedLaborCost}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: 
+                        Estimated Parts Cost: ${estimatedPartsCost}
+                        </Typography>
+
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Time: {estimatedTime}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: 
-                        </Typography>      
+                        Earliest Availability: {earliestAvailability}
+                        </Typography>    
                     </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
@@ -184,45 +218,47 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem.quote_notes}
+                            {maintenanceItem.quote_notes}
                         </Typography>
                        </Box>
                 </Grid>
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Invoice</Typography>
-                
-                    <Box
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            flexDirection: "column",
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "10px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                            display: 'flex',
-                            width: "95%",
-                        }}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Total Amount Due:  
+                {invoiceCreated ? (
+                    <Grid item xs={12} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
+                            Invoice
                         </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Pay by: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Payment Method: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        View Documents: 
-                        </Typography>   
-                    </Box>
-                </Grid>
+                        <Box
+                            variant="contained"
+                            disableElevation
+                            sx={{
+                                flexDirection: "column",
+                                backgroundColor: "#D6D5DA",
+                                textTransform: "none",
+                                paddingRight: "10px",
+                                borderRadius: "10px",
+                                paddingLeft: "10px",
+                                paddingTop: "10px",
+                                paddingBottom: "10px",
+                                display: 'flex',
+                                width: "95%",
+                            }}>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Total Amount Due:  ${estimatedCost}
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Pay by: 
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Payment Method: Venmo, Zelle, Apple Pay
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            View Documents: 
+                            </Typography>   
+                        </Box>
+                    </Grid> ) : null }
                 
                 <Grid item xs={6} sx={{
                     alignItems: "center",

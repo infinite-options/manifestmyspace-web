@@ -35,32 +35,15 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
     const [earliestAvailability, setEarliestAvailability] = useState("");
 
     useEffect(() => {
-        console.log("QuotesSubmittedAction01", maintenanceItem)
-
-        // console.log("expenses", maintenanceItem.quote_services_expenses)
-        //console.log("quote_event_type", maintenanceItem.quote_event_type)
-
         const parseServicesExpenses = (expenses) => {
             let servicesObject = JSON.parse(expenses)
-            console.log(servicesObject)
-            // Object.keys(servicesObject).forEach(([key, value])=> {
-            //     console.log(key, value)
-            // })
             var partsCost = 0
             for (const item in servicesObject?.parts){
                 partsCost += parseInt(servicesObject.parts[item].cost)
             }
-
             setEstimatedLaborCost(servicesObject.total_estimate)
             setEstimatedPartsCost(partsCost)
-
             setEstimatedCost(servicesObject.total_estimate + partsCost)
-
-            // let total = 0;
-            // expenses.forEach(expense => {
-            //     total += expense.expense_cost
-            // })
-            // return total;
         }
         
         parseServicesExpenses(maintenanceItem.quote_services_expenses)

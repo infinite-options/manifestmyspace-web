@@ -22,6 +22,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
+import User_fill from './User_fill.png';
 
 
 export default function PayMaintenanceForm(){
@@ -38,6 +39,8 @@ export default function PayMaintenanceForm(){
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
+
+    console.log("PayMaintenanceForm", maintenanceItem, navigationParams)
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -154,7 +157,7 @@ export default function PayMaintenanceForm(){
                     paddingBottom: '30px',
                 }}
             >
-                    <Stack
+                <Stack
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
@@ -162,6 +165,7 @@ export default function PayMaintenanceForm(){
                         paddingBottom: "20px",
                         paddingLeft: "0px",
                         paddingRight: "0px",
+                        paddingTop: "20px",
                     }}
                 >
                     <Stack
@@ -209,6 +213,7 @@ export default function PayMaintenanceForm(){
                                     height: "100%",
                                     padding: "10px",
                                     margin: "10px",
+                                    paddingTop: "30px"
                                 }}>
                                     <Grid item xs={12}>
                                         <Grid container spacing={2} justifyContent="center">
@@ -290,28 +295,63 @@ export default function PayMaintenanceForm(){
                         alignContent="center"
                         justifyContent="center"
                         alignItems="center"
-                        direction="column"
+                        direction="row"
+                        sx={{
+                            paddingTop: "20px",
+                            paddingLeft: "20px",
+                            paddingRight: "20px",
+                        }}
                     >
-                        
                         <Grid item xs={12}>
-                            Doolittle Maintenance
+                            <img
+                                src={User_fill}
+                                alt="User Icon"
+                                style={{ width: "25px", height: "26px", margin:'0px' }}
+                            />
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                {maintenanceItem.business_name}
+                            </Typography>
                         </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50%' }}>
+                            <Container 
+                                maxWidth="sm" 
+                                style={{ 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    justifyContent: 'center', 
+                                    alignItems: 'center', 
+                                    backgroundColor: '#FFFFFF', 
+                                    padding: '10px', 
+                                    width: '100%',
+                                    borderRadius: '10px',
+                                }}
+                            >    
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
+                                    $100
+                                </Typography>   
+                            </Container>
+                        </Grid>
+
                         <Grid item xs={12}>
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                                 Notes
                             </Typography>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
-                                    multiline
-                                    rows={10}
-                                    defaultValue="Took a little longer than expected!"
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                />
+                            <Container 
+                                maxWidth="sm" 
+                                style={{ 
+                                    display: 'flex', 
+                                    // flexDirection: 'column', 
+                                    // justifyContent: 'center', 
+                                    // alignItems: 'center', 
+                                    backgroundColor: '#FFFFFF', 
+                                    padding: '10px', 
+                                    width: '100%',
+                                    borderRadius: '10px',
+                                }}
+                            >    
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.secondary.fontWeight, fontSize: "14px"}}>
+                                    {maintenanceItem.quote_notes}
+                                </Typography>   
                             </Container>
                         </Grid>
                         <Grid item xs={12}>

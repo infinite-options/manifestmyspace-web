@@ -193,23 +193,6 @@ export default function Maintenance(){
             for (const item of array6) {
                 dataObject["PAID"].push(item);
             }
-            // console.log("maintenanceRequestsData", maintenanceRequestsData)
-
-            // for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
-            // console.log("dataObject from new api call", dataObject)
-
-            // maintenanceRequestsData.MaintenanceProjects.result.forEach(item => {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
-
             setMaintenanceData(prevData => ({
                 ...prevData, 
                 ...dataObject

@@ -18,7 +18,8 @@ function getInitialImages(requestData, currentIndex) {
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator({ requestIndex, updateRequestIndex, requestData, color, item, allData }) {
+export default function MaintenanceRequestNavigator({ requestIndex, updateRequestIndex, requestData, status, color, item, allData }) {
+  
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -26,6 +27,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   const [images, setImages] = useState([maintenanceRequestImage]);
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
+
+  console.log("MaintenanceRequestNavigator ---DEBUG---", requestIndex, requestData)
 
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
@@ -93,31 +96,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
       });
   };
 
-
-  // const handleNextCard = () => {
-  //   setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
-  //   let nextMaintenanceId = requestData[currentIndex].maintenance_request_uid;
-  //   // navigate(`/maintenance/${nextMaintenanceId}`, { replace: true,   state: {
-  //   //     requestIndex,
-  //   //     status,
-  //   //     maintenanceItemsForStatus,
-  //   //     allData,
-  //   // }});
-  //   console.log("currentIndex", currentIndex)
-  //   console.log("allData", allData)
-  //   console.log("requestData", requestData)
-  //   // console.log("item", allData[requestData.mapping][currentIndex])
-  //   console.log("requestData[currentIndex]", requestData[currentIndex])
-  // };
-
-  // const handlePreviousCard = () => {
-  //   setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
-  //   let previousMaintenanceId = requestData[currentIndex].maintenance_request_uid;
-  //   // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
-  //   console.log("currentIndex", currentIndex)
-  //   console.log("item", allData[requestData.mapping][currentIndex])
-  // };
-
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -145,13 +123,14 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
     setFormattedDate(formattedDate);
   }
 
-  const data = requestData[currentIndex];
-  // console.log("requestData", requestData)
-  // console.log("data", data)
+  // const data = requestData[currentIndex];
+  console.log("MaintenanceRequestrequestData", requestData)
+  console.log("currentIndex === requestIndex", currentIndex, requestIndex)
+  console.log("data", item)
 
   useEffect(() => {
-    formatDate(data.maintenance_request_created_date);
-  }, [data]);
+    formatDate(item.maintenance_request_created_date);
+  }, [item]);
 
   return (
     <div style={{ paddingBottom: "10px" }}>
@@ -183,7 +162,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
             spacing={2}
           >
             <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {item.status}
+              {item.maintenance_request_status}
             </Typography>
             <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
               {currentIndex + 1} of {requestData.length}
@@ -300,7 +279,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_title} - {data?.maintenance_request_uid}
+                  {item?.maintenance_title} - {item?.maintenance_request_uid}
                 </Typography>
                 <Typography
                   sx={{
@@ -310,7 +289,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_priority} Priority
+                  {item?.maintenance_priority} Priority
                 </Typography>
                 <Typography
                   sx={{
@@ -321,7 +300,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   }}
                   underline="always"
                 >
-                  {data?.property_address}
+                  {item?.property_address}
                 </Typography>
                 <Typography
                   sx={{
@@ -331,7 +310,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
+                  Estimated Cost: {item?.maintenance_estimated_cost ? "$" + item?.maintenance_estimated_cost : "Not reported"}
                 </Typography>
                 <Typography
                   sx={{
@@ -352,7 +331,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null}
+                  {item.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + item.maintenance_scheduled_date + " at " + item.maintenance_scheduled_time: null}
                 </Typography>
               </div>
             </CardContent>

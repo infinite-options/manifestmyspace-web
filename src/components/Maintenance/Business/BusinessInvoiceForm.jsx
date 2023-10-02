@@ -63,6 +63,26 @@ function PartRow({partName, partCost, }){
     )
 }
 
+function TableWithAddRow(){
+    const [rows, setRows] = useState([{}]);
+    return (
+        <>
+            <Grid container direction="row" spacing={2} alignContent="center">
+                
+            </Grid>
+            <Button sx={{
+                color: "#3D5CAC",
+                textTransform: "none",
+            }}>
+                <AddIcon/> 
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                    Add {}
+                </Typography>
+            </Button>
+        </>
+    )
+}
+
 
 export default function BusinessInvoiceForm({maintenanceQuote}){
 
@@ -71,41 +91,20 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
 
 
     const maintenanceItem = location.state.maintenanceItem;
-    
 
-    const [parts, setParts] = useState([
-        {
-            partName: "Part 1",
-            partCost: "$100.00",
-            selected: false,
-        },
-        {
-            partName: "Part 2",
-            partCost: "$200.00",
-            selected: false,
-        },
-        {
-            partName: "Part 3",
-            partCost: "$300.00",
-            selected: false,
-        },
-        {
-            partName: "Part 4",
-            partCost: "$400.00",
-            selected: false,
-        },
-        {
-            partName: "Part 5",
-            partCost: "$500.00",
-            selected: false,
-        },
-    ]);
+    console.log("BusinessInvoiceForm", maintenanceItem)    
+
+    const [parts, setParts] = useState([]);
     const [numParts, setNumParts] = useState(parts.length);
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [amountDue, setAmountDue] = useState(0);
     const [notes, setNotes] = useState("");
 
     const [total, setTotal] = useState(0);
+
+    useEffect(() => {
+
+    }, [parts, amountDue])
 
     const handleNotesChange = (e) => {
         setNotes(e.target.value);
@@ -233,7 +232,7 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
 
                         <Grid container direction="row" rowSpacing={2}>
                             <Grid item xs={12}>
-                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                {/* <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                     Amount Due:
                                 </Typography>
                                 <div style={{paddingLeft: "5px"}}>
@@ -256,7 +255,7 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
                                         }}
                                         onChange={(e) => setAmountDue(e.target.value)}
                                     />
-                                </div>
+                                </div> */}
                             </Grid>
                             <Grid item xs={12} alignContent="center" sx={{paddingTop: "20px", paddingBottom: "20px"}}>
                                 {parts.map((part, index) => (
