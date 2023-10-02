@@ -26,7 +26,14 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
     const location = useLocation();
     let navigate = useNavigate();
 
-    // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
+    // console.log("MaintenanceStatusTable ---- DEBUGGING ----")
+    // console.log("status", status)
+    // console.log("color", color)
+    // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+    // console.log("allMaintenanceData", allMaintenanceData)
+    // console.log("maintenanceRequestsCount", maintenanceRequestsCount)
+
+
 
     const tableTextStyle = {
         backgroundColor: color, 
@@ -36,14 +43,14 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         fontWeight: 600,
     }
 
-    function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
+    function handleRequestDetailPage(maintenance_request_index){
         // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
         // There is some work that needs to be done here.
         // The maintenanceDataForStatus object is just an array of maintenance requests for a particular status.
         // Example: "NEW"
         // We need to pass all the data to it, by status
 
-        console.log("handleRequestDetailPage")
+        console.log("--------handleRequestDetailPage--------")
         console.log("maintenance_request_index", maintenance_request_index)
         console.log("status", status)
         console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
@@ -105,7 +112,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     >
                         <Table>
                             <TableBody>
-                                <TableRow onClick={() => handleRequestDetailPage(index, item.property_uid, item.maintenance_request_uid)}>
+                                <TableRow onClick={() => handleRequestDetailPage(index)}>
                                     <TableCell align="left" sx={{width: "250px"}}>
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}

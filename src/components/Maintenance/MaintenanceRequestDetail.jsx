@@ -36,6 +36,7 @@ import PaidMaintenance from "./Manager/PaidMaintenance";
 
 
 function CustomTabPanel(props) {
+    // console.log("CustomTabPanel")
     const { children, value, index, ...other } = props;
     return (
         <div
@@ -82,82 +83,68 @@ export default function MaintenanceRequestDetail(){
         navigate('/maintenance'); 
     }
 
-    function deactivateTab(key, maintenanceData){
-        if(maintenanceData[key]){
-            return maintenanceData[key].length > 0 ? false : true;
+    function deactivateTab(maintenance_items){
+        if(maintenance_items){
+            return maintenance_items.length > 0 ? false : true;
         }
         else{
             return true;
         }
     }
 
-    function greyOutTab(key, maintenanceData, color){
+    function greyOutTab(maintenance_items, color){
         let greyColor = "#D9D9D9"
-        if(maintenanceData[key]){
-            return maintenanceData[key].length > 0 ? color : greyColor;  
+        if(maintenance_items){
+            return maintenance_items.length > 0 ? color : greyColor;  
         }
         else{
             return greyColor;
         }
     }
 
-    const colorStatus = theme.colorStatusPMO
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    // const status = location.state.status;
     const [status, setStatus] = useState(location.state.status);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
+    const [allMaintenanceData, setAllMaintenanceData] = useState(location.state.allMaintenanceData);
+    const [tabValue, setTabValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
 
-    useEffect(() => {
-        console.log("useEffect")
-        console.log("status value", status)
-        console.log("maintenanceRequestIndex", maintenanceRequestIndex)
 
+    useEffect(() => {
         setNavParams({
             maintenanceRequestIndex,
             status,
             maintenanceItemsForStatus,
-            allData,
+            allMaintenanceData,
         })
     }, [maintenanceRequestIndex, status])
-    
-    const allData = location.state.allMaintenanceData;
-
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
 
     useEffect(() => {
-        console.log("useEffect")
-        console.log("status value", status)
-        colorStatus.find((item, index) => {
-            if(item.status === status){
-                console.log("status", item.status, "===", status)
-                setValue(index);
+        // console.log("useEffect")
+        // console.log("status value", status)
+        allMaintenanceData.find((item, index) => {
+            if(item.maintenance_status === status){
+                // console.log("status", item.status, "===", status)
+                setTabValue(index);
             }
         })
     }, [status])
 
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)
-        setStatus(colorStatus[newValue].status)
-        setValue(newValue);
+        setStatus(allMaintenanceData[newValue].maintenance_status)
+        setTabValue(newValue);
         setMaintenanceRequestIndex(0);
-        setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
+        setMaintenanceItemsForStatus(allMaintenanceData[newValue].maintenance_items)
     };
 
     const handleMaintenaceRequestIndexChange = (index) => {
         setMaintenanceRequestIndex(index);  
     }
-
-    useEffect(() => {
-        console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
-    }, [maintenanceRequestIndex])
-
-    // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
     function a11yProps(index) {
         return {
@@ -167,14 +154,14 @@ export default function MaintenanceRequestDetail(){
       }
 
     const handleNext = () => {
-        if (value < 5){
-            setValue(value + 1);
+        if (tabValue < 5){
+            setTabValue(tabValue + 1);
         }
     }
 
     const handleBack = () => {
-        if (value > 0){
-            setValue(value - 1);
+        if (tabValue > 0){
+            setTabValue(tabValue - 1);
         }
     }
 
@@ -243,7 +230,7 @@ export default function MaintenanceRequestDetail(){
                         }}>
                             <Tabs 
                                 variant="fullWidth" 
-                                value={value} 
+                                value={tabValue} 
                                 onChange={handleChange} 
                                 TabIndicatorProps={{
                                     style: {
@@ -261,12 +248,11 @@ export default function MaintenanceRequestDetail(){
 
                                 }}
                             >
-                                {colorStatus.map((item, index) => {
-
-                                        let color = greyOutTab(item.mapping, allData, item.color)
+                                {allMaintenanceData.map((item, index) => {
+                                        let color = greyOutTab(item.maintenance_items, item.maintenance_color)
                                         return (
                                             <Tab key={index}
-                                                disabled={deactivateTab(item.mapping, allData)}
+                                                disabled={deactivateTab(item.maintenance_items)}
                                                 {...a11yProps(index)} 
                                                 sx={{
                                                     backgroundColor: color,
@@ -281,56 +267,63 @@ export default function MaintenanceRequestDetail(){
                                     }
                                 )}
                             </Tabs>
-                            {colorStatus.map((item, index) =>
-                                <div key={index}>
-                                    <CustomTabPanel key={index} value={value} index={index} style={{
-                                        backgroundColor: item.color,
-
-                                    }}>
-                                        <Grid
-                                            sx={{
-                                                backgroundColor: item.color,
-                                                justifyContent: "center",
-                                                marginLeft: "25px",
-                                                marginRight: "25px",
-                                                paddingBottom: "0px"
-
+                            {allMaintenanceData.map((item, index) => {
+                                // console.log("item", item, "index", index)
+                                return (
+                                    <div key={index}>
+                                        <CustomTabPanel key={index} value={tabValue} index={index} style={{
+                                            backgroundColor: item.maintenance_color,
                                         }}>
-                                            {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
-                                                : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
-                                            }
-                                        </Grid>
-                                    </CustomTabPanel>
-                                </div>
+                                            <Grid
+                                                sx={{
+                                                    backgroundColor: item.maintenance_color,
+                                                    justifyContent: "center",
+                                                    marginLeft: "25px",
+                                                    marginRight: "25px",
+                                                    paddingBottom: "0px"
+
+                                            }}>
+                                                <MaintenanceRequestNavigator 
+                                                    requestIndex={maintenanceRequestIndex} 
+                                                    updateRequestIndex={handleMaintenaceRequestIndexChange} 
+                                                    requestData={item.maintenance_items} 
+                                                    status={status} 
+                                                    color={item.maintenance_color} 
+                                                    item={item} 
+                                                    allData={allMaintenanceData}
+                                                />
+                                            </Grid>
+                                        </CustomTabPanel>
+                                    </div>
+                                )}
                             )}
                             <Box
-                                sx={{
-                                    paddingBottom: "20px",
-                                    paddingTop: "20px",
-                                }}
+                            sx={{
+                                paddingBottom: "20px",
+                                paddingTop: "20px",
+                            }}
                             >
-                                {colorStatus[value].status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {status === "NEW REQUEST" ?
                                     <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null 
                                 }
-                                {colorStatus[value].status === "Quotes Requested" ?
+                                {status === "QUOTES REQUESTED" ?
                                     <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Quotes Accepted" ?
+                                {status === "QUOTES ACCEPTED" ?
                                     <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Scheduled" ?    
+                                {status === "SCHEDULED" ?    
                                     <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Completed" ?
+                                {status === "COMPLETED" ?
                                     <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Paid" ?
+                                {status === "PAID" ?
                                     <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/> 
                                     : null
                                 }

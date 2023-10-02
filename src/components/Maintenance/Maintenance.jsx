@@ -28,8 +28,8 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 export default function Maintenance(){
     const location = useLocation();
     let navigate = useNavigate();
-    const [maintenanceData, setMaintenanceData] = useState({});
-    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+    const [maintenanceData, setMaintenanceData] = useState([]);
+    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusPMO
 
@@ -48,11 +48,11 @@ export default function Maintenance(){
 
     useEffect(() => {
         if (maintenanceData){
-            console.log("maintenanceData", maintenanceData)
+            // console.log("maintenanceData", maintenanceData)
             const propertyList = [];
             const addedAddresses = [];
             for (const key in maintenanceData){
-                for (const item of maintenanceData[key]){
+                for (const item of maintenanceData[key].maintenance_items){ 
                     if (!addedAddresses.includes(item.property_address)){
                         addedAddresses.push(item.property_address);
                         if (!propertyList.includes(item.property_address)){
@@ -64,8 +64,7 @@ export default function Maintenance(){
                     }
                 }
             }
-            
-            console.log("filterPropertyList", propertyList)
+            // console.log("Property List generated from useEffect", propertyList)
             setFilterPropertyList(propertyList);
         }
     }, [maintenanceData])
@@ -151,7 +150,7 @@ export default function Maintenance(){
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
-        const dataObject = {};
+        const sortedMaintenanceData = [];
         const getMaintenanceData = async () => {
             // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
             // const propertyData = await propertiesByOwnerResponse.json()
@@ -160,64 +159,22 @@ export default function Maintenance(){
             const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003')
             const maintenanceRequestsData = await maintenanceRequests.json()
 
-            let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
-            let array2 = maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items
-            let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
-            let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
-            let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
-            let array6 = maintenanceRequestsData.result["PAID"].maintenance_items
+            // console.log("maintenanceRequestsData", maintenanceRequestsData.result)
 
-            dataObject["NEW REQUEST"] = [];
-            dataObject["QUOTES REQUESTED"] = [];
-            dataObject["QUOTES ACCEPTED"] = [];
-            dataObject["SCHEDULED"] = [];
-            dataObject["COMPLETED"] = [];
-            dataObject["PAID"] = [];
+            // Create an array sorted by status
 
-            for (const item of array1) {
-                // console.log(item.maintenance_request_uid)
-                dataObject["NEW REQUEST"].push(item);
-            }
-            for (const item of array2) {
-                dataObject["QUOTES REQUESTED"].push(item);
-            }
-            for (const item of array3) {
-                dataObject["QUOTES ACCEPTED"].push(item);
-            }
-            for (const item of array4) {
-                dataObject["SCHEDULED"].push(item);
-            }
-            for (const item of array5) {
-                dataObject["COMPLETED"].push(item);
-            }
-            for (const item of array6) {
-                dataObject["PAID"].push(item);
-            }
-            // console.log("maintenanceRequestsData", maintenanceRequestsData)
+            let statusOrder = ["NEW REQUEST", "QUOTES REQUESTED", "QUOTES ACCEPTED", "SCHEDULED", "COMPLETED", "PAID"]
 
-            // for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
-            // console.log("dataObject from new api call", dataObject)
+            for (const status of statusOrder){
+                let maintenanceStatusObject = maintenanceRequestsData.result[status]
+                maintenanceStatusObject.maintenance_status = status
+                sortedMaintenanceData.push(maintenanceStatusObject)
+            }
 
-            // maintenanceRequestsData.MaintenanceProjects.result.forEach(item => {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
+            // console.log("dataObject from useEffect with API Call", dataObject)
 
-            setMaintenanceData(prevData => ({
-                ...prevData, 
-                ...dataObject
-            }));
-            setDisplayMaintenanceData(prevData => ({
-                ...prevData,
-                ...dataObject
-            }));
+            setMaintenanceData(sortedMaintenanceData);
+            setDisplayMaintenanceData(sortedMaintenanceData);
         }
         getMaintenanceData();
     }, [])
@@ -326,35 +283,25 @@ export default function Maintenance(){
                         borderRadius: "10px",
                         margin: "20px",
                     }}>
-                        {colorStatus.map((item, index) => {
-                            // construct mapping key if it doesn't exist
-                            // var mappingKey = ""
-                            // if (item.mapping === "SCHEDULED") { // a known key with color mapping
-                            //     mappingKey = "SCHEDULED" // a mapped key to the maintenanceData object
-                            // } else if (item.mapping == "PAID"){
-                            //     mappingKey = "PAID"
-                            // } else{
-                            //     mappingKey = item.mapping
-                            // }
-
-                            let mappingKey = item.mapping
-
-                            let maintenanceArray = maintenanceData[mappingKey]|| []
-
-                            let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
-
+                        {maintenanceData.map((item, index) => {
+                            let color = item.maintenance_color
+                            let status = item.maintenance_status
+                            let items = item.maintenance_items || [];
+                            // console.log("maintenanceArray in maintenanceData map", items)
+                            let filteredArray = handleFilter(items, month, year, filterPropertyList);
+                            // console.log("filterArray in maintenanceData map", filteredArray)
                             return (
                                 <MaintenanceStatusTable 
                                     key={index}
-                                    status={item.status}
-                                    color={item.color}
+                                    status={status}
+                                    color={color}
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={maintenanceData}
-                                    maintenanceRequestsCount={maintenanceArray}
+                                    maintenanceRequestsCount={items.length}
                                 />
                             );
                         })}
-                    </div>
+                    </div> 
                 </Paper>
             </Box>
         </ThemeProvider>

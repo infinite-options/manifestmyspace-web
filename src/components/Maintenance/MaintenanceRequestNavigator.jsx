@@ -11,6 +11,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 
 function getInitialImages(requestData, currentIndex) {
+  console.log("getInitialImages", requestData, currentIndex);
   if (requestData[currentIndex].maintenance_images != "[]") {
     // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
     return JSON.parse(requestData[currentIndex].maintenance_images);
@@ -27,19 +28,20 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
 
+
+  // console.log("RequestNavigator ---- DEBUGGING ----");
+  // console.log("requestIndex", requestIndex);
+  // console.log("currentIndex", currentIndex);
+  // console.log("requestData", requestData);
+  // console.log("color", color);
+  // console.log("item", item);
+  // console.log("allData", allData);
+
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
     setImages(initialImages);
     setActiveStep(0);
   }, [currentIndex]);
-
-  // console.log("RequestNavigator");
-  // console.log("requestIndex", requestIndex);
-  // console.log("requestData", requestData);
-  // console.log("currentIndex", currentIndex);
-  // console.log("color", color);
-  // console.log("item", item);
-  // console.log("allData", allData);
 
   const maxSteps = images.length;
 
@@ -352,7 +354,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null}
+                  {/* {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null} */}
                 </Typography>
               </div>
             </CardContent>
