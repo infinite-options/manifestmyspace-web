@@ -188,7 +188,8 @@ export default function BusinessQuoteForm({acceptBool}){
             "per Hour Charge": rate,
             "event_type": jobType,
             "service_name": "Labor",
-            'total_estimate': computeTotalCost({hours: jobType, rate: rate})
+            "parts": partsObject,
+            "total_estimate": computeTotalCost({hours: jobType, rate: rate})
 
         }
         return JSON.stringify(expenseObject)
@@ -253,10 +254,28 @@ export default function BusinessQuoteForm({acceptBool}){
         }
         partsObject.forEach(part => {
             if(part.cost !== ""){
-                total += parseInt(part.cost)
+                total += parseInt(part.cost) * parseInt(part.quantity)
             }
         })    
         return total        
+    }
+
+    function convertToDateTime(date, time){
+
+        var dateArray = date.split("/")
+        var timeArray = time.split(":")
+
+        var year = dateArray[2]
+        var month = dateArray[0]
+        var day = dateArray[1]
+
+        var hour = timeArray[0]
+        var minute = timeArray[1]
+        var second = timeArray[2]
+
+        var dateTimeString = `${year}-${month}-${day} ${hour}:${minute}:${second}`
+        return dateTimeString
+
     }
 
     function handleBackButton(){
@@ -313,6 +332,7 @@ export default function BusinessQuoteForm({acceptBool}){
         //     }
         // }
 
+
         const changeQuoteStatus = async (status) => {
 
             var formData = new FormData();
@@ -327,6 +347,7 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_event_type", createEventType())
                 formData.append("quote_total_estimate", String(computeTotalEstimate()));
                 formData.append("quote_created_date", formatDateToCustomString())
+                formData.append("quote_earliest_availability", convertToDateTime(availabilityDate, availabilityTime))
 
             } else if (status === "REFUSED"){
                 formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx

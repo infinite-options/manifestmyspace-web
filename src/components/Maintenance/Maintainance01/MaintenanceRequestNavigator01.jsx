@@ -366,7 +366,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
                     paddingBottom: "10px",
                   }}
                 >
-                  Issue Notes: {data!==undefined ? (data.maintenance_notes===null ? "None" : data.maintenance_notes) : ""}
+                  Issue Notes: {data!==undefined ? (data.maintenance_desc===null ? "None" : data.maintenance_desc) : ""}
                   {/* Estimated Cost: */}
                    {/* {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"} */}
                 </Typography>
@@ -378,7 +378,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
                     paddingBottom: "10px",
                   }}
                 >
-                Manager Notes:  {data!==undefined ? (data.maintenance_pm_notes===null ? "None" : data.maintenance_pm_notes) : "None"}
+                Manager Notes:  {data!==undefined ? (data.quote_pm_notes===null ? "None" : data.quote_pm_notes) : "None"}
                 </Typography>
                 {/* {data.maintenance} */}
                 <Typography

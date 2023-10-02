@@ -48,6 +48,12 @@ export default function QuoteAcceptForm(){
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [maintenanceQuotes, setMaintenanceQuotes] = useState([])
 
+    const [estimatedTotalCost, setEstimatedTotalCost] = useState(0);
+    const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
+    const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
+    const [estimatedTime, setEstimatedTime] = useState("");
+    const [earliestAvailability, setEarliestAvailability] = useState("");
+
     useEffect(() => {
         
         const getMaintenanceItemQuotes = async () => {
@@ -73,6 +79,40 @@ export default function QuoteAcceptForm(){
 
     const currentQuote = maintenanceQuotes[currentQuoteIndex];
     console.log(currentQuote)
+
+    useEffect(() => {
+        console.log("currentQuote", currentQuote)
+        if (currentQuote){
+            console.log("currentQuote", currentQuote)
+            const parseServicesExpenses = (expenses) => {
+                let servicesObject = JSON.parse(expenses)
+                console.log(servicesObject)
+                // Object.keys(servicesObject).forEach(([key, value])=> {
+                //     console.log(key, value)
+                // })
+                var partsCost = 0
+                for (const item in servicesObject.parts){
+                    partsCost += parseInt(servicesObject.parts[item].cost)
+                }
+    
+                setEstimatedLaborCost(servicesObject.total_estimate)
+                setEstimatedPartsCost(partsCost)
+    
+                setEstimatedTotalCost(servicesObject.total_estimate + partsCost)
+    
+                // let total = 0;
+                // expenses.forEach(expense => {
+                //     total += expense.expense_cost
+                // })
+                // return total;
+            }
+            
+            parseServicesExpenses(currentQuote.quote_services_expenses)
+            setEstimatedTime(currentQuote.quote_event_type)
+            setEarliestAvailability(currentQuote.quote_earliest_availability)
+        }
+
+    }, [currentQuote])
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
@@ -161,6 +201,14 @@ export default function QuoteAcceptForm(){
         changeMaintenanceQuoteStatus()
 
 
+    }
+
+    function displayQuoteDetails(quote_expenses){
+        let quoteJSON = JSON.parse(quote_expenses)
+
+        let parts = quoteJSON.parts
+
+        
     }
 
     function numImages(){
@@ -376,7 +424,7 @@ export default function QuoteAcceptForm(){
                                 Quote
                             </Typography>
                             <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
+                                {/* <TextField
                                     multiline
                                     rows={10}
                                     value={currentQuote?.quote_services_expenses}
@@ -386,7 +434,24 @@ export default function QuoteAcceptForm(){
                                     readOnly: true,
                                     style: { backgroundColor: 'white' }
                                     }}
-                                />
+                                /> */}
+
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                            Estimated Total: ${estimatedTotalCost}
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Estimated Labor Cost: ${estimatedLaborCost}
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Estimated Parts Cost: ${estimatedPartsCost}
+                            </Typography>
+
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Estimated Time: {estimatedTime}
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Earliest Availability: {earliestAvailability}
+                            </Typography>  
                             </Container>
                         </Grid>
                         <Grid item xs={12}>

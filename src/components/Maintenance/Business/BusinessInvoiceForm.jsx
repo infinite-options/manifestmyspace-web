@@ -16,6 +16,7 @@ import {
     Select,
     Radio,
     FormControlLabel,
+    InputAdornment,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -63,14 +64,13 @@ function PartRow({partName, partCost, }){
 }
 
 
-export default function BusinessInvoiceForm({}){
+export default function BusinessInvoiceForm({maintenanceQuote}){
 
     const navigate = useNavigate();
     const location = useLocation();
 
 
     const maintenanceItem = location.state.maintenanceItem;
-    console.log(maintenanceItem)
     
 
     const [parts, setParts] = useState([
@@ -103,8 +103,13 @@ export default function BusinessInvoiceForm({}){
     const [numParts, setNumParts] = useState(parts.length);
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [amountDue, setAmountDue] = useState(0);
+    const [notes, setNotes] = useState("");
 
     const [total, setTotal] = useState(0);
+
+    const handleNotesChange = (e) => {
+        setNotes(e.target.value);
+    }
 
     function computeTotal(){
         let total = 0;
@@ -125,14 +130,25 @@ export default function BusinessInvoiceForm({}){
 
         const changeMaintenanceRequestStatus = async () => {
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                    method: 'PUT',
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills", {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "PAID"
+                        
+                        "bill_description": "Maintenance Payment Test",
+                        "bill_created_by": maintenanceItem.quote_business_id,
+                        "bill_utility_type": "maintenance",
+                        "bill_amount": total,
+                        "bill_split": "Uniform",
+                        "bill_property_id": [{
+                            "property_uid": maintenanceItem.property_id,
+                        }],
+                        "bill_docs": [],
+                        "bill_notes": "Just testing Maintenance payment",
+                        "bill_maintenance_quote_id": "900-000001"
+                        
                     })
                 });
 
@@ -233,7 +249,10 @@ export default function BusinessInvoiceForm({}){
                                             style: { 
                                                 backgroundColor: 'white',
                                                 borderColor: '#000000'
-                                            }
+                                            },
+                                            startAdornment: (
+                                                <InputAdornment position="start">$</InputAdornment>
+                                            ),
                                         }}
                                         onChange={(e) => setAmountDue(e.target.value)}
                                     />
@@ -280,7 +299,10 @@ export default function BusinessInvoiceForm({}){
                                         style: { 
                                             backgroundColor: 'white',
                                             borderColor: '#000000'
-                                        }
+                                        },
+                                        startAdornment: (
+                                            <InputAdornment position="start">$</InputAdornment>
+                                        ),
                                     }}
                                 />
                             </Grid>
@@ -313,7 +335,10 @@ export default function BusinessInvoiceForm({}){
                                         style: { 
                                             backgroundColor: 'white',
                                             borderColor: '#000000'
-                                        }
+                                        },
+                                        startAdornment: (
+                                            <InputAdornment position="start">$</InputAdornment>
+                                        ),
                                     }}
                                     value={total}
                                 />
@@ -355,6 +380,7 @@ export default function BusinessInvoiceForm({}){
                                             borderColor: '#000000'
                                         }
                                     }}
+                                    onChange={handleNotesChange}
                                 />
                             </Grid>
                             <Grid item xs={12}>

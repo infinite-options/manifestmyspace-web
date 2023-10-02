@@ -28,6 +28,47 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
     
     const navigate = useNavigate();
 
+    const [estimatedCost, setEstimatedCost] = useState(0);
+    const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
+    const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
+    const [estimatedTime, setEstimatedTime] = useState("");
+    const [earliestAvailability, setEarliestAvailability] = useState("");
+
+    useEffect(() => {
+        console.log("QuotesSubmittedAction01", maintenanceItem)
+
+        // console.log("expenses", maintenanceItem.quote_services_expenses)
+        //console.log("quote_event_type", maintenanceItem.quote_event_type)
+
+        const parseServicesExpenses = (expenses) => {
+            let servicesObject = JSON.parse(expenses)
+            console.log(servicesObject)
+            // Object.keys(servicesObject).forEach(([key, value])=> {
+            //     console.log(key, value)
+            // })
+            var partsCost = 0
+            for (const item in servicesObject?.parts){
+                partsCost += parseInt(servicesObject.parts[item].cost)
+            }
+
+            setEstimatedLaborCost(servicesObject.total_estimate)
+            setEstimatedPartsCost(partsCost)
+
+            setEstimatedCost(servicesObject.total_estimate + partsCost)
+
+            // let total = 0;
+            // expenses.forEach(expense => {
+            //     total += expense.expense_cost
+            // })
+            // return total;
+        }
+        
+        parseServicesExpenses(maintenanceItem.quote_services_expenses)
+        setEstimatedTime(maintenanceItem.quote_event_type)
+        setEarliestAvailability(maintenanceItem.quote_earliest_availability)
+
+    }, [maintenanceItem])
+
     function handleNavigateToQuotesRequested(){
 
         console.log("NewRequestAction", maintenanceItem)
@@ -136,17 +177,21 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Cost: 
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                        Estimated Total: ${estimatedCost}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Parts Cost :
+                        Estimated Labor Cost: ${estimatedLaborCost}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: 
+                        Estimated Parts Cost: ${estimatedPartsCost}
+                        </Typography>
+
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Estimated Time: {estimatedTime}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: 
+                        Earliest Availability: {earliestAvailability}
                         </Typography>   
                                            
                     </Box>
