@@ -25,8 +25,8 @@ const maskNumber = (value) => {
   const len = value.length;
   const mask = "***-**-****";
   if (len < 4) return mask.slice(0, len);
-  if (len < 6) return mask.slice(0, len+1);
-  return mask.slice(0, len+2);
+  if (len < 6) return mask.slice(0, len + 1);
+  return mask.slice(0, len + 2);
 };
 
 const headers = {
@@ -36,4 +36,40 @@ const headers = {
   "Access-Control-Allow-Credentials": "*",
 };
 
-export { MaskCharacter, formatPhoneNumber, headers, maskNumber };
+const roleMap = {
+  OWNER: {
+    dashboardUrl: "/ownerDashboard",
+    profileApi: "/ownerProfile",
+  },
+  MANAGER: {
+    dashboardUrl: "/managerDashboard",
+    profileApi: "/businessProfile",
+  },
+  TENANT: {
+    dashboardUrl: "/tenantDashboard",
+    profileApi: "/tenantProfile",
+  },
+  MAINTENANCE: {
+    dashboardUrl: "/maintenanceDashboard",
+    profileApi: "/businessProfile",
+  },
+  PM_EMPLOYEE: {
+    dashboardUrl: "/managerDashboard",
+    profileApi: "/employee",
+  },
+  MAINT_EMPLOYEE: {
+    dashboardUrl: "/maintenanceDashboard",
+    profileApi: "/employee",
+  },
+};
+
+const photoFields = new Set(["owner_photo", "tenant_photo", "business_photo"]);
+
+export {
+  MaskCharacter,
+  formatPhoneNumber,
+  headers,
+  maskNumber,
+  roleMap,
+  photoFields,
+};

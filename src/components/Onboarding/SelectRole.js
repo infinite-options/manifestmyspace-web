@@ -43,7 +43,7 @@ function SelectRole() {
     });
     if (user.isEmailSignup) {
       const response = await axios.post(
-        "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
+        "http://localhost:2000/api/v2/CreateAccount/MYSPACE",
         payload
       );
       if (response.data.message === "User already exists") {

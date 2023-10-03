@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Paper,
@@ -11,18 +11,20 @@ import {
   Backdrop,
   CircularProgress,
 } from "@mui/material";
-import theme from "../../../theme/theme";
+import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
 import { Grid } from "@mui/material";
-import StatusBarPM3 from "../../../images/onboarding/status_bar_pm3.png";
-import PayPal from "../../../images/PayPal.png";
-import Zelle from "../../../images/Zelle.png";
-import Venmo from "../../../images/Venmo.png";
-import Stripe from "../../../images/Stripe.png";
-import ApplePay from "../../../images/ApplePay.png";
-import { headers } from "../helper";
+import { useUser } from "../../contexts/UserContext";
+import Status24 from "../../images/status_2_4.svg";
+import Status33 from "../../images/status_3_3.svg";
+import PayPal from "../../images/PayPal.png";
+import Zelle from "../../images/Zelle.png";
+import Venmo from "../../images/Venmo.png";
+import Stripe from "../../images/Stripe.png";
+import ApplePay from "../../images/ApplePay.png";
+import { headers } from "./helper";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,11 +38,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function POProfilePayment() {
+function ProfilePayment() {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tenantId } = location.state;
+  const { profileId } = location.state;
+  const [statusImg, setStatusImg] = useState();
+  const { user, isBusiness, isEmployee, roleName, isManagementEmployee } =
+    useUser();
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false },
     apple_pay: { value: "", checked: false },
@@ -71,7 +76,7 @@ function POProfilePayment() {
     keys.forEach((key) => {
       if (paymentMethods[key].value !== "") {
         payload.push({
-          paymentMethod_profile_id: tenantId,
+          paymentMethod_profile_id: profileId,
           paymentMethod_type: key,
           paymentMethod_name: paymentMethods[key].value,
           paymentMethod_status: paymentMethods[key].checked
@@ -88,8 +93,19 @@ function POProfilePayment() {
     console.log("POST response: " + response);
     setShowSpinner(false);
     if (checkedCreditCard) navigate("");
-    navigate("/onboardingRouter");
+    if (isBusiness())
+      navigate("/personalInfo", { state: { businessId: profileId } });
+    else navigate("/onboardingRouter");
   };
+
+  const handleRoleSpecifics = () => {
+    if (isBusiness()) setStatusImg(Status24);
+    else setStatusImg(Status33);
+  };
+
+  useEffect(() => {
+    handleRoleSpecifics();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -143,11 +159,10 @@ function POProfilePayment() {
               <Stack direction="row" justifyContent="center">
                 <Box
                   sx={{
-                    paddingLeft: "20%",
                     paddingTop: "10%",
                   }}
                 >
-                  <img src={StatusBarPM3} alt="status" />
+                  <img src={statusImg} alt="status" />
                 </Box>
               </Stack>
 
@@ -159,7 +174,7 @@ function POProfilePayment() {
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                {"Tenant Payment Info"}
+                {`${roleName()} Payment Info`}
               </Typography>
             </>
           </Box>
@@ -422,4 +437,4 @@ function POProfilePayment() {
   );
 }
 
-export default POProfilePayment;
+export default ProfilePayment;

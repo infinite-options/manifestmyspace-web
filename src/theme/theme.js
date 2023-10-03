@@ -95,8 +95,11 @@ const theme = createTheme({
         root: {
           color: "#3D5CAC",
           "&.Mui-checked": {
-            color: "#3D5CAC",
+            color: "#3D5CAC !important",
           },
+        },
+        "&.Mui-checked": {
+          color: "#3D5CAC !important",
         },
       },
     },

@@ -11,7 +11,7 @@ import comment_fill from '../images/comment_fill.png';
 
 export function Footer() {
     const navigate = useNavigate();
-    const { selectedRole } = useUser(); // Access the user object from UserContext
+    const { selectedRole, isLoggedIn } = useUser(); // Access the user object from UserContext
 
     // Define a function to get the home button navigation based on the selected role
     const getHomeButtonNav = () => {
@@ -74,7 +74,7 @@ export function Footer() {
 
   return (
     <footer className="footer">
-      {selectedRole && 
+      {isLoggedIn && 
         <ThemeProvider theme={theme}>
           <Box
             style={{

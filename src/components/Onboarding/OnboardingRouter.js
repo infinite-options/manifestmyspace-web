@@ -1,25 +1,30 @@
 import { useNavigate } from "react-router-dom";
-import { useUser, profileRoutesMap } from "../../contexts/UserContext";
+import { useUser } from "../../contexts/UserContext";
 import { useEffect } from "react";
+import { roleMap } from "./helper";
 
 const OnboardingRouter = () => {
-  const { onboardingState, setOnboardingState, setSelectedRole } = useUser();
+  const { onboardingState, setOnboardingState, setSelectedRole, setLoggedIn } =
+    useUser();
   const { roles, openingRole } = onboardingState;
   const navigate = useNavigate();
 
   useEffect(() => {
     if (roles.length === 0) {
       setSelectedRole(openingRole);
-      navigate(profileRoutesMap[openingRole].dashboardUrl);
+      setLoggedIn(true);
+      const { dashboardUrl } = roleMap[openingRole];
+      navigate(dashboardUrl);
     } else {
-      const nextProfile = roles.shift();
+      const nextRole = roles.shift();
       if (!openingRole) {
         setOnboardingState({
           ...onboardingState,
-          openingRole: nextProfile,
+          openingRole: nextRole,
         });
       }
-      navigate(profileRoutesMap[nextProfile].onboardUrl);
+      setSelectedRole(nextRole);
+      navigate("/profileName");
     }
   }, []);
 

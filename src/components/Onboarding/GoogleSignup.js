@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import googleImg from "../../images/onboarding/continue_with_google.png";
+import googleImg from "../../images/ContinueWithGoogle.svg";
 
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;

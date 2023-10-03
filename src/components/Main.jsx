@@ -97,15 +97,10 @@ import OnboardingRouter from "./Onboarding/OnboardingRouter";
 import ContactInfo from "./Onboarding/ContactInfo";
 
 import SelectRole from "./Onboarding/SelectRole";
-import PMProfileDisplay from "./Onboarding/Manager/PMProfileDisplay";
-import PMProfilePayment from "./Onboarding/Manager/PMProfilePayment";
-import PMProfileName from "./Onboarding/Manager/PMProfileName";
-import POProfileDisplay from "./Onboarding/Owner/POProfileDisplay";
-import POProfilePayment from "./Onboarding/Owner/POProfilePayment";
-import POProfileName from "./Onboarding/Owner/POProfileName";
-import TenantProfileDisplay from "./Onboarding/Tenant/TenantProfileDisplay";
-import TenantProfilePayment from "./Onboarding/Tenant/TenantProfilePayment";
-import TenantProfileName from "./Onboarding/Tenant/TenantProfileName";
+import ProfileName from "./Onboarding/ProfileName";
+import ProfileInfo from "./Onboarding/ProfileInfo";
+import PersonalInfo from "./Onboarding/PersonalInfo";
+import ProfilePayment from "./Onboarding/ProfilePayment";
 
 function Main() {
   return (
@@ -206,19 +201,10 @@ function Main() {
             <Route exact path="/returningUser" element={<ReturningUser />} />
             <Route exact path="/userLogin" element={<UserLogin />} />
             <Route exact path="/selectRole" element={<SelectRole />} />
-
-            <Route exact path="/pmProfileName" element={<PMProfileName />} />
-            <Route exact path="/pmProfileDisplay" element={<PMProfileDisplay />} />
-            <Route exact path="/pmProfilePayment" element={<PMProfilePayment/>} />
-         
-            <Route exact path="/poProfileName" element={<POProfileName />} />
-            <Route exact path="/poProfileDisplay" element={<POProfileDisplay />} />
-            <Route exact path="/poProfilePayment" element={<POProfilePayment/>} />
-            
-            <Route exact path="/tenantProfileName" element={<TenantProfileName />} />
-            <Route exact path="/tenantProfileDisplay" element={<TenantProfileDisplay />} />
-            <Route exact path="/tenantProfilePayment" element={<TenantProfilePayment/>} />
-            
+            <Route exact path="/profileName" element={<ProfileName />} />
+            <Route exact path="/profileInfo" element={<ProfileInfo />} />
+            <Route exact path="/personalInfo" element={<PersonalInfo />} />
+            <Route exact path="/profilePayment" element={<ProfilePayment />} />
             <Route exact path="/onboardingRouter" element={<OnboardingRouter />} />
             <Route exact path="/contactInfo" element={<ContactInfo />} />
 
