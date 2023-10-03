@@ -462,7 +462,7 @@ function TenantProfile() {
                         boxShadow: '0px 4px 4px #00000032'
                     }}>
                         <GrayBox>
-                            <Box onClick={()=>navigate('/tenantProfileEdit')}>
+                            <Box onClick={()=>{navigate('/tenantProfileEdit')}}>
                             <TextBox fontSize={'15px'} fontWeight={'bold'}>
                                 Edit Profile and Password
                             </TextBox>

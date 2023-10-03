@@ -101,7 +101,7 @@ export function Footer() {
                       src={Home_fill}
                       alt="Home Icon"
                       style={{ display: 'block', margin: '0 auto' }}
-                      onClick={()=>navigate(getHomeButtonNav())}
+                      onClick={()=>{navigate(getHomeButtonNav())}}
                     />
                 </Box>
               </Grid>
@@ -110,7 +110,7 @@ export function Footer() {
                     src={User_fill}
                     alt="User Icon"
                     style={{ display: 'block', margin: '0 auto' }}
-                    onClick={()=>navigate(getProfileButtonNav())}
+                    onClick={()=>{navigate(getProfileButtonNav())}}
                   />
               </Grid>
               <Grid item xs={3}>
@@ -118,7 +118,7 @@ export function Footer() {
                   src={Bell_fill}
                   alt="Bell Icon"
                   style={{ display: 'block', margin: '0 auto' }}
-                  onClick={()=>navigate(getBellButtonNav())}
+                  onClick={()=>{navigate(getBellButtonNav())}}
                 />
               </Grid>
               <Grid item xs={3}>
@@ -126,7 +126,7 @@ export function Footer() {
                   src={comment_fill}
                   alt="Comment Icon"
                   style={{ display: 'block', margin: '0 auto' }}
-                  onClick={()=>navigate(getCommentButtonNav())}
+                  onClick={()=>{navigate(getCommentButtonNav())}}
                 />
               </Grid>
             </Grid>
