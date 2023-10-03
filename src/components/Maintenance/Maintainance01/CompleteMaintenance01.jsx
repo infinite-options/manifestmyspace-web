@@ -22,11 +22,17 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import { AttachMoney } from "@mui/icons-material";
+import { set } from "date-fns";
 
 
 export default function CompleteMaintenance01({maintenanceItem}){
     const navigate = useNavigate();
 
+    const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
+    const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
+    const [estimateLaborTime, setEstimateLaborTime] = useState(0);
+
+    console.log("CompleteMaintenance01", maintenanceItem)
 
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
@@ -76,6 +82,45 @@ export default function CompleteMaintenance01({maintenanceItem}){
                 maintenanceItem
             }
         });
+    }
+
+    function computeTotalCost(estimate){
+        let costObject = JSON.parse(estimate)
+        console.log(costObject)
+        let laborTotal = 0;
+        let partsTotal = 0;
+        let laborTime = 0;
+        try{
+            for (const item in costObject.labor){
+                console.log(item)
+                laborTotal += parseInt(costObject.labor[item].charge)
+                laborTime += parseInt(costObject.labor[item].hours)
+            }
+    
+            for (const item in costObject.parts){
+                console.log(item)
+                partsTotal += parseInt(costObject.parts[item].cost) * parseInt(costObject.parts[item].quantity)
+            }
+            
+            setEstimatedLaborCost(laborTotal)
+            setEstimatedPartsCost(partsTotal)
+            setEstimateLaborTime(laborTime)
+        } catch (error){
+            console.log(error)
+        }
+        
+    }
+
+    useEffect(() => {
+        computeTotalCost(maintenanceItem.quote_services_expenses)
+    },[maintenanceItem])
+
+    function displayDueDate(dateStr){
+        const dateObj = new Date(dateStr);
+        dateObj.setDate(dateObj.getDate() + 5);
+        const newDateStr = dateObj.toISOString().slice(0, 19).replace("T", " ");
+
+        return newDateStr;
     }
 
     return(
@@ -150,16 +195,16 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Cost: 
+                        Estimated Cost: ${maintenanceItem.quote_total_estimate}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Parts Cost :
+                        Estimated Parts Cost: ${estimatedPartsCost}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: 
+                        Estimated Time: {maintenanceItem.quote_event_type}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: 
+                        Earliest Availability: {maintenanceItem.quote_earliest_availability}
                         </Typography>      
                     </Box>
                 </Grid>
@@ -210,17 +255,20 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Total Amount Due:  
+                        Total Amount Due:  {maintenanceItem.bill_amount}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Pay by: 
+                        Pay by: {displayDueDate(maintenanceItem.quote_earliest_availability)}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                         Payment Method: 
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        View Documents: 
-                        </Typography>   
+                        View Documents: {maintenanceItem.bill_docs === null || maintenanceItem.bill_docs === "[]" ? "No Documents" : maintenanceItem.bill_docs}
+                        </Typography>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Bill Notes: {maintenanceItem.bill_notes}
+                        </Typography>     
                     </Box>
                 </Grid>
                 

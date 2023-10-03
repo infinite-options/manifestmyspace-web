@@ -43,29 +43,23 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
         const parseServicesExpenses = (expenses) => {
             let servicesObject = JSON.parse(expenses)
             console.log(servicesObject)
-            // Object.keys(servicesObject).forEach(([key, value])=> {
-            //     console.log(key, value)
-            // })
             var partsCost = 0
             for (const item in servicesObject?.parts){
                 partsCost += parseInt(servicesObject.parts[item].cost)
             }
 
-            setEstimatedLaborCost(servicesObject.total_estimate)
+            setEstimatedLaborCost(servicesObject?.total_estimate)
             setEstimatedPartsCost(partsCost)
 
-            setEstimatedCost(servicesObject.total_estimate + partsCost)
-
-            // let total = 0;
-            // expenses.forEach(expense => {
-            //     total += expense.expense_cost
-            // })
-            // return total;
+            setEstimatedCost(servicesObject?.total_estimate + partsCost)
         }
-        
-        parseServicesExpenses(maintenanceItem.quote_services_expenses)
-        setEstimatedTime(maintenanceItem.quote_event_type)
-        setEarliestAvailability(maintenanceItem.quote_earliest_availability)
+        try{
+            parseServicesExpenses(maintenanceItem?.quote_services_expenses)
+            setEstimatedTime(maintenanceItem.quote_event_type)
+            setEarliestAvailability(maintenanceItem.quote_earliest_availability)
+        } catch (error){
+            console.log("error", error)
+        }
 
     }, [maintenanceItem])
 
@@ -135,7 +129,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                 </Grid>
                 
                 <Grid item xs={11} sx={{
-                        alignItems: "center",
+                        alignItems: "center",   
                         justifyContent: "center",
                         paddingLeft: "40px",
                     }}>
@@ -218,7 +212,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem.quote_notes}
+                        {maintenanceItem?.quote_notes}
                         </Typography>
                        </Box>
                 </Grid>
