@@ -255,9 +255,11 @@ const ProfileInfo = () => {
   const encodeForm = (payload) => {
     const form = new FormData();
     for (let key in payload) {
-      if (photoFields.has(key) && payload[key])
-        form.append(key, payload[key].file);
-      else form.append(key, payload[key]);
+      if (photoFields.has(key)) {
+        if (payload[key]) form.append(key, payload[key].file);
+      } else {
+        form.append(key, payload[key]);
+      }
     }
     return form;
   };
