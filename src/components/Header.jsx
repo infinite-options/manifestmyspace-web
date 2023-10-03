@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,8 +5,8 @@ import Button from '@material-ui/core/Button';
 import { useUser } from '../contexts/UserContext';
 
 function Header() {
-    const { user, setUser } = useUser();
-    const userRoles = user.roles;
+    const { user, selectedRole, setSelectedRole } = useUser();
+    const userRoles = user?user.role.split(","):[];
     
     const navigate = useNavigate();
 
@@ -50,10 +49,11 @@ function Header() {
           break;
       }
       // Update the user state with the selected role
-      setUser((prevUser) => ({
-        ...prevUser,
-        selectedRole: role,
-      }));
+      // setUser((prevUser) => ({
+      //   ...prevUser,
+      //   selectedRole: role,
+      // }));
+      setSelectedRole(role);
     };
   
   
@@ -82,7 +82,7 @@ function Header() {
                     key={role}
                     color="inherit"
                     style={{
-                      fontWeight: user.selectedRole === role ? 800 : 300,
+                      fontWeight: selectedRole === role ? 800 : 300,
                       fontSize: '16px',
                       fontFamily: 'Source Sans 3, sans-serif',
                       margin: '0 10px',

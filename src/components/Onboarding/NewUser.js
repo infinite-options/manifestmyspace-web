@@ -60,11 +60,10 @@ function NewUser() {
             </Stack>
             <Button 
                             sx={{
-                                m:'2%',
                                 background: '#3D5CAC',
                                 color: theme.palette.background.default,
                                 width: `326px`,
-                                height: `7%`,
+                                height: `60.5px`,
                                 borderRadius: '15px',
                                 fontSize:theme.typography.smallFont,
                                 fontWeight: theme.typography.primary.fontWeight, 
