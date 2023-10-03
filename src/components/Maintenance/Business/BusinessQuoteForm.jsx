@@ -171,7 +171,7 @@ export default function BusinessQuoteForm({acceptBool}){
         {
             part: "",
             quantity: "",
-            cost: ""
+            cost: "",
         }
     ]);
 
@@ -305,33 +305,6 @@ export default function BusinessQuoteForm({acceptBool}){
 
     const handleSubmit = (status) => {
         console.log("handleSubmit")
-        
-        
-        // const changeMaintenanceRequestStatus = async (status) => {
-        //     try {
-        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
-        //                 "maintenance_request_status": "QUOTING"
-        //             })
-        //         });
-
-        //         const responseData = await response.json();
-        //         console.log(responseData);
-        //         if (response.status === 200) {
-        //             console.log("success - changeMaintenanceRequestStatus")
-        //         } else{
-        //             console.log("error setting status")
-        //         }
-        //     } catch (error){
-        //         console.log("error", error)
-        //     }
-        // }
-
 
         const changeQuoteStatus = async (status) => {
 
