@@ -61,7 +61,6 @@ export default function PayMaintenanceForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
                 } else{
                     console.log("error setting status")
                 }
@@ -74,7 +73,7 @@ export default function PayMaintenanceForm(){
             const formData = new FormData();
             //formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
             formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-            formData.append("maintenance_request_status", "COMPLETED")
+            formData.append("quote_status", "COMPLETED")
             
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
@@ -310,7 +309,7 @@ export default function PayMaintenanceForm(){
                                 borderRadius: '10px',      // Rounded border
                             }} maxWidth={false}> 
                                 <Typography align="center" sx={{color: theme.typography.primary.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>  {/* This will center the text inside the Typography component */}
-                                    ${maintenanceItem.bill_amount}
+                                    {maintenanceItem.bill_amount !== null ? `${maintenanceItem.bill_amount}` : "No Invoice Submitted"}
                                 </Typography>
                             </Container>       
                         </Grid>

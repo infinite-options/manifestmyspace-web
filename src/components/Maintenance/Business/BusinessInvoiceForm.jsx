@@ -454,7 +454,7 @@ export default function BusinessInvoiceForm(){
         hours: costData.event_type,
         charge: costData["per Hour Charge"],
     }]);
-    const [numParts, setNumParts] = useState(parts.length);
+    // const [numParts, setNumParts] = useState(costData.parts.length);
     const [selectedImageList, setSelectedImageList] = useState([]);
     // const [amountDue, setAmountDue] = useState(0);
     const [notes, setNotes] = useState("");

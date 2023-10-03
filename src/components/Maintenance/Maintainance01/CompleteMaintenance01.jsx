@@ -195,16 +195,16 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Cost: ${maintenanceItem.quote_total_estimate}
+                        Estimated Cost: ${maintenanceItem?.quote_total_estimate}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                         Estimated Parts Cost: ${estimatedPartsCost}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: {maintenanceItem.quote_event_type}
+                        Estimated Time: {maintenanceItem?.quote_event_type}
                         </Typography>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: {maintenanceItem.quote_earliest_availability}
+                        Earliest Availability: {maintenanceItem?.quote_earliest_availability}
                         </Typography>      
                     </Box>
                 </Grid>
@@ -229,7 +229,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem.quote_notes}
+                        {maintenanceItem?.quote_notes}
                         </Typography>
                        </Box>
                 </Grid>

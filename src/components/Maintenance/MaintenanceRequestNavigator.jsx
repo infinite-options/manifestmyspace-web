@@ -352,7 +352,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null}
+                  {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
                 </Typography>
               </div>
             </CardContent>

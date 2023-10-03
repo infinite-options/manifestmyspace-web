@@ -167,13 +167,17 @@ export default function BusinessQuoteForm({acceptBool}){
     const [notes, setNotes] = useState('');
     const [jobType, setJobType] = useState("");
 
-    const [partsObject, setPartsObject] = useState([
-        {
+    const [partsObject, setPartsObject] = useState([{
             part: "",
             quantity: "",
             cost: "",
-        }
-    ]);
+        }]);
+    
+    const [labor, setLabor] = useState({
+        description: "",
+        hours: "",
+        rate: "",
+    });
 
     function computeTotalCost({hours, rate}){
         if (hours === "Fixed Bid" || hours === "Custom"){
@@ -189,6 +193,11 @@ export default function BusinessQuoteForm({acceptBool}){
             "event_type": jobType,
             "service_name": "Labor",
             "parts": partsObject,
+            "labor": [{
+                "description": "",
+                "hours": jobType,
+                "rate": rate,
+            }],
             "total_estimate": computeTotalCost({hours: jobType, rate: rate})
 
         }
