@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Form, useLocation, useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import theme from '../../../theme/theme';
@@ -434,13 +434,15 @@ function PartsTable({parts, setParts}){
 
 
 
-export default function BusinessInvoiceForm({maintenanceQuote}){
+export default function BusinessInvoiceForm(){
 
     const navigate = useNavigate();
     const location = useLocation();
 
 
     const maintenanceItem = location.state.maintenanceItem;
+
+    console.log("maintenanceItem", maintenanceItem)
 
     const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
 
@@ -454,7 +456,7 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
     }]);
     const [numParts, setNumParts] = useState(parts.length);
     const [selectedImageList, setSelectedImageList] = useState([]);
-    const [amountDue, setAmountDue] = useState(0);
+    // const [amountDue, setAmountDue] = useState(0);
     const [notes, setNotes] = useState("");
     const [total, setTotal] = useState(0);
 
@@ -474,35 +476,34 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
         let laborTotal = 0
 
         for(let i = 0; i < parts.length; i++){
-            partsTotal += parseInt(parts[i].partCost) * parseInt(parts[i].quantity);
+            partsTotal += parseInt(parts[i].cost) * parseInt(parts[i].quantity);
         }
 
         for (let i = 0; i < labor.length; i++){
             laborTotal += parseInt(labor[i].hours) * parseInt(labor[i].charge);
         }
+        setTotal(partsTotal + laborTotal)
     }, [parts, labor])
-
-    function computeTotal(){
-        let total = 0;
-        for(let i = 0; i < parts.length; i++){
-            if (parts[i].selected){
-                total += parts[i].partCost;
-            }
-        }
-        return total + amountDue;
-    }
 
     const handleSendInvoice = () => {
         console.log("handleSendInvoice")
         console.log("selectedImageList", selectedImageList)
-        console.log("amountDue", amountDue)
         console.log("parts", parts)
         console.log("total", total)
 
         const updateMaintenanceQuote = async () => {
+            var formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_services_expenses", JSON.stringify({
+                "parts": parts,
+                "labor": labor,
+            }));
+
+
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenance/${maintenanceItem.maintenance_request_uid}`, {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
                     method: 'PUT',
+                    body: formData,
                 })
             } catch (error){
                 console.log("error", error)
@@ -517,8 +518,7 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        
-                        "bill_description": "Maintenance Payment Test",
+                        "bill_description": "Invoice from " + maintenanceItem.business_name,
                         "bill_created_by": maintenanceItem.quote_business_id,
                         "bill_utility_type": "maintenance",
                         "bill_amount": total,
@@ -528,8 +528,7 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
                         }],
                         "bill_docs": [],
                         "bill_notes": notes,
-                        "bill_maintenance_quote_id": "900-000001"
-                        
+                        "bill_maintenance_quote_id": maintenanceItem.maintenance_quote_uid
                     })
                 });
 
@@ -537,7 +536,7 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
+                    navigate("/maintenanceMM")
                 } else{
                     console.log("error setting status")
                 }
@@ -545,11 +544,9 @@ export default function BusinessInvoiceForm({maintenanceQuote}){
                 console.log("error", error)
             }
         }
+        updateMaintenanceQuote()
+        createBill()
     }
-
-    // useEffect(() => {
-    //     setTotal(computeTotal());
-    // }, [amountDue, parts]);
 
     return (
         <div style={{
