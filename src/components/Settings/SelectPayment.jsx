@@ -59,7 +59,7 @@ export default function SelectPayment(props) {
   const navigate = useNavigate();
   let balance = location.state.total;
   let [paymentData, setPaymentData] = useState(location.state.paymentData);
-  console.log("business_code", paymentData.business_code);
+  console.log("business_code", paymentData.customer_uid);
   let [convenience_fee, set_convenience_fee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
   let totalBalance = balance + convenience_fee;
@@ -198,13 +198,13 @@ export default function SelectPayment(props) {
 
   const handleSubmit = async (e) => {
     console.log("selectedMethod", selectedMethod);
-    e.preventDefault();
+    // e.preventDefault();
     paymentData.payment_summary.total = parseFloat(totalBalance.toFixed(2));
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
     else if (selectedMethod === "Credit Card") {
       console.log("in else if");
-      toggleKeys();
+      // toggleKeys();
 
       setStripeDialogShow(true);
     }
@@ -214,8 +214,8 @@ export default function SelectPayment(props) {
     console.log("inside toggle keys");
     const url =
       paymentData.business_code === "PMTEST"
-        ? "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+        ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
     let response = await fetch(url);
     const responseData = await response.json();
     const stripePromise = loadStripe(responseData.publicKey);
@@ -408,8 +408,8 @@ export default function SelectPayment(props) {
           <StripePayment
             submit={submit}
             message={paymentData.business_code}
-            amount={paymentData.payment_summary.total}
-            paidBy={paymentData.customer_id}
+            amount={balance + convenience_fee}
+            paidBy={paymentData.customer_uid}
           />
         </Elements>
       </div>

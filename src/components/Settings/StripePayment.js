@@ -1,28 +1,35 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+
+import { Button, FormControl } from "@mui/material";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import {
   useElements,
   useStripe,
   CardElement,
   Elements,
 } from "@stripe/react-stripe-js";
+import theme from "../../theme/theme";
 import * as ReactBootStrap from "react-bootstrap";
 
 function StripePayment(props) {
+  console.log("in stripepayment page");
   const { message, amount, paidBy } = props;
+  console.log(paidBy);
   const [showSpinner, setShowSpinner] = useState(false);
   const elements = useElements();
   const stripe = useStripe();
 
   const submitPayment = async () => {
+    console.log("in submitpayment");
     setShowSpinner(true);
     const paymentData = {
       customer_uid: paidBy,
       business_code: message === "PMTEST" ? message : "PM",
       payment_summary: {
-        total: parseFloat(amount) + 0.03 * parseFloat(amount),
+        total: parseFloat(amount),
       },
     };
+    console.log(paymentData);
     const response = await fetch(
       "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent",
       {
@@ -31,6 +38,7 @@ function StripePayment(props) {
         body: JSON.stringify(paymentData),
       }
     );
+    console.log(response);
     const clientSecret = await response.json();
     // console.log(clientSecret);
     const cardElement = await elements.getElement(CardElement);
@@ -128,9 +136,18 @@ function StripePayment(props) {
           <Col></Col>
           <Col>
             <Button
-              variant="outline-primary"
-              //onClick={submitForm}
+              variant="contained"
               onClick={submitPayment}
+              sx={{
+                background: "#3D5CAC",
+                color: theme.palette.background.default,
+                width: `50%`,
+                height: `20%`,
+                left: `14px`,
+                top: `4px`,
+                borderRadius: "10px 10px 10px 10px",
+                margin: "5% 50% 30% 5%",
+              }}
             >
               Pay Now
             </Button>
