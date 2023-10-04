@@ -83,7 +83,7 @@ export function Footer() {
               justifyContent: 'center',
               width: '100%',
               backgroundColor: theme.palette.priority.clear,
-              marginTop: '55px',
+              marginTop: '20px',
               height: '40px',
             }}
           >

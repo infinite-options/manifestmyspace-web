@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, Button, Box, Stack } from "@mui/material";
-import theme from "../../theme/theme";
-import maintenanceRequestImage from "./maintenanceRequest.png";
+import theme from "../../../theme/theme";
+import maintenanceRequestImage from "../maintenanceRequest.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MobileStepper from "@mui/material/MobileStepper";
@@ -10,15 +10,31 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 
-function getInitialImages(requestData, currentIndex) {
-  if (requestData[currentIndex].maintenance_images != "[]") {
-    // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
-    return JSON.parse(requestData[currentIndex].maintenance_images);
-  }
+async function getInitialImages(requestData, currentIndex) {
+  // if (requestData[currentIndex].maintenance_images != "[]") {
+  //   // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
+  //   return JSON.parse(requestData[currentIndex].maintenance_images);
+  // }
+
+  // call api to get images
+
+  // var images = []
+
+  // try {
+  //   const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests/${requestData[currentIndex].quote_maintenance_request_id}`);
+  //   const jsonData = await response.json();
+  //   console.log("jsonData", jsonData);
+  //   if (jsonData.result[0].quote_images !== "[]") {
+  //     return JSON.parse(jsonData.result[0].quote_images);
+  //   }
+  // } catch (error) {
+  //   console.log("error", error);
+  // }
+
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator({ requestIndex, updateRequestIndex, requestData, color, item, allData }) {
+export default function MaintenanceRequestNavigator01({ requestIndex, updateRequestIndex, requestData, color, item, allData }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -28,18 +44,23 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   const navigate = useNavigate();
 
   useEffect(() => {
-    const initialImages = getInitialImages(requestData, currentIndex);
-    setImages(initialImages);
-    setActiveStep(0);
-  }, [currentIndex]);
+    const fetchImages = async () => {
+        const initialImages = await getInitialImages(requestData, currentIndex);
+        setImages(initialImages);
+        setActiveStep(0);
+    };
+    
+    fetchImages();
+}, [currentIndex]);
 
-  console.log("-- DEBUG -- RequestNavigator");
-  console.log("requestIndex", requestIndex);
-  console.log("requestData", requestData);
-  console.log("currentIndex", currentIndex);
-  console.log("color", color);
-  console.log("item", item);
-  console.log("allData", allData);
+
+  // console.log("RequestNavigator");
+  // console.log("requestIndex", requestIndex);
+  // console.log("requestData", requestData);
+  // console.log("currentIndex", currentIndex);
+  // console.log("color", color);
+  // console.log("item", item);
+  // console.log("allData", allData);
 
   const maxSteps = images.length;
 
@@ -67,14 +88,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
           updateRequestIndex(newIndex)
           return newIndex;
       });
-    //   navigate(`/maintenance/detail`, {
-    //     state: {
-    //         maintenance_request_index,
-    //         status,
-    //         maintenanceItemsForStatus,
-    //         allMaintenanceData,
-    //     }
-    // })
   };
 
   const handlePreviousCard = () => {
@@ -146,13 +159,15 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   }
 
   const data = requestData[currentIndex];
-  console.log("--DEBUG requestData--")
-  console.log("requestData", requestData)
-  console.log("currentIndex", currentIndex)
-  console.log("data", data)
 
-  useEffect(() => {
-    formatDate(data.maintenance_request_created_date);
+  
+  // console.log("requestData", requestData)
+  // console.log("data", data)
+
+   useEffect(() => {
+    if(data){
+      formatDate(data.maintenance_request_created_date);
+    }
   }, [data]);
 
   return (
@@ -182,7 +197,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
             justifyContent="center"
             alignItems="center"
             // width= "100%" // Take up full screen width
-            spacing={2}
+            spacing={1}
           >
             <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
               {item.status}
@@ -194,6 +209,13 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
           <Button onClick={handleNextCard} disabled={requestData.length <= 1}>
             <ArrowForwardIcon />
           </Button>
+        </Stack>
+        <Stack
+         justifyContent="center"
+         alignItems="center">
+        <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+              { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"}
+        </Typography>
         </Stack>
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card
@@ -302,28 +324,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-              {data?.maintenance_priority} Priority
-             </Typography>
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
-                  }} underline="always"
-                >
-                    {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
-            </Typography>
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
-                  }}
-                >
-     { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
-            
+                  {data?.maintenance_title} - {data?.maintenance_request_uid}
                 </Typography>
                 <Typography
                   sx={{
@@ -333,7 +334,18 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
+                  {data?.maintenance_priority} Priority
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                  underline="always"
+                >
+                {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
                 </Typography>
                 <Typography
                   sx={{
@@ -344,20 +356,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   }}
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
-                </Typography>
-                  {/* {data.maintenance} */}
-                <Typography
-                  sx={{
-                    overflowWrap: "break-word",
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {console.log("---DEBUG---")}
-                  {console.log(data)}
-                  {console.log(data.maintenance_request_status)}
-                  {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
+                  {/* Reported: {data?.maintenance_request_created_date} | Open : Days */}
                 </Typography>
                 <Typography
                   sx={{
@@ -367,7 +366,30 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  Issue Description: {data?.maintenance_desc}
+                  Issue Notes: {data!==undefined ? (data.maintenance_desc===null ? "None" : data.maintenance_desc) : ""}
+                  {/* Estimated Cost: */}
+                   {/* {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"} */}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                Manager Notes:  {data!==undefined ? (data.quote_pm_notes===null ? "None" : data.quote_pm_notes) : "None"}
+                </Typography>
+                {/* {data.maintenance} */}
+                <Typography
+                  sx={{
+                    overflowWrap: "break-word",
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {/* {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null} */}
                 </Typography>
               </div>
             </CardContent>

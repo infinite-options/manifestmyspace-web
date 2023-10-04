@@ -18,11 +18,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import theme from '../../theme/theme';
+import theme from '../../../theme/theme';
 
 
 
-export default function MaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
+export default function MaintenanceStatusTable01({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
     const location = useLocation();
     let navigate = useNavigate();
 
@@ -49,7 +49,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
         console.log("allMaintenanceData", allMaintenanceData)
 
-        navigate(`/maintenance/detail`, {
+        navigate(`/maintenanceMM/detail`, {
             state: {
                 maintenance_request_index,
                 status,
@@ -131,8 +131,8 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
-                                        {item.maintenance_request_uid.substr(item.maintenance_request_uid.length - 3)}
-                                        </Typography>
+                                   {item.maintenance_request_uid.substr(item.maintenance_request_uid.length - 3)}
+                                    </Typography>
                                     </TableCell>
                                     {/* <Divider orientation="vertical" color="white"/> */}
                                     <TableCell align="right" sx={{width: "250px"}}>

@@ -97,10 +97,18 @@ import OnboardingRouter from "./Onboarding/OnboardingRouter";
 import ContactInfo from "./Onboarding/ContactInfo";
 
 import SelectRole from "./Onboarding/SelectRole";
+
+import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
+import BusinessInvoiceForm from "./Maintenance/Business/BusinessInvoiceForm";
+
+import Maintenance01 from "./Maintenance/Maintainance01/Maintainance01";
+import MaintenanceRequestDetail01 from "./Maintenance/Maintainance01/MaintenanceRequestDetail01";
+
 import ProfileName from "./Onboarding/ProfileName";
 import ProfileInfo from "./Onboarding/ProfileInfo";
 import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
+
 
 function Main() {
   return (
@@ -213,6 +221,12 @@ function Main() {
             <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
+            <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
+            <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
+            <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
+            <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
+            <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>

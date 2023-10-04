@@ -1,3 +1,4 @@
+
 import { 
     ThemeProvider, 
     Typography,
@@ -21,40 +22,43 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import QuoteDetailInfo from "./QuoteDetailInfo";
 
-
-
-export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
-    
-    const location = useLocation();
+export default function QuotesAccepted01({maintenanceItem}){
     const navigate = useNavigate();
 
-    function handleNavigate(){
-        console.log("navigate to Rescheduling Maintenance")
-        console.log("navigateParams to /scheduleMaintenance", navigateParams)
-        navigate("/scheduleMaintenance", {
+    console.log("QuotesAccepted maintenanceItem", maintenanceItem)
+
+
+    function handleNavigateToQuotesRequested(){
+
+        console.log("NewRequestAction", maintenanceItem)
+        navigate("/quoterequest", {
             state:{
-                maintenanceItem,
-                navigateParams
+                maintenanceItem
             }
-        })
+        });
     }
 
-    async function handleCancel(id){
+    async function handleCancel(id){ // Change
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            navigate('/maintenanceMM')
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
         }
     }
 
-    const handleSubmit = () => {
-        console.log("handleSubmit")
+    async function handleScheduleChange(id){
+
+        console.log("handleScheduleChange", id)
+
         const changeMaintenanceRequestStatus = async () => {
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
@@ -64,7 +68,10 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                     },
                     body: JSON.stringify({
                         "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "COMPLETED"
+                        "maintenance_request_status": "SCHEDULED",
+                        "maintenance_scheduled_date": "10/30/2023",
+                        "maintenance_scheduled_time": "10:00:00"
+
                     })
                 });
 
@@ -72,7 +79,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
+                    changeQuoteStatus()
                 } else{
                     console.log("error setting status")
                 }
@@ -80,33 +87,29 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                 console.log("error", error)
             }
         }
-        const changeMaintenanceQuoteStatus = async () => {
 
-            const formData = new FormData();
-            formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
-            formData.append("quote_maintenance_request_id", maintenanceItem.quote_maintenance_request_id)
-            formData.append("quote_status", "FINISHED")
-            
+        const changeQuoteStatus = async () => {
+
+            var formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_status", "SCHEDULED");
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
                     method: 'PUT',
                     body: formData
                 });
-
                 const responseData = await response.json();
-                console.log(responseData);
-                if (response.status === 200) {
-                    console.log("success")
-                    changeMaintenanceRequestStatus()
-                    navigate("/maintenance"); 
-                } else{
-                    console.log("error setting status")
+                console.log(responseData)
+                if (responseData.code === 200){
+                    console.log("Ticket Status Changed")
+                    alert("Ticket Status Changed to SCHEDULED")
+                    navigate('/maintenanceMM')
                 }
-            } catch (error){
+            } catch(error){
                 console.log("error", error)
             }
         }
-        changeMaintenanceQuoteStatus()
+        changeMaintenanceRequestStatus()
     }
 
     async function handleComplete(id){
@@ -122,6 +125,30 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
         }
     }
 
+    async function handleScheduleStatusChange(){
+        try {
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                    "maintenance_request_status": "SCHEDULED"
+                })
+            });
+            const responseData = await response.json();
+            console.log(responseData)
+            if (responseData.code === 200){
+                console.log("Ticket Status Changed")
+                alert("Ticket Status Changed")
+                navigate('/maintenance')
+            }
+        } catch (error){
+            console.log("error", error)
+        }
+    }
+
     return(
         <Box 
             sx={{
@@ -132,7 +159,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                 width: "100%",
             }}
         >
-            <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
+              <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <Grid item xs={1} sx={{
                         alignItems: "center",
                         justifyContent: "left",
@@ -140,7 +167,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                     }}>
                     <Button sx={{
                         maxWidth: "10px",
-                        paddingRight: "0px",
+                        paddingRight: "20px",
                         paddingLeft: "0px",
                         }}
                         onClick={() => console.log("Chat Button")}
@@ -150,9 +177,11 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                         }}/>
                     </Button>
                 </Grid>
-                <Grid item xs={5} sx={{
+                
+                <Grid item xs={11} sx={{
                         alignItems: "center",
                         justifyContent: "center",
+                        paddingLeft: "40px",
                     }}>
                     <Button
                         variant="contained"
@@ -160,35 +189,15 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
-                            paddingRight: "0px",
+                            paddingRight: "10px",
                             borderRadius: "10px",
+                            paddingLeft: "30px",
                             display: 'flex',
                             width: "100%",
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - Kim Gordon
-                        </Typography>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - Steve Albini
+                            Manager -  Steve Albini
                         </Typography>
                     </Button>
                 </Grid>
@@ -196,24 +205,51 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    <Button
+                    <Box
                         variant="contained"
                         disableElevation
                         sx={{
-                            backgroundColor: "#97A7CF",
+                            flexDirection: "column",
+                            backgroundColor: "#D6D5DA",
                             textTransform: "none",
-                            paddingRight: "0px",
+                            paddingRight: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
                             borderRadius: "10px",
+                            paddingLeft: "10px",
                             display: 'flex',
-                            width: "100%",
+                            width: "95%",
                         }}
-                        onClick={() => handleNavigate()}
                     >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Reschedule Maintenance
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        Notes
+                    </Typography>
+                    <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            {maintenanceItem?.quote_notes}
                         </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
+                    </Box>
                 </Grid>
                 <Grid item xs={6} sx={{
                     alignItems: "center",
@@ -230,17 +266,16 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                             width: "100%",
                         }}
                         onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
-                    >
+                    >   
                         <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Cancel Ticket
+                           Withdraw Quote
                         </Typography>
                     </Button>
-                </Grid>
+                </Grid> 
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
-
                 }}>
                     <Button
                         variant="contained"
@@ -250,16 +285,19 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                             textTransform: "none",
                             borderRadius: "10px",
                             display: 'flex',
-                            width: "100%"
+                            width: "100%",
                         }}
-                        onClick={() => handleSubmit()}
-                    >
-                        <CheckIcon sx={{color: "#3D5CAC"}}/>
+                        onClick={() => handleScheduleChange(maintenanceItem.maintenance_request_uid)}
+                    >   
+                        <CalendarTodayIcon sx={{
+                            color: "#3D5CAC",
+                            paddingRight: "10%"
+                        }}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Complete Ticket
+                            Schedule
                         </Typography>
                     </Button>
-                </Grid>
+                </Grid> 
             </Grid>
         </Box>
     )

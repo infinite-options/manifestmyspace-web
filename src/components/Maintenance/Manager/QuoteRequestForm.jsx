@@ -24,6 +24,7 @@ import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import dataURItoBlob from "../../utils/dataURItoBlob";
+import userIcon from "./User_fill.png"
 
 export default function QuoteRequestForm(){
 
@@ -102,12 +103,12 @@ export default function QuoteRequestForm(){
             const formData = new FormData();
 
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid)
-            formData.append("quote_notes", additionalInfo)
+            formData.append("quote_pm_notes", additionalInfo)
 
             if (selectedImageList.length > 0){
                 for (let i = 0; i < selectedImageList.length; i++){
                     const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-                    console.log(imageBlob)
+                    // console.log(imageBlob)
                     formData.append(`img_${i}`, imageBlob)
                 }
             }
@@ -115,9 +116,11 @@ export default function QuoteRequestForm(){
             // also make a put request to the maintenanceRequest endpoint to update the images there
 
             let maintenanceContactIds = []
+            // console.log("maintenanceContactIds", maintenanceContactIds)
             if (maintenanceContacts.length > 0){
                 for(let i = 0; i < maintenanceContacts.length; i++){
-                    maintenanceContactIds.append(maintenanceContacts[i].maintenance_contact_uid)
+                    console.log("maintenanceContacts[i].maintenance_contact_uid", maintenanceContacts[i].business_uid)
+                    maintenanceContactIds.push(maintenanceContacts[i].business_uid)
                }
                formData.append("quote_maintenance_contacts", maintenanceContactIds)
             }
@@ -136,6 +139,7 @@ export default function QuoteRequestForm(){
                 });
 
                 const responseData = await response.json();
+                console.log("responseData", responseData)
         
                 if (response.status === 200) {
                     console.log("success");
@@ -177,7 +181,7 @@ export default function QuoteRequestForm(){
 
     const handleMaintenanceChange = (event) => {
         console.log("handleStateChange", event.target.value)
-        setMaintenanceContacts(event.target.value)
+        setMaintenanceContacts(prevContacts => [...prevContacts, event.target.value]);
     }
 
     function numImages(){
@@ -189,8 +193,9 @@ export default function QuoteRequestForm(){
     }
 
     function displayContactList(){
-        console.log("displayContactList")
-        console.log("contactList length", contactList.length)
+        // console.log("displayContactList")
+        // console.log("contactList length", contactList.length)
+        // console.log("contactList", contactList)
         if(contactList.length > 0){
             return (contactList.map((contact, index) => (
                 <MenuItem key={index} value={contact}> {contact.business_name} </MenuItem>
@@ -380,9 +385,12 @@ export default function QuoteRequestForm(){
                     >
                         <Grid item xs={12}>
                             <img 
-                                src="src/components/Maintenance/Manager/User_fill.png" 
+                                src={userIcon}
                                 alt="User Icon" 
-                                style={{ marginRight: '8px' }}  // Adds some spacing between the image and the text
+                                style={{ 
+                                    marginRight: '8px',
+                                    width: "20px",
+                                    height: "20px" }}
                             />
                             <Typography component="span" sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                 View All Maintenance Contacts
@@ -394,18 +402,24 @@ export default function QuoteRequestForm(){
                                     Loading Contacts
                                 </Typography>
                             ) : (
-                                <Select 
-                                    sx={{
-                                        backgroundColor: 'white',
-                                        borderColor: 'black',
-                                        borderRadius: '7px',
-                                    }}
-                                    size="small"
-                                    fullWidth
-                                    onChange={e => handleMaintenanceChange(e)} 
-                                >
-                                    {displayContactList()}
-                                </Select>
+                                <>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Contacts
+                                    </Typography>
+                                    <Select 
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderColor: 'black',
+                                            borderRadius: '7px',
+                                        }}
+                                        size="small"
+                                        fullWidth
+                                        onChange={e => handleMaintenanceChange(e)}
+                                        // renderValue={(selected) => selected.join(', ')}
+                                    >
+                                        {displayContactList()}
+                                    </Select>
+                                </>
                             )}
 
                         </Grid>

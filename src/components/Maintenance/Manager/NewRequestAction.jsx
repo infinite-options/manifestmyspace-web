@@ -21,11 +21,14 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import RequestMoreInfo from "../Maintainance01/RequestMoreInfo";
 
 
 
 export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
+
+    const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
@@ -139,6 +142,35 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         </Typography>
                     </Button>
                 </Grid>
+                <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
+                    <Grid item xs={12} sx={{
+                            alignItems: "center",
+                            justifyContent: "left",
+                            
+                        }}>
+                            <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRight:"10%",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%",
+                        }} 
+                        onClick={() => setShowRequestMoreInfo(true)}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Request More Info
+                        </Typography>
+                    </Button>
+                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
+                           
+                    </Grid>
+                </Grid>
+           
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
