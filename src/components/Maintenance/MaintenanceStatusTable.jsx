@@ -131,7 +131,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                                         <Typography 
                                             sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
                                         >
-                                        {item.maintenance_request_uid}
+                                        {item.maintenance_request_uid.substr(item.maintenance_request_uid.length - 3)}
                                         </Typography>
                                     </TableCell>
                                     {/* <Divider orientation="vertical" color="white"/> */}

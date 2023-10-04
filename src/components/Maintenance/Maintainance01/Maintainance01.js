@@ -10,14 +10,11 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import AddIcon from '@mui/icons-material/Add';
 import SelectMonthComponent from '../../SelectMonthComponent';
 import SelectPropertyFilter from '../../SelectPropertyFilter/SelectPropertyFilter';
-import CloseIcon from '@mui/icons-material/Close';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
-import HomeFill from "../../../images/Home_fill.png";
-import ViewAll from "../../../images/View_all.png";
+import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilter";
 
 export default function Maintenance01(){
 
@@ -27,25 +24,25 @@ export default function Maintenance01(){
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusMM
-
     const [showSelectMonth, setShowSelectMonth] = useState(false);
+
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
+    const [showPriorityFilter, setShowPriorityFilter] = useState(false);
+
     const [month, setMonth] = useState(null);
     const [year, setYear] = useState(null);
 
     const [filterPropertyList, setFilterPropertyList] = useState([]);
-
-
-    function navigateToAddMaintenanceItem(){
-        // console.log("navigateToAddMaintenanceItem")
-        navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
-    }
+    const [filterPriorityList, setFilterPriorityList] = useState([]);
 
     useEffect(() => {
         if (maintenanceData){
             console.log("maintenanceData", maintenanceData)
+
             const propertyList = [];
+            const priorityList = [];
             const addedAddresses = [];
+
             for (const key in maintenanceData){
                 for (const item of maintenanceData[key]){
                     if (!addedAddresses.includes(item.property_address)){
@@ -59,6 +56,13 @@ export default function Maintenance01(){
                     }
                 }
             }
+            
+            priorityList.push({"priority":"High","checked": true});
+            priorityList.push({"priority":"Medium","checked": true});
+            priorityList.push({"priority":"Low","checked": true});
+            priorityList.push({"priority":"","checked": true});
+
+            setFilterPriorityList(priorityList);
             
             console.log("filterPropertyList", propertyList)
             setFilterPropertyList(propertyList);
@@ -84,7 +88,7 @@ export default function Maintenance01(){
         return `${year}-${months[monthName]}`;
     }
 
-    function handleFilter(maintenanceArray, month, year, filterPropertyList){
+    function handleFilter(maintenanceArray, month, year, filterPropertyList, filterPriorityList){
         var filteredArray = [];
 
         // Filtering by date
@@ -98,6 +102,18 @@ export default function Maintenance01(){
         } else {
             filteredArray = maintenanceArray;
         }
+                // Filtering by priority
+                if (filterPriorityList?.length > 0){
+                    //filteredArray = filteredArray.filter(item => filterPropertyList.includes(item.property_address));
+                    filteredArray = filteredArray.filter(item => {
+                        for (const filterItem of filterPriorityList){
+                            if (filterItem.priority === item.maintenance_priority && filterItem.checked){
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                }        
     
         // Filtering by property
         if (filterPropertyList?.length > 0){
@@ -125,25 +141,23 @@ export default function Maintenance01(){
     }
 
     function displayPriorityFilterTitle(filterPropertyList){
+        return "priority"
+    }
+
+    function displayPropertyFilterTitle(filterPropertyList){
         var count = 0;
         for (const item of filterPropertyList){
             if(item.checked){
                 count++;
             }
         }
-        return "priority"
-        // if(count === filterPropertyList.length){
-            
-        // } else{
-        //     return "Selected " + count + " Properties"
-        // }
+        if(count === filterPropertyList.length){
+            return "All Properties"
+        } else{
+            return "Selected " + count + " Properties"
+        }
     }
 
-    function clearFilters(){
-        setMonth(null);
-        setYear(null);
-        setFilterPropertyList([]);
-    }
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
@@ -160,12 +174,6 @@ export default function Maintenance01(){
             let array5 = maintenanceRequestsData1.result.FINISHED.maintenance_items;
             let array6 = maintenanceRequestsData1.result.PAID.maintenance_items;
            
-            // console.log("len 1 "+array1.length)
-            // console.log("len 2 "+array2.length)
-            // console.log("len 3 "+array3.length)
-            // console.log("len 4 "+array4.length)
-            // console.log("len 5 "+array5.length)
-            // console.log("len 6 "+array6.length)
 
             dataObject["REQUESTED"] = [];
             dataObject["SUBMITTED"] = [];
@@ -174,15 +182,7 @@ export default function Maintenance01(){
             dataObject["FINISHED"] = [];
             dataObject["PAID"] = [];
 
-            // dataObject["REQUESTED"].push(array1);
-            // dataObject["SUBMITTED"].push(array2);
-            // dataObject["ACCEPTED"].push(array3);
-            // dataObject["SCHEDULED"].push(array4);
-            // dataObject["FINISHED"].push(array5);
-            // dataObject["PAID"].push(array6);
-
             for (const item of array1) {
-                // console.log(item.maintenance_request_uid)
                 dataObject["REQUESTED"].push(item);
             }
             for (const item of array2) {
@@ -256,11 +256,7 @@ export default function Maintenance01(){
                                 Maintenance
                             </Typography>
                         </Box>
-                        {/* <Box position="absolute" right={0}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
-                                <AddIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/>
-                            </Button>
-                        </Box> */}
+                       
                     </Stack>
                         <Box
                             component="span"
@@ -277,30 +273,27 @@ export default function Maintenance01(){
                                     {displayFilterString(month, year)}
                                 </Typography>
                             </Button>
-                            <Box
-                            component="span"
-                            m={2}
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            >
-                            <img src={ViewAll}/>
-                            <Typography 
-                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
-                                >
-                            View All</Typography>
-                            </Box>
+                          
                             <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
                                 <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                                 <Typography 
                                     sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                                 >
-                                    {displayPriorityFilterTitle(filterPropertyList)}
+                                             {displayPropertyFilterTitle(filterPropertyList)}
+                                </Typography>
+                            </Button>
+                            <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPriorityFilter(true)}>
+                                <Typography 
+                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                                >
+                                    {displayPriorityFilterTitle(filterPriorityList)}
                                 </Typography>
                             </Button>
                         
                             <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
                             <SelectPropertyFilter showPropertyFilter={showPropertyFilter} setShowPropertyFilter={setShowPropertyFilter} filterList={filterPropertyList} setFilterList={setFilterPropertyList}/>
+                            <SelectPriorityFilter showPriorityFilter={showPriorityFilter} setShowPriorityFilter={setShowPriorityFilter} filterList={filterPriorityList} setFilterList={setFilterPriorityList}/>
+       
                         </Box>
                         <Box
                             component="span"
@@ -346,7 +339,7 @@ export default function Maintenance01(){
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
                           
-                            let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
+                            let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList, filterPriorityList)
   
                             return (
                                 <MaintenanceStatusTable01
