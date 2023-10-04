@@ -302,8 +302,18 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_title} - {data?.maintenance_request_uid}
-                </Typography>
+              {data?.maintenance_priority} Priority
+             </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }} underline="always"
+                >
+                    {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
+            </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -312,18 +322,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_priority} Priority
-                </Typography>
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
-                  }}
-                  underline="always"
-                >
-                  {data?.property_address}
+     { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+            
                 </Typography>
                 <Typography
                   sx={{
@@ -358,6 +358,16 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   {console.log(data)}
                   {console.log(data.maintenance_request_status)}
                   {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                  Issue Description: {data?.maintenance_desc}
                 </Typography>
               </div>
             </CardContent>

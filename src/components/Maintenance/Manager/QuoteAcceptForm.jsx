@@ -408,6 +408,8 @@ export default function QuoteAcceptForm(){
                             </Button>
                         </Grid>
                     </Grid>
+                    {(currentQuote?.quote_status!=="REJECTED" && currentQuote?.quote_status!=="REFUSED")?(
+    
                     <Grid container spacing={3}
                         alignContent="center"
                         justifyContent="center"
@@ -517,6 +519,7 @@ export default function QuoteAcceptForm(){
                             </Button>
                         </Grid>
                     </Grid>
+                       ):(<div></div>)}
                 </Stack>
             </Paper>
         </Box>
