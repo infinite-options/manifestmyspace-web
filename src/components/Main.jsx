@@ -98,13 +98,6 @@ import ContactInfo from "./Onboarding/ContactInfo";
 
 import SelectRole from "./Onboarding/SelectRole";
 
-import PMProfileDisplay from "./Onboarding/PMProfileDisplay";
-import PMProfilePayment from "./Onboarding/PMProfilePayment";
-import PMProfileName from "./Onboarding/PMProfileName";
-
-import POProfileDisplay from "./Onboarding/POProfileDisplay";
-import POProfilePayment from "./Onboarding/POProfilePayment";
-import POProfileName from "./Onboarding/POProfileName";
 import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
 import BusinessInvoiceForm from "./Maintenance/Business/BusinessInvoiceForm";
 
