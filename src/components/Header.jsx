@@ -3,57 +3,18 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import { useUser } from '../contexts/UserContext';
+import { roleMap } from './Onboarding/helper'; 
 
 function Header() {
     const { user, selectedRole, setSelectedRole } = useUser();
     const userRoles = user?user.role.split(","):[];
     
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //   // Perform the initial navigation when the component mounts
-    //     switch (user.selectedRole) {
-    //       case 'Owner':
-    //         navigate('/ownerDashboard');
-    //         break;
-    //       case 'Manager':
-    //         navigate('/managerDashboard');
-    //         break;
-    //       case 'Tenant':
-    //         navigate('/tenantDashboard');
-    //         break;
-    //       case 'Maintenance':
-    //         navigate('/ownerDashboard');
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    // }, [user.selectedRole]);
   
     const handleButtonClick = (role) => {
-      
-      switch (role) {
-        case 'Owner':
-          navigate('/ownerDashboard');
-          break;
-        case 'Manager':
-          navigate('/managerDashboard');
-          break;
-        case 'Tenant':
-          navigate('/tenantDashboard');
-          break;
-        case 'Maintenance':
-          navigate('/ownerDashboard');
-          break;
-        default:
-          break;
-      }
-      // Update the user state with the selected role
-      // setUser((prevUser) => ({
-      //   ...prevUser,
-      //   selectedRole: role,
-      // }));
       setSelectedRole(role);
+      const { dashboardUrl } = roleMap[role];
+      navigate(dashboardUrl);
     };
   
   
