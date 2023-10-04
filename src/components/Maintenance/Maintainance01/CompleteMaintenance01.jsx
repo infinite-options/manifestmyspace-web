@@ -23,6 +23,7 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import { AttachMoney } from "@mui/icons-material";
 import { set } from "date-fns";
+import QuoteDetailInfo from "./QuoteDetailInfo";
 
 
 export default function CompleteMaintenance01({maintenanceItem}){
@@ -194,25 +195,16 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "95%",
                         }}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Cost: ${maintenanceItem?.quote_total_estimate}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Parts Cost: ${estimatedPartsCost}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: {maintenanceItem?.quote_event_type}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: {maintenanceItem?.quote_earliest_availability}
-                        </Typography>      
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                    
                     </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                    Notes
+                </Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -229,48 +221,26 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem?.quote_notes}
+                            {maintenanceItem?.quote_notes}
                         </Typography>
                        </Box>
                 </Grid>
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Invoice</Typography>
-                
-                    <Box
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            flexDirection: "column",
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "10px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                            display: 'flex',
-                            width: "95%",
-                        }}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Total Amount Due:  {maintenanceItem.bill_amount}
+                {maintenanceItem.bill_uid !== null ? (
+                    <Grid item xs={12} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                            Payment Requested On:
                         </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Pay by: {displayDueDate(maintenanceItem.quote_earliest_availability)}
+                    </Grid>
+                ) : (
+                    <Grid item xs={12}>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                            No Invoice
                         </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Payment Method: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        View Documents: {maintenanceItem.bill_docs === null || maintenanceItem.bill_docs === "[]" ? "No Documents" : maintenanceItem.bill_docs}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Bill Notes: {maintenanceItem.bill_notes}
-                        </Typography>     
-                    </Box>
-                </Grid>
+                    </Grid>
+                )}
                 
                 <Grid item xs={6} sx={{
                     alignItems: "center",
@@ -293,29 +263,54 @@ export default function CompleteMaintenance01({maintenanceItem}){
                            Mark Paid
                         </Typography>
                     </Button>
-                </Grid> 
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleNavigateToInvoice()}
-                    >   
-                       <AttachMoney sx={{color: "#3D5CAC"}}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Create Invoice
-                        </Typography>
-                    </Button>
-                </Grid> 
+                </Grid>
+                {maintenanceItem.bill_uid === null ? (
+                    <Grid item xs={6} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            sx={{
+                                backgroundColor: "#FFFFFF",
+                                textTransform: "none",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => handleNavigateToInvoice()}
+                        >   
+                            <AttachMoney sx={{color: "#3D5CAC"}}/>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                Create Invoice
+                            </Typography>
+                        </Button>
+                    </Grid> 
+                ) : (
+                    <Grid item xs={6} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            sx={{
+                                backgroundColor: "#FFFFFF",
+                                textTransform: "none",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => console.log("Edit Invoice")}
+                        >   
+                           <AttachMoney sx={{color: "#3D5CAC"}}/>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                Edit Invoice
+                            </Typography>
+                        </Button>
+                    </Grid> 
+                )}
             </Grid>
         </Box>
     )

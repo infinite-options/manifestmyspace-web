@@ -22,7 +22,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import CalendarToday from "@mui/icons-material/CalendarToday";
-
+import QuoteDetailInfo from "./QuoteDetailInfo";
 
 
 export default function ScheduleMaintenance01({maintenanceItem}){
@@ -169,19 +169,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Cost: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Parts Cost :
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: 
-                        </Typography>   
-                                           
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
                     </Box>
                     
                 </Grid>
@@ -189,7 +177,9 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        Notes
+                    </Typography>
                     <Box
                         variant="contained"
                         disableElevation

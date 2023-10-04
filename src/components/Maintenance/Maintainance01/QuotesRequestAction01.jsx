@@ -22,46 +22,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import QuoteDetailInfo from "./QuoteDetailInfo";
 
 
 export default function QuotesSubmittedAction01({maintenanceItem}){
     
     const navigate = useNavigate();
 
-    const [estimatedCost, setEstimatedCost] = useState(0);
-    const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
-    const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
-    const [estimatedTime, setEstimatedTime] = useState("");
-    const [earliestAvailability, setEarliestAvailability] = useState("");
-
-    useEffect(() => {
-        console.log("QuotesSubmittedAction01", maintenanceItem)
-
-        // console.log("expenses", maintenanceItem.quote_services_expenses)
-        //console.log("quote_event_type", maintenanceItem.quote_event_type)
-
-        const parseServicesExpenses = (expenses) => {
-            let servicesObject = JSON.parse(expenses)
-            console.log(servicesObject)
-            var partsCost = 0
-            for (const item in servicesObject?.parts){
-                partsCost += parseInt(servicesObject.parts[item].cost)
-            }
-
-            setEstimatedLaborCost(servicesObject?.total_estimate)
-            setEstimatedPartsCost(partsCost)
-
-            setEstimatedCost(servicesObject?.total_estimate + partsCost)
-        }
-        try{
-            parseServicesExpenses(maintenanceItem?.quote_services_expenses)
-            setEstimatedTime(maintenanceItem.quote_event_type)
-            setEarliestAvailability(maintenanceItem.quote_earliest_availability)
-        } catch (error){
-            console.log("error", error)
-        }
-
-    }, [maintenanceItem])
 
     function handleNavigateToQuotesRequested(){
 
@@ -155,6 +122,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
+                    {maintenanceItem.quote_status !== "REFUSED" ? (
                     <Box
                         variant="contained"
                         disableElevation
@@ -171,31 +139,20 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                        Estimated Total: ${estimatedCost}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Labor Cost: ${estimatedLaborCost}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Parts Cost: ${estimatedPartsCost}
-                        </Typography>
-
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Estimated Time: {estimatedTime}
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Earliest Availability: {earliestAvailability}
-                        </Typography>   
-                                           
-                    </Box>
-                    
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
+                    </Box>) : (
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
+                            Quote Refused
+                        </Typography>  
+                    )}
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>Notes</Typography>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        Notes
+                    </Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -212,9 +169,9 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem?.quote_notes}
+                            {maintenanceItem?.quote_notes}
                         </Typography>
-                       </Box>
+                    </Box>
                 </Grid>
             </Grid>
         </Box>

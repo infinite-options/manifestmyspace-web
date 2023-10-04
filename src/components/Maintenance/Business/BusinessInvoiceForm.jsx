@@ -40,8 +40,6 @@ function LaborTable({labor, setLabor}){
     const [laborHours, setLaborHours] = useState("1");
     const [laborCharge, setLaborCharge] = useState("0");
 
-    
-
     function addRow(){
         console.log("addRows")
         let newRow = {
