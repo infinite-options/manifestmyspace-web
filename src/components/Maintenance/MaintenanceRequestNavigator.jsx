@@ -33,13 +33,13 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
     setActiveStep(0);
   }, [currentIndex]);
 
-  // console.log("RequestNavigator");
-  // console.log("requestIndex", requestIndex);
-  // console.log("requestData", requestData);
-  // console.log("currentIndex", currentIndex);
-  // console.log("color", color);
-  // console.log("item", item);
-  // console.log("allData", allData);
+  console.log("-- DEBUG -- RequestNavigator");
+  console.log("requestIndex", requestIndex);
+  console.log("requestData", requestData);
+  console.log("currentIndex", currentIndex);
+  console.log("color", color);
+  console.log("item", item);
+  console.log("allData", allData);
 
   const maxSteps = images.length;
 
@@ -146,8 +146,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   }
 
   const data = requestData[currentIndex];
-  // console.log("requestData", requestData)
-  // console.log("data", data)
+  console.log("--DEBUG requestData--")
+  console.log("requestData", requestData)
+  console.log("currentIndex", currentIndex)
+  console.log("data", data)
 
   useEffect(() => {
     formatDate(data.maintenance_request_created_date);
@@ -352,6 +354,9 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
+                  {console.log("---DEBUG---")}
+                  {console.log(data)}
+                  {console.log(data.maintenance_request_status)}
                   {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
                 </Typography>
               </div>

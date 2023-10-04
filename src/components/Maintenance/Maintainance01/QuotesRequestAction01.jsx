@@ -122,7 +122,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    {maintenanceItem.quote_status !== "REFUSED" ? (
+                    {maintenanceItem?.quote_status !== "REFUSED" ? (
                     <Box
                         variant="contained"
                         disableElevation

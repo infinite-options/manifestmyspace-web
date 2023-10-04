@@ -129,7 +129,7 @@ export default function MaintenanceRequestDetail(){
 
     console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
-
+    console.log("above useEffect MaintenanceRequestDetail")
     useEffect(() => {
         console.log("useEffect")
         console.log("status value", status)
@@ -140,6 +140,8 @@ export default function MaintenanceRequestDetail(){
             }
         })
     }, [status])
+    console.log("below useEffect MaintenanceRequestDetail")
+    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)
@@ -148,14 +150,22 @@ export default function MaintenanceRequestDetail(){
         setMaintenanceRequestIndex(0);
         setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
     };
+    console.log(" 1 below useEffect MaintenanceRequestDetail")
+    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleMaintenaceRequestIndexChange = (index) => {
         setMaintenanceRequestIndex(index);  
     }
+    console.log("2 below useEffect MaintenanceRequestDetail")
+    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+
 
     useEffect(() => {
         console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
     }, [maintenanceRequestIndex])
+
+    console.log("3 below useEffect MaintenanceRequestDetail")
+    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
@@ -296,9 +306,18 @@ export default function MaintenanceRequestDetail(){
                                                 paddingBottom: "0px"
 
                                         }}>
-                                            {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
+                                            {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
+                                            {console.log(allData[item.mapping])}
+                                            {console.log(allData[item.mapping][maintenanceRequestIndex])}
+                                            {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
+                                                console.log("Option 1 (True state)"),
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
-                                                : <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
+                                            )
+                                            //     : (
+                                            //     console.log("Option 2 (False state)"),
+                                            //     <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
+                                            // )
+                                            : null
                                             }
                                         </Grid>
                                     </CustomTabPanel>

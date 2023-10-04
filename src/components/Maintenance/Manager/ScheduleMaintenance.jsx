@@ -64,7 +64,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                     },
                     body: JSON.stringify({
                         "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "PAID"
+                        "maintenance_request_status": "COMPLETED"
                     })
                 });
 
@@ -83,8 +83,9 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
         const changeMaintenanceQuoteStatus = async () => {
 
             const formData = new FormData();
-            formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
-            formData.append("maintenance_request_status", "COMPLETED")
+            formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
+            formData.append("quote_maintenance_request_id", maintenanceItem.quote_maintenance_request_id)
+            formData.append("quote_status", "FINISHED")
             
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {

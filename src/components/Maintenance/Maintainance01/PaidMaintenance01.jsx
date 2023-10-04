@@ -195,18 +195,26 @@ export default function PaidMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                         Paid On: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Method:
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Amount: 
-                        </Typography>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        View Documents 
-                        </Typography>   
+                        {maintenanceItem.purchase_status === "UNPAID" ? (
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Payment Requested
+                            </Typography>                            
+                        ): (
+                            <>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Paid On: {maintenanceItem.payment_date}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Method: {maintenanceItem.payment_type}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Amount: {maintenanceItem.pay_amount}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Payment Notes: {maintenanceItem.payment_notes}
+                                </Typography>
+                            </>
+                        )}
                     </Box>
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                         Notes from Manager
