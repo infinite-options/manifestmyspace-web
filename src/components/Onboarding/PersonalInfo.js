@@ -32,6 +32,14 @@ const useStyles = makeStyles((theme) => ({
       paddingBottom: "15px",
     },
   },
+  select: {
+    backgroundColor: "#D6D5DA",
+    height: 30,
+    borderRadius: "10px !important",
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#D6D5DA",
+    },
+  },
 }));
 
 const PersonalInfo = () => {
@@ -116,7 +124,7 @@ const PersonalInfo = () => {
       employee_last_name: lastName,
       employee_phone_number: phoneNumber,
       employee_email: email,
-      employee_role: "OWNER",
+      employee_role: isEmployee() ? "EMPLOYEE" : "OWNER",
       employee_address: address,
       employee_unit: unit,
       employee_city: city,
@@ -160,26 +168,12 @@ const PersonalInfo = () => {
           justifyContent: "flex-start", // Align items at the top
         }}
       >
-        <Box
-          component="span"
-          display="flex"
-          margin="10px"
-          justifyContent="center"
-          alignItems="center"
-          position="relative"
-        ></Box>
         <Paper
           style={{
-            margin: "30px", // Margin around the paper
+            margin: "30px 5px 30px 5px",
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
-            width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
+            width: "85%",
           }}
         >
           <Box
@@ -223,7 +217,7 @@ const PersonalInfo = () => {
             >
               Display Name
             </Typography>
-            <Stack direction="row">
+            <Stack spacing={5} direction="row">
               <TextField
                 name="firstName"
                 value={firstName}
@@ -361,6 +355,7 @@ const PersonalInfo = () => {
                   sx={{
                     color: theme.typography.common.blue,
                     fontWeight: theme.typography.primary.fontWeight,
+                    paddingBottom: "10px",
                   }}
                 >
                   State
@@ -371,6 +366,7 @@ const PersonalInfo = () => {
                   onChange={handleStateChange}
                   size="small"
                   fullWidth
+                  className={classes.select}
                 >
                   <MenuItem value={1}>CA</MenuItem>
                   <MenuItem value={2}>TX</MenuItem>

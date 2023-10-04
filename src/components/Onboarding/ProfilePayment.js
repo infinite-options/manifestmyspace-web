@@ -44,7 +44,7 @@ function ProfilePayment() {
   const location = useLocation();
   const { profileId } = location.state;
   const [statusImg, setStatusImg] = useState();
-  const { user, isBusiness, isEmployee, roleName, isManagementEmployee } =
+  const { user, isBusiness, roleName } =
     useUser();
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false },

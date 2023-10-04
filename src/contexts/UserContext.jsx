@@ -26,8 +26,8 @@ export const UserProvider = ({ children }) => {
   const isEmployee = () => {
     return selectedRole === "PM_EMPLOYEE" || selectedRole === "MAINT_EMPLOYEE";
   };
-  const roleName = () => {
-    switch (selectedRole) {
+  const roleName = (role = selectedRole) => {
+    switch (role) {
       case "MANAGER":
         return "Property Manager";
       case "MAINTENANCE":

@@ -237,7 +237,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                    <TextField value={email} onChange={(e) => setEmail(e.target.value)}   placeholder="Email"   fullWidth className={classes.root}></TextField>
+                    <TextField type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" fullWidth className={classes.root}></TextField>
                 </Box></Stack>
 
                 <Stack spacing={-2} m={5}>
@@ -245,7 +245,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                <TextField value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password"   fullWidth className={classes.root}></TextField>
+                <TextField type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" fullWidth className={classes.root}></TextField>
                 </Box>
                 </Stack>
 
