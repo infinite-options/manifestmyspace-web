@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import Typography from "@mui/material/Typography";
-import googleImg from "../../images/onboarding/continue_with_google.png";
+import { useUser } from "../../contexts/UserContext";
+import { roleMap } from './helper';
+import googleImg from "../../images/ContinueWithGoogle.svg";
 
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -14,14 +15,13 @@ let SCOPES =
 function GoogleLogin(props) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const [accessToken, setAccessToken] = useState("");
-  const [loginSuccessful, setLoginSuccessful] = useState(false);
   const [userDoesntExist, setUserDoesntExist] = useState(false);
   const [socialId, setSocialId] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
+  const { setAuthData, setLoggedIn, setSelectedRole } = useUser();
   let codeClient = {};
   function getAuthorizationCode() {
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
@@ -30,12 +30,13 @@ function GoogleLogin(props) {
 
   const socialGoogle = async (e, u) => {
     setShowSpinner(true);
-    navigate("/managerDashboard", {
-      state: {
-        user: u,
-      },
-    });
-    setLoginSuccessful(true);
+    setAuthData(u);
+    const { role } = u.user;
+    const openingRole = role.split(",")[0];
+    setSelectedRole(openingRole);
+    setLoggedIn(true);
+    const { dashboardUrl } = roleMap[openingRole];
+    navigate(dashboardUrl);
     setShowSpinner(false);
   };
 
@@ -131,7 +132,7 @@ function GoogleLogin(props) {
                       } else if (
                         response["data"]["message"] === "Login with email"
                       ) {
-                        setErrorMessage(response["data"]["message"]);
+                        alert(response["data"]["message"]);
                       } else {
                         let user = response.data.result;
                         let user_id = response.data.result.user_uid;

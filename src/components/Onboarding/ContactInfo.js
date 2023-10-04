@@ -8,9 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import theme from "../../theme/theme";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
+import { formatPhoneNumber } from "./helper";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,25 +28,27 @@ const useStyles = makeStyles((theme) => ({
 function Register() {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const location = useLocation();
+  const { email, password } = location.state;
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  const handleNextStep = () => {
-    if (email === "" || password === "" || confirmPassword === "") {
+  const handleCreateUser = async () => {
+    if (firstName === "" || lastName === "" || phoneNumber === "") {
       alert("Please fill out all fields");
       return;
     }
-    if (password !== confirmPassword) {
-      alert("Passwords must match");
-      return;
-    }
-    navigate("/contactInfo", {
-      state: {
-        email,
-        password,
-      },
-    });
+    const user = {
+      first_name: firstName,
+      last_name: lastName,
+      phone_number: phoneNumber,
+      email: email,
+      password: password,
+      role: "",
+      isEmailSignup: true,
+    };
+    navigate("/selectRole", { state: { user } });
   };
 
   return (
@@ -110,7 +113,7 @@ function Register() {
                     fontSize: theme.typography.largeFont,
                   }}
                 >
-                  {"Register"}
+                  {"Contact Info"}
                 </Typography>
               </Stack>
             </>
@@ -124,10 +127,9 @@ function Register() {
               }}
             >
               <TextField
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First Name"
                 fullWidth
                 className={classes.root}
               ></TextField>
@@ -142,10 +144,9 @@ function Register() {
               }}
             >
               <TextField
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last Name"
                 fullWidth
                 className={classes.root}
               ></TextField>
@@ -160,10 +161,13 @@ function Register() {
               }}
             >
               <TextField
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re Enter Password"
+                type="tel"
+                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                value={phoneNumber}
+                onChange={(e) =>
+                  setPhoneNumber(formatPhoneNumber(e.target.value))
+                }
+                placeholder="Phone Number"
                 fullWidth
                 className={classes.root}
               ></TextField>
@@ -182,9 +186,9 @@ function Register() {
               fontWeight: theme.typography.primary.fontWeight,
               textTransform: "none",
             }}
-            onClick={handleNextStep}
+            onClick={handleCreateUser}
           >
-            {"Sign Up"}
+            {"Save"}
           </Button>
           <Stack spacing={-20} m={12}>
             <Typography

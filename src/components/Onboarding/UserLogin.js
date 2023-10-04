@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from "axios";
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, Button, Typography, Backdrop, CircularProgress } from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
+import { useUser } from "../../contexts/UserContext";
 import PasswordModal from './PasswordModal';
 import UserDoesNotExistModal from './UserDoesNotExistModal';
+import { roleMap } from './helper';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,14 +29,12 @@ function UserLogin() {
     const [passModal, setpassModal] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
-
-    const [loginSuccessful, setLoginSuccessful] = useState(false);
+    const { setAuthData, setLoggedIn, setSelectedRole } = useUser();
     const [userDoesntExist, setUserDoesntExist] = useState(false);
     const submitForm = async () => {
         if (email === "" || password === "") {
-        setErrorMessage("Please fill out all fields");
+        alert("Please fill out all fields");
         return;
         }
         setShowSpinner(true);
@@ -90,24 +90,23 @@ function UserLogin() {
                     )
                     .then((response) => {
                         console.log(response.data.message);
-                        if (response.data.message === "Incorrect password") {
-                        setErrorMessage(response.data.message);
+                        const { message, result } = response.data;
+                        if (message === "Incorrect password") {
+                        alert(response.data.message);
                         setShowSpinner(false);
                         } else if (
-                        response.data.message === "Email doesn't exist"
+                        message === "Email doesn't exist"
                         ) {
                         setUserDoesntExist(true);
                         setShowSpinner(false);
-                        } else if (response.data.message === "Login successful") {
-                        setErrorMessage("");
-                        setLoginSuccessful(true);
-                        navigate("/managerDashboard", {
-                            state: {
-                              email: email,
-                              tokens: response.data.result,
-                              user: response.data.result.user,
-                            },
-                          });
+                        } else if (message === "Login successful") {
+                        setAuthData(result);
+                        const { role } = result.user;
+                        const openingRole = role.split(",")[0];
+                        setSelectedRole(openingRole);
+                        setLoggedIn(true);
+                        const { dashboardUrl } = roleMap[openingRole];
+                        navigate(dashboardUrl);
                         }
                     })
                     .catch((err) => {
@@ -127,8 +126,8 @@ function UserLogin() {
     };
 
     const onReset = async () => {
-        if (email == "") {
-        setErrorMessage("Please enter an email");
+        if (email === "") {
+        alert("Please enter an email");
         return;
         }
         setShowSpinner(true);
@@ -141,13 +140,12 @@ function UserLogin() {
         )
         .then((response) => {
             if (response.data.message === "A temporary password has been sent") {
-            setErrorMessage("");
             setShowSpinner(false);
             setpassModal(true);
             }
             if (response.data.code === 280) {
             console.log(response);
-            setErrorMessage("No account found with that email.");
+            alert("No account found with that email.");
             return;
             }
         });
@@ -162,6 +160,12 @@ function UserLogin() {
 
     return (        
       <ThemeProvider theme={theme}>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <Box
             style={{
                 display: 'flex',
@@ -233,7 +237,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                    <TextField value={email} onChange={(e) => setEmail(e.target.value)}   placeholder="Email"   fullWidth className={classes.root}></TextField>
+                    <TextField type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" fullWidth className={classes.root}></TextField>
                 </Box></Stack>
 
                 <Stack spacing={-2} m={5}>
@@ -241,7 +245,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                <TextField value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password"   fullWidth className={classes.root}></TextField>
+                <TextField type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" fullWidth className={classes.root}></TextField>
                 </Box>
                 </Stack>
 
