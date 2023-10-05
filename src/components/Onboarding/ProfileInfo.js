@@ -56,7 +56,14 @@ const ProfileInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [statusImg, setStatusImg] = useState();
-  const { user, isBusiness, isManager, roleName, selectedRole } = useUser();
+  const {
+    user,
+    isBusiness,
+    isManager,
+    roleName,
+    selectedRole,
+    updateProfileUid,
+  } = useUser();
   //   {
   //     user: { user_uid: "" },
   //     isBusiness: () => true,
@@ -163,11 +170,24 @@ const ProfileInfo = () => {
     const form = encodeForm(payload);
     const data = await createProfile(form, selectedRole);
     setShowSpinner(false);
+    handleUpdateProfileUid(data);
     navigate("/profilePayment", {
       state: {
         profileId: data.business_uid || data.owner_uid || data.tenant_uid,
       },
     });
+  };
+
+  const handleUpdateProfileUid = (data) => {
+    if (data.owner_uid) {
+      updateProfileUid({ owner_id: data.owner_uid });
+    }
+    if (data.tenant_uid) {
+      updateProfileUid({ tenant_id: data.tenant_uid });
+    }
+    if (data.business_uid) {
+      updateProfileUid({ business_uid: data.business_uid });
+    }
   };
 
   const getPayload = (type) => {

@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 const PersonalInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const { user, isEmployee, roleName } = useUser();
+  const { user, isEmployee, roleName, updateProfileUid } = useUser();
   const location = useLocation();
   const { businessId } = location.state;
   const [showSpinner, setShowSpinner] = useState(false);
@@ -138,18 +138,24 @@ const PersonalInfo = () => {
         formPayload.append(key, payload[key].file);
       else formPayload.append(key, payload[key]);
     }
-    const response = await axios.post(
+    const { data } = await axios.post(
       "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee",
       formPayload,
       headers
     );
-    console.log("POST result", response);
+    handleUpdateProfileUid(data);
     setShowSpinner(false);
     if (isEmployee())
       navigate("/profilePayment", { state: { profileId: businessId } });
     else navigate("/onboardingRouter");
   };
-
+  const handleUpdateProfileUid = (data) => {
+    if (isEmployee()) {
+      updateProfileUid({ business_employee_id: data.employee_uid });
+    } else {
+      updateProfileUid({ business_owner_id: data.employee_uid });
+    }
+  };
   return (
     <ThemeProvider theme={theme}>
       <Backdrop

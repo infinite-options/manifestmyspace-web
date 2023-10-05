@@ -104,7 +104,7 @@ function GoogleLogin(props) {
 
                   axios
                     .get(
-                      `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/FINDME/${e}`
+                      `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
                     )
                     .then((response) => {
                       if (
@@ -137,7 +137,7 @@ function GoogleLogin(props) {
                         let user = response.data.result;
                         let user_id = response.data.result.user_uid;
                         setAccessToken(at);
-                        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/FINDME/${user_id}`;
+                        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
                         axios
                           .post(url, {
                             google_auth_token: at,

@@ -42,6 +42,43 @@ export const UserProvider = ({ children }) => {
         return "Tenant";
     }
   };
+  const updateProfileUid = (profileUidObj) => {
+    if (isBusiness() || isEmployee()) {
+      setUser((prev) => updateUser(prev, profileUidObj));
+    } else {
+      setUser((prev) => ({ ...prev, ...profileUidObj }));
+    }
+  };
+  const updateUser = (prevUser, profileUidObj) => {
+    let newBusinesses;
+    if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
+      newBusinesses = {
+        ...prevUser.businesses,
+        MANAGEMENT: updateBusinessSection(
+          prevUser.businesses?.MANAGEMENT,
+          profileUidObj
+        ),
+      };
+    } else {
+      newBusinesses = {
+        ...prevUser.businesses,
+        MAINTENANCE: updateBusinessSection(
+          prevUser.businesses?.MAINTENANCE,
+          profileUidObj
+        ),
+      };
+    }
+    return {
+      ...prevUser,
+      businesses: newBusinesses,
+    };
+  };
+  const updateBusinessSection = (prevSection, profileObj) => {
+    if (prevSection) {
+      return Object.assign({}, prevSection, profileObj);
+    }
+    return profileObj;
+  };
   return (
     <UserContext.Provider
       value={{
@@ -63,6 +100,7 @@ export const UserProvider = ({ children }) => {
         roleName,
         isLoggedIn,
         setLoggedIn,
+        updateProfileUid,
       }}
     >
       {children}
