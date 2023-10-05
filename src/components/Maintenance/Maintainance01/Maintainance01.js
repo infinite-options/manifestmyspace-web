@@ -15,9 +15,10 @@ import SelectPropertyFilter from '../../SelectPropertyFilter/SelectPropertyFilte
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
 import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilter";
+import { useUser } from "../../../contexts/UserContext";
 
 export default function Maintenance01(){
-
+    const { user } = useUser();
     const location = useLocation();
     let navigate = useNavigate();
     const [maintenanceData, setMaintenanceData] = useState({});
@@ -163,8 +164,8 @@ export default function Maintenance01(){
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
-            
-            const maintenanceRequests1 = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000012')
+            const { business_uid } = user.businesses.MAINTENANCE;
+            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${business_uid}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             
             let array1 = maintenanceRequestsData1.result.REQUESTED.maintenance_items;

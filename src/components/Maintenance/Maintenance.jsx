@@ -158,7 +158,7 @@ export default function Maintenance(){
             // const propertyData = await propertiesByOwnerResponse.json()
 
             // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-            const { business_uid } = user.businesses.MAINTENANCE;
+            const { business_uid } = user.businesses.MANAGEMENT;
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${business_uid}`)
             const maintenanceRequestsData = await maintenanceRequests.json()
 
