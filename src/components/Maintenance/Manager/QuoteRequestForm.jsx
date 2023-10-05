@@ -104,6 +104,7 @@ export default function QuoteRequestForm(){
 
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid)
             formData.append("quote_pm_notes", additionalInfo)
+            // formData.append("quote_services_expenses", JSON.stringify({'parts': [{hours: 0, rate: 0, description: ""}], 'labor': [{part: "", cost: 0, quantity: ""}]}))
 
             if (selectedImageList.length > 0){
                 for (let i = 0; i < selectedImageList.length; i++){

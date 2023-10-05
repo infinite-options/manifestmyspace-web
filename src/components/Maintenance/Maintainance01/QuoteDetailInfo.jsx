@@ -85,8 +85,6 @@ function LaborTableReadOnly({labor, setLabor}){
 function PartsTableReadOnly({parts, setParts}){
 
 
-    console.log("labor in LaborTable", parts)
-
     const calculateTotal = (qty, cost) => {
         return parseInt(qty) * parseInt(cost)
     }
@@ -152,12 +150,12 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
 
-    console.log(costData)
-    console.log(costData.parts)
-    console.log(costData.labor)
+    // console.log(costData)
+    // console.log(costData.parts)
+    // console.log(costData.labor)
 
-    const [parts, setParts] = useState(costData.parts);
-    const [labor, setLabor] = useState(costData.labor);
+    const [parts, setParts] = useState(costData?.parts || [{hours: 0, rate: 0, description: ""}]);
+    const [labor, setLabor] = useState(costData?.labor || [{part: "", cost: 0, quantity: ""}]);
 
     const [estimatedCost, setEstimatedCost] = useState(0);
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);

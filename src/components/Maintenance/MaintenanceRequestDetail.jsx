@@ -128,6 +128,7 @@ export default function MaintenanceRequestDetail(){
     const allData = location.state.allMaintenanceData;
 
     console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    console.log("--DEBUG-- should be filtered", maintenanceItemsForStatus)
 
     console.log("above useEffect MaintenanceRequestDetail")
     useEffect(() => {
@@ -309,6 +310,8 @@ export default function MaintenanceRequestDetail(){
                                             {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
                                             {console.log(allData[item.mapping])}
                                             {console.log(allData[item.mapping][maintenanceRequestIndex])}
+
+                                            {/* TODO: Pass the data filter all the way here */}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
                                                 console.log("Option 1 (True state)"),
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
