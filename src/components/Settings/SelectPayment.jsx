@@ -148,6 +148,7 @@ export default function SelectPayment(props) {
   const submit = () => {
     // cancel();
     setPaymentConfirm(true);
+    navigate("/tenantDashboard")
   };
   //CreditCardHandler
 
@@ -214,12 +215,17 @@ export default function SelectPayment(props) {
     console.log("inside toggle keys");
     const url =
       paymentData.business_code === "PMTEST"
-        ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+        // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+        ? "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+
     let response = await fetch(url);
     const responseData = await response.json();
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
+    
   };
   return (
     <div>
