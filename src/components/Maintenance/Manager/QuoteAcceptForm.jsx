@@ -62,12 +62,10 @@ export default function QuoteAcceptForm(){
             console.log(data);
             const quotes = data.result
             console.log("quotes",  quotes)
-            
             setMaintenanceQuotes(quotes)
         }
         getMaintenanceItemQuotes()  
-
-    }, [])
+    }, [maintenanceItem])
 
     const handleNextQuote = () => {
         setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % maintenanceQuotes.length);
@@ -77,13 +75,10 @@ export default function QuoteAcceptForm(){
         setCurrentQuoteIndex((prevIndex) => (prevIndex - 1 + maintenanceQuotes.length) % maintenanceQuotes.length);
     };
 
-    const currentQuote = maintenanceQuotes[currentQuoteIndex];
-    console.log(currentQuote)
-
     useEffect(() => {
+        const currentQuote = maintenanceQuotes[currentQuoteIndex];
         console.log("currentQuote", currentQuote)
-        if (currentQuote){
-            console.log("currentQuote", currentQuote)
+        if(currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
             const parseServicesExpenses = (expenses) => {
                 let servicesObject = JSON.parse(expenses)
                 console.log(servicesObject)
@@ -112,7 +107,7 @@ export default function QuoteAcceptForm(){
             setEarliestAvailability(currentQuote.quote_earliest_availability)
         }
 
-    }, [currentQuote])
+    }, [currentQuoteIndex, maintenanceQuotes])
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
@@ -177,7 +172,7 @@ export default function QuoteAcceptForm(){
 
             var formData = new FormData();
 
-            formData.append("maintenance_quote_uid", currentQuote?.maintenance_quote_uid);
+            formData.append("maintenance_quote_uid", maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid);
             formData.append("quote_status", "ACCEPTED");
 
             try {
@@ -408,118 +403,171 @@ export default function QuoteAcceptForm(){
                             </Button>
                         </Grid>
                     </Grid>
-                    {(currentQuote?.quote_status!=="REJECTED" && currentQuote?.quote_status!=="REFUSED")?(
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT")?(
     
-                    <Grid container spacing={3}
+                        <Grid container spacing={3}
+                            alignContent="center"
+                            justifyContent="center"
+                            alignItems="center"
+                            direction="column"
+                        >
+                            
+                            <Grid item xs={12}>
+                                {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
+                                {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business id:" + maintenanceQuotes[currentQuoteIndex]?.quote_business_id : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Quote
+                                </Typography>
+                                <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
+                                    {/* <TextField
+                                        multiline
+                                        rows={10}
+                                        value={currentQuote?.quote_services_expenses}
+                                        variant="outlined"
+                                        fullWidth
+                                        InputProps={{
+                                        readOnly: true,
+                                        style: { backgroundColor: 'white' }
+                                        }}
+                                    /> */}
+
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                                Estimated Total: ${estimatedTotalCost}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Estimated Labor Cost: ${estimatedLaborCost}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Estimated Parts Cost: ${estimatedPartsCost}
+                                </Typography>
+
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Estimated Time: {estimatedTime}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Earliest Availability: {earliestAvailability}
+                                </Typography>  
+                                </Container>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Notes
+                                </Typography>
+                                <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
+                                    <TextField
+                                        multiline
+                                        rows={10}
+                                        value={maintenanceQuotes[currentQuoteIndex]?.quote_notes}
+                                        variant="outlined"
+                                        fullWidth
+                                        InputProps={{
+                                        readOnly: true,
+                                        style: { backgroundColor: 'white' }
+                                        }}
+                                    />
+                                </Container>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        backgroundColor: "#CB8E8E",
+                                        textTransform: "none",
+                                        borderRadius: "10px",
+                                        display: 'flex',
+                                        width: "100%",
+                                    }}
+                                    onClick={() => handleSubmit("CANCELLED")}
+                                    >
+                                    <Typography sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight, 
+                                        fontSize: "14px"
+                                    }}>
+                                        Decline Quote
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        backgroundColor: "#9EAED6",
+                                        textTransform: "none",
+                                        borderRadius: "10px",
+                                        display: 'flex',
+                                        width: "100%",
+                                    }}
+                                    onClick={() => handleSubmit()}
+                                    >
+                                    <Typography sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight, 
+                                        fontSize: "14px"
+                                    }}>
+                                        Accept Quote
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    ): maintenanceQuotes[currentQuoteIndex]?.quote_status==="REQUESTED" ? (
+                            <Grid container spacing={3}
+                                alignContent="center"
+                                justifyContent="center"
+                                alignItems="center"
+                                direction="column"
+                            >
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Quote Requested from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
+                                </Typography>
+                                <Grid item xs={12}>
+                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                        Awaiting quote details...
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                    ) : maintenanceQuotes[currentQuoteIndex]?.quote_status==="REFUSED" ? (
+                            <Grid container spacing={3}
+                            alignContent="center"
+                            justifyContent="center"
+                            alignItems="center"
+                            direction="column"
+                            >
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Refused to quote request from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
+                                </Typography>
+                            </Grid>
+                    ) : maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED" ?(
+                        <Grid container spacing={3}
                         alignContent="center"
                         justifyContent="center"
                         alignItems="center"
                         direction="column"
-                    >
-                        
-                        <Grid item xs={12}>
-                            {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
-                            {currentQuote?.quote_status ? currentQuote?.quote_status + " from business id:" + currentQuote?.quote_business_id : "no quote status found for " + currentQuote?.quote_business_id}
-                        </Grid>
-                        <Grid item xs={12}>
+                        >
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Quote
+                                Your quote has been {maintenanceQuotes[currentQuoteIndex]?.quote_status}
                             </Typography>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                {/* <TextField
-                                    multiline
-                                    rows={10}
-                                    value={currentQuote?.quote_services_expenses}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                /> */}
-
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                            Estimated Total: ${estimatedTotalCost}
-                            </Typography>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Estimated Labor Cost: ${estimatedLaborCost}
-                            </Typography>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Estimated Parts Cost: ${estimatedPartsCost}
-                            </Typography>
-
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Estimated Time: {estimatedTime}
-                            </Typography>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Earliest Availability: {earliestAvailability}
-                            </Typography>  
-                            </Container>
                         </Grid>
-                        <Grid item xs={12}>
+                    ) : maintenanceQuotes[currentQuoteIndex]?.quote_status==="WITHDRAWN" ?(
+                        <Grid container spacing={3}
+                        alignContent="center"
+                        justifyContent="center"
+                        alignItems="center"
+                        direction="column"
+                        >
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Notes
+                                This quote request has been {maintenanceQuotes[currentQuoteIndex]?.quote_status}
                             </Typography>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
-                                    multiline
-                                    rows={10}
-                                    value={currentQuote?.quote_notes}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                />
-                            </Container>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#CB8E8E",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit("CANCELLED")}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Decline Quote
-                                </Typography>
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#9EAED6",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit()}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Accept Quote
-                                </Typography>
-                            </Button>
-                        </Grid>
-                    </Grid>
-                       ):(<div></div>)}
+
+                    ) : (
+                        null
+                    )
+                }
                 </Stack>
             </Paper>
         </Box>
