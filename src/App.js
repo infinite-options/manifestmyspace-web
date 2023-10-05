@@ -4,9 +4,11 @@ import {SettingsACHContextProvider} from '../src/contexts/SettingsACHContext';
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from './contexts/UserContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
+import { CookiesProvider } from 'react-cookie';
 
 function App() {
   return (
+    <CookiesProvider defaultSetOptions={{ path: '/' }}>
     <UserProvider>
     <OnboardingProvider>
     <SettingsACHContextProvider>
@@ -16,6 +18,7 @@ function App() {
     </SettingsACHContextProvider>
     </OnboardingProvider>
     </UserProvider>
+    </CookiesProvider>
   )
 }
 

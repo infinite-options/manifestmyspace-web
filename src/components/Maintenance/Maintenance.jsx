@@ -23,11 +23,12 @@ import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import CloseIcon from '@mui/icons-material/Close';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
-
+import { useUser } from "../../contexts/UserContext";
 
 export default function Maintenance(){
     const location = useLocation();
     let navigate = useNavigate();
+    const { user } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
@@ -157,7 +158,8 @@ export default function Maintenance(){
             // const propertyData = await propertiesByOwnerResponse.json()
 
             // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-            const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003')
+            const { business_uid } = user.businesses.MAINTENANCE;
+            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${business_uid}`)
             const maintenanceRequestsData = await maintenanceRequests.json()
 
             let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items

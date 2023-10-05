@@ -30,7 +30,7 @@ function UserLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
-    const { setAuthData, setLoggedIn, setSelectedRole } = useUser();
+    const { setAuthData, setLoggedIn, selectRole } = useUser();
     const [userDoesntExist, setUserDoesntExist] = useState(false);
     const submitForm = async () => {
         if (email === "" || password === "") {
@@ -103,7 +103,7 @@ function UserLogin() {
                         setAuthData(result);
                         const { role } = result.user;
                         const openingRole = role.split(",")[0];
-                        setSelectedRole(openingRole);
+                        selectRole(openingRole);
                         setLoggedIn(true);
                         const { dashboardUrl } = roleMap[openingRole];
                         navigate(dashboardUrl);

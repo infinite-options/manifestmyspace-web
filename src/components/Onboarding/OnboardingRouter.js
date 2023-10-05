@@ -4,14 +4,14 @@ import { useEffect } from "react";
 import { roleMap } from "./helper";
 
 const OnboardingRouter = () => {
-  const { onboardingState, setOnboardingState, setSelectedRole, setLoggedIn } =
+  const { onboardingState, setOnboardingState, selectRole, setLoggedIn } =
     useUser();
   const { roles, openingRole } = onboardingState;
   const navigate = useNavigate();
 
   useEffect(() => {
     if (roles.length === 0) {
-      setSelectedRole(openingRole);
+      selectRole(openingRole);
       setLoggedIn(true);
       const { dashboardUrl } = roleMap[openingRole];
       navigate(dashboardUrl);
@@ -23,7 +23,7 @@ const OnboardingRouter = () => {
           openingRole: nextRole,
         });
       }
-      setSelectedRole(nextRole);
+      selectRole(nextRole);
       navigate("/profileName");
     }
   }, []);

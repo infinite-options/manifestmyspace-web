@@ -21,7 +21,7 @@ function GoogleLogin(props) {
   const [socialId, setSocialId] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
-  const { setAuthData, setLoggedIn, setSelectedRole } = useUser();
+  const { setAuthData, setLoggedIn, selectRole } = useUser();
   let codeClient = {};
   function getAuthorizationCode() {
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
@@ -33,7 +33,7 @@ function GoogleLogin(props) {
     setAuthData(u);
     const { role } = u.user;
     const openingRole = role.split(",")[0];
-    setSelectedRole(openingRole);
+    selectRole(openingRole);
     setLoggedIn(true);
     const { dashboardUrl } = roleMap[openingRole];
     navigate(dashboardUrl);
@@ -106,9 +106,9 @@ function GoogleLogin(props) {
                     .get(
                       `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
                     )
-                    .then((response) => {
+                    .then(({ data }) => {
                       if (
-                        response["data"]["message"] === "Email ID doesnt exist"
+                        data["message"] === "Email ID doesnt exist"
                       ) {
                         const socialGoogle = async () => {
                           const user = {
@@ -130,12 +130,12 @@ function GoogleLogin(props) {
                         socialGoogle();
                         return;
                       } else if (
-                        response["data"]["message"] === "Login with email"
+                        data["message"] === "Login with email"
                       ) {
-                        alert(response["data"]["message"]);
+                        alert(data["message"]);
                       } else {
-                        let user = response.data.result;
-                        let user_id = response.data.result.user_uid;
+                        let user = data.result;
+                        let user_id = data.result.user.user_uid;
                         setAccessToken(at);
                         let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
                         axios

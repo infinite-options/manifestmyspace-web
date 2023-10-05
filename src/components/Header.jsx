@@ -7,13 +7,13 @@ import { roleMap } from "./Onboarding/helper";
 import { ReactComponent as Logo } from "../images/logo.svg";
 
 function Header() {
-  const { user, selectedRole, setSelectedRole, roleName } = useUser();
+  const { user, selectedRole, selectRole, roleName } = useUser();
   const userRoles = user ? user.role.split(",") : [];
 
   const navigate = useNavigate();
 
   const handleButtonClick = (role) => {
-    setSelectedRole(role);
+    selectRole(role);
     const { dashboardUrl } = roleMap[role];
     navigate(dashboardUrl);
   };

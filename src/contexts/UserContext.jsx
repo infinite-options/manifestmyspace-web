@@ -1,18 +1,22 @@
 import React, { createContext, useContext, useState } from "react";
+import { useCookies } from "react-cookie";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState();
-  const [accessToken, setAccessToken] = useState();
-  const [refreshToken, setRefreshToken] = useState();
-  const [selectedRole, setSelectedRole] = useState();
+  const [cookies, setCookie] = useCookies(["user", "token", "selectedRole"]);
+  const [user, setUser] = useState(cookies.user);
+  const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [onboardingState, setOnboardingState] = useState();
   const setAuthData = (data) => {
     setUser(data.user);
-    setAccessToken(data.access_token);
-    setRefreshToken(data.refresh_token);
+    setCookie("user", data.user);
+    setCookie("token", data.access_token);
+  };
+  const selectRole = (role) => {
+    setSelectedRole(role);
+    setCookie("selectedRole", role);
   };
   const isBusiness = () => {
     return selectedRole === "MANAGER" || selectedRole === "MAINTENANCE";
@@ -84,12 +88,8 @@ export const UserProvider = ({ children }) => {
       value={{
         user,
         setUser,
-        accessToken,
-        setAccessToken,
-        refreshToken,
-        setRefreshToken,
         selectedRole,
-        setSelectedRole,
+        selectRole,
         setAuthData,
         onboardingState,
         setOnboardingState,
