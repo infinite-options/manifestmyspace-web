@@ -11,6 +11,9 @@ import {
 import theme from "../../theme/theme";
 import * as ReactBootStrap from "react-bootstrap";
 
+
+import Payment_Failure from "./Payment_Failure";
+
 function StripePayment(props) {
   console.log("in stripepayment page");
   const { message, amount, paidBy } = props;
@@ -18,8 +21,10 @@ function StripePayment(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const elements = useElements();
   const stripe = useStripe();
-
-  const submitPayment = async () => {
+  const [showError, setShowError]= useState(false) // State to show payment failre
+ 
+  
+   const submitPayment = async () => {
     console.log("in submitpayment");
     setShowSpinner(true);
     const paymentData = {
@@ -104,6 +109,7 @@ function StripePayment(props) {
     setShowSpinner(false);
     props.submit();
   };
+  
 
   return (
     <div style={{ margin: "5rem" }}>
@@ -115,6 +121,9 @@ function StripePayment(props) {
           margin: "20px",
         }}
       >
+
+<Payment_Failure showError={showError} setShowError={setShowError} />
+
         <CardElement elementRef={(c) => (this._element = c)} />
       </div>
 
@@ -137,7 +146,10 @@ function StripePayment(props) {
           <Col>
             <Button
               variant="contained"
-              onClick={submitPayment}
+              onClick={async ()=>{
+                 try{ await submitPayment()}
+                catch(err){setShowError(true)}
+              }}
               sx={{
                 background: "#3D5CAC",
                 color: theme.palette.background.default,

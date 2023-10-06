@@ -35,6 +35,7 @@ import ApplePay from "../../images/ApplePay.png";
 import { margin } from "@mui/system";
 import axios from "axios";
 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -235,6 +236,10 @@ export default function SelectPayment(props) {
         toggleKeys={toggleKeys}
         setStripePayment={setStripePayment}
       />
+      
+
+
+      
       <Stack direction="row" justifyContent="center">
         <Typography
           sx={{
