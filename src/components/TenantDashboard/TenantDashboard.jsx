@@ -15,6 +15,10 @@ import theme from '../../theme/theme';
 function TenantDashboard(props) {
   const navigate = useNavigate();
 
+  const [maintenanceRequestsData, setMaintenanceRequestsData] = useState([]);
+  const [propertyData, setPropertyData] = useState([]);
+  const [announcementsData, setAnnouncementsData] = useState([]);
+
   const [paymentData, setPaymentData] = useState({
         currency: "usd",
         customer_uid: "100-000125",
@@ -35,6 +39,24 @@ function TenantDashboard(props) {
     setPaymentData(paymentData)
 
   }, [total])
+
+  useEffect(() => {
+       
+    const getTenantData = async () => {
+        const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
+        const tenantRequestsData = await tenantRequests.json()        
+        
+        console.log("TD: "+JSON.stringify(tenantRequestsData))
+        let propertyData = tenantRequestsData.property.result;
+        let maintenanceRequestsData = tenantRequestsData.maintenanceRequests.result;
+        let announcementsData = tenantRequestsData.announcements.result;
+
+        setPropertyData(propertyData);
+        setMaintenanceRequestsData(maintenanceRequestsData);
+        setAnnouncementsData(announcementsData);
+    }
+    getTenantData();
+}, [])
 
   function createPaymentdata(total){
     return {
@@ -145,7 +167,7 @@ function TenantDashboard(props) {
           }}
           onClick={()=>{navigate('/myProperty')}}
         >
-          103 N. Abel St unit #104
+          {propertyData[0]!==undefined? propertyData[0].property_address:"No Data"}
         </Box>
       </Box>
       <DashboardTab>
@@ -179,7 +201,7 @@ function TenantDashboard(props) {
                 margin: "10px",
               }}
             >
-              ${total}
+          ${propertyData[0]!==undefined? propertyData[0].balance:"No Data"}
             </Box>
             <Box
               sx={{
@@ -209,7 +231,8 @@ function TenantDashboard(props) {
                 padding: "6px",
               }}
             >
-              Pay before 1st July
+              Pay before {propertyData[0]!==undefined? propertyData[0].earliest_due_date:"No Data"}
+
             </Box>
             <Box
               sx={{
@@ -300,11 +323,20 @@ function TenantDashboard(props) {
               <th style={thStyle}>Date</th>
               <th style={thStyle}>Time</th>
             </tr>
-            <TableRow data={[PlaceholderImage, "Broken door", "Viewed", "High", "07/12/23", "10:40- 11:40"]} />
-            <TableRow data={[PlaceholderImage, "Broken door", "Assigned", "High", "07/12/23", "10:40- 11:40"]} />
-            <TableRow data={[PlaceholderImage, "Broken door", "Completed", "High", "07/12/23", "Closed"]} />
-            <TableRow data={[PlaceholderImage, "Broken door", "Sent", "High", "Pending", "Pending"]} />
-          </table>
+            {
+              
+              maintenanceRequestsData.length>0 && maintenanceRequestsData.map((item, index) =>{
+                let  array = [PlaceholderImage,
+                  item.maintenance_title,
+                  item.maintenance_request_status,
+                  item.maintenance_priority,
+                  item.maintenance_scheduled_date, 
+                  item.maintenance_scheduled_time]
+                  return ( <TableRow data={array} />)
+              })
+            } 
+
+         </table>
         </Box>
       </DashboardTab>
       <DashboardTab>
@@ -335,7 +367,7 @@ function TenantDashboard(props) {
             }}
             onClick={()=>{navigate('/announcement')}}
           >
-            View all (3)
+            View all ({announcementsData.length})
           </Box>
         </Box>
         <CardSlider />
@@ -533,6 +565,7 @@ function DashboardTab(props) {
 }
 
 function TableRow(props) {
+  console.log("In table Row "+props.data)
   const [image, title, status, priority, date, time] = props.data;
 
   const tdStyle = {
