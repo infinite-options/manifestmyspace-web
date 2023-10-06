@@ -23,7 +23,16 @@ export default function Maintenance01(){
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
-    const colorStatus = theme.colorStatusMM
+    const colorStatus = theme.colorStatusMM;
+    const newDataObject = {};
+
+    newDataObject["REQUESTED"] = [];
+    newDataObject["SUBMITTED"] = [];
+    newDataObject["ACCEPTED"] = [];
+    newDataObject["SCHEDULED"] = [];
+    newDataObject["FINISHED"] = [];
+    newDataObject["PAID"] = [];
+
     const [showSelectMonth, setShowSelectMonth] = useState(false);
 
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -341,14 +350,18 @@ export default function Maintenance01(){
                           
                             let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList, filterPriorityList)
   
+                            for (const item of filteredArray) {
+                                newDataObject[mappingKey].push(item);
+                            }
+  
                             return (
                                 <MaintenanceStatusTable01
                                     key={index}
                                     status={item.status}
                                     color={item.color}
                                     maintenanceItemsForStatus={filteredArray}
-                                    allMaintenanceData={maintenanceData}
-                                    maintenanceRequestsCount={maintenanceArray}
+                                    allMaintenanceData={newDataObject}
+                                    maintenanceRequestsCount={filteredArray}
                                 />
                             );
                         })}

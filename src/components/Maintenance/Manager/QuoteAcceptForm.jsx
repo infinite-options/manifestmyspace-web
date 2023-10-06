@@ -427,17 +427,16 @@ export default function QuoteAcceptForm(){
                             </Typography>
                             <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
                                 {/* <TextField
-                                    multiline
-                                    rows={10}
-                                    value={currentQuote?.quote_services_expenses}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                /> */}
-
+                                        multiline
+                                        rows={10}
+                                        value={currentQuote?.quote_services_expenses}
+                                        variant="outlined"
+                                        fullWidth
+                                        InputProps={{
+                                        readOnly: true,
+                                        style: { backgroundColor: 'white' }
+                                        }}
+                                    /> */}
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
                             Estimated Total: ${estimatedTotalCost}
                             </Typography>
@@ -460,19 +459,37 @@ export default function QuoteAcceptForm(){
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                                 Notes
                             </Typography>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
-                                    multiline
-                                    rows={10}
-                                    value={currentQuote?.quote_notes}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
-                                    }}
-                                />
-                            </Container>
+                            {/* <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
+                                    <TextField
+                                        multiline
+                                        rows={10}
+                                        value={maintenanceQuotes[currentQuoteIndex]?.quote_notes}
+                                        variant="outlined"
+                                        fullWidth
+                                        InputProps={{
+                                        readOnly: true,
+                                        style: { backgroundColor: 'white' }
+                                        }}
+                                    />
+                                </Container> */}
+                            <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            {currentQuote?.quote_notes}
+                        </Typography>
+                        </Box>
                         </Grid>
                         <Grid item xs={12}>
                             <Button

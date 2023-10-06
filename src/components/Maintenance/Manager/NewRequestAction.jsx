@@ -22,6 +22,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import RequestMoreInfo from "../Maintainance01/RequestMoreInfo";
+import AlertMessage from "../AlertMessage";
 
 
 
@@ -29,6 +30,8 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
 
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState("");
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
@@ -48,11 +51,13 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
-            alert("Ticket Cancelled")
+            setShowMessage(true);
+            setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED")
             navigate('/maintenance')
         } else{
             console.log("Ticket Not Cancelled")
-            alert("Error: Ticket Not Cancelled")
+            setShowMessage(true);
+            setMessage("Error: Ticket Not Cancelled")
         }
     }
 
@@ -61,11 +66,13 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
             console.log("handleComplete", response);
             if (response){
                 console.log("Ticket Completed")
-                alert("Ticket Completed")
+                setShowMessage(true);
+                setMessage("Ticket Completed!! Maintenance Status changed to COMPLETED")
                 navigate('/maintenance')
             } else{
                 console.log("Ticket Not Completed")
-                alert("Error: Ticket Not Completed")
+                setShowMessage(true);
+                setMessage("Error: Ticket Not Completed")
             }
         }).catch(error => {
             console.log("handleComplete", error);
@@ -268,6 +275,8 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                     </Button>
                 </Grid>
             </Grid>
+            <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
+                    
         </Box>
     )
 }
