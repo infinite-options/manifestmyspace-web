@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { useCookies, removeCookies } from "react-cookie";
+import { useCookies, removeCookie } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
@@ -98,7 +98,11 @@ export const UserProvider = ({ children }) => {
       ? user.tenant_id
       : user.owner_id;
   const logout = () => {
-    removeCookies();
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    });
     navigate("/");
   };
   return (
