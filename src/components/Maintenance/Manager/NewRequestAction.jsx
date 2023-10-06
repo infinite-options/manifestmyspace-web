@@ -21,7 +21,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import RequestMoreInfo from "../Maintainance01/RequestMoreInfo";
+import RequestMoreInfo from "../Worker/RequestMoreInfo";
 
 
 

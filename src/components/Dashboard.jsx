@@ -14,6 +14,8 @@ import { useUser } from "../contexts/UserContext";
 
 function Dashboard() {
     const { user } = useUser();
+
+    console.log("---DEBUG---", user)
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);

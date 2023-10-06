@@ -17,7 +17,7 @@ import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
 import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilter";
 import { useUser } from "../../../contexts/UserContext";
 
-export default function Maintenance01(){
+export default function MaintenanceWorker(){
     const { user } = useUser();
     const location = useLocation();
     let navigate = useNavigate();
@@ -167,6 +167,7 @@ export default function Maintenance01(){
             const { business_uid } = user.businesses.MAINTENANCE;
             const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${business_uid}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
+            console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
             let array1 = maintenanceRequestsData1.result.REQUESTED.maintenance_items;
             let array2 = maintenanceRequestsData1.result.SUBMITTED.maintenance_items;
@@ -224,7 +225,7 @@ export default function Maintenance01(){
                 display: 'flex',
                 justifyContent: 'center',
                 width: '100%', // Take up full screen width
-                minHeight: '100vh', // Set the Box height to full height
+                minHeight: '100%', // Set the Box height to full height
                 marginTop: theme.spacing(2), // Set the margin to 20px
             }}
             >
@@ -233,12 +234,12 @@ export default function Maintenance01(){
                         padding: theme.spacing(2),
                         backgroundColor: theme.palette.primary.main,
                         width: '85%', // Occupy full width with 25px margins on each side
-                        [theme.breakpoints.down('sm')]: {
-                            width: '80%',
-                        },
-                        [theme.breakpoints.up('sm')]: {
-                            width: '50%',
-                        },
+                        // [theme.breakpoints.down('sm')]: {
+                        //     width: '80%',
+                        // },
+                        // [theme.breakpoints.up('sm')]: {
+                        //     width: '50%',
+                        // },
                         paddingTop: '10px',
                     }}
                 >

@@ -55,7 +55,7 @@ import TenantContactDetails from './Contacts/TenantContactDetails';
 
 import PropertyList from "./Property/PropertyList";
 import Dashboard from "./Dashboard";
-import Maintenance from "./Maintenance/Maintenance";
+import Maintenance from "./Maintenance/MaintenanceManager";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
 import MaintenanceRequestDetail from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
@@ -75,6 +75,8 @@ import AddCard from "./Settings/AddCard";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import { Footer } from "./Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
+
+import MaintenanceDashboard from "./MaintenanceDashboard/MaintenanceDashboard";
 
 import SettingsACH1 from "./SettingsACH/SettingsACH1";
 import SettingsACH2 from "./SettingsACH/SettingsACH2";
@@ -101,8 +103,8 @@ import SelectRole from "./Onboarding/SelectRole";
 import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
 import BusinessInvoiceForm from "./Maintenance/Business/BusinessInvoiceForm";
 
-import Maintenance01 from "./Maintenance/Maintainance01/Maintainance01";
-import MaintenanceRequestDetail01 from "./Maintenance/Maintainance01/MaintenanceRequestDetail01";
+import Maintenance01 from "./Maintenance/Worker/MaintenanceWorker";
+import MaintenanceRequestDetail01 from "./Maintenance/Worker/MaintenanceRequestDetail01";
 
 import ProfileName from "./Onboarding/ProfileName";
 import ProfileInfo from "./Onboarding/ProfileInfo";
@@ -181,6 +183,8 @@ function Main() {
               <Route exact path="/maintenance" element={<Maintenance />} />
               <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
+              <Route exact path="/maintenanceDashboard" element={<MaintenanceDashboard />} />
+
               <Route exact path="/addMaintenanceItem" element={<AddMaintenanceItem />} />
               <Route exact path="/maintenance/detail" element={<MaintenanceRequestDetail />} />
               <Route exact path="/maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
@@ -203,30 +207,30 @@ function Main() {
               <Route exact path="/poContracts" element={<POContracts />} />
               <Route exact path="/managerDashboard" element={<ManagerDashboard/>} />
               {/* <Route exact path="/onboarding" element={<Onboarding />} /> */}
-            
-            <Route exact path="/newUser" element={<NewUser />} />
-            <Route exact path="/register" element={<Register />} />
-            <Route exact path="/returningUser" element={<ReturningUser />} />
-            <Route exact path="/userLogin" element={<UserLogin />} />
-            <Route exact path="/selectRole" element={<SelectRole />} />
-            <Route exact path="/profileName" element={<ProfileName />} />
-            <Route exact path="/profileInfo" element={<ProfileInfo />} />
-            <Route exact path="/personalInfo" element={<PersonalInfo />} />
-            <Route exact path="/profilePayment" element={<ProfilePayment />} />
-            <Route exact path="/onboardingRouter" element={<OnboardingRouter />} />
-            <Route exact path="/contactInfo" element={<ContactInfo />} />
+              
+              <Route exact path="/newUser" element={<NewUser />} />
+              <Route exact path="/register" element={<Register />} />
+              <Route exact path="/returningUser" element={<ReturningUser />} />
+              <Route exact path="/userLogin" element={<UserLogin />} />
+              <Route exact path="/selectRole" element={<SelectRole />} />
+              <Route exact path="/profileName" element={<ProfileName />} />
+              <Route exact path="/profileInfo" element={<ProfileInfo />} />
+              <Route exact path="/personalInfo" element={<PersonalInfo />} />
+              <Route exact path="/profilePayment" element={<ProfilePayment />} />
+              <Route exact path="/onboardingRouter" element={<OnboardingRouter />} />
+              <Route exact path="/contactInfo" element={<ContactInfo />} />
 
-            <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
-            <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
-            <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
-            <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
-            <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+              <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
+              <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
+              <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
+              <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
+              <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
 
-            <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
-            <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
-            <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
-            <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
-            <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
+              <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
+              <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
+              <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
+              <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
+              <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>
