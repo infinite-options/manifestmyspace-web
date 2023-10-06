@@ -62,12 +62,10 @@ export default function QuoteAcceptForm(){
             console.log(data);
             const quotes = data.result
             console.log("quotes",  quotes)
-            
             setMaintenanceQuotes(quotes)
         }
         getMaintenanceItemQuotes()  
-
-    }, [])
+    }, [maintenanceItem])
 
     const handleNextQuote = () => {
         setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % maintenanceQuotes.length);
@@ -77,13 +75,10 @@ export default function QuoteAcceptForm(){
         setCurrentQuoteIndex((prevIndex) => (prevIndex - 1 + maintenanceQuotes.length) % maintenanceQuotes.length);
     };
 
-    const currentQuote = maintenanceQuotes[currentQuoteIndex];
-    console.log(currentQuote)
-
     useEffect(() => {
+        const currentQuote = maintenanceQuotes[currentQuoteIndex];
         console.log("currentQuote", currentQuote)
-        if (currentQuote){
-            console.log("currentQuote", currentQuote)
+        if(currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
             const parseServicesExpenses = (expenses) => {
                 let servicesObject = JSON.parse(expenses)
                 console.log(servicesObject)
@@ -112,7 +107,7 @@ export default function QuoteAcceptForm(){
             setEarliestAvailability(currentQuote.quote_earliest_availability)
         }
 
-    }, [currentQuote])
+    }, [currentQuoteIndex, maintenanceQuotes])
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
@@ -177,7 +172,7 @@ export default function QuoteAcceptForm(){
 
             var formData = new FormData();
 
-            formData.append("maintenance_quote_uid", currentQuote?.maintenance_quote_uid);
+            formData.append("maintenance_quote_uid", maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid);
             formData.append("quote_status", "ACCEPTED");
 
             try {
@@ -408,7 +403,7 @@ export default function QuoteAcceptForm(){
                             </Button>
                         </Grid>
                     </Grid>
-                    {(currentQuote?.quote_status!=="REJECTED" && currentQuote?.quote_status!=="REFUSED")?(
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT")?(
     
                     <Grid container spacing={3}
                         alignContent="center"
@@ -427,16 +422,17 @@ export default function QuoteAcceptForm(){
                             </Typography>
                             <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
                                 {/* <TextField
-                                        multiline
-                                        rows={10}
-                                        value={currentQuote?.quote_services_expenses}
-                                        variant="outlined"
-                                        fullWidth
-                                        InputProps={{
-                                        readOnly: true,
-                                        style: { backgroundColor: 'white' }
-                                        }}
-                                    /> */}
+                                    multiline
+                                    rows={10}
+                                    value={currentQuote?.quote_services_expenses}
+                                    variant="outlined"
+                                    fullWidth
+                                    InputProps={{
+                                    readOnly: true,
+                                    style: { backgroundColor: 'white' }
+                                    }}
+                                /> */}
+
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
                             Estimated Total: ${estimatedTotalCost}
                             </Typography>
@@ -447,19 +443,19 @@ export default function QuoteAcceptForm(){
                             Estimated Parts Cost: ${estimatedPartsCost}
                             </Typography>
 
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Estimated Time: {estimatedTime}
-                            </Typography>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Earliest Availability: {earliestAvailability}
-                            </Typography>  
-                            </Container>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Notes
-                            </Typography>
-                            {/* <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Estimated Time: {estimatedTime}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Earliest Availability: {earliestAvailability}
+                                </Typography>  
+                                </Container>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Notes
+                                </Typography>
+                                <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
                                     <TextField
                                         multiline
                                         rows={10}
@@ -471,72 +467,107 @@ export default function QuoteAcceptForm(){
                                         style: { backgroundColor: 'white' }
                                         }}
                                     />
-                                </Container> */}
-                            <Box
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "10px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                            display: 'flex',
-                            width: "95%",
-                        }}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            {currentQuote?.quote_notes}
-                        </Typography>
-                        </Box>
+                                </Container>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        backgroundColor: "#CB8E8E",
+                                        textTransform: "none",
+                                        borderRadius: "10px",
+                                        display: 'flex',
+                                        width: "100%",
+                                    }}
+                                    onClick={() => handleSubmit("CANCELLED")}
+                                    >
+                                    <Typography sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight, 
+                                        fontSize: "14px"
+                                    }}>
+                                        Decline Quote
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        backgroundColor: "#9EAED6",
+                                        textTransform: "none",
+                                        borderRadius: "10px",
+                                        display: 'flex',
+                                        width: "100%",
+                                    }}
+                                    onClick={() => handleSubmit()}
+                                    >
+                                    <Typography sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight, 
+                                        fontSize: "14px"
+                                    }}>
+                                        Accept Quote
+                                    </Typography>
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#CB8E8E",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit("CANCELLED")}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Decline Quote
+                    ): maintenanceQuotes[currentQuoteIndex]?.quote_status==="REQUESTED" ? (
+                            <Grid container spacing={3}
+                                alignContent="center"
+                                justifyContent="center"
+                                alignItems="center"
+                                direction="column"
+                            >
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Quote Requested from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                                 </Typography>
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#9EAED6",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit()}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Accept Quote
+                                <Grid item xs={12}>
+                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                        Awaiting quote details...
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                    ) : maintenanceQuotes[currentQuoteIndex]?.quote_status==="REFUSED" ? (
+                            <Grid container spacing={3}
+                            alignContent="center"
+                            justifyContent="center"
+                            alignItems="center"
+                            direction="column"
+                            >
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                    Refused to quote request from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                                 </Typography>
-                            </Button>
+                            </Grid>
+                    ) : maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED" ?(
+                        <Grid container spacing={3}
+                        alignContent="center"
+                        justifyContent="center"
+                        alignItems="center"
+                        direction="column"
+                        >
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                Your quote has been {maintenanceQuotes[currentQuoteIndex]?.quote_status}
+                            </Typography>
                         </Grid>
-                    </Grid>
-                       ):(<div></div>)}
+                    ) : maintenanceQuotes[currentQuoteIndex]?.quote_status==="WITHDRAWN" ?(
+                        <Grid container spacing={3}
+                        alignContent="center"
+                        justifyContent="center"
+                        alignItems="center"
+                        direction="column"
+                        >
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                This quote request has been {maintenanceQuotes[currentQuoteIndex]?.quote_status}
+                            </Typography>
+                        </Grid>
+
+                    ) : (
+                        null
+                    )
+                }
                 </Stack>
             </Paper>
         </Box>
