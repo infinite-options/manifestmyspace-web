@@ -18,7 +18,7 @@ import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilte
 import { useUser } from "../../../contexts/UserContext";
 
 export default function Maintenance01(){
-    const { user } = useUser();
+    const { getProfileId } = useUser();
     const location = useLocation();
     let navigate = useNavigate();
     const [maintenanceData, setMaintenanceData] = useState({});
@@ -164,8 +164,7 @@ export default function Maintenance01(){
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
-            const { business_uid } = user.businesses.MAINTENANCE;
-            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${business_uid}`)
+            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             
             let array1 = maintenanceRequestsData1.result.REQUESTED.maintenance_items;

@@ -3,14 +3,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { CalendarIcon, HomeIcon, MainContainer, RentAccordionView, RentTitle, ViewAllButton, ViewOptionContainer, ViewOptionText } from "../RentComponents/RentComponents";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../../contexts/UserContext";
 
 function OwnerRent(props) {
     const navigate = useNavigate();
+    const { getProfileId } = useUser();
     const [dataNum, setDataNum] = useState(0);
     const [rentData, setRentData] = useState({});
 
     useEffect(() => {
-        const requestURL = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/rents/110-000003";
+        const requestURL = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/rents/${getProfileId()}`;
         axios.get(requestURL).then(res => {
             const fetchingData = res.data.RentStatus.result;
             setDataNum(fetchingData.length);

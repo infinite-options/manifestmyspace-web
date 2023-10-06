@@ -29,7 +29,7 @@ const GoogleSignup = () => {
   useEffect(() => {
     /* global google */
 
-    if (window.google) {
+    if (google) {
       // initialize a code client for the authorization code flow.
       codeClient = google.accounts.oauth2.initCodeClient({
         client_id: CLIENT_ID,

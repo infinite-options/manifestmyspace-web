@@ -13,7 +13,7 @@ import User_fill_dark from '../images/User_fill_dark.png'
 import { useUser } from "../contexts/UserContext";
 
 function Dashboard() {
-    const { user } = useUser();
+    const { getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);
@@ -56,7 +56,7 @@ function Dashboard() {
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${user.owner_id}`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
             console.log(jsonData)
             console.log(jsonData.RentStatus.result)

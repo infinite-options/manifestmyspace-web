@@ -8,6 +8,7 @@ import { post, put } from "../utils/api";
 import PropertyListData from "../Property/PropertyListData";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+import { useUser } from "../../contexts/UserContext";
 // import PropertyData from "../Property/PropertyData";
 
 const useStyles = makeStyles((theme) => ({
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 const AddExpense = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const { getProfileId } = useUser();
   const [category, setCategory] = useState("Insurance");
   const [frequency, setFrequency] = useState("Monthly");
   const [amount, setAmount] = useState("");
@@ -72,8 +74,8 @@ const AddExpense = (props) => {
       "purchase_status": "COMPLETED",
       "pur_notes": "This is just a note",
       "pur_description": description,
-      "pur_receiver": "110-000003",
-      "pur_initiator": "110-000003",
+      "pur_receiver": getProfileId(),
+      "pur_initiator": getProfileId(),
       "pur_payer": null
     });
     

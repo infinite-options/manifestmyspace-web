@@ -132,7 +132,7 @@ const CashflowOwner = () => {
                     </Button>
                     <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
                     
-                    {selectedRole === 'Manager' && <Button sx={{ textTransform: 'capitalize' }} onClick={()=>{}}>
+                    {selectedRole === 'MANAGER' && <Button sx={{ textTransform: 'capitalize' }} onClick={()=>{}}>
                         <img src={AllOwnerIcon} alt='All Owners' style={{ width: '10px', height: '10px' }}/>
                         <Typography 
                         sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}

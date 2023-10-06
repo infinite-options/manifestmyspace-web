@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 
 function ManagerDashboard() {
     const classes = useStyles();
-    const { user } = useUser();
+    const { getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);
@@ -76,8 +76,7 @@ function ManagerDashboard() {
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
-            const { business_uid } = user.businesses.MANAGEMENT;
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${business_uid}`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/managerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
             console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);

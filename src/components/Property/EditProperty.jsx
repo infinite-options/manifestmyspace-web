@@ -39,13 +39,13 @@ import dataURItoBlob from '../utils/dataURItoBlob'
 import defaultHouseImage from './defaultHouseImage.png'
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-
+import { useUser } from "../../contexts/UserContext";
 import IconButton from '@mui/material/IconButton';
 
 export default function EditProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
-
+    const { getProfileId } = useUser();
     const propertyData = location.state.item
     const propertyId = location.state.propertyId;
 
@@ -53,7 +53,7 @@ export default function EditProperty({}){
     console.log("Property Data in Edit Property", propertyData)
 
 
-    const [ownerId, setOwnerId] = useState('110-000003');
+    const [ownerId, setOwnerId] = useState(getProfileId());
 
     const [address, setAddress] = useState(propertyData.property_address);
     const [city, setCity] = useState(propertyData.property_city);

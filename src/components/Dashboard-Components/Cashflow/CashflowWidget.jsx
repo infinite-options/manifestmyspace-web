@@ -6,10 +6,11 @@ import { useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
 import MixedChart from "../../Graphs/OwnerCashflowGraph";
 import { months } from "moment";
+import { useUser } from "../../../contexts/UserContext";
 
 function CashflowWidget() {
   const navigate = useNavigate();
-
+  const { user } = useUser();
   const [revenue, setRevenue] = useState(null);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [expense, setExpense] = useState(null);
@@ -34,7 +35,7 @@ function CashflowWidget() {
           month={month}
           filter={false}
           role={"Owner"}
-          userID={"100-000003"}
+          userID={user.user_uid}
           setRevenueSummary={setRevenueSummary}
           setExpenseSummary={setExpenseSummary}
           setExpense={setExpense}

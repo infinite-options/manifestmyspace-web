@@ -3,8 +3,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import SelectProperty from "../SelectProperty";
 import AllOwnerIcon from './AllOwnerIcon.png';
+import { useUser } from "../../../contexts/UserContext";
 
 function PMLeases(props) {
+    const { getProfileId } = useUser();
     // Select Property Tab
     const [open, setOpen] = useState(false);
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
@@ -28,7 +30,7 @@ function PMLeases(props) {
             }
             return num;
         }
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/600-000003")
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data['Lease Details'].result);
                 const fetchData = res.data['Lease_Details'].result;

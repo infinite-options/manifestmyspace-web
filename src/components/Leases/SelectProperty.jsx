@@ -1,16 +1,18 @@
 import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useUser } from "../../contexts/UserContext";
 
 function SelectProperty(props) {
     const handleClose = props.closeTab;
+    const { getProfileId } = useUser();
     let setSelectedProperty = {}
     if (props.setSelectedProperty) {
         setSelectedProperty = props.setSelectedProperty;
     }
     const [properties, setProperties] = useState([]);
     useEffect(()=>{
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003")
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/${getProfileId()}`)
         .then((res)=>{
             console.log("Property list ",res.data.Property.result);
             setProperties(res.data.Property.result);

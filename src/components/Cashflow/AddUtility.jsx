@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+import { useUser } from "../../contexts/UserContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 const AddUtility = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const { getProfileId } = useUser();
   const [type, setType] = useState("Electricty");
   const [provider, setProvider] = useState("");
   const [notes, setNotes] = useState("");
@@ -110,7 +112,7 @@ const AddUtility = (props) => {
 
     let data = JSON.stringify({
       "bill_description": notes,
-      "bill_created_by": "110-000003",
+      "bill_created_by": getProfileId(),
       "bill_utility_type": "maintenance",
       "bill_amount": Number(amount),
       "bill_split": splitMethod,

@@ -4,6 +4,7 @@ import { BackIcon, RentDetailBody, RentDetailNavbarTab } from "../RentComponents
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useUser } from "../../../contexts/UserContext";
 
 function PMRentDetail(props) {
     const location = useLocation();
@@ -42,8 +43,9 @@ function PMRentDetail(props) {
 
     const [rentDetailsData, setRentDetailsData] = useState({});
     const [propertyID, setPropertyID] = useState('');
+    const { getProfileId } = useUser();
     useEffect(() => {
-        const requestURL = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/rentDetails/110-000003";
+        const requestURL = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/rentDetails/${getProfileId()}`;
         axios.get(requestURL).then(res => {
             // console.log(res.data.RentStatus.result);
             const fetchData = res.data.RentStatus.result;

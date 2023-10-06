@@ -37,6 +37,7 @@ import ImageUploader from '../ImageUploader';
 import theme from '../../theme/theme';
 import dataURItoBlob from '../utils/dataURItoBlob'
 import { type } from "@testing-library/user-event/dist/type";
+import { useUser } from "../../contexts/UserContext";
 
 // function dataURItoBlob(dataURI) {
 //     // Split the input to get the mime type and the data itself
@@ -62,6 +63,7 @@ import { type } from "@testing-library/user-event/dist/type";
 export default function AddMaintenanceItem({}){
     const location = useLocation();
     let navigate = useNavigate();
+    const { getProfileId } = useUser();
     const [propertyId, setPropertyId] = useState('200-000029')
     const [properties, setProperties] = useState([])
     const [property, setProperty] = useState('');
@@ -123,7 +125,7 @@ export default function AddMaintenanceItem({}){
     useEffect(() => {
 
         const getProperties = async () => {
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${getProfileId()}`)
 
             const propertyData = await response.json();
             // console.log("data", data)
@@ -153,7 +155,7 @@ export default function AddMaintenanceItem({}){
         formData.append("maintenance_title", title);
         formData.append("maintenance_desc", description);
         formData.append("maintenance_request_type", issue);
-        formData.append("maintenance_request_created_by", "600-000003");  // problem is here it was 600-000003, changed it 600-000012
+        formData.append("maintenance_request_created_by", getProfileId());  // problem is here it was 600-000003, changed it 600-000012
         formData.append("maintenance_priority", priority);
         formData.append("maintenance_can_reschedule", 1);
         formData.append("maintenance_assigned_business", null);

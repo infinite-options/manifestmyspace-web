@@ -5,10 +5,11 @@ import Status from "../../Templates/Status";
 import { get } from "../../utils/api";
 
 import theme from "../../../theme/theme";
+import { useUser } from "../../../contexts/UserContext";
 
 export default function MaintenanceWidget(){
     const navigate = useNavigate();
-
+    const { getProfileId } = useUser();
     const [maintenanceRequests, setMaintenanceRequests] = useState({});
     // const colorStatus = [
     //     {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
@@ -26,7 +27,7 @@ export default function MaintenanceWidget(){
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
             console.log(jsonData.MaintenanceStatus.result)
             for (const item of jsonData.MaintenanceStatus.result) {

@@ -1,12 +1,13 @@
 import { Box } from '@mui/system';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useUser } from "../../../contexts/UserContext";
 
 function TenantDoucments() {
-
+    const { getProfileId } = useUser();
     const [documentsData, setDocumentsData] = useState([]);
     useEffect(() => {
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000001')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);

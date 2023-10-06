@@ -3,6 +3,7 @@ import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from "../../../contexts/UserContext";
 
 const theme = createTheme({
     palette: {
@@ -18,7 +19,7 @@ const theme = createTheme({
     },
 });
 function TenantProfile() {
-
+    const { getProfileId } = useUser();
     const navigate = useNavigate()
     const [profileData, setProfileData] = useState([]);
     const [adultTenantData, setAdultTenantData] = useState([]);
@@ -27,7 +28,7 @@ function TenantProfile() {
     const [vehicleTenantData, setVehicleTenantData] = useState([]);
     useEffect(() => {
         console.log("TENANT PROFILE USE EFFECT")
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data.Profile.result[0]);
                 setProfileData(res.data.Profile.result[0]);
