@@ -34,10 +34,10 @@ function PMProfile() {
 
     const [profileData, setProfileData] = useState([]);
     useEffect(()=>{
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerProfile/${getProfileId()}`)
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${getProfileId()}`)
         .then((res)=>{
             // console.log(res.data);
-            setProfileData(res.data.Profile.result[0]);
+            setProfileData(res.data.result[0]);
         });
     }, []);
     return (
@@ -96,7 +96,7 @@ function PMProfile() {
                     color: theme.typography.common.blue, 
                     fontWeight: theme.typography.common.fontWeight, 
                     fontSize:theme.typography.largeFont}}>
-                    {profileData.owner_first_name} {profileData.owner_last_name}
+                    {profileData.business_name}
                 </Typography>
                 </Stack>
                 
@@ -134,7 +134,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {profileData.owner_email}
+                        {profileData.business_email}
                     </Typography>
                     </Stack>
                     
@@ -159,7 +159,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {getPhoneNumberText(profileData.owner_phone_number)}
+                        {profileData.business_phone_number}
                     </Typography>
                     </Stack>
                     
@@ -184,7 +184,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {profileData.owner_address ? profileData.owner_address : '-'}
+                        {profileData.business_address ? profileData.business_address : '-'}
                     </Typography>
                     </Stack>
                     
@@ -249,7 +249,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontWeight: theme.typography.light.fontWeight, 
                             fontSize:theme.typography.smallFont}}>
-                            {profileData.owner_apple_pay}
+                            {/* {profileData.owner_apple_pay} */}
                         </Typography>
                         <Box sx={{
                             width: '50px',
@@ -280,7 +280,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontWeight: theme.typography.light.fontWeight, 
                             fontSize:theme.typography.smallFont}}>
-                            {profileData.owner_paypal}
+                            {/* {profileData.owner_paypal} */}
                         </Typography>
                         <Box sx={{
                             display: 'flex',
@@ -308,7 +308,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontWeight: theme.typography.light.fontWeight, 
                             fontSize:theme.typography.smallFont}}>
-                            {profileData.owner_venmo}
+                            {/* {profileData.owner_venmo} */}
                         </Typography>
                         <Box sx={{
                             display: 'flex',
@@ -334,7 +334,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontWeight: theme.typography.light.fontWeight, 
                             fontSize:theme.typography.smallFont}}>
-                            {profileData.owner_zelle}
+                            {/* {profileData.owner_zelle} */}
                         </Typography>
                         <Box sx={{
                             width: '50px',
@@ -459,7 +459,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontSize: '16px',
                             fontWeight: 'bold'}}>
-                            {getSSNText(profileData.owner_ssn)}
+                            {/* {getSSNText(profileData.owner_ssn)} */}
                         </Typography>
                         
                         <Stack
@@ -481,7 +481,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontSize: '16px',
                             fontWeight: 'bold'}}>
-                            {profileData.owner_ein_number === "" ? "No EIN Provided" : profileData.owner_ein_number}
+                            {profileData.business_ein_number === "" ? "No EIN Provided" : profileData.business_ein_number}
                         </Typography>
                         
                         <Stack

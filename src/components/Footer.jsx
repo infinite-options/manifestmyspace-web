@@ -15,58 +15,74 @@ export function Footer() {
 
     // Define a function to get the home button navigation based on the selected role
     const getHomeButtonNav = () => {
-        console.log("selectedRole ",selectedRole);
+        // console.log("selectedRole ",selectedRole);
         switch (selectedRole) {
-        case 'Owner':
-            return '/';
-        case 'Manager':
+        case 'OWNER':
+            return '/ownerDashboard';
+        case 'MANAGER':
             return '/managerDashboard';
-        case 'Tenant':
+        case 'TENANT':
             return '/tenantDashboard';
-        case 'Maintenance':
-            return '/';
+        case 'MAINTENANCE':
+            return '/maintenanceDashboard';
+        case 'PM_EMPLOYEE':
+            return '/managerDashboard';
+        case 'MAINT_EMPLOYEE':
+            return '/maintenanceDashboard';
         default:
             return '/';
         }
     };
     const getProfileButtonNav = () => {
         switch (selectedRole) {
-          case 'Owner':
+          case 'OWNER':
             return '/ownerProfile';
-          case 'Manager':
+          case 'MANAGER':
             return '/pmProfile';
-          case 'Tenant':
+          case 'TENANT':
             return '/tenantProfile';
-          case 'Maintenance':
-            return '/';
+          case 'MAINTENANCE':
+            return '/maintenanceProfile';
+          case 'PM_EMPLOYEE':
+            return '/pmProfile';
+          case 'MAINT_EMPLOYEE':
+              return '/maintenanceProfile';
           default:
             return '/';
         }
     };
     const getBellButtonNav = () => {
         switch (selectedRole) {
-          case 'Owner':
-            return '/';
-          case 'Manager':
+          case 'OWNER':
+            return '/ownerDashboard';
+          case 'MANAGER':
             return '/managerDashboard';
-          case 'Tenant':
+          case 'TENANT':
             return '/tenantDashboard';
-          case 'Maintenance':
-            return '/';
+          case 'MAINTENANCE':
+            return '/maintenanceDashboard';
+          case 'PM_EMPLOYEE':
+            return '/managerDashboard';
+          case 'MAINT_EMPLOYEE':
+            return '/maintenanceDashboard';
           default:
             return '/';
         }
     };
     const getCommentButtonNav = () => {
         switch (selectedRole) {
-          case 'Owner':
-            return '/';
-          case 'Manager':
+          case 'OWNER':
+            return '/ownerDashboard';
+          case 'MANAGER':
             return '/managerDashboard';
-          case 'Tenant':
+          case 'TENANT':
             return '/tenantDashboard';
-          case 'Maintenance':
-            return '/';
+          case 'MAINTENANCE':
+            return '/maintenanceDashboard';
+          case 'PM_EMPLOYEE':
+            return '/managerDashboard';
+          case 'MAINT_EMPLOYEE':
+            return '/maintenanceDashboard';
           default:
             return '/';
         }

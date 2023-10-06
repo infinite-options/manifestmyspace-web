@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-import { useCookies, removeCookie } from "react-cookie";
-import { useNavigate } from "react-router-dom";
+import { useCookies, Cookies } from "react-cookie";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
-  const navigate = useNavigate();
+export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const [cookies, setCookie] = useCookies(["user", "token", "selectedRole"]);
   const [user, setUser] = useState(cookies.user);
   const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
@@ -98,12 +96,9 @@ export const UserProvider = ({ children }) => {
       ? user.tenant_id
       : user.owner_id;
   const logout = () => {
-    document.cookie.split(";").forEach((c) => {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
-    });
-    navigate("/");
+    cookiesObj.remove("user");
+    cookiesObj.remove("token");
+    window.location.href = "/";
   };
   return (
     <UserContext.Provider
