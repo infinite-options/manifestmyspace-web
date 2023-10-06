@@ -414,7 +414,7 @@ export default function QuoteAcceptForm(){
                         
                         <Grid item xs={12}>
                             {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
-                            {currentQuote?.quote_status ? currentQuote?.quote_status + " from business id:" + currentQuote?.quote_business_id : "no quote status found for " + currentQuote?.quote_business_id}
+                            {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business id:" + maintenanceQuotes[currentQuoteIndex]?.quote_business_id : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                         </Grid>
                         <Grid item xs={12}>
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
