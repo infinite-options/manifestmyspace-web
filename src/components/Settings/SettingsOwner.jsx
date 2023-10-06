@@ -6,9 +6,11 @@ import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
+import { useUser } from "../../contexts/UserContext";
 
 export default function Settings() {
     const navigate = useNavigate();
+    const { logout } = useUser();
     return (
         <ThemeProvider theme={theme}>
           <Box

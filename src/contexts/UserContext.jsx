@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
-import { useCookies } from "react-cookie";
+import { useCookies, removeCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["user", "token", "selectedRole"]);
   const [user, setUser] = useState(cookies.user);
   const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
@@ -95,6 +97,10 @@ export const UserProvider = ({ children }) => {
       : selectedRole === "TENANT"
       ? user.tenant_id
       : user.owner_id;
+  const logout = () => {
+    removeCookies();
+    navigate("/");
+  };
   return (
     <UserContext.Provider
       value={{
@@ -114,6 +120,7 @@ export const UserProvider = ({ children }) => {
         setLoggedIn,
         updateProfileUid,
         getProfileId,
+        logout,
       }}
     >
       {children}
