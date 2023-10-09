@@ -30,14 +30,36 @@ export default function MaintenanceDashboard(){
     const navigate = useNavigate();
     const { user } = useUser();
 
-    console.log(user)
+    console.log("user object", user)
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+
 
 
     useEffect(() => {
-        console.log(user)
-    }, [user])
+        console.log("Maintenance Worker Dashboard useEffect")
+        console.log(user.businesses.MAINTENANCE.business_uid)
+
+        const getMaintenanceWorkerDashboardData = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceDashboard/${user.businesses.MAINTENANCE.business_uid}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',                    
+                    }
+                });
+                const data = await response.json();
+                console.log(data);
+                setLoading(false);
+            } catch(error){
+                console.log("Error getting maintenance worker dashboard data: ", error)
+            }
+        }
+        getMaintenanceWorkerDashboardData()
+    }, [])
+
+
 
 
     const data = [
@@ -72,6 +94,30 @@ export default function MaintenanceDashboard(){
           "fill": "#6588AC"
         },
       ]
+
+    // const renderCustomizedLabel = (props) => {
+    //         const {
+    //         x, y, width, height, value,
+    //         } = props;
+    //     // console.log(x, y, width, height, value)
+    //     // const fireOffset = value.toString().length < 5;
+    //     // const offset = fireOffset ? -40 : 5;
+    //         // return (
+    //         //     <text x={x + width -offset} y={y + height - 5} fill={fireOffset ? "#285A64" :"#fff"} textAnchor="end">
+    //         //     {value}
+    //         //     </text>
+    //         // );
+
+
+    //         return (
+    //             <text x={100+x} y={100} fill={"#000"} textAnchor="end">
+    //                 {props.name}
+    //                 {props.value}
+    //             </text>
+    //         )
+    //   };
+      
+      
 
     return (
         <ThemeProvider theme={theme}>
@@ -142,14 +188,16 @@ export default function MaintenanceDashboard(){
                                         <RadialBarChart 
                                             width={500} 
                                             height={500} 
-                                            innerRadius="20%" 
+                                            // cx='50%'
+                                            // cy='50%'
+                                            innerRadius="10%" 
                                             outerRadius="80%" 
                                             data={data.reverse()} 
                                             startAngle={90} 
-                                            endAngle={360}  
+                                            endAngle={-180}  
                                         >
-                                            <RadialBar minAngle={5} background clockWise={true} dataKey='count'>
-                                                <LabelList dataKey="name" position="start" fill="#000"/>
+                                            <RadialBar minAngle={15} background clockWise={true} dataKey='count'>
+                                                <LabelList dataKey="name" position="outsideStart" fill="#000"/>
                                             </RadialBar>
                                         </RadialBarChart>
                                     </Box>
@@ -164,7 +212,6 @@ export default function MaintenanceDashboard(){
                                 <Grid item xs={12}>
                                     <Box
                                         variant="contained"
-                                        disableElevation
                                         sx={{
                                             flexDirection: "column",
                                             backgroundColor: "rgba(189, 169, 97, 0.7)",
@@ -190,7 +237,6 @@ export default function MaintenanceDashboard(){
                                 <Grid item xs={12}>
                                     <Box
                                         variant="contained"
-                                        disableElevation
                                         sx={{
                                             flexDirection: "column",
                                             backgroundColor: "rgba(149, 154, 118, 0.7)",
@@ -303,8 +349,7 @@ export default function MaintenanceDashboard(){
                             alignItems: 'center' 
                         }}>
                         <Button
-                                variant="contained"
-                                disableElevation                            
+                                variant="contained"                            
                                 sx={{
                                     backgroundColor: "#DEDFE3",
                                     textTransform: "none",
@@ -352,8 +397,7 @@ export default function MaintenanceDashboard(){
                             alignItems: 'center' 
                         }}>
                             <Button
-                                variant="contained"
-                                disableElevation                            
+                                variant="contained"                            
                                 sx={{
                                     backgroundColor: "#DEDFE3",
                                     textTransform: "none",

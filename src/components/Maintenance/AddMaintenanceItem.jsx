@@ -37,6 +37,7 @@ import ImageUploader from '../ImageUploader';
 import theme from '../../theme/theme';
 import dataURItoBlob from '../utils/dataURItoBlob'
 import { type } from "@testing-library/user-event/dist/type";
+import { useUser } from "../../contexts/UserContext";
 
 // function dataURItoBlob(dataURI) {
 //     // Split the input to get the mime type and the data itself
@@ -62,6 +63,7 @@ import { type } from "@testing-library/user-event/dist/type";
 export default function AddMaintenanceItem({}){
     const location = useLocation();
     let navigate = useNavigate();
+    const { user, getProfileId } = useUser();
     const [propertyId, setPropertyId] = useState('200-000029')
     const [properties, setProperties] = useState([])
     const [property, setProperty] = useState('');
@@ -74,6 +76,12 @@ export default function AddMaintenanceItem({}){
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
+
+    console.log(user)
+
+    const profileId = getProfileId();
+
+    console.log(profileId)
 
 
 
@@ -121,6 +129,7 @@ export default function AddMaintenanceItem({}){
     }
 
     useEffect(() => {
+        console.log(user.owner_id)
 
         const getProperties = async () => {
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
