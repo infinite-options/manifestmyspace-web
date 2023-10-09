@@ -33,13 +33,13 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
     setActiveStep(0);
   }, [currentIndex]);
 
-  // console.log("RequestNavigator");
-  // console.log("requestIndex", requestIndex);
-  // console.log("requestData", requestData);
-  // console.log("currentIndex", currentIndex);
-  // console.log("color", color);
-  // console.log("item", item);
-  // console.log("allData", allData);
+  console.log("-- DEBUG -- RequestNavigator");
+  console.log("requestIndex", requestIndex);
+  console.log("requestData", requestData);
+  console.log("currentIndex", currentIndex);
+  console.log("color", color);
+  console.log("item", item);
+  console.log("allData", allData);
 
   const maxSteps = images.length;
 
@@ -146,8 +146,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   }
 
   const data = requestData[currentIndex];
-  // console.log("requestData", requestData)
-  // console.log("data", data)
+  console.log("--DEBUG requestData--")
+  console.log("requestData", requestData)
+  console.log("currentIndex", currentIndex)
+  console.log("data", data)
 
   useEffect(() => {
     formatDate(data.maintenance_request_created_date);
@@ -292,6 +294,26 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   alignItems: "left",
                 }}
               >
+                 <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+              {data?.maintenance_priority} Priority
+             </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }} underline="always"
+                >
+                    {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
+            </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -300,28 +322,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_priority} Priority
-                </Typography>
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
-                  }}
-                  underline="always"
-                >
-                  {data?.property_address}
-                </Typography>
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    paddingBottom: "10px",
-                  }}
-                >
-                  {data?.maintenance_title}
+     { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+            
                 </Typography>
                 <Typography
                   sx={{
@@ -343,7 +345,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
-                  {data.maintenance}
+                  {/* {data.maintenance} */}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",
@@ -352,7 +354,20 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null}
+                  {console.log("---DEBUG---")}
+                  {console.log(data)}
+                  {console.log(data.maintenance_request_status)}
+                  {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                  Issue Description: {data?.maintenance_desc}
                 </Typography>
               </div>
             </CardContent>

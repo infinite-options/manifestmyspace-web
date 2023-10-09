@@ -43,13 +43,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import propertyImage from "./propertyImage.png";
 import maintenanceIcon from "./maintenanceIcon.png";
 import samplePropertyData from "./samplePropertyData";
-
+import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
 // import PropertyData from './PropertyData';
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
-
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchTerm(query);
@@ -135,6 +134,7 @@ function getPaymentStatus(paymentStatus) {
 
 export default function PropertyList({}) {
   let navigate = useNavigate();
+  const { getProfileId } = useUser();
   const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   // const [maintenanceData, setMaintenanceData] = useState([]);
@@ -143,7 +143,7 @@ export default function PropertyList({}) {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
-      const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${getProfileId()}`)
       const propertyData = await response.json();
       console.log(propertyData)
       setPropertyList([...propertyData["Property_Dashboard"].result]);
@@ -169,6 +169,46 @@ export default function PropertyList({}) {
       return imagesArray[0];
     } else {
       return propertyImage;
+    }
+  }
+
+  function displayAddress(property){
+    if (property.property_unit !== ""){
+      return (
+        <Typography
+            sx={{
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: theme.typography.smallFont,
+              margin: "0px", // Ensure no margin
+              padding: "0px", // Ensure no padding
+              textAlign: "center", // Ensure text is centered within itself
+              verticalAlign: "middle", // Vertically align text in the middle
+              alignItems: "center", // vertically align items to the center
+            }}
+          >
+          {property.property_address}  #{property.property_unit}<br />
+          {property.property_city + " " + property.property_state + " " + property.property_zip}
+        </Typography>
+      )
+    } else {
+      return (
+        <Typography
+          sx={{
+            color: theme.typography.common.blue,
+            fontWeight: theme.typography.primary.fontWeight,
+            fontSize: theme.typography.smallFont,
+            margin: "0px", // Ensure no margin
+            padding: "0px", // Ensure no padding
+            textAlign: "center", // Ensure text is centered within itself
+            verticalAlign: "middle", // Vertically align text in the middle
+            alignItems: "center", // vertically align items to the center
+          }}
+        >
+        {property.property_address} <br />
+        {property.property_city + " " + property.property_state + " " + property.property_zip}
+        </Typography>
+      )
     }
   }
 
@@ -245,7 +285,7 @@ export default function PropertyList({}) {
                       width: "50%", // to take full width of its parent
                     }}
                   >
-                    <Typography
+                    {/* <Typography
                       sx={{
                         color: theme.typography.common.blue,
                         fontWeight: theme.typography.primary.fontWeight,
@@ -256,10 +296,12 @@ export default function PropertyList({}) {
                         verticalAlign: "middle", // Vertically align text in the middle
                         alignItems: "center", // vertically align items to the center
                       }}
-                    >
-                      {property.property_address} <br />
+                    > */}
+                      {/* {property.property_address}  #{property.property_unit}<br />
                       {property.property_city + " " + property.property_state + " " + property.property_zip}
-                    </Typography>
+                       */}
+                      {displayAddress(property)}
+                    {/* </Typography> */}
                   </Box>
                   <Box
                     sx={{

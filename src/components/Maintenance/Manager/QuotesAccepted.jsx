@@ -58,27 +58,58 @@ export default function QuotesAccepted({maintenanceItem, navigateParams}){
     }
 
     async function handleScheduleStatusChange(){
-        try {
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                    "maintenance_request_status": "SCHEDULED"
-                })
-            });
-            const responseData = await response.json();
-            console.log(responseData)
-            if (responseData.code === 200){
-                console.log("Ticket Status Changed")
-                alert("Ticket Status Changed")
-                navigate('/maintenance')
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "SCHEDULED"
+                    })
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    navigate("/maintenance")
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
             }
-        } catch (error){
-            console.log("error", error)
         }
+        const changeMaintenanceQuoteStatus = async () => {
+
+            const formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
+            formData.append("quote_maintenance_request_id", maintenanceItem.quote_maintenance_request_id)
+            formData.append("quote_status", "SCHEDULED")
+            
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    changeMaintenanceRequestStatus()
+                    navigate("/maintenance"); 
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+        changeMaintenanceQuoteStatus()
     }
 
     return(

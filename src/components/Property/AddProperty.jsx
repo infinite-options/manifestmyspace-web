@@ -35,14 +35,12 @@ import dataURItoBlob from '../utils/dataURItoBlob'
 import defaultHouseImage from './defaultHouseImage.png'
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-
-
-
+import { useUser } from "../../contexts/UserContext";
 
 export default function AddProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
-
+    const { getProfileId } = useUser();
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
@@ -63,7 +61,7 @@ export default function AddProperty({}){
     const [activeStep, setActiveStep] = useState(0);
 
 
-    const [ownerId, setOwnerId] = useState('110-000003"');
+    const [ownerId, setOwnerId] = useState(getProfileId());
 
     const [unit, setUnit] = useState('');
 

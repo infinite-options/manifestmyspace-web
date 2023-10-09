@@ -134,6 +134,7 @@ export default function RescheduleMaintenance(){
                 console.log("error", error)
             }
         }
+        
         changeMaintenanceRequestStatus()
         navigate("/maintenance/detail", {
             state: {

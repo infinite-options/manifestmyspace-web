@@ -1,24 +1,24 @@
 import './App.css';
 import Main from './components/Main';
 import {SettingsACHContextProvider} from '../src/contexts/SettingsACHContext';
-import {PMProfileContextProvider} from '../src/contexts/PMProfileContext';
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from './contexts/UserContext';
-import { POProfileContextProvider } from './contexts/POProfileContext';
+import { OnboardingProvider } from './contexts/OnboardingContext';
+import { CookiesProvider } from 'react-cookie';
 
 function App() {
   return (
+    <CookiesProvider defaultSetOptions={{ path: '/' }}>
     <UserProvider>
-    <PMProfileContextProvider>
-    <POProfileContextProvider>
+    <OnboardingProvider>
     <SettingsACHContextProvider>
       <BrowserRouter>
         <Main/>
       </BrowserRouter>
     </SettingsACHContextProvider>
-    </POProfileContextProvider>
-    </PMProfileContextProvider>
+    </OnboardingProvider>
     </UserProvider>
+    </CookiesProvider>
   )
 }
 

@@ -21,11 +21,15 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-
+import RequestMoreInfo from "../Maintainance01/RequestMoreInfo";
+import Scheduler from "../../utils/Schedular";
 
 
 export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [schedulerDate, setSchedulerDate] = useState();
+    const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
@@ -79,6 +83,12 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 width: "100%",
             }}
         >
+            <Scheduler 
+                show={showScheduler} 
+                setShow={setShowScheduler} 
+                date={schedulerDate} 
+                setDate={setSchedulerDate} 
+            />
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <Grid item xs={1} sx={{
                         alignItems: "center",
@@ -139,6 +149,35 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         </Typography>
                     </Button>
                 </Grid>
+                <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
+                    <Grid item xs={12} sx={{
+                            alignItems: "center",
+                            justifyContent: "left",
+                            
+                        }}>
+                            <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRight:"10%",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%",
+                        }} 
+                        onClick={() => setShowRequestMoreInfo(true)}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Request More Info
+                        </Typography>
+                    </Button>
+                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
+                           
+                    </Grid>
+                </Grid>
+           
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -157,6 +196,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                             //     backgroundColor: darken("#9EAED6", 0.2)
                             // }
                         }}
+                        onClick={() => setShowScheduler(true)}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
                             Schedule Repair

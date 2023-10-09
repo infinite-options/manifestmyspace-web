@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import Typography from "@mui/material/Typography";
-import googleImg from "../../images/onboarding/continue_with_google.png";
+import { useUser } from "../../contexts/UserContext";
+import { roleMap } from './helper';
+import googleImg from "../../images/ContinueWithGoogle.svg";
 
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -14,14 +15,13 @@ let SCOPES =
 function GoogleLogin(props) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const [accessToken, setAccessToken] = useState("");
-  const [loginSuccessful, setLoginSuccessful] = useState(false);
   const [userDoesntExist, setUserDoesntExist] = useState(false);
   const [socialId, setSocialId] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
+  const { setAuthData, setLoggedIn, selectRole } = useUser();
   let codeClient = {};
   function getAuthorizationCode() {
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
@@ -30,17 +30,19 @@ function GoogleLogin(props) {
 
   const socialGoogle = async (e, u) => {
     setShowSpinner(true);
-    navigate("/managerDashboard", {
-      state: {
-        user: u,
-      },
-    });
-    setLoginSuccessful(true);
+    setAuthData(u);
+    const { role } = u.user;
+    const openingRole = role.split(",")[0];
+    selectRole(openingRole);
+    setLoggedIn(true);
+    const { dashboardUrl } = roleMap[openingRole];
+    navigate(dashboardUrl);
     setShowSpinner(false);
   };
 
   useEffect(() => {
     /* global google */
+    if(google) {
     codeClient = google.accounts.oauth2.initCodeClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
@@ -103,11 +105,11 @@ function GoogleLogin(props) {
 
                   axios
                     .get(
-                      `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/FINDME/${e}`
+                      `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
                     )
-                    .then((response) => {
+                    .then(({ data }) => {
                       if (
-                        response["data"]["message"] === "Email ID doesnt exist"
+                        data["message"] === "Email ID doesnt exist"
                       ) {
                         const socialGoogle = async () => {
                           const user = {
@@ -129,14 +131,14 @@ function GoogleLogin(props) {
                         socialGoogle();
                         return;
                       } else if (
-                        response["data"]["message"] === "Login with email"
+                        data["message"] === "Login with email"
                       ) {
-                        setErrorMessage(response["data"]["message"]);
+                        alert(data["message"]);
                       } else {
-                        let user = response.data.result;
-                        let user_id = response.data.result.user_uid;
+                        let user = data.result;
+                        let user_id = data.result.user.user_uid;
                         setAccessToken(at);
-                        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/FINDME/${user_id}`;
+                        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
                         axios
                           .post(url, {
                             google_auth_token: at,
@@ -164,6 +166,7 @@ function GoogleLogin(props) {
         }
       },
     });
+    }
   }, [getAuthorizationCode]);
   const onCancelModal = () => {
     setUserDoesntExist(false);

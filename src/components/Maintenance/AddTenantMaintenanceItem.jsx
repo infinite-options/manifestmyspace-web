@@ -23,7 +23,7 @@ import {
     UploadFile,
     InputAdornment
 } from "@mui/material";
-
+import { useUser } from "../../contexts/UserContext";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -38,7 +38,7 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, propertyId}){
     const location = useLocation();
     let navigate = useNavigate();
-
+    const { getProfileId } = useUser();
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [property, setProperty] = useState('200-000029');
     const [issue, setIssue] = useState('');
@@ -103,7 +103,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         formData.append("maintenance_title", title);
         formData.append("maintenance_desc", description);
         formData.append("maintenance_request_type", issue);
-        formData.append("maintenance_request_created_by", "600-000003");
+        formData.append("maintenance_request_created_by", getProfileId());
         formData.append("maintenance_priority", toggleAlignment);
         formData.append("maintenance_can_reschedule", 1);
         formData.append("maintenance_assigned_business", null);

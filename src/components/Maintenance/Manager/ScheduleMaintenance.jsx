@@ -53,6 +53,62 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
         }
     }
 
+    const handleSubmit = () => {
+        console.log("handleSubmit")
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "COMPLETED"
+                    })
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    navigate("/maintenance")
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+        const changeMaintenanceQuoteStatus = async () => {
+
+            const formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
+            formData.append("quote_maintenance_request_id", maintenanceItem.quote_maintenance_request_id)
+            formData.append("quote_status", "FINISHED")
+            
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    changeMaintenanceRequestStatus()
+                    navigate("/maintenance"); 
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+        changeMaintenanceQuoteStatus()
+    }
+
     async function handleComplete(id){
         let response = CompleteTicket(id);
         console.log("handleComplete", response);
@@ -196,7 +252,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                             display: 'flex',
                             width: "100%"
                         }}
-                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleSubmit()}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

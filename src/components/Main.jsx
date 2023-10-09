@@ -95,36 +95,24 @@ import NewUser from "./Onboarding/NewUser";
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
-import EmailLogin from "./Onboarding/Login/EmailLogin";
-import EmailSignup from "./Onboarding/Signup/EmailSignup";
-import GoogleLogin from "./Onboarding/GoogleLogin";
-import GoogleSignup from "./Onboarding/GoogleSignup";
+import OnboardingRouter from "./Onboarding/OnboardingRouter";
+import ContactInfo from "./Onboarding/ContactInfo";
 
-import { useUser } from "../contexts/UserContext";
 import SelectRole from "./Onboarding/SelectRole";
 
-import PMProfileDisplay from "./Onboarding/PMProfileDisplay";
-import PMProfilePayment from "./Onboarding/PMProfilePayment";
-import PMProfileName from "./Onboarding/PMProfileName";
+import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
+import BusinessInvoiceForm from "./Maintenance/Business/BusinessInvoiceForm";
 
-import POProfileDisplay from "./Onboarding/POProfileDisplay";
-import POProfilePayment from "./Onboarding/POProfilePayment";
-import POProfileName from "./Onboarding/POProfileName";
+import Maintenance01 from "./Maintenance/Maintainance01/Maintainance01";
+import MaintenanceRequestDetail01 from "./Maintenance/Maintainance01/MaintenanceRequestDetail01";
+
+import ProfileName from "./Onboarding/ProfileName";
+import ProfileInfo from "./Onboarding/ProfileInfo";
+import PersonalInfo from "./Onboarding/PersonalInfo";
+import ProfilePayment from "./Onboarding/ProfilePayment";
+
 
 function Main() {
-  const { user } = useUser(); // Get the user context
-
-  // Define the role-specific routes
-  const roleRoutes = {
-    Manager: "/managerDashboard", // Change this to the Manager's home route
-    Owner: "/ownerDashboard", // Change this to the Owner's home route
-    Tenant: "/tenantDashboard", // Change this to the Tenant's home route
-    Maintenance: "/ownerDashboard", // Change this to the Maintenance's home route
-  };
-
-  // Get the route for the selected user role
-  const selectedRoleRoute = roleRoutes[user.selectedRole];
-  console.log("storedSelectedRole selectedRoleRoute ", selectedRoleRoute)
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -226,25 +214,24 @@ function Main() {
             <Route exact path="/returningUser" element={<ReturningUser />} />
             <Route exact path="/userLogin" element={<UserLogin />} />
             <Route exact path="/selectRole" element={<SelectRole />} />
-
-            <Route exact path="/pmProfileName" element={<PMProfileName />} />
-            <Route exact path="/pmProfileDisplay" element={<PMProfileDisplay />} />
-            <Route exact path="/pmProfilePayment" element={<PMProfilePayment/>} />
-         
-            <Route exact path="/poProfileName" element={<POProfileName />} />
-            <Route exact path="/poProfileDisplay" element={<POProfileDisplay />} />
-            <Route exact path="/poProfilePayment" element={<POProfilePayment/>} />
-            
-            <Route exact path="/email-login" element={<EmailLogin />} />
-            <Route exact path="/email-signup" element={<EmailSignup />} />
-            <Route exact path="/google-login" element={<GoogleLogin />} />
-            <Route exact path="/google-signup" element={<GoogleSignup />} />
+            <Route exact path="/profileName" element={<ProfileName />} />
+            <Route exact path="/profileInfo" element={<ProfileInfo />} />
+            <Route exact path="/personalInfo" element={<PersonalInfo />} />
+            <Route exact path="/profilePayment" element={<ProfilePayment />} />
+            <Route exact path="/onboardingRouter" element={<OnboardingRouter />} />
+            <Route exact path="/contactInfo" element={<ContactInfo />} />
 
             <Route exact path="/quoteAccept" element={<QuoteAcceptForm />} />
             <Route exact path="/quoteRequest" element={<QuoteRequestForm />} />
             <Route exact path="/scheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route exact path="/payMaintenance" element={<PayMaintenanceForm />} />
+
+            <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
+            <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
+            <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
+            <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
+            <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>

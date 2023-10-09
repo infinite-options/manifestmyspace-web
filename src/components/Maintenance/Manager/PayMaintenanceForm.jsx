@@ -22,6 +22,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
+import userFillIcon from './User_fill.png'
 
 
 export default function PayMaintenanceForm(){
@@ -38,6 +39,8 @@ export default function PayMaintenanceForm(){
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
+
+    console.log(maintenanceItem)
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -58,7 +61,6 @@ export default function PayMaintenanceForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
                 } else{
                     console.log("error setting status")
                 }
@@ -66,15 +68,40 @@ export default function PayMaintenanceForm(){
                 console.log("error", error)
             }
         }
-        changeMaintenanceRequestStatus()
-        navigate("/maintenance/detail", {
-            state: {
-                maintenance_request_index,
-                status,
-                maintenanceItemsForStatus,
-                allMaintenanceData,
+        const changeMaintenanceQuoteStatus = async () => {
+
+            const formData = new FormData();
+            //formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_status", "COMPLETED")
+            
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    changeMaintenanceRequestStatus()
+                    navigate("/maintenance/detail", {
+                        state: {
+                            maintenance_request_index,
+                            status,
+                            maintenanceItemsForStatus,
+                            allMaintenanceData,
+                        }
+                    }); 
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
             }
-        }); 
+        }
+        changeMaintenanceQuoteStatus()
     }
 
     useEffect(() => {
@@ -182,8 +209,10 @@ export default function PayMaintenanceForm(){
                                     borderRadius: "10px",
                                     width: "85%",
                                     height: "100%",
-                                    padding: "10px",
                                     margin: "10px",
+                                    paddingTop: "25px",
+                                    paddingLeft: "10px",
+                                    paddingRight: "10px"
                                 }}>
                                     <Grid item xs={12}>
                                         <Grid container spacing={2} justifyContent="center">
@@ -235,14 +264,6 @@ export default function PayMaintenanceForm(){
                                             Estimated Cost: <b>{maintenanceItem.maintenance_desc}</b>
                                         </Typography>
                                     </Grid>
-                                {/* {Object.entries(maintenanceItem).map(([key, value], index) => (
-                                        <Grid item xs={12}>
-                                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                                <b>{key} : {value}</b>
-                                            </Typography>
-                                        </Grid>
-                                    )
-                                )} */}
                             </Card>
                         </Grid>
                     </Grid>
@@ -261,15 +282,36 @@ export default function PayMaintenanceForm(){
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={3}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
+                    <Grid container spacing={0}
+                        alignContent="left"
+                        justifyContent="left"
+                        alignItems="left"
                         direction="column"
                     >
                         
+                        <Grid item xs={12} sx={{padding: "25px"}}>
+                            <img src={userFillIcon} alt="user" style={{ width: '25px', height: '25px' }} />
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                                <u>{maintenanceItem.business_name}</u>
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={3} sx={{paddingTop: "25px"}}>
                         <Grid item xs={12}>
-                            Doolittle Maintenance
+                            <Container style={{ 
+                                display: 'flex',           // Turn the container into a flex container
+                                flexDirection: 'column',   // Stack children vertically
+                                justifyContent: 'center',  // Center children vertically
+                                alignItems: 'center',      // Center children horizontally
+                                backgroundColor: '#FFFFFF', 
+                                padding: '20px',
+                                width: '90%',             // Make sure the container takes the full width of its parent
+                                borderRadius: '10px',      // Rounded border
+                            }} maxWidth={false}> 
+                                <Typography align="center" sx={{color: theme.typography.primary.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>  {/* This will center the text inside the Typography component */}
+                                    {maintenanceItem.bill_amount !== null ? `${maintenanceItem.bill_amount}` : "No Invoice Submitted"}
+                                </Typography>
+                            </Container>       
                         </Grid>
                         <Grid item xs={12}>
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
@@ -279,21 +321,26 @@ export default function PayMaintenanceForm(){
                                 <TextField
                                     multiline
                                     rows={10}
-                                    defaultValue="Took a little longer than expected!"
+                                    defaultValue={maintenanceItem.bill_notes}
                                     variant="outlined"
                                     fullWidth
                                     InputProps={{
-                                    readOnly: true,
-                                    style: { backgroundColor: 'white' }
+                                        readOnly: true,
+                                        style: { backgroundColor: 'white' }
+                                    }}
+                                    sx={{
+                                        width: '90%',
                                     }}
                                 />
                             </Container>
                         </Grid>
                         <Grid item xs={12}>
-                            Paypal: bossanova43@gmail.com
-                        </Grid>
-                        <Grid item xs={12}>
-                            Venmo: bossanova43@gmail.com
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                Paypal: bossanova43@gmail.com
+                            </Typography>
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                Venmo: bossanova43@gmail.com
+                            </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Button

@@ -10,6 +10,7 @@ import theme from "../../theme/theme";
 import Dollar from '../../images/Dollar.png'
 import File_dock_fill from '../../images/File_dock_fill.png'
 import User_fill_dark from '../../images/User_fill_dark.png'
+import { useUser } from "../../contexts/UserContext";
 
 const useStyles = makeStyles({
     button: {
@@ -32,6 +33,7 @@ const useStyles = makeStyles({
 
 function ManagerDashboard() {
     const classes = useStyles();
+    const { getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);
@@ -74,7 +76,7 @@ function ManagerDashboard() {
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003")
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/managerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
             console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);

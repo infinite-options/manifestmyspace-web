@@ -11,63 +11,78 @@ import comment_fill from '../images/comment_fill.png';
 
 export function Footer() {
     const navigate = useNavigate();
-    const { user } = useUser(); // Access the user object from UserContext
-    const selectedRole = user.selectedRole; // Get the selected role from user object
+    const { selectedRole, isLoggedIn } = useUser(); // Access the user object from UserContext
 
     // Define a function to get the home button navigation based on the selected role
     const getHomeButtonNav = () => {
-        console.log("selectedRole ",selectedRole);
+        // console.log("selectedRole ",selectedRole);
         switch (selectedRole) {
-        case 'Owner':
-            return '/';
-        case 'Manager':
+        case 'OWNER':
+            return '/ownerDashboard';
+        case 'MANAGER':
             return '/managerDashboard';
-        case 'Tenant':
+        case 'TENANT':
             return '/tenantDashboard';
-        case 'Maintenance':
-            return '/';
+        case 'MAINTENANCE':
+            return '/maintenanceDashboard';
+        case 'PM_EMPLOYEE':
+            return '/managerDashboard';
+        case 'MAINT_EMPLOYEE':
+            return '/maintenanceDashboard';
         default:
             return '/';
         }
     };
     const getProfileButtonNav = () => {
         switch (selectedRole) {
-          case 'Owner':
+          case 'OWNER':
             return '/ownerProfile';
-          case 'Manager':
+          case 'MANAGER':
             return '/pmProfile';
-          case 'Tenant':
+          case 'TENANT':
             return '/tenantProfile';
-          case 'Maintenance':
-            return '/';
+          case 'MAINTENANCE':
+            return '/maintenanceProfile';
+          case 'PM_EMPLOYEE':
+            return '/pmProfile';
+          case 'MAINT_EMPLOYEE':
+              return '/maintenanceProfile';
           default:
             return '/';
         }
     };
     const getBellButtonNav = () => {
         switch (selectedRole) {
-          case 'Owner':
-            return '/';
-          case 'Manager':
+          case 'OWNER':
+            return '/ownerDashboard';
+          case 'MANAGER':
             return '/managerDashboard';
-          case 'Tenant':
+          case 'TENANT':
             return '/tenantDashboard';
-          case 'Maintenance':
-            return '/';
+          case 'MAINTENANCE':
+            return '/maintenanceDashboard';
+          case 'PM_EMPLOYEE':
+            return '/managerDashboard';
+          case 'MAINT_EMPLOYEE':
+            return '/maintenanceDashboard';
           default:
             return '/';
         }
     };
     const getCommentButtonNav = () => {
         switch (selectedRole) {
-          case 'Owner':
-            return '/';
-          case 'Manager':
+          case 'OWNER':
+            return '/ownerDashboard';
+          case 'MANAGER':
             return '/managerDashboard';
-          case 'Tenant':
+          case 'TENANT':
             return '/tenantDashboard';
-          case 'Maintenance':
-            return '/';
+          case 'MAINTENANCE':
+            return '/maintenanceDashboard';
+          case 'PM_EMPLOYEE':
+            return '/managerDashboard';
+          case 'MAINT_EMPLOYEE':
+            return '/maintenanceDashboard';
           default:
             return '/';
         }
@@ -75,63 +90,65 @@ export function Footer() {
 
   return (
     <footer className="footer">
-      <ThemeProvider theme={theme}>
-        <Box
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            backgroundColor: theme.palette.priority.clear,
-            marginTop: '55px',
-            height: '40px',
-          }}
-        >
-          <Grid
-            container
-            justify="center"
-            alignItems="center"
+      {isLoggedIn && 
+        <ThemeProvider theme={theme}>
+          <Box
             style={{
-              width: '85%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              backgroundColor: theme.palette.priority.clear,
+              marginTop: '20px',
+              height: '40px',
             }}
           >
-            <Grid item xs={3}>
-              <Box>
+            <Grid
+              container
+              justify="center"
+              alignItems="center"
+              style={{
+                width: '85%',
+              }}
+            >
+              <Grid item xs={3}>
+                <Box>
+                    <img
+                      src={Home_fill}
+                      alt="Home Icon"
+                      style={{ display: 'block', margin: '0 auto' }}
+                      onClick={()=>{navigate(getHomeButtonNav())}}
+                    />
+                </Box>
+              </Grid>
+              <Grid item xs={3}>
                   <img
-                    src={Home_fill}
-                    alt="Home Icon"
+                    src={User_fill}
+                    alt="User Icon"
                     style={{ display: 'block', margin: '0 auto' }}
-                    onClick={()=>navigate(getHomeButtonNav())}
+                    onClick={()=>{navigate(getProfileButtonNav())}}
                   />
-              </Box>
-            </Grid>
-            <Grid item xs={3}>
+              </Grid>
+              <Grid item xs={3}>
                 <img
-                  src={User_fill}
-                  alt="User Icon"
+                  src={Bell_fill}
+                  alt="Bell Icon"
                   style={{ display: 'block', margin: '0 auto' }}
-                  onClick={()=>navigate(getProfileButtonNav())}
+                  onClick={()=>{navigate(getBellButtonNav())}}
                 />
+              </Grid>
+              <Grid item xs={3}>
+                <img
+                  src={comment_fill}
+                  alt="Comment Icon"
+                  style={{ display: 'block', margin: '0 auto' }}
+                  onClick={()=>{navigate(getCommentButtonNav())}}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={3}>
-              <img
-                src={Bell_fill}
-                alt="Bell Icon"
-                style={{ display: 'block', margin: '0 auto' }}
-                onClick={()=>navigate(getBellButtonNav())}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <img
-                src={comment_fill}
-                alt="Comment Icon"
-                style={{ display: 'block', margin: '0 auto' }}
-                onClick={()=>navigate(getCommentButtonNav())}
-              />
-            </Grid>
-          </Grid>
-        </Box>
-      </ThemeProvider>
+          </Box>
+        </ThemeProvider>
+      }
     </footer>
   );
 }

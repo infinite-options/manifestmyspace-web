@@ -3,13 +3,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import SelectProperty from "../SelectProperty";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
+import { useUser } from "../../../contexts/UserContext";
 
 function OwnerLeases(props) {
     
   
     
     // Select Property Tab
-    
+    const { getProfileId } = useUser();
     const [open, setOpen] = useState(false);
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     const handleClose = () => {
@@ -32,7 +33,7 @@ function OwnerLeases(props) {
             }
             return num;
         }
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003")
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data['Lease_Details'].result);
                 const fetchData = res.data['Lease_Details'].result;
@@ -317,7 +318,7 @@ function LeaseMonth(props) {
 
 function LeaseComponent(props) {
     const leaseData = props.data;
-
+    const { getProfileId } = useUser();
     function getLeaseStatusText(status) {
         switch (status) {
             case 'MOVING':
@@ -372,7 +373,7 @@ function LeaseComponent(props) {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
-      const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003")
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${getProfileId()}`)
       const propertyData = await response.json();
       console.log(propertyData)
       setPropertyList([...propertyData["Property_Dashboard"].result]);

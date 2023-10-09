@@ -2,6 +2,7 @@ import { Box, ThemeProvider, createTheme } from '@mui/system';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from "../../../contexts/UserContext";
 
 const theme = createTheme({
     palette: {
@@ -22,6 +23,7 @@ function OwnerDocuments() {
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
+    const { getProfileId } = useUser();
     const navigate = useNavigate();
     function navigateTo(url) {
         navigate(url);
@@ -32,7 +34,7 @@ function OwnerDocuments() {
 
     const [documentsData, setDocumentsData] = useState([]);
     useEffect(() => {
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDocuments/110-000003')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDocuments/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);

@@ -23,11 +23,12 @@ import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import CloseIcon from '@mui/icons-material/Close';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
-
+import { useUser } from "../../contexts/UserContext";
 
 export default function Maintenance(){
     const location = useLocation();
     let navigate = useNavigate();
+    const { getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
@@ -156,16 +157,61 @@ export default function Maintenance(){
             // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
             // const propertyData = await propertiesByOwnerResponse.json()
 
-            const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
+            // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
+            // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
+            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
             const maintenanceRequestsData = await maintenanceRequests.json()
 
-            for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-                if (!dataObject[item.maintenance_request_status]){
-                    dataObject[item.maintenance_request_status] = [];
-                }
-                dataObject[item.maintenance_request_status].push(item);
+            let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
+            let array2 = maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items
+            let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
+            let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
+            let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
+            let array6 = maintenanceRequestsData.result["PAID"].maintenance_items
+
+            dataObject["NEW REQUEST"] = [];
+            dataObject["QUOTES REQUESTED"] = [];
+            dataObject["QUOTES ACCEPTED"] = [];
+            dataObject["SCHEDULED"] = [];
+            dataObject["COMPLETED"] = [];
+            dataObject["PAID"] = [];
+
+            for (const item of array1) {
+                // console.log(item.maintenance_request_uid)
+                dataObject["NEW REQUEST"].push(item);
             }
+            for (const item of array2) {
+                dataObject["QUOTES REQUESTED"].push(item);
+            }
+            for (const item of array3) {
+                dataObject["QUOTES ACCEPTED"].push(item);
+            }
+            for (const item of array4) {
+                dataObject["SCHEDULED"].push(item);
+            }
+            for (const item of array5) {
+                dataObject["COMPLETED"].push(item);
+            }
+            for (const item of array6) {
+                dataObject["PAID"].push(item);
+            }
+            // console.log("maintenanceRequestsData", maintenanceRequestsData)
+
+            // for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
+            //     if (!dataObject[item.maintenance_request_status]){
+            //         dataObject[item.maintenance_request_status] = [];
+            //     }
+            //     dataObject[item.maintenance_request_status].push(item);
+            // }
             // console.log("dataObject from new api call", dataObject)
+
+            // maintenanceRequestsData.MaintenanceProjects.result.forEach(item => {
+            //     if (!dataObject[item.maintenance_request_status]){
+            //         dataObject[item.maintenance_request_status] = [];
+            //     }
+            //     dataObject[item.maintenance_request_status].push(item);
+            // }
+
             setMaintenanceData(prevData => ({
                 ...prevData, 
                 ...dataObject
