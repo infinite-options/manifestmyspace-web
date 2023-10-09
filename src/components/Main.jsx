@@ -173,7 +173,7 @@ function Main() {
               <Route exact path="/pmUploadDocuments" element={<PMUploadDocuments />} />
               <Route exact path="/pmRent" element={<PMRent />} />
               <Route exact path="/pmRentDetail" element={<PMRentDetail />} />
-
+              <Route exact path="/settings" element={<Settings />} />
               <Route exact path="/transactionHistory" element={<TransactionHistory />} />
               <Route exact path="/viewTransactionOwner" element={<ViewTransactionOwner />} />
               <Route exact path="/paymentsTenant" element={<PaymentsTenant />} />
