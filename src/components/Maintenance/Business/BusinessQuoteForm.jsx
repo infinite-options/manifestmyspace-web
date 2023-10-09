@@ -32,8 +32,7 @@ import documentIcon from './Subtract.png'
 import maintenanceRequestImage from "./../maintenanceRequest.png";
 import xIcon from './Close_round.png'
 import { Select } from "@material-ui/core";
-
-
+import { useUser } from "../../../contexts/UserContext";
 
 function CostPartsTable({parts, setParts}){
 
@@ -152,6 +151,7 @@ export default function BusinessQuoteForm({acceptBool}){
     console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
+    const { getProfileId } = useUser();
     const maintenanceItem = location.state.maintenanceItem;
 
     //console.log("navigationParams", navigationParams)
@@ -322,7 +322,7 @@ export default function BusinessQuoteForm({acceptBool}){
             if (status === "SENT"){
                 formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
                 formData.append("quote_maintenance_request_id", maintenanceItem?.quote_maintenance_request_id); // 800-xxx
-                formData.append("quote_business_id", "600-000012")
+                formData.append("quote_business_id", getProfileId())
                 formData.append("quote_services_expenses", compileExpenseObject())
                 formData.append("quote_notes", notes);
                 formData.append("quote_status", status);

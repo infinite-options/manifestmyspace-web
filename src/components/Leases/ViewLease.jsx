@@ -15,9 +15,11 @@ import {
 import { ArrowBack, Chat, Visibility } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useUser } from "../../contexts/UserContext";
 
 const ViewLease = (props) => {
     const navigate = useNavigate();
+    const { getProfileId } = useUser();
     const handleBackButton = () => {};
 
     const handleViewButton = () => {
@@ -32,7 +34,7 @@ const ViewLease = (props) => {
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
     useEffect(()=>{
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         .then((res)=>{
             const data = res.data['Lease Details'];
             // console.log(data);

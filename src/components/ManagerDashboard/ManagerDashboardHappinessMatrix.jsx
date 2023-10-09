@@ -18,9 +18,11 @@ import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from "../../contexts/UserContext";
 
 export default function ManagerDashboardHappinessMatrix(props) {
     const navigate = useNavigate();
+    const { user } = useUser();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
     let date = new Date();
     let month = date.toLocaleString('default', { month: 'long' });
@@ -28,7 +30,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
 
     return (
         <>
-            <CashflowData year={year} month={month} role={'Owner'} userID={'100-000003'} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
+            <CashflowData year={year} month={month} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
             <ThemeProvider theme={theme}>
             <Paper 
             component={Stack} 

@@ -1,12 +1,13 @@
 import { Box } from '@mui/system';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useUser } from "../../../contexts/UserContext";
 
 function TenantLeases(props) {
-
+    const { getProfileId } = useUser();
     const [tenantLeases, setTenantLeases] = useState([]);
     useEffect(() => {
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000038')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
             .then((res) => {
                 const fetchData = res.data['Lease_Details'].result;
                 // console.log(fetchData[0]);

@@ -21,13 +21,14 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import RequestMoreInfo from "../Worker/RequestMoreInfo";
-
+import RequestMoreInfo from "../Maintainance01/RequestMoreInfo";
+import Scheduler from "../../utils/Schedular";
 
 
 export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
-
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
 
     console.log("NewRequestAction", maintenanceItem)
@@ -82,6 +83,12 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 width: "100%",
             }}
         >
+            <Scheduler 
+                show={showScheduler} 
+                setShow={setShowScheduler} 
+                date={schedulerDate} 
+                setDate={setSchedulerDate} 
+            />
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <Grid item xs={1} sx={{
                         alignItems: "center",
@@ -189,6 +196,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                             //     backgroundColor: darken("#9EAED6", 0.2)
                             // }
                         }}
+                        onClick={() => setShowScheduler(true)}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
                             Schedule Repair

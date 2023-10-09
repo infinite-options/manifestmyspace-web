@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { useMyContext } from '../../contexts/SettingsACHContext';
 import StatusBar from '../../images/status_bar_5.png'
+import { useUser } from "../../contexts/UserContext";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,7 +33,7 @@ export default function SettingsACH3() {
     const [show, setShow] = useState(true);
     const classes = useStyles();
     const navigate = useNavigate();
-
+    const { getProfileId } = useUser();
     
     const { 
 
@@ -101,7 +102,7 @@ export default function SettingsACH3() {
         };
 
         const input = {
-            account_business_id:"600-000007",
+            account_business_id:getProfileId(),
             account_business_legal_name:account_business_legal_name,
             account_business_name:account_business_name,
             account_business_website:account_business_website,
@@ -208,7 +209,7 @@ export default function SettingsACH3() {
             console.log(error);
         });
 
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/account?account_business_id=600-000007",
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/account?account_business_id=${getProfileId()}`,
         headers)
         .then(response => {
             console.log("GET result", response);

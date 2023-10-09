@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState } from "react";
-import { useCookies } from "react-cookie";
+import { useCookies, Cookies } from "react-cookie";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const [cookies, setCookie] = useCookies(["user", "token", "selectedRole"]);
   const [user, setUser] = useState(cookies.user);
   const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(!!cookies.user);
   const [onboardingState, setOnboardingState] = useState();
   const setAuthData = (data) => {
     setUser(data.user);
@@ -23,6 +23,9 @@ export const UserProvider = ({ children }) => {
   };
   const isManager = () => {
     return selectedRole === "MANAGER";
+  };
+  const isManagement = () => {
+    return selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE";
   };
   const isManagementEmployee = () => {
     return selectedRole === "PM_EMPLOYEE";
@@ -83,6 +86,20 @@ export const UserProvider = ({ children }) => {
     }
     return profileObj;
   };
+  const getBusiness = (user, type) => user.businesses[type].business_uid;
+  const getProfileId = () =>
+    isManagement()
+      ? getBusiness(user, "MANAGEMENT")
+      : isBusiness()
+      ? getBusiness(user, "MAINTENANCE")
+      : selectedRole === "TENANT"
+      ? user.tenant_id
+      : user.owner_id;
+  const logout = () => {
+    cookiesObj.remove("user");
+    cookiesObj.remove("token");
+    window.location.href = "/";
+  };
   return (
     <UserContext.Provider
       value={{
@@ -101,6 +118,8 @@ export const UserProvider = ({ children }) => {
         isLoggedIn,
         setLoggedIn,
         updateProfileUid,
+        getProfileId,
+        logout,
       }}
     >
       {children}

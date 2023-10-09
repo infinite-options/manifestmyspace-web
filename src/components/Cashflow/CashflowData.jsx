@@ -1,4 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
+import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
 const CashflowData = (props) => {
   // console.log("props", props);
@@ -7,6 +8,7 @@ const CashflowData = (props) => {
   const year = props.year;
   const month = props.month;
   const selectedProperty = props.selectedProperty;
+  const { getProfileId } = useUser();
 
   const fetchCashflow = async () => {
     // console.log("props fetchCashflow", props);
@@ -14,7 +16,7 @@ const CashflowData = (props) => {
     //   navigate("/");
     //   return;
     // }
-    const cashflow = await axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/110-000003/TTM");
+    const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${getProfileId()}/TTM`);
     console.log("props cashflowResponse", cashflow);
     if (props.setTotalRevenueByMonth) { props.setTotalRevenueByMonth(0); getRevenueByMonth(cashflow.data.response_revenue_by_month.result); }
     if (props.setTotalExpenseByMonth) { props.setTotalExpenseByMonth(0); getExpenseByMonth(cashflow.data.response_expense_by_month.result); }

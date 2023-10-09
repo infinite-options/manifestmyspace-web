@@ -42,6 +42,7 @@ function GoogleLogin(props) {
 
   useEffect(() => {
     /* global google */
+    if(google) {
     codeClient = google.accounts.oauth2.initCodeClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
@@ -165,6 +166,7 @@ function GoogleLogin(props) {
         }
       },
     });
+    }
   }, [getAuthorizationCode]);
   const onCancelModal = () => {
     setUserDoesntExist(false);

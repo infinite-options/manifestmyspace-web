@@ -1,13 +1,14 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useUser } from "../../../contexts/UserContext";
 
 function TenantProfileEdit(props) {
-
+    const { getProfileId } = useUser();
     const [profileData, setProfileData] = useState([]);
     useEffect(()=>{
         console.log("TENANT EDIT USE EFFECT")
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000002')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
         .then((res)=>{
             console.log(res.data.Profile[0]);
             setProfileData(res.data.Profile[0]);

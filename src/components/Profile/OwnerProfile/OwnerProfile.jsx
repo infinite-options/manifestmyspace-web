@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { Stack, Typography, Paper } from '@mui/material';
 import theme from '../../../theme/theme';
+import { useUser } from "../../../contexts/UserContext";
 // const theme = createTheme({
 //     palette: {
 //         background: {
@@ -26,7 +27,7 @@ import theme from '../../../theme/theme';
 // });
 function OwnerProfile() {
     const navigate = useNavigate();
-
+    const { getProfileId } = useUser();
     function getPhoneNumberText(data) {
         if(data === undefined) {
             return '';
@@ -48,7 +49,7 @@ function OwnerProfile() {
 
     const [profileData, setProfileData] = useState([]);
     useEffect(()=>{
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerProfile/110-000003')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerProfile/${getProfileId()}`)
         .then((res)=>{
             // console.log(res.data);
             setProfileData(res.data.Profile.result[0]);

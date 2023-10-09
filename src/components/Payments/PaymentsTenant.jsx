@@ -16,6 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios from 'axios';
+import { useUser } from "../../contexts/UserContext";
 
 const useStyles = makeStyles((theme) => ({
     input: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 export default function PaymentsTenant(props) {
     const classes = useStyles();
     const navigate = useNavigate();
-
+    const { user, getProfileId } = useUser();
     const [paymentDueResult, setPaymentDueResult] = useState([]);
 
     const [paymentNotes, setPaymentNotes] = useState('');
@@ -38,7 +39,7 @@ export default function PaymentsTenant(props) {
 
     const [paymentData, setPaymentData] = useState({
         currency: "usd",
-        customer_uid: "100-000125",
+        customer_uid: user.user_uid,
        // business_code: "IOTEST",
         business_code: paymentNotes,
         item_uid: "320-000054",
@@ -53,7 +54,7 @@ export default function PaymentsTenant(props) {
         //   navigate("/");
         //   return;
         // }
-        const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/350-000002`);
+        const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
         console.log("payments result", res.data.PaymentStatus.result);
         const data = res.data.PaymentStatus.result;
 

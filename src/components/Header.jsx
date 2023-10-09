@@ -32,7 +32,8 @@ function Header() {
             style={{
               display: "flex",
               // justifyContent: "center",
-              overflowX: "scroll",
+              overflowX: "auto",
+              scrollbarWidth: "none",
             }}
           >
             {userRoles.map((role) => (
