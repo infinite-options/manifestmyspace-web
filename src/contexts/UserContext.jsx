@@ -36,6 +36,11 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const isEmployee = () => {
     return selectedRole === "PM_EMPLOYEE" || selectedRole === "MAINT_EMPLOYEE";
   };
+
+  const isMaintenance = () => {
+    return selectedRole === "MAINTENANCE" || selectedRole === "MAINT_EMPLOYEE";
+  };
+
   const roleName = (role = selectedRole) => {
     switch (role) {
       case "MANAGER":
@@ -94,12 +99,12 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     
     const profileId = isManagement()
     ? getBusiness(user, "MANAGEMENT")
-    : isBusiness()
+    : isMaintenance()
     ? getBusiness(user, "MAINTENANCE")
     : selectedRole === "TENANT"
     ? user.tenant_id
     : user.owner_id;
-    
+
     return profileId
   }
   const logout = () => {

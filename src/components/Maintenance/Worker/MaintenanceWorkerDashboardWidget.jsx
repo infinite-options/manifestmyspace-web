@@ -31,7 +31,7 @@ export default function MaintenanceWorkerDashboardWidget(){
         }
 
         const getMaintenanceData = async () => {
-            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${maintenanceBusinessID}`)
+            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
