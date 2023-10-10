@@ -245,7 +245,10 @@ export default function Settings() {
             </Paper>
             <Button
             variant="contained"
-            onClick={() => navigate("/tenantDashboard")}
+            onClick={() => {
+              logout();
+              navigate("/tenantDashboard")}
+            }
             sx={{
               background: "white",
               color: "#3D5CAC",
