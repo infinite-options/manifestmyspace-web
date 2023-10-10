@@ -72,6 +72,7 @@ import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 import EditProfileSettings from "./Settings/EditProfileSettings";
 import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
+import AddPayment from "./Settings/AddPayment";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
@@ -172,6 +173,7 @@ function Main() {
               <Route exact path="/editProfileSettings" element={<EditProfileSettings />} />
               <Route exact path="/changePasswordSettings" element={<ChangePasswordSettings />} />
               <Route exact path="/addCardSettings" element={<AddCard />} />
+              <Route exact path="/addPaymentSettings" element={<AddPayment />} />
               <Route exact path="/cardDetailsSettings" element={<CardDetailsSettings />} />
               
               <Route exact path="/SelectPayment" element={<SelectPayment />} />

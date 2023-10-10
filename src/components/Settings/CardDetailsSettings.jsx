@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, Box, Stack, ThemeProvider, Checkbox, Typography, TextField, FormControlLabel, AccordionDetails, Grid } from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, Checkbox, Typography, TextField, Button, FormControlLabel, AccordionDetails, Grid } from '@mui/material';
 import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
@@ -287,6 +287,22 @@ export default function CardDetailsSettings() {
                         sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                         onClick={()=>{navigate('/settingsManagerACH1')}}/>
                 </Box>
+                <Button
+            sx={{
+              paddingLeft: "2%",
+              paddingRight: "2%",
+              background: "#3D5CAC",
+              color: theme.palette.background.default,
+              width: `100%`,
+              height: `15%`,
+              borderRadius: "15px",
+              fontSize: theme.typography.smallFont,
+              fontWeight: theme.typography.primary.fontWeight,
+              textTransform: "none",
+            }}
+          >
+            {"Save and Submit"}
+          </Button>
             </Paper>
             </Box>
             </Box>

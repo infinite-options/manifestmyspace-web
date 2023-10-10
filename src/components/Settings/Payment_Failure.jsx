@@ -24,7 +24,7 @@ export default function Payment_Failure(props) {
       <DialogTitle id="alert-dialog-title"></DialogTitle>
       <DialogContent>
         <div className="d-flex justify-content-center align-items-center m-5">
-          <h5>The payment was unsuccessful Soltan e Khafan. Would you like to go to you dashboard? </h5>
+          <h5>The payment was unsuccessful. Would you like to go to you dashboard? </h5>
         </div>
       </DialogContent>
       <DialogActions>
