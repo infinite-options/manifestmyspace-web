@@ -43,16 +43,16 @@ export default function AccordionView({colorStatusType, data, ItemComponent}){
     useEffect(() => {
         const parseData = () => {
             let dataObject = {};
-            data.forEach((item) => { 
-                const itemStatus = item.maintenance_request_status
-                if (colorStatusTenantMap[itemStatus]){
-                    const colorStatusMap = colorStatusTenantMap[itemStatus]
-                    if (!dataObject[colorStatusMap]) {
-                        dataObject[colorStatusMap] = [];
-                    }
-                    dataObject[colorStatusMap].push(item);
-                }
-            });
+            // data.forEach((item) => { 
+            //     const itemStatus = item.maintenance_request_status
+            //     if (colorStatusTenantMap[itemStatus]){
+            //         const colorStatusMap = colorStatusTenantMap[itemStatus]
+            //         if (!dataObject[colorStatusMap]) {
+            //             dataObject[colorStatusMap] = [];
+            //         }
+            //         dataObject[colorStatusMap].push(item);
+            //     }
+            // });
             console.log(dataObject)
             setFormattedData(prevData => ({...prevData, ...dataObject}));
         }

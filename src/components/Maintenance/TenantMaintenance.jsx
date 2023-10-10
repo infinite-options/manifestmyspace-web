@@ -51,6 +51,10 @@ export default function TenantMaintenance(){
     const [propertyAddress, setPropertyAddress] = useState("")
     const [propertyId, setPropertyId] = useState("200-000029")
 
+    const location = useLocation();
+    const tenantId = '';//location.state.tenantId;
+
+    console.log("tenant ID :"+tenantId)
     let navigate = useNavigate();
 
     const color = "#FFFFFF"
@@ -63,17 +67,62 @@ export default function TenantMaintenance(){
 
     useEffect(() => {
 
-
+        // const getPropertyDetails = async () => {
+        //     console.log("Getting Property Details")
+        //     try {
+        //         const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/Property/' + propertyId);
+        //         const jsonData = await response.json();
+        //         const data = jsonData.PropertyDetails.result;
+        //     } catch (err) {
+        //         console.error(err.message);
+        //     }
+        // };
+        const dataObject = {};
         const getTenantMaintenanceData = async () => {
             console.log("Getting Tenant Maintenance Data")
-            try {
-                const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000029');
+      
+                const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/350-000040');//+tenantId);
                 const jsonData = await response.json();
-                const data = jsonData.MaintenanceProjects.result;
-                setTenantMaintenanceData(data)
-            } catch (err) {
-                console.error(err.message);
-            }
+                const data = jsonData.result;
+                  
+                let array1 = data["NEW REQUEST"].maintenance_items;
+                let array2 = data["INFO REQUESTED"].maintenance_items;
+                let array3 = data["PROCESSING"].maintenance_items;
+                let array4 = data["SCHEDULED"].maintenance_items;
+                let array5 = data["CANCELLED"].maintenance_items;
+                let array6 = data["COMPLETED"].maintenance_items;
+    
+                dataObject["NEW REQUEST"] = [];
+                dataObject["INFO REQUESTED"] = [];
+                dataObject["PROCESSING"] = [];
+                dataObject["SCHEDULED"] = [];
+                dataObject["CANCELLED"] = [];
+                dataObject["COMPLETED"] = [];
+    
+                for (const item of array1) {
+                    dataObject["NEW REQUEST"].push(item);
+                }
+                for (const item of array2) {
+                    dataObject["INFO REQUESTED"].push(item);
+                }
+                for (const item of array3) {
+                    dataObject["PROCESSING"].push(item);
+                }
+                for (const item of array4) {
+                    dataObject["SCHEDULED"].push(item);
+                }
+                for (const item of array5) {
+                    dataObject["CANCELLED"].push(item);
+                }
+                for (const item of array6) {
+                    dataObject["COMPLETED"].push(item);
+                }
+
+                setTenantMaintenanceData(prevData => ({
+                    ...prevData, 
+                    ...dataObject
+                }))
+           
         };
         getTenantMaintenanceData();
         // getPropertyDetails();

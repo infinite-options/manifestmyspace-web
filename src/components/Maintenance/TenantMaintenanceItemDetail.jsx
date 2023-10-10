@@ -37,7 +37,7 @@ export default function TenantMaintenanceItemDetail() {
   let navigate = useNavigate();
 
   const color = location.state.color;
-  const item = location.state.request;
+  const item = location.state.item;
 
   console.log(location.state);
 
