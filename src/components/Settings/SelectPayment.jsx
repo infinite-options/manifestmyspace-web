@@ -35,7 +35,6 @@ import ApplePay from "../../images/ApplePay.png";
 import { margin } from "@mui/system";
 import axios from "axios";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -149,7 +148,7 @@ export default function SelectPayment(props) {
   const submit = () => {
     // cancel();
     setPaymentConfirm(true);
-    navigate("/tenantDashboard")
+    navigate("/tenantDashboard");
   };
   //CreditCardHandler
 
@@ -216,17 +215,16 @@ export default function SelectPayment(props) {
     console.log("inside toggle keys");
     const url =
       paymentData.business_code === "PMTEST"
-        // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
-        ? "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+        ? // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+          // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
+    // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
 
     let response = await fetch(url);
     const responseData = await response.json();
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
-    
   };
   return (
     <div>
@@ -236,10 +234,7 @@ export default function SelectPayment(props) {
         toggleKeys={toggleKeys}
         setStripePayment={setStripePayment}
       />
-      
 
-
-      
       <Stack direction="row" justifyContent="center">
         <Typography
           sx={{
@@ -373,25 +368,88 @@ export default function SelectPayment(props) {
           <FormControlLabel
             value="Bank Transfer"
             control={<Radio />}
-            label="Bank Transfer"
+            label={
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img src={Chase} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+      Bank Transfer
+    </div>
+  }
           />
           <FormControlLabel
-            value="Credit Card"
-            control={<Radio />}
-            label="Credit Card"
-          />
+  value="Credit Card"
+  control={<Radio />}
+  label={
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img src={Chase} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+      Credit Card
+    </div>
+  }
+/>
+
+          
           <div style={{ display: "flex", alignItems: "center" }}>
             <Typography>Other Payment Methods</Typography>
           </div>
-          <FormControlLabel value="Paypal" control={<Radio />} label="Paypal" />
+          
           <FormControlLabel
-            value="Apple Pay"
+  value="PayPal"
+  control={<Radio />}
+  label={
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img src={PayPal} alt="PayPal" style={{ marginRight: "8px", height: "24px" }} />
+      Paypal
+    </div>
+  }
+/>
+
+
+<FormControlLabel
+  value="Apple Pay"
+  control={<Radio />}
+  label={
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
+      Apple Pay
+    </div>
+  }
+/>
+
+<FormControlLabel
+  value="Stripe"
+  control={<Radio />}
+  label={
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
+      Stripe
+    </div>
+  }
+/>
+
+          <FormControlLabel
+  value="Zelle"
+  control={<Radio />}
+  label={
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
+      Zelle
+    </div>
+  }
+/>
+
+          <FormControlLabel
+            value="Venmo"
             control={<Radio />}
-            label="Apple Pay"
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={Venmo}
+                  alt="Venmo"
+                  style={{ marginRight: "8px", height: "24px" }}
+                />
+                Venmo
+              </div>
+            }
           />
-          <FormControlLabel value="Stripe" control={<Radio />} label="Stripe" />
-          <FormControlLabel value="Zelle" control={<Radio />} label="Zelle" />
-          <FormControlLabel value="Venmo" control={<Radio />} label="Venmo" />
         </RadioGroup>
       </FormControl>
       <Typography variant="body1">
