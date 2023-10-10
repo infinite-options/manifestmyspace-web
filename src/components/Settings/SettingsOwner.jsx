@@ -247,8 +247,8 @@ export default function Settings() {
             variant="contained"
             onClick={() => {
               logout();
-              navigate("/tenantDashboard")}
-            }
+              
+            }}
             sx={{
               background: "white",
               color: "#3D5CAC",
