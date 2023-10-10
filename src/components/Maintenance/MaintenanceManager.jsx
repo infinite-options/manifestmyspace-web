@@ -25,10 +25,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import { useUser } from "../../contexts/UserContext";
 
-export default function Maintenance(){
+export default function MaintenanceManager(){
     const location = useLocation();
     let navigate = useNavigate();
-    const { getProfileId } = useUser();
+    const { user, getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
@@ -41,6 +41,12 @@ export default function Maintenance(){
 
     const [filterPropertyList, setFilterPropertyList] = useState([]);
 
+    console.log(user)
+
+    const businessId = user.businesses.MAINTENANCE.business_uid;
+    console.log(businessId)
+
+    console.log(getProfileId(), "===", businessId)
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
@@ -159,8 +165,9 @@ export default function Maintenance(){
 
             // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
             // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
-            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
+            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
+            console.log("maintenanceRequestsData", maintenanceRequestsData)
 
             let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
             let array2 = maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items

@@ -49,7 +49,7 @@ export default function MaintenanceStatusTable01({status, color, maintenanceItem
         console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
         console.log("allMaintenanceData", allMaintenanceData)
 
-        navigate(`/maintenanceMM/detail`, {
+        navigate(`/workerMaintenance/detail`, {
             state: {
                 maintenance_request_index,
                 status,

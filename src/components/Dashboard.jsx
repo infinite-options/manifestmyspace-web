@@ -146,7 +146,7 @@ function Dashboard() {
                 <div className="mt-widget-main">
                     <CashflowWidget />
                     <div className="mt-container">
-                        <MaintenanceWidget />
+                        <MaintenanceWidget selectedRole={"OWNER"}/>
                         <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">

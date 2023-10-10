@@ -534,7 +534,7 @@ export default function BusinessInvoiceForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenanceMM")
+                    navigate("/workerMaintenance")
                 } else{
                     console.log("error setting status")
                 }

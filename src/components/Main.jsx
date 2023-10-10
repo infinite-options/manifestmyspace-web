@@ -55,7 +55,8 @@ import TenantContactDetails from './Contacts/TenantContactDetails';
 
 import PropertyList from "./Property/PropertyList";
 import Dashboard from "./Dashboard";
-import Maintenance from "./Maintenance/MaintenanceManager";
+import MaintenanceManager from "./Maintenance/MaintenanceManager";
+import MaintenanceOwner from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
 import MaintenanceRequestDetail from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
@@ -180,7 +181,8 @@ function Main() {
               <Route exact path="/addContacts" element={<AddContacts />} />
               <Route exact path="/tenantContactDetails" element={<TenantContactDetails />} />
 
-              <Route exact path="/maintenance" element={<Maintenance />} />
+              <Route exact path="/managerMaintenance" element={<MaintenanceManager />} />
+              <Route exact path="/ownerMaintenance" element={<MaintenanceOwner />} />
               <Route exact path="/ownerDashboard" element={<Dashboard />} />
 
               <Route exact path="/maintenanceDashboard" element={<MaintenanceDashboard />} />
@@ -229,8 +231,8 @@ function Main() {
               <Route exact path="/businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
               <Route exact path="/businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
               <Route exact path="/businessInvoiceForm" element={<BusinessInvoiceForm/>} />
-              <Route exact path="/maintenanceMM" element={<Maintenance01 />} />
-              <Route exact path="/maintenanceMM/detail" element={<MaintenanceRequestDetail01 />} />
+              <Route exact path="/workerMaintenance" element={<Maintenance01 />} />
+              <Route exact path="/workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             </Routes>
             <Footer/>

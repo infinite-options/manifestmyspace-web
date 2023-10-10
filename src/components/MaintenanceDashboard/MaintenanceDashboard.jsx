@@ -23,18 +23,20 @@ import card from './card.png'
 
 
 import MaintenanceWorker from "../Maintenance/Worker/MaintenanceWorker";
+import MaintenanceWorkerDashboardWidget from "../Maintenance/Worker/MaintenanceWorkerDashboardWidget";
 
 
 export default function MaintenanceDashboard(){
 
     const navigate = useNavigate();
-    const { user } = useUser();
+    const { user, getProfileId } = useUser();
 
     console.log("user object", user)
 
+    console.log("getProfileId", getProfileId()) 
+
+
     const [loading, setLoading] = useState(true);
-
-
 
 
     useEffect(() => {
@@ -42,8 +44,8 @@ export default function MaintenanceDashboard(){
         console.log(user.businesses.MAINTENANCE.business_uid)
 
         const getMaintenanceWorkerDashboardData = async () => {
-            try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceDashboard/${user.businesses.MAINTENANCE.business_uid}`, {
+            try { // Change back to ${getProfileId()}
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceDashboard/${getProfileId()}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',                    
@@ -51,6 +53,8 @@ export default function MaintenanceDashboard(){
                 });
                 const data = await response.json();
                 console.log(data);
+                console.log("CurrentActivities", data.CurrentActivities);
+                console.log("WorkOrders", data.WorkOrders);
                 setLoading(false);
             } catch(error){
                 console.log("Error getting maintenance worker dashboard data: ", error)
@@ -290,7 +294,8 @@ export default function MaintenanceDashboard(){
                     </Grid>
                     <Grid container direction="row" justifyContent="center" sx={{paddingTop: "25px"}}>
                         <Grid item xs={12}>
-                            <MaintenanceWorker/>
+                            {/* <MaintenanceWorker/> */}
+                            <MaintenanceWorkerDashboardWidget/>
                         </Grid>
                     </Grid>
                     <Grid container direction="row" justifyContent="center" sx={{paddingTop: "30px"}}>

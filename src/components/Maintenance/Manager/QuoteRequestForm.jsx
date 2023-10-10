@@ -25,6 +25,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import dataURItoBlob from "../../utils/dataURItoBlob";
 import userIcon from "./User_fill.png"
+import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 export default function QuoteRequestForm(){
 
@@ -166,7 +167,8 @@ export default function QuoteRequestForm(){
                     // } else {
                     //     console.error("Failed to find the updated maintenance request");
                     // }
-                    navigate("/maintenance")
+                    // navigate("/maintenance")
+                    RoutingBasedOnSelectedRole()
         
                 } else {
                     console.error(`Request failed with status: ${response.status}`);

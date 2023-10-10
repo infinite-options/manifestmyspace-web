@@ -159,7 +159,7 @@ function ManagerDashboard() {
             {!loading &&
                 <div className="mt-widget-main">
                     <div className="mt-container">
-                        <MaintenanceWidget />
+                        <MaintenanceWidget selectedRole={"MANAGER"}/>
                         <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">

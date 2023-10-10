@@ -23,6 +23,7 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import CalendarToday from "@mui/icons-material/CalendarToday";
 import QuoteDetailInfo from "./QuoteDetailInfo";
+import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
 export default function ScheduleMaintenance01({maintenanceItem}){
@@ -45,7 +46,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
     //     if (response){
     //         console.log("Ticket Cancelled")
     //         alert("Ticket Cancelled")
-    //         navigate('/maintenanceMM')
+    //         navigate('/workerMaintenance')
     //     } else{
     //         console.log("Ticket Not Cancelled")
     //         alert("Error: Ticket Not Cancelled")
@@ -82,7 +83,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                     if (response){
                         console.log("Ticket Completed")
                         alert("Ticket Completed")
-                        
+                        RoutingBasedOnSelectedRole()
                     } else{
                         console.log("Ticket Not Completed")
                         alert("Error: Ticket Not Completed")

@@ -23,6 +23,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import QuoteDetailInfo from "./QuoteDetailInfo";
+import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
 export default function QuotesSubmittedAction01({maintenanceItem}){
@@ -46,7 +47,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            routingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -59,7 +60,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            navigate('/maintenance')
+            routingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")

@@ -38,37 +38,14 @@ import theme from '../../theme/theme';
 import dataURItoBlob from '../utils/dataURItoBlob'
 import { type } from "@testing-library/user-event/dist/type";
 import { useUser } from "../../contexts/UserContext";
+import { get } from "../utils/api";
 
-// function dataURItoBlob(dataURI) {
-//     // Split the input to get the mime type and the data itself
-//     const [typeInfo, base64] = dataURI.split(",");
-    
-//     // Decode the base64 string
-//     const byteString = atob(base64);
-    
-//     // Create a Uint8Array to hold the binary data
-//     const arrayBuffer = new ArrayBuffer(byteString.length);
-//     const intArray = new Uint8Array(arrayBuffer);
-    
-//     for (let i = 0; i < byteString.length; i++) {
-//         intArray[i] = byteString.charCodeAt(i);
-//     }
-    
-//     // Create a Blob from the ArrayBuffer
-//     const blob = new Blob([intArray], { type: typeInfo });
-    
-//     return blob;
-// }
 
-export default function AddMaintenanceItem({}){
+export default function AddMaintenanceItem(){
     const location = useLocation();
     let navigate = useNavigate();
-<<<<<<< HEAD
-    const { user, getProfileId } = useUser();
-=======
-    const { getProfileId } = useUser();
->>>>>>> master
-    const [propertyId, setPropertyId] = useState('200-000029')
+    const { user, getProfileId, roleName } = useUser();
+    const [propertyId, setPropertyId] = useState('')
     const [properties, setProperties] = useState([])
     const [property, setProperty] = useState('');
     const [issue, setIssue] = useState('');
@@ -85,13 +62,18 @@ export default function AddMaintenanceItem({}){
 
     const profileId = getProfileId();
 
+    const role = roleName();
+
     console.log(profileId)
+
+    console.log("---DEBUG--- AddMaintenanceItem", role)
 
 
 
     const handlePropertyChange = (event) => {
         console.log("handlePropertyChange", event.target.value)
         setProperty(event.target.value);
+        setPropertyId(event.target.value);
     };
 
     const handleIssueChange = (event) => {
@@ -132,18 +114,37 @@ export default function AddMaintenanceItem({}){
         navigate(-1);
     }
 
+    function routingBasedOnSelectedRole(){
+       const role = roleName()
+       console.log("role", role)   
+
+       if (role === "Property Manager"){
+              navigate("/managerMaintenance")
+         } else if (role === "Property Owner"){
+            navigate("/ownerMaintenance")
+        } else if (role === "Maintenance"){
+            navigate("/workerMaintenance")
+        } else if (role === "PM Employee"){
+            navigate("/managerMaintenance")
+        } else if (role === "Maintenance Employee"){
+            navigate("/workerMaintenance")
+        } else if (role === "Tenant"){
+            navigate("/tenantMaintenance")
+        }     
+    }
+
     useEffect(() => {
         console.log(user.owner_id)
 
         const getProperties = async () => {
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${getProfileId()}`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
             const propertyData = await response.json();
             // console.log("data", data)
             // const propertyData = data.Property.result
             console.log("properties", propertyData)
             // setProperties(properties)
-            setProperties([...propertyData["Property_Dashboard"].result]);
+            setProperties([...propertyData["Property"].result]);
         }
 
         getProperties();
@@ -220,7 +221,7 @@ export default function AddMaintenanceItem({}){
         setCost('')
         setTitle('')
         setDescription('')
-        navigate('/maintenance');
+        routingBasedOnSelectedRole();
     }
 
 

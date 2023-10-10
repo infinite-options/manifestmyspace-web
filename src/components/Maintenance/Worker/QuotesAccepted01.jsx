@@ -25,6 +25,7 @@ import CompleteTicket from "../../utils/CompleteTicket";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import QuoteDetailInfo from "./QuoteDetailInfo";
+import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 export default function QuotesAccepted01({maintenanceItem}){
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function QuotesAccepted01({maintenanceItem}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenanceMM')
+            navigate('/workerMaintenance')
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -103,7 +104,7 @@ export default function QuotesAccepted01({maintenanceItem}){
                 if (responseData.code === 200){
                     console.log("Ticket Status Changed")
                     alert("Ticket Status Changed to SCHEDULED")
-                    navigate('/maintenanceMM')
+                    navigate('/workerMaintenance')
                 }
             } catch(error){
                 console.log("error", error)
@@ -118,7 +119,7 @@ export default function QuotesAccepted01({maintenanceItem}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            navigate('/maintenance')
+            routingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
@@ -142,7 +143,7 @@ export default function QuotesAccepted01({maintenanceItem}){
             if (responseData.code === 200){
                 console.log("Ticket Status Changed")
                 alert("Ticket Status Changed")
-                navigate('/maintenance')
+                routingBasedOnSelectedRole()
             }
         } catch (error){
             console.log("error", error)

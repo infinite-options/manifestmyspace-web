@@ -19,12 +19,15 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     setCookie("selectedRole", role);
   };
   const isBusiness = () => {
+    console.log("--DEBUG-- selectedRole", selectedRole)
     return selectedRole === "MANAGER" || selectedRole === "MAINTENANCE";
   };
   const isManager = () => {
+    console.log("--DEBUG-- selectedRole Manager", selectedRole)
     return selectedRole === "MANAGER";
   };
   const isManagement = () => {
+    console.log("--DEBUG-- selectedRole Management", selectedRole)
     return selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE";
   };
   const isManagementEmployee = () => {
@@ -87,14 +90,18 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     return profileObj;
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;
-  const getProfileId = () =>
-    isManagement()
-      ? getBusiness(user, "MANAGEMENT")
-      : isBusiness()
-      ? getBusiness(user, "MAINTENANCE")
-      : selectedRole === "TENANT"
-      ? user.tenant_id
-      : user.owner_id;
+  const getProfileId = () => {
+    
+    const profileId = isManagement()
+    ? getBusiness(user, "MANAGEMENT")
+    : isBusiness()
+    ? getBusiness(user, "MAINTENANCE")
+    : selectedRole === "TENANT"
+    ? user.tenant_id
+    : user.owner_id;
+    
+    return profileId
+  }
   const logout = () => {
     cookiesObj.remove("user");
     cookiesObj.remove("token");
