@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Typography,
+  Stack
 } from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
@@ -11,9 +12,12 @@ import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import theme from '../../theme/theme';
+import { useUser } from "../../contexts/UserContext";
 
 function TenantDashboard(props) {
+  
   const navigate = useNavigate();
+
 
   const [paymentData, setPaymentData] = useState({
         currency: "usd",
@@ -25,7 +29,42 @@ function TenantDashboard(props) {
         },
   })
 
-  const [total, setTotal] = useState("1300.00");
+  const { getProfileId } = useUser();
+
+  const [maintenanceRequestsData, setMaintenanceRequestsData] = useState([]);
+  const [propertyData, setPropertyData] = useState([]);
+  const [announcementsData, setAnnouncementsData] = useState([]);
+  const [leaseFirstName, setLeaseFirstName] = useState("");
+  const [propertyAddr, setPropertyAddr] = useState();
+  const [tenantId, setTenantId] = useState(`${getProfileId()}`);
+
+  console.log(`User ID: ${getProfileId()} `+" "+{tenantId})
+  useEffect(() => {
+
+    const getTenantData = async () => {
+        const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
+        const tenantRequestsData = await tenantRequests.json()        
+
+        let propertyData = tenantRequestsData.property.result;
+        let maintenanceRequestsData = tenantRequestsData.maintenanceRequests.result;
+        let announcementsData = tenantRequestsData.announcements.result;
+
+        setPropertyData(propertyData);
+        setMaintenanceRequestsData(maintenanceRequestsData);
+        setAnnouncementsData(announcementsData);
+
+        // let lease_contact = JSON.parse(propertyData[0].lease_assigned_contacts)
+        // console.log(lease_contact[0].first_name)
+        // setLeaseFirstName(lease_contact[0].first_name)
+
+        let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
+        setPropertyAddr(propertyAddress);
+        }
+      getTenantData();
+  }, [])
+
+
+  const [total, setTotal] = useState("0.00");
 
   useEffect(() => {
     console.log("TenantDashboard useEffect")
@@ -47,9 +86,7 @@ function TenantDashboard(props) {
         },
     }
   }
-
-
-
+  
   const thStyle = {
     color: "#160449",
     fontWeight: "600",
@@ -116,7 +153,7 @@ function TenantDashboard(props) {
             fontWeight: "600",
           }}
         >
-          Hello Nina!
+          Hello {leaseFirstName}!
         </Box>
         <Box sx={{ width: "19", height: "16" }}></Box>
       </Box>
@@ -145,7 +182,7 @@ function TenantDashboard(props) {
           }}
           onClick={()=>{navigate('/myProperty')}}
         >
-          103 N. Abel St unit #104
+          {propertyAddr}
         </Box>
       </Box>
       <DashboardTab>
@@ -156,6 +193,7 @@ function TenantDashboard(props) {
             justifyContent: "space-between",
             padding: "10px",
           }}
+          onClick={() => {navigate('/paymentsTenant')}}
         >
           <Box
             sx={{
@@ -179,7 +217,7 @@ function TenantDashboard(props) {
                 margin: "10px",
               }}
             >
-              ${total}
+          ${propertyData[0]!==undefined? propertyData[0].balance:"No Data"}
             </Box>
             <Box
               sx={{
@@ -187,6 +225,7 @@ function TenantDashboard(props) {
                 fontWeight: "600",
                 color: "#3D5CAC",
               }}
+              onClick={()=>{navigate('/paymentsTenant')}}
             >
               View Details
             </Box>
@@ -209,7 +248,7 @@ function TenantDashboard(props) {
                 padding: "6px",
               }}
             >
-              Pay before 1st July
+              Pay before {propertyData[0]!==undefined? propertyData[0].earliest_due_date:"No Data"}
             </Box>
             <Box
               sx={{
@@ -300,12 +339,24 @@ function TenantDashboard(props) {
               <th style={thStyle}>Date</th>
               <th style={thStyle}>Time</th>
             </tr>
-            <TableRow data={[PlaceholderImage, "Broken door", "Viewed", "High", "07/12/23", "10:40- 11:40"]} />
-            <TableRow data={[PlaceholderImage, "Broken door", "Assigned", "High", "07/12/23", "10:40- 11:40"]} />
-            <TableRow data={[PlaceholderImage, "Broken door", "Completed", "High", "07/12/23", "Closed"]} />
-            <TableRow data={[PlaceholderImage, "Broken door", "Sent", "High", "Pending", "Pending"]} />
-          </table>
-        </Box>
+            {/* {
+
+              maintenanceRequestsData.length>0 && maintenanceRequestsData.map((item, index) =>{
+                let  array = [PlaceholderImage,
+                  item.maintenance_title,
+                  item.maintenance_request_status,
+                  item.maintenance_priority,
+                  item.maintenance_scheduled_date, 
+                  item.maintenance_scheduled_time,item]
+                  return ( <TableRow data={array} />)
+              })
+            }  */}
+            <TableRow data={[PlaceholderImage, "Broken door", "NEW", "High", "07/12/23", "10:40- 11:40"]} />
+            <TableRow data={[PlaceholderImage, "Broken door", "INFO", "High", "07/12/23", "10:40- 11:40"]} />
+            <TableRow data={[PlaceholderImage, "Broken door", "COMPLETED", "High", "07/12/23", "Closed"]} />
+            <TableRow data={[PlaceholderImage, "Broken door", "CANCELLED", "High", "Pending", "Pending"]} />
+      </table>
+      </Box>
       </DashboardTab>
       <DashboardTab>
         <Box
@@ -333,12 +384,15 @@ function TenantDashboard(props) {
               color: "#007AFF",
               fontSize: "10px",
             }}
-            onClick={()=>{navigate('/announcement')}}
+            onClick={()=>{navigate('/announcement',
+            {state: 
+              {announcementsData, propertyAddr}
+            })}}
           >
-            View all (3)
+            View all ({announcementsData.length})
           </Box>
         </Box>
-        <CardSlider />
+        <CardSlider data={announcementsData} />
       </DashboardTab>
       <Box
         sx={{
@@ -364,6 +418,7 @@ function TenantDashboard(props) {
             borderRadius: "10px",
           }}
         >
+            <a href="tel:+6692041680" >
           <Box
             sx={{
               display: "flex",
@@ -386,6 +441,7 @@ function TenantDashboard(props) {
           >
             Call Manager
           </Box>
+          </a>
         </Box>
         <Box
           sx={{
@@ -421,6 +477,8 @@ function TenantDashboard(props) {
               alignItems: "center",
               paddingRight: "5px",
             }}
+
+            onClick={() => handleTenantMaintenanceNavigate()}
           >
             <Box>Urgent</Box>
             <Box>Maintenance</Box>
@@ -468,7 +526,6 @@ function TenantDashboard(props) {
             View Lease
           </Box>
         </Box>
-
         <Box
           sx={{
             display: "flex",
@@ -484,7 +541,12 @@ function TenantDashboard(props) {
             boxShadow: "3px 2px 4px #00000019",
             borderRadius: "10px",
           }}
-          onClick={()=>navigate('/tenantDocuments')}
+          onClick={()=>{navigate('/tenantDocuments',{
+              state: 
+                {propertyAddr: propertyAddr}
+              }
+            )}}
+            
         >
           <Box
             sx={{
@@ -512,6 +574,14 @@ function TenantDashboard(props) {
           </Box>
         </Box>
       </Box>
+      <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: "50px",
+            }}></Box>
     </Box>
   );
 }
@@ -533,7 +603,9 @@ function DashboardTab(props) {
 }
 
 function TableRow(props) {
-  const [image, title, status, priority, date, time] = props.data;
+  const [image, title, status, priority, date, time, item] = props.data;
+
+  console.log(status+" "+getStatusColor(status))
 
   const tdStyle = {
     color: "#160449",
@@ -543,14 +615,18 @@ function TableRow(props) {
   };
   function getStatusColor(status) {
     switch (status) {
-      case "Viewed":
-        return "#A52A2A3C";
-      case "Assigned":
-        return "#A52A2A";
-      case "Completed":
-        return "#778DC5";
-      case "Sent":
-        return "#7E7B7B";
+      case "NEW":
+        return "#B62C2A";
+      case "PROCESSING":
+        return "#D4736D";
+      case "COMPLETED":
+        return "#6788B3";
+      case "CANCELLED":
+          return "#6788B3";
+      case "INFO":
+        return "#DEA19C";
+      case "SCHEDULED":
+        return "#92A9CB";
       default:
         return "#000000";
     }
@@ -561,8 +637,14 @@ function TableRow(props) {
     fontWeight: "bold",
     textAlign: "center",
   };
+  const navigate = useNavigate();
   return (
-    <tr>
+    <tr onClick={()=>{navigate('/tenantMaintenanceItem',{
+      state: 
+        {color: getStatusColor(status),
+          item:item}
+      }
+    )}}>
       <td style={tdStyle}>
         <img src={image} alt="Maintenance" style={{ width: "45px", height: "35px" }} />
       </td>

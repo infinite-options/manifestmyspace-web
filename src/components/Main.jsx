@@ -192,7 +192,7 @@ function Main() {
               <Route exact path="/myProperty" element={<TenantProperty />} />
               <Route exact path="/properties" element={<PropertyList />} />
               {/* <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItem />} /> */}
-              <Route exact path="/tenantMaintenanceItem/:id" element={<TenantMaintenanceItemDetail />} />
+              <Route exact path="/tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
               <Route exact path="/settingsManagerACH1" element={<SettingsACH1 />} />
               <Route exact path="/settingsManagerACH2" element={<SettingsACH2 />} />

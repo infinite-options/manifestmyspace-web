@@ -2,13 +2,18 @@ import { Box } from '@mui/system';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";
+import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 
 function TenantDoucments() {
     const { getProfileId } = useUser();
     const [documentsData, setDocumentsData] = useState([]);
+    const location = useLocation();
+    const propertyAddress = location.state.propertyAddr;
+   
     useEffect(() => {
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)
-            .then((res) => {
+    //    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000040`)  
+    .then((res) => {
                 // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);
             });
@@ -60,7 +65,7 @@ function TenantDoucments() {
                         fontSize: '11px',
                         fontWeight: '600',
                     }}>
-                        103 N. Abel St unit #104
+                        {propertyAddress}
                     </Box>
                 </Box>
             </Box>
@@ -153,6 +158,7 @@ function TenantDoucments() {
                 </Box>
                 {documentsData.map((document) => {
                     const docs = JSON.parse(document.tenant_documents);
+                    console.log("Docs "+docs)
                     return (
                         <>
                             {docs.map((doc) => (
