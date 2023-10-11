@@ -147,7 +147,7 @@ export default function PropertyList({}) {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${profileId}`)
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       console.log(propertyData)
       setPropertyList([...propertyData["Property"].result]);
