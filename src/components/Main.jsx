@@ -72,7 +72,10 @@ import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 import EditProfileSettings from "./Settings/EditProfileSettings";
 import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
+import AddPayment from "./Settings/AddPayment";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
+import SelectPayment from "./Settings/SelectPayment";
+import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
 
@@ -177,7 +180,9 @@ function Main() {
             <Route path="pmUploadDocuments" element={<PMUploadDocuments />} />
             <Route path="pmRent" element={<PMRent />} />
             <Route path="pmRentDetail" element={<PMRentDetail />} />
-
+            <Route path="addPaymentSettings" element={<AddPayment />} />
+            <Route path="SelectPayment" element={<SelectPayment />} />
+            <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
             <Route path="paymentsTenant" element={<PaymentsTenant />} />

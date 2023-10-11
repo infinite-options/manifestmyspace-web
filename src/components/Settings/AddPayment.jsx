@@ -80,52 +80,6 @@ export default function AddCard() {
                 },
               }}
             >
-                <Box
-                component="span"
-                display= 'flex'
-                justifyContent= 'center'
-                alignItems= 'center'
-                position= 'relative'
-                flexDirection="column">
-                    <AccountCircleIcon
-                    sx={{
-                        color: theme.typography.common.blue,
-                        width: 45,
-                        height:45,
-                        position: 'absolute',
-                        left: 0
-                    }}
-                    ></AccountCircleIcon>
-                    <>
-                    <Stack
-                    direction="row"
-                    justifyContent="center"
-                    >
-                    <Typography 
-                    sx={{
-                        justifySelf: 'center',
-                        color: theme.typography.primary.black, 
-                        fontWeight: theme.typography.primary.fontWeight, 
-                        fontSize:theme.typography.largeFont}}>
-                    John Lennon
-                    </Typography>
-                    </Stack>
-                    <Stack
-                    direction="row"
-                    justifyContent="center"
-                    >
-                    <Typography 
-                    sx={{
-                        justifySelf: 'center',
-                        color: theme.typography.common.blue, 
-                        fontWeight: theme.typography.light.fontWeight, 
-                        fontSize:theme.typography.primary.smallFont}}>
-                    Owner Profile
-                    </Typography>
-                    </Stack>
-                    </>
-                </Box>
-                <hr/>
                 
                 <Stack m={5}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Enter Card Details</Typography>
@@ -133,34 +87,36 @@ export default function AddCard() {
                 <hr/>
                 
                 <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Card Number</Typography>
-                <TextField variant="filled" fullWidth placeholder="0000 0000 0000 0000" type='password' className={classes.root}></TextField>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Full Name</Typography>
+                <TextField variant="filled" fullWidth   className={classes.root}></TextField>
                 </Stack>
                 
                 <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Card Holder Name</Typography>
-                <TextField variant="filled" fullWidth placeholder="ex. Marie Schrader" className={classes.root}></TextField>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Email</Typography>
+                <TextField variant="filled" fullWidth   className={classes.root}></TextField>
                 </Stack>
-                
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={4}>
-                    <Stack spacing={-2} m={4}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Expiry Date</Typography>
-                    <TextField variant="filled" fullWidth placeholder="MM/YYYY" className={classes.root}></TextField>
-                    </Stack>
-                </Grid>
-                <Grid item xs={4}>
-                    <Stack spacing={-2} m={4}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>CVV/CVC</Typography>
-                    <TextField variant="filled" fullWidth placeholder="3-4 digits" className={classes.root}></TextField>
-                    </Stack>
-                </Grid>
-                <Grid item xs={4}>
-                    
-                </Grid>
-                </Grid>
+
+                <Stack spacing={-2} m={5}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Bank Name</Typography>
+                <TextField variant="filled" fullWidth  className={classes.root}></TextField>
+                </Stack>
+
+                <Stack spacing={-2} m={5}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Routing Number</Typography>
+                <TextField variant="filled" fullWidth  className={classes.root}></TextField>
+                </Stack>
+
+                <Stack spacing={-2} m={5}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Account Number</Typography>
+                <TextField variant="filled" fullWidth  className={classes.root}></TextField>
+                </Stack>
+
+                <Stack spacing={-2} m={5}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Re-enter Number</Typography>
+                <TextField variant="filled" fullWidth  className={classes.root}></TextField>
+                </Stack>
+
                 <hr/>
-                
                 <Button
             sx={{
               paddingLeft: "2%",
@@ -174,6 +130,7 @@ export default function AddCard() {
               fontWeight: theme.typography.primary.fontWeight,
               textTransform: "none",
             }}
+            
           >
             {"Sign Up"}
           </Button>

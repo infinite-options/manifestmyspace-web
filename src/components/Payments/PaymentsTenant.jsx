@@ -39,7 +39,8 @@ export default function PaymentsTenant(props) {
 
     const [paymentData, setPaymentData] = useState({
         currency: "usd",
-        customer_uid: user.user_uid,
+        customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
+        // customer_uid: user.user_uid,
        // business_code: "IOTEST",
         business_code: paymentNotes,
         item_uid: "320-000054",
@@ -287,9 +288,11 @@ export default function PaymentsTenant(props) {
                                             padding: "10px",
                                         }}
                                         onClick={() => {
-                                            handleStripePayment()
-                                            // navigate('/paymentsTenant')
-                                        }}
+                      paymentData.business_code = paymentNotes;
+                      navigate("/SelectPayment", {
+                        state: { paymentData, total },
+                      });
+                    }}
                                     >
                                         Select Payment
                                     </Box>
