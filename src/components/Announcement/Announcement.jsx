@@ -4,10 +4,12 @@ import AnnouncementCard from "./AnnouncementCard";
 import Searchbar from "./Searchbar";
 import axios from "axios";
 import SearchFilter from "./SearchFilter";
+import { useUser } from "../../contexts/UserContext";
 function Announcement() {
+    const { getProfileId } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
     useEffect(() => {
-        axios.get("https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/announcement?receiver=350-000002")
+        axios.get(`https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/announcement?receiver=${getProfileId()}`)
             .then((res) => {
                 setAnnouncementData(res.data.result);
                 // console.log(res.data.result);

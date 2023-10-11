@@ -83,7 +83,7 @@ const CashflowOwner = () => {
     // },[selectedProperty])
     return (
         <ThemeProvider theme={theme}>
-            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={'100-000003'} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty}></CashflowData>
+            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={user.user_uid} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty}></CashflowData>
           <Box
             style={{
                 display: 'flex',
