@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import React, { Component , useState} from 'react';
+import { Paper, Box, Stack, ThemeProvider,Switch, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
@@ -11,6 +11,8 @@ import { useUser } from "../../contexts/UserContext";
 export default function Settings() {
     const navigate = useNavigate();
     const { logout } = useUser();
+    let [isOn1, switchState1]=useState(true)
+    let [isOn2, switchState2]=useState(true)
     return (
         <ThemeProvider theme={theme}>
           <Box
@@ -175,12 +177,11 @@ export default function Settings() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Typography sx={{color: theme.typography.primary.black}}>
-                    Push notifications
-                    </Typography>
-                    <Typography sx={{color: theme.typography.common.blue}}>
-                    l
-                    </Typography>
+                
+                <Typography>Allow Notification</Typography> 
+                <Switch sx={{backgroundColor:"#3D5CAC"}} checked={isOn1} onChange={()=>{switchState1(!isOn1)}}/>
+                
+
                     </Box>                    
                     <Box
                     component="span"
@@ -189,12 +190,15 @@ export default function Settings() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Typography sx={{color: theme.typography.primary.black}}>
-                    Dark mode
-                    </Typography>
-                    <Typography sx={{color: theme.typography.common.blue}}>
-                    l
-                    </Typography>
+                
+              
+                
+                <Typography>Dark Mode</Typography> 
+                <Switch sx={{backgroundColor:"#3D5CAC"}}  checked={isOn2} onChange={()=>{switchState2(!isOn2)}} />
+                
+
+
+                    
                     </Box>
                     <hr/>
                     <Box

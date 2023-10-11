@@ -132,7 +132,7 @@ export default function AddCard() {
             }}
             
           >
-            {"Sign Up"}
+            {"Add Account"}
           </Button>
             </Paper>
             </Box>
