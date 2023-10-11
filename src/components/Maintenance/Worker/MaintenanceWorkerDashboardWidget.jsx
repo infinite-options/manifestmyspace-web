@@ -4,19 +4,23 @@ import { state, useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
 import { useUser } from "../../../contexts/UserContext";
 import Status from "../../Templates/Status";
+import { Typography, Box, Grid } from "@mui/material";
+import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
 
+import { InputBase, Paper, IconButton, Button } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function MaintenanceWorkerDashboardWidget(){
     const navigate = useNavigate();
 
-    const { user, getProfileId } = useUser();
+    const { getProfileId } = useUser();
     const colorStatus = theme.colorStatusMM
 
     const [currentActivities, setCurrentActivities] = useState([]);
     const [workOrders, setWorkOrders] = useState([]);
     const [maintenanceRequests, setMaintenanceRequests] = useState({});
-
-    const maintenanceBusinessID = user?.businesses.MAINTENANCE.business_uid
+    const [query, setQuery] = useState('');
+    
 
     useEffect(() => {
         const dataObject = {};
@@ -74,30 +78,103 @@ export default function MaintenanceWorkerDashboardWidget(){
                 ...prevData, 
                 ...dataObject
             }));
-            // setDisplayMaintenanceData(prevData => ({
-            //     ...prevData,
-            //     ...dataObject
-            // }));
         }
         getMaintenanceData();
 
         fetchMaintenanceDashboardData();
     }, []);
+    
+    function handleFilter(filterString, searchArray){
+        console.log("filterString", filterString)
+        console.log("searchArray", searchArray)
+        let filteredArray = []
+        if(filterString === "All" || filterString === ""){
+            filteredArray = searchArray
+        } else {
+            filteredArray = searchArray.filter(item => item.maintenance_title === filterString)
+        }
+        return filteredArray
+    }
 
+    const handleInputChange = (e) => {
+        setQuery(e.target.value);
+    };
 
     return(
-        <div className="mt-widget-requests-container" onClick={() => navigate("/workerMaintenance", { state: { colorStatus, maintenanceRequests } })}>  
-            <h2 className="mt-widget-title">Maintenance</h2>
-            {/* <Status colorStatus={colorStatus} maintenanceRequests={maintenanceRequests}/> */}
-            <div id="mt-all-requests">
-            <ul className="mt-widget-requests">
-                {colorStatus.map((item, index) => 
-                    <li key={index} style={{ backgroundColor: item.color, color: '#FFFFFF', fontFamily: 'Source Sans Pro', fontSize: '12px', fontWeight:600 }}>
-                        {item.status} <span style={{float: "right"}}>{maintenanceRequests[item.mapping]?.length ?? null}</span>
-                    </li>
-                )}
-            </ul>
-        </div>
+        <div style={{
+            borderRadius: "10px",
+            margin: "20px",
+        }}>
+
+            <Grid container spacing={4} sx={{paddingLeft:"5px"}}>
+                <Grid item xs={12}>
+                    <Box sx={{paddingLeft:"5px"}}>
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                            Work Orders
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={2}>
+                    <Box sx={{paddingLeft:"5px", alignContent:"center", alignItems: "center"}}>
+                        <Button
+                            variant="contained" 
+                            sx={{
+                                backgroundColor: 'darkgrey', // Set the dark grey background
+                                borderRadius: '25px', // Set border radius to half of the height to create an oval shape
+                                height: '40px', // Set height
+                                width: '100px', // Set width
+                                '&:hover': {
+                                    backgroundColor: 'grey', // Set a different color on hover if desired
+                                },
+                            }}
+                            onClick={() => {
+                                setQuery("All");
+                            }}
+                        >
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                All
+                            </Typography>
+                        </Button>
+                    </Box>
+                </Grid>
+                <Grid item xs={10} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <Paper component="form" style={{ padding: '2px 4px', display: 'flex', alignItems: 'center', width: 400, alignContent:"center"}}>
+                        <InputBase
+                            style={{ marginLeft: '8px', flex: 1 }}
+                            placeholder="Search"
+                            inputProps={{ 'aria-label': 'search' }}
+                            value={query}
+                            onChange={handleInputChange}
+                        />
+                        <IconButton type="submit" style={{ padding: '10px' }} onClick={() => console.log("test")} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                    {colorStatus.map((item, index) => {
+
+                        let mappingKey = item.mapping
+
+                        let maintenanceArray = maintenanceRequests[mappingKey]|| []
+
+                        let filteredArray = handleFilter(query, maintenanceRequests[mappingKey])
+
+                        return (
+                            <MaintenanceStatusTable01
+                                key={index}
+                                status={item.status}
+                                color={item.color}
+                                maintenanceItemsForStatus={maintenanceArray}
+                                allMaintenanceData={maintenanceRequests}
+                                maintenanceRequestsCount={maintenanceArray}
+                            />
+                        );
+                    })}
+                </Grid>
+            </Grid>
+
+
         </div>
     )
 
