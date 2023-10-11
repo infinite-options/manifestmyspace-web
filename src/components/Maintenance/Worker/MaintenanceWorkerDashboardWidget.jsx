@@ -86,11 +86,12 @@ export default function MaintenanceWorkerDashboardWidget(){
     
     function handleFilter(filterString, searchArray){
         console.log("filterString", filterString)
+        console.log("searchArray", searchArray)
         let filteredArray = []
         if(filterString === "All" || filterString === ""){
             filteredArray = searchArray
         } else {
-            filteredArray = searchArray.filter(item => item.status === filterString)
+            filteredArray = searchArray.filter(item => item.maintenance_title === filterString)
         }
         return filteredArray
     }
@@ -144,7 +145,6 @@ export default function MaintenanceWorkerDashboardWidget(){
                             inputProps={{ 'aria-label': 'search' }}
                             value={query}
                             onChange={handleInputChange}
-                            // onKeyPress={handleKeyPress}
                         />
                         <IconButton type="submit" style={{ padding: '10px' }} onClick={() => console.log("test")} aria-label="search">
                             <SearchIcon />
@@ -158,7 +158,7 @@ export default function MaintenanceWorkerDashboardWidget(){
 
                         let maintenanceArray = maintenanceRequests[mappingKey]|| []
 
-                        // let filteredArray = handleFilter(query, maintenanceRequests[mappingKey])
+                        let filteredArray = handleFilter(query, maintenanceRequests[mappingKey])
 
                         return (
                             <MaintenanceStatusTable01
