@@ -27,16 +27,53 @@ import MaintenanceWorkerDashboardWidget from "../Maintenance/Worker/MaintenanceW
 
 
 export default function MaintenanceDashboard(){
-
     const navigate = useNavigate();
-    const { user, getProfileId } = useUser();
-
-    console.log("user object", user)
-
-    console.log("getProfileId", getProfileId()) 
-
-
+    const { user, getProfileId } = useUser(); 
     const [loading, setLoading] = useState(true);
+    const [quoteRequestedCount, setQuoteRequestedCount] = useState(0);
+    const [submittedCount, setSubmittedCount] = useState(0);
+    const [quoteAcceptedCount, setQuoteAcceptedCount] = useState(0);
+    const [scheduledCount, setScheduledCount] = useState(0);
+    const [finishedCount, setFinishedCount] = useState(0);
+    const [paidCount, setPaidCount] = useState(0);
+
+    const [quotesAcceptedCashflow, setQuotesAcceptedCashflow] = useState(0);
+    const [quotesScheduledCashflow, setQuotesScheduledCashflow] = useState(0);
+    const [quotesFinishedCashflow, setQuotesFinishedCashflow] = useState(0);
+
+
+    const data = [
+        {
+            "name": "Quotes Requested",
+            "count": quoteRequestedCount,
+            "fill": "#DB9687"
+        },
+        {
+            "name": "Submitted",
+            "count": submittedCount,
+            "fill": "#CEA892"
+        },
+        {
+            "name": "Quotes Accepted",
+            "count": quoteAcceptedCount,
+            "fill": "#BAAC7A"
+        },
+        {
+            "name": "Scheduled",
+            "count": scheduledCount,
+            "fill": "#959A76"
+        },
+        {
+            "name": "Finished",
+            "count": finishedCount,
+            "fill": "#598A96"
+        },
+        {
+            "name": "Paid",
+            "count": paidCount,
+            "fill": "#6588AC"
+        },
+      ]
 
 
     useEffect(() => {
@@ -55,6 +92,55 @@ export default function MaintenanceDashboard(){
                 console.log(data);
                 console.log("CurrentActivities", data.CurrentActivities);
                 console.log("WorkOrders", data.WorkOrders);
+
+                // for (const item of data.CurrentActivities.result){
+                //     item.maintenance_request_status === "REQUESTED" ? setQuoteRequestedCount(prevCount => prevCount + 1) : null;
+                //     item.maintenance_request_status === "SUBMITTED" ? setSubmittedCount(prevCount => prevCount + 1) : null;
+                //     item.maintenance_request_status === "ACCEPTED" ? setQuoteAcceptedCount(prevCount => prevCount + 1) : null;
+                //     item.maintenance_request_status === "SCHEDULED" ? setScheduledCount(prevCount => prevCount + 1) : null;
+                //     item.maintenance_request_status === "FINISHED" ? setFinishedCount(prevCount => prevCount + 1) : null;
+                //     item.maintenance_request_status === "PAID" ? setPaidCount(prevCount => prevCount + 1) : null;
+                // }
+                for (const item of data.CurrentActivities.result) {
+                    switch(item.maintenance_request_status) {
+                        case "REQUESTED": 
+                            setQuoteRequestedCount(prevCount => prevCount + 1) 
+                            break;
+                        case "SUBMITTED": 
+                            setSubmittedCount(prevCount => prevCount + 1)
+                            break;
+                        case "ACCEPTED": 
+                            setQuoteAcceptedCount(prevCount => prevCount + 1)
+                            setQuotesAcceptedCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
+                            break;
+                        case "SCHEDULED": 
+                            setScheduledCount(prevCount => prevCount + 1)
+                            setQuotesScheduledCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
+                            break;
+                        case "FINISHED": 
+                            setFinishedCount(prevCount => prevCount + 1)
+                            console.log("item.maintenance_request_cost", item.maintenance_request_cost)
+                            setQuotesFinishedCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
+                            break;
+                        case "PAID": 
+                            setPaidCount(prevCount => prevCount + 1)
+                            console.log("item.maintenance_request_cost", item.maintenance_request_cost)
+                            break;
+                        default: 
+                            // Handle unexpected status or do nothing
+                            break;
+                    }
+                }
+                
+                // Update state after loop
+                // setQuoteRequestedCount(initialCounts.quoteRequested);
+                // setSubmittedCount(initialCounts.submitted);
+                // setQuoteAcceptedCount(initialCounts.quoteAccepted);
+                // setScheduledCount(initialCounts.scheduled);
+                // setFinishedCount(initialCounts.finished);
+                // setPaidCount(initialCounts.paid);
+
+
                 setLoading(false);
             } catch(error){
                 console.log("Error getting maintenance worker dashboard data: ", error)
@@ -62,65 +148,6 @@ export default function MaintenanceDashboard(){
         }
         getMaintenanceWorkerDashboardData()
     }, [])
-
-
-
-
-    const data = [
-        {
-          "name": "Quotes Requested",
-          "count": 25,
-          "fill": "#DB9687"
-        },
-        {
-          "name": "Submitted",
-          "count": 5,
-          "fill": "#CEA892"
-        },
-        {
-          "name": "Quotes Accepted",
-          "count": 15,
-          "fill": "#BAAC7A"
-        },
-        {
-          "name": "Scheduled",
-          "count": 9,
-          "fill": "#959A76"
-        },
-        {
-            "name": "Finished",
-            "count": 5,
-            "fill": "#598A96"
-        },
-        {
-          "name": "Paid",
-          "count": 150,
-          "fill": "#6588AC"
-        },
-      ]
-
-    // const renderCustomizedLabel = (props) => {
-    //         const {
-    //         x, y, width, height, value,
-    //         } = props;
-    //     // console.log(x, y, width, height, value)
-    //     // const fireOffset = value.toString().length < 5;
-    //     // const offset = fireOffset ? -40 : 5;
-    //         // return (
-    //         //     <text x={x + width -offset} y={y + height - 5} fill={fireOffset ? "#285A64" :"#fff"} textAnchor="end">
-    //         //     {value}
-    //         //     </text>
-    //         // );
-
-
-    //         return (
-    //             <text x={100+x} y={100} fill={"#000"} textAnchor="end">
-    //                 {props.name}
-    //                 {props.value}
-    //             </text>
-    //         )
-    //   };
-      
       
 
     return (
@@ -182,6 +209,9 @@ export default function MaintenanceDashboard(){
                                         paddingTop: '10px',
                                     }}
                                 >
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:"22px"}}>
+                                        Current Activity
+                                    </Typography>                                    
                                     <Box
                                         style={{
                                             display: 'flex',
@@ -234,7 +264,7 @@ export default function MaintenanceDashboard(){
                                             Quotes Accepted Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
-                                            $500
+                                            ${quotesAcceptedCashflow}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -259,7 +289,7 @@ export default function MaintenanceDashboard(){
                                             Quotes Scheduled Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
-                                            $500
+                                            ${quotesScheduledCashflow}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -285,7 +315,7 @@ export default function MaintenanceDashboard(){
                                             Quotes Finished Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
-                                            $500
+                                            ${quotesFinishedCashflow}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -294,8 +324,33 @@ export default function MaintenanceDashboard(){
                     </Grid>
                     <Grid container direction="row" justifyContent="center" sx={{paddingTop: "25px"}}>
                         <Grid item xs={12}>
-                            {/* <MaintenanceWorker/> */}
-                            <MaintenanceWorkerDashboardWidget/>
+                            <Box
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    width: '100%', // Take up full screen width
+                                    minHeight: '300px', // Set the Box height to full height
+                                    marginTop: theme.spacing(2), // Set the margin to 20px
+                                }}
+                            >
+                                <Paper
+                                style={{
+                                    padding: theme.spacing(2),
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: theme.palette.primary.main,
+                                    width: '90%', // Occupy full width with 25px margins on each side
+                                    [theme.breakpoints.down('sm')]: {
+                                        width: '80%',
+                                    },
+                                    [theme.breakpoints.up('sm')]: {
+                                        width: '50%',
+                                    },
+                                    paddingTop: '10px',
+                                }}>
+                                    <MaintenanceWorkerDashboardWidget/>
+                                </Paper>
+                            </Box>
                         </Grid>
                     </Grid>
                     <Grid container direction="row" justifyContent="center" sx={{paddingTop: "30px"}}>

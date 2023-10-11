@@ -164,7 +164,7 @@ export default function MaintenanceWorker(){
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
-            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${user.businesses.MAINTENANCE.business_uid}`) // Change back to ${getProfileId()}
+            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
