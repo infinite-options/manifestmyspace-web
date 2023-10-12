@@ -1,10 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, ThemeProvider } from "@mui/material";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, ThemeProvider } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, createContext, useContext  } from "react";
 import { useUser } from "../../../contexts/UserContext";
-
-const TenantProfileEditContext = createContext(null);
 
 const TenantProfileEditContext = createContext(null);
 
