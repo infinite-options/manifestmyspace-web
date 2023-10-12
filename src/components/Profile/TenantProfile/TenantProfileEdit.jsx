@@ -1,7 +1,10 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, ThemeProvider } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, ThemeProvider } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, createContext, useContext  } from "react";
 import { useUser } from "../../../contexts/UserContext";
+
+const TenantProfileEditContext = createContext(null);
 
 const TenantProfileEditContext = createContext(null);
 
@@ -800,6 +803,12 @@ function ProfileTextInputField(props) {
 function DocumentCard(props) {
     const title = props.data.title;
     const date = props.data.date;
+    const link = props.data.link;
+
+    const onClickView = () => {
+        window.open(link, '_blank');
+    };
+
     const link = props.data.link;
 
     const onClickView = () => {
