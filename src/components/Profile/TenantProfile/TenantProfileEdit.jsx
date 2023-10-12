@@ -163,7 +163,6 @@ function TenantProfileEdit(props) {
             setTenantZip(value);
         }
         
-
         setModifiedData((prevData) => ({
             ...prevData,
             [name]: value
