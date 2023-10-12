@@ -809,11 +809,6 @@ function DocumentCard(props) {
         window.open(link, '_blank');
     };
 
-    const link = props.data.link;
-
-    const onClickView = () => {
-        window.open(link, '_blank');
-    };
 
     return (
         <Box sx={{
