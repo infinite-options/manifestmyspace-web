@@ -9,14 +9,17 @@ import {
     Button,
 } from '@mui/material';
 import { ArrowBack, Download } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const LeasePDF = (props) => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const handleBackButton = () => {
         navigate('/viewLease');
     };
 
+    const documentLink  = location.state.document; 
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -79,46 +82,8 @@ const LeasePDF = (props) => {
                                 Viewing Lease PDF
                             </Typography>
                         </Box>
-                        <Box position="absolute" right={0}>
-                            <Button>
-                                <Download
-                                    sx={{
-                                        color: theme.typography.primary.black,
-                                        fontSize: '20px',
-                                        margin: '5px',
-                                    }}
-                                />
-                            </Button>
-                        </Box>
                     </Stack>
-                    <Paper
-                        style={{
-                            backgroundColor: theme.palette.background.default,
-                            height: '50vh',
-                            width: '95%',
-                            margin: '10px',
-                        }}
-                    >
-                        <Stack justifyContent="center" alignItems="center">
-                            <Typography sx={{ marginTop: '45%' }}>
-                                PDF Page 1
-                            </Typography>
-                        </Stack>
-                    </Paper>
-                    <Paper
-                        style={{
-                            backgroundColor: theme.palette.background.default,
-                            height: '50vh',
-                            width: '95%',
-                            margin: '10px',
-                        }}
-                    >
-                        <Stack justifyContent="center" alignItems="center">
-                            <Typography sx={{ marginTop: '45%' }}>
-                                PDF Page 2
-                            </Typography>
-                        </Stack>
-                    </Paper>
+                    <iframe src={documentLink} width="100%" height="500px"/>
                 </Paper>
             </Box>
         </ThemeProvider>

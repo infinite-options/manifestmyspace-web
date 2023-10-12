@@ -51,27 +51,31 @@ export default function TenantProperty({ }) {
         "Not Paid": theme.palette.priority.high
     }
     
+    const location = useLocation();
+    const propertyData = location.state.propertyData[0];
 
     const color = theme.palette.form.main
 
-    const images = [
-        {
-          label: 'maintenanceRequest',
-          imgPath: propertyImage,
-        },
-        {
-          label: 'maintenanceRequest',
-          imgPath: propertyImage,
-        },
-        {
-          label: 'maintenanceRequest',
-          imgPath: propertyImage,
-        },
-        {
-          label: 'maintenanceRequest',
-          imgPath: propertyImage,
-        },
-      ];
+    // const images = [
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //   ];
+      let images = JSON.parse(propertyData.property_images);
+
     
       const maxSteps = images.length;
     
@@ -234,8 +238,8 @@ export default function TenantProperty({ }) {
                                             >
                                                 <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
                                                     {/* {item.property_address} {item.property_unit}, {item.property_city} {item.property_state} {item.property_zip} */}
-                                                    103 N. Abel St, Milpitas CA 95035
-                                                </Typography>
+                                                    {propertyData.property_address} {propertyData.property_unit}, {propertyData.property_city} {propertyData.property_state} {propertyData.property_zip}
+                                                  </Typography>
                                                 <Box
                                                     sx={{
                                                         // display: "flex",
@@ -248,7 +252,7 @@ export default function TenantProperty({ }) {
 
                                                     <CardMedia
                                                         component="img"
-                                                        image={images[activeStep].imgPath}
+                                                        image={images[activeStep]}
                                                         sx={{
                                                             elevation: "0",
                                                             boxShadow: "none",
@@ -344,7 +348,7 @@ export default function TenantProperty({ }) {
                                                                     fontSize:theme.typography.smallFont,
                                                                 }}
                                                             >
-                                                                Rent: $2000
+                                                            Rent: ${propertyData.property_listed_rent}
                                                             </Typography>
                                                             <Typography
                                                                 sx={{
@@ -354,8 +358,7 @@ export default function TenantProperty({ }) {
                                                                     paddingBottom: "10px"
                                                                 }}
                                                             >
-                                                                Due: 09/01/2023
-                                                            </Typography>
+                                                                Due: {propertyData.earliest_due_date}                                                            </Typography>
                                                         </Grid>
                                                         <Grid item xs={6}>
                                                             <Button
@@ -385,7 +388,7 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    Expiring: 01/01/2024
+                                                                    Expiring: {propertyData.lease_end}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={6}>
@@ -408,8 +411,8 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    $527,000 (2022)
-
+                                                                    {/* $527,000 (2022) */}
+                                                                    ???
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={6}>
@@ -433,7 +436,8 @@ export default function TenantProperty({ }) {
                                                                     }}
                                                                 >
                                                                 {/* {item.property_area} */}
-                                                                2030
+                                                                {propertyData.property_area}
+                                                              
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={4}>
@@ -456,7 +460,7 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    Condo
+                                                                    {propertyData.property_type}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={4}>
@@ -480,7 +484,7 @@ export default function TenantProperty({ }) {
                                                                     }}
                                                                 >
                                                                     {/* {item.property_num_beds} */}
-                                                                    2
+                                                                    {propertyData.property_num_beds}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={4}>
@@ -504,7 +508,7 @@ export default function TenantProperty({ }) {
                                                                     }}
                                                                 >
                                                                     {/* {item.property_num_baths} */}
-                                                                    1.5
+                                                                    {propertyData.property_num_baths}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={12}>
@@ -534,7 +538,7 @@ export default function TenantProperty({ }) {
                                                                     paddingRight: "10px"
                                                                 }}
                                                             >
-                                                                Open Maintenance Tickets
+                                                                Open Maintenance Tickets ??
                                                             </Typography>
                                                             <Typography
                                                                     sx={{
@@ -544,7 +548,7 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    05/05/2021: Water Heater
+                                                                    05/05/2021: Water Heater ??
                                                                     <Badge
                                                                         overlap="circular"
                                                                         color="error"
@@ -585,7 +589,7 @@ export default function TenantProperty({ }) {
                                                                     paddingRight: "10px"
                                                                 }}
                                                             >
-                                                                Tenant
+                                                                Tenant 
                                                             </Typography>
                                                             <Typography
                                                                     sx={{
@@ -595,7 +599,7 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    05/05/2021: Ringo Starr
+                                                                    05/05/2021: Ringo Starr ?
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={12}>
@@ -638,7 +642,7 @@ export default function TenantProperty({ }) {
                                                                     fontSize:theme.typography.smallFont,
                                                                     paddingRight: "10px"
                                                                 }}>
-                                                                    Community Codes
+                                                                    Community Codes ??
                                                                 </Typography>
                                                         </Grid>
                                                         <Grid item xs={1}></Grid>
