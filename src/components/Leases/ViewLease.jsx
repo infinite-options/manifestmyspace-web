@@ -22,21 +22,27 @@ const ViewLease = (props) => {
     const { getProfileId } = useUser();
     const handleBackButton = () => {};
 
-    const handleViewButton = () => {
-        navigate('/leaseDocument');
+    const handleViewButton = (leaseData) => {
+        navigate('/leaseDocument',{
+            state:{
+                document: leaseData.ld_link
+            }
+        }
+        );
     };
 
     const handleRenewLease = () => {
         navigate('/editLease');
     };
-    const leaseID = '300-000001';
+    const leaseID = '300-000005';
 
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
     useEffect(()=>{
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+//      axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
         .then((res)=>{
-            const data = res.data['Lease Details'];
+            const data = res.data['Lease_Details'].result;
             // console.log(data);
             setFetchData(data);
             data.forEach((lease) => {
@@ -93,7 +99,7 @@ const ViewLease = (props) => {
                         position="relative"
                         sx={{ paddingBottom: '25px', paddingTop: '15px' }}
                     >
-                        <Box position="absolute" left={0}>
+                        {/* <Box position="absolute" left={0}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBack
                                     sx={{
@@ -103,7 +109,7 @@ const ViewLease = (props) => {
                                     }}
                                 />
                             </Button>
-                        </Box>
+                        </Box> */}
                         <Box
                             direction="row"
                             justifyContent="center"
@@ -120,8 +126,8 @@ const ViewLease = (props) => {
                                 Viewing Lease
                             </Typography>
                         </Box>
-                        <Box position="absolute" right={0}>
-                            <Button onClick={handleViewButton}>
+                        <Box position="absolute" right={0}
+                        onClick={()=>{handleViewButton(leaseData)}}>
                                 <Visibility
                                     sx={{
                                         color: theme.typography.primary.black,
@@ -129,7 +135,7 @@ const ViewLease = (props) => {
                                         margin: '5px',
                                     }}
                                 />
-                            </Button>
+                            
                         </Box>
                     </Stack>
                     <Table>
@@ -384,7 +390,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {'?'} days
+                                    {leaseData.late_fee} days
                                     </Typography>
                                 </TableCell>
                                 <TableCell>

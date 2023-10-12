@@ -33,16 +33,20 @@ export default function AccordionView({colorStatusType, data, ItemComponent}){
     };
     
     const formattedColorOrder = [
-        {'status': 'New Requests', 'color': '#A52A2A'},
-        {'status': 'Reviewed Requests', 'color': '#D29595'},
-        {'status': 'Scheduled', 'color': '#778DC5'},
-        {'status': 'Completed', 'color': '#3D5CAC'},
+        {'status': 'NEW REQUEST', 'color': '#B62C2A'},
+        {'status': 'INFO REQUESTED', 'color': '#D4736D'},
+        {'status': 'PROCESSING', 'color': '#DEA19C'},
+        // {'status': 'Reviewed Requests', 'color': '#D29595'},
+        {'status': 'SCHEDULED', 'color': '#92A9CB'},
+        {'status': 'COMPLETED', 'color': '#6788B3'},
+        {'status': 'CANCELLED', 'color': '#173C8D'},
+
     ]
 
 
     useEffect(() => {
         const parseData = () => {
-            let dataObject = {};
+            let dataObject = data;
             // data.forEach((item) => { 
             //     const itemStatus = item.maintenance_request_status
             //     if (colorStatusTenantMap[itemStatus]){

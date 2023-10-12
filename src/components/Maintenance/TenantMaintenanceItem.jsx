@@ -41,13 +41,13 @@ export default function TenantMaintenanceItem({color, request}){
         fontWeight:600,
     }
 
-    function handleRequestDetailPage(maintenance_request_uid, color){
+    function handleRequestDetailPage(item, color){
         // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
         // navigate(`/app/tenantmaintenance/${property_uid}/${maintenance_request_uid}`)
         console.log("handleRequestDetailPage color:", color)
-        navigate(`/tenantMaintenanceItem/${maintenance_request_uid}`, {
+        navigate(`/tenantMaintenanceItem`, {
             state: {
-                request, 
+                item, 
                 color
             }
         })
@@ -62,7 +62,7 @@ export default function TenantMaintenanceItem({color, request}){
         >
             <Table>
                 <TableBody>
-                    <TableRow onClick={() => handleRequestDetailPage(request.maintenance_request_uid, color)}>
+                <TableRow onClick={() => handleRequestDetailPage(request, color)}>
                         <TableCell align="left">
                             <Typography 
                                 sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
