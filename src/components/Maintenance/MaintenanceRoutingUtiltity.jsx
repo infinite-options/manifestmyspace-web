@@ -1,7 +1,7 @@
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
-export default function RoutingBasedOnSelectedRole(){
+export default function _to_delete_RoutingBasedOnSelectedRole(){
     const navigate = useNavigate();
     const { roleName } = useUser();
 

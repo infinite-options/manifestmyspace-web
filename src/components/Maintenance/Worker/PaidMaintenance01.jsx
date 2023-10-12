@@ -24,10 +24,12 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
 
 export default function PaidMaintenance01({maintenanceItem}){
     const navigate = useNavigate();
+    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
 
     function handleNavigateToQuotesRequested(){
@@ -47,7 +49,7 @@ export default function PaidMaintenance01({maintenanceItem}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            routingBasedOnSelectedRole()
+            navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -60,7 +62,7 @@ export default function PaidMaintenance01({maintenanceItem}){
             if (response.ok){
                 console.log("Ticket Completed")
                 alert("Ticket Completed")
-                routingBasedOnSelectedRole()
+                navigate(maintenanceRoutingBasedOnSelectedRole())
             } else{
                 console.log("Ticket Not Completed")
                 alert("Error: Ticket Not Completed")

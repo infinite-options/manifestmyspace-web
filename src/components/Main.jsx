@@ -54,7 +54,7 @@ import AddContacts from "./Contacts/AddContacts";
 import TenantContactDetails from "./Contacts/TenantContactDetails";
 
 import PropertyList from "./Property/PropertyList";
-import Dashboard from "./Dashboard";
+import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import MaintenanceOwner from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
@@ -203,7 +203,7 @@ function Main() {
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
-            <Route path="ownerDashboard" element={<Dashboard />} />
+            <Route path="ownerDashboard" element={<OwnerDashboard />} />
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />

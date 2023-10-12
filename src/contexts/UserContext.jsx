@@ -112,6 +112,24 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     cookiesObj.remove("token");
     window.location.href = "/";
   };
+
+  const maintenanceRoutingBasedOnSelectedRole = () => {
+    const role = roleName()
+    if (role === "Property Manager"){
+      return "/managerMaintenance"
+    } else if (role === "Property Owner"){
+      return "/ownerMaintenance"
+    } else if (role === "Maintenance"){
+      return "/workerMaintenance"
+    } else if (role === "PM Employee"){
+      return "/managerMaintenance"
+    } else if (role === "Maintenance Employee"){
+      return "/workerMaintenance"
+    } else if (role === "Tenant"){
+      return "/tenantMaintenance"
+    }     
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -132,6 +150,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         updateProfileUid,
         getProfileId,
         logout,
+        maintenanceRoutingBasedOnSelectedRole,
       }}
     >
       {children}

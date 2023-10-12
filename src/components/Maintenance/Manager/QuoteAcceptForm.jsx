@@ -24,22 +24,16 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
-
-function QuoteNavigator({ onPrevious, onNext }) {
-    return (
-        <div>
-            <button onClick={onPrevious}>Previous</button>
-            <button onClick={onNext}>Next</button>
-        </div>
-    );
-}
 
 export default function QuoteAcceptForm(){
 
     console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
+    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+    
     const maintenanceItem = location.state.maintenanceItem;
     const navigationParams = location.state.navigateParams
     console.log("navigationParams", navigationParams)
@@ -142,33 +136,6 @@ export default function QuoteAcceptForm(){
     const handleSubmit = () => {
         console.log("handleSubmit")
         
-        
-        // const changeMaintenanceRequestStatus = async () => {
-        //     try {
-        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 "maintenance_request_uid": maintenanceItem?.maintenance_request_uid,
-        //                 "maintenance_request_status": "ACCEPTED"
-        //             })
-        //         });
-
-        //         const responseData = await response.json();
-        //         console.log(responseData);
-        //         if (response.status === 200) {
-        //             console.log("success")
-        //             navigate("/maintenance")
-        //         } else{
-        //             console.log("error setting status")
-        //         }
-        //     } catch (error){
-        //         console.log("error", error)
-        //     }
-        // }
-
         const changeMaintenanceQuoteStatus = async () => {
 
             var formData = new FormData();
@@ -186,7 +153,7 @@ export default function QuoteAcceptForm(){
                 if (response.status === 200) {
                     console.log("success")
                     // navigate("/maintenance")
-                    RoutingBasedOnSelectedRole()
+                    navigate(maintenanceRoutingBasedOnSelectedRole())
                 }
             } catch (error){
                 console.log("error", error)

@@ -26,6 +26,7 @@ import AddIcon from '@mui/icons-material/Add';
 import dataURItoBlob from "../../utils/dataURItoBlob";
 import userIcon from "./User_fill.png"
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
 export default function QuoteRequestForm(){
 
@@ -33,6 +34,8 @@ export default function QuoteRequestForm(){
     
     const location = useLocation();
     const navigate = useNavigate();
+    const { roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
+
     const maintenanceItem = location.state.maintenanceItem;
 
     const navigationParams = location.state.navigateParams
@@ -72,11 +75,6 @@ export default function QuoteRequestForm(){
             }
         }); 
     }
-
-    // const getMaintenanceDataForNavigate = async () = {
-    //     const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-
-    // }
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -146,29 +144,7 @@ export default function QuoteRequestForm(){
                 if (response.status === 200) {
                     console.log("success");
                     changeMaintenanceRequestStatus()
-                    // Fetch all maintenance requests for the owner
-                    // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003');
-                    // const maintenanceRequestsData = await maintenanceRequests.json();
-        
-                    // const allMaintenanceData = maintenanceRequestsData.Maintenance_Requests.result;
-        
-                    // const processingItems = allMaintenanceData["PROCESSING"];
-                    // const maintenance_request_index = processingItems.findIndex(item => item.maintenance_request_uid === maintenanceItem.maintenance_request_uid);
-        
-                    // if (maintenance_request_index !== -1) {
-                    //     navigate("/maintenance/detail", {
-                    //         state: {
-                    //             maintenance_request_index,
-                    //             status: "PROCESSING",
-                    //             maintenanceItemsForStatus: processingItems,
-                    //             allMaintenanceData
-                    //         }
-                    //     });
-                    // } else {
-                    //     console.error("Failed to find the updated maintenance request");
-                    // }
-                    // navigate("/maintenance")
-                    RoutingBasedOnSelectedRole()
+                    navigate(maintenanceRoutingBasedOnSelectedRole())
         
                 } else {
                     console.error(`Request failed with status: ${response.status}`);

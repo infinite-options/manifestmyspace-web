@@ -11,21 +11,26 @@ import Dollar from '../images/Dollar.png'
 import File_dock_fill from '../images/File_dock_fill.png'
 import User_fill_dark from '../images/User_fill_dark.png'
 import { useUser } from "../contexts/UserContext";
+import PropertyRentWidget from "./Dashboard-Components/PropertyRent/PropertyRentWidget";
 
-function Dashboard() {
+export default function OwnerDashboard() {
     const { user, getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
+    const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
+
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
+    
     const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
     const [partialPaidRentStatusCount, setPartialPaidRentStatusCount] = useState(0);
     const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
     const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
     const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
     const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
+
     const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
     const rentData = [
@@ -37,13 +42,18 @@ function Dashboard() {
         ["paid on time", 36],
       ];
 
-      const data = [
+    const data = [
         { rent_status: "not paid", number: unpaidRentStatusCount, fill: "#A52A2A" },
         { rent_status: "paid partially", number: partialPaidRentStatusCount, fill: "#FF8A00" },
         { rent_status: "paid late", number: paidLateRentStatusCount, fill: "#FFC85C" },
         { rent_status: "vacant", number: vacantRentStatusCount, fill: "#160449" },
         { rent_status: "paid on time", number: paidRentStatusCount, fill: "#3D5CAC" }
-      ];
+    ];
+
+    let propsForPropertyRentWidget = {
+        rentData: data,
+        unpaidRentStatusCount: totalPropertiesCount,
+    }
 
     const renderColorfulLegendText = (value, entry) => {
         const { color } = entry;
@@ -58,9 +68,9 @@ function Dashboard() {
             console.log("in useEffect")
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
-            console.log(jsonData)
-            console.log(jsonData.RentStatus.result)
             setRentStatus(jsonData.RentStatus.result);
+            setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
+            console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
             setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
@@ -146,8 +156,9 @@ function Dashboard() {
                 <div className="mt-widget-main">
                     <CashflowWidget />
                     <div className="mt-container">
-                        <MaintenanceWidget selectedRole={"OWNER"}/>
-                        <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
+                        <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData}/>
+                        <PropertyRentWidget {...propsForPropertyRentWidget}/>
+                        {/* <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">
                                 <PieChart width={200} height={250} >
@@ -193,7 +204,7 @@ function Dashboard() {
                                     </text>
                                 </PieChart>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
                         {/* <div className="mt-expiry-container"> */}
@@ -360,5 +371,3 @@ function Dashboard() {
         </ThemeProvider>
     )
 }
-
-export default Dashboard;

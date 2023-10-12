@@ -44,7 +44,7 @@ import { get } from "../utils/api";
 export default function AddMaintenanceItem(){
     const location = useLocation();
     let navigate = useNavigate();
-    const { user, getProfileId, roleName } = useUser();
+    const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [propertyId, setPropertyId] = useState('')
     const [properties, setProperties] = useState([])
     const [property, setProperty] = useState('');
@@ -60,15 +60,7 @@ export default function AddMaintenanceItem(){
 
     console.log(user)
 
-    const profileId = getProfileId();
-
-    const role = roleName();
-
-    console.log(profileId)
-
-    console.log("---DEBUG--- AddMaintenanceItem", role)
-
-
+    const profileId = getProfileId(); 
 
     const handlePropertyChange = (event) => {
         console.log("handlePropertyChange", event.target.value)
@@ -112,25 +104,6 @@ export default function AddMaintenanceItem(){
     const handleBackButton = () => {
         console.log("handleBackButton")
         navigate(-1);
-    }
-
-    function routingBasedOnSelectedRole(){
-       const role = roleName()
-       console.log("role", role)   
-
-       if (role === "Property Manager"){
-              navigate("/managerMaintenance")
-         } else if (role === "Property Owner"){
-            navigate("/ownerMaintenance")
-        } else if (role === "Maintenance"){
-            navigate("/workerMaintenance")
-        } else if (role === "PM Employee"){
-            navigate("/managerMaintenance")
-        } else if (role === "Maintenance Employee"){
-            navigate("/workerMaintenance")
-        } else if (role === "Tenant"){
-            navigate("/tenantMaintenance")
-        }     
     }
 
     useEffect(() => {
@@ -221,7 +194,7 @@ export default function AddMaintenanceItem(){
         setCost('')
         setTitle('')
         setDescription('')
-        routingBasedOnSelectedRole();
+        navigate(maintenanceRoutingBasedOnSelectedRole())
     }
 
 

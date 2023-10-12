@@ -71,7 +71,7 @@ function a11yProps(index) {
 
 export default function MaintenanceRequestDetail(){
     const location = useLocation();
-    const { user, getProfileId, roleName } = useUser();
+    const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
     let navigate = useNavigate();
 
     function navigateToAddMaintenanceItem(){
@@ -79,28 +79,9 @@ export default function MaintenanceRequestDetail(){
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
-    function routingBasedOnSelectedRole(){
-        const role = roleName()
-        console.log("role", role)   
- 
-        if (role === "Property Manager"){
-               navigate("/managerMaintenance")
-          } else if (role === "Property Owner"){
-             navigate("/ownerMaintenance")
-         } else if (role === "Maintenance"){
-             navigate("/workerMaintenance")
-         } else if (role === "PM Employee"){
-             navigate("/managerMaintenance")
-         } else if (role === "Maintenance Employee"){
-             navigate("/workerMaintenance")
-         } else if (role === "Tenant"){
-             navigate("/tenantMaintenance")
-         }     
-     }
-
     function handleBackButton(){
         console.log("handleBackButton")
-        routingBasedOnSelectedRole();
+        navigate(maintenanceRoutingBasedOnSelectedRole());
     }
 
     function deactivateTab(key, maintenanceData){
@@ -142,8 +123,6 @@ export default function MaintenanceRequestDetail(){
      }
 
      const colorStatus = getColorStatusBasedOnSelectedRole()
- 
-
 
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
