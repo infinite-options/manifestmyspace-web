@@ -105,8 +105,6 @@ function TenantProfileEdit(props) {
             // setTenantMonthlyRent(responseData.tenant_monthly_rent)
             // setTenantPMName(responseData.tenant_pm_name)
             // setTenantPMPhone(responseData.tenant_pm_phone)
-            
-
         });
     }, []);
 
