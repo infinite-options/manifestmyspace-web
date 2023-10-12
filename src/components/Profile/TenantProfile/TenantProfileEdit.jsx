@@ -27,6 +27,11 @@ function TenantProfileEdit(props) {
     const [tenantCity, setTenantCity] = useState('');
     const [tenantState, setTenantState] = useState('');
     const [tenantZip, setTenantZip] = useState('');
+    const [tenantLeaseStartDate, setTenantLeaseStartDate] = useState('');
+    const [tenantLeaseEndDate, setTenantLeaseEndDate] = useState('');
+    const [tenantMonthlyRent, setTenantMonthlyRent] = useState('');
+    const [tenantPMName, setTenantPMName] = useState('');
+    const [tenantPMPhone, setTenantPMPhone] = useState('');
     
     // const [tenant, setTenant] = useState('');
 
@@ -95,6 +100,13 @@ function TenantProfileEdit(props) {
             setTenantState(responseData.tenant_state)
             setTenantCity(responseData.tenant_city)
             setTenantZip(responseData.tenant_zip)
+            // setTenantLeaseStartDate(responseData.tenant_lease_start_date)
+            // setTenantLeaseEndDate(responseData.tenant_lease_end_date)
+            // setTenantMonthlyRent(responseData.tenant_monthly_rent)
+            // setTenantPMName(responseData.tenant_pm_name)
+            // setTenantPMPhone(responseData.tenant_pm_phone)
+            
+
         });
     }, []);
 
@@ -517,7 +529,33 @@ function TenantProfileEdit(props) {
                         <Box>
                             <ProfileAccordion>
                                 <ProfileAccordionSummary>
-                                    Additional details
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Box>
+                                            Additional details
+                                        </Box>
+                                        {!(tenantLeaseStartDate && tenantLeaseEndDate && tenantMonthlyRent && tenantPMName && tenantPMPhone) && (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: '#A52A2A',
+                                                borderRadius: '10px',
+                                                fontSize: '9px',
+                                                fontWeight: '600',
+                                                color: '#FFFFFF',
+                                                width: '60px',
+                                                height: '13px',
+                                                marginRight: '20px',
+                                            }}>
+                                                Incomplete
+                                            </Box>
+                                        )}
+                                    </Box>
                                 </ProfileAccordionSummary>
                                 <ProfileAccordionDetail>
                                     <Box sx={{
@@ -525,17 +563,17 @@ function TenantProfileEdit(props) {
                                         flexDirection: 'row',
                                         gap: 2,
                                     }}>
-                                        <ProfileTextInputField>lease start date</ProfileTextInputField>
-                                        <ProfileTextInputField>lease end date</ProfileTextInputField>
+                                        <ProfileTextInputField name="tenant_lease_start_date" value = {tenantLeaseStartDate} onChange={handleInputChange}>lease start date</ProfileTextInputField>
+                                        <ProfileTextInputField name="tenant_lease_end_date" value = {tenantLeaseEndDate} onChange={handleInputChange}>lease end date</ProfileTextInputField>
                                     </Box>
                                     <Box sx={{
                                         width: '40%',
                                     }}>
-                                        <ProfileTextInputField>Monthly Rent</ProfileTextInputField>
+                                        <ProfileTextInputField name="tenant_monthly_rent" value = {tenantMonthlyRent} onChange={handleInputChange}>Monthly Rent</ProfileTextInputField>
                                     </Box>
 
-                                    <ProfileTextInputField>Property Manager Name</ProfileTextInputField>
-                                    <ProfileTextInputField>Property Manager phone</ProfileTextInputField>
+                                    <ProfileTextInputField name="tenant_pm_name" value = {tenantPMName} onChange={handleInputChange}>Property Manager Name</ProfileTextInputField>
+                                    <ProfileTextInputField name="tenant_pm_phone" value = {tenantPMPhone} onChange={handleInputChange}>Property Manager phone</ProfileTextInputField>
                                 </ProfileAccordionDetail>
                             </ProfileAccordion>
                         </Box>
@@ -543,7 +581,33 @@ function TenantProfileEdit(props) {
                         <Box>
                             <ProfileAccordion>
                                 <ProfileAccordionSummary>
-                                    Who plans to live in the unit
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Box>
+                                            Who plans to live in the unit
+                                        </Box>
+                                        {!(occupantsDataComplete) && (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: '#A52A2A',
+                                                borderRadius: '10px',
+                                                fontSize: '9px',
+                                                fontWeight: '600',
+                                                color: '#FFFFFF',
+                                                width: '60px',
+                                                height: '13px',
+                                                marginRight: '20px',
+                                            }}>
+                                                Incomplete
+                                            </Box>
+                                        )}
+                                    </Box>
                                 </ProfileAccordionSummary>
                                 <ProfileAccordionDetail>
                                     <Box>
@@ -551,10 +615,10 @@ function TenantProfileEdit(props) {
                                         <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} widths={['25%', '25%', '25%', '25%']}/>
                                         <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} widths={['25%', '25%', '25%', '25%']}/>
                                         <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} widths={['20%', '20%', '20%', '20%', '20%']}/> */}
-                                        <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} />
-                                        <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} />
-                                        <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} />
-                                        <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} />
+                                        <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_adult_occupants || profileData.tenant_adult_occupants} field={'tenant_adult_occupants'} />
+                                        <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_children_occupants || profileData.tenant_children_occupants} field={'tenant_children_occupants'} />
+                                        <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={modifiedData.tenant_pet_occupants || profileData.tenant_pet_occupants} field={'tenant_pet_occupants'} />
+                                        <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Year", "License", "State"]} data={modifiedData.tenant_vehicle_info || profileData.tenant_vehicle_info} field={'tenant_vehicle_info'} />
                                     </Box>
                                 </ProfileAccordionDetail>
                             </ProfileAccordion>
@@ -594,24 +658,72 @@ function TenantProfileEdit(props) {
                                                 alignItems: 'center',
                                             }}>
                                                 <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M6.375 9.2085L10.625 9.2085" stroke="white" stroke-linecap="round" />
-                                                    <path d="M6.375 6.375L9.20833 6.375" stroke="white" stroke-linecap="round" />
-                                                    <path d="M6.375 12.0415L9.20833 12.0415" stroke="white" stroke-linecap="round" />
+                                                    <path d="M6.375 9.2085L10.625 9.2085" stroke="white" strokeLinecap="round" />
+                                                    <path d="M6.375 6.375L9.20833 6.375" stroke="white" strokeLinecap="round" />
+                                                    <path d="M6.375 12.0415L9.20833 12.0415" stroke="white" strokeLinecap="round" />
                                                     <path d="M13.4584 9.20833V9.91667C13.4584 11.7464 13.4584 12.6613 13.0727 13.3466C12.8035 13.8248 12.4082 14.2201 11.93 14.4893C11.2448 14.875 10.3299 14.875 8.50008 14.875V14.875C6.6703 14.875 5.75541 14.875 5.07018 14.4893C4.59192 14.2201 4.19667 13.8248 3.92746 13.3466C3.54175 12.6613 3.54175 11.7464 3.54175 9.91667V6.375C3.54175 5.21147 3.54175 4.6297 3.70096 4.16068C4.00075 3.27751 4.69426 2.58401 5.57743 2.28421C6.04645 2.125 6.62821 2.125 7.79175 2.125V2.125" stroke="white" />
-                                                    <path d="M12.75 2.125L12.75 6.375" stroke="white" stroke-linecap="round" />
-                                                    <path d="M14.875 4.25L10.625 4.25" stroke="white" stroke-linecap="round" />
+                                                    <path d="M12.75 2.125L12.75 6.375" stroke="white" strokeLinecap="round" />
+                                                    <path d="M14.875 4.25L10.625 4.25" stroke="white" strokeLinecap="round" />
                                                 </svg>
                                             </Box>
                                         </Box>
-                                        <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} />
-                                        <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} />
+                                        {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
+                                            <DocumentCard key={index} data={{ title: document.name, description:document.description, date: document.created_date, link: document.link,  }} />
+                                        ))}
+                                        {/* <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} />
+                                        <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} /> */}
                                     </Box>
                                 </ProfileAccordionDetail>
                             </ProfileAccordion>
                         </Box>
+                        <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{
+                                display: 'flex',
+                        }}>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                backgroundColor: '#3D5CAC',
+                                borderRadius: '10px',
+                                width: '150px',
+                                height: '32px',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                fontSize: '16px',
+                                color: '#FFFFFF',
+                                marginBottom: '14px',
+                            }}>
+                                <Button variant="text" type="submit" form="editProfileForm" style={{ color: 'white', textTransform:'none', fontWeight:'bold' }}>
+                                    <Typography>
+                                            Save
+                                    </Typography>
+                                </Button>
+                                
+                            </Box>
+
+                            {/* <Box
+                                sx={{
+                                    display: 'flex',
+                                }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                                <Grid container columnSpacing={12} rowSpacing={6} sx={{display: 'flex'}}>
+                                    <Grid item xs={12}>
+                                        <Button variant="contained" type="submit" form="editProfileForm" >
+                                            <Typography>
+                                                    Save
+                                            </Typography>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Box> */}
+                        </Stack>
                     </Box>
                 </Box>
-
             </Box>
         </TenantProfileEditContext.Provider>
     );
@@ -635,7 +747,7 @@ function ProfileAccordionSummary(props) {
         <AccordionSummary
             expandIcon={
                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4.75 7.125L9.5 11.875L14.25 7.125" stroke="#3D5CAC" stroke-width="2.5" />
+                    <path d="M4.75 7.125L9.5 11.875L14.25 7.125" stroke="#3D5CAC" strokeWidth="2.5" />
                 </svg>
             }>
             <Box sx={{
@@ -684,13 +796,19 @@ function ProfileTextInputField(props) {
             }}>
                 {props.children}:
             </Box>
-            <input type='text' name={props.name} value={props.value} onChange={props.onChange} style={inputStyle} />
+            <input type='text' style={inputStyle} name={props.name} value={props.value} onChange={props.onChange}/>
         </Box>
     );
 }
 function DocumentCard(props) {
     const title = props.data.title;
     const date = props.data.date;
+    const link = props.data.link;
+
+    const onClickView = () => {
+        window.open(link, '_blank');
+    };
+
     return (
         <Box sx={{
             backgroundColor: '#D9D9D980',
@@ -724,7 +842,7 @@ function DocumentCard(props) {
                     display: 'flex',
                     flexDirection: 'row',
                 }}>
-                    <Box sx={{
+                    <Box onClick={onClickView} sx={{
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -753,6 +871,24 @@ function DocumentCard(props) {
 function ProfileTenantTable(props) {
     const title = props.title;
     const headers = props.headers;
+    const data = props.data;
+    const field = props.field
+    
+    const headerToDataKeyMap = {
+        'Name': 'name',
+        'Last Name': 'last_name',
+        // 'Last Name': 'last_name', // Map to the appropriate key in your data
+        'Relation': 'relationship',
+        'DOB (YY/MM/DD)': 'dob',
+        'Type': 'type',
+        'Breed': 'breed',
+        'Weight': 'weight',
+        'Make': 'make',
+        'Model': 'model',
+        'Year': 'year',
+        'State': 'state',
+        'License': 'license',
+    };
     // const widthList = props.widths;
     const tableStyle = {
         width: '100%',
@@ -774,29 +910,23 @@ function ProfileTenantTable(props) {
                 fontWeight: '600',
             }}>
                 <table style={tableStyle}>
-                    <tr>
-                        {headers.map((text) => (
-                            <ProfileTableHeader text={text} />
+                    <thead>
+                        <tr>
+                            {headers.map((text, index) => (
+                                <ProfileTableHeader key={index} text={text} />
+                            ))}
+                        </tr>
+                        
+                    </thead>
+                    <tbody>
+                        {data && data.map((rowData, index) => (
+                        <tr key={index}>
+                            {headers.map((header, i) => (
+                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} />
+                            ))}
+                        </tr>
                         ))}
-                    </tr>
-                    <tr>
-                        {headers.map((header, i) => (
-                            // <ProfileTableCell style={widthList[i]} />
-                            <ProfileTableCell />
-                        ))}
-                    </tr>
-                    <tr>
-                        {headers.map((header, i) => (
-                            // <ProfileTableCell style={widthList[i]} />
-                            <ProfileTableCell />
-                        ))}
-                    </tr>
-                    <tr>
-                        {headers.map((header, i) => (
-                            // <ProfileTableCell style={widthList[i]} />
-                            <ProfileTableCell />
-                        ))}
-                    </tr>
+                    </tbody>
                 </table>
             </Box>
         </Box>
@@ -813,9 +943,14 @@ function ProfileTableHeader(props) {
     );
 }
 function ProfileTableCell(props) {
+    const { setModifiedData,isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const cellWidth = props.style;
     const cellStyle = {
         width: cellWidth,
+    }
+    if ((!props.value) && occupantsDataComplete)
+    {
+        setOccupantsDataComplete(false)
     }
     const inputStyle = {
         border: 'none',
@@ -827,9 +962,33 @@ function ProfileTableCell(props) {
         paddingRight: '5px',
         borderRadius: '5px',
     };
+    // handle input change for each table cell
+    // props - field, index, subField, value
+    const handleInputChange = (event) => {
+        if (!isEdited){
+            setIsEdited(true);
+        }
+        console.log("Input changed");
+        const { value } = event.target;
+        console.log(value);
+      
+        const fieldName = props.field;
+        setModifiedData((prevData) => ({
+          ...prevData,
+          [fieldName]: prevData[fieldName].map((item, i) => {
+            if (i === props.index) {
+              return {
+                ...item,
+                [props.subField]: value,
+              };
+            }
+            return item;
+          }),
+        }));
+    };
     return (
         <td style={cellStyle}>
-            <input type='text' style={inputStyle} />
+            <input type='text' style={inputStyle} value={props.value} onChange={handleInputChange} />
         </td>
     );
 }
