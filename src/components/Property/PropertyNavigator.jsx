@@ -15,7 +15,6 @@ import LeaseIcon from './leaseIcon.png';
 import CreateIcon from '@mui/icons-material/Create';
 import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 
-
 export default function PropertyNavigator({property, index, propertyData, paymentStatus, paymentStatusColor}){
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -498,7 +497,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                 {item.property_num_baths}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={11}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Typography
                                                 sx={{
@@ -527,7 +526,8 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                             </div>
                                         </div>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={1}></Grid>
+                                    <Grid item xs={11}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -538,6 +538,9 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                         >
                                             {displayTopMaintenanceItem()}
                                         </Typography>
+                                    </Grid>
+                                    <Grid item xs={1}>
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>
                                     </Grid>
                                     {/* <Grid item xs={2}>
                                         <Badge badgeContent={numberOfMaintenanceItems(maintenanceData)} color="error" width="20px" height="20px" 
@@ -554,7 +557,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                             </Box>
                                         ) : (null)}
                                     </Grid> */}
-                                    <Grid item xs={12}>
+                                    <Grid item xs={11}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -577,7 +580,8 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                 05/05/2021: Ringo Starr
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={1}></Grid>
+                                    <Grid item xs={11}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -600,6 +604,9 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                 John Lennon
                                         </Typography>
 
+                                    </Grid>
+                                    <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>
                                     </Grid>
                                 </Grid>
                             </div>
