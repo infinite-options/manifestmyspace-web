@@ -63,6 +63,8 @@ import MaintenanceRequestDetail from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
 import EditProperty from "./Property/EditProperty";
 import PropertyDetail from "./Property/PropertyDetail";
+import SearchManager from "./Property/SearchManager";
+import ManagerDetails from "./Property/ManagerDetails";
 import TenantMaintenance from "./Maintenance/TenantMaintenance";
 import AddTenantMaintenanceItem from "./Maintenance/AddTenantMaintenanceItem";
 import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigator";
@@ -216,6 +218,8 @@ function Main() {
             <Route path="addProperty" element={<AddProperty />} />
             <Route path="editProperty" element={<EditProperty />} />
             <Route path="propertyDetail" element={<PropertyDetail />} />
+            <Route path="searchManager" element={<SearchManager />} />
+            <Route path="managerDetails" element={<ManagerDetails />} />
             <Route path="tenantMaintenance" element={<TenantMaintenance />} />
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />

@@ -96,11 +96,11 @@ export default function PropertyDetail({}){
                         alignItems="center"
                     >
                         <Box>
-                            <Button onClick={() => handleBackButton()}>
+                            <Button onClick={() => handleBackButton()} sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '16px', "&:hover, &:focus, &:active": {background: theme.palette.primary.main}}}>
 
                                 {/* <UTurnLeftIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px', transform: 'rotate(90deg)', fontWeight: theme.typography.common.fontWeight}}/> */}
                                 <img src={refundIcon} style={{width: '25px', height: '25px', margin:'5px'}}/>
-                                <Typography sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '16px'}}>
+                                <Typography>
                                     Return to Viewing All Properties
                                 </Typography>
                             </Button>
@@ -115,7 +115,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator property={property} index={index} propertyData={propertyList}/>
+                            <PropertyNavigator index={index} propertyData={propertyList}/>
                         </Box>
                     </Stack>
                 </Paper>
