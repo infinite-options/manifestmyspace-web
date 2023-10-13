@@ -65,8 +65,9 @@ function TenantProfileEdit(props) {
 
     useEffect(()=>{
         console.log("TENANT EDIT USE EFFECT")
-        //rohit axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
-        axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000060')
+
+        // axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000060')
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
         .then((res)=>{
             // console.log(res.data.Profile.result[0]);
             let responseData = res.data.Profile.result[0];
@@ -163,8 +164,17 @@ function TenantProfileEdit(props) {
             setTenantCity(value);
         } else if (name === 'tenant_zip') {
             setTenantZip(value);
+        } else if (name === 'tenant_lease_start_date') {
+            setTenantLeaseStartDate(value);
+        }else if (name === 'tenant_lease_end_date') {
+            setTenantLeaseEndDate(value);
+        }else if (name === 'tenant_monthly_rent') {
+            setTenantMonthlyRent(value);
+        }else if (name === 'tenant_pm_name') {
+            setTenantPMName(value);
+        }else if (name === 'tenant_pm_phone') {
+            setTenantPMPhone(value);
         }
-        //rohit - add lease_start_date etc.
         
         setModifiedData((prevData) => ({
             ...prevData,
@@ -194,7 +204,7 @@ function TenantProfileEdit(props) {
         if(isEdited){
             console.log("EDITED")
             //rohit - replace localhost with aws url
-            axios.put('http://localhost:4000/tenantProfile', modifiedData, headers)
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile', modifiedData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
