@@ -48,7 +48,8 @@ import Settings from "./Settings/SettingsOwner";
 import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
-import Contacts from "./Contacts/Contacts";
+import Contacts from "./Contacts/Contacts"; 
+import OwnerContacts from "./Contacts/OwnerContacts";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
 import TenantContactDetails from "./Contacts/TenantContactDetails";
@@ -197,6 +198,9 @@ function Main() {
 
             <Route path="propertyInfo" element={<PropertyInfo />} />
             <Route path="contacts" element={<Contacts />} />
+
+            <Route path="ownerContacts" element={<OwnerContacts />} />    {/*rohit*/}
+
             <Route path="contactDetails" element={<ContactDetails />} />
             <Route path="addContacts" element={<AddContacts />} />
             <Route path="tenantContactDetails" element={<TenantContactDetails />} />
