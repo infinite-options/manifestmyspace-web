@@ -203,7 +203,6 @@ function TenantProfileEdit(props) {
         // Make a PUT request with formData to update data on the backend
         if(isEdited){
             console.log("EDITED")
-            //rohit - replace localhost with aws url
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile', modifiedData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
