@@ -104,7 +104,7 @@ export default function EditProfileSettings() {
                     <Typography 
                     sx={{
                         justifySelf: 'center',
-                        color: theme.typography.primary.black, 
+                        color: '#3D5CAC', 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
                     John Lennon
