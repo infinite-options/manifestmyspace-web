@@ -188,6 +188,14 @@ const theme = createTheme({
     { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
     { color: "#173C8D", status: "Paid", mapping: "PAID" },
   ],
+  colorStatusO: [
+    { color: "#B62C2A", status: "New Requests", mapping: "NEW REQUEST" },
+    { color: "#D4736D", status: "Info Requested", mapping: "INFO REQUESTED" },
+    { color: "#DEA19C", status: "Processing", mapping: "PROCESSING" },
+    { color: "#92A9CB", status: "Scheduled", mapping: "SCHEDULED" },
+    { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
+    { color: "#173C8D", status: "Cancelled", mapping: "CANCELLED" },
+  ],
   colorStatusTenant: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },
     { color: "#D4736D", status: "Reviewed Requests", mapping: "PROCESSING" },

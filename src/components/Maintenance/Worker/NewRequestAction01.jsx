@@ -52,16 +52,6 @@ export default function QuotesRequestedAction01({maintenanceItem}){
                 maintenanceItem
             }
         })
-        // let response = CancelTicket(id);
-        // console.log("handleDecline", response)
-        // if (response){
-        //     console.log("Ticket Declined")
-        //     alert("Ticket Declined")
-        //     navigate('/maintenance01')
-        // } else{
-        //     console.log("Ticket Not Declined")
-        //     alert("Error: Ticket Not Declined")
-        // }
     }
 
     async function createQuote(id){
@@ -71,19 +61,6 @@ export default function QuotesRequestedAction01({maintenanceItem}){
                 maintenanceItem
             }
         })
-        // CompleteTicket(id).then(response => {
-        //     console.log("handleComplete", response);
-        //     if (response){
-        //         console.log("Ticket Completed")
-        //         alert("Ticket Completed")
-        //         navigate('/maintenance')
-        //     } else{
-        //         console.log("Ticket Not Completed")
-        //         alert("Error: Ticket Not Completed")
-        //     }
-        // }).catch(error => {
-        //     console.log("handleComplete", error);
-        // });
     }
 
     return(

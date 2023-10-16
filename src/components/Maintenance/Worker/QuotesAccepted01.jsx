@@ -1,3 +1,4 @@
+
 import { 
     ThemeProvider, 
     Typography,
@@ -21,47 +22,95 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import { AttachMoney } from "@mui/icons-material";
-import { set } from "date-fns";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import QuoteDetailInfo from "./QuoteDetailInfo";
+import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
-
-export default function CompleteMaintenance01({maintenanceItem}){
+export default function QuotesAccepted01({maintenanceItem}){
     const navigate = useNavigate();
 
-    const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
-    const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
-    const [estimateLaborTime, setEstimateLaborTime] = useState(0);
+    console.log("QuotesAccepted maintenanceItem", maintenanceItem)
 
-    console.log("CompleteMaintenance01", maintenanceItem)
 
-    function handleNavigate(){
-        console.log("navigate to pay Maintenance")
+    function handleNavigateToQuotesRequested(){
 
-        navigate("/payMaintenance", {
+        console.log("NewRequestAction", maintenanceItem)
+        navigate("/quoterequest", {
             state:{
                 maintenanceItem
-
             }
-        })
+        });
     }
 
-    async function handleCancel(id){
+    async function handleCancel(id){ // Change
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            navigate('/workerMaintenance')
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
         }
     }
 
-    function handleMarkPaid(id){
-        console.log("Mark Paid Not Implemented", id)
-        alert("Mark Paid Not Implemented")
+    async function handleScheduleChange(id){
+
+        console.log("handleScheduleChange", id)
+
+        const changeMaintenanceRequestStatus = async () => {
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "SCHEDULED",
+                        "maintenance_scheduled_date": "10/30/2023",
+                        "maintenance_scheduled_time": "10:00:00"
+
+                    })
+                });
+
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                    changeQuoteStatus()
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+
+        const changeQuoteStatus = async () => {
+
+            var formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_status", "SCHEDULED");
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
+                const responseData = await response.json();
+                console.log(responseData)
+                if (responseData.code === 200){
+                    console.log("Ticket Status Changed")
+                    alert("Ticket Status Changed to SCHEDULED")
+                    navigate('/workerMaintenance')
+                }
+            } catch(error){
+                console.log("error", error)
+            }
+        }
+        changeMaintenanceRequestStatus()
     }
 
     async function handleComplete(id){
@@ -70,58 +119,35 @@ export default function CompleteMaintenance01({maintenanceItem}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            navigate('/maintenance')
+            routingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
         }
     }
 
-    const handleNavigateToInvoice = () => {
-        navigate("/businessInvoiceForm", {
-            state:{
-                maintenanceItem
+    async function handleScheduleStatusChange(){
+        try {
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                    "maintenance_request_status": "SCHEDULED"
+                })
+            });
+            const responseData = await response.json();
+            console.log(responseData)
+            if (responseData.code === 200){
+                console.log("Ticket Status Changed")
+                alert("Ticket Status Changed")
+                routingBasedOnSelectedRole()
             }
-        });
-    }
-
-    function computeTotalCost(estimate){
-        let costObject = JSON.parse(estimate)
-        console.log(costObject)
-        let laborTotal = 0;
-        let partsTotal = 0;
-        let laborTime = 0;
-        try{
-            for (const item in costObject.labor){
-                console.log(item)
-                laborTotal += parseInt(costObject.labor[item].charge)
-                laborTime += parseInt(costObject.labor[item].hours)
-            }
-    
-            for (const item in costObject.parts){
-                console.log(item)
-                partsTotal += parseInt(costObject.parts[item].cost) * parseInt(costObject.parts[item].quantity)
-            }
-            
-            setEstimatedLaborCost(laborTotal)
-            setEstimatedPartsCost(partsTotal)
-            setEstimateLaborTime(laborTime)
         } catch (error){
-            console.log(error)
+            console.log("error", error)
         }
-        
-    }
-
-    useEffect(() => {
-        computeTotalCost(maintenanceItem.quote_services_expenses)
-    },[maintenanceItem])
-
-    function displayDueDate(dateStr){
-        const dateObj = new Date(dateStr);
-        dateObj.setDate(dateObj.getDate() + 5);
-        const newDateStr = dateObj.toISOString().slice(0, 19).replace("T", " ");
-
-        return newDateStr;
     }
 
     return(
@@ -194,17 +220,18 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             paddingLeft: "10px",
                             display: 'flex',
                             width: "95%",
-                        }}>
-                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                    
+                        }}
+                    >
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
                     </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                    Notes
-                </Typography>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        Notes
+                    </Typography>
                     <Box
                         variant="contained"
                         disableElevation
@@ -223,25 +250,8 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                             {maintenanceItem?.quote_notes}
                         </Typography>
-                       </Box>
+                    </Box>
                 </Grid>
-                {maintenanceItem.bill_uid !== null ? (
-                    <Grid item xs={12} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                            Payment Requested On:
-                        </Typography>
-                    </Grid>
-                ) : (
-                    <Grid item xs={12}>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                            No Invoice
-                        </Typography>
-                    </Grid>
-                )}
-                
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -256,61 +266,39 @@ export default function CompleteMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleMarkPaid(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >   
-                        <CheckIcon sx={{color: "#3D5CAC"}}/>
+                        <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                           Mark Paid
+                           Withdraw Quote
                         </Typography>
                     </Button>
-                </Grid>
-                {maintenanceItem.bill_uid === null ? (
-                    <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                backgroundColor: "#FFFFFF",
-                                textTransform: "none",
-                                borderRadius: "10px",
-                                display: 'flex',
-                                width: "100%",
-                            }}
-                            onClick={() => handleNavigateToInvoice()}
-                        >   
-                            <AttachMoney sx={{color: "#3D5CAC"}}/>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                                Create Invoice
-                            </Typography>
-                        </Button>
-                    </Grid> 
-                ) : (
-                    <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                backgroundColor: "#FFFFFF",
-                                textTransform: "none",
-                                borderRadius: "10px",
-                                display: 'flex',
-                                width: "100%",
-                            }}
-                            onClick={() => console.log("Edit Invoice")}
-                        >   
-                           <AttachMoney sx={{color: "#3D5CAC"}}/>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                                Edit Invoice
-                            </Typography>
-                        </Button>
-                    </Grid> 
-                )}
+                </Grid> 
+                <Grid item xs={6} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#FFFFFF",
+                            textTransform: "none",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%",
+                        }}
+                        onClick={() => handleScheduleChange(maintenanceItem.maintenance_request_uid)}
+                    >   
+                        <CalendarTodayIcon sx={{
+                            color: "#3D5CAC",
+                            paddingRight: "10%"
+                        }}/>
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                            Schedule
+                        </Typography>
+                    </Button>
+                </Grid> 
             </Grid>
         </Box>
     )

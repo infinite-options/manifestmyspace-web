@@ -139,15 +139,19 @@ export default function PropertyList({}) {
   const [displayedItems, setDisplayedItems] = useState([]);
   // const [maintenanceData, setMaintenanceData] = useState([]);
 
+  const profileId = getProfileId();
+
+  console.log("getProfileId information", getProfileId());
+
   useEffect(() => {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${getProfileId()}`)
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       console.log(propertyData)
-      setPropertyList([...propertyData["Property_Dashboard"].result]);
-      setDisplayedItems([...propertyData["Property_Dashboard"].result]);
+      setPropertyList([...propertyData["Property"].result]);
+      setDisplayedItems([...propertyData["Property"].result]);
     };
     fetchData();
   }, []);
@@ -245,7 +249,7 @@ export default function PropertyList({}) {
                 All Properties
               </Typography>
             </Box>
-            <Button position="absolute" right={0} onClick={() => console.log("this button should add a property")}>
+            <Button position="absolute" right={0} sx={{ "&:hover, &:focus, &:active": {background: theme.palette.primary.main } }} onClick={() => navigate("/addProperty")}>
               <AddIcon onClick={() => navigate("/addProperty")} sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
             </Button>
           </Stack>

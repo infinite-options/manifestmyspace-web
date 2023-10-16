@@ -23,6 +23,7 @@ import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
 function QuoteNavigator({ onPrevious, onNext }) {
@@ -184,7 +185,8 @@ export default function QuoteAcceptForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
+                    // navigate("/maintenance")
+                    RoutingBasedOnSelectedRole()
                 }
             } catch (error){
                 console.log("error", error)

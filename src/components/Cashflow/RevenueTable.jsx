@@ -148,7 +148,7 @@ const RevenueTable = (props) => {
               </TableCell>
               <TableCell align="right">
               <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $ 0.00
+                $0.00
               {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "DEPOSIT") ?
               (revenueSummary
                 .find((reS) => reS.purchase_type === "DEPOSIT")

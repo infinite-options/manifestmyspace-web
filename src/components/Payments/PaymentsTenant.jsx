@@ -294,7 +294,7 @@ export default function PaymentsTenant(props) {
                       });
                     }}
                                     >
-                                        Make a Payment
+                                        Select Payment
                                     </Box>
                                 </Grid>
                             </Grid>

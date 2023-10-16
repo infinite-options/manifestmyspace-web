@@ -13,7 +13,7 @@ import User_fill_dark from '../images/User_fill_dark.png'
 import { useUser } from "../contexts/UserContext";
 
 function Dashboard() {
-    const { getProfileId } = useUser();
+    const { user, getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
     const [loading, setLoading] = useState(true);
@@ -146,7 +146,7 @@ function Dashboard() {
                 <div className="mt-widget-main">
                     <CashflowWidget />
                     <div className="mt-container">
-                        <MaintenanceWidget />
+                        <MaintenanceWidget selectedRole={"OWNER"}/>
                         <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">

@@ -1,3 +1,4 @@
+
 import { 
     ThemeProvider, 
     Typography,
@@ -11,7 +12,6 @@ import {
     Stack,
     Button,
     Grid,
-    responsiveFontSizes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,30 +23,31 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import QuoteDetailInfo from "./QuoteDetailInfo";
+import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
-export default function QuotesSubmittedAction01({maintenanceItem}){
-    
+export default function PaidMaintenance01({maintenanceItem}){
     const navigate = useNavigate();
 
 
     function handleNavigateToQuotesRequested(){
 
         console.log("NewRequestAction", maintenanceItem)
-        navigate("/quoteAccept", {
+        navigate("/quoterequest", {
             state:{
                 maintenanceItem
             }
         });
     }
 
-    async function handleCancel(id){
+    function handleCancel(id){
+        console.log("handleCancel", id)
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            routingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -54,17 +55,21 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
     }
 
     async function handleComplete(id){
-        let response = CompleteTicket(id);
-        console.log("handleComplete", response);
-        if (response){
-            console.log("Ticket Completed")
-            alert("Ticket Completed")
-            navigate('/maintenance')
-        } else{
-            console.log("Ticket Not Completed")
-            alert("Error: Ticket Not Completed")
-        }
+        CompleteTicket(id).then(response => {
+            console.log("handleComplete", response);
+            if (response.ok){
+                console.log("Ticket Completed")
+                alert("Ticket Completed")
+                routingBasedOnSelectedRole()
+            } else{
+                console.log("Ticket Not Completed")
+                alert("Error: Ticket Not Completed")
+            }
+        }).catch(error => {
+            console.log("handleComplete", error);
+        });
     }
+
 
     return(
         <Box 
@@ -76,7 +81,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                 width: "100%",
             }}
         >
-             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
+              <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <Grid item xs={1} sx={{
                         alignItems: "center",
                         justifyContent: "left",
@@ -96,7 +101,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                 </Grid>
                 
                 <Grid item xs={11} sx={{
-                        alignItems: "center",   
+                        alignItems: "center",
                         justifyContent: "center",
                         paddingLeft: "40px",
                     }}>
@@ -122,7 +127,6 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    {maintenanceItem?.quote_status !== "REFUSED" ? (
                     <Box
                         variant="contained"
                         disableElevation
@@ -139,12 +143,8 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
-                    </Box>) : (
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
-                            Quote Refused
-                        </Typography>  
-                    )}
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                  
+                    </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
@@ -169,9 +169,76 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            {maintenanceItem?.quote_notes}
+                            {maintenanceItem.quote_notes}
                         </Typography>
+                       </Box>
+                </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        Payment Details
+                    </Typography>
+                    <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            flexDirection: "column",
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}
+                    >
+                        {maintenanceItem.purchase_status === "UNPAID" ? (
+                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Payment Requested
+                            </Typography>                            
+                        ): (
+                            <>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Paid On: {maintenanceItem.payment_date}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Method: {maintenanceItem.payment_type}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Amount: {maintenanceItem.pay_amount}
+                                </Typography>
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                                Payment Notes: {maintenanceItem.payment_notes}
+                                </Typography>
+                            </>
+                        )}
                     </Box>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        Notes from Manager
+                    </Typography>
+                    <Box
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            paddingRight: "10px",
+                            borderRadius: "10px",
+                            paddingLeft: "10px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                            display: 'flex',
+                            width: "95%",
+                        }}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            {maintenanceItem.quote_notes}
+                        </Typography>
+                       </Box>
                 </Grid>
             </Grid>
         </Box>

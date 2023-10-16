@@ -11,6 +11,7 @@ import {
     Stack,
     Button,
     Grid,
+    responsiveFontSizes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -21,81 +22,50 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import CalendarToday from "@mui/icons-material/CalendarToday";
 import QuoteDetailInfo from "./QuoteDetailInfo";
+import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
-export default function ScheduleMaintenance01({maintenanceItem}){
+export default function QuotesSubmittedAction01({maintenanceItem}){
     
-    const location = useLocation();
     const navigate = useNavigate();
 
-    function handleNavigate(){
-        console.log("navigate to Rescheduling Maintenance")
-        navigate("/scheduleMaintenance", {
+
+    function handleNavigateToQuotesRequested(){
+
+        console.log("NewRequestAction", maintenanceItem)
+        navigate("/quoteAccept", {
             state:{
                 maintenanceItem
             }
-        })
+        });
     }
 
-    // async function handleCancel(id){
-    //     let response = CancelTicket(id);
-    //     console.log("handleCancel", response)
-    //     if (response){
-    //         console.log("Ticket Cancelled")
-    //         alert("Ticket Cancelled")
-    //         navigate('/maintenanceMM')
-    //     } else{
-    //         console.log("Ticket Not Cancelled")
-    //         alert("Error: Ticket Not Cancelled")
-    //     }
-    // }
-
-    async function handleReSchedule(id){
-        console.log("reschedule not implemented yet")
-        alert("RESCHEDULE NOT IMPLEMENTED YET")
-
+    async function handleCancel(id){
+        let response = CancelTicket(id);
+        console.log("handleCancel", response)
+        if (response){
+            console.log("Ticket Cancelled")
+            alert("Ticket Cancelled")
+            routingBasedOnSelectedRole()
+        } else{
+            console.log("Ticket Not Cancelled")
+            alert("Error: Ticket Not Cancelled")
+        }
     }
 
     async function handleComplete(id){
-
-
-        const changeMaintenanceQuoteStatus = async () => {
-
-            var formData = new FormData();
-
-            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-            formData.append("quote_status", "FINISHED");
-
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
-                    method: 'PUT',
-                    body: formData,
-                });            
-                let responseData = await response.json();
-                console.log(responseData);
-                if (response.status === 200) {
-                    console.log("success")
-                    let response = CompleteTicket(id);
-                    console.log("handleComplete", response);
-                    if (response){
-                        console.log("Ticket Completed")
-                        alert("Ticket Completed")
-                        
-                    } else{
-                        console.log("Ticket Not Completed")
-                        alert("Error: Ticket Not Completed")
-                    }
-                }
-            } catch (error){
-                console.log("error", error)
-            }
+        let response = CompleteTicket(id);
+        console.log("handleComplete", response);
+        if (response){
+            console.log("Ticket Completed")
+            alert("Ticket Completed")
+            routingBasedOnSelectedRole()
+        } else{
+            console.log("Ticket Not Completed")
+            alert("Error: Ticket Not Completed")
         }
-
-        changeMaintenanceQuoteStatus();
     }
-
 
     return(
         <Box 
@@ -127,7 +97,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                 </Grid>
                 
                 <Grid item xs={11} sx={{
-                        alignItems: "center",
+                        alignItems: "center",   
                         justifyContent: "center",
                         paddingLeft: "40px",
                     }}>
@@ -153,6 +123,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
+                    {maintenanceItem?.quote_status !== "REFUSED" ? (
                     <Box
                         variant="contained"
                         disableElevation
@@ -170,8 +141,11 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                         }}
                     >
                         <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
-                    </Box>
-                    
+                    </Box>) : (
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
+                            Quote Refused
+                        </Typography>  
+                    )}
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
@@ -196,57 +170,10 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem.quote_notes}
+                            {maintenanceItem?.quote_notes}
                         </Typography>
-                       </Box>
+                    </Box>
                 </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleReSchedule(maintenanceItem.maintenance_request_uid)}
-                    >   
-                         <CalendarToday sx={{
-                            color: "#3D5CAC",
-                            paddingRight: "10%"
-                        }}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                           Reschedule
-                        </Typography>
-                    </Button>
-                </Grid> 
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
-                    >   
-                       <CheckIcon sx={{color: "#3D5CAC"}}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Complete Ticket
-                        </Typography>
-                    </Button>
-                </Grid> 
             </Grid>
         </Box>
     )

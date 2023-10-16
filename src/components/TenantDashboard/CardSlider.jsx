@@ -7,6 +7,9 @@ const cardHeight = 70;
 export default function CardSlider(props) {
     const buttonSize = 30;
 
+//    const [image, title, status, priority, date, time] = props.data;
+  
+    const announcements = props.data;
     const cards = ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5'];
     let baseArray = [true];
     for (let i = 1; i < cards.length; i++) {

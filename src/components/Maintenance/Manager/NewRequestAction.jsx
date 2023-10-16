@@ -21,8 +21,11 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import RequestMoreInfo from "../Maintainance01/RequestMoreInfo";
+// import RequestMoreInfo from "../Maintainance01/Worker/RequestMoreInfo";
+import RequestMoreInfo from "../Worker/RequestMoreInfo";
+
 import Scheduler from "../../utils/Schedular";
+import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
 export default function NewRequestAction({maintenanceItem, navigateParams}){
@@ -30,6 +33,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
+
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
@@ -50,7 +54,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            RoutingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -63,7 +67,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
             if (response){
                 console.log("Ticket Completed")
                 alert("Ticket Completed")
-                navigate('/maintenance')
+                RoutingBasedOnSelectedRole()
             } else{
                 console.log("Ticket Not Completed")
                 alert("Error: Ticket Not Completed")

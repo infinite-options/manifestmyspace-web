@@ -18,8 +18,10 @@ import { getStatusColor } from './ContactsFunction';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { formattedPhoneNumber } from '../utils/privacyMasking';
+import { useUser } from "../../contexts/UserContext";
 
 const Contacts = (props) => {
+    const { getProfileId } = useUser();
     const [contactsTab, setContactsTab] = useState('Owner');
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
@@ -37,7 +39,7 @@ const Contacts = (props) => {
 
     const fetchData = async () => {
         const url =
-            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/600-000003';
+            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/${getProfileId()}`;
         await axios
             .get(url)
             .then((resp) => {
@@ -64,7 +66,7 @@ const Contacts = (props) => {
             });
 
         const ownerUrl =
-            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/600-000003';
+            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/${getProfileId()}`;
         await axios
             .get(ownerUrl)
             .then((resp) => {
@@ -89,7 +91,7 @@ const Contacts = (props) => {
             });
 
         const tenantUrl =
-            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/600-000003';
+            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/${getProfileId()}`;
         await axios
             .get(tenantUrl)
             .then((resp) => {
@@ -114,7 +116,7 @@ const Contacts = (props) => {
             });
 
         const maintenanceUrl =
-            'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/600-000003';
+            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/${getProfileId()}`;
         await axios
             .get(maintenanceUrl)
             .then((resp) => {

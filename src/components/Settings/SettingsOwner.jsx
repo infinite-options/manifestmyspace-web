@@ -59,16 +59,9 @@ export default function Settings() {
                 </Box>
             <Paper
               style={{
-                margin: '30px', // Margin around the paper
-                padding: theme.spacing(2),
+                margin: "5% 50% 5% 5%", // Margin around the paper
                 backgroundColor: theme.palette.primary.main,
-                width: '85%', // Occupy full width with 25px margins on each side
-                [theme.breakpoints.down('sm')]: {
-                    width: '80%',
-                },
-                [theme.breakpoints.up('sm')]: {
-                    width: '50%',
-                },
+                width: "90%",
               }}
             >
                 <Box
@@ -251,21 +244,21 @@ export default function Settings() {
             variant="contained"
             onClick={() => {
               logout();
-              
             }}
             sx={{
-              background: "white",
+              background: theme.palette.primary.main,
               color: "#3D5CAC",
-              width: `50%`,
-              height: `20%`,
-              left: `14px`,
-              top: `4px`,
-              borderRadius: "10px 10px 10px 10px",
+              width: "90%",
+              height: "32px",
+              borderRadius: '10px',
               margin: "5% 50% 30% 5%",
               fontWeight: "bold",
               fontFamily: "Source Sans Pro",
               textTransform: "none",
               fontSize: theme.typography.smallFont,
+              "&:hover, &:focus, &:active": {
+                background: theme.palette.primary.main,
+              },
             }}
           >
             Sign Out

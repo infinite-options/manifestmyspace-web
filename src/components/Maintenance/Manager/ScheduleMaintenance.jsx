@@ -21,6 +21,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
+import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 
 
 
@@ -46,7 +47,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/maintenance')
+            RoutingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -72,7 +73,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
+                    RoutingBasedOnSelectedRole()
                 } else{
                     console.log("error setting status")
                 }
@@ -98,7 +99,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                 if (response.status === 200) {
                     console.log("success")
                     changeMaintenanceRequestStatus()
-                    navigate("/maintenance"); 
+                    RoutingBasedOnSelectedRole()
                 } else{
                     console.log("error setting status")
                 }
@@ -115,7 +116,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            navigate('/maintenance')
+            RoutingBasedOnSelectedRole()
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
