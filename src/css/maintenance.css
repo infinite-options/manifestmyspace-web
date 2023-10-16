@@ -106,6 +106,18 @@
     cursor: pointer;
 }
 
+.mt-widget-payments-section {
+    background-color: var(--light-gray-bg);
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    height: 150px;
+    width: 90%;
+    margin-top: 15px;
+    padding: 3px;
+    cursor: pointer;
+}
+
 #first-row,
 #second-row {
   display: flex;

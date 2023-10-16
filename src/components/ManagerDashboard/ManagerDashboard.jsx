@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider, CircularProgress, Grid } from '@mui/material';
+import { Button, Container, Box, ThemeProvider, CircularProgress, Grid, Typography } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
@@ -12,6 +12,7 @@ import File_dock_fill from '../../images/File_dock_fill.png'
 import User_fill_dark from '../../images/User_fill_dark.png'
 import { useUser } from "../../contexts/UserContext";
 import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const useStyles = makeStyles({
     button: {
@@ -174,8 +175,8 @@ function ManagerDashboard() {
                 <div className="mt-widgest-main">
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData}/>
-                        <PropertyRentWidget {...propsForPropertyRentWidget}/>
-                        {/* <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
+                        {/* <PropertyRentWidget {...propsForPropertyRentWidget}/> */}
+                        <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">
                                 <PieChart width={200} height={250} >
@@ -221,7 +222,7 @@ function ManagerDashboard() {
                                     </text>
                                 </PieChart>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="mt-widget-expiry" onClick={() => navigate("/pmLeases")}>
                         {/* <div className="mt-expiry-container"> */}
@@ -365,7 +366,44 @@ function ManagerDashboard() {
                         </div>
                     </div>
                     <br />
-            
+                    
+                    <Box 
+                        style={{ 
+                            // backgroundColor: 'var(--light-gray-bg)', // Ensure this variable is defined in your CSS
+                            backgroundColor: "#FFFFFF",
+                            display: 'flex',
+                            margin: '15px auto 0', // Combined margin-top with margin shorthand
+                            borderRadius: '10px',
+                            height: '150px',
+                            width: '90%',
+                            padding: '3px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <h2 className="mt-expiry-widget-title">
+                            Payments
+                        </h2>
+
+                        <Button 
+                            sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                width: '50%', // Set the button width to be 50% of its container
+                                backgroundColor: "#F2F2F2",
+                            }}
+                            variant="outlined"
+                            onClick={() => navigate("/paymentsPM")}
+                        >
+                            <Typography variant="outlined" style={{ textTransform: "none", color: '#160449', fontFamily: 'Source Sans Pro', fontWeight: '600' }}>
+                                Pay Bills
+                            </Typography>
+                        </Button>
+                    </Box>
+
+
                     <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
                     </div>

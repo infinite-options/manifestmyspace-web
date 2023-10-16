@@ -40,7 +40,7 @@ export default function OwnerDashboard() {
         ["paid late", 3],
         ["vacant", 3],
         ["paid on time", 36],
-      ];
+    ];
 
     const data = [
         { rent_status: "not paid", number: unpaidRentStatusCount, fill: "#A52A2A" },

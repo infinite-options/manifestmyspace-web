@@ -114,6 +114,8 @@ import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
 import Forbidden from "./utils/Forbidden";
 
+import PaymentsPM from "./Payments/PaymentsPM";
+
 function Main() {
   return (
     <div
@@ -181,11 +183,12 @@ function Main() {
             <Route path="pmRent" element={<PMRent />} />
             <Route path="pmRentDetail" element={<PMRentDetail />} />
             <Route path="addPaymentSettings" element={<AddPayment />} />
-            <Route path="SelectPayment" element={<SelectPayment />} />
+            <Route path="selectPayment" element={<SelectPayment />} />
             <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
             <Route path="paymentsTenant" element={<PaymentsTenant />} />
+            <Route path="paymentsPM" element={<PaymentsPM />} />
             <Route path="card" element={<CardDetails />} />
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />

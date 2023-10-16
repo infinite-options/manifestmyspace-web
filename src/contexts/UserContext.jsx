@@ -18,16 +18,13 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     setSelectedRole(role);
     setCookie("selectedRole", role);
   };
-  const isBusiness = () => {
-    console.log("--DEBUG-- selectedRole", selectedRole)
+  const isBusiness = () => { 
     return selectedRole === "MANAGER" || selectedRole === "MAINTENANCE";
   };
   const isManager = () => {
-    console.log("--DEBUG-- selectedRole Manager", selectedRole)
     return selectedRole === "MANAGER";
   };
   const isManagement = () => {
-    console.log("--DEBUG-- selectedRole Management", selectedRole)
     return selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE";
   };
   const isManagementEmployee = () => {
@@ -130,6 +127,24 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     }     
   }
 
+  const paymentRoutingBasedOnSelectedRole = () => {
+    const role = roleName()
+    if (role === "Property Manager"){
+      return "/paymentsPM"
+    }
+    // } else if (role === "Property Owner"){
+    //   return "/ownerMaintenance"
+    // } else if (role === "Maintenance"){
+    //   return "/workerMaintenance"
+    // } else if (role === "PM Employee"){
+    //   return "/managerMaintenance"
+    // } else if (role === "Maintenance Employee"){
+    //   return "/workerMaintenance"
+    else if (role === "Tenant"){
+      return "/paymentsTenant"
+    }     
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -151,6 +166,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         getProfileId,
         logout,
         maintenanceRoutingBasedOnSelectedRole,
+        paymentRoutingBasedOnSelectedRole,
       }}
     >
       {children}
