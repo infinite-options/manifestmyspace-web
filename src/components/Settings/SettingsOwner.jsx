@@ -47,7 +47,9 @@ export default function Settings() {
                         padding: 5,
                         position: 'absolute',
                         left: 0
-                        }}/>
+                        }}
+                        onClick={()=>{navigate(-1)}}
+                        />
                     <Typography 
                     sx={{
                         justifySelf: 'center',
