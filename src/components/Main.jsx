@@ -194,6 +194,7 @@ function Main() {
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
             <Route path="settingsOwner" element={<Settings />} />
+            <Route path="settingsTenant" element={<Settings />} />
             <Route path="editProfileSettings" element={<EditProfileSettings />} />
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
             <Route path="addCardSettings" element={<AddCard />} />
