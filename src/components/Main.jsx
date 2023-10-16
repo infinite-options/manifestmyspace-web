@@ -54,7 +54,7 @@ import AddContacts from "./Contacts/AddContacts";
 import TenantContactDetails from "./Contacts/TenantContactDetails";
 
 import PropertyList from "./Property/PropertyList";
-import Dashboard from "./Dashboard";
+import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import MaintenanceOwner from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
@@ -115,6 +115,8 @@ import ProfileInfo from "./Onboarding/ProfileInfo";
 import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
 import Forbidden from "./utils/Forbidden";
+
+import PaymentsPM from "./Payments/PaymentsPM";
 
 function Main() {
   return (
@@ -183,11 +185,12 @@ function Main() {
             <Route path="pmRent" element={<PMRent />} />
             <Route path="pmRentDetail" element={<PMRentDetail />} />
             <Route path="addPaymentSettings" element={<AddPayment />} />
-            <Route path="SelectPayment" element={<SelectPayment />} />
+            <Route path="selectPayment" element={<SelectPayment />} />
             <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
             <Route path="paymentsTenant" element={<PaymentsTenant />} />
+            <Route path="paymentsPM" element={<PaymentsPM />} />
             <Route path="card" element={<CardDetails />} />
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
@@ -205,7 +208,7 @@ function Main() {
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
-            <Route path="ownerDashboard" element={<Dashboard />} />
+            <Route path="ownerDashboard" element={<OwnerDashboard />} />
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />

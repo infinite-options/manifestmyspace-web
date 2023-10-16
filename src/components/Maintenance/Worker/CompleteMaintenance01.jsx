@@ -25,10 +25,12 @@ import { AttachMoney } from "@mui/icons-material";
 import { set } from "date-fns";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
 
 export default function CompleteMaintenance01({maintenanceItem}){
     const navigate = useNavigate();
+    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
     const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
@@ -53,7 +55,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            RoutingBasedOnSelectedRole()
+            navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -71,7 +73,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            RoutingBasedOnSelectedRole()
+            navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")

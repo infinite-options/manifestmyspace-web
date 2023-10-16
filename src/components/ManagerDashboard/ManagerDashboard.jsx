@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider, CircularProgress, Grid } from '@mui/material';
+import { Button, Container, Box, ThemeProvider, CircularProgress, Grid, Typography } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
@@ -11,6 +11,8 @@ import Dollar from '../../images/Dollar.png'
 import File_dock_fill from '../../images/File_dock_fill.png'
 import User_fill_dark from '../../images/User_fill_dark.png'
 import { useUser } from "../../contexts/UserContext";
+import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const useStyles = makeStyles({
     button: {
@@ -39,14 +41,19 @@ function ManagerDashboard() {
     const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
+    const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
+
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
+    
     const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
     const [partialPaidRentStatusCount, setPartialPaidRentStatusCount] = useState(0);
     const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
     const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
     const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
     const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
+    
     const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
+    
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
     const rentData = [
         ["Properties", "Rent status"],
@@ -55,15 +62,21 @@ function ManagerDashboard() {
         ["paid late", 3],
         ["vacant", 3],
         ["paid on time", 36],
-      ];
+    ];
 
-      const data = [
+    const data = [
         { rent_status: "not paid", number: unpaidRentStatusCount, fill: "#A52A2A" },
         { rent_status: "paid partially", number: partialPaidRentStatusCount, fill: "#FF8A00" },
         { rent_status: "paid late", number: paidLateRentStatusCount, fill: "#FFC85C" },
         { rent_status: "vacant", number: vacantRentStatusCount, fill: "#160449" },
         { rent_status: "paid on time", number: paidRentStatusCount, fill: "#3D5CAC" }
-      ];
+    ];
+
+
+    let propsForPropertyRentWidget = {
+        rentData: data,
+        unpaidRentStatusCount: totalPropertiesCount,
+    }
 
     const renderColorfulLegendText = (value, entry) => {
         const { color } = entry;
@@ -78,7 +91,9 @@ function ManagerDashboard() {
             console.log("in useEffect")
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/managerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
-            console.log(jsonData.RentStatus.result)
+            console.log(jsonData)   
+            console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)
+            setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
             setRentStatus(jsonData.RentStatus.result);
             setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
@@ -157,9 +172,10 @@ function ManagerDashboard() {
             </div>    
         }
             {!loading &&
-                <div className="mt-widget-main">
+                <div className="mt-widgest-main">
                     <div className="mt-container">
-                        <MaintenanceWidget selectedRole={"MANAGER"}/>
+                        <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData}/>
+                        {/* <PropertyRentWidget {...propsForPropertyRentWidget}/> */}
                         <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">
@@ -350,7 +366,44 @@ function ManagerDashboard() {
                         </div>
                     </div>
                     <br />
-            
+                    
+                    <Box 
+                        style={{ 
+                            // backgroundColor: 'var(--light-gray-bg)', // Ensure this variable is defined in your CSS
+                            backgroundColor: "#FFFFFF",
+                            display: 'flex',
+                            margin: '15px auto 0', // Combined margin-top with margin shorthand
+                            borderRadius: '10px',
+                            height: '150px',
+                            width: '90%',
+                            padding: '3px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <h2 className="mt-expiry-widget-title">
+                            Payments
+                        </h2>
+
+                        <Button 
+                            sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                width: '50%', // Set the button width to be 50% of its container
+                                backgroundColor: "#F2F2F2",
+                            }}
+                            variant="outlined"
+                            onClick={() => navigate("/paymentsPM")}
+                        >
+                            <Typography variant="outlined" style={{ textTransform: "none", color: '#160449', fontFamily: 'Source Sans Pro', fontWeight: '600' }}>
+                                Pay Bills
+                            </Typography>
+                        </Button>
+                    </Box>
+
+
                     <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
                     </div>

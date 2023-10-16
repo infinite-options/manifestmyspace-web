@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Paper,
   Radio,
@@ -32,8 +32,10 @@ import Venmo from "../../images/Venmo.png";
 import Chase from "../../images/Chase.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
+import { useUser } from "../../contexts/UserContext";
 import { margin } from "@mui/system";
 import axios from "axios";
+import { CatchingPokemonSharp } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,103 +56,152 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function SelectPayment(props) {
-  const location = useLocation();
-  const classes = useStyles();
-  const navigate = useNavigate();
-  let balance = location.state.total;
-  let [paymentData, setPaymentData] = useState(location.state.paymentData);
-  console.log("business_code", paymentData.customer_uid);
-  let [convenience_fee, set_convenience_fee] = useState(0);
-  const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
-  let totalBalance = balance + convenience_fee;
+    const location = useLocation();
+    const classes = useStyles();
+    const navigate = useNavigate();
+    const { getProfileId, paymentRoutingBasedOnSelectedRole } = useUser();
 
-  const [stripePayment, setStripePayment] = useState(false);
-  const [paymentConfirm, setPaymentConfirm] = useState(false);
+    const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
+    const [paymentData, setPaymentData] = useState(location.state.paymentData);
+    const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0].purchase_uid);
 
-  const [stripeDialogShow, setStripeDialogShow] = useState(false);
-  const payment_url = {
-    "Credit Card":
-      "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent",
-    "Bank Transfer":
-      "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent",
-  };
+    console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData)
+    console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData.purchase_uid)
+    console.log("business_code", paymentData.customer_uid);
+    const [convenience_fee, setFee] = useState(0);
+    const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
+    const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
+    
+    useEffect(() => {
+        console.log(balance)
+        console.log(convenience_fee)
+        setTotalBalance(balance + convenience_fee);
+    }, [balance, convenience_fee]);
 
-  // const payment_url={"Credit Card":'http://127.0.0.1:5000/home',
-  // 'Bank Transfer': 'https://127.0.0.1:5000/home'
-  // }
 
-  const [stripePromise, setStripePromise] = useState(null);
-  //Credit Card Handler
-  function credit_card_handler(notes) {
-    if (notes === "PMTEST") {
-      // Fetch public key
-      console.log("fetching public key");
-      axios
-        .post(
-          "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST"
-        )
-        .then((result) => {
-          console.log(
-            "(1 PaymentDetails) Stripe-key then result (1): " +
-              JSON.stringify(result)
-          );
-          // setSelectedMethod(result.data.PUBLISHABLE_KEY);
-          //let tempStripePromise = loadStripe(result.data.publicKey);
 
-          // console.log("(1 PaymentDetails) setting state with stripePromise");
+    const [stripePayment, setStripePayment] = useState(false);
+    const [paymentConfirm, setPaymentConfirm] = useState(false);
 
-          // setStripePromise(tempStripePromise);
+    const [stripeResponse, setStripeResponse] = useState(null);
+    // const [paymentIntent, setPaymentIntent] = useState(null);
+    // const [paymentMethod, setPaymentMethod] = useState(null);
 
-          // console.log(tempStripePromise);
-          // console.log("(1 PaymentDetails) stripePromise set!");
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response) {
+    const [stripeDialogShow, setStripeDialogShow] = useState(false);
+    const payment_url = {
+        "Credit Card":
+        "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent",
+        "Bank Transfer":
+        "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent",
+    };
+
+    // const payment_url={"Credit Card":'http://127.0.0.1:5000/home',
+    // 'Bank Transfer': 'https://127.0.0.1:5000/home'
+    // }
+
+    const [stripePromise, setStripePromise] = useState(null);
+    //Credit Card Handler
+    function credit_card_handler(notes) {
+        if (notes === "PMTEST") {
+        // Fetch public key
+        console.log("fetching public key");
+        axios
+            .post(
+            "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST"
+            )
+            .then((result) => {
             console.log(
-              "(1 PaymentDetails) error: " + JSON.stringify(err.response)
+                "(1 PaymentDetails) Stripe-key then result (1): " +
+                JSON.stringify(result)
             );
-          }
-        });
-    } else {
-      // Fetch public key live
+            // setSelectedMethod(result.data.PUBLISHABLE_KEY);
+            //let tempStripePromise = loadStripe(result.data.publicKey);
 
-      console.log("fetching public key live");
-      axios
-        .post(
-          "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PM"
-        )
-        .then((result) => {
-          console.log(
-            "(2 PaymentDetails) Stripe-key then result (1): " +
-              JSON.stringify(result)
-          );
-          setSelectedMethod(result.data.publicKey);
-          // let tempStripePromise = loadStripe(result.data.publicKey);
+            // console.log("(1 PaymentDetails) setting state with stripePromise");
 
-          // console.log("(2 PaymentDetails) setting state with stripePromise");
+            // setStripePromise(tempStripePromise);
 
-          // console.log(tempStripePromise);
-          // setStripePromise(tempStripePromise);
+            // console.log(tempStripePromise);
+            // console.log("(1 PaymentDetails) stripePromise set!");
+            })
+            .catch((err) => {
+            console.log(err);
+            if (err.response) {
+                console.log(
+                "(1 PaymentDetails) error: " + JSON.stringify(err.response)
+                );
+            }
+            });
+        } else {
+        // Fetch public key live
 
-          // console.log("(2 PaymentDetails) stripePromise set!");
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response) {
+        console.log("fetching public key live");
+        axios
+            .post(
+            "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PM"
+            )
+            .then((result) => {
             console.log(
-              "(2 PaymentDetails) error: " + JSON.stringify(err.response)
+                "(2 PaymentDetails) Stripe-key then result (1): " +
+                JSON.stringify(result)
             );
-          }
-        });
+            setSelectedMethod(result.data.publicKey);
+            // let tempStripePromise = loadStripe(result.data.publicKey);
+
+            // console.log("(2 PaymentDetails) setting state with stripePromise");
+
+            // console.log(tempStripePromise);
+            // setStripePromise(tempStripePromise);
+
+            // console.log("(2 PaymentDetails) stripePromise set!");
+            })
+            .catch((err) => {
+            console.log(err);
+            if (err.response) {
+                console.log(
+                "(2 PaymentDetails) error: " + JSON.stringify(err.response)
+                );
+            }
+            });
+        }
     }
-  }
-  const submit = () => {
-    // cancel();
-    setPaymentConfirm(true);
-    navigate("/tenantDashboard");
-  };
-  //CreditCardHandler
+    const submit = ({paymentIntent, paymentMethod}) => {
+        console.log("in submit in SelectPayment.jsx")
+        setPaymentConfirm(true);
+        // TODO: navigate to correct dashboard based on role
+        // navigate("/tenantDashboard");
+
+        // console.log("--DEBUG-- in submit in SelectPayment.jsx stripeResponse output", stripeResponse)
+
+        console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent)
+        console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod)
+        const makePayment = async () => {
+            fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "pay_purchase_id": purchaseUID,
+                    "pay_amount" : totalBalance,
+                    // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
+                    "payment_notes": paymentData.business_code,
+                    "pay_charge_id" : "stripe transaction key",
+                    "payment_type" : selectedMethod,
+                    "payment_verify" : "Unverified",
+                    "paid_by" : getProfileId(),
+                    "payment_intent": paymentIntent,
+                    "payment_method": paymentMethod,
+                })
+            })
+        }
+
+        makePayment()
+
+        let routingString = paymentRoutingBasedOnSelectedRole();
+        navigate(routingString);
+    };
+    //CreditCardHandler
 
   async function bank_transfer_handler() {
     // Set the Content-Type header
@@ -185,11 +236,11 @@ export default function SelectPayment(props) {
 
   function update_fee(e) {
     if (e.target.value === "Bank Transfer")
-      set_convenience_fee(Math.min(balance * 0.008, 5));
+      setFee(Math.min(balance * 0.008, 5));
     else if (e.target.value === "Credit Card")
-      set_convenience_fee(balance * 0.03);
-    else set_convenience_fee(0);
-    totalBalance = balance + convenience_fee;
+    setFee(balance * 0.03);
+    else setFee(0);
+    setTotalBalance(balance + convenience_fee);
   }
 
   const handleChange = (event) => {
@@ -200,7 +251,8 @@ export default function SelectPayment(props) {
   const handleSubmit = async (e) => {
     console.log("selectedMethod", selectedMethod);
     // e.preventDefault();
-    paymentData.payment_summary.total = parseFloat(totalBalance.toFixed(2));
+    setPaymentData({ ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
+    // paymentData.payment_summary.total = parseFloat(totalBalance.toFixed(2));
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
     else if (selectedMethod === "Credit Card") {
@@ -211,6 +263,7 @@ export default function SelectPayment(props) {
     }
     // credit_card_handler(paymentData.business_code);
   };
+
   const toggleKeys = async () => {
     console.log("inside toggle keys");
     const url =
@@ -223,11 +276,15 @@ export default function SelectPayment(props) {
 
     let response = await fetch(url);
     const responseData = await response.json();
+    // console.log("--DEBUG-- response data from Stripe", responseData);
+    // setStripeResponse(responseData);
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
+    // console.log("--DEBUG-- stripePromise", stripePromise);
   };
+
   return (
-    <div>
+    <div style={{padding: "30px"}}>
       <StripeFeesDialog
         stripeDialogShow={stripeDialogShow}
         setStripeDialogShow={setStripeDialogShow}
@@ -477,7 +534,7 @@ export default function SelectPayment(props) {
           <StripePayment
             submit={submit}
             message={paymentData.business_code}
-            amount={balance + convenience_fee}
+            amount={totalBalance}
             paidBy={paymentData.customer_uid}
           />
         </Elements>
