@@ -115,6 +115,7 @@ import ProfileInfo from "./Onboarding/ProfileInfo";
 import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
 import Forbidden from "./utils/Forbidden";
+import AddRole from "./Onboarding/AddRole";
 
 function Main() {
   return (
@@ -173,6 +174,7 @@ function Main() {
             <Route path="tenantLeases" element={<TenantLeases />} />
             <Route path="tenantProfile" element={<TenantProfile />} />
             <Route path="tenantProfileEdit" element={<TenantProfileEdit />} />
+            <Route path="addRole" element={<AddRole />} />
             <Route path="tenantDashboard" element={<TenantDashboard />} />
 
             <Route path="pmProfile" element={<PMProfile />} />
