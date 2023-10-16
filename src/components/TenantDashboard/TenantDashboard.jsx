@@ -55,14 +55,8 @@ function TenantDashboard(props) {
         setMaintenanceRequestsData(maintenanceRequestsData);
         setAnnouncementsData(announcementsData);
 
-        // let lease_contact = JSON.parse(propertyData[0].lease_assigned_contacts)
-        // console.log(lease_contact[0].first_name)
-        // setLeaseFirstName(lease_contact[0].first_name)
-
         let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
         setPropertyAddr(propertyAddress);
-
-        
         setFirstName(user.first_name)
         }
       getTenantData();

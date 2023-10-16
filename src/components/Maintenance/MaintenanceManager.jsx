@@ -34,6 +34,14 @@ export default function MaintenanceManager(){
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusPMO
 
+    const newDataObject = {};
+    newDataObject["NEW REQUEST"] = [];
+    newDataObject["QUOTES REQUESTED"] = [];
+    newDataObject["QUOTES ACCEPTED"] = [];
+    newDataObject["SCHEDULED"] = [];
+    newDataObject["COMPLETED"] = [];
+    newDataObject["PAID"] = [];
+
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
     const [month, setMonth] = useState(null);
@@ -352,14 +360,18 @@ export default function MaintenanceManager(){
 
                             let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
 
+                            for (const item of filteredArray) {
+                                newDataObject[mappingKey].push(item);
+                            }
+
                             return (
                                 <MaintenanceStatusTable 
                                     key={index}
                                     status={item.status}
                                     color={item.color}
                                     maintenanceItemsForStatus={filteredArray}
-                                    allMaintenanceData={maintenanceData}
-                                    maintenanceRequestsCount={maintenanceArray}
+                                    allMaintenanceData={newDataObject}
+                                    maintenanceRequestsCount={filteredArray}
                                 />
                             );
                         })}

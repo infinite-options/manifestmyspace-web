@@ -23,7 +23,7 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 // import RequestMoreInfo from "../Maintainance01/Worker/RequestMoreInfo";
 import RequestMoreInfo from "../Worker/RequestMoreInfo";
-
+import AlertMessage from "../AlertMessage";
 import Scheduler from "../../utils/Schedular";
 import { useUser } from "../../../contexts/UserContext";
 
@@ -34,7 +34,8 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
-
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState("");
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
@@ -54,11 +55,13 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
-            alert("Ticket Cancelled")
+            setShowMessage(true);
+            setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED");
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Cancelled")
-            alert("Error: Ticket Not Cancelled")
+            setShowMessage(true);
+            setMessage("Error: Ticket Not Cancelled")
         }
     }
 
@@ -67,7 +70,8 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
             console.log("handleComplete", response);
             if (response){
                 console.log("Ticket Completed")
-                alert("Ticket Completed")
+                setShowMessage(true);
+                setMessage("Ticket Completed!! Maintenance Status changed to COMPLETED");
                 navigate(maintenanceRoutingBasedOnSelectedRole())
             } else{
                 console.log("Ticket Not Completed")
@@ -281,6 +285,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                     </Button>
                 </Grid>
             </Grid>
+            <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
         </Box>
     )
 }
