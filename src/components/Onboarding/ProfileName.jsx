@@ -22,6 +22,7 @@ import Status12 from "../../images/status_1_2.svg";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import NewBusinessLogo from "../../images/NewBusinessLogo.svg";
 import NewProfilePicture from "../../images/NewProfilePicture.svg";
+import { objToQueryString } from "../utils/helper";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -150,11 +151,11 @@ const ProfileName = () => {
   };
 
   const handleFetchBusinesses = async () => {
-    const response = await axios.get(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile?type=${
-        isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE"
-      }`
-    );
+    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+    const args = {
+      "business_type": isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE",
+    }
+    const response = await axios.get(url+objToQueryString(args));
     setBusinesses(response.data.result);
   };
 

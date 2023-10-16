@@ -151,7 +151,7 @@ export default function AddProperty({}){
         setNotes(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(event.target)
 
@@ -198,19 +198,16 @@ export default function AddProperty({}){
             console.log(key, value);    
         }
 
-        const postData = async () => {
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
-                    method: "POST",
-                    body: formData,
-                })
-                const data = await response.json();
-                console.log("data response", data)
-            } catch (error) {
-                console.log("Error posting data:", error);
-            }
+        try {
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
+                method: "POST",
+                body: formData,
+            })
+            const data = await response.json();
+            console.log("data response", data)
+        } catch (error) {
+            console.log("Error posting data:", error);
         }
-        postData();
 
         setAddress('');
         setCity('');
@@ -568,7 +565,7 @@ export default function AddProperty({}){
                         >
                         <Grid container columnSpacing={12} rowSpacing={6} sx={{display: 'flex'}}>
                             <Grid item xs={12}>
-                                <Button variant="contained" type="submit" form="addPropertyForm" sx={{backgroundColor: "#9EAED6"}}>
+                                <Button variant="contained" type="submit" form="addPropertyForm" sx={{backgroundColor: "#9EAED6", "&:hover, &:focus, &:active": {background: "#9EAED6" }}}>
                                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Save Property
                                     </Typography>

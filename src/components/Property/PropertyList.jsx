@@ -249,7 +249,7 @@ export default function PropertyList({}) {
                 All Properties
               </Typography>
             </Box>
-            <Button position="absolute" right={0} onClick={() => console.log("this button should add a property")}>
+            <Button position="absolute" right={0} sx={{ "&:hover, &:focus, &:active": {background: theme.palette.primary.main } }} onClick={() => navigate("/addProperty")}>
               <AddIcon onClick={() => navigate("/addProperty")} sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
             </Button>
           </Stack>

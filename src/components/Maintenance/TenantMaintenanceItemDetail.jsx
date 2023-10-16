@@ -41,6 +41,9 @@ export default function TenantMaintenanceItemDetail() {
 
   console.log(location.state);
 
+  function openDays(openday){
+    return openday;
+  }
   // const handleNextCard = () => {
   //     setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
   //   };
@@ -61,24 +64,25 @@ export default function TenantMaintenanceItemDetail() {
     navigate("/tenantMaintenance");
   }
 
-  const images = [
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-    {
-      label: "maintenanceRequest",
-      imgPath: maintenanceRequestImage,
-    },
-  ];
+  // const images = [
+  //   {
+  //     label: "maintenanceRequest",
+  //     imgPath: maintenanceRequestImage,
+  //   },
+  //   {
+  //     label: "maintenanceRequest",
+  //     imgPath: maintenanceRequestImage,
+  //   },
+  //   {
+  //     label: "maintenanceRequest",
+  //     imgPath: maintenanceRequestImage,
+  //   },
+  //   {
+  //     label: "maintenanceRequest",
+  //     imgPath: maintenanceRequestImage,
+  //   },
+  // ];
+  let images = JSON.parse(item.maintenance_images);
 
   const statusTimeline = [
     {
@@ -105,10 +109,10 @@ export default function TenantMaintenanceItemDetail() {
   return (
     <Paper
       style={{
-        margin: "30px",
+        margin: "5px",
         padding: theme.spacing(2),
         backgroundColor: theme.palette.primary.main,
-        paddingTop: "10px",
+        paddingTop: "5px",
       }}
     >
       <Stack direction="column" justifyContent="center" alignItems="center" position="relative">
@@ -139,7 +143,8 @@ export default function TenantMaintenanceItemDetail() {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
-                  Maintenance Request #{item.maintenance_property_id}
+                Maintenance Request 
+                  #{item.maintenance_property_id}
                 </Typography>
               </Grid>
 
@@ -148,7 +153,7 @@ export default function TenantMaintenanceItemDetail() {
               </Grid>
 
               <Grid item xs={5}>
-                <Typography sx={{ color: "#160449", fontWeight: 900, fontSize: "16px" }}>Status: {item.maintenance_request_status}</Typography>
+              <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Open: {openDays(item.maintenance_request_created_date)} Days</Typography>
               </Grid>
 
               <Grid item xs={7}>
@@ -207,7 +212,7 @@ export default function TenantMaintenanceItemDetail() {
                       </Button>
                       <CardMedia
                         component="img"
-                        image={images[activeStep].imgPath}
+                        image={images[activeStep]}
                         sx={{
                           elevation: "0",
                           boxShadow: "none",

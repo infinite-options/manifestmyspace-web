@@ -111,6 +111,15 @@ function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
+
+function objToQueryString(obj) {
+  const queryString = [];
+  for (let [key, value] of Object.entries(obj)) {
+      queryString.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+  }
+  return '?' + queryString.join('&');
+}
+
 export {
   MaskCharacter,
   ordinal_suffix_of,
@@ -122,4 +131,5 @@ export {
   descendingComparator,
   getComparator,
   stableSort,
+  objToQueryString,
 };

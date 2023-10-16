@@ -15,25 +15,21 @@ import LeaseIcon from './leaseIcon.png';
 import CreateIcon from '@mui/icons-material/Create';
 import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 
-
-export default function PropertyNavigator({property, index, propertyData, paymentStatus, paymentStatusColor}){
+export default function PropertyNavigator({index, propertyData, paymentStatus, paymentStatusColor}){
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(index);
-    const [currentId, setCurrentId] = useState(property.property_id);
+    const item = propertyData[currentIndex];
+    const [currentId, setCurrentId] = useState(item.property_uid);
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
-
     const color = theme.palette.form.main
     const maxSteps = images.length;
-    const item = propertyData[currentIndex];
-    const propertyObject = property;
-    console.log(item)
 
     useEffect(() => {
         const getMintenanceForProperty = async () => {
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${propertyObject.property_id}`);
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }
@@ -50,7 +46,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
     function displayTopMaintenanceItem(){
 
         console.log(maintenanceData)
-        if(maintenanceData && maintenanceData.length > 0){
+        if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
             const date = new Date(maintenanceData[0].maintenance_request_created_date)
             // console.log(date.toLocaleDateString())
             const title = maintenanceData[0].maintenance_title 
@@ -64,7 +60,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
     function numberOfMaintenanceItems(maintenanceItems){
         console.log(maintenanceItems)
         if(maintenanceItems && maintenanceItems.length > 0){
-            return maintenanceItems.length
+            return maintenanceItems.filter(mi => !!mi.maintenance_request_uid).length
         } else {
             return 0
         }
@@ -100,6 +96,11 @@ export default function PropertyNavigator({property, index, propertyData, paymen
   
     const handleBack = () => {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleManagerChange = () => {
+        if(item.business_uid) navigate("/managerDetails", { state: { ownerId: item.owner_uid, managerBusinessId: item.business_uid } });
+        else navigate("/searchManager");
     };
 
     return(
@@ -301,7 +302,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                 paddingBottom: "10px"
                                             }}
                                         >
-                                            Due: {item.due}
+                                            Due: {item.lease_rent_due_by}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -498,7 +499,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                 {item.property_num_baths}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={11}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Typography
                                                 sx={{
@@ -518,16 +519,17 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                     paddingRight:"10px"
                                                 }}
                                             />
-                                            <div style={{paddingLeft: "20px"}}>
+                                            {/* <div style={{paddingLeft: "20px"}}>
                                                 {maintenanceData && maintenanceData.length > 0 ? (
                                                     <Box display="flex" alignItems="right">
                                                         <KeyboardArrowRightIcon sx={{paddingRight: "10px"}} onClick={() => navigateToMaintenanceAccordion()}/>
                                                     </Box>
                                                 ) : (null)}
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={1}></Grid>
+                                    <Grid item xs={11}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -538,6 +540,10 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                         >
                                             {displayTopMaintenanceItem()}
                                         </Typography>
+                                    </Grid>
+                                    <Grid item xs={1}>
+                                        {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
                                     </Grid>
                                     {/* <Grid item xs={2}>
                                         <Badge badgeContent={numberOfMaintenanceItems(maintenanceData)} color="error" width="20px" height="20px" 
@@ -554,7 +560,7 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                             </Box>
                                         ) : (null)}
                                     </Grid> */}
-                                    <Grid item xs={12}>
+                                    <Grid item xs={11}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -574,10 +580,13 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                05/05/2021: Ringo Starr
+                                                {(item.lease_start && item.tenant_uid)?
+                                                `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
+                                                "No Tenant"}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={1}></Grid>
+                                    <Grid item xs={11}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -597,9 +606,14 @@ export default function PropertyNavigator({property, index, propertyData, paymen
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                John Lennon
+                                            {(item.business_uid)?
+                                            `${item.business_name}`:
+                                            "No Manager"}
                                         </Typography>
 
+                                    </Grid>
+                                    <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
                                     </Grid>
                                 </Grid>
                             </div>
