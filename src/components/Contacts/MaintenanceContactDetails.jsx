@@ -13,7 +13,7 @@ import { Email, Message, Phone } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { maskSSN, maskEIN, formattedPhoneNumber } from '../utils/privacyMasking';
 
-const TenantContactDetails = (props) => {
+const MaintenanceContactDetails = (props) => {
     const navigate = useNavigate();
     const location = useLocation();
     const contactDetails = location.state.dataDetails;
@@ -91,7 +91,7 @@ const TenantContactDetails = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
-                            Tenant Contacts
+                            Maintenance Contacts
                         </Typography>
                         <Stack flexDirection="row" justifyContent="center">
                             <Button
@@ -222,7 +222,7 @@ const TenantContactDetails = (props) => {
                             >
                                 <img
                                     src={selectedData.contact_photo_url}
-                                    alt="profile placeholder"
+                                    alt="profile"
                                     style={{
                                         height: '60px',
                                         width: '60px',
@@ -282,127 +282,99 @@ const TenantContactDetails = (props) => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                        <Stack
-                            flexDirection="row"
-                            sx={{ padding: '15px 15px 0' }}
-                        >
-                            <Typography sx={{
-                                    fontWeight:
-                                        theme.typography.primary.fontWeight,
-                            }}>
-                                {selectedData.contact_address}
-                                {', '}
-                                {selectedData.contact_city}
-                                {', '}
-                                {selectedData.contact_state}{' '}
-                                {selectedData.contact_zip}
-                            </Typography>
-                            {/* <Typography
-                                sx={{
-                                    fontWeight:
-                                        theme.typography.primary.fontWeight,
-                                }}
-                            >
-                                103 N. Abel St, Milpitas CA 95035
-                            </Typography> */}
-                        </Stack>
-                        <Stack spacing={3} sx={{ padding: '15px' }}>
+                        
+                        <Stack spacing={3} sx={{ paddingLeft: '15px', paddingTop: '10px', }}>
                             <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_adult_occupants).length} Adult(s)`}</Typography>
-                                {JSON.parse(selectedData.contact_adult_occupants).map((occupant, index) => (
-                                    <Typography key={index} sx={{ fontSize: '13px' }}>{`${occupant.name} | ${occupant.relationship} | DOB: ${occupant.dob}`}</Typography>
+                                <Typography sx={{ fontSize: '13px',fontWeight: theme.typography.primary.fontWeight, }}>{`Category:`}</Typography>
+                                
+                            </Stack>
+                            <Stack>
+                                <Typography sx={{ fontSize: '13px',fontWeight: theme.typography.primary.fontWeight, }}>{`Areas of Service:`}</Typography>
+                                {JSON.parse(selectedData.contact_business_locations).map((location, index) => (
+                                    <Typography key={index} sx={{ fontSize: '13px' }}>{`${location.location} | +- ${location.distance} miles |`}</Typography>
                                 ))}
                             </Stack>
-                            
                             <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_children_occupants).length} Children`}</Typography>
-                                {JSON.parse(selectedData.contact_children_occupants).map((occupant, index) => (
-                                    <Typography key={index} sx={{ fontSize: '13px' }}>{`${occupant.name} | ${occupant.relationship} | DOB: ${occupant.dob}`}</Typography>
-                                ))}
-                            </Stack>
-                            
-                            <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_pet_occupants).length} Pet(s)`}</Typography>
-                                {JSON.parse(selectedData.contact_pet_occupants).map((occupant, index) => (
-                                    <Typography key={index} sx={{ fontSize: '13px' }}>{`${occupant.name} | ${occupant.type} | ${occupant.weight} lbs`}</Typography>
-                                ))}
-                            </Stack>
-                            
-                            <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_vehicle_info).length} Vehicle(s)`}</Typography>
-                                {JSON.parse(selectedData.contact_vehicle_info).map((vehicle, index) => (
-                                    <Typography key={index} sx={{ fontSize: '13px' }}>{`${vehicle.make} ${vehicle.model} | ${vehicle.license} | ${vehicle.state}`}</Typography>
-                                ))}
+                                <Typography sx={{ fontSize: '13px',fontWeight: theme.typography.primary.fontWeight, }}>{`Notes:`}</Typography>
                             </Stack>
                         </Stack>
-                        <Stack sx={{ padding: '15px' }}>
-                            <Stack
+                        <Stack sx={{ padding: '5px' }}>
+                            <Stack flexDirection="row" justifyContent="space-between" alignItems="flex-start">
+                                <Box>
+                                    <Stack
+                                        flexDirection="row"
+                                        alignItems="center"
+                                    >
+                                        <Box sx={{ padding: '0 10px' }}>
+                                            <img
+                                                src={require('./../Profile/Images/PaypalIcon.png')}
+                                                alt="chase"
+                                                style={{
+                                                    height: '25px',
+                                                }}
+                                            />
+                                        </Box>
+                                        <Stack>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '12px',
+                                                }}
+                                            >
+                                                {selectedData.contact_paypal}
+                                            </Typography>
+                                        </Stack>
+                                    </Stack>
+                                </Box>
+                                
+                            </Stack>
+                            <Stack 
                                 flexDirection="row"
                                 justifyContent="space-between"
-                                alignItems="center"
-                                sx={{
-                                    paddingLeft: '10px',
-                                    paddingRight: '10px',
-                                }}
+                                alignItems="flex-start"
                             >
-                                <Stack
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ paddingLeft: '10px' }}
-                                >
-                                    {!selectedData.hasOwnProperty('contact_ssn') || selectedData.contact_ssn === '' ? (
-                                        <Typography
-                                            sx={{
-                                                fontSize: '13px',
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                            }}
-                                        >
-                                            No SSN Provided
-                                        </Typography>
-                                    ) : (
-                                        <Typography
-                                            sx={{
-                                                fontSize: '13px',
-                                                fontWeight:
-                                                    theme.typography.primary
-                                                        .fontWeight,
-                                            }}
-                                        >
-                                            {selectedData.hasOwnProperty('contact_ssn') && maskSSN(selectedData.contact_ssn)}
-                                        </Typography>
-                                    )}
-                                    <Typography
-                                        sx={{
-                                            fontSize: '13px',
-                                        }}
+                                <Box>
+                                    <Stack
+                                        flexDirection="row"
+                                        alignItems="center"
                                     >
-                                        SSN
-                                    </Typography>
-                                </Stack>
-                                <Stack
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ paddingLeft: '30px' }}
-                                >
-                                    <Typography
-                                        sx={{
-                                            fontSize: '13px',
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                        }}
-                                    >
-                                        {selectedData.contact_drivers_license_number} {selectedData.contact_drivers_license_state}
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            fontSize: '13px',
-                                        }}
-                                    >
-                                        License Number / State
-                                    </Typography>
+                                        <Box sx={{ padding: '0 10px' }}>
+                                            <img
+                                                src={require('./../Profile/Images/VenmoIcon.png')}
+                                                alt="venmo"
+                                                style={{
+                                                    height: '25px',
+                                                }}
+                                            />
+                                        </Box>
+                                        <Stack>
+                                            {selectedData.contact_venmo === '' ? (
+                                                <Box
+                                                    sx={{
+                                                        marginRight: '130px',
+                                                    }}
+                                                >
+                                                    <Typography>
+                                                        {' '}
+                                                        &nbsp;{' '}
+                                                    </Typography>
+                                                </Box>
+                                            ) : (
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: '12px',
+                                                    }}
+                                                >
+                                                    {selectedData.contact_venmo}
+                                                </Typography>
+                                            )}
+                                        </Stack>
+                                    </Stack>
+                                </Box>
+                            </Stack>
+                            <Stack spacing={3} sx={{ paddingLeft: '15px', paddingTop: '10px', }}>
+                                <Stack>
+                                    <Typography sx={{ fontSize: '13px',fontWeight: theme.typography.primary.fontWeight, }}>{`Previous Jobs:`}</Typography>
+                                    
                                 </Stack>
                             </Stack>
                         </Stack>
@@ -413,4 +385,4 @@ const TenantContactDetails = (props) => {
     );
 };
 
-export default TenantContactDetails;
+export default MaintenanceContactDetails;

@@ -20,16 +20,17 @@ import { useNavigate } from 'react-router-dom';
 import { formattedPhoneNumber } from '../utils/privacyMasking';
 import { useUser } from "../../contexts/UserContext";
 
-const OwnerContacts = (props) => {
+const PMContacts = (props) => {
     const { getProfileId, selectedRole } = useUser();
-    const [contactsTab, setContactsTab] = useState('Managers');
+    const [contactsTab, setContactsTab] = useState('Owner');
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
-    const [maintenanceData, setMaintenanceData] = useState([]);
+    // const [maintenanceData, setMaintenanceData] = useState([]);
 
     // rohit
-    const [managersData, setManagersData] = useState([]);
+    const [ownersData, setOwnersData] = useState([]);
     const [tenantsData, setTenantsData] = useState([]);
+    const [maintenanceData, setMaintenanceData] = useState([]);
 
 
     const [ownerDataDetails, setOwnerDataDetails] = useState([]);
@@ -49,21 +50,22 @@ const OwnerContacts = (props) => {
         //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/${getProfileId()}`;
         //rohit - replace hardcoded value
         const url =
-            `http://localhost:4000/contacts/110-000003`;
+            `http://localhost:4000/contacts/600-000003`;
         await axios
             .get(url)
             .then((resp) => {
-                const data = resp.data['owner_contacts'];
-                console.log("ROHIT - OWNER DATA")
+                const data = resp.data['management_contacts'];
+                console.log("ROHIT - PM DATA")
                 console.log(data);
                 console.log("ROHIT - SELECTED ROLE")
                 console.log(selectedRole);
 
-    
                 //rohit
-
-                setManagersData(data['managers']);
+                setOwnersData(data['owners']);
                 setTenantsData(data['tenants']);
+                setMaintenanceData(data['maintenance']);
+
+
             })
             .catch((e) => {
                 console.error(e);
@@ -75,14 +77,14 @@ const OwnerContacts = (props) => {
     };
 
     const handleSetSelectedCard = (selectedData, index) => {
-        if (contactsTab === 'Managers') {
-            navigate('/managerContactDetails', {
+        if (contactsTab === 'Owner') {
+            navigate('/ownerContactDetails', {
                 state: {
-                    dataDetails: managersData,
+                    dataDetails: ownersData,
                     tab: contactsTab,
                     selectedData: selectedData,
                     index: index,
-                    viewData: managersData,
+                    viewData: ownersData,
                 },
             });
         } else if (contactsTab === 'Tenants') {
@@ -93,6 +95,16 @@ const OwnerContacts = (props) => {
                     selectedData: selectedData,
                     index: index,
                     viewData: tenantsData,
+                },
+            });
+        } else if (contactsTab === 'Maintenance') {
+            navigate('/maintenanceContactDetails', {
+                state: {
+                    dataDetails: maintenanceData,
+                    tab: contactsTab,
+                    selectedData: selectedData,
+                    index: index,
+                    viewData: maintenanceData,
                 },
             });
         }
@@ -210,12 +222,12 @@ const OwnerContacts = (props) => {
                                     className="contacts-detail-navbar"
                                     style={{
                                         backgroundColor:
-                                            getStatusColor('Managers'),
+                                            getStatusColor('Owner'),
                                     }}
-                                    onClick={() => setContactsTab('Managers')}
+                                    onClick={() => setContactsTab('Owner')}
                                 >
                                     <div className="contacts-detail-text">
-                                        Managers
+                                        Owners
                                     </div>
                                 </div>
                                 <div
@@ -230,6 +242,18 @@ const OwnerContacts = (props) => {
                                         Tenants
                                     </div>
                                 </div>
+                                <div
+                                    className="contacts-detail-navbar"
+                                    style={{
+                                        backgroundColor:
+                                            getStatusColor('Maintenance'),
+                                    }}
+                                    onClick={() => setContactsTab('Maintenance')}
+                                >
+                                    <div className="contacts-detail-text">
+                                        Maintenance
+                                    </div>
+                                </div>
                             </div>
                             <div className="contacts-detail-background">
                                 <div
@@ -239,19 +263,19 @@ const OwnerContacts = (props) => {
                                             getStatusColor(contactsTab),
                                     }}
                                 />
-                                {contactsTab === 'Managers' ? (
+                                {contactsTab === 'Owner' ? (
                                     <>
-                                        {managersData.map((manager, index) => {
+                                        {ownersData.map((owner, index) => {
                                             return (
                                                 <OwnerContactsCard
-                                                    data={manager}
+                                                    data={owner}
                                                     key={index}
                                                     index={index}
                                                     selected={
                                                         handleSetSelectedCard
                                                     }
                                                     dataDetails={
-                                                        managersData.length
+                                                        ownersData.length
                                                         // ownerDataDetails.length
                                                     }
                                                 />
@@ -502,7 +526,7 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {formattedPhoneNumber(business.contact_phone_numnber)}
+                        {formattedPhoneNumber(business.contact_phone_number)}
                     </Typography>
                     <Typography
                         sx={{
@@ -522,4 +546,4 @@ const MaintenanceContactsCard = (props) => {
     );
 };
 
-export default OwnerContacts;
+export default PMContacts;

@@ -50,9 +50,14 @@ import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWid
 
 import Contacts from "./Contacts/Contacts"; 
 import OwnerContacts from "./Contacts/OwnerContacts";
+import PMContacts from "./Contacts/PMContacts";
+import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
 import TenantContactDetails from "./Contacts/TenantContactDetails";
+import ManagerContactDetails from "./Contacts/ManagerContactDetails"; 
+import MaintenanceContactDetails from "./Contacts/MaintenanceContactDetails"; 
+import OwnerContactDetails from "./Contacts/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
 import Dashboard from "./Dashboard";
@@ -202,10 +207,15 @@ function Main() {
             <Route path="contacts" element={<Contacts />} />
 
             <Route path="ownerContacts" element={<OwnerContacts />} />    {/*rohit*/}
+            <Route path="PMContacts" element={<PMContacts />} />    {/*rohit*/}
+            <Route path="maintenanceContacts" element={<MaintenanceContacts />} />    {/*rohit*/}
 
             <Route path="contactDetails" element={<ContactDetails />} />
             <Route path="addContacts" element={<AddContacts />} />
             <Route path="tenantContactDetails" element={<TenantContactDetails />} />
+            <Route path="managerContactDetails" element={<ManagerContactDetails />} />
+            <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
+            <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />

@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { formattedPhoneNumber } from '../utils/privacyMasking';
 import { useUser } from "../../contexts/UserContext";
 
-const OwnerContacts = (props) => {
+const MaintenanceContacts = (props) => {
     const { getProfileId, selectedRole } = useUser();
     const [contactsTab, setContactsTab] = useState('Managers');
     const [ownerData, setOwnerData] = useState([]);
@@ -49,12 +49,13 @@ const OwnerContacts = (props) => {
         //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/${getProfileId()}`;
         //rohit - replace hardcoded value
         const url =
-            `http://localhost:4000/contacts/110-000003`;
+            `http://localhost:4000/contacts/600-000012`;
         await axios
             .get(url)
             .then((resp) => {
-                const data = resp.data['owner_contacts'];
-                console.log("ROHIT - OWNER DATA")
+                const data = resp.data['maintenance_contacts'];
+                // const data = resp.data['maintenance_contacts'];
+                console.log("ROHIT - MAINTENANCE CONTACTS DATA")
                 console.log(data);
                 console.log("ROHIT - SELECTED ROLE")
                 console.log(selectedRole);
@@ -76,23 +77,23 @@ const OwnerContacts = (props) => {
 
     const handleSetSelectedCard = (selectedData, index) => {
         if (contactsTab === 'Managers') {
-            navigate('/managerContactDetails', {
+            navigate('/contactDetails', {
                 state: {
-                    dataDetails: managersData,
+                    dataDetails: ownerDataDetails,
                     tab: contactsTab,
                     selectedData: selectedData,
                     index: index,
-                    viewData: managersData,
+                    viewData: ownerData,
                 },
             });
         } else if (contactsTab === 'Tenants') {
             navigate('/tenantContactDetails', {
                 state: {
-                    dataDetails: tenantsData,
+                    dataDetails: tenantDataDetails,
                     tab: contactsTab,
                     selectedData: selectedData,
                     index: index,
-                    viewData: tenantsData,
+                    viewData: tenantData,
                 },
             });
         }
@@ -522,4 +523,4 @@ const MaintenanceContactsCard = (props) => {
     );
 };
 
-export default OwnerContacts;
+export default MaintenanceContacts;
