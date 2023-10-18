@@ -278,7 +278,7 @@ export default function PaymentsTenant(props) {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Box
+                                    <Button
                                         sx={{
                                             backgroundColor: "#3D5CAC",
                                             borderRadius: "10px",
@@ -288,14 +288,16 @@ export default function PaymentsTenant(props) {
                                             padding: "10px",
                                         }}
                                         onClick={() => {
-                      paymentData.business_code = paymentNotes;
-                      navigate("/selectPayment", {
-                        state: { paymentData, total },
-                      });
-                    }}
+                                            paymentData.business_code = paymentNotes;
+                                            navigate("/selectPayment", {
+                                                state: { paymentData, total },
+                                            });
+                                        }}
                                     >
-                                        Select Payment
-                                    </Box>
+                                        <Typography variant="outlined" style={{ textTransform: "none", color: '#160449', fontFamily: 'Source Sans Pro', fontWeight: '600' }}>
+                                            Select Payment
+                                        </Typography>
+                                    </Button>
                                 </Grid>
                             </Grid>
                         </Stack>

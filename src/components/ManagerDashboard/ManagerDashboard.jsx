@@ -393,9 +393,12 @@ function ManagerDashboard() {
                                 justifyContent: 'center',
                                 width: '50%', // Set the button width to be 50% of its container
                                 backgroundColor: "#F2F2F2",
+                                "&:hover, &:focus, &:active": {
+                                    background: theme.palette.primary.main,
+                                }
                             }}
                             variant="outlined"
-                            onClick={() => navigate("/paymentsPM")}
+                            onClick={() => navigate("/payments")}
                         >
                             <Typography variant="outlined" style={{ textTransform: "none", color: '#160449', fontFamily: 'Source Sans Pro', fontWeight: '600' }}>
                                 Pay Bills

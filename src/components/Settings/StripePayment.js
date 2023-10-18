@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-
-import { Button, FormControl } from "@mui/material";
+import { 
+    Button, 
+    Modal, 
+    Typography,
+    IconButton,
+    Box,
+    CircularProgress
+} from "@mui/material";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import {
   useElements,
@@ -10,28 +16,31 @@ import {
 } from "@stripe/react-stripe-js";
 import theme from "../../theme/theme";
 import * as ReactBootStrap from "react-bootstrap";
-
-
 import Payment_Failure from "./Payment_Failure";
+
+import CloseIcon from "@mui/icons-material/Close"; // Import the close icon
+
 
 function StripePayment(props) {
     console.log("in stripepayment page");
-    const { message, amount, paidBy } = props;
+    const { message, amount, paidBy, show, setShow } = props;
     console.log(paidBy);
     const [showSpinner, setShowSpinner] = useState(false);
     const elements = useElements();
     const stripe = useStripe();
-    const [showError, setShowError]= useState(false) // State to show payment failre
- 
+    const [showError, setShowError]= useState(false) // State to show payment failure 
+
+    const handleClose = () => {
+        setShow(false);
+    }; 
   
     const submitPayment = async () => {
-        console.log("in submitpayment");
         setShowSpinner(true);
         const paymentData = {
             customer_uid: paidBy,
             business_code: message === "PMTEST" ? message : "PM",
             payment_summary: {
-            total: parseFloat(amount),
+                total: parseFloat(amount),
             },
         };
         console.log(paymentData);
@@ -45,7 +54,6 @@ function StripePayment(props) {
         );
         console.log(response);
         const clientSecret = await response.json();
-        // console.log(clientSecret);
         const cardElement = await elements.getElement(CardElement);
         const stripeResponse = await stripe.createPaymentMethod({
             type: "card",
@@ -54,7 +62,7 @@ function StripePayment(props) {
                 name: "XYZ",
             },
         });
-        // console.log(stripeResponse);
+        
         const paymentMethodID = stripeResponse.paymentMethod.id;
         
         const confirmedCardPayment = await stripe.confirmCardPayment(clientSecret, {
@@ -67,116 +75,87 @@ function StripePayment(props) {
         console.log("--DEBUG-- in StripePayment paymentMethodID", paymentMethodID);
         console.log("--DEBUG-- in StripePayment paymentIntentID", paymentIntentID);
 
-        // let newPayment = {};
-        // if (purchases.length === 1) {
-        //   // console.log(purchases[0]);
-        //   newPayment = {
-        //     pay_purchase_id: purchases[0].purchase_uid,
-        //     //Need to make change here
-        //     amount: parseFloat(amount) + 0.03 * parseFloat(amount),
-        //     payment_notes: message,
-        //     charge_id: paymentIntentID,
-        //     payment_type: "STRIPE",
-        //     paid_by: paidBy,
-        //   };
-        //   // await post("/payments", newPayment);
-        //   // if (purchases[0].linked_bill_id !== null) {
-        //   //   const body = {
-        //   //     maintenance_request_uid: purchases[0].linked_bill_id,
-        //   //     quote_status: "PAID",
-        //   //   };
-        //   //   // const response = await put("/QuotePaid", body);
-        //   // }
-        // } else {
-        //   // for (let purchase of purchases) {
-        //   //   // console.log(purchase);
-        //   //   newPayment = {
-        //   //     pay_purchase_id: purchase.purchase_uid,
-        //   //     //Need to make change here
-        //   //     amount:
-        //   //       parseFloat(purchase.amount_due - purchase.amount_paid) +
-        //   //       0.03 * parseFloat(purchase.amount_due - purchase.amount_paid),
-        //   //     payment_notes: message,
-        //   //     charge_id: paymentIntentID,
-        //   //     payment_type: "STRIPE",
-        //   //     paid_by: paidBy,
-        //   //   };
-        //   //   // await post("/payments", newPayment);
-        //   //   if (purchase.linked_bill_id !== null) {
-        //   //     const body = {
-        //   //       maintenance_request_uid: purchase.linked_bill_id,
-        //   //       quote_status: "PAID",
-        //   //     };
-        //   //     // const response = await put("/QuotePaid", body);
-        //   //   }
-        //   // }
-        // }
         setShowSpinner(false);
-        console.log("Right before we call props.submit() from StripePayment.js")
         props.submit({
             paymentIntent: paymentIntentID,
             paymentMethod: paymentMethodID
         });
     };
   
-
   return (
-    <div style={{ margin: "5rem" }}>
-      <div
-        style={{
-          border: "1px solid black",
-          borderRadius: "10px",
-          padding: "10px",
-          margin: "20px",
-        }}
-      >
-
-<Payment_Failure showError={showError} setShowError={setShowError} />
-
-        <CardElement elementRef={(c) => (this._element = c)} />
-      </div>
-
-      <div className="text-center mt-2">
-        {showSpinner ? (
-          <div className="w-100 d-flex flex-column justify-content-center align-items-center">
-            <ReactBootStrap.Spinner animation="border" role="status" />
-          </div>
-        ) : (
-          ""
-        )}
-        <Row
-          style={{
-            display: "text",
-            flexDirection: "row",
-            textAlign: "center",
-          }}
+    <Modal
+        open={show}
+        onClose={handleClose}
+        aria-labelledby="payment-modal-title"
+        aria-describedby="payment-modal-description"
+    >
+        <div
+            style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                backgroundColor: "white",
+                border: "1px solid black",
+                borderRadius: "10px",
+                padding: "20px", // Increase padding for a larger modal
+                width: "500px", // Set a maximum width for the modal
+            }}
         >
-          <Col></Col>
-          <Col>
-            <Button
-              variant="contained"
-              onClick={async ()=>{
-                 try{ await submitPayment()}
-                catch(err){setShowError(true)}
-              }}
-              sx={{
-                background: "#3D5CAC",
-                color: theme.palette.background.default,
-                width: `50%`,
-                height: `20%`,
-                left: `14px`,
-                top: `4px`,
-                borderRadius: "10px 10px 10px 10px",
-                margin: "5% 50% 30% 5%",
-              }}
+            <IconButton
+                edge="end"
+                color="inherit"
+                onClick={handleClose}
+                style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                }}
+                aria-label="close"
             >
-              Pay Now
-            </Button>
-          </Col>
-        </Row>
-      </div>
-    </div>
-  );
+                <CloseIcon />
+            </IconButton>
+            <Payment_Failure showError={showError} setShowError={setShowError} />
+            <Box sx={{paddingTop: "50px", paddingBottom: "50px"}}>
+                <CardElement sx={{
+                    width: "100px",
+                    height: "20px",
+                    backgroundColor: "red",
+                }}/>
+            </Box>
+            <div className="text-center mt-2">
+                {showSpinner ? (
+                    <div className="w-100 d-flex flex-column justify-content-center align-items-center">
+                        <Typography variant="body2">Processing...</Typography>
+                        <CircularProgress size={30}/>
+                    </div>
+                ) : null}
+                <Button
+                    variant="contained"
+                    onClick={async () => {
+                        try {
+                            setShowSpinner(true);
+                            await submitPayment();
+                            setShowSpinner(false);
+                        } catch (err) {
+                            setShowSpinner(false);
+                            setShowError(true);
+                        }
+                    }}
+                    sx={{
+                        background: "#3D5CAC",
+                        color: "white",
+                        width: "100%", // Make the button full width
+                        borderRadius: "10px",
+                        marginTop: "10px",
+                    }}
+                >
+                    Pay Now
+                </Button>
+            </div>
+        </div>
+    </Modal>
+    );
 }
 
 export default StripePayment;
