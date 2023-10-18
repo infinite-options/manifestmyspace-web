@@ -117,7 +117,7 @@ import ProfilePayment from "./Onboarding/ProfilePayment";
 import Forbidden from "./utils/Forbidden";
 import AddRole from "./Onboarding/AddRole";
 
-import PaymentsPM from "./Payments/PaymentsPM";
+import Payments from "./Payments/Payments";
 
 function Main() {
   return (
@@ -191,8 +191,8 @@ function Main() {
             <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
-            <Route path="paymentsTenant" element={<PaymentsTenant />} />
-            <Route path="paymentsPM" element={<PaymentsPM />} />
+            {/* <Route path="payments" element={<PaymentsTenant />} /> */}
+            <Route path="payments" element={<Payments />} />
             <Route path="card" element={<CardDetails />} />
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />

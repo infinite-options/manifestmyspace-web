@@ -6,6 +6,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { Fade } from "@mui/material";
 import { DialogActions } from "@material-ui/core";
 import { Button } from "react-bootstrap";
+import theme from "../../theme/theme";
+
 
 export default function CopyDialog(props) {
   const {
@@ -21,19 +23,37 @@ export default function CopyDialog(props) {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title"></DialogTitle>
+      <DialogTitle id="alert-dialog-title">
+        Payment Processing Fees
+      </DialogTitle>
       <DialogContent>
-        <div className="d-flex justify-content-center align-items-center m-5">
-          <h5>An additional 3% will be charged as credit card fees</h5>
-        </div>
+        <h5>An additional 3% will be charged as credit card fees</h5>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setStripeDialogShow(false)}>Cancel</Button>
+        <Button 
+          onClick={() => setStripeDialogShow(false)}
+          sx={{
+              backgroundColor: "#3D5CAC",
+              color: theme.palette.background.default,
+              width: '100%', // Center the button horizontally
+              borderRadius: "10px", // Rounded corners
+              marginTop: '20px', // Add some spacing to the top
+          }}  
+        >
+          Cancel
+        </Button>
         <Button
-          onClick={() => {
-            toggleKeys();
-            setStripePayment(true);
-            setStripeDialogShow(false);
+            onClick={() => {
+              toggleKeys();
+              setStripePayment(true);
+              setStripeDialogShow(false);
+            }}
+            sx={{
+              backgroundColor: "#3D5CAC",
+              color: theme.palette.background.default,
+              width: '100%', // Center the button horizontally
+              borderRadius: "10px", // Rounded corners
+              marginTop: '20px', // Add some spacing to the top
           }}
         >
           Continue

@@ -159,6 +159,12 @@ const theme = createTheme({
     largeFont: {
       fontSize: "20px",
     },
+    secondaryFont: {
+      fontSize: "18px",
+    },
+    mediumFont: {
+      fontSize: "16px",
+    },
     smallFont: {
       fontSize: "14px",
     },
