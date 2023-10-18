@@ -31,10 +31,8 @@ const SearchManager = () => {
   const [searchTerm, setSearchTerm] = useState();
   const handleSearch = async () => {
     const url =
-      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
-    const args = {
-      business_type: "MANAGEMENT",
-    };
+      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
+    const args = {};
     if (searchTerm) args.business_name = searchTerm;
     const response = await axios.get(url + objToQueryString(args));
     setManagers(response.data.result);
@@ -219,7 +217,7 @@ function DocumentCard(props) {
             }}
           >
             <div>
-              <img src={ArrowDown} />
+              <img src={ArrowDown} alt="down" />
               Estimated Fees
             </div>
           </Button>
