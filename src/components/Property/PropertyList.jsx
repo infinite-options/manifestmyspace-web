@@ -115,7 +115,7 @@ const paymentStatusMap = {
 };
 
 function getPaymentStatusColor(paymentStatus) {
-  if (paymentStatus === null) {
+  if (paymentStatus === null || paymentStatus === undefined) {
     return paymentStatusColorMap["Vacant"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -124,7 +124,7 @@ function getPaymentStatusColor(paymentStatus) {
 }
 
 function getPaymentStatus(paymentStatus) {
-  if (paymentStatus === null) {
+  if (paymentStatus === null || paymentStatus === undefined) {
     return paymentStatusMap["VACANT"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -143,10 +143,21 @@ export default function PropertyList({}) {
 
   console.log("getProfileId information", getProfileId());
 
+  function numberOfMaintenanceItems(maintenanceItems){
+    console.log(maintenanceItems)
+    if(maintenanceItems && maintenanceItems.length > 0){
+        return maintenanceItems.filter(mi => !!mi.maintenance_request_uid).length
+    } else {
+        return 0
+    }
+}
+
   useEffect(() => {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
+      console.log("Profile ID :"+profileId);
+//      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       console.log(propertyData)
@@ -348,6 +359,26 @@ export default function PropertyList({}) {
                   >
                     <Button onClick={() => navigate("/maintenance")} sx={{ border: "none" }}>
                       <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
+                      {/* <Box fixed sx={{
+                           height: '20px',
+                           width: '20px',
+                           background: '#A52A2A',
+                           borderRadius: '50%',
+                           marginLeft: 'auto',
+                           marginRight: 'auto',
+                           marginBottom: '30%',
+                           boxShadow: '0px 4px 4px #A52A2A',
+                      }}>
+                        <Typography
+                      sx={{
+                        color: theme.palette.primary.main,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        textAlign: "center", // Ensure text is centered within itself
+                      }}
+                    ></Typography>
+                      </Box> */}
+                      
                     </Button>
                   </Badge>
                 </ListItem>
