@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, TextField, AccordionSummary, AccordionDetails, Grid } from '@mui/material';
+import { Paper, Box, Grid, Stack, ThemeProvider, TextField, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
+import PhotoIcon from '@mui/icons-material/Photo';
+import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import AddIcon from '@mui/icons-material/Add';
-import { alpha, makeStyles } from "@material-ui/core/styles";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,9 +19,16 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   }));
-export default function AddCard() {
+
+export default function TenantProfileSettings() {
     const classes = useStyles();
     const navigate = useNavigate();
+    const textStyle={color: theme.typography.common.blue, 
+        fontWeight: theme.typography.light.fontWeight, 
+        fontSize:theme.typography.primary.smallFont};
+
+    
+
     return (
         <ThemeProvider theme={theme}>
           <Box
@@ -55,7 +63,7 @@ export default function AddCard() {
                         padding: 5,
                         position: 'absolute',
                         left: 0
-                            }}
+                        }}
                     onClick={()=>{navigate(-1)}}/>
                     <Typography 
                     sx={{
@@ -104,10 +112,10 @@ export default function AddCard() {
                     <Typography 
                     sx={{
                         justifySelf: 'center',
-                        color: theme.typography.primary.black, 
+                        color: '#3D5CAC', 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    John Lennon
+                    {'Abbey Road'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -120,63 +128,124 @@ export default function AddCard() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.light.fontWeight, 
                         fontSize:theme.typography.primary.smallFont}}>
-                    Owner Profile
+                    Tenant Profile
                     </Typography>
                     </Stack>
                     </>
                 </Box>
                 <hr/>
+                <Typography 
+                    sx={{
+                        justifySelf: 'center',
+                        color: '#3D5CAC', 
+                        fontWeight: theme.typography.primary.fontWeight, 
+                        fontSize:theme.typography.largeFont}}>
+                    Add Tenant Information
+                    </Typography>
                 
-                <Stack m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Enter Card Details</Typography>
-                </Stack>
                 <hr/>
-                
-                <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Card Number</Typography>
-                <TextField variant="filled" fullWidth placeholder="0000 0000 0000 0000" type='password' className={classes.root}></TextField>
-                </Stack>
-                
-                <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Card Holder Name</Typography>
-                <TextField variant="filled" fullWidth placeholder="ex. Marie Schrader" className={classes.root}></TextField>
-                </Stack>
-                
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={4}>
-                    <Stack spacing={-2} m={4}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Expiry Date</Typography>
-                    <TextField variant="filled" fullWidth placeholder="MM/YYYY" className={classes.root}></TextField>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'First Name'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'Abbey'}</Typography>
                     </Stack>
                 </Grid>
-                <Grid item xs={4}>
-                    <Stack spacing={-2} m={4}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>CVV/CVC</Typography>
-                    <TextField variant="filled" fullWidth placeholder="3-4 digits" className={classes.root}></TextField>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'Last Name'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'Road'}</Typography>
                     </Stack>
                 </Grid>
-                <Grid item xs={4}>
-                    
+                </Grid>
+
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'Email Address'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'abbeyroad1969@gmail.com'}</Typography>
+                    </Stack>
+                </Grid>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'Phone'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'5415678900'}</Typography>
+                    </Stack>
                 </Grid>
                 </Grid>
-                <hr/>
-                
-                <Button
-            sx={{
-              paddingLeft: "2%",
-              paddingRight: "2%",
-              background: "#3D5CAC",
-              color: theme.palette.background.default,
-              width: `100%`,
-              height: `15%`,
-              borderRadius: "15px",
-              fontSize: theme.typography.smallFont,
-              fontWeight: theme.typography.primary.fontWeight,
-              textTransform: "none",
-            }}
-          >
-            {"Add Card"}
-          </Button>
+
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'Address'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'1234 Abc.street'}</Typography>
+                    </Stack>
+                </Grid>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'Unit Number'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'2'}</Typography>
+                    </Stack>
+                </Grid>
+                </Grid>
+
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'City/ State'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'San Jose/ CA'}</Typography>
+                    </Stack>
+                </Grid>
+                <Grid item xs={6}>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={textStyle}>{'Zip Code'}</Typography>
+                    <Typography sx={{ ...textStyle, color:'black' }}>{'123455'}</Typography>
+                    </Stack>
+                </Grid>
+                </Grid>
+
+                <Box
+  component="span"
+  m={2}
+  p={2}
+  display="flex"
+  justifyContent="space-between"
+  alignItems="center"
+  className={classes.typography}
+  style={{
+    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", // Add shadow
+  }}
+>
+  <Typography sx={textStyle}>Connect credit card</Typography>
+  <ArrowForwardIosIcon
+    sx={{ color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}
+    onClick={() => {
+      navigate('/addCardSettings');
+    }}
+  />
+</Box>
+<Box
+  component="span"
+  m={2}
+  p={2}
+  display="flex"
+  justifyContent="space-between"
+  alignItems="center"
+  className={classes.typography}
+  style={{
+    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", // Add shadow
+  }}
+>
+  <Typography sx={textStyle}>Setup ACH Transfer</Typography>
+  <ArrowForwardIosIcon
+    sx={{ color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}
+    onClick={() => {
+      navigate('/settingsManagerACH1');
+    }}
+  />
+</Box>
+
+
             </Paper>
             </Box>
             </Box>

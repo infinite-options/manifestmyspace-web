@@ -48,7 +48,7 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
     return(
         <div className="mt-widget-requests-container" onClick={() => navigate(routingWithSelectedRole(), { state: { colorStatus, maintenanceRequests } })}>  
             <h2 className="mt-widget-title">Maintenance</h2>
-            <Status colorStatus={colorStatus} maintenanceStatusCount={maintenanceRequests}/>
+            <Status colorStatus={colorStatus} maintenanceRequests={maintenanceRequests} selectedRole={selectedRole}/>
         </div>
     )
 }

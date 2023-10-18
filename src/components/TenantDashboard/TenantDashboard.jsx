@@ -196,7 +196,7 @@ function TenantDashboard(props) {
             justifyContent: "space-between",
             padding: "10px",
           }}
-          onClick={() => {navigate('/paymentsTenant')}}
+          onClick={() => {navigate('/payments')}}
         >
           <Box
             sx={{
@@ -228,7 +228,7 @@ function TenantDashboard(props) {
                 fontWeight: "600",
                 color: "#3D5CAC",
               }}
-              onClick={()=>{navigate('/paymentsTenant')}}
+              onClick={()=>{navigate('/payments')}}
             >
               View Details
             </Box>
@@ -267,7 +267,7 @@ function TenantDashboard(props) {
               }}
               onClick={() => {
                 // handleStripePayment()
-                navigate('/paymentsTenant')
+                navigate('/payments')
               }}
             >
               Make a Payment

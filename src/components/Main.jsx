@@ -115,8 +115,9 @@ import ProfileInfo from "./Onboarding/ProfileInfo";
 import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
 import Forbidden from "./utils/Forbidden";
+import AddRole from "./Onboarding/AddRole";
 
-import PaymentsPM from "./Payments/PaymentsPM";
+import Payments from "./Payments/Payments";
 import PMQuotesRequested from "./Property/PMQuotesRequested";
 
 function Main() {
@@ -176,6 +177,7 @@ function Main() {
             <Route path="tenantLeases" element={<TenantLeases />} />
             <Route path="tenantProfile" element={<TenantProfile />} />
             <Route path="tenantProfileEdit" element={<TenantProfileEdit />} />
+            <Route path="addRole" element={<AddRole />} />
             <Route path="tenantDashboard" element={<TenantDashboard />} />
 
             <Route path="pmProfile" element={<PMProfile />} />
@@ -190,12 +192,13 @@ function Main() {
             <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
-            <Route path="paymentsTenant" element={<PaymentsTenant />} />
-            <Route path="paymentsPM" element={<PaymentsPM />} />
+            {/* <Route path="payments" element={<PaymentsTenant />} /> */}
+            <Route path="payments" element={<Payments />} />
             <Route path="card" element={<CardDetails />} />
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
             <Route path="settingsOwner" element={<Settings />} />
+            <Route path="settingsTenant" element={<Settings />} />
             <Route path="editProfileSettings" element={<EditProfileSettings />} />
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
             <Route path="addCardSettings" element={<AddCard />} />

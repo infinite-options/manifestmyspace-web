@@ -157,8 +157,8 @@ export default function OwnerDashboard() {
                     <CashflowWidget />
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData}/>
-                        <PropertyRentWidget {...propsForPropertyRentWidget}/>
-                        {/* <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
+                        {/* <PropertyRentWidget {...propsForPropertyRentWidget}/> */}
+                        <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">
                                 <PieChart width={200} height={250} >
@@ -204,7 +204,7 @@ export default function OwnerDashboard() {
                                     </text>
                                 </PieChart>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
                         {/* <div className="mt-expiry-container"> */}
