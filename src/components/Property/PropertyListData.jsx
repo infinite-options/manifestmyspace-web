@@ -13,7 +13,7 @@ const PropertyListData = (props) => {
         //     navigate("/");
         //     return;
         // }
-        const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/${getProfileId()}`);
+        const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
         console.log("response property list ", res.data.Property.result);
         props.setPropertyList(res.data.Property.result);
         // if (response.msg === "Token has expired") {
