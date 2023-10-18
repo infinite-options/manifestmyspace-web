@@ -117,6 +117,7 @@ import ProfilePayment from "./Onboarding/ProfilePayment";
 import Forbidden from "./utils/Forbidden";
 
 import PaymentsPM from "./Payments/PaymentsPM";
+import PMQuotesRequested from "./Property/PMQuotesRequested";
 
 function Main() {
   return (
@@ -245,6 +246,9 @@ function Main() {
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm/>} />
             <Route path="workerMaintenance" element={<Maintenance01 />} />
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
+
+            <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+            
           </Route>
         </Routes>
         <Footer />

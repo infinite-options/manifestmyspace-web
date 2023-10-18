@@ -29,6 +29,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
     useEffect(() => {
         const getMintenanceForProperty = async () => {
             try {
+                console.log("Fetch maintenance data for "+item.property_uid)
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
@@ -58,7 +59,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
     }
 
     function numberOfMaintenanceItems(maintenanceItems){
-        console.log(maintenanceItems)
+//        console.log("maintenanceItems "+JSON.stringify(maintenanceItems))
         if(maintenanceItems && maintenanceItems.length > 0){
             return maintenanceItems.filter(mi => !!mi.maintenance_request_uid).length
         } else {
@@ -261,9 +262,11 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                             }}
                         >   
                             <Grid item xs={12}>
+                                <Box  sx={{color:theme.typography.common.blue}}>
                                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                                     <b>Rent Status:</b> {getPaymentStatus(item.rent_status)}
                                 </Typography>
+                                </Box>
                             </Grid>
                         </Grid>
                         <CardContent
@@ -356,7 +359,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                $527,000 (2022)
+                                                ${/* 527,000 (2022) */}
 
                                         </Typography>
                                     </Grid>
@@ -380,7 +383,8 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                ${(1300/830).toFixed(2)}
+                                                ${item.property_area.toFixed(2)}
+                                                
 
                                         </Typography>
                                     </Grid>
@@ -585,7 +589,48 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                                 "No Tenant"}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={1}></Grid>
+                                    <Grid item xs={1}>
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
+                                    </Grid>
+                                    <Grid item xs={11}>
+                                        <Box onClick={()=> {navigate("/pmQuotesRequested",
+                                        {state :{
+                                            index: index,
+                                            propertyData, propertyData
+                                        }})}}>
+                                        <Typography
+                                            sx={{
+                                                textTransform: 'none',
+                                                color: theme.typography.primary.black,
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize:theme.typography.smallFont,
+                                                paddingRight: "10px"
+                                            }}
+                                        >
+                                            PM Quotes Requested
+                                        </Typography>
+                                        <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.light.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
+                                            >
+                                                {(item.lease_start && item.tenant_uid)?
+                                                `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
+                                                "No PM Quotes"}
+                                        </Typography>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={1}>
+                                        <Box >
+                                    <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
+                                    onClick={()=> {navigate("/pmQuotesRequested",{state :{
+                                        index: index,
+                                        propertyData, propertyData
+                                    }})}}/>
+                                    </Box></Grid>
                                     <Grid item xs={11}>
                                         <Typography
                                                 sx={{
