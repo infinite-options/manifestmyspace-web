@@ -30,7 +30,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import ReactImageGallery from 'react-image-gallery';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -39,6 +40,7 @@ dayjs.tz.setDefault('America/Los_Angeles');
 
 const PropertyInfo = (props) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const index = location.state.index;
     const property = location.state.data;
     const ppt_images = property.property_images.split(',');
@@ -278,6 +280,7 @@ const PropertyInfo = (props) => {
                                 background: '#3D5CAC',
                                 color: theme.palette.background.default,
                             }}
+                            onClick={() => navigate('/tenantApplication')}
                         >
                             Apply Now
                         </Button>

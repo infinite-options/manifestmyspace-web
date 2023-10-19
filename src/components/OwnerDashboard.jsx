@@ -363,7 +363,7 @@ export default function OwnerDashboard() {
                             variant="outlined"
                             id="maintenance"
                             className="bottom-item"
-                            onClick={() => { navigate('/contacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
+                            onClick={() => { navigate('/ownerContacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
                     </div>
                     <br />
                 </div>
