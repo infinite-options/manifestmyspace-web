@@ -45,24 +45,26 @@ function TenantDashboard(props) {
 
     const getTenantData = async () => {
       setShowSpinner(true);
-    const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/${getProfileId()}`);
-    // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
-    const tenantRequestsData = await tenantRequests.json()        
+      const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/${getProfileId()}`);
+      // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
+      const tenantRequestsData = await tenantRequests.json()        
 
-        let propertyData = tenantRequestsData?.property?.result;
-        let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
-        let announcementsData = tenantRequestsData?.announcements?.result;
+      let propertyData = tenantRequestsData?.property?.result;
+      let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
+      let announcementsData = tenantRequestsData?.announcements?.result;
 
-        setPropertyData(propertyData || []);
-        setMaintenanceRequestsData(maintenanceRequestsData || []);
-        setAnnouncementsData(announcementsData || []);
+      if(!propertyData || propertyData.length === 0) navigate("/listings");
 
-        let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
-        setPropertyAddr(propertyAddress);
-        setFirstName(user.first_name)
-        setShowSpinner(false);
-        }
-      getTenantData();
+      setPropertyData(propertyData || []);
+      setMaintenanceRequestsData(maintenanceRequestsData || []);
+      setAnnouncementsData(announcementsData || []);
+
+      let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
+      setPropertyAddr(propertyAddress);
+      setFirstName(user.first_name)
+      setShowSpinner(false);
+    }
+    getTenantData();
   }, [])
 
 
