@@ -8,6 +8,7 @@ const CashflowData = (props) => {
   const year = props.year;
   const month = props.month;
   const selectedProperty = props.selectedProperty;
+  const setShowSpinner = props.setShowSpinner;
   const { getProfileId } = useUser();
 
   const fetchCashflow = async () => {
@@ -16,6 +17,7 @@ const CashflowData = (props) => {
     //   navigate("/");
     //   return;
     // }
+    setShowSpinner(true);
     const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${getProfileId()}/TTM`);
     console.log("props cashflowResponse", cashflow);
     if (props.setTotalRevenueByMonth) { props.setTotalRevenueByMonth(0); getRevenueByMonth(cashflow.data.response_revenue_by_month.result); }
@@ -25,6 +27,7 @@ const CashflowData = (props) => {
     props.setRevenueList && getRevenueList(cashflow.data.response_revenue.result);
     props.setExpenseList && getExpenseList(cashflow.data.response_expense.result);
     props.setRevenueCashflowByMonth && getPast12MonthsCashflow(cashflow.data.response_revenue_by_month.result, cashflow.data.response_expense_by_month.result);
+    setShowSpinner(false);
   };
 
   const getRevenueList = (revenue) => {

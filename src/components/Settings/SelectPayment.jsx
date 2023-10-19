@@ -37,6 +37,8 @@ import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +63,7 @@ export default function SelectPayment(props) {
     const classes = useStyles();
     const navigate = useNavigate();
     const { getProfileId, paymentRoutingBasedOnSelectedRole } = useUser();
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
     const [paymentData, setPaymentData] = useState(location.state.paymentData);
     const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0].purchase_uid);
@@ -107,6 +109,7 @@ export default function SelectPayment(props) {
         if (notes === "PMTEST") {
         // Fetch public key
         console.log("fetching public key");
+        setShowSpinner(true);
         axios
             .post(
             "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST"
@@ -125,6 +128,7 @@ export default function SelectPayment(props) {
 
             // console.log(tempStripePromise);
             // console.log("(1 PaymentDetails) stripePromise set!");
+            setShowSpinner(false);
             })
             .catch((err) => {
             console.log(err);
@@ -133,10 +137,11 @@ export default function SelectPayment(props) {
                 "(1 PaymentDetails) error: " + JSON.stringify(err.response)
                 );
             }
+            setShowSpinner(false);
             });
         } else {
         // Fetch public key live
-
+        setShowSpinner(true);
         console.log("fetching public key live");
         axios
             .post(
@@ -156,6 +161,7 @@ export default function SelectPayment(props) {
             // setStripePromise(tempStripePromise);
 
             // console.log("(2 PaymentDetails) stripePromise set!");
+            setShowSpinner(false);
             })
             .catch((err) => {
             console.log(err);
@@ -164,6 +170,7 @@ export default function SelectPayment(props) {
                 "(2 PaymentDetails) error: " + JSON.stringify(err.response)
                 );
             }
+            setShowSpinner(false);
             });
         }
     }
@@ -177,33 +184,44 @@ export default function SelectPayment(props) {
 
         console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent)
         console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod)
-        const makePayment = async (purchase_uid) => {
-            fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "pay_purchase_id": purchase_uid,
-                    "pay_amount" : totalBalance,
-                    // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
-                    "payment_notes": paymentData.business_code,
-                    "pay_charge_id" : "stripe transaction key",
-                    "payment_type" : selectedMethod,
-                    "payment_verify" : "Unverified",
-                    "paid_by" : getProfileId(),
-                    "payment_intent": paymentIntent,
-                    "payment_method": paymentMethod,
+        
+        const makePayments = async () => {
+            setShowSpinner(true);
+            const makePayment = (purchase_uid) => (
+                fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "pay_purchase_id": purchase_uid,
+                        "pay_amount" : totalBalance,
+                        // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
+                        "payment_notes": paymentData.business_code,
+                        "pay_charge_id" : "stripe transaction key",
+                        "payment_type" : selectedMethod,
+                        "payment_verify" : "Unverified",
+                        "paid_by" : getProfileId(),
+                        "payment_intent": paymentIntent,
+                        "payment_method": paymentMethod,
+                    })
                 })
-            })
+            )
+            const promises = []
+            for (const item of purchaseUIDs) {
+                promises.push(makePayment(item.purchase_uid))
+            }
+            try {
+                await Promise.all(promises)
+                let routingString = paymentRoutingBasedOnSelectedRole();
+                navigate(routingString);
+            } catch (error) {
+                console.error("Error making payments:", error);
+            }
+            setShowSpinner(false);
         }
 
-        for (const item of purchaseUIDs) {
-            makePayment(item.purchase_uid)
-        }
-
-        let routingString = paymentRoutingBasedOnSelectedRole();
-        navigate(routingString);
+        makePayments()
     };
     //CreditCardHandler
 
@@ -214,7 +232,7 @@ export default function SelectPayment(props) {
     };
 
     // Make the POST request
-
+    setShowSpinner(true);
     try {
       const response = await fetch(payment_url[selectedMethod], {
         // Use http instead of https
@@ -233,7 +251,7 @@ export default function SelectPayment(props) {
     } catch (error) {
       console.error("An error occurred while making the POST request", error);
     }
-
+    setShowSpinner(false);
     // navigate
     navigate("/PaymentConfirmation", { state: { paymentData } });
   }
@@ -269,6 +287,7 @@ export default function SelectPayment(props) {
   };
 
   const toggleKeys = async () => {
+    setShowSpinner(true);
     console.log("inside toggle keys");
     const url =
       paymentData.business_code === "PMTEST"
@@ -285,10 +304,17 @@ export default function SelectPayment(props) {
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
     // console.log("--DEBUG-- stripePromise", stripePromise);
+    setShowSpinner(false);
   };
 
   return (
     <div style={{padding: "30px"}}>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <StripeFeesDialog
             stripeDialogShow={stripeDialogShow}
             setStripeDialogShow={setStripeDialogShow}

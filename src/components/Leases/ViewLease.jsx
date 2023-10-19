@@ -16,9 +16,12 @@ import { ArrowBack, Chat, Visibility } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ViewLease = (props) => {
     const navigate = useNavigate();
+    const [showSpinner, setShowSpinner] = useState(false);
     const { getProfileId } = useUser();
     const handleBackButton = () => {};
 
@@ -40,6 +43,7 @@ const ViewLease = (props) => {
     const [leaseData, setLeaseData] = useState([]);
     useEffect(()=>{
 //      axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
         .then((res)=>{
             const data = res.data['Lease_Details'].result;
@@ -50,6 +54,7 @@ const ViewLease = (props) => {
                     setLeaseData(lease);
                 }
             });
+            setShowSpinner(false);
         });
     },[]);
 
@@ -67,6 +72,12 @@ const ViewLease = (props) => {
     }
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

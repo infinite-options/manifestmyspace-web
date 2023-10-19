@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider, CircularProgress } from '@mui/material';
+import { Button, Box, ThemeProvider } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -12,6 +12,8 @@ import File_dock_fill from '../images/File_dock_fill.png'
 import User_fill_dark from '../images/User_fill_dark.png'
 import { useUser } from "../contexts/UserContext";
 import PropertyRentWidget from "./Dashboard-Components/PropertyRent/PropertyRentWidget";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function OwnerDashboard() {
     const { user, getProfileId } = useUser();
@@ -21,7 +23,7 @@ export default function OwnerDashboard() {
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
     
     const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
@@ -66,6 +68,7 @@ export default function OwnerDashboard() {
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
+            setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
             setRentStatus(jsonData.RentStatus.result);
@@ -141,12 +144,19 @@ export default function OwnerDashboard() {
             // setCurrentMonth(date.getMonth()+1);
             // let currentYear = date.getFullYear().toString();
             // console.log("month, year", currentMonth)
+            setShowSpinner(false);
         }
         fetchData();
     }, []);
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         {loading && 
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             {loading && <CircularProgress color="inherit" />}

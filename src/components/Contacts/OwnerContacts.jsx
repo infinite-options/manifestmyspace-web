@@ -19,6 +19,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { formattedPhoneNumber } from '../utils/privacyMasking';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const OwnerContacts = (props) => {
     const { getProfileId, selectedRole } = useUser();
@@ -26,7 +28,7 @@ const OwnerContacts = (props) => {
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
     const [maintenanceData, setMaintenanceData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
 
     const [managersData, setManagersData] = useState([]);
     const [tenantsData, setTenantsData] = useState([]);
@@ -48,6 +50,7 @@ const OwnerContacts = (props) => {
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
         // const url =
         //     `http://localhost:4000/contacts/110-000003`;
+        setShowSpinner(true);
         await axios
             .get(url)
             .then((resp) => {
@@ -59,9 +62,11 @@ const OwnerContacts = (props) => {
 
                 setManagersData(data['managers']);
                 setTenantsData(data['tenants']);
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
     };
 
@@ -95,6 +100,12 @@ const OwnerContacts = (props) => {
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

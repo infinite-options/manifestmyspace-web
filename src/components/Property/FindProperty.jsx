@@ -25,11 +25,14 @@ import {
 import ReactImageGallery from 'react-image-gallery';
 import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const FindProperty = (props) => {
     const [propertyData, setPropertyData] = useState([]);
     const { getProfileId } = useUser();
     const profileId = getProfileId();
+    const [showSpinner, setShowSpinner] = useState(false);
 
     // const images = [
     //     {
@@ -53,14 +56,22 @@ const FindProperty = (props) => {
     }, []);
     
     async function fetchData(){
+        setShowSpinner(true);
         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
         const propertyData = await response.json();
         console.log(propertyData)
         setPropertyData(propertyData.Property_Dashboard.result)
+        setShowSpinner(false);
     }
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

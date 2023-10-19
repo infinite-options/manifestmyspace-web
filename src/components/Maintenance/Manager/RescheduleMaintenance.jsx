@@ -26,7 +26,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 // function DateTimePicker() {
 //   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -89,7 +90,7 @@ export default function RescheduleMaintenance(){
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
-
+    const [showSpinner, setShowSpinner] = useState(false);
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
@@ -117,6 +118,7 @@ export default function RescheduleMaintenance(){
         const date = "12-15-2023"
         const time = "09:00:00"
         const changeMaintenanceRequestStatus = async () => {
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
@@ -133,6 +135,7 @@ export default function RescheduleMaintenance(){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
         
         changeMaintenanceRequestStatus()
@@ -198,6 +201,12 @@ export default function RescheduleMaintenance(){
                 marginTop: theme.spacing(2), // Set the margin to 20px
             }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Paper
                 style={{
                     margin: '10px',
