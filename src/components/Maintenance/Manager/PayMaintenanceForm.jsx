@@ -23,7 +23,8 @@ import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import userFillIcon from './User_fill.png'
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function PayMaintenanceForm(){
 
@@ -34,7 +35,7 @@ export default function PayMaintenanceForm(){
     const [displayImages, setDisplayImages] = useState([])
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
-
+    const [showSpinner, setShowSpinner] = useState(false);
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
@@ -45,6 +46,7 @@ export default function PayMaintenanceForm(){
     const handleSubmit = () => {
         console.log("handleSubmit")
         const changeMaintenanceRequestStatus = async () => {
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
@@ -67,9 +69,10 @@ export default function PayMaintenanceForm(){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
         const changeMaintenanceQuoteStatus = async () => {
-
+            setShowSpinner(true);
             const formData = new FormData();
             //formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
             formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
@@ -100,6 +103,7 @@ export default function PayMaintenanceForm(){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
         changeMaintenanceQuoteStatus()
     }
@@ -147,6 +151,12 @@ export default function PayMaintenanceForm(){
             marginTop: theme.spacing(2), // Set the margin to 20px
         }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Paper
                 style={{
                     margin: '10px',

@@ -1,4 +1,5 @@
-export default async function CancelTicket(maintenance_request_uid){
+export default async function CancelTicket(maintenance_request_uid, setShowSpinner = () => {}){
+    setShowSpinner(true);
     try {
         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
             method: 'PUT',
@@ -18,4 +19,5 @@ export default async function CancelTicket(maintenance_request_uid){
         console.log("error", error)
         return false;
     }
+    setShowSpinner(false);
 }

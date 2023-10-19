@@ -16,6 +16,8 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
 import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilter";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function MaintenanceWorker(){
     const { user, getProfileId } = useUser();
@@ -25,7 +27,7 @@ export default function MaintenanceWorker(){
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusMM;
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const newDataObject = {};
 
     newDataObject["REQUESTED"] = [];
@@ -174,6 +176,7 @@ export default function MaintenanceWorker(){
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
+            setShowSpinner(true);
             const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             console.log("maintenanceRequestsData1", maintenanceRequestsData1)
@@ -221,6 +224,7 @@ export default function MaintenanceWorker(){
                 ...prevData,
                 ...dataObject
             }));
+            setShowSpinner(false);
         }
         getMaintenanceData();
     }, [])
@@ -229,6 +233,12 @@ export default function MaintenanceWorker(){
 
     return(
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
             style={{
                 display: 'flex',

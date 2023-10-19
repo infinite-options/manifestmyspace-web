@@ -19,18 +19,27 @@ import CommentIcon from '@mui/icons-material/Comment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function ManagerDashboardHappinessMatrix(props) {
     const navigate = useNavigate();
     const { user } = useUser();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     let date = new Date();
     let month = date.toLocaleString('default', { month: 'long' });
     let year = date.getFullYear().toString()
 
     return (
         <>
-            <CashflowData year={year} month={month} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <CashflowData setShowSpinner={setShowSpinner} year={year} month={month} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
             <ThemeProvider theme={theme}>
             <Paper 
             component={Stack} 

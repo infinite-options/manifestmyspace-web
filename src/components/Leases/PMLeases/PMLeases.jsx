@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import SelectProperty from "../SelectProperty";
 import AllOwnerIcon from './AllOwnerIcon.png';
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function PMLeases(props) {
     const { getProfileId } = useUser();
     // Select Property Tab
     const [open, setOpen] = useState(false);
+    const [showSpinner, setShowSpinner] = useState(false);
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     const handleClose = () => {
         setOpen(false);
@@ -30,6 +33,7 @@ function PMLeases(props) {
             }
             return num;
         }
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data['Lease Details'].result);
@@ -68,11 +72,18 @@ function PMLeases(props) {
                 });
                 setLeaseDate(leases);
                 setMoveoutCount(moveoutNum);
+                setShowSpinner(false);
             });
     }, []);
 
     return (
         <Box>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 fontFamily: 'Source Sans Pro',
                 backgroundColor: '#F2F2F2',

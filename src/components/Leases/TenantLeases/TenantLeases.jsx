@@ -2,17 +2,22 @@ import { Box } from '@mui/system';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function TenantLeases(props) {
     const { getProfileId } = useUser();
     const [tenantLeases, setTenantLeases] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     useEffect(() => {
     //axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+    setShowSpinner(true);
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
     .then((res) => {
                 const fetchData = res.data['Lease_Details'].result;
                 // console.log(fetchData[0]);
                 setTenantLeases(fetchData[0]);
+                setShowSpinner(false);
             });
     }, [])
 
@@ -33,6 +38,12 @@ function TenantLeases(props) {
             fontFamily: 'Source Sans Pro',
             padding: '30px',
         }}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',

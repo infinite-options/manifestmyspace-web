@@ -30,6 +30,8 @@ import documentIcon from "./Subtract.png"
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { set } from "date-fns";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function LaborTable({labor, setLabor}){
 
@@ -436,7 +438,7 @@ export default function BusinessInvoiceForm(){
 
     const navigate = useNavigate();
     const location = useLocation();
-
+    const [showSpinner, setShowSpinner] = useState(false);
 
     const maintenanceItem = location.state.maintenanceItem;
 
@@ -497,7 +499,7 @@ export default function BusinessInvoiceForm(){
                 "labor": labor,
             }));
 
-
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
                     method: 'PUT',
@@ -506,9 +508,11 @@ export default function BusinessInvoiceForm(){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
 
         const createBill = async () => {
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills", {
                     method: 'POST',
@@ -541,6 +545,7 @@ export default function BusinessInvoiceForm(){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
         updateMaintenanceQuote()
         createBill()
@@ -553,6 +558,12 @@ export default function BusinessInvoiceForm(){
             alignItems: 'center',
             width: '100%',
         }}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
             style={{
                 display: 'flex',

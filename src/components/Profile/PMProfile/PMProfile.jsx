@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { Stack, Typography, Paper } from '@mui/material';
 import theme from '../../../theme/theme';
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function PMProfile() {
     const navigate = useNavigate();
@@ -31,17 +33,25 @@ function PMProfile() {
         const num3 = data.slice(5);
         return `${num1}_${num2}_${num3}`;
     }
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState([]);
     useEffect(()=>{
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${getProfileId()}`)
         .then((res)=>{
             // console.log(res.data);
             setProfileData(res.data.result[0]);
+            setShowSpinner(false);
         });
     }, []);
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
             style={{
                 display: 'flex',

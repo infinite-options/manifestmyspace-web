@@ -9,6 +9,8 @@ import { Typography, Button, TextField, InputAdornment } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { ReactComponent as SearchIcon } from "../../images/search.svg";
 import { objToQueryString } from "../utils/helper";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,13 +31,16 @@ const SearchManager = () => {
   const navigate = useNavigate();
   const [managers, setManagers] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
+  const [showSpinner, setShowSpinner] = useState(false);
   const handleSearch = async () => {
+    setShowSpinner(true);
     const url =
       "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
     const args = {};
     if (searchTerm) args.business_name = searchTerm;
     const response = await axios.get(url + objToQueryString(args));
     setManagers(response.data.result);
+    setShowSpinner(false);
   };
   useEffect(() => {
     handleSearch();
@@ -43,6 +48,12 @@ const SearchManager = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={showSpinner}
+      >
+          <CircularProgress color="inherit" />
+      </Backdrop>
       <Box
         sx={{
           fontFamily: "Source Sans Pro",

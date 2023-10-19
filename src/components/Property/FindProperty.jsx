@@ -24,10 +24,12 @@ import {
 } from '@mui/icons-material';
 import ReactImageGallery from 'react-image-gallery';
 import axios from 'axios';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const FindProperty = (props) => {
     const [propertyData, setPropertyData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     // const images = [
     //     {
     //         original: 'https://picsum.photos/id/1018/1000/600/',
@@ -49,6 +51,7 @@ const FindProperty = (props) => {
     }, []);
 
     async function fetchData() {
+        setShowSpinner(true);
         await axios
             .get(url)
             .then((resp) => {
@@ -63,14 +66,22 @@ const FindProperty = (props) => {
                 //     resp.data.Property.result[1],
                 // ]);
                 setPropertyData(resp.data.Property.result);
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
     }
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

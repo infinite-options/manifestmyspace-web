@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import SelectProperty from "../SelectProperty";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function OwnerLeases(props) {
     
@@ -12,6 +14,7 @@ function OwnerLeases(props) {
     // Select Property Tab
     const { getProfileId } = useUser();
     const [open, setOpen] = useState(false);
+    const [showSpinner, setShowSpinner] = useState(false);
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     const handleClose = () => {
         setOpen(false);
@@ -33,6 +36,7 @@ function OwnerLeases(props) {
             }
             return num;
         }
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data['Lease_Details'].result);
@@ -72,6 +76,7 @@ function OwnerLeases(props) {
                 
                 setLeaseDate(leases);
                 setMoveoutCount(moveoutNum);
+                setShowSpinner(false);
             });
     }, []);
 
@@ -79,6 +84,12 @@ function OwnerLeases(props) {
     
     return (
         <Box>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 fontFamily: 'Source Sans Pro',
                 backgroundColor: '#F2F2F2',
