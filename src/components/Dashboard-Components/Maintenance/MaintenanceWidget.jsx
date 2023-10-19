@@ -11,9 +11,9 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
     // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
     useEffect(() => {
         const dataObject = {};
-        console.log("maintenanceData", maintenanceData)
+        // console.log("maintenanceData", maintenanceData)
         for (const item of maintenanceData){
-            console.log(item)
+            // console.log(item)
             if (!dataObject[item.maintenance_status]){
                 dataObject[item.maintenance_status] = item.num;
             }
@@ -23,7 +23,7 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
     }, [maintenanceData]);
 
     function routingWithSelectedRole(){
-        console.log("routingWithSelectedRole selectedRole", selectedRole)
+        // console.log("routingWithSelectedRole selectedRole", selectedRole)
         if (selectedRole == "MANAGER"){
             return "/managerMaintenance"
         } else if (selectedRole == "OWNER"){
@@ -32,7 +32,7 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
     }
 
     function selectColorStatus(){
-        console.log("selectColorStatus selectedRole", selectedRole)
+        // console.log("selectColorStatus selectedRole", selectedRole)
         if (selectedRole == "MANAGER"){
             return theme.colorStatusPMO
         } else if (selectedRole == "OWNER"){ 

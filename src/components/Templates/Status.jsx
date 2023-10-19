@@ -1,6 +1,6 @@
 export default function Status({colorStatus, maintenanceRequestCounts }){
-    console.log("status maintenanceRequestCounts", maintenanceRequestCounts)
-    console.log("status colorStatus", colorStatus)
+    // console.log("status maintenanceRequestCounts", maintenanceRequestCounts)
+    // console.log("status colorStatus", colorStatus)
     return(
         <div id="mt-all-requests">
             <ul className="mt-widget-requests">

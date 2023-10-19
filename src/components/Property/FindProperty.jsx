@@ -23,13 +23,17 @@ import {
     TurnedInNot,
 } from '@mui/icons-material';
 import ReactImageGallery from 'react-image-gallery';
+import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
 const FindProperty = (props) => {
     const [propertyData, setPropertyData] = useState([]);
+    const { getProfileId } = useUser();
+    const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
+
     // const images = [
     //     {
     //         original: 'https://picsum.photos/id/1018/1000/600/',
@@ -47,31 +51,17 @@ const FindProperty = (props) => {
     // 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003';
 
     useEffect(() => {
+        console.log('fetch data')
         fetchData();
     }, []);
-
-    async function fetchData() {
+    
+    async function fetchData(){
         setShowSpinner(true);
-        await axios
-            .get(url)
-            .then((resp) => {
-                console.log(resp.status);
-                // console.log(resp.data.Property.result);
-                // console.log([
-                //     resp.data.Property.result[0],
-                //     resp.data.Property.result[1],
-                // ]);
-                // setPropertyData([
-                //     resp.data.Property.result[0],
-                //     resp.data.Property.result[1],
-                // ]);
-                setPropertyData(resp.data.Property.result);
-                setShowSpinner(false);
-            })
-            .catch((e) => {
-                console.error(e);
-                setShowSpinner(false);
-            });
+        const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
+        const propertyData = await response.json();
+        console.log(propertyData)
+        setPropertyData(propertyData.Property_Dashboard.result)
+        setShowSpinner(false);
     }
 
     return (

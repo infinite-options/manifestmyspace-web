@@ -571,7 +571,7 @@ export default function Payments(props) {
                                             fontFamily: 'Source Sans Pro',
                                         }}
                                         >
-                                            {formatDate(item.purchase_date)}
+                                            {formatDate(item.payment_date)}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4} alignItems="center">

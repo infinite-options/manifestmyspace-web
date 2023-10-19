@@ -13,6 +13,7 @@ import User_fill_dark from '../../images/User_fill_dark.png'
 import { useUser } from "../../contexts/UserContext";
 import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -90,12 +91,12 @@ function ManagerDashboard() {
     useEffect(() => {
         const dataObject = {};
         const fetchData = async () => {
-            console.log("in useEffect")
+            // console.log("in useEffect")
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/managerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
-            console.log(jsonData)   
-            console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)
+            // console.log(jsonData)   
+            // console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
             setRentStatus(jsonData.RentStatus.result);
             setLoading(false);
@@ -162,7 +163,7 @@ function ManagerDashboard() {
             });
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
-            console.log("leaseStatusDictionary ", leaseStatusDictionary)
+            // console.log("leaseStatusDictionary ", leaseStatusDictionary)
             setShowSpinner(false);
         }
         fetchData();
@@ -376,47 +377,6 @@ function ManagerDashboard() {
                         </div>
                     </div>
                     <br />
-                    
-                    <Box 
-                        style={{ 
-                            // backgroundColor: 'var(--light-gray-bg)', // Ensure this variable is defined in your CSS
-                            backgroundColor: "#FFFFFF",
-                            display: 'flex',
-                            margin: '15px auto 0', // Combined margin-top with margin shorthand
-                            borderRadius: '10px',
-                            height: '150px',
-                            width: '90%',
-                            padding: '3px',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <h2 className="mt-expiry-widget-title">
-                            Payments
-                        </h2>
-
-                        <Button 
-                            sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                width: '50%', // Set the button width to be 50% of its container
-                                backgroundColor: "#F2F2F2",
-                                "&:hover, &:focus, &:active": {
-                                    background: theme.palette.primary.main,
-                                }
-                            }}
-                            variant="outlined"
-                            onClick={() => navigate("/payments")}
-                        >
-                            <Typography variant="outlined" style={{ textTransform: "none", color: '#160449', fontFamily: 'Source Sans Pro', fontWeight: '600' }}>
-                                Pay Bills
-                            </Typography>
-                        </Button>
-                    </Box>
-
-
                     <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
                     </div>
@@ -424,44 +384,34 @@ function ManagerDashboard() {
             
                     <div className={classes.container}>
                     <Grid container spacing={2} className={classes.row}>
-                        <Grid item xs={4}>
-                        <Button
-                            variant="outlined"
-                            id="revenue"
-                            className={classes.button}
-                            onClick={() => {
-                            navigate('/contacts');
-                            }}
-                        >
-                            <img src={User_fill_dark} alt="Owner" />
-                            Owner
-                        </Button>
+                        <Grid item xs={12}>
+                            <Button
+                                variant="outlined"
+                                id="revenue"
+                                className={classes.button}
+                                onClick={() => {
+                                    navigate('/payments');
+                                }}
+                            >
+                                {/* <img src={User_fill_dark} alt="Payments" /> */}
+                                <CurrencyExchangeIcon sx={{paddingRight: "5px"}}/>
+                                Pay Bills
+                            </Button>
                         </Grid>
-                        <Grid item xs={4}>
-                        <Button
-                            variant="outlined"
-                            id="expense"
-                            className={classes.button}
-                            onClick={() => {
-                            navigate();
-                            }}
-                        >
-                            <img src={User_fill_dark} alt="Tenant" />
-                            Tenant
-                        </Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                        <Button
-                            variant="outlined"
-                            id="maintenance"
-                            className={classes.button}
-                            onClick={() => {
-                            navigate();
-                            }}
-                        >
-                            <img src={User_fill_dark} alt="Maintenance" />
-                            Maintenance
-                        </Button>
+                    </Grid>
+                    <Grid container spacing={2} className={classes.row}>
+                        <Grid item xs={12}>
+                            <Button
+                                variant="outlined"
+                                id="revenue"
+                                className={classes.button}
+                                onClick={() => {
+                                navigate('/pmContacts');
+                                }}
+                            >
+                                <img src={User_fill_dark} alt="Contacts" />
+                                Contacts
+                            </Button>
                         </Grid>
                     </Grid>
                     <Grid container spacing={2} className={classes.row}>
