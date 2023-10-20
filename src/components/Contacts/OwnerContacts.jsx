@@ -23,19 +23,19 @@ import { useUser } from "../../contexts/UserContext";
 const OwnerContacts = (props) => {
     const { getProfileId, selectedRole } = useUser();
     const [contactsTab, setContactsTab] = useState('Managers');
-    const [ownerData, setOwnerData] = useState([]);
-    const [tenantData, setTenantData] = useState([]);
-    const [maintenanceData, setMaintenanceData] = useState([]);
+    // const [ownerData, setOwnerData] = useState([]);
+    // const [tenantData, setTenantData] = useState([]);
+    // const [maintenanceData, setMaintenanceData] = useState([]);
 
 
     const [managersData, setManagersData] = useState([]);
     const [tenantsData, setTenantsData] = useState([]);
 
 
-    const [ownerDataDetails, setOwnerDataDetails] = useState([]);
-    const [tenantDataDetails, setTenantDataDetails] = useState([]);
-    const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
-    const [managersDataDetails, setManagersDataDetails] = useState([]);
+    // const [ownerDataDetails, setOwnerDataDetails] = useState([]);
+    // const [tenantDataDetails, setTenantDataDetails] = useState([]);
+    // const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
+    // const [managersDataDetails, setManagersDataDetails] = useState([]);
 
     const navigate = useNavigate();
 
@@ -46,6 +46,9 @@ const OwnerContacts = (props) => {
     const fetchData = async () => {
         const url =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        
+        // const url =
+        //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/110-000003`;
         // const url =
         //     `http://localhost:4000/contacts/110-000003`;
         await axios
@@ -238,7 +241,7 @@ const OwnerContacts = (props) => {
                                     <>
                                         {managersData.map((manager, index) => {
                                             return (
-                                                <OwnerContactsCard
+                                                <ManagerContactsCard
                                                     data={manager}
                                                     key={index}
                                                     index={index}
@@ -253,7 +256,7 @@ const OwnerContacts = (props) => {
                                             );
                                         })}
                                     </>
-                                ) : contactsTab === 'Tenants' ? (
+                                ) : (
                                     <>
                                         {tenantsData.map(
                                             (tenant, index) => {
@@ -270,21 +273,6 @@ const OwnerContacts = (props) => {
                                             }
                                         )}
                                     </>
-                                ) : (
-                                    <>
-                                        {maintenanceData.map((maint, index) => {
-                                            return (
-                                                <MaintenanceContactsCard
-                                                    data={maint}
-                                                    key={index}
-                                                    index={index}
-                                                    selected={
-                                                        handleSetSelectedCard
-                                                    }
-                                                />
-                                            );
-                                        })}
-                                    </>
                                 )}
                             </div>
                         </div>
@@ -295,15 +283,15 @@ const OwnerContacts = (props) => {
     );
 };
 
-const OwnerContactsCard = (props) => {
-    const owner = props.data;
+const ManagerContactsCard = (props) => {
+    const manager = props.data;
     const handleSetSelectedCard = props.selected;
     const ownerDataDetailsLength = props.dataDetails;
     const index = props.index;
 
     const handleSelection = () => {
         console.log(index);
-        handleSetSelectedCard(owner, index);
+        handleSetSelectedCard(manager, index);
     };
 
     return (
@@ -325,7 +313,10 @@ const OwnerContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {`${owner.contact_first_name} ${owner.contact_last_name}`}
+                            {`
+                                ${manager.contact_first_name? manager.contact_first_name : '<FIRST_NAME>'}
+                                ${manager.contact_last_name? manager.contact_last_name : '<LAST_NAME>'}
+                            `}
                         </Typography>
                         <Button>
                             <Message
@@ -343,7 +334,9 @@ const OwnerContactsCard = (props) => {
                             fontWeight: theme.typography.primary.fontWeight,
                         }}
                     >
-                        {owner.property_count} Properties
+                        {
+                            manager.property_count? manager.property_count > 1? `${manager.property_count} Properties` : `${manager.property_count} Property` : `<PROPERTY_COUNT>` 
+                        }
                     </Typography>
                     <Typography
                         sx={{
@@ -351,7 +344,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {owner.contact_email}
+                        {manager.contact_email? manager.contact_email : '<EMAIL>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -359,7 +352,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >   
-                        {formattedPhoneNumber(owner.contact_phone_number)}
+                        {manager.contact_phone_number? formattedPhoneNumber(manager.contact_phone_number) : '<PHONE_NUMBER>'}
                     </Typography>
                 </CardContent>
             </Card>
@@ -396,9 +389,10 @@ const TenantContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {/* {tenant.contact_first_name}{' '}
-                            {tenant.contact_last_name} */}
-                            {tenant.contact_first_name} {tenant.contact_last_name}
+                            {`
+                                ${tenant.contact_first_name? tenant.contact_first_name : '<FIRST_NAME>'}
+                                ${tenant.contact_last_name? tenant.contact_last_name : '<LAST_NAME>'}
+                            `}
                         </Typography>
                         <Button>
                             <Message
@@ -415,7 +409,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_address}
+                        {tenant.contact_address? tenant.contact_address : '<ADDRESS>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -423,7 +417,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_email}
+                        {tenant.contact_email? tenant.contact_email : '<EMAIL>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -431,88 +425,17 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_phone_number.indexOf('(') > -1
-                            ? tenant.contact_phone_number
-                            : formattedPhoneNumber(tenant.contact_phone_number)}
-                        {/* {formattedPhoneNumber(tenant.tenant_phone_number)} */}
+                        {
+                            tenant.contact_phone_number
+                                ? (tenant.contact_phone_number.indexOf('(') > -1
+                                    ? tenant.contact_phone_number
+                                    : formattedPhoneNumber(tenant.contact_phone_number))
+                                : '<PHONE_NUMBER>'
+                        }
                     </Typography>
                 </CardContent>
             </Card>
         </Stack>
     );
 };
-
-const MaintenanceContactsCard = (props) => {
-    const business = props.data;
-    const handleSetSelectedCard = props.selected;
-    const index = props.index;
-
-    const handleSelection = () => {
-        handleSetSelectedCard(business, index);
-    };
-    return (
-        <Stack>
-            <Card
-                sx={{
-                    backgroundColor: '#D6D5DA',
-                    borderRadius: '10px',
-                    margin: '10px',
-                    color: '#160449',
-                }}
-                onClick={handleSelection}
-            >
-                <CardContent>
-                    <Stack flexDirection="row" justifyContent="space-between">
-                        <Typography
-                            sx={{
-                                fontSize: '16px',
-                                fontWeight: theme.typography.common.fontWeight,
-                            }}
-                        >
-                            {business.contact_first_name}{' '}
-                            {business.contact_last_name}
-                        </Typography>
-                        <Button>
-                            <Message
-                                sx={{
-                                    color: theme.typography.common.blue,
-                                    fontSize: '15px',
-                                }}
-                            />
-                        </Button>
-                    </Stack>
-                    <Typography
-                        sx={{
-                            color: theme.typography.common.blue,
-                            fontSize: '14px',
-                        }}
-                    >
-                        {business.contact_email}
-                    </Typography>
-                    <Typography
-                        sx={{
-                            color: theme.typography.common.blue,
-                            fontSize: '14px',
-                        }}
-                    >
-                        {formattedPhoneNumber(business.contact_phone_numnber)}
-                    </Typography>
-                    <Typography
-                        sx={{
-                            color: theme.typography.common.blue,
-                            fontSize: '14px',
-                            right: '25px',
-                            position: 'absolute',
-                        }}
-                    >
-                        {business.contact_description
-                            ? business.contact_description
-                            : 'Plumbing and Landscaping'}
-                    </Typography>
-                </CardContent>
-            </Card>
-        </Stack>
-    );
-};
-
 export default OwnerContacts;

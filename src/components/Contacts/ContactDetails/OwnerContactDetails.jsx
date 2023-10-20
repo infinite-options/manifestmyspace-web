@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState }  from 'react';
 import theme from '../../../theme/theme';
 import {
     ThemeProvider,
@@ -16,36 +16,47 @@ import {
     maskEIN,
     formattedPhoneNumber,
 } from '../../utils/privacyMasking';
+import { useUser } from "../../../contexts/UserContext";
+import User_fill from '../../../images/User_fill_dark.png'
 
 const OwnerContactDetails = (props) => {
+    const { selectedRole } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
     const contactDetails = location.state.dataDetails;
     const contactsTab = location.state.tab;
-    const selectedData = location.state.selectedData;
-    const index = location.state.index;
-    const passedData = location.state.viewData;
+    // const selectedData = location.state.selectedData;
+    // const index = location.state.index;
+    const [index, setIndex] = useState(location.state.index);
+    // const passedData = location.state.viewData;
+
+    useEffect(() => {
+        console.log("INDEX UPDATED - ", index);
+        // location.state.index = index;
+        console.log("DATA DETAILS", contactDetails[index])
+    }, [index]);
 
     console.log(contactDetails);
-    console.log(selectedData);
-    console.log(index);
+    // console.log(selectedData);
+    console.log("INDEX", index);
+    console.log('SELECTED ROLE - ', selectedRole);
 
-    const uniqueValues = {};
+    // const uniqueValues = {};
 
-    const uniqueContacts = contactDetails.filter((item) => {
-        if (
-            !uniqueValues[item.contract_name] &&
-            item.contract_status === 'ACTIVE'
-        ) {
-            uniqueValues[item.contract_name] = item;
-            return true;
-        }
-        return false;
-    });
+    // const uniqueContacts = contactDetails.filter((item) => {
+    //     if (
+    //         !uniqueValues[item.contract_name] &&
+    //         item.contract_status === 'ACTIVE'
+    //     ) {
+    //         uniqueValues[item.contract_name] = item;
+    //         return true;
+    //     }
+    //     return false;
+    // });
 
-    const owner_object = Object.values(uniqueValues)[0];
+    // const owner_object = Object.values(uniqueValues)[0];
 
-    console.log(owner_object);
+    // console.log(owner_object);
 
     const handleBackBtn = () => {
         // navigate('/ownerContacts');
@@ -86,7 +97,7 @@ const OwnerContactDetails = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
-                            {contactsTab} Contacts
+                            Owner Contact
                         </Typography>
                         <Stack flexDirection="row" justifyContent="center">
                             <Button
@@ -140,7 +151,11 @@ const OwnerContactDetails = (props) => {
                                     padding: '5px 10px',
                                 }}
                             >
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Previous button clicked");
+                                        index > 0? setIndex(index-1) : setIndex(contactDetails.length - 1)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -164,11 +179,15 @@ const OwnerContactDetails = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                                        {index + 1} Of {passedData.length}{' '}
-                                        {contactsTab}
+                                        {index + 1} of {contactDetails.length} Owners
+                                        {/* {contactsTab} */}
                                     </Typography>
                                 </Box>
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Next button clicked");
+                                        (index < contactDetails.length - 1) ? setIndex(index+1) : setIndex(0)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -200,8 +219,12 @@ const OwnerContactDetails = (props) => {
                                             theme.typography.common.fontWeight,
                                     }}
                                 >
-                                    {selectedData.contact_first_name}{' '}
-                                    {selectedData.contact_last_name}
+                                    {/* {selectedData.contact_first_name}{' '}
+                                    {selectedData.contact_last_name} */}
+                                    {`
+                                        ${contactDetails[index].contact_first_name? contactDetails[index].contact_first_name : '<FIRST_NAME>'}
+                                        ${contactDetails[index].contact_last_name? contactDetails[index].contact_last_name : '<LAST_NAME>'
+                                    }`}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -216,7 +239,7 @@ const OwnerContactDetails = (props) => {
                                 }}
                             >
                                 <img
-                                    src={selectedData.contact_photo_url}
+                                    src={contactDetails[index].contact_photo_url? contactDetails[index].contact_photo_url : User_fill}
                                     alt="profile placeholder"
                                     style={{
                                         height: '60px',
@@ -256,7 +279,8 @@ const OwnerContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {selectedData.contact_email}
+                                        {/* {selectedData.contact_email} */}
+                                        { contactDetails[index].contact_email? contactDetails[index].contact_email : '<EMAIL>' }
                                     </Typography>
                                 </Stack>
                                 <Stack flexDirection="row">
@@ -272,9 +296,10 @@ const OwnerContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {formattedPhoneNumber(
+                                        {/* {formattedPhoneNumber(
                                             selectedData.contact_phone_number
-                                        )}
+                                        )} */}
+                                        { contactDetails[index].contact_phone_number? formattedPhoneNumber(contactDetails[index].contact_phone_number) : '<PHONE_NUMBER>' }
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -297,10 +322,14 @@ const OwnerContactDetails = (props) => {
                                 </svg>
                             </Box>
                             <Typography sx={{ fontSize: '13px' }}>
-                                {selectedData.contact_address}{', '}
+                                {/* {selectedData.contact_address}{', '}
                                 {selectedData.contact_city}{', '}
                                 {selectedData.contact_state}{', '}
-                                {selectedData.contact_zip}
+                                {selectedData.contact_zip} */}
+                                {contactDetails[index].contact_address ? contactDetails[index].contact_address : '<ADDRESS>'} {', '}
+                                {contactDetails[index].contact_city ? contactDetails[index].contact_city : '<CITY>'} {', '}
+                                {contactDetails[index].contact_state ? contactDetails[index].contact_state : '<STATE>'} {', '}
+                                {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : '<ZIP>'}
                             </Typography>
                         </Stack>
                         <Stack sx={{ padding: '15px' }}>
@@ -310,9 +339,10 @@ const OwnerContactDetails = (props) => {
                                         theme.typography.primary.fontWeight,
                                 }}
                             >
-                                {selectedData.property_count} Properties
+                                {/* {selectedData.property_count} Properties */}
+                                {contactDetails[index].property_count? contactDetails[index].property_count : '<PROPERTY_COUNT>'} Properties
                             </Typography>
-                            {JSON.parse(selectedData.properties).map((property, index) => (
+                            {JSON.parse(contactDetails[index].properties).map((property, index) => (
                                 <Typography sx={{ 
                                                 color: theme.typography.common.blue,
                                                 fontSize: '13px',
@@ -321,7 +351,13 @@ const OwnerContactDetails = (props) => {
                                             }} 
                                             key={index}
                                 >
-                                    {`${property.property_address}, ${property.property_city}, ${property.property_state} ${property.property_zip}`}
+                                    {/* {`${property.property_address}, ${property.property_city}, ${property.property_state} ${property.property_zip}`} */}
+                                    {`
+                                            ${property.property_address? property.property_address : '<ADDRESS>'}, 
+                                            ${property.property_city? property.property_city : '<CITY>'}, 
+                                            ${property.property_state? property.property_state : '<STATE>'} 
+                                            ${property.property_zip? property.property_zip : '<ZIP_CODE>'}
+                                    `}
                                 </Typography>
                             ))}
                         </Stack>
@@ -347,7 +383,8 @@ const OwnerContactDetails = (props) => {
                                                     fontSize: '12px',
                                                 }}
                                             >
-                                                {selectedData.contact_paypal}
+                                                {/* {selectedData.contact_paypal} */}
+                                                {contactDetails[index].contact_paypal? contactDetails[index].contact_paypal :'<PAYPAL>'}
                                             </Typography>
                                         </Stack>
                                     </Stack>
@@ -357,7 +394,7 @@ const OwnerContactDetails = (props) => {
                                     alignItems="center"
                                     sx={{ paddingLeft: '30px' }}
                                 >
-                                    {!selectedData.hasOwnProperty('contact_ssn') || selectedData.contact_ssn === '' ? (
+                                    {!contactDetails[index].hasOwnProperty('contact_ssn') || contactDetails[index].contact_ssn === '' ? (
                                         <Typography
                                             sx={{
                                                 fontSize: '13px',
@@ -377,7 +414,7 @@ const OwnerContactDetails = (props) => {
                                                         .fontWeight,
                                             }}
                                         >
-                                            {selectedData.hasOwnProperty('contact_ssn') && maskSSN(selectedData.contact_ssn)}
+                                            {contactDetails[index].hasOwnProperty('contact_ssn') && maskSSN(contactDetails[index].contact_ssn)}
                                         </Typography>
                                     )}
                                     <Typography
@@ -409,26 +446,13 @@ const OwnerContactDetails = (props) => {
                                             />
                                         </Box>
                                         <Stack>
-                                            {selectedData.contact_venmo === '' ? (
-                                                <Box
-                                                    sx={{
-                                                        marginRight: '130px',
-                                                    }}
-                                                >
-                                                    <Typography>
-                                                        {' '}
-                                                        &nbsp;{' '}
-                                                    </Typography>
-                                                </Box>
-                                            ) : (
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: '12px',
-                                                    }}
-                                                >
-                                                    {selectedData.contact_venmo}
-                                                </Typography>
-                                            )}
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '12px',
+                                                }}
+                                            >
+                                                {contactDetails[index].contact_venmo? contactDetails[index].contact_venmo : '<VENMO>'}
+                                            </Typography>                                        
                                         </Stack>
                                     </Stack>
                                 </Box>
@@ -437,7 +461,7 @@ const OwnerContactDetails = (props) => {
                                     alignItems="center"
                                     sx={{ paddingLeft: '15px' }}
                                 >
-                                    {selectedData.contact_ein_number === '' ? (
+                                    {contactDetails[index].contact_ein_number === '' ? (
                                         <Typography
                                             sx={{
                                                 fontSize: '13px',
@@ -458,7 +482,7 @@ const OwnerContactDetails = (props) => {
                                             }}
                                         >
                                             {maskEIN(
-                                                selectedData.contact_ein_number
+                                                contactDetails[index].contact_ein_number
                                             )}
                                         </Typography>
                                     )}
@@ -472,52 +496,6 @@ const OwnerContactDetails = (props) => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                        {/* <Stack sx={{ padding: '15px' }}>
-                            <Stack
-                                flexDirection="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography
-                                    sx={{
-                                        fontWeight:
-                                            theme.typography.primary.fontWeight,
-                                    }}
-                                >
-                                    Management Fees
-                                </Typography>
-                                <Box>
-                                    <svg
-                                        width="16"
-                                        height="20"
-                                        viewBox="0 0 16 20"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            clip-rule="evenodd"
-                                            d="M8 0V5L7.99999 5.05441C7.99991 5.47848 7.99983 5.8906 8.04553 6.23052C8.09705 6.61372 8.22257 7.051 8.58579 7.41421C8.949 7.77743 9.38628 7.90295 9.76948 7.95447C10.1094 8.00017 10.5215 8.00009 10.9456 8.00001H10.9456H10.9456H10.9456L11 8H16V14C16 16.8284 16 18.2426 15.1213 19.1213C14.2426 20 12.8284 20 10 20H6C3.17157 20 1.75736 20 0.87868 19.1213C0 18.2426 0 16.8284 0 14V6C0 3.17157 0 1.75736 0.87868 0.87868C1.75736 0 3.17157 0 6 0H8ZM10 0.00462076V5C10 5.49967 10.0021 5.77383 10.0277 5.96402L10.0287 5.97131L10.036 5.97231C10.2262 5.99788 10.5003 6 11 6H15.9954C15.9852 5.58836 15.9525 5.31595 15.8478 5.06306C15.6955 4.69552 15.4065 4.40649 14.8284 3.82843L12.1716 1.17157C11.5935 0.593512 11.3045 0.304482 10.9369 0.152241C10.684 0.0474889 10.4116 0.0148133 10 0.00462076ZM4 11C4 10.4477 4.44772 10 5 10L11 10C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12L5 12C4.44772 12 4 11.5523 4 11ZM5 14C4.44772 14 4 14.4477 4 15C4 15.5523 4.44772 16 5 16H9C9.55228 16 10 15.5523 10 15C10 14.4477 9.55229 14 9 14H5Z"
-                                            fill="#3D5CAC"
-                                        />
-                                    </svg>
-                                </Box>
-                            </Stack>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Monthly Service Charge: 15% of all rent Tenant
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Setup Fee: $100
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Annual Inspection Fee: $200
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Re-Keying Charge: $200
-                            </Typography>
-                            <Typography sx={{ fontSize: '13px' }}>
-                                Annual Postage and Communication Fee: $20
-                            </Typography>
-                        </Stack> */}
                     </Paper>
                 </Paper>
             </Box>

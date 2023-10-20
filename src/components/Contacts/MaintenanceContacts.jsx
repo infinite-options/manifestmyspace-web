@@ -45,6 +45,9 @@ const MaintenanceContacts = (props) => {
     const fetchData = async () => {
         const url =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        
+        // const url =
+        //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000012`;
         // const url =
         //     `http://localhost:4000/contacts/600-000012`;
         await axios
@@ -52,10 +55,12 @@ const MaintenanceContacts = (props) => {
             .then((resp) => {
                 const data = resp.data['maintenance_contacts'];
                 // const data = resp.data['maintenance_contacts'];
+                console.log("PROFILE ID", getProfileId())
                 console.log("MAINTENANCE CONTACTS DATA")
                 console.log(data);
                 console.log("SELECTED ROLE")
                 console.log(selectedRole);
+
 
                 setManagersData(data['managers']);
                 setTenantsData(data['tenants']);
@@ -545,5 +550,4 @@ const MaintenanceContactsCard = (props) => {
         </Stack>
     );
 };
-//rohit
 export default MaintenanceContacts;

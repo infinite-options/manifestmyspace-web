@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../../theme/theme';
 import {
     ThemeProvider,
@@ -20,36 +20,45 @@ import { useUser } from "../../../contexts/UserContext";
 import User_fill from '../../../images/User_fill_dark.png'
 
 const ManagerContactDetails = (props) => {
-    const { getProfileId, selectedRole } = useUser();
+    const { selectedRole } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
     const contactDetails = location.state.dataDetails;
     const contactsTab = location.state.tab;
-    const selectedData = location.state.selectedData;
-    const index = location.state.index;
-    const passedData = location.state.viewData;
+    // const selectedData = location.state.selectedData;
+    // const index = location.state.index;
+    const [index, setIndex] = useState(location.state.index);
+    // const viewData = location.state.selectedData;
+
+    // const passedData = location.state.viewData;
+
+    useEffect(() => {
+        console.log("INDEX UPDATED - ", index);
+        // location.state.index = index;
+        console.log("DATA DETAILS", contactDetails[index])
+    }, [index]);
 
     console.log(contactDetails);
-    console.log(selectedData);
-    console.log(index);
+    // console.log(selectedData);
+    console.log("INDEX", index);
     console.log('SELECTED ROLE - ', selectedRole);
 
-    const uniqueValues = {};
+    // const uniqueValues = {};
 
-    const uniqueContacts = contactDetails.filter((item) => {
-        if (
-            !uniqueValues[item.contract_name] &&
-            item.contract_status === 'ACTIVE'
-        ) {
-            uniqueValues[item.contract_name] = item;
-            return true;
-        }
-        return false;
-    });
+    // const uniqueContacts = contactDetails.filter((item) => {
+    //     if (
+    //         !uniqueValues[item.contract_name] &&
+    //         item.contract_status === 'ACTIVE'
+    //     ) {
+    //         uniqueValues[item.contract_name] = item;
+    //         return true;
+    //     }
+    //     return false;
+    // });
 
-    const owner_object = Object.values(uniqueValues)[0];
+    // const owner_object = Object.values(uniqueValues)[0];
 
-    console.log(owner_object);
+    // console.log(owner_object);
 
     const handleBackBtn = () => {
         // navigate('/ownerContacts');
@@ -90,7 +99,7 @@ const ManagerContactDetails = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
-                            {contactsTab} Contacts
+                            Manager Contact
                         </Typography>
                         <Stack flexDirection="row" justifyContent="center">
                             <Button
@@ -144,7 +153,11 @@ const ManagerContactDetails = (props) => {
                                     padding: '5px 10px',
                                 }}
                             >
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Previous button clicked");
+                                        index > 0? setIndex(index-1) : setIndex(contactDetails.length - 1)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -168,11 +181,15 @@ const ManagerContactDetails = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                                        {index + 1} Of {passedData.length}{' '}
-                                        {contactsTab}
+                                        {index + 1} of {contactDetails.length} Managers
+                                        {/* {contactsTab} */}
                                     </Typography>
                                 </Box>
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Next button clicked");
+                                        (index < contactDetails.length - 1) ? setIndex(index+1) : setIndex(0)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -205,7 +222,11 @@ const ManagerContactDetails = (props) => {
                                             theme.typography.common.fontWeight,
                                     }}
                                 >
-                                    {`${selectedData.contact_first_name} ${selectedData.contact_last_name}`}
+                                    {/* {`${selectedData.contact_first_name} ${selectedData.contact_last_name}`} */}
+                                    {`
+                                        ${contactDetails[index].contact_first_name? contactDetails[index].contact_first_name : '<FIRST_NAME>'}
+                                        ${contactDetails[index].contact_last_name? contactDetails[index].contact_last_name : '<LAST_NAME>'
+                                    }`}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -219,27 +240,18 @@ const ManagerContactDetails = (props) => {
                                     marginTop: '-34px',
                                 }}
                             >
-                                {selectedData.contact_photo_url ? (
-                                    <img
-                                        src={selectedData.contact_photo_url}
-                                        alt="profile placeholder"
-                                        style={{
-                                            height: '60px',
-                                            width: '60px',
-                                            margin: '4px',
-                                        }}
-                                    />
-                                ) : (
-                                    <img
-                                        src={User_fill}
-                                        alt="profile placeholder"
-                                        style={{
-                                            height: '60px',
-                                            width: '60px',
-                                            margin: '4px',
-                                        }}
-                                    />
-                                )}
+                                
+                                <img
+                                    src={contactDetails[index].contact_photo_url? contactDetails[index].contact_photo_url : User_fill}
+                                    alt="profile placeholder"
+                                    style={{
+                                        height: '60px',
+                                        width: '60px',
+                                        margin: '4px',
+                                        borderRadius: '68px',
+                                    }}
+                                />
+                        
                             </Box>
                         </Stack>
                         <Stack sx={{ padding: '10px 15px 0' }}>
@@ -271,7 +283,7 @@ const ManagerContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {selectedData.contact_email}
+                                        { contactDetails[index].contact_email? contactDetails[index].contact_email : '<EMAIL>' }
                                     </Typography>
                                 </Stack>
                                 <Stack flexDirection="row">
@@ -287,9 +299,7 @@ const ManagerContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {formattedPhoneNumber(
-                                            selectedData.contact_phone_number
-                                        )}
+                                        { contactDetails[index].contact_phone_number? formattedPhoneNumber(contactDetails[index].contact_phone_number) : '<PHONE_NUMBER>' }
                                     </Typography>
                                 </Stack>
                                 {selectedRole === 'MAINTENANCE' && (
@@ -302,8 +312,6 @@ const ManagerContactDetails = (props) => {
                                         </Typography>
                                     
                                     </Stack>
-                                    
-                                    
                                 )}
                             </Stack>
                         </Stack>
@@ -339,10 +347,10 @@ const ManagerContactDetails = (props) => {
                                     </svg>
                                 </Box>
                                 <Typography sx={{ fontSize: '13px' }}>
-                                    {selectedData.contact_address}{', '}
-                                    {selectedData.contact_city}{', '}
-                                    {selectedData.contact_state}{', '}
-                                    {selectedData.contact_zip}
+                                    {contactDetails[index].contact_address ? contactDetails[index].contact_address : '<ADDRESS>'} {', '}
+                                    {contactDetails[index].contact_city ? contactDetails[index].contact_city : '<CITY>'} {', '}
+                                    {contactDetails[index].contact_state ? contactDetails[index].contact_state : '<STATE>'} {', '}
+                                    {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : '<ZIP>'}
                                 </Typography>
                             </Stack>
                         )}
@@ -354,10 +362,10 @@ const ManagerContactDetails = (props) => {
                                             theme.typography.primary.fontWeight,
                                     }}
                                 >
-                                    Manages {selectedData.property_count} of your Properties
+                                    Manages {contactDetails[index].property_count? contactDetails[index].property_count : '<PROPERTY_COUNT>'} of your Properties
                                 </Typography>
 
-                                {JSON.parse(selectedData.properties).map((property, index) => (
+                                {JSON.parse(contactDetails[index].properties).map((property, index) => (
                                     <Typography sx={{ 
                                                     color: theme.typography.common.blue,
                                                     fontSize: '13px',
@@ -366,7 +374,12 @@ const ManagerContactDetails = (props) => {
                                                 }} 
                                                 key={index}
                                     >
-                                        {`${property.property_address}, ${property.property_city}, ${property.property_state} ${property.property_zip}`}
+                                        {`
+                                            ${property.property_address? property.property_address : '<ADDRESS>'}, 
+                                            ${property.property_city? property.property_city : '<CITY>'}, 
+                                            ${property.property_state? property.property_state : '<STATE>'} 
+                                            ${property.property_zip? property.property_zip : '<ZIP_CODE>'}
+                                        `}
                                     </Typography>
                                 ))}
                             </Stack>
@@ -391,11 +404,11 @@ const ManagerContactDetails = (props) => {
                                             </Box>
                                             <Stack>
                                                 <Typography
-                                                    sx={{
-                                                        fontSize: '12px',
-                                                    }}
+                                                sx={{
+                                                    fontSize: '12px',
+                                                }}
                                                 >
-                                                    {selectedData.contact_paypal}
+                                                    {contactDetails[index].contact_paypal? contactDetails[index].contact_paypal :'<PAYPAL>'}
                                                 </Typography>
                                             </Stack>
                                         </Stack>
@@ -405,7 +418,7 @@ const ManagerContactDetails = (props) => {
                                         alignItems="center"
                                         sx={{ paddingLeft: '30px' }}
                                     >
-                                        {!selectedData.hasOwnProperty('contact_ssn') || selectedData.contact_ssn === '' ? (
+                                        {!contactDetails[index].hasOwnProperty('contact_ssn') || contactDetails[index].contact_ssn === '' ? (
                                             <Typography
                                                 sx={{
                                                     fontSize: '13px',
@@ -425,7 +438,7 @@ const ManagerContactDetails = (props) => {
                                                             .fontWeight,
                                                 }}
                                             >
-                                                {selectedData.hasOwnProperty('contact_ssn') && maskSSN(selectedData.contact_ssn)}
+                                                {contactDetails[index].hasOwnProperty('contact_ssn') && maskSSN(contactDetails[index].contact_ssn)}
                                             </Typography>
                                         )}
                                         <Typography
@@ -457,26 +470,13 @@ const ManagerContactDetails = (props) => {
                                                 />
                                             </Box>
                                             <Stack>
-                                                {selectedData.contact_venmo === '' ? (
-                                                    <Box
-                                                        sx={{
-                                                            marginRight: '130px',
-                                                        }}
-                                                    >
-                                                        <Typography>
-                                                            {' '}
-                                                            &nbsp;{' '}
-                                                        </Typography>
-                                                    </Box>
-                                                ) : (
-                                                    <Typography
-                                                        sx={{
-                                                            fontSize: '12px',
-                                                        }}
-                                                    >
-                                                        {selectedData.contact_venmo}
-                                                    </Typography>
-                                                )}
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: '12px',
+                                                    }}
+                                                >
+                                                    {contactDetails[index].contact_venmo? contactDetails[index].contact_venmo : '<VENMO>'}
+                                                </Typography>
                                             </Stack>
                                         </Stack>
                                     </Box>
@@ -485,7 +485,7 @@ const ManagerContactDetails = (props) => {
                                         alignItems="center"
                                         sx={{ paddingLeft: '15px' }}
                                     >
-                                        {selectedData.contact_ein_number === '' ? (
+                                        {contactDetails[index].contact_ein_number === '' ? (
                                             <Typography
                                                 sx={{
                                                     fontSize: '13px',
@@ -506,7 +506,7 @@ const ManagerContactDetails = (props) => {
                                                 }}
                                             >
                                                 {maskEIN(
-                                                    selectedData.contact_ein_number
+                                                    contactDetails[index].contact_ein_number
                                                 )}
                                             </Typography>
                                         )}

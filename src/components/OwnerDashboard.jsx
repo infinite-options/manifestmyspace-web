@@ -66,7 +66,10 @@ export default function OwnerDashboard() {
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
+            console.log("PROFILE ID: ", getProfileId())
+            
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003`)
             const jsonData = await response.json()
             setRentStatus(jsonData.RentStatus.result);
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
@@ -363,7 +366,7 @@ export default function OwnerDashboard() {
                             variant="outlined"
                             id="maintenance"
                             className="bottom-item"
-                            onClick={() => { navigate('/contacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
+                            onClick={() => { navigate('/ownerContacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
                     </div>
                     <br />
                 </div>
