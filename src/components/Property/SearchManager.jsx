@@ -14,6 +14,8 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,15 +40,16 @@ const SearchManager = () => {
   const { getProfileId } = useUser();
   const [ownerId, setOwnerId] = useState(getProfileId());
 
+  const [showSpinner, setShowSpinner] = useState(false);
   const handleSearch = async () => {
+    setShowSpinner(true);
     const url =
-      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
-    const args = {
-      business_type: "MANAGEMENT",
-    };
+      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
+    const args = {};
     if (searchTerm) args.business_name = searchTerm;
     const response = await axios.get(url + objToQueryString(args));
     setManagers(response.data.result);
+    setShowSpinner(false);
   };
   useEffect(() => {
     handleSearch();
@@ -54,6 +57,12 @@ const SearchManager = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={showSpinner}
+      >
+          <CircularProgress color="inherit" />
+      </Backdrop>
       <Box
         sx={{
           fontFamily: "Source Sans Pro",
@@ -275,7 +284,14 @@ function DocumentCard(props) {
               height: `5%`,
               left: `15%`,
               top: `10%`,
-            }} >Estimated Fees</Typography>
+              fontSize: `11px`,
+            }}
+          >
+            <div>
+              <img src={ArrowDown} />
+              Estimated Fees
+            </div>
+          </Button>
           <Button
             variant="contained"
             sx={{

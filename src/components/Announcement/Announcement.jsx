@@ -5,18 +5,29 @@ import Searchbar from "./Searchbar";
 import axios from "axios";
 import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 function Announcement() {
     const { getProfileId } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     useEffect(() => {
+        setShowSpinner(true);
         axios.get(`https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/announcement?receiver=${getProfileId()}`)
             .then((res) => {
                 setAnnouncementData(res.data.result);
                 // console.log(res.data.result);
+                setShowSpinner(false);
             });
     }, []);
     return (
         <div className="announcement-container">
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <div className="announcement-title">
                 <div className="announcement-title-icon">
                     <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">

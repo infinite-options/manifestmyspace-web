@@ -39,7 +39,8 @@ import dataURItoBlob from '../utils/dataURItoBlob'
 import { type } from "@testing-library/user-event/dist/type";
 import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function AddMaintenanceItem(){
     const location = useLocation();
@@ -57,7 +58,7 @@ export default function AddMaintenanceItem(){
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     console.log(user)
 
     const profileId = getProfileId(); 
@@ -110,6 +111,7 @@ export default function AddMaintenanceItem(){
         console.log(user.owner_id)
 
         const getProperties = async () => {
+            setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
             const propertyData = await response.json();
@@ -118,6 +120,7 @@ export default function AddMaintenanceItem(){
             console.log("properties", propertyData)
             // setProperties(properties)
             setProperties([...propertyData["Property"].result]);
+            setShowSpinner(false);
         }
 
         getProperties();
@@ -173,6 +176,7 @@ export default function AddMaintenanceItem(){
 
 
         const postData = async () => {
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: "POST",
@@ -183,6 +187,7 @@ export default function AddMaintenanceItem(){
             } catch (err){  
                 console.error("Error: ", err.message)
             }
+            setShowSpinner(false);
         }
         postData();
 
@@ -200,6 +205,12 @@ export default function AddMaintenanceItem(){
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

@@ -10,6 +10,8 @@ import {
     Typography,
     Button
 } from '@mui/material';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 // const theme = createTheme({
 //     palette: {
@@ -28,7 +30,7 @@ import {
 function POContracts(props) {
     
     const [managers, setManagers] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
@@ -70,15 +72,23 @@ function POContracts(props) {
     ];
 
     useEffect(() => {
+        setShowSpinner(true);
         axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager")
             .then((res) => {
                 setManagers(res.data.result);
                 console.log(res.data.result);
+                setShowSpinner(false);
             });
     }, []);
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 fontFamily: 'Source Sans Pro',
                 color: 'text.darkblue',

@@ -17,6 +17,8 @@ import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios from 'axios';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
     input: {
@@ -29,7 +31,7 @@ export default function PaymentsTenant(props) {
     const navigate = useNavigate();
     const { user, getProfileId } = useUser();
     const [paymentDueResult, setPaymentDueResult] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [paymentNotes, setPaymentNotes] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
     const [total, setTotal] = useState(0);
@@ -50,6 +52,7 @@ export default function PaymentsTenant(props) {
     })
 
     const fetchPaymentsData = async () => {
+        setShowSpinner(true);
         try{
         // if (access_token === null) {
         //   navigate("/");
@@ -81,6 +84,7 @@ export default function PaymentsTenant(props) {
         } catch (error) {
             console.error("Error fetching payment data:", error);
         }
+        setShowSpinner(false);
     };
 
     // Update total and selectedItems when a checkbox is clicked
@@ -143,6 +147,7 @@ export default function PaymentsTenant(props) {
     const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
     const handleStripePayment = async (e) => {
+        setShowSpinner(true);
         console.log("Stripe Payment")
         try {
             // Update paymentData with the latest total value
@@ -170,6 +175,7 @@ export default function PaymentsTenant(props) {
         } catch (error) {
             console.log(error);
         }
+        setShowSpinner(false);
     }
 
     // Define the CSS style for the selected checkbox
@@ -185,6 +191,12 @@ export default function PaymentsTenant(props) {
     return (
         <>
             <ThemeProvider theme={theme}>
+                <Backdrop
+                    sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={showSpinner}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 <Paper
                     component={Stack}
                     direction="column"

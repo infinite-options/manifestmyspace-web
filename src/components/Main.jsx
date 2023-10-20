@@ -49,9 +49,16 @@ import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
+import OwnerContacts from "./Contacts/OwnerContacts";
+import PMContacts from "./Contacts/PMContacts";
+import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
-import TenantContactDetails from "./Contacts/TenantContactDetails";
+// import TenantContactDetails from "./Contacts/TenantContactDetails";
+import TenantContactDetails from "./Contacts/ContactDetails/TenantContactDetails";
+import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetails"; 
+import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails"; 
+import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
 import OwnerDashboard from "./OwnerDashboard";
@@ -120,6 +127,8 @@ import AddRole from "./Onboarding/AddRole";
 import Payments from "./Payments/Payments";
 import PMQuotesRequested from "./Property/PMQuotesRequested";
 
+import TenantApplication from "./Applications/TenantApplication";
+
 function Main() {
   return (
     <div
@@ -158,7 +167,7 @@ function Main() {
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
-            <Route path="findProperty" element={<FindProperty />} />
+            <Route path="listings" element={<FindProperty />} />
 
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
@@ -206,9 +215,15 @@ function Main() {
 
             <Route path="propertyInfo" element={<PropertyInfo />} />
             <Route path="contacts" element={<Contacts />} />
+            <Route path="ownerContacts" element={<OwnerContacts />} />
+            <Route path="PMContacts" element={<PMContacts />} />
+            <Route path="maintenanceContacts" element={<MaintenanceContacts />} />
             <Route path="contactDetails" element={<ContactDetails />} />
             <Route path="addContacts" element={<AddContacts />} />
             <Route path="tenantContactDetails" element={<TenantContactDetails />} />
+            <Route path="managerContactDetails" element={<ManagerContactDetails />} />
+            <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
+            <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
@@ -251,6 +266,8 @@ function Main() {
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+
+            <Route path="tenantApplication" element={<TenantApplication />} />
             
           </Route>
         </Routes>

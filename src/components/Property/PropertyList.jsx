@@ -45,6 +45,8 @@ import maintenanceIcon from "./maintenanceIcon.png";
 import samplePropertyData from "./samplePropertyData";
 import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 // import PropertyData from './PropertyData';
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
@@ -138,7 +140,7 @@ export default function PropertyList({}) {
   const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   // const [maintenanceData, setMaintenanceData] = useState([]);
-
+  const [showSpinner, setShowSpinner] = useState(false);
   const profileId = getProfileId();
 
   console.log("getProfileId information", getProfileId());
@@ -156,6 +158,7 @@ export default function PropertyList({}) {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
+      setShowSpinner(true);
       console.log("Profile ID :"+profileId);
 //      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
@@ -163,6 +166,7 @@ export default function PropertyList({}) {
       console.log(propertyData)
       setPropertyList([...propertyData["Property"].result]);
       setDisplayedItems([...propertyData["Property"].result]);
+      setShowSpinner(false);
     };
     fetchData();
   }, []);
@@ -238,6 +242,12 @@ export default function PropertyList({}) {
           marginTop: theme.spacing(2), // Set the margin to 20px
         }}
       >
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <Paper
           sx={{
             margin: "30px",

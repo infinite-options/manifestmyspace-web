@@ -22,16 +22,22 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-const Contacts = (props) => {
-    const { getProfileId } = useUser();
-    const [contactsTab, setContactsTab] = useState('Owner');
+const OwnerContacts = (props) => {
+    const { getProfileId, selectedRole } = useUser();
+    const [contactsTab, setContactsTab] = useState('Managers');
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
     const [maintenanceData, setMaintenanceData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+
+    const [managersData, setManagersData] = useState([]);
+    const [tenantsData, setTenantsData] = useState([]);
+
+
     const [ownerDataDetails, setOwnerDataDetails] = useState([]);
     const [tenantDataDetails, setTenantDataDetails] = useState([]);
     const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
+    const [managersDataDetails, setManagersDataDetails] = useState([]);
 
     const navigate = useNavigate();
 
@@ -41,99 +47,21 @@ const Contacts = (props) => {
 
     const fetchData = async () => {
         const url =
-            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/${getProfileId()}`;
+            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        // const url =
+        //     `http://localhost:4000/contacts/110-000003`;
         setShowSpinner(true);
         await axios
             .get(url)
             .then((resp) => {
-                const data = resp.data['Business_Contacts'].result;
-                // console.log(data);
+                const data = resp.data['owner_contacts'];
+                console.log("OWNER DATA")
+                console.log(data);
+                console.log("SELECTED ROLE")
+                console.log(selectedRole);
 
-                const ownerCon = data.filter((val) => {
-                    return val.contact_uid && val.contact_uid.includes('110-');
-                });
-                setOwnerData(ownerCon);
-
-                const tenantCon = data.filter((val) => {
-                    return val.contact_uid && val.contact_uid.includes('350-');
-                });
-                setTenantData(tenantCon);
-
-                const mainCon = data.filter((val) => {
-                    return val.contact_uid && val.contact_uid.includes('600-');
-                });
-                setMaintenanceData(mainCon);
-                setShowSpinner(false);
-            })
-            .catch((e) => {
-                console.error(e);
-                setShowSpinner(false);
-            });
-
-        const ownerUrl =
-            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/${getProfileId()}`;
-        setShowSpinner(true);
-        await axios
-            .get(ownerUrl)
-            .then((resp) => {
-                const ownerCon = resp.data['Owner_Details'].result;
-                // console.log(ownerCon);
-                const uniqueValues = {};
-
-                const uniqueContacts = ownerCon.filter((item) => {
-                    if (
-                        !uniqueValues[item.contract_name] &&
-                        item.contract_status === 'ACTIVE'
-                    ) {
-                        uniqueValues[item.contract_name] = true;
-                        return true;
-                    }
-                    return false;
-                });
-                setOwnerDataDetails(uniqueContacts);
-                setShowSpinner(false);
-            })
-            .catch((e) => {
-                console.error(e);
-                setShowSpinner(false);
-            });
-
-        const tenantUrl =
-            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/${getProfileId()}`;
-        setShowSpinner(true);
-        await axios
-            .get(tenantUrl)
-            .then((resp) => {
-                const tenantCon = resp.data['Tenant_Details'].result;
-
-                const uniqueValues = {};
-
-                const uniqueContacts = tenantCon.filter((item) => {
-                    if (
-                        !uniqueValues[item.tenant_uid] &&
-                        item.contract_status !== 'TERMINATED'
-                    ) {
-                        uniqueValues[item.tenant_uid] = item;
-                        return true;
-                    }
-                    return false;
-                });
-                setTenantDataDetails(uniqueContacts);
-                setShowSpinner(false);
-            })
-            .catch((e) => {
-                console.error(e);
-                setShowSpinner(false);
-            });
-
-        const maintenanceUrl =
-            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/${getProfileId()}`;
-        setShowSpinner(true);
-        await axios
-            .get(maintenanceUrl)
-            .then((resp) => {
-                const mainCon = resp.data['Maintenance_Details'].result;
-                setMaintenanceDataDetails(mainCon);
+                setManagersData(data['managers']);
+                setTenantsData(data['tenants']);
                 setShowSpinner(false);
             })
             .catch((e) => {
@@ -147,34 +75,24 @@ const Contacts = (props) => {
     };
 
     const handleSetSelectedCard = (selectedData, index) => {
-        if (contactsTab === 'Owner') {
-            navigate('/contactDetails', {
+        if (contactsTab === 'Managers') {
+            navigate('/managerContactDetails', {
                 state: {
-                    dataDetails: ownerDataDetails,
+                    dataDetails: managersData,
                     tab: contactsTab,
                     selectedData: selectedData,
                     index: index,
-                    viewData: ownerData,
+                    viewData: managersData,
                 },
             });
         } else if (contactsTab === 'Tenants') {
             navigate('/tenantContactDetails', {
                 state: {
-                    dataDetails: tenantDataDetails,
+                    dataDetails: tenantsData,
                     tab: contactsTab,
                     selectedData: selectedData,
                     index: index,
-                    viewData: tenantData,
-                },
-            });
-        } else if (contactsTab === 'Maintenance') {
-            navigate('/contactDetails', {
-                state: {
-                    dataDetails: maintenanceDataDetails,
-                    tab: contactsTab,
-                    selectedData: selectedData,
-                    index: index,
-                    viewData: maintenanceData,
+                    viewData: tenantsData,
                 },
             });
         }
@@ -248,14 +166,14 @@ const Contacts = (props) => {
                                     <path
                                         d="M9 2L9 16"
                                         stroke="#160449"
-                                        stroke-width="3"
-                                        stroke-linecap="round"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
                                     />
                                     <path
                                         d="M16 9L2 9"
                                         stroke="#160449"
-                                        stroke-width="3"
-                                        stroke-linecap="round"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
                                     />
                                 </svg>
                             </Button>
@@ -298,12 +216,12 @@ const Contacts = (props) => {
                                     className="contacts-detail-navbar"
                                     style={{
                                         backgroundColor:
-                                            getStatusColor('Owner'),
+                                            getStatusColor('Managers'),
                                     }}
-                                    onClick={() => setContactsTab('Owner')}
+                                    onClick={() => setContactsTab('Managers')}
                                 >
                                     <div className="contacts-detail-text">
-                                        Owners
+                                        Managers
                                     </div>
                                 </div>
                                 <div
@@ -318,20 +236,6 @@ const Contacts = (props) => {
                                         Tenants
                                     </div>
                                 </div>
-                                <div
-                                    className="contacts-detail-navbar"
-                                    style={{
-                                        backgroundColor:
-                                            getStatusColor('Maintenance'),
-                                    }}
-                                    onClick={() =>
-                                        setContactsTab('Maintenance')
-                                    }
-                                >
-                                    <div className="contacts-detail-text">
-                                        Maintenance
-                                    </div>
-                                </div>
                             </div>
                             <div className="contacts-detail-background">
                                 <div
@@ -341,19 +245,20 @@ const Contacts = (props) => {
                                             getStatusColor(contactsTab),
                                     }}
                                 />
-                                {contactsTab === 'Owner' ? (
+                                {contactsTab === 'Managers' ? (
                                     <>
-                                        {ownerData.map((owner, index) => {
+                                        {managersData.map((manager, index) => {
                                             return (
                                                 <OwnerContactsCard
-                                                    data={owner}
+                                                    data={manager}
                                                     key={index}
                                                     index={index}
                                                     selected={
                                                         handleSetSelectedCard
                                                     }
                                                     dataDetails={
-                                                        ownerDataDetails.length
+                                                        managersData.length
+                                                        // ownerDataDetails.length
                                                     }
                                                 />
                                             );
@@ -361,7 +266,7 @@ const Contacts = (props) => {
                                     </>
                                 ) : contactsTab === 'Tenants' ? (
                                     <>
-                                        {tenantDataDetails.map(
+                                        {tenantsData.map(
                                             (tenant, index) => {
                                                 return (
                                                     <TenantContactsCard
@@ -431,7 +336,7 @@ const OwnerContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {owner.contact_first_name} {owner.contact_last_name}
+                            {`${owner.contact_first_name} ${owner.contact_last_name}`}
                         </Typography>
                         <Button>
                             <Message
@@ -449,7 +354,7 @@ const OwnerContactsCard = (props) => {
                             fontWeight: theme.typography.primary.fontWeight,
                         }}
                     >
-                        {ownerDataDetailsLength} Properties
+                        {owner.property_count} Properties
                     </Typography>
                     <Typography
                         sx={{
@@ -464,8 +369,8 @@ const OwnerContactsCard = (props) => {
                             color: theme.typography.common.blue,
                             fontSize: '14px',
                         }}
-                    >
-                        {formattedPhoneNumber(owner.contact_phone_numnber)}
+                    >   
+                        {formattedPhoneNumber(owner.contact_phone_number)}
                     </Typography>
                 </CardContent>
             </Card>
@@ -504,7 +409,7 @@ const TenantContactsCard = (props) => {
                         >
                             {/* {tenant.contact_first_name}{' '}
                             {tenant.contact_last_name} */}
-                            {tenant.tenant_first_name} {tenant.tenant_last_name}
+                            {tenant.contact_first_name} {tenant.contact_last_name}
                         </Typography>
                         <Button>
                             <Message
@@ -521,9 +426,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.tenant_address
-                            ? tenant.tenant_address
-                            : '103 N. Abel St, Milpitas CA 95035'}
+                        {tenant.contact_address}
                     </Typography>
                     <Typography
                         sx={{
@@ -531,7 +434,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.tenant_email}
+                        {tenant.contact_email}
                     </Typography>
                     <Typography
                         sx={{
@@ -539,9 +442,9 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.tenant_phone_number.indexOf('(') > -1
-                            ? tenant.tenant_phone_number
-                            : formattedPhoneNumber(tenant.tenant_phone_number)}
+                        {tenant.contact_phone_number.indexOf('(') > -1
+                            ? tenant.contact_phone_number
+                            : formattedPhoneNumber(tenant.contact_phone_number)}
                         {/* {formattedPhoneNumber(tenant.tenant_phone_number)} */}
                     </Typography>
                 </CardContent>
@@ -623,4 +526,4 @@ const MaintenanceContactsCard = (props) => {
     );
 };
 
-export default Contacts;
+export default OwnerContacts;

@@ -27,11 +27,13 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function QuotesAccepted01({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
-
+    const [showSpinner, setShowSpinner] = useState(false);
     console.log("QuotesAccepted maintenanceItem", maintenanceItem)
 
 
@@ -46,7 +48,7 @@ export default function QuotesAccepted01({maintenanceItem}){
     }
 
     async function handleCancel(id){ // Change
-        let response = CancelTicket(id);
+        let response = CancelTicket(id, setShowSpinner);
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
@@ -63,6 +65,7 @@ export default function QuotesAccepted01({maintenanceItem}){
         console.log("handleScheduleChange", id)
 
         const changeMaintenanceRequestStatus = async () => {
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
@@ -89,10 +92,11 @@ export default function QuotesAccepted01({maintenanceItem}){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
 
         const changeQuoteStatus = async () => {
-
+            setShowSpinner(true);
             var formData = new FormData();
             formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
             formData.append("quote_status", "SCHEDULED");
@@ -111,12 +115,13 @@ export default function QuotesAccepted01({maintenanceItem}){
             } catch(error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
         changeMaintenanceRequestStatus()
     }
 
     async function handleComplete(id){
-        let response = CompleteTicket(id);
+        let response = CompleteTicket(id, setShowSpinner);
         console.log("handleComplete", response);
         if (response){
             console.log("Ticket Completed")
@@ -129,6 +134,7 @@ export default function QuotesAccepted01({maintenanceItem}){
     }
 
     async function handleScheduleStatusChange(){
+        setShowSpinner(true);
         try {
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                 method: 'PUT',
@@ -150,6 +156,7 @@ export default function QuotesAccepted01({maintenanceItem}){
         } catch (error){
             console.log("error", error)
         }
+        setShowSpinner(false);
     }
 
     return(
@@ -162,6 +169,12 @@ export default function QuotesAccepted01({maintenanceItem}){
                 width: "100%",
             }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
               <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <Grid item xs={1} sx={{
                         alignItems: "center",
