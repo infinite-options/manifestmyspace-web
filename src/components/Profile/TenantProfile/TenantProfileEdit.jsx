@@ -2,11 +2,15 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack
 import axios from "axios";
 import { useEffect, useState, createContext, useContext  } from "react";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 const TenantProfileEditContext = createContext(null);
 
 function TenantProfileEdit(props) {
     const { getProfileId } = useUser();
+    const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState({});
     const [modifiedData, setModifiedData] = useState({});
     const [isEdited, setIsEdited] = useState(false);
@@ -65,6 +69,7 @@ function TenantProfileEdit(props) {
 
     useEffect(()=>{
         console.log("TENANT EDIT USE EFFECT")
+        setShowSpinner(true);
         
         // axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000060')
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
@@ -108,6 +113,8 @@ function TenantProfileEdit(props) {
             // setTenantMonthlyRent(responseData.tenant_monthly_rent)
             // setTenantPMName(responseData.tenant_pm_name)
             // setTenantPMPhone(responseData.tenant_pm_phone)
+
+            setShowSpinner(false);
         });
     }, []);
 
@@ -217,6 +224,12 @@ function TenantProfileEdit(props) {
                 fontFamily: 'Source Sans Pro',
 
             }}>
+                <Backdrop
+                    sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={showSpinner}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 <Box sx={{
                     backgroundColor: '#3D5CAC',
                     minHeight: '100px',
