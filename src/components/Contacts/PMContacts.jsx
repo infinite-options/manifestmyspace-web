@@ -49,6 +49,9 @@ const PMContacts = (props) => {
         const url =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
         setShowSpinner(true);
+
+        // const url =
+        //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000003`;
         // const url =
         //     `http://localhost:4000/contacts/600-000003`;
         await axios
@@ -359,7 +362,11 @@ const OwnerContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {owner.contact_first_name} {owner.contact_last_name}
+                            {`
+                                ${owner.contact_first_name? owner.contact_first_name : '<FIRST_NAME>'}
+                                ${owner.contact_last_name? owner.contact_last_name : '<LAST_NAME>'}
+                            `}
+                            {/* {owner.contact_first_name} {owner.contact_last_name} */}
                         </Typography>
                         <Button>
                             <Message
@@ -377,7 +384,7 @@ const OwnerContactsCard = (props) => {
                             fontWeight: theme.typography.common.fontWeight,
                         }}
                     >
-                        {owner.property_count} Properties
+                        {owner.property_count? owner.property_count : '<PROPERTY_COUNT>'} Properties
                     </Typography>
                     <Typography
                         sx={{
@@ -385,7 +392,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {owner.contact_email}
+                        {owner.contact_email? owner.contact_email : '<EMAIL>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -393,7 +400,7 @@ const OwnerContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {formattedPhoneNumber(owner.contact_phone_number)}
+                        {owner.contact_phone_number? formattedPhoneNumber(owner.contact_phone_number) : '<PHONE_NUMBER>'}
                     </Typography>
                 </CardContent>
             </Card>
@@ -430,9 +437,11 @@ const TenantContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {/* {tenant.contact_first_name}{' '}
-                            {tenant.contact_last_name} */}
-                            {tenant.contact_first_name} {tenant.contact_last_name}
+                            {/* {tenant.contact_first_name} {tenant.contact_last_name} */}
+                            {`
+                                ${tenant.contact_first_name? tenant.contact_first_name : '<FIRST_NAME>'}
+                                ${tenant.contact_last_name? tenant.contact_last_name : '<LAST_NAME>'}
+                            `}
                         </Typography>
                         <Button>
                             <Message
@@ -449,9 +458,7 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_address
-                            ? tenant.contact_address
-                            : '<ADDRESS>'}
+                        {tenant.contact_address ? tenant.contact_address : '<ADDRESS>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -459,7 +466,8 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_email}
+                        {/* {tenant.contact_email} */}
+                        {tenant.contact_email? tenant.contact_email : '<EMAIL>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -467,10 +475,17 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {tenant.contact_phone_number.indexOf('(') > -1
+                        {/* {tenant.contact_phone_number.indexOf('(') > -1
                             ? tenant.contact_phone_number
-                            : formattedPhoneNumber(tenant.contact_phone_number)}
+                            : formattedPhoneNumber(tenant.contact_phone_number)} */}
                         {/* {formattedPhoneNumber(tenant.tenant_phone_number)} */}
+                        {
+                            tenant.contact_phone_number
+                                ? (tenant.contact_phone_number.indexOf('(') > -1
+                                    ? tenant.contact_phone_number
+                                    : formattedPhoneNumber(tenant.contact_phone_number))
+                                : '<PHONE_NUMBER>'
+                        }
                     </Typography>
                 </CardContent>
             </Card>
@@ -505,8 +520,12 @@ const MaintenanceContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {business.contact_first_name}{' '}
-                            {business.contact_last_name}
+                            {/* {business.contact_first_name}{' '}
+                            {business.contact_last_name} */}
+                            {`
+                                ${business.contact_first_name? business.contact_first_name : '<FIRST_NAME>'}
+                                ${business.contact_last_name? business.contact_last_name : '<LAST_NAME>'}
+                            `}
                         </Typography>
                         <Button>
                             <Message
@@ -523,7 +542,7 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {business.contact_email}
+                        {business.contact_email? business.contact_email : '<EMAIL>'}
                     </Typography>
                     <Typography
                         sx={{
@@ -531,7 +550,14 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {formattedPhoneNumber(business.contact_phone_number)}
+                        {/* {formattedPhoneNumber(business.contact_phone_number)} */}
+                        {
+                            business.contact_phone_number
+                                ? (business.contact_phone_number.indexOf('(') > -1
+                                    ? business.contact_phone_number
+                                    : formattedPhoneNumber(business.contact_phone_number))
+                                : '<PHONE_NUMBER>'
+                        }
                     </Typography>
                     <Typography
                         sx={{
@@ -541,9 +567,7 @@ const MaintenanceContactsCard = (props) => {
                             position: 'absolute',
                         }}
                     >
-                        {business.contact_description
-                            ? business.contact_description
-                            : '<Category-TBD>'}
+                        {business.contact_description ? business.contact_description : '<Category-TBD>'}
                     </Typography>
                 </CardContent>
             </Card>

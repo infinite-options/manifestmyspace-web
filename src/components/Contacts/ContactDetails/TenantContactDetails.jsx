@@ -12,22 +12,32 @@ import { getStatusColor } from '../ContactsFunction';
 import { Email, Message, Phone } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { maskSSN, maskEIN, formattedPhoneNumber } from '../../utils/privacyMasking';
+import { useUser } from "../../../contexts/UserContext";
 import User_fill from '../../../images/User_fill_dark.png'
 
 const TenantContactDetails = (props) => {
+    const { selectedRole } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
     const contactDetails = location.state.dataDetails;
     const contactsTab = location.state.tab;
-    const selectedData = location.state.selectedData;
-    const index = location.state.index;
-    const passedData = location.state.viewData;
+    // const selectedData = location.state.selectedData;
+    // const index = location.state.index;
+    const [index, setIndex] = useState(location.state.index);
+    // const passedData = location.state.viewData;
 
-    const [currentViewData, setCurrentViewData] = useState();
+    // const [currentViewData, setCurrentViewData] = useState();
 
-    console.log(contactDetails);
-    console.log(selectedData);
-    console.log(index);
+    useEffect(() => {
+        console.log("INDEX UPDATED - ", index);
+        // location.state.index = index;
+        console.log("DATA DETAILS", contactDetails[index])
+    }, [index]);
+
+    // console.log(contactDetails);
+    // console.log(selectedData);
+    console.log("INDEX", index);
+    console.log('SELECTED ROLE - ', selectedRole);
 
     // const uniqueValues = {};
 
@@ -53,9 +63,9 @@ const TenantContactDetails = (props) => {
         navigate(-1);
     };
 
-    useEffect(() => {
-        setCurrentViewData(selectedData);
-    }, []);
+    // useEffect(() => {
+    //     setCurrentViewData(selectedData);
+    // }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -92,7 +102,7 @@ const TenantContactDetails = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
-                            Tenant Contacts
+                            Tenant Contact
                         </Typography>
                         <Stack flexDirection="row" justifyContent="center">
                             <Button
@@ -146,7 +156,11 @@ const TenantContactDetails = (props) => {
                                     padding: '5px 10px',
                                 }}
                             >
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Previous button clicked");
+                                        index > 0? setIndex(index-1) : setIndex(contactDetails.length - 1)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -170,11 +184,15 @@ const TenantContactDetails = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                                        {index + 1} Of {passedData.length}{' '}
-                                        {contactsTab}
+                                        {index + 1} of {contactDetails.length} Tenants
+                                        {/* {contactsTab} */}
                                     </Typography>
                                 </Box>
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Next button clicked");
+                                        (index < contactDetails.length - 1) ? setIndex(index+1) : setIndex(0)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -206,8 +224,12 @@ const TenantContactDetails = (props) => {
                                             theme.typography.common.fontWeight,
                                     }}
                                 >
-                                    {selectedData.contact_first_name}{' '}
-                                    {selectedData.contact_last_name}
+                                    {/* {selectedData.contact_first_name}{' '}
+                                    {selectedData.contact_last_name} */}
+                                    {`
+                                        ${contactDetails[index].contact_first_name? contactDetails[index].contact_first_name : '<FIRST_NAME>'}
+                                        ${contactDetails[index].contact_last_name? contactDetails[index].contact_last_name : '<LAST_NAME>'
+                                    }`}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -221,27 +243,16 @@ const TenantContactDetails = (props) => {
                                     marginTop: '-34px',
                                 }}
                             >
-                                {selectedData.contact_photo_url ? (
-                                    <img
-                                        src={selectedData.contact_photo_url}
-                                        alt="profile placeholder"
-                                        style={{
-                                            height: '60px',
-                                            width: '60px',
-                                            margin: '4px',
-                                        }}
-                                    />
-                                ) : (
-                                    <img
-                                        src={User_fill}
-                                        alt="profile placeholder"
-                                        style={{
-                                            height: '60px',
-                                            width: '60px',
-                                            margin: '4px',
-                                        }}
-                                    />
-                                )}
+                                <img
+                                    src={contactDetails[index].contact_photo_url? contactDetails[index].contact_photo_url : User_fill}
+                                    alt="profile placeholder"
+                                    style={{
+                                        height: '60px',
+                                        width: '60px',
+                                        margin: '4px',
+                                        borderRadius: '68px',
+                                    }}
+                                />
                             </Box>
                         </Stack>
                         <Stack sx={{ padding: '10px 15px 0' }}>
@@ -273,7 +284,8 @@ const TenantContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {selectedData.contact_email}
+                                        {/* {selectedData.contact_email} */}
+                                        { contactDetails[index].contact_email? contactDetails[index].contact_email : '<EMAIL>' }
                                     </Typography>
                                 </Stack>
                                 <Stack flexDirection="row">
@@ -289,7 +301,8 @@ const TenantContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {selectedData.contact_phone_number}
+                                        {/* {selectedData.contact_phone_number} */}
+                                        { contactDetails[index].contact_phone_number? formattedPhoneNumber(contactDetails[index].contact_phone_number) : '<PHONE_NUMBER>' }
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -302,12 +315,16 @@ const TenantContactDetails = (props) => {
                                     fontWeight:
                                         theme.typography.primary.fontWeight,
                             }}>
-                                {selectedData.contact_address}
+                                {/* {selectedData.contact_address}
                                 {', '}
                                 {selectedData.contact_city}
                                 {', '}
                                 {selectedData.contact_state}{' '}
-                                {selectedData.contact_zip}
+                                {selectedData.contact_zip} */}
+                                {contactDetails[index].contact_address ? contactDetails[index].contact_address : '<ADDRESS>'} {', '}
+                                {contactDetails[index].contact_city ? contactDetails[index].contact_city : '<CITY>'} {', '}
+                                {contactDetails[index].contact_state ? contactDetails[index].contact_state : '<STATE>'} {', '}
+                                {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : '<ZIP>'}
                             </Typography>
                             {/* <Typography
                                 sx={{
@@ -320,29 +337,29 @@ const TenantContactDetails = (props) => {
                         </Stack>
                         <Stack spacing={3} sx={{ padding: '15px' }}>
                             <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_adult_occupants).length} Adult(s)`}</Typography>
-                                {JSON.parse(selectedData.contact_adult_occupants).map((occupant, index) => (
+                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(contactDetails[index].contact_adult_occupants).length} Adult(s)`}</Typography>
+                                {JSON.parse(contactDetails[index].contact_adult_occupants).map((occupant, index) => (
                                     <Typography key={index} sx={{ fontSize: '13px' }}>{`${occupant.name} | ${occupant.relationship} | DOB: ${occupant.dob}`}</Typography>
                                 ))}
                             </Stack>
                             
                             <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_children_occupants).length} Children`}</Typography>
-                                {JSON.parse(selectedData.contact_children_occupants).map((occupant, index) => (
+                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(contactDetails[index].contact_children_occupants).length} Children`}</Typography>
+                                {JSON.parse(contactDetails[index].contact_children_occupants).map((occupant, index) => (
                                     <Typography key={index} sx={{ fontSize: '13px' }}>{`${occupant.name} | ${occupant.relationship} | DOB: ${occupant.dob}`}</Typography>
                                 ))}
                             </Stack>
                             
                             <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_pet_occupants).length} Pet(s)`}</Typography>
-                                {JSON.parse(selectedData.contact_pet_occupants).map((occupant, index) => (
+                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(contactDetails[index].contact_pet_occupants).length} Pet(s)`}</Typography>
+                                {JSON.parse(contactDetails[index].contact_pet_occupants).map((occupant, index) => (
                                     <Typography key={index} sx={{ fontSize: '13px' }}>{`${occupant.name} | ${occupant.type} | ${occupant.weight} lbs`}</Typography>
                                 ))}
                             </Stack>
                             
                             <Stack>
-                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(selectedData.contact_vehicle_info).length} Vehicle(s)`}</Typography>
-                                {JSON.parse(selectedData.contact_vehicle_info).map((vehicle, index) => (
+                                <Typography sx={{ fontSize: '13px' }}>{`${JSON.parse(contactDetails[index].contact_vehicle_info).length} Vehicle(s)`}</Typography>
+                                {JSON.parse(contactDetails[index].contact_vehicle_info).map((vehicle, index) => (
                                     <Typography key={index} sx={{ fontSize: '13px' }}>{`${vehicle.make} ${vehicle.model} | ${vehicle.license} | ${vehicle.state}`}</Typography>
                                 ))}
                             </Stack>
@@ -362,7 +379,7 @@ const TenantContactDetails = (props) => {
                                     alignItems="center"
                                     sx={{ paddingLeft: '10px' }}
                                 >
-                                    {!selectedData.hasOwnProperty('contact_ssn') || selectedData.contact_ssn === '' ? (
+                                    {!contactDetails[index].hasOwnProperty('contact_ssn') || contactDetails[index].contact_ssn === '' ? (
                                         <Typography
                                             sx={{
                                                 fontSize: '13px',
@@ -382,7 +399,7 @@ const TenantContactDetails = (props) => {
                                                         .fontWeight,
                                             }}
                                         >
-                                            {selectedData.hasOwnProperty('contact_ssn') && maskSSN(selectedData.contact_ssn)}
+                                            {contactDetails[index].hasOwnProperty('contact_ssn') && maskSSN(contactDetails[index].contact_ssn)}
                                         </Typography>
                                     )}
                                     <Typography
@@ -406,7 +423,11 @@ const TenantContactDetails = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                                        {selectedData.contact_drivers_license_number} {selectedData.contact_drivers_license_state}
+                                        {`
+                                            ${contactDetails[index].contact_drivers_license_number? contactDetails[index].contact_drivers_license_number : '<LICENSE_NO>'} 
+                                            ${contactDetails[index].contact_drivers_license_state? contactDetails[index].contact_drivers_license_state : '<LICENSE_STATE>'}
+                                        `}
+                                        
                                     </Typography>
                                     <Typography
                                         sx={{

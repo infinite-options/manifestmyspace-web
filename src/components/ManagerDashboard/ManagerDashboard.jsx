@@ -406,7 +406,7 @@ function ManagerDashboard() {
                                 id="revenue"
                                 className={classes.button}
                                 onClick={() => {
-                                navigate('/pmContacts');
+                                navigate('/PMContacts');
                                 }}
                             >
                                 <img src={User_fill_dark} alt="Contacts" />

@@ -12,21 +12,33 @@ import { getStatusColor } from '../ContactsFunction';
 import { Email, Message, Phone } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { maskSSN, maskEIN, formattedPhoneNumber } from '../../utils/privacyMasking';
+import { useUser } from "../../../contexts/UserContext";
+import User_fill from '../../../images/User_fill_dark.png'
 
 const MaintenanceContactDetails = (props) => {
+    const { selectedRole } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
     const contactDetails = location.state.dataDetails;
     const contactsTab = location.state.tab;
-    const selectedData = location.state.selectedData;
-    const index = location.state.index;
-    const passedData = location.state.viewData;
+    // const selectedData = location.state.selectedData;
+    // const index = location.state.index;
+    const [index, setIndex] = useState(location.state.index);
+    // const passedData = location.state.viewData;
 
-    const [currentViewData, setCurrentViewData] = useState();
+    useEffect(() => {
+        console.log("INDEX UPDATED - ", index);
+        // location.state.index = index;
+        console.log("DATA DETAILS", contactDetails[index])
+    }, [index]);
+
+    // const [currentViewData, setCurrentViewData] = useState();
 
     console.log(contactDetails);
-    console.log(selectedData);
-    console.log(index);
+    // console.log(selectedData);
+    console.log("INDEX", index);
+    console.log('SELECTED ROLE - ', selectedRole);
+
 
     // const uniqueValues = {};
 
@@ -52,9 +64,9 @@ const MaintenanceContactDetails = (props) => {
         navigate(-1);
     };
 
-    useEffect(() => {
-        setCurrentViewData(selectedData);
-    }, []);
+    // useEffect(() => {
+    //     setCurrentViewData(selectedData);
+    // }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -91,7 +103,7 @@ const MaintenanceContactDetails = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
-                            Maintenance Contacts
+                            Maintenance Contact
                         </Typography>
                         <Stack flexDirection="row" justifyContent="center">
                             <Button
@@ -145,7 +157,11 @@ const MaintenanceContactDetails = (props) => {
                                     padding: '5px 10px',
                                 }}
                             >
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Previous button clicked. INDEX - ", index);
+                                        index > 0? setIndex(index-1) : setIndex(contactDetails.length - 1)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -169,11 +185,15 @@ const MaintenanceContactDetails = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                                        {index + 1} Of {passedData.length}{' '}
-                                        {contactsTab}
+                                        {index + 1} of {contactDetails.length} Contacts 
+                                        {/* {contactsTab} */}
                                     </Typography>
                                 </Box>
-                                <Box>
+                                <Box onClick={() => {
+                                        console.log("Next button clicked. INDEX - ", index);
+                                        (index < contactDetails.length - 1) ? setIndex(index+1) : setIndex(0)
+                                    }}
+                                >
                                     <svg
                                         width="33"
                                         height="33"
@@ -205,8 +225,12 @@ const MaintenanceContactDetails = (props) => {
                                             theme.typography.common.fontWeight,
                                     }}
                                 >
-                                    {selectedData.contact_first_name}{' '}
-                                    {selectedData.contact_last_name}
+                                    {/* {selectedData.contact_first_name}{' '}
+                                    {selectedData.contact_last_name} */}
+                                    {`
+                                        ${contactDetails[index].contact_first_name? contactDetails[index].contact_first_name : '<FIRST_NAME>'}
+                                        ${contactDetails[index].contact_last_name? contactDetails[index].contact_last_name : '<LAST_NAME>'}
+                                    `}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -221,7 +245,7 @@ const MaintenanceContactDetails = (props) => {
                                 }}
                             >
                                 <img
-                                    src={selectedData.contact_photo_url}
+                                    src={contactDetails[index].contact_photo_url? contactDetails[index].contact_photo_url : User_fill}
                                     alt="profile"
                                     style={{
                                         height: '60px',
@@ -261,7 +285,8 @@ const MaintenanceContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {selectedData.contact_email}
+                                        {/* {selectedData.contact_email} */}
+                                        { contactDetails[index].contact_email? contactDetails[index].contact_email : '<EMAIL>' }
                                     </Typography>
                                 </Stack>
                                 <Stack flexDirection="row">
@@ -277,7 +302,8 @@ const MaintenanceContactDetails = (props) => {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {selectedData.contact_phone_number}
+                                        {/* {selectedData.contact_phone_number} */}
+                                        { contactDetails[index].contact_phone_number? formattedPhoneNumber(contactDetails[index].contact_phone_number) : '<PHONE_NUMBER>' }
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -290,7 +316,7 @@ const MaintenanceContactDetails = (props) => {
                             </Stack>
                             <Stack>
                                 <Typography sx={{ fontSize: '13px',fontWeight: theme.typography.primary.fontWeight, }}>{`Areas of Service:`}</Typography>
-                                {JSON.parse(selectedData.contact_business_locations).map((location, index) => (
+                                {JSON.parse(contactDetails[index].contact_business_locations).map((location, index) => (
                                     <Typography key={index} sx={{ fontSize: '13px' }}>{`${location.location} | +- ${location.distance} miles |`}</Typography>
                                 ))}
                             </Stack>
@@ -320,7 +346,7 @@ const MaintenanceContactDetails = (props) => {
                                                     fontSize: '12px',
                                                 }}
                                             >
-                                                {selectedData.contact_paypal}
+                                                {contactDetails[index].contact_paypal? contactDetails[index].contact_paypal :'<PAYPAL>'}
                                             </Typography>
                                         </Stack>
                                     </Stack>
@@ -347,26 +373,14 @@ const MaintenanceContactDetails = (props) => {
                                             />
                                         </Box>
                                         <Stack>
-                                            {selectedData.contact_venmo === '' ? (
-                                                <Box
-                                                    sx={{
-                                                        marginRight: '130px',
-                                                    }}
-                                                >
-                                                    <Typography>
-                                                        {' '}
-                                                        &nbsp;{' '}
-                                                    </Typography>
-                                                </Box>
-                                            ) : (
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: '12px',
-                                                    }}
-                                                >
-                                                    {selectedData.contact_venmo}
-                                                </Typography>
-                                            )}
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '12px',
+                                                }}
+                                            >
+                                                {/* {selectedData.contact_venmo} */}
+                                                {contactDetails[index].contact_venmo? contactDetails[index].contact_venmo : '<VENMO>'}
+                                            </Typography>
                                         </Stack>
                                     </Stack>
                                 </Box>

@@ -348,7 +348,8 @@ export default function MaintenanceDashboard(){
                             display: 'flex', 
                             justifyContent: 'center', 
                             alignItems: 'center' 
-                        }}>
+                        }}
+                        >
                             <Button
                                 variant="contained"
                                 disableElevation                            
@@ -467,6 +468,7 @@ export default function MaintenanceDashboard(){
                                         boxShadow: '0 0 0 3px rgba(0,0,0,0.1)',
                                     },
                                 }}
+                                onClick={() => navigate('/maintenanceContacts')}
                             >
                                 <Box 
                                     component="img"
