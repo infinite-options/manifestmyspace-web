@@ -25,18 +25,77 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
     const color = theme.palette.form.main
     const maxSteps = images.length;
-
+    //const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
+    const [propertyId, setPropertyId] = useState('200-000028')
+    const [contractsFeeData, setContractsFeeData] = useState([]) 
     useEffect(() => {
         const getMintenanceForProperty = async () => {
             try {
                 console.log("Fetch maintenance data for "+item.property_uid)
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
+//                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);
+
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }
-                const data = await response.json();
-                console.log("Maintenance Data", data)
-                setMaintenanceData(data["MaintenanceProjects"].result);
+                const contractdata = await response.json();
+                console.log("Contract Data", contractdata)
+
+                const contracts = [];
+               
+                contractdata.result.forEach((contract) => {
+                  
+                    if (contract.contract_property_id==propertyId) {
+
+                        let obj = {
+                            fees: contract.contract_fees,
+                            documents: contract.contract_documents,
+                            contact: contract.contract_assigned_contacts
+                        }
+                        //console.log("C fee "+JSON.stringify(contract.contract_fees))
+                        //contracts.push(contract.contract_fees); 
+                        contracts.push(obj);                  
+                    }
+                });
+              
+                let obj = {};
+                const feeData = [];
+                contracts.forEach((contractfee2) => {
+
+                    var db = JSON.stringify(contractfee2.fees);
+                    let contractArray = JSON.parse(db);
+                   
+                    let contractfee1 = JSON.parse(contractArray)
+                    obj.documents = contractfee2.documents;
+                    let contactObj = JSON.parse(contractfee2.contact);
+                    obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+                    contractfee1.forEach((contractfee) => {
+
+                        if (contractfee!==undefined && contractfee.fee_name=="Monthly Service Charge") {
+                            obj.monthly_service_charge = contractfee.charge                
+                        }
+                        if (contractfee!==undefined && contractfee.fee_name=="Tenant Setup Fee") {
+                            obj.tenant_setup_fee = contractfee.charge                
+                        }
+                        if (contractfee!==undefined && contractfee.fee_name=="Annual Inspection Fee") {
+                            obj.annual_inspection_fee = contractfee.charge                
+                        }
+                        if (contractfee!==undefined && contractfee.fee_name=="Re-Keying Charge") {
+                            obj.re_keying_charge = contractfee.charge                
+                        }
+                        if (contractfee!==undefined && contractfee.fee_name=="Postage and Communication Fee") {
+                            obj.postage_and_communication_fee = contractfee.charge                
+                        }
+     
+                    });
+                    console.log(JSON.stringify(obj))
+                    feeData.push(obj)    
+                 
+                });
+
+               
+                setContractsFeeData(feeData);
+
             } catch (error) {
                 console.log(error);
             }
@@ -596,7 +655,8 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         <Box onClick={()=> {navigate("/pmQuotesRequested",
                                         {state :{
                                             index: index,
-                                            propertyData, propertyData
+                                            propertyData: propertyData,
+                                            contractsFeeData: contractsFeeData
                                         }})}}>
                                         <Typography
                                             sx={{

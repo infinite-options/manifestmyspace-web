@@ -9,6 +9,11 @@ import { Typography, Button, TextField, InputAdornment } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { ReactComponent as SearchIcon } from "../../images/search.svg";
 import { objToQueryString } from "../utils/helper";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useUser } from "../../contexts/UserContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +34,10 @@ const SearchManager = () => {
   const navigate = useNavigate();
   const [managers, setManagers] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
+
+  const { getProfileId } = useUser();
+  const [ownerId, setOwnerId] = useState(getProfileId());
+
   const handleSearch = async () => {
     const url =
       "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
@@ -156,7 +165,7 @@ const SearchManager = () => {
                   }}
                 />
                 {managers.map((m) => (
-                  <DocumentCard data={m} />
+                  <DocumentCard data={m} ownerId={ownerId} />
                 ))}
               </Box>
             </Box>
@@ -169,6 +178,52 @@ const SearchManager = () => {
 
 function DocumentCard(props) {
   const obj = props.data;
+  const ownerId = props.ownerId;
+
+//  console.log("Business Profile "+JSON.stringify(obj))
+
+  let location1 = JSON.parse(obj.business_locations);
+  let city = location1[0]!==undefined ? location1[0].location : "";
+  let distance = location1[0]!==undefined ? location1[0].distance : "";
+  let feesArray = JSON.parse(obj.business_services_fees);
+
+  const handleRequestQuotes = async () => {
+
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+    let data = JSON.stringify({
+
+      "announcement_title":"New PM Request",
+      "announcement_msg":"PM Quote Requested", 
+      "announcement_sender":ownerId,
+      "announcement_date":formattedDate,
+      "announcement_properties":"",
+      "announcement_mode":"",
+      "announcement_receiver":" ", 
+      "announcement_type":"PM Request",
+      "Email":0, "Text":0, "App":1,
+    });
+    
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    
+  };
 
   return (
     <Box
@@ -192,7 +247,7 @@ function DocumentCard(props) {
             fontWeight: "bold",
           }}
         >
-          {obj.business_name}
+          <Typography>{obj.business_name}</Typography>
         </Box>
       </Box>
       <Box></Box>
@@ -202,27 +257,25 @@ function DocumentCard(props) {
         }}
       >
         <Box>
-          Area of service: {obj.business_locations[0].location} +-{" "}
-          {obj.business_locations[0].distance} miles
+          <Typography>
+           Area of service: {city} +-{" "}{distance} miles
+          </Typography>
         </Box>
         <Box>
-          <Button
-            sx={{
+        <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+      
+          <Typography sx={{
               textTransform: "none",
-              color: "#160449",
-              width: `45%`,
-              height: `85%`,
-              left: `1%`,
-              right: `1%`,
+              width: `40%`,
+              height: `5%`,
+              left: `15%`,
               top: `10%`,
-              fontSize: `11px`,
-            }}
-          >
-            <div>
-              <img src={ArrowDown} />
-              Estimated Fees
-            </div>
-          </Button>
+            }} >Estimated Fees</Typography>
           <Button
             variant="contained"
             sx={{
@@ -230,20 +283,34 @@ function DocumentCard(props) {
               background: "#3D5CAC",
               color: theme.palette.background.default,
               width: `40%`,
-              height: `85%`,
+              height: `5%`,
               left: `15%`,
               top: `10%`,
               borderRadius: "10px 10px 10px 10px",
-              fontSize: `10px`,
             }}
+            onClick={handleRequestQuotes}
           >
             Request Quote
           </Button>
+        
+        </AccordionSummary>
+            <AccordionDetails>
+                {feesArray.map((fee) =>{
+                  return( <FeesTextCard fee={fee}/>)
+                })}
+              </AccordionDetails>
+        </Accordion>
         </Box>
         <Box></Box>
       </Box>
     </Box>
   );
+}
+
+function FeesTextCard(props) {
+
+  let fee = props.fee;
+ return(<Typography>{fee.fee_name}:{fee.charge}{fee.fee_type}</Typography>)
 }
 
 export default SearchManager;
