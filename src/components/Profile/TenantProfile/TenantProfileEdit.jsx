@@ -7,6 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 function TenantProfileEdit(props) {
     const { getProfileId } = useUser();
+
     const [profileData, setProfileData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     useEffect(()=>{
