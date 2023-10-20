@@ -45,13 +45,14 @@ function TenantProfile() {
     }, []);
     // console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
     return (
+        <>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <ThemeProvider theme={theme}>
-            <Backdrop
-                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={showSpinner}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
             <Box sx={{
                 "font-family": 'Source Sans Pro',
                 color: 'text.primary',
@@ -485,6 +486,7 @@ function TenantProfile() {
                 </Box>
             </Box>
         </ThemeProvider>
+        </>
     );
 }
 
