@@ -16,6 +16,7 @@ import CreateIcon from '@mui/icons-material/Create';
 import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 export default function PropertyNavigator({index, propertyData, paymentStatus, paymentStatusColor}){
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
         const getMintenanceForProperty = async () => {
             setShowSpinner(true);
             try {
-                console.log("Fetch maintenance data for "+item.property_uid)
+                console.log("Fetch maintenance data for "+ item.property_uid)
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
@@ -635,13 +636,14 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         </Box>
                                     </Grid>
                                     <Grid item xs={1}>
-                                        <Box >
-                                    <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
-                                    onClick={()=> {navigate("/pmQuotesRequested",{state :{
-                                        index: index,
-                                        propertyData, propertyData
-                                    }})}}/>
-                                    </Box></Grid>
+                                        <Box>
+                                            <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
+                                            onClick={()=> {navigate("/pmQuotesRequested",{state :{
+                                                index: index,
+                                                propertyData, propertyData
+                                            }})}}/>
+                                        </Box>
+                                    </Grid>
                                     <Grid item xs={11}>
                                         <Typography
                                                 sx={{
@@ -670,6 +672,21 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Button
+                                            variant="outlined" 
+                                            sx={{
+                                                background: '#3D5CAC',
+                                                color: theme.palette.background.default,
+                                            }}
+                                            onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
+                                        >
+                                            <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
+                                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                Create Listing
+                                            </Typography>
+                                        </Button>
                                     </Grid>
                                 </Grid>
                             </div>
