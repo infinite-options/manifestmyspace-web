@@ -128,6 +128,7 @@ import Payments from "./Payments/Payments";
 import PMQuotesRequested from "./Property/PMQuotesRequested";
 
 import TenantApplication from "./Applications/TenantApplication";
+import AddListing from "./Property/AddListing";
 
 function Main() {
   return (
@@ -168,6 +169,7 @@ function Main() {
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
             <Route path="listings" element={<FindProperty />} />
+            <Route path="addListing" element={<AddListing />} />
 
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
