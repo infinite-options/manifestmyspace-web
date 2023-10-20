@@ -100,6 +100,7 @@ import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
 import OnboardingRouter from "./Onboarding/OnboardingRouter";
+import PrivateOnboardingRouter from "./Onboarding/PrivateOnBoardingRouter";
 import ContactInfo from "./Onboarding/ContactInfo";
 
 import SelectRole from "./Onboarding/SelectRole";
@@ -114,6 +115,10 @@ import ProfileName from "./Onboarding/ProfileName";
 import ProfileInfo from "./Onboarding/ProfileInfo";
 import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
+import PrivateProfileName from "./Onboarding/PrivateProfileName";
+import PrivateProfileInfo from "./Onboarding/PrivateProfileInfo";
+import PrivatePersonalInfo from "./Onboarding/PrivatePersonalInfo";
+import PrivateProfilePayment from "./Onboarding/PrivateProfilePayment";
 import Forbidden from "./utils/Forbidden";
 import AddRole from "./Onboarding/AddRole";
 
@@ -160,6 +165,16 @@ function Main() {
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
             <Route path="leaseDocument" element={<LeasePDF />} />
+
+
+            <Route path="PrivateprofileName" element={<PrivateProfileName />} />
+            <Route path="PrivateprofileInfo" element={<PrivateProfileInfo />} />
+            <Route path="PrivatepersonalInfo" element={<PrivatePersonalInfo />} />
+            <Route path="PrivateprofilePayment" element={<PrivateProfilePayment />} />
+            <Route path="PrivateonboardingRouter" element={<PrivateOnboardingRouter />} />
+
+
+
 
             <Route path="announcement" element={<Announcement />} />
             <Route path="ownerProfile" element={<OwnerProfile />} />
