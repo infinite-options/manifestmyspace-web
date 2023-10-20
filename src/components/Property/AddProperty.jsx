@@ -43,6 +43,7 @@ export default function AddProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
+    const { user, selectedRole, selectRole, Name } = useUser();
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
@@ -68,12 +69,43 @@ export default function AddProperty({}){
     const [unit, setUnit] = useState('');
 
     const [description, setDescription] = useState('');
+    const [selectedOwner, setSelectedOwner] = useState('');
+    const [ownerList, setOwnerList] = useState([]);
     const [selectedImageList, setSelectedImageList] = useState([]);
     const maxSteps = selectedImageList.length;
 
     useEffect(() => {
         console.log("useEffect")
         setCoverImage(selectedImageList[0]?.data_url || coverImage);
+
+        const getOwnerContacts = async () => {
+                try {
+                    //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/`+);
+                    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000035`);
+    
+                    if(!response.ok){
+                        console.log("Error fetching owner data")
+                    }
+                    const ownerdata = await response.json();
+                    console.log("Owner Data", ownerdata.management_contacts.owners)
+
+                    let contactArray = ownerdata.management_contacts.owners;
+                    let ownerObjList = [];
+                    contactArray.forEach((contact)=>{
+                        let obj ={
+                            owner_id : contact.contact_uid,
+                            owner_name : contact.contact_first_name+" "+contact.contact_last_name,
+                        }
+                        ownerObjList.push(obj)
+                    });
+                    setOwnerList(ownerObjList);
+        
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            getOwnerContacts();
+    
     }, [selectedImageList])
 
     const handleNext = () => {
@@ -153,6 +185,10 @@ export default function AddProperty({}){
         setNotes(event.target.value);
     };
 
+    const handleOwnerChange = (event) => {
+        setSelectedOwner(event.target.value);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(event.target)
@@ -184,6 +220,7 @@ export default function AddProperty({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
+        formData.append('property_owner_id', selectedOwner);
 
         for (let i = 0; i < selectedImageList.length; i++) {
             console.log("selectedImageList[i].file", selectedImageList[i].data_url)
@@ -552,6 +589,31 @@ export default function AddProperty({}){
                                             onChange={handleNotesChange}
                                         />
                                     </Grid>
+                                   <Grid item xs={12}>
+                                   {selectedRole==='MANAGER'?<div>
+
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                            Owner 
+                                        </Typography>
+                                        <Select  sx={{
+                                                    backgroundColor: 'white',
+                                                    borderColor: 'black',
+                                                    borderRadius: '7px',
+                                                }}
+                                                size="small"
+                                                fullWidth value={selectedOwner} onChange={handleOwnerChange} displayEmpty>
+                                        <MenuItem value="" disabled>
+                                            Select Owner
+                                        </MenuItem>
+                                        {ownerList.map((option, index) => (
+                                            <MenuItem key={index} value={option.owner_id}>
+                                            {option.owner_name}
+                                            </MenuItem>
+                                        ))}
+                                        </Select>
+                                    
+                                   </div>:<div></div>} 
+                                   </Grid>
                                 </Grid>                              
                             </Box>
                         </Stack>

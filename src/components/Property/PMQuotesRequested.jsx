@@ -26,6 +26,7 @@ export default function PMQuotesRequested({}){
     const location = useLocation();
     let navigate = useNavigate(); 
 
+    const contractsFeeData = location.state.contractsFeeData;
     const property = location.state.propertyData;
     const index = location.state.index;
 
@@ -36,6 +37,14 @@ export default function PMQuotesRequested({}){
         return statusColor[status];
     }
    
+//     const address =  (property[index].business_locations!==null||property[index].business_locations!==undefined)
+//     ?property[index].business_locations:"";
+//    // console.log("propertyLocation "+JSON.parse(address)[0].city)
+
+//     const dataValue = {
+//         city: (address!==null||address!==undefined||address!=="") ?JSON.parse(address)[0].city:"",
+//         miles: (address!==null||address!==undefined||address!=="")?JSON.parse(address)[0].miles:""
+//     }
     const address = property[index].business_locations
     console.log("propertyLocation "+JSON.parse(address)[0].city)
 
@@ -43,6 +52,7 @@ export default function PMQuotesRequested({}){
         city: JSON.parse(address)[0].city,
         miles: JSON.parse(address)[0].miles
     }
+
     const [data, setData] = useState(property[index]);
 
     return( 
@@ -147,13 +157,12 @@ export default function PMQuotesRequested({}){
                         <Box sx={{
                             padding: '13px',
                         }}>
-                            <DocumentCard data={data}/>
-                            <DocumentCard data={data}/>
-                            <DocumentCard data={data}/>
-                            <DocumentCard data={data}/>
-                            {/* <DocumentCard />
-                            <DocumentCard />
-                            <DocumentCard /> */}
+
+                            {
+                                contractsFeeData.map(data=>{
+                                    return<DocumentCard data={data}/>;
+                                })
+                            }
                             </Box>
                             </Box>
                         </Box>
@@ -193,7 +202,7 @@ function DocumentCard(props) {
     };
 
     const obj = props.data
-
+    console.log(JSON.stringify(obj))
     return (
         <Box sx={{
             backgroundColor: '#D6D5DA',
@@ -222,26 +231,26 @@ function DocumentCard(props) {
                     
                 </Box>
                 <Box>
-                <Typography sx={textStyle}> Monthly Service Charge: {}% of all rent </Typography>
+                <Typography sx={textStyle}> Monthly Service Charge: {obj.monthly_service_charge}% of all rent </Typography>
                     
                 </Box>
                 <Box>
-                <Typography sx={textStyle}> Tenant Setup Fee: $100 </Typography>
+                <Typography sx={textStyle}> Tenant Setup Fee: ${obj.tenant_setup_fee} </Typography>
                     
                 </Box>
                 <Box>
-                <Typography sx={textStyle}>  Annual Inspection Fee: $200 </Typography>
+                <Typography sx={textStyle}>  Annual Inspection Fee: ${obj.annual_inspection_fee} </Typography>
                     
                 </Box>
                 <Box>
-                <Typography sx={textStyle}> Re-Keying Charge: $200 </Typography>
+                <Typography sx={textStyle}> Re-Keying Charge: ${obj.re_keying_charge} </Typography>
                     
                 </Box>
                 <Box>
-                <Typography sx={textStyle}> Annual Postage and Communication Fee: $20 </Typography>
+                <Typography sx={textStyle}> Annual Postage and Communication Fee: ${obj.postage_and_communication_fee} </Typography>
                     
                 </Box>
-                
+                <Box></Box>
                 View Documents <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
 
                 <Stack
