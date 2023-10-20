@@ -21,7 +21,7 @@ import {
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers';
-
+import Scheduler from '../../utils/Scheduler';
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -91,6 +91,8 @@ export default function RescheduleMaintenance(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
     const [showSpinner, setShowSpinner] = useState(false);
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [schedulerDate, setSchedulerDate] = useState();
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
@@ -114,9 +116,6 @@ export default function RescheduleMaintenance(){
 
 
     function handleSubmit(){
-        
-        const date = "12-15-2023"
-        const time = "09:00:00"
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             try {
@@ -128,8 +127,8 @@ export default function RescheduleMaintenance(){
                     body: JSON.stringify({
                         "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
                         "maintenance_request_status": "SCHEDULED",
-                        "maintenance_scheduled_date": date,
-                        "maintenance_scheduled_time": time
+                        "maintenance_scheduled_date": schedulerDate.format("YYYY-MM-DD"),
+                        "maintenance_scheduled_time": schedulerDate.format("HH:mm:ss")
                     })
                 });
             } catch (error){
@@ -146,7 +145,8 @@ export default function RescheduleMaintenance(){
                 maintenanceItemsForStatus,
                 allMaintenanceData,
             }
-        }); 
+        });
+        setShowScheduler(false);
     }
 
     function numImages(){
@@ -207,6 +207,13 @@ export default function RescheduleMaintenance(){
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
+            <Scheduler 
+                show={showScheduler} 
+                setShow={setShowScheduler} 
+                date={schedulerDate} 
+                setDate={setSchedulerDate}
+                handleSubmit={handleSubmit}
+            />
             <Paper
                 style={{
                     margin: '10px',
@@ -420,7 +427,7 @@ export default function RescheduleMaintenance(){
                                     display: 'flex',
                                     width: "100%",
                                 }}
-                                onClick={() => handleSubmit()}
+                                onClick={() => setShowScheduler(true)}
                                 >
                                 <Typography sx={{
                                     color: "#160449",

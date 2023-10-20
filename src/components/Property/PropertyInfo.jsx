@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import theme from '../../theme/theme';
 import {
     ThemeProvider,
@@ -24,7 +24,7 @@ import {
     DigitalClock,
     LocalizationProvider,
 } from '@mui/x-date-pickers';
-
+import Scheduler from '../utils/Scheduler';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -44,6 +44,8 @@ const PropertyInfo = (props) => {
     const index = location.state.index;
     const property = location.state.data;
     const ppt_images = property.property_images.split(',');
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [schedulerDate, setSchedulerDate] = useState();
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -120,6 +122,12 @@ const PropertyInfo = (props) => {
                     </Box>
                 </Stack>
             </Box> */}
+            <Scheduler 
+                show={showScheduler} 
+                setShow={setShowScheduler} 
+                date={schedulerDate} 
+                setDate={setSchedulerDate} 
+            />
             <Box
                 style={{
                     display: 'flex',
@@ -464,6 +472,7 @@ const PropertyInfo = (props) => {
                                             color: theme.palette.background
                                                 .default,
                                         }}
+                                        onClick={() => setShowScheduler(true)}
                                     >
                                         Schedule
                                     </Button>

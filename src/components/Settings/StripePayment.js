@@ -23,7 +23,7 @@ import CloseIcon from "@mui/icons-material/Close"; // Import the close icon
 
 function StripePayment(props) {
     console.log("in stripepayment page");
-    const { message, amount, paidBy, show, setShow } = props;
+    const { message, amount, paidBy, show, setShow, submit } = props;
     console.log(paidBy);
     const [showSpinner, setShowSpinner] = useState(false);
     const elements = useElements();
@@ -35,7 +35,7 @@ function StripePayment(props) {
     }; 
   
     const submitPayment = async () => {
-        setShowSpinner(true);
+        // setShowSpinner(true);
         const paymentData = {
             customer_uid: paidBy,
             business_code: message === "PMTEST" ? message : "PM",
@@ -75,11 +75,11 @@ function StripePayment(props) {
         console.log("--DEBUG-- in StripePayment paymentMethodID", paymentMethodID);
         console.log("--DEBUG-- in StripePayment paymentIntentID", paymentIntentID);
 
-        setShowSpinner(false);
-        props.submit({
+        await submit({
             paymentIntent: paymentIntentID,
             paymentMethod: paymentMethodID
         });
+        // setShowSpinner(false);
     };
   
   return (
