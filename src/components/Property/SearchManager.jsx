@@ -284,14 +284,8 @@ function DocumentCard(props) {
               height: `5%`,
               left: `15%`,
               top: `10%`,
-              fontSize: `11px`,
-            }}
-          >
-            <div>
-              <img src={ArrowDown} />
-              Estimated Fees
-            </div>
-          </Button>
+            }} >Estimated Fees</Typography>
+          
           <Button
             variant="contained"
             sx={{
