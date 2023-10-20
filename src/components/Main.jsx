@@ -127,6 +127,8 @@ import AddRole from "./Onboarding/AddRole";
 import Payments from "./Payments/Payments";
 import PMQuotesRequested from "./Property/PMQuotesRequested";
 
+import TenantApplication from "./Applications/TenantApplication";
+
 function Main() {
   return (
     <div
@@ -165,7 +167,7 @@ function Main() {
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
-            <Route path="findProperty" element={<FindProperty />} />
+            <Route path="listings" element={<FindProperty />} />
 
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
@@ -264,6 +266,8 @@ function Main() {
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+
+            <Route path="tenantApplication" element={<TenantApplication />} />
             
           </Route>
         </Routes>

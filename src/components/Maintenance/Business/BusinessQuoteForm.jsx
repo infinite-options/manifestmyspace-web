@@ -33,6 +33,8 @@ import maintenanceRequestImage from "./../maintenanceRequest.png";
 import xIcon from './Close_round.png'
 import { Select } from "@material-ui/core";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function CostPartsTable({parts, setParts}){
 
@@ -160,7 +162,7 @@ export default function BusinessQuoteForm({acceptBool}){
     const [displayImages, setDisplayImages] = useState([])
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [checked, setChecked] = useState(true);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [availabilityDate, setAvailabilityDate] = useState('');
     const [availabilityTime, setAvailabilityTime] = useState('');
     const [rate, setRate] = useState(0);
@@ -316,7 +318,7 @@ export default function BusinessQuoteForm({acceptBool}){
         console.log("handleSubmit")
 
         const changeQuoteStatus = async (status) => {
-
+            setShowSpinner(true);
             var formData = new FormData();
 
             if (status === "SENT"){
@@ -359,6 +361,7 @@ export default function BusinessQuoteForm({acceptBool}){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
 
 
@@ -394,6 +397,12 @@ export default function BusinessQuoteForm({acceptBool}){
                 marginTop: theme.spacing(2), // Set the margin to 20px
             }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Paper
                 style={{
                     margin: '10px',

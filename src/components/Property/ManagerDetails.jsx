@@ -9,11 +9,14 @@ import { ReactComponent as SearchIcon } from "../../images/search.svg";
 import EmailIcon from "./messageIconDark.png";
 import PhoneIcon from "./phoneIconDark.png";
 import AddressIcon from "./addressIconDark.png";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ManagerDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { ownerId, managerBusinessId } = location.state;
+  const [showSpinner, setShowSpinner] = useState(false);
   const [properties, setProperties] = useState([
     {
       business_name: "",
@@ -27,9 +30,11 @@ const ManagerDetails = () => {
     },
   ]);
   const fetchManagerProperties = async () => {
+    setShowSpinner(true);
     const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByManager/${ownerId}/${managerBusinessId}`;
     const response = await axios.get(url);
     setProperties(response.data.result);
+    setShowSpinner(false);
   };
   useEffect(() => {
     fetchManagerProperties();
@@ -37,6 +42,12 @@ const ManagerDetails = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={showSpinner}
+      >
+          <CircularProgress color="inherit" />
+      </Backdrop>
       <Box
         sx={{
           fontFamily: "Source Sans Pro",

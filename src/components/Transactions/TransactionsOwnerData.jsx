@@ -8,10 +8,12 @@ import TransactionHistory from "./TransactionHistory";
 
 export default function TransactionsOwnerData(props) {
   const selectedProperty = props.selectedProperty;
+  const setShowSpinner = props.setShowSpinner;
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [transactionsResult, setTransactionsResult] = useState([]);
   const fetchOwnerTransactions = async () => {
+    setShowSpinner(true);
     // if (access_token === null) {
     //   navigate("/");
     //   return;
@@ -21,6 +23,7 @@ export default function TransactionsOwnerData(props) {
     setTransactionsResult(res.data.Transactions.result);
     props.setTransactionList(res.data.Transactions.result);
     props.setLoading(false);
+    setShowSpinner(false);
   };
 
   const filterOwnerTransactions = async () => {

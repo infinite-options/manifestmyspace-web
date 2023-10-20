@@ -3,19 +3,24 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function TenantDoucments() {
     const { getProfileId } = useUser();
     const [documentsData, setDocumentsData] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     const location = useLocation();
     const propertyAddress = location.state.propertyAddr;
    
     useEffect(() => {
     //    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)
+    setShowSpinner(true);
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000040`)  
     .then((res) => {
                 // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);
+                setShowSpinner(false);
             });
     }, []);
     return (
@@ -23,6 +28,12 @@ function TenantDoucments() {
             fontFamily: 'Source Sans Pro',
             padding: '30px',
         }}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',

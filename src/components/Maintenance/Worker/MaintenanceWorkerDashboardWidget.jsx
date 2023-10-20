@@ -9,13 +9,15 @@ import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
 
 import { InputBase, Paper, IconButton, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function MaintenanceWorkerDashboardWidget(){
     const navigate = useNavigate();
 
     const { getProfileId } = useUser();
     const colorStatus = theme.colorStatusMM
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [currentActivities, setCurrentActivities] = useState([]);
     const [workOrders, setWorkOrders] = useState([]);
     const [maintenanceRequests, setMaintenanceRequests] = useState({});
@@ -26,15 +28,18 @@ export default function MaintenanceWorkerDashboardWidget(){
         const dataObject = {};
         const fetchMaintenanceDashboardData = async () => {
             console.log("in useEffect")
+            setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceDashboard/${getProfileId()}`)
             const jsonData = await response.json()
             console.log("CurrentActivities", jsonData.CurrentActivities.result)
             console.log("WorkOrders", jsonData.WorkOrders.result)
             setWorkOrders(jsonData.WorkOrders.result)
             setCurrentActivities(jsonData.CurrentActivities.result)
+            setShowSpinner(false);
         }
 
         const getMaintenanceData = async () => {
+            setShowSpinner(true);
             const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             console.log("maintenanceRequestsData1", maintenanceRequestsData1)
@@ -78,6 +83,7 @@ export default function MaintenanceWorkerDashboardWidget(){
                 ...prevData, 
                 ...dataObject
             }));
+            setShowSpinner(false);
         }
         getMaintenanceData();
 
@@ -105,7 +111,12 @@ export default function MaintenanceWorkerDashboardWidget(){
             borderRadius: "10px",
             margin: "20px",
         }}>
-
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Grid container spacing={4} sx={{paddingLeft:"5px"}}>
                 <Grid item xs={12}>
                     <Box sx={{paddingLeft:"5px"}}>

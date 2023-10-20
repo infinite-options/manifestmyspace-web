@@ -19,6 +19,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { formattedPhoneNumber } from '../utils/privacyMasking';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const PMContacts = (props) => {
     const { getProfileId, selectedRole } = useUser();
@@ -30,7 +32,7 @@ const PMContacts = (props) => {
     const [ownersData, setOwnersData] = useState([]);
     const [tenantsData, setTenantsData] = useState([]);
     const [maintenanceData, setMaintenanceData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
 
     const [ownerDataDetails, setOwnerDataDetails] = useState([]);
     const [tenantDataDetails, setTenantDataDetails] = useState([]);
@@ -46,6 +48,7 @@ const PMContacts = (props) => {
     const fetchData = async () => {
         const url =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        setShowSpinner(true);
 
         // const url =
         //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000003`;
@@ -63,10 +66,11 @@ const PMContacts = (props) => {
                 setOwnersData(data['owners']);
                 setTenantsData(data['tenants']);
                 setMaintenanceData(data['maintenance']);
-
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
     };
 
@@ -110,6 +114,12 @@ const PMContacts = (props) => {
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

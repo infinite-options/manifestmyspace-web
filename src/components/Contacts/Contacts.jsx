@@ -19,6 +19,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { formattedPhoneNumber } from '../utils/privacyMasking';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Contacts = (props) => {
     const { getProfileId } = useUser();
@@ -26,7 +28,7 @@ const Contacts = (props) => {
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
     const [maintenanceData, setMaintenanceData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [ownerDataDetails, setOwnerDataDetails] = useState([]);
     const [tenantDataDetails, setTenantDataDetails] = useState([]);
     const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
@@ -40,6 +42,7 @@ const Contacts = (props) => {
     const fetchData = async () => {
         const url =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/${getProfileId()}`;
+        setShowSpinner(true);
         await axios
             .get(url)
             .then((resp) => {
@@ -60,13 +63,16 @@ const Contacts = (props) => {
                     return val.contact_uid && val.contact_uid.includes('600-');
                 });
                 setMaintenanceData(mainCon);
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
 
         const ownerUrl =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/${getProfileId()}`;
+        setShowSpinner(true);
         await axios
             .get(ownerUrl)
             .then((resp) => {
@@ -85,13 +91,16 @@ const Contacts = (props) => {
                     return false;
                 });
                 setOwnerDataDetails(uniqueContacts);
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
 
         const tenantUrl =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/${getProfileId()}`;
+        setShowSpinner(true);
         await axios
             .get(tenantUrl)
             .then((resp) => {
@@ -110,21 +119,26 @@ const Contacts = (props) => {
                     return false;
                 });
                 setTenantDataDetails(uniqueContacts);
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
 
         const maintenanceUrl =
             `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/${getProfileId()}`;
+        setShowSpinner(true);
         await axios
             .get(maintenanceUrl)
             .then((resp) => {
                 const mainCon = resp.data['Maintenance_Details'].result;
                 setMaintenanceDataDetails(mainCon);
+                setShowSpinner(false);
             })
             .catch((e) => {
                 console.error(e);
+                setShowSpinner(false);
             });
     };
 
@@ -168,6 +182,12 @@ const Contacts = (props) => {
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 style={{
                     display: 'flex',

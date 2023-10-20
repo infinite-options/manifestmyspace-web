@@ -2,16 +2,21 @@ import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/materia
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function TenantProfileEdit(props) {
     const { getProfileId } = useUser();
     const [profileData, setProfileData] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     useEffect(()=>{
         console.log("TENANT EDIT USE EFFECT")
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
         .then((res)=>{
             console.log(res.data.Profile[0]);
             setProfileData(res.data.Profile[0]);
+            setShowSpinner(false);
         });
     }, []);
     return (
@@ -19,6 +24,12 @@ function TenantProfileEdit(props) {
             fontFamily: 'Source Sans Pro',
 
         }}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 backgroundColor: '#3D5CAC',
                 minHeight: '100px',

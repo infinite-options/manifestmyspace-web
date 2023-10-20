@@ -14,8 +14,7 @@ import {
     Button,
     Typography,
     Stack,
-    Modal,
-    CircularProgress
+    Modal
   } from "@mui/material";
   import CloseIcon from '@mui/icons-material/Close';
   import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -33,6 +32,8 @@ import {
   import TransactionsOwnerData from "./TransactionsOwnerData";
 import ViewTransactionOwner from "./ViewTransactionOwner";
 import SelectProperty from "../Leases/SelectProperty";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
   const useStyles = makeStyles(theme => ({
     cell_long: {
@@ -48,7 +49,7 @@ export default function TransactionHistory(props) {
     const classes = useStyles();
     const navigate = useNavigate();
     // const history = props.data; //array of objects
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [history, setTransactionList] = useState([]);
     console.log("history ", history);
     // const [transactionList, setTransactionList] = useState([]);
@@ -150,7 +151,13 @@ export default function TransactionHistory(props) {
     return (
         <>
             <ThemeProvider theme={theme}>
-            <TransactionsOwnerData setTransactionList={setTransactionList} selectedProperty={selectedProperty} setLoading={setLoading}></TransactionsOwnerData>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <TransactionsOwnerData setShowSpinner={setShowSpinner} setTransactionList={setTransactionList} selectedProperty={selectedProperty} setLoading={setLoading}></TransactionsOwnerData>
             <Box
                 style={{
                     display: 'flex',

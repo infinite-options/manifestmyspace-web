@@ -14,6 +14,8 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import LeaseIcon from './leaseIcon.png';
 import CreateIcon from '@mui/icons-material/Create';
 import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function PropertyNavigator({index, propertyData, paymentStatus, paymentStatusColor}){
     const navigate = useNavigate();
@@ -23,11 +25,13 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
+    const [showSpinner, setShowSpinner] = useState(false);
     const color = theme.palette.form.main
     const maxSteps = images.length;
 
     useEffect(() => {
         const getMintenanceForProperty = async () => {
+            setShowSpinner(true);
             try {
                 console.log("Fetch maintenance data for "+item.property_uid)
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
@@ -40,6 +44,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
             } catch (error) {
                 console.log(error);
             }
+            setShowSpinner(false);
         }
         getMintenanceForProperty();
     }, []);
@@ -110,6 +115,12 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                 backgroundColor: theme.palette.form.main,
             }}
             >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 sx={{
                     flexDirection: 'column', // Added this to stack children vertically

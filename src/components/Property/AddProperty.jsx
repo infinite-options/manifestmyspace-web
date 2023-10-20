@@ -36,6 +36,8 @@ import defaultHouseImage from './defaultHouseImage.png'
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function AddProperty({}){
     const location = useLocation();
@@ -49,7 +51,7 @@ export default function AddProperty({}){
     const [squareFootage, setSquareFootage] = useState('');
     const [bedrooms, setBedrooms] = useState('');
     const [bathrooms, setBathrooms] = useState('');
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [deposit, setDeposit] = useState(0);
     const [petsAllowed, setPetsAllowed] = useState(0);
     const [depositForRent, setDepositForRent] = useState(0);
@@ -154,7 +156,7 @@ export default function AddProperty({}){
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(event.target)
-
+        setShowSpinner(true);
         const formData = new FormData();
 
         const currentDate = new Date();
@@ -227,12 +229,19 @@ export default function AddProperty({}){
         setCoverImage(defaultHouseImage);
         setSelectedImageList([]);
         setActiveStep(0);
+        setShowSpinner(false);
         navigate('/properties');
     };
 
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Stack
                 style={{
                     display: 'flex',

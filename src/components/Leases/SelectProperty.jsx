@@ -2,6 +2,8 @@ import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function SelectProperty(props) {
     const handleClose = props.closeTab;
@@ -11,11 +13,14 @@ function SelectProperty(props) {
         setSelectedProperty = props.setSelectedProperty;
     }
     const [properties, setProperties] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     useEffect(()=>{
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/${getProfileId()}`)
         .then((res)=>{
             console.log("Property list ",res.data.Property.result);
             setProperties(res.data.Property.result);
+            setShowSpinner(false);
         });
     }, []);
 
@@ -28,6 +33,12 @@ function SelectProperty(props) {
             paddingRight: '20px',
             minWidth: '320px',
         }}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
