@@ -174,7 +174,7 @@ export default function SelectPayment(props) {
             });
         }
     }
-    const submit = ({paymentIntent, paymentMethod}) => {
+    const submit = async ({paymentIntent, paymentMethod}) => {
         console.log("in submit in SelectPayment.jsx")
         setPaymentConfirm(true);
         // TODO: navigate to correct dashboard based on role
@@ -221,7 +221,7 @@ export default function SelectPayment(props) {
             setShowSpinner(false);
         }
 
-        makePayments()
+        await makePayments()
     };
     //CreditCardHandler
 
