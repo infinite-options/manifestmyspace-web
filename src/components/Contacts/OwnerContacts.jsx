@@ -28,7 +28,7 @@ const OwnerContacts = (props) => {
     // const [ownerData, setOwnerData] = useState([]);
     // const [tenantData, setTenantData] = useState([]);
     // const [maintenanceData, setMaintenanceData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
 
     const [managersData, setManagersData] = useState([]);
     const [tenantsData, setTenantsData] = useState([]);
