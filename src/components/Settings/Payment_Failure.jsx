@@ -7,9 +7,12 @@ import { Fade } from "@mui/material";
 import { DialogActions } from "@material-ui/core";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
+
 
 export default function Payment_Failure(props) {
   const navigate = useNavigate();
+  const { paymentRoutingBasedOnSelectedRole } = useUser();
   const {
     showError,
     setShowError,
@@ -32,7 +35,7 @@ export default function Payment_Failure(props) {
         <Button
           onClick={() => {
             setShowError(false);
-            navigate("/tenantDashboard")
+            navigate(paymentRoutingBasedOnSelectedRole())
           }}
         >
           Continue

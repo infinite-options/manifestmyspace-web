@@ -26,9 +26,11 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
 export default function QuotesAccepted01({maintenanceItem}){
     const navigate = useNavigate();
+    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
     console.log("QuotesAccepted maintenanceItem", maintenanceItem)
 
@@ -119,7 +121,7 @@ export default function QuotesAccepted01({maintenanceItem}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            routingBasedOnSelectedRole()
+            navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
@@ -143,7 +145,7 @@ export default function QuotesAccepted01({maintenanceItem}){
             if (responseData.code === 200){
                 console.log("Ticket Status Changed")
                 alert("Ticket Status Changed")
-                routingBasedOnSelectedRole()
+                navigate(maintenanceRoutingBasedOnSelectedRole())
             }
         } catch (error){
             console.log("error", error)

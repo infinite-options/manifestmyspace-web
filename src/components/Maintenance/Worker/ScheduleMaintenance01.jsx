@@ -24,12 +24,14 @@ import CompleteTicket from "../../utils/CompleteTicket";
 import CalendarToday from "@mui/icons-material/CalendarToday";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
 
 export default function ScheduleMaintenance01({maintenanceItem}){
     
     const location = useLocation();
     const navigate = useNavigate();
+    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
     function handleNavigate(){
         console.log("navigate to Rescheduling Maintenance")
@@ -39,19 +41,6 @@ export default function ScheduleMaintenance01({maintenanceItem}){
             }
         })
     }
-
-    // async function handleCancel(id){
-    //     let response = CancelTicket(id);
-    //     console.log("handleCancel", response)
-    //     if (response){
-    //         console.log("Ticket Cancelled")
-    //         alert("Ticket Cancelled")
-    //         navigate('/workerMaintenance')
-    //     } else{
-    //         console.log("Ticket Not Cancelled")
-    //         alert("Error: Ticket Not Cancelled")
-    //     }
-    // }
 
     async function handleReSchedule(id){
         console.log("reschedule not implemented yet")
@@ -83,7 +72,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                     if (response){
                         console.log("Ticket Completed")
                         alert("Ticket Completed")
-                        RoutingBasedOnSelectedRole()
+                        navigate(maintenanceRoutingBasedOnSelectedRole())
                     } else{
                         console.log("Ticket Not Completed")
                         alert("Error: Ticket Not Completed")

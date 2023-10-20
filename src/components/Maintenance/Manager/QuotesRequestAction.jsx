@@ -23,11 +23,13 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import { useUser } from "../../../contexts/UserContext";
 
 
 export default function QuotesRequestAction({maintenanceItem, navigateParams}){
     
     const navigate = useNavigate();
+    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
     function handleNavigateToQuotesRequested(){
 
@@ -47,7 +49,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams}){
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            RoutingBasedOnSelectedRole()
+            navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -60,7 +62,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams}){
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
-            RoutingBasedOnSelectedRole()
+            navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")

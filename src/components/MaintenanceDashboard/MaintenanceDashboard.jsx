@@ -81,7 +81,7 @@ export default function MaintenanceDashboard(){
         console.log(user.businesses.MAINTENANCE.business_uid)
 
         const getMaintenanceWorkerDashboardData = async () => {
-            try { // Change back to ${getProfileId()}
+            try {
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceDashboard/${getProfileId()}`, {
                     method: 'GET',
                     headers: {
@@ -93,14 +93,6 @@ export default function MaintenanceDashboard(){
                 console.log("CurrentActivities", data.CurrentActivities);
                 console.log("WorkOrders", data.WorkOrders);
 
-                // for (const item of data.CurrentActivities.result){
-                //     item.maintenance_request_status === "REQUESTED" ? setQuoteRequestedCount(prevCount => prevCount + 1) : null;
-                //     item.maintenance_request_status === "SUBMITTED" ? setSubmittedCount(prevCount => prevCount + 1) : null;
-                //     item.maintenance_request_status === "ACCEPTED" ? setQuoteAcceptedCount(prevCount => prevCount + 1) : null;
-                //     item.maintenance_request_status === "SCHEDULED" ? setScheduledCount(prevCount => prevCount + 1) : null;
-                //     item.maintenance_request_status === "FINISHED" ? setFinishedCount(prevCount => prevCount + 1) : null;
-                //     item.maintenance_request_status === "PAID" ? setPaidCount(prevCount => prevCount + 1) : null;
-                // }
                 for (const item of data.CurrentActivities.result) {
                     switch(item.maintenance_request_status) {
                         case "REQUESTED": 
@@ -117,12 +109,12 @@ export default function MaintenanceDashboard(){
                             setScheduledCount(prevCount => prevCount + 1)
                             setQuotesScheduledCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
                             break;
-                        case "FINISHED": 
+                        case "FINISHED":
                             setFinishedCount(prevCount => prevCount + 1)
                             console.log("item.maintenance_request_cost", item.maintenance_request_cost)
                             setQuotesFinishedCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
                             break;
-                        case "PAID": 
+                        case "PAID":
                             setPaidCount(prevCount => prevCount + 1)
                             console.log("item.maintenance_request_cost", item.maintenance_request_cost)
                             break;
@@ -131,15 +123,6 @@ export default function MaintenanceDashboard(){
                             break;
                     }
                 }
-                
-                // Update state after loop
-                // setQuoteRequestedCount(initialCounts.quoteRequested);
-                // setSubmittedCount(initialCounts.submitted);
-                // setQuoteAcceptedCount(initialCounts.quoteAccepted);
-                // setScheduledCount(initialCounts.scheduled);
-                // setFinishedCount(initialCounts.finished);
-                // setPaidCount(initialCounts.paid);
-
 
                 setLoading(false);
             } catch(error){
