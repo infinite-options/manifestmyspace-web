@@ -217,7 +217,7 @@ function DocumentCard(props) {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements',
+      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/'+ownerId,
       headers: { 
         'Content-Type': 'application/json'
       },
