@@ -15,12 +15,81 @@ import {
     AccordionSummary,
     AccordionDetails,
 } from '@mui/material';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 
 export default function TenantApplication(){
     const location = useLocation();
+    const navigate = useNavigate();
     const { user, getProfileId, roleName } = useUser();
+
+
+    const [property, setProperty] = useState(location.state.property)
+
+    const [tenantProfile, setTenantProfile] = useState(null);
+
+
+    function formattedAddress(){
+        return `${property.property_address} ${property.property_unit} ${property.property_city} ${property.property_state} ${property.property_zip}`
+    }
+
+    function formatPreviousAddress(){
+        // let address = "test"
+        if (!tenantProfile){
+            return "No Previous Address"
+        } else{
+            let address = JSON.parse(tenantProfile?.tenant_previous_address)
+            return `${address.street} ${address.unit} ${address.city} ${address.state} ${address.zip}`
+        }
+    }
+
+    function formatPreviousCityState(){
+        if (!tenantProfile){
+            return "No Previous Address"
+        } else{
+            let address = JSON.parse(tenantProfile?.tenant_previous_address)
+            return `${address.city}, ${address.state}`
+        }
+    }
+
+    function formatPreviousZip(){
+        if (!tenantProfile){
+            return "No Previous Address"
+        } else{
+            let address = JSON.parse(tenantProfile?.tenant_previous_address)
+            return `${address.zip}`
+        }
+    }
+
+    function formatPreviousUnit(){
+        if (!tenantProfile){
+            return "No Previous Address"
+        } else{
+            let address = JSON.parse(tenantProfile?.tenant_previous_address)
+            return `${address.unit}`
+        }
+    }
+
+    function formatTenantVehicleInfo(){
+        if (!tenantProfile){
+            return "No Vehicle Information"
+        } else{
+            let info = JSON.parse(tenantProfile?.tenant_vehicle_info)
+            
+        }
+    }
+
+    useEffect(() => {
+        const getTenantProfileInformation = async () => {
+
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
+            const data = await response.json()
+            const tenantProfileData = data.Profile.result[0]
+            setTenantProfile(tenantProfileData)
+            console.log("tenantProfileData", tenantProfileData)
+        }
+        getTenantProfileInformation()
+    }, []);
 
     return(
         <ThemeProvider theme={theme}>
@@ -59,7 +128,7 @@ export default function TenantApplication(){
                         fontWeight: theme.typography.medium.fontWeight,
                         fontSize: theme.typography.smallFont
                     }}>
-                        1234 Main St, San Jose, CA 95131
+                        {formattedAddress()}
                 </Typography>
             </Box>
             <Divider light />
@@ -91,7 +160,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            Ranjit
+                            {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -113,7 +182,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            rmarathay@gmail.com
+                            {tenantProfile?.teannt_phone_number}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -135,7 +204,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            408-476-1238
+                            {tenantProfile?.tenant_phone_number}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -157,7 +226,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            123-45-6789
+                            {tenantProfile?.tenant_ssn}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -179,7 +248,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            123456789
+                            {tenantProfile?.tenant_drivers_license_number}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -201,7 +270,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            TX
+                            {tenantProfile?.tenant_drivers_license_state} 
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -223,7 +292,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            $87,900
+                            ${tenantProfile?.tenant_current_salary}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -245,7 +314,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            Bi-weekly
+                            {tenantProfile?.tenant_salary_frequency}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -267,7 +336,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            RPM Capital Management LLC
+                            {tenantProfile?.tenant_current_job_company}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -289,7 +358,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            Business Person
+                            {tenantProfile?.tenant_current_job_title}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -311,7 +380,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            1934 1st Ave
+                            {formatPreviousAddress()}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -333,7 +402,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            5
+                            {formatPreviousUnit()}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -355,7 +424,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            New York, NY
+                            {formatPreviousCityState()}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -377,7 +446,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.smallFont
                             }}
                         >
-                            10029
+                            {formatPreviousZip()}
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
@@ -522,6 +591,7 @@ export default function TenantApplication(){
                                 justifyContent: "center",
                                 alignItems: "center",
                             }}
+                            onClick={() => navigate("/tenantProfileEdit")}
                         >
                             Edit
                         </Button>
