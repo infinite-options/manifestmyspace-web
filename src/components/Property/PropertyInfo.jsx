@@ -288,7 +288,7 @@ const PropertyInfo = (props) => {
                                 background: '#3D5CAC',
                                 color: theme.palette.background.default,
                             }}
-                            onClick={() => navigate('/tenantApplication')}
+                            onClick={() => navigate('/tenantApplication', {state: { property: property }})}
                         >
                             Apply Now
                         </Button>
