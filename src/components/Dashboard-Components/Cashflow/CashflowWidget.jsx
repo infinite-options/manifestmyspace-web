@@ -7,6 +7,8 @@ import theme from "../../../theme/theme";
 import MixedChart from "../../Graphs/OwnerCashflowGraph";
 import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 function CashflowWidget() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ function CashflowWidget() {
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [expense, setExpense] = useState(null);
   const [expenseSummary, setExpenseSummary] = useState(null);
-
+  const [showSpinner, setShowSpinner] = useState(false);
   const [totalRevenueByMonth, setTotalRevenueByMonth] = useState(0);
   const [totalExpenseByMonth, setTotalExpenseByMonth] = useState(0);
   const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
@@ -29,8 +31,15 @@ function CashflowWidget() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={showSpinner}
+      >
+          <CircularProgress color="inherit" />
+      </Backdrop>
       <div className="cf-widget-main" onClick={() => navigate("/cashflow")}>
         <CashflowData
+          setShowSpinner={setShowSpinner}
           year={year}
           month={month}
           filter={false}

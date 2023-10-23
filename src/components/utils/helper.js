@@ -113,6 +113,7 @@ function stableSort(array, comparator) {
 }
 
 function objToQueryString(obj) {
+  if(!obj) return;
   const queryString = [];
   for (let [key, value] of Object.entries(obj)) {
       queryString.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);

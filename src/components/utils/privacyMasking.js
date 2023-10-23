@@ -3,7 +3,7 @@ function maskSSN(ssn) {
 
     if (ssn.length !== 9) {
         console.error('Invalid SSN Length');
-        return '***';
+        return '<SSN-invalid length>';
     }
 
     return '***-**-' + ssn.slice(5);
@@ -26,7 +26,7 @@ function formattedPhoneNumber(phoneNumber) {
 
     if (phoneNumber.length !== 10) {
         console.error('Invalid Phone Number Length');
-        return '****';
+        return '<PHONE_NUMBER> - invalid length';
     }
 
     return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(

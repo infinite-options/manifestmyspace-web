@@ -10,14 +10,15 @@ import MaintenanceIcon from "./MaintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 import theme from '../../theme/theme';
 import { useUser } from "../../contexts/UserContext";
 
 function TenantDashboard(props) {
   
   const navigate = useNavigate();
-
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const [paymentData, setPaymentData] = useState({
         currency: "usd",
@@ -43,29 +44,27 @@ function TenantDashboard(props) {
   useEffect(() => {
 
     const getTenantData = async () => {
-   //      const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/${getProfileId()}`);
-   const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
-   const tenantRequestsData = await tenantRequests.json()        
+      setShowSpinner(true);
+      const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/${getProfileId()}`);
+      // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
+      const tenantRequestsData = await tenantRequests.json()        
 
-        let propertyData = tenantRequestsData.property.result;
-        let maintenanceRequestsData = tenantRequestsData.maintenanceRequests.result;
-        let announcementsData = tenantRequestsData.announcements.result;
+      let propertyData = tenantRequestsData?.property?.result;
+      let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
+      let announcementsData = tenantRequestsData?.announcements?.result;
 
-        setPropertyData(propertyData);
-        setMaintenanceRequestsData(maintenanceRequestsData);
-        setAnnouncementsData(announcementsData);
+      if(!propertyData || propertyData.length === 0) navigate("/listings");
 
-        // let lease_contact = JSON.parse(propertyData[0].lease_assigned_contacts)
-        // console.log(lease_contact[0].first_name)
-        // setLeaseFirstName(lease_contact[0].first_name)
+      setPropertyData(propertyData || []);
+      setMaintenanceRequestsData(maintenanceRequestsData || []);
+      setAnnouncementsData(announcementsData || []);
 
-        let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
-        setPropertyAddr(propertyAddress);
-
-        
-        setFirstName(user.first_name)
-        }
-      getTenantData();
+      let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
+      setPropertyAddr(propertyAddress);
+      setFirstName(user.first_name)
+      setShowSpinner(false);
+    }
+    getTenantData();
   }, [])
 
 
@@ -108,6 +107,7 @@ function TenantDashboard(props) {
   const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
   const handleStripePayment = async (e) => {
+    setShowSpinner(true);
     console.log("Stripe Payment")
     try {
         //const stripe = await stripePromise;
@@ -124,6 +124,7 @@ function TenantDashboard(props) {
       } catch (error) {
         console.log(error);
       }
+    setShowSpinner(false);
   }
 
   return (
@@ -133,6 +134,12 @@ function TenantDashboard(props) {
         padding: "14px",
       }}
     >
+      <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={showSpinner}
+      >
+          <CircularProgress color="inherit" />
+      </Backdrop>
       <Box
         sx={{
           display: "flex",
@@ -202,7 +209,7 @@ function TenantDashboard(props) {
             justifyContent: "space-between",
             padding: "10px",
           }}
-          onClick={() => {navigate('/paymentsTenant')}}
+          onClick={() => {navigate('/payments')}}
         >
           <Box
             sx={{
@@ -234,7 +241,7 @@ function TenantDashboard(props) {
                 fontWeight: "600",
                 color: "#3D5CAC",
               }}
-              onClick={()=>{navigate('/paymentsTenant')}}
+              onClick={()=>{navigate('/payments')}}
             >
               View Details
             </Box>
@@ -273,7 +280,7 @@ function TenantDashboard(props) {
               }}
               onClick={() => {
                 // handleStripePayment()
-                navigate('/paymentsTenant')
+                navigate('/payments')
               }}
             >
               Make a Payment

@@ -21,12 +21,13 @@ import {
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers';
-
+import Scheduler from '../../utils/Scheduler';
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 // function DateTimePicker() {
 //   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -89,7 +90,9 @@ export default function RescheduleMaintenance(){
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
-
+    const [showSpinner, setShowSpinner] = useState(false);
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [schedulerDate, setSchedulerDate] = useState();
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
@@ -113,10 +116,8 @@ export default function RescheduleMaintenance(){
 
 
     function handleSubmit(){
-        
-        const date = "12-15-2023"
-        const time = "09:00:00"
         const changeMaintenanceRequestStatus = async () => {
+            setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
@@ -126,13 +127,14 @@ export default function RescheduleMaintenance(){
                     body: JSON.stringify({
                         "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
                         "maintenance_request_status": "SCHEDULED",
-                        "maintenance_scheduled_date": date,
-                        "maintenance_scheduled_time": time
+                        "maintenance_scheduled_date": schedulerDate.format("YYYY-MM-DD"),
+                        "maintenance_scheduled_time": schedulerDate.format("HH:mm:ss")
                     })
                 });
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
         
         changeMaintenanceRequestStatus()
@@ -143,7 +145,8 @@ export default function RescheduleMaintenance(){
                 maintenanceItemsForStatus,
                 allMaintenanceData,
             }
-        }); 
+        });
+        setShowScheduler(false);
     }
 
     function numImages(){
@@ -198,6 +201,19 @@ export default function RescheduleMaintenance(){
                 marginTop: theme.spacing(2), // Set the margin to 20px
             }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <Scheduler 
+                show={showScheduler} 
+                setShow={setShowScheduler} 
+                date={schedulerDate} 
+                setDate={setSchedulerDate}
+                handleSubmit={handleSubmit}
+            />
             <Paper
                 style={{
                     margin: '10px',
@@ -411,7 +427,7 @@ export default function RescheduleMaintenance(){
                                     display: 'flex',
                                     width: "100%",
                                 }}
-                                onClick={() => handleSubmit()}
+                                onClick={() => setShowScheduler(true)}
                                 >
                                 <Typography sx={{
                                     color: "#160449",

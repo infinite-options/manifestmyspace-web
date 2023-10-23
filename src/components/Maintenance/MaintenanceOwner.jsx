@@ -24,6 +24,8 @@ import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import CloseIcon from '@mui/icons-material/Close';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function MaintenanceOwner(){
     const location = useLocation();
@@ -38,7 +40,7 @@ export default function MaintenanceOwner(){
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
     const [month, setMonth] = useState(null);
     const [year, setYear] = useState(null);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [filterPropertyList, setFilterPropertyList] = useState([]);
 
     console.log(user)
@@ -160,6 +162,7 @@ export default function MaintenanceOwner(){
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
+            setShowSpinner(true);
             // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
             // const propertyData = await propertiesByOwnerResponse.json()
 
@@ -212,6 +215,7 @@ export default function MaintenanceOwner(){
                 ...prevData,
                 ...dataObject
             }));
+            setShowSpinner(false);
         }
         getMaintenanceData();
     }, [])
@@ -220,6 +224,12 @@ export default function MaintenanceOwner(){
 
     return(
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
             style={{
                 display: 'flex',

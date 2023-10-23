@@ -49,9 +49,16 @@ import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
+import OwnerContacts from "./Contacts/OwnerContacts";
+import PMContacts from "./Contacts/PMContacts";
+import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
-import TenantContactDetails from "./Contacts/TenantContactDetails";
+// import TenantContactDetails from "./Contacts/TenantContactDetails";
+import TenantContactDetails from "./Contacts/ContactDetails/TenantContactDetails";
+import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetails"; 
+import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails"; 
+import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
 import OwnerDashboard from "./OwnerDashboard";
@@ -122,7 +129,11 @@ import PrivateProfilePayment from "./Onboarding/PrivateProfilePayment";
 import Forbidden from "./utils/Forbidden";
 import AddRole from "./Onboarding/AddRole";
 
-import PaymentsPM from "./Payments/PaymentsPM";
+import Payments from "./Payments/Payments";
+import PMQuotesRequested from "./Property/PMQuotesRequested";
+
+import TenantApplication from "./Applications/TenantApplication";
+import AddListing from "./Property/AddListing";
 
 function Main() {
   return (
@@ -162,7 +173,8 @@ function Main() {
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
-            <Route path="findProperty" element={<FindProperty />} />
+            <Route path="listings" element={<FindProperty />} />
+            <Route path="addListing" element={<AddListing />} />
 
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
@@ -206,8 +218,8 @@ function Main() {
             <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
-            <Route path="paymentsTenant" element={<PaymentsTenant />} />
-            <Route path="paymentsPM" element={<PaymentsPM />} />
+            {/* <Route path="payments" element={<PaymentsTenant />} /> */}
+            <Route path="payments" element={<Payments />} />
             <Route path="card" element={<CardDetails />} />
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
@@ -220,9 +232,15 @@ function Main() {
 
             <Route path="propertyInfo" element={<PropertyInfo />} />
             <Route path="contacts" element={<Contacts />} />
+            <Route path="ownerContacts" element={<OwnerContacts />} />
+            <Route path="PMContacts" element={<PMContacts />} />
+            <Route path="maintenanceContacts" element={<MaintenanceContacts />} />
             <Route path="contactDetails" element={<ContactDetails />} />
             <Route path="addContacts" element={<AddContacts />} />
             <Route path="tenantContactDetails" element={<TenantContactDetails />} />
+            <Route path="managerContactDetails" element={<ManagerContactDetails />} />
+            <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
+            <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
@@ -263,6 +281,11 @@ function Main() {
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm/>} />
             <Route path="workerMaintenance" element={<Maintenance01 />} />
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
+
+            <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+
+            <Route path="tenantApplication" element={<TenantApplication />} />
+            
           </Route>
         </Routes>
         <Footer />

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const theme = createTheme({
     palette: {
@@ -26,8 +28,10 @@ function TenantProfile() {
     const [childTenantData, setChildTenantData] = useState([]);
     const [petTenantData, setPetTenantData] = useState([]);
     const [vehicleTenantData, setVehicleTenantData] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     useEffect(() => {
         console.log("TENANT PROFILE USE EFFECT")
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data.Profile.result[0]);
@@ -36,10 +40,18 @@ function TenantProfile() {
                 setChildTenantData(JSON.parse(res.data.Profile.result[0].tenant_children_occupants));
                 setPetTenantData(JSON.parse(res.data.Profile.result[0].tenant_pet_occupants));
                 setVehicleTenantData(JSON.parse(res.data.Profile.result[0].tenant_vehicle_info));
+                setShowSpinner(false);
             });
     }, []);
     // console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
     return (
+        <>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <ThemeProvider theme={theme}>
             <Box sx={{
                 "font-family": 'Source Sans Pro',
@@ -474,6 +486,7 @@ function TenantProfile() {
                 </Box>
             </Box>
         </ThemeProvider>
+        </>
     );
 }
 

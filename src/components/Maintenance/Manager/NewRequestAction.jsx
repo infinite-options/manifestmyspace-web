@@ -23,10 +23,11 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 // import RequestMoreInfo from "../Maintainance01/Worker/RequestMoreInfo";
 import RequestMoreInfo from "../Worker/RequestMoreInfo";
-
-import Scheduler from "../../utils/Schedular";
+import AlertMessage from "../AlertMessage";
+import Scheduler from "../../utils/Scheduler";
 import { useUser } from "../../../contexts/UserContext";
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
@@ -34,7 +35,9 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
-
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState("");
+    const [showSpinner, setShowSpinner] = useState(false);
 
     console.log("NewRequestAction", maintenanceItem)
     function handleNavigateToQuotesRequested(){
@@ -54,11 +57,13 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
         console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
-            alert("Ticket Cancelled")
+            setShowMessage(true);
+            setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED");
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
             console.log("Ticket Not Cancelled")
-            alert("Error: Ticket Not Cancelled")
+            setShowMessage(true);
+            setMessage("Error: Ticket Not Cancelled")
         }
     }
 
@@ -67,7 +72,8 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
             console.log("handleComplete", response);
             if (response){
                 console.log("Ticket Completed")
-                alert("Ticket Completed")
+                setShowMessage(true);
+                setMessage("Ticket Completed!! Maintenance Status changed to COMPLETED");
                 navigate(maintenanceRoutingBasedOnSelectedRole())
             } else{
                 console.log("Ticket Not Completed")
@@ -76,6 +82,32 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
         }).catch(error => {
             console.log("handleComplete", error);
         });
+    }
+
+    async function handleSubmit(){
+        const changeMaintenanceRequestStatus = async () => {
+            setShowSpinner(true);
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "SCHEDULED",
+                        "maintenance_scheduled_date": schedulerDate.format("YYYY-MM-DD"),
+                        "maintenance_scheduled_time": schedulerDate.format("HH:mm:ss")
+                    })
+                });
+            } catch (error){
+                console.log("error", error)
+            }
+            setShowSpinner(false);
+        }
+        await changeMaintenanceRequestStatus();
+        setShowScheduler(false);
+        navigate(maintenanceRoutingBasedOnSelectedRole())
     }
 
     return(
@@ -88,11 +120,18 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 width: "100%",
             }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Scheduler 
                 show={showScheduler} 
                 setShow={setShowScheduler} 
                 date={schedulerDate} 
-                setDate={setSchedulerDate} 
+                setDate={setSchedulerDate}
+                handleSubmit={handleSubmit}
             />
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <Grid item xs={1} sx={{
@@ -281,6 +320,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                     </Button>
                 </Grid>
             </Grid>
+            <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
         </Box>
     )
 }

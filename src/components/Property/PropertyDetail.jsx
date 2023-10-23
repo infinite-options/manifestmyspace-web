@@ -26,12 +26,12 @@ export default function PropertyDetail({}){
     const location = useLocation();
     let navigate = useNavigate(); 
 
-    const property = location.state.property
+    // const property = location.state.property
     const index = location.state.index;
     const propertyList = location.state.propertyList;
     // const maintenanceData = location.state.maintenanceData;
 
-    console.log("property from PropertyDetail", property)
+    // console.log("property from PropertyDetail", property)
 
     // console.log("Maintenance Data in Property Detail", maintenanceData)
     // console.log("This maintenance data's thing", maintenanceData[index])
@@ -47,6 +47,11 @@ export default function PropertyDetail({}){
         navigate("/addProperty");
     }
 
+    function navigateToAddListing(){
+        console.log("navigateToAddListing")
+        navigate("/addListing");
+    }
+
     return( 
         <ThemeProvider theme={theme}>
             <Box
@@ -57,6 +62,8 @@ export default function PropertyDetail({}){
                 width: '100%', // Take up full screen width
                 minHeight: '100vh', // Set the Box height to full height
                 marginTop: theme.spacing(2), // Set the margin to 20px
+                marginBottom: theme.spacing(2), // Set the margin to 20px
+                paddingBottom: "50px"
             }}
             >
                 <Paper
@@ -65,6 +72,7 @@ export default function PropertyDetail({}){
                         backgroundColor: theme.palette.primary.main,
                         width: '100%', // Occupy full width with 25px margins on each side
                         paddingTop: '10px',
+                        paddingBottom: '30px',
                     }}
                 >
                      <Stack

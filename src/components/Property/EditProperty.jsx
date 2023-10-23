@@ -41,6 +41,9 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useUser } from "../../contexts/UserContext";
 import IconButton from '@mui/material/IconButton';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
 
 export default function EditProperty({}){
     const location = useLocation();
@@ -49,10 +52,10 @@ export default function EditProperty({}){
     const propertyData = location.state.item
     const propertyId = location.state.propertyId;
 
-    console.log("Property Id", propertyId)
+    // console.log("Property Id", propertyId)
     console.log("Property Data in Edit Property", propertyData)
 
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
 
     const [address, setAddress] = useState(propertyData.property_address);
@@ -64,7 +67,7 @@ export default function EditProperty({}){
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState('test');
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
@@ -111,23 +114,20 @@ export default function EditProperty({}){
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
-
-        formData.append('property_owner_id', ownerId);
-        formData.append('available_to_rent', 1);
-        formData.append('active_date', formattedDate);
+        formData.append("property_uid", propertyData.property_uid)
         formData.append('property_address', address);
         formData.append('property_unit', unit);
         formData.append('property_city', city);
         formData.append('property_state', propertyState);
         formData.append('property_zip', zip);
         formData.append('property_type', propertyType);
-        formData.append('property_num_beds', bedrooms);
-        formData.append('property_num_baths', bathrooms);
+        formData.append('property_num_beds', bedrooms); // Double
+        formData.append('property_num_baths', bathrooms); // Double
         formData.append('property_area', squareFootage);
-        formData.append('property_listed', 0);
-        formData.append('property_deposit', deposit);
+        formData.append('property_listed_rent', 0); // Int
+        formData.append('property_deposit', deposit); // Int
         formData.append('property_pets_allowed', petsAllowed);
-        formData.append('property_deposit_for_rent', depositForRent);
+        formData.append('property_deposit_for_rent', depositForRent); // Int
         formData.append('property_taxes', taxes);
         formData.append('property_mortgages', mortgages);
         formData.append('property_insurance', insurance);
@@ -141,8 +141,9 @@ export default function EditProperty({}){
         }
 
         const putData = async () => {
+            setShowSpinner(true);
             try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
                     method: "PUT",
                     body: formData
                 })
@@ -151,6 +152,7 @@ export default function EditProperty({}){
             } catch(error){
                 console.log("Error posting data:", error)
             }
+            setShowSpinner(false);
         }
 
         putData();
@@ -160,6 +162,12 @@ export default function EditProperty({}){
 
     return (
         <ThemeProvider theme={theme}>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Stack
                 style={{
                     display: 'flex',

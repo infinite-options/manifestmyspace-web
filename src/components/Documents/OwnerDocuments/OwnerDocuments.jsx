@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const theme = createTheme({
     palette: {
@@ -23,6 +25,7 @@ function OwnerDocuments() {
     const statusList = ["Applications", "Leases", "Agreements", "Notices", "Contracts"];
     const statusColor = ['#A52A2A', '#FF8A00', '#FFC614', '#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
+    const [showSpinner, setShowSpinner] = useState(false);
     const { getProfileId } = useUser();
     const navigate = useNavigate();
     function navigateTo(url) {
@@ -34,14 +37,23 @@ function OwnerDocuments() {
 
     const [documentsData, setDocumentsData] = useState([]);
     useEffect(() => {
+        setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDocuments/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);
+                setShowSpinner(false);
             });
     }, []);
 
     return (
+        <>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <ThemeProvider theme={theme}>
             <Box sx={{
                 fontFamily: 'Source Sans Pro',
@@ -209,6 +221,7 @@ function OwnerDocuments() {
                 </Box>
             </Box>
         </ThemeProvider>
+        </>
     );
 }
 

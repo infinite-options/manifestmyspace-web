@@ -13,6 +13,8 @@ import ExpenseTable from './ExpenseTable';
 import ExpectedExpenseTable from './ExpectedExpenseTable';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const CashflowManager = () => {
     const navigate = useNavigate();
@@ -47,6 +49,7 @@ const CashflowManager = () => {
     console.log("cashflow expense ", expense);
     console.log("cashflow revenueSummary ", revenueSummary, month);
     console.log("cashflow expenseSummary ", expenseSummary);
+    const [showSpinner, setShowSpinner] = useState(false);
 
     const handleButtonClick = (buttonName) => {
         setActiveButton(buttonName);
@@ -61,7 +64,13 @@ const CashflowManager = () => {
     
     return (
         <ThemeProvider theme={theme}>
-            <CashflowData year={year} month={month} filter={false} role={'Owner'} userID={user.user_uid} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <CashflowData setShowSpinner={setShowSpinner} year={year} month={month} filter={false} role={'Owner'} userID={user.user_uid} setRevenueSummary={setRevenueSummary} setExpenseSummary={setExpenseSummary} setExpense={setExpense} setRevenue={setRevenue} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
           <Box
             style={{
                 display: 'flex',

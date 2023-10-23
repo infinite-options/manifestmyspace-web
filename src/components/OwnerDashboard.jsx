@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider, CircularProgress } from '@mui/material';
+import { Button, Box, ThemeProvider } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -12,16 +12,18 @@ import File_dock_fill from '../images/File_dock_fill.png'
 import User_fill_dark from '../images/User_fill_dark.png'
 import { useUser } from "../contexts/UserContext";
 import PropertyRentWidget from "./Dashboard-Components/PropertyRent/PropertyRentWidget";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function OwnerDashboard() {
     const { user, getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
     
     const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
@@ -66,12 +68,16 @@ export default function OwnerDashboard() {
         const dataObject = {};
         const fetchData = async () => {
             console.log("in useEffect")
+            console.log("PROFILE ID: ", getProfileId())
+            
+            setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003`)
             const jsonData = await response.json()
             setRentStatus(jsonData.RentStatus.result);
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
             console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
-            setLoading(false);
+            // setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
             unpaidCount = unpaidCount ? unpaidCount.num : 0;
@@ -141,24 +147,31 @@ export default function OwnerDashboard() {
             // setCurrentMonth(date.getMonth()+1);
             // let currentYear = date.getFullYear().toString();
             // console.log("month, year", currentMonth)
+            setShowSpinner(false);
         }
         fetchData();
     }, []);
 
     return (
         <ThemeProvider theme={theme}>
-        {loading && 
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        {/* {loading && 
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             {loading && <CircularProgress color="inherit" />}
             </div>    
         }
-            {!loading &&
+            {!loading && */}
                 <div className="mt-widget-main">
                     <CashflowWidget />
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData}/>
-                        <PropertyRentWidget {...propsForPropertyRentWidget}/>
-                        {/* <div className="mt-prop-widget-container" onClick={() => navigate("/ownerRent")}>
+                        {/* <PropertyRentWidget {...propsForPropertyRentWidget}/> */}
+                        <div className="mt-prop-widget-container" onClick={() => navigate("/pmRent")}>
                             <h2 className="mt-prop-widget-title"> Property Rent</h2>
                             <div className="mt-prop-widget-graph">
                                 <PieChart width={200} height={250} >
@@ -204,7 +217,7 @@ export default function OwnerDashboard() {
                                     </text>
                                 </PieChart>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
                         {/* <div className="mt-expiry-container"> */}
@@ -363,11 +376,11 @@ export default function OwnerDashboard() {
                             variant="outlined"
                             id="maintenance"
                             className="bottom-item"
-                            onClick={() => { navigate('/contacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
+                            onClick={() => { navigate('/ownerContacts') }}> <img src={User_fill_dark}></img> Contacts</Button>
                     </div>
                     <br />
                 </div>
-            }
+            {/* } */}
         </ThemeProvider>
     )
 }

@@ -26,6 +26,8 @@ import { post, put } from "../utils/api";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,7 +55,7 @@ const AddUtility = (props) => {
   const [amount, setAmount] = useState("");
   const [propertyList, setPropertyList] = useState([]);
   const [payable, setPayable] = useState("Owner");
-
+  const [showSpinner, setShowSpinner] = useState(false);
   const [dropdowns, setDropdowns] = useState([{}]);
 
   const handlePropertyChange = (event, index) => {
@@ -131,13 +133,15 @@ const AddUtility = (props) => {
       },
       data: data
     };
-
+    setShowSpinner(true);
     axios.request(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        setShowSpinner(false);
       })
       .catch((error) => {
         console.log(error);
+        setShowSpinner(false);
       });
     navigate(-1);
   };
@@ -148,7 +152,13 @@ const AddUtility = (props) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <PropertyListData setPropertyList={setPropertyList}></PropertyListData>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}></PropertyListData>
         <Box
           style={{
             display: "flex",

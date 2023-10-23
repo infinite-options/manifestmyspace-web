@@ -25,7 +25,8 @@ import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
-
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function QuoteAcceptForm(){
 
@@ -42,7 +43,7 @@ export default function QuoteAcceptForm(){
     const [displayImages, setDisplayImages] = useState([])
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [maintenanceQuotes, setMaintenanceQuotes] = useState([])
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [estimatedTotalCost, setEstimatedTotalCost] = useState(0);
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
     const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
@@ -52,12 +53,14 @@ export default function QuoteAcceptForm(){
     useEffect(() => {
         
         const getMaintenanceItemQuotes = async () => {
+            setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${maintenanceItem.maintenance_quote_uid}`)
             const data = await response.json()
             console.log(data);
             const quotes = data.result
             console.log("quotes",  quotes)
             setMaintenanceQuotes(quotes)
+            setShowSpinner(false);
         }
         getMaintenanceItemQuotes()  
     }, [maintenanceItem])
@@ -137,7 +140,7 @@ export default function QuoteAcceptForm(){
         console.log("handleSubmit")
         
         const changeMaintenanceQuoteStatus = async () => {
-
+            setShowSpinner(true);
             var formData = new FormData();
 
             formData.append("maintenance_quote_uid", maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid);
@@ -158,6 +161,7 @@ export default function QuoteAcceptForm(){
             } catch (error){
                 console.log("error", error)
             }
+            setShowSpinner(false);
         }
 
         // changeMaintenanceRequestStatus()
@@ -199,6 +203,12 @@ export default function QuoteAcceptForm(){
             marginTop: theme.spacing(2), // Set the margin to 20px
         }}
         >
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Paper
                 style={{
                     margin: '10px',

@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Container, Box, ThemeProvider, CircularProgress, Grid, Typography } from '@mui/material';
+import { Button, Container, Box, ThemeProvider, Grid, Typography } from '@mui/material';
 import { PieChart, Pie, Legend, Cell } from 'recharts';
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
@@ -13,6 +13,9 @@ import User_fill_dark from '../../images/User_fill_dark.png'
 import { useUser } from "../../contexts/UserContext";
 import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles({
     button: {
@@ -38,11 +41,11 @@ function ManagerDashboard() {
     const { getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
-
+    const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
     
     const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
@@ -88,14 +91,15 @@ function ManagerDashboard() {
     useEffect(() => {
         const dataObject = {};
         const fetchData = async () => {
-            console.log("in useEffect")
+            // console.log("in useEffect")
+            setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/managerDashboard/${getProfileId()}`)
             const jsonData = await response.json()
-            console.log(jsonData)   
-            console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)
+            // console.log(jsonData)   
+            // console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
             setRentStatus(jsonData.RentStatus.result);
-            setLoading(false);
+            // setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
             unpaidCount = unpaidCount ? unpaidCount.num : 0;
@@ -159,19 +163,26 @@ function ManagerDashboard() {
             });
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
-            console.log("leaseStatusDictionary ", leaseStatusDictionary)
+            // console.log("leaseStatusDictionary ", leaseStatusDictionary)
+            setShowSpinner(false);
         }
         fetchData();
     }, []);
 
     return (
         <ThemeProvider theme={theme}>
-        {loading && 
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        {/* {loading && 
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             {loading && <CircularProgress color="inherit" />}
             </div>    
-        }
-            {!loading &&
+        } 
+            {!loading && */}
                 <div className="mt-widgest-main">
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData}/>
@@ -366,44 +377,6 @@ function ManagerDashboard() {
                         </div>
                     </div>
                     <br />
-                    
-                    <Box 
-                        style={{ 
-                            // backgroundColor: 'var(--light-gray-bg)', // Ensure this variable is defined in your CSS
-                            backgroundColor: "#FFFFFF",
-                            display: 'flex',
-                            margin: '15px auto 0', // Combined margin-top with margin shorthand
-                            borderRadius: '10px',
-                            height: '150px',
-                            width: '90%',
-                            padding: '3px',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <h2 className="mt-expiry-widget-title">
-                            Payments
-                        </h2>
-
-                        <Button 
-                            sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                width: '50%', // Set the button width to be 50% of its container
-                                backgroundColor: "#F2F2F2",
-                            }}
-                            variant="outlined"
-                            onClick={() => navigate("/paymentsPM")}
-                        >
-                            <Typography variant="outlined" style={{ textTransform: "none", color: '#160449', fontFamily: 'Source Sans Pro', fontWeight: '600' }}>
-                                Pay Bills
-                            </Typography>
-                        </Button>
-                    </Box>
-
-
                     <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
                     </div>
@@ -411,44 +384,34 @@ function ManagerDashboard() {
             
                     <div className={classes.container}>
                     <Grid container spacing={2} className={classes.row}>
-                        <Grid item xs={4}>
-                        <Button
-                            variant="outlined"
-                            id="revenue"
-                            className={classes.button}
-                            onClick={() => {
-                            navigate('/contacts');
-                            }}
-                        >
-                            <img src={User_fill_dark} alt="Owner" />
-                            Owner
-                        </Button>
+                        <Grid item xs={12}>
+                            <Button
+                                variant="outlined"
+                                id="revenue"
+                                className={classes.button}
+                                onClick={() => {
+                                    navigate('/payments');
+                                }}
+                            >
+                                {/* <img src={User_fill_dark} alt="Payments" /> */}
+                                <CurrencyExchangeIcon sx={{paddingRight: "5px"}}/>
+                                Pay Bills
+                            </Button>
                         </Grid>
-                        <Grid item xs={4}>
-                        <Button
-                            variant="outlined"
-                            id="expense"
-                            className={classes.button}
-                            onClick={() => {
-                            navigate();
-                            }}
-                        >
-                            <img src={User_fill_dark} alt="Tenant" />
-                            Tenant
-                        </Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                        <Button
-                            variant="outlined"
-                            id="maintenance"
-                            className={classes.button}
-                            onClick={() => {
-                            navigate();
-                            }}
-                        >
-                            <img src={User_fill_dark} alt="Maintenance" />
-                            Maintenance
-                        </Button>
+                    </Grid>
+                    <Grid container spacing={2} className={classes.row}>
+                        <Grid item xs={12}>
+                            <Button
+                                variant="outlined"
+                                id="revenue"
+                                className={classes.button}
+                                onClick={() => {
+                                navigate('/PMContacts');
+                                }}
+                            >
+                                <img src={User_fill_dark} alt="Contacts" />
+                                Contacts
+                            </Button>
                         </Grid>
                     </Grid>
                     <Grid container spacing={2} className={classes.row}>
@@ -497,7 +460,7 @@ function ManagerDashboard() {
                 <br />
                 <br />
                 </div>
-            }
+            {/* } */}
         </ThemeProvider>
     )
 }
