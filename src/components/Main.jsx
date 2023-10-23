@@ -96,6 +96,7 @@ import SettingsACH3 from "./SettingsACH/SettingsACH3";
 import SettingsACH4 from "./SettingsACH/SettingsACH4";
 import SettingsACH5 from "./SettingsACH/SettingsACH5";
 import POContracts from "./Contracts/POContracts/POContracts";
+import NewOwnerInquiry from "./Contracts/OwnerManagerContracts/NewOwnerInquiry";
 import QuoteAcceptForm from "./Maintenance/Manager/QuoteAcceptForm";
 import QuoteRequestForm from "./Maintenance/Manager/QuoteRequestForm";
 import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
@@ -193,7 +194,7 @@ function Main() {
 
             <Route path="pmProfile" element={<PMProfile />} />
             <Route path="pmLeases" element={<PMLeases />} />
-            <Route path="pmContracts" element={<PMContracts />} />
+            <Route path="pmContracts" element={<PMContracts />} /> 
             <Route path="pmDocuments" element={<PMDocuments />} />
             <Route path="pmUploadDocuments" element={<PMUploadDocuments />} />
             <Route path="pmRent" element={<PMRent />} />
@@ -268,6 +269,7 @@ function Main() {
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+            <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
 
             <Route path="tenantApplication" element={<TenantApplication />} />
             
