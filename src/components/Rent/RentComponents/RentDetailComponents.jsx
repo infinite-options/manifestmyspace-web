@@ -62,7 +62,7 @@ export function RentDetailBody(props) {
     }
 
     function formatDate(inputDate) {
-        if (inputDate === null) {
+        if (!inputDate) {
             return '';
         }
         const year = inputDate.substring(0, 4);

@@ -18,8 +18,11 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from '@mui/icons-material/PostAdd';
 
+import { useUser } from "../../contexts/UserContext";
+
 export default function PropertyNavigator({index, propertyData, paymentStatus, paymentStatusColor}){
     const navigate = useNavigate();
+    const { user, getProfileId, roleName } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
@@ -38,7 +41,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
             try {
                 console.log("Fetch maintenance data for "+item.property_uid)
 //                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
 
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
