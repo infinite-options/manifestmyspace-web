@@ -129,6 +129,7 @@ import PMQuotesRequested from "./Property/PMQuotesRequested";
 
 import TenantApplication from "./Applications/TenantApplication";
 import AddListing from "./Property/AddListing";
+import RequestQuotes from "./Property/RequestQuotes";
 
 function Main() {
   return (
@@ -268,6 +269,7 @@ function Main() {
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+            <Route path="requestQuotes" element={<RequestQuotes />} />
 
             <Route path="tenantApplication" element={<TenantApplication />} />
             
