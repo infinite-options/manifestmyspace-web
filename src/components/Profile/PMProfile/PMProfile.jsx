@@ -106,7 +106,7 @@ function PMProfile() {
                     color: theme.typography.common.blue, 
                     fontWeight: theme.typography.common.fontWeight, 
                     fontSize:theme.typography.largeFont}}>
-                    {profileData.business_name}
+                    {profileData?.business_name}
                 </Typography>
                 </Stack>
                 
@@ -144,7 +144,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {profileData.business_email}
+                        {profileData?.business_email}
                     </Typography>
                     </Stack>
                     
@@ -169,7 +169,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {profileData.business_phone_number}
+                        {profileData?.business_phone_number}
                     </Typography>
                     </Stack>
                     
@@ -194,7 +194,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {profileData.business_address ? profileData.business_address : '-'}
+                        {profileData?.business_address ? profileData?.business_address : '-'}
                     </Typography>
                     </Stack>
                     
@@ -491,7 +491,7 @@ function PMProfile() {
                             color: theme.typography.common.blue, 
                             fontSize: '16px',
                             fontWeight: 'bold'}}>
-                            {profileData.business_ein_number === "" ? "No EIN Provided" : profileData.business_ein_number}
+                            {profileData?.business_ein_number === "" ? "No EIN Provided" : profileData?.business_ein_number}
                         </Typography>
                         
                         <Stack
