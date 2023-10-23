@@ -19,7 +19,7 @@ export default function OwnerDashboard() {
     const { user, getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
@@ -77,7 +77,7 @@ export default function OwnerDashboard() {
             setRentStatus(jsonData.RentStatus.result);
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
             console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
-            setLoading(false);
+            // setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
             unpaidCount = unpaidCount ? unpaidCount.num : 0;
@@ -160,12 +160,12 @@ export default function OwnerDashboard() {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        {loading && 
+        {/* {loading && 
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             {loading && <CircularProgress color="inherit" />}
             </div>    
         }
-            {!loading &&
+            {!loading && */}
                 <div className="mt-widget-main">
                     <CashflowWidget />
                     <div className="mt-container">
@@ -380,7 +380,7 @@ export default function OwnerDashboard() {
                     </div>
                     <br />
                 </div>
-            }
+            {/* } */}
         </ThemeProvider>
     )
 }

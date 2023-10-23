@@ -41,7 +41,7 @@ function ManagerDashboard() {
     const { getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
@@ -99,7 +99,7 @@ function ManagerDashboard() {
             // console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
             setRentStatus(jsonData.RentStatus.result);
-            setLoading(false);
+            // setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
             unpaidCount = unpaidCount ? unpaidCount.num : 0;
@@ -177,12 +177,12 @@ function ManagerDashboard() {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        {loading && 
+        {/* {loading && 
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             {loading && <CircularProgress color="inherit" />}
             </div>    
-        }
-            {!loading &&
+        } 
+            {!loading && */}
                 <div className="mt-widgest-main">
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData}/>
@@ -460,7 +460,7 @@ function ManagerDashboard() {
                 <br />
                 <br />
                 </div>
-            }
+            {/* } */}
         </ThemeProvider>
     )
 }
