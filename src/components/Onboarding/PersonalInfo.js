@@ -22,6 +22,7 @@ import Status44 from "../../images/status_bar_8.png";
 import axios from "axios";
 import { formatPhoneNumber, headers, maskNumber } from "./helper";
 import AES from "crypto-js/aes";
+import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +50,12 @@ const PersonalInfo = () => {
   const { user, isEmployee, roleName, updateProfileUid } = useUser();
   const location = useLocation();
   const { businessId } = location.state;
+  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
+  const isPrivateRoute = cookie["isPrivateRoute"];
+
+  console.log('Is Private Personal Info')
+  console.log(isPrivateRoute)
+  console.log('Is Private Personal Info')
   const [showSpinner, setShowSpinner] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -148,7 +155,7 @@ const PersonalInfo = () => {
     setShowSpinner(false);
     if (isEmployee())
       navigate("/profilePayment", { state: { profileId: businessId } });
-    else navigate("/onboardingRouter");
+    else navigate("/onboardingRouter" );
   };
   const handleUpdateProfileUid = (data) => {
     if (isEmployee()) {

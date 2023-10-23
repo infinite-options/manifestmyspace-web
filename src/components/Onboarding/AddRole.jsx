@@ -28,7 +28,6 @@ export default function AddRole() {
     MAINT_EMPLOYEE: "/employee"
   };
 
-  
 
   const handleNextStep = async () => {
     if (selectedRoles.length === 0) {
@@ -40,17 +39,17 @@ export default function AddRole() {
     let newRoles= selectedRoles.filter(val=> !initialRoles.includes(val))
     const updatePayload={user_uid: user.user_uid, role: user.role}
     setOnboardingState({
-      ...onboardingState,
+      ...onboardingState ?? {},
       roles:newRoles,
     });
-    const updateURL=`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE`
-    
+    const updateURL=`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE` //Updating user in the DB
     const response = await axios.put(
       updateURL,
       updatePayload
     );
     setCookie("user", user);
-    navigate("/privateonboardingRouter");
+    setCookie("isPrivateRoute", true);
+    navigate(`/privateonboardingRouter`, { state: { isPrivate:true } });
   };
   
   // Function to get selected roles
