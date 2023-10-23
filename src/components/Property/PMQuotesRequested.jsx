@@ -168,7 +168,7 @@ export default function PMQuotesRequested({}){
                         }}>
 
                             {
-                                contractsFeeData.map(data=>{
+                                contractsFeeData.length>0 && contractsFeeData.map(data=>{
                                     return<DocumentCard data={data}/>;
                                 })
                             }
