@@ -64,9 +64,6 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@testing-library/dom": "^9.3.3"
-  },
   "peerDependencies": {
     "@types/react": "^17.0.0",
     "react": "^17.0.0 || ^18.0.0"
