@@ -66,9 +66,10 @@ export default function EditProperty({}){
     const [squareFootage, setSquareFootage] = useState(0);
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
+    // const [existingImages, setExistingImages] = useState(JSON.parse(propertyData.property_images));
 
     const [description, setDescription] = useState('test');
-    const [selectedImageList, setSelectedImageList] = useState([]);
+    const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
@@ -135,6 +136,20 @@ export default function EditProperty({}){
         formData.append('property_description', description);
         formData.append('property_notes', notes);
 
+        for (let i = 0; i < selectedImageList.length; i++) {
+            try{
+                console.log("selectedImageList[i].file", selectedImageList[i].data_url)
+                const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
+                console.log(imageBlob)
+                if(i === 0){
+                    formData.append("img_cover", imageBlob);
+                } else{
+                    formData.append("img_" + (i-1), imageBlob);
+                }
+            } catch (error){ 
+                continue
+            }
+        }
 
         for (let [key, value] of formData.entries()) {
             console.log(key, value);    
@@ -153,8 +168,8 @@ export default function EditProperty({}){
                 console.log("Error posting data:", error)
             }
             setShowSpinner(false);
+            navigate(-1)
         }
-
         putData();
     }
 
@@ -247,8 +262,8 @@ export default function EditProperty({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            // image={selectedImageList[activeStep]}
-                                            image={coverImage}
+                                            image={selectedImageList[activeStep]}
+                                            // image={coverImage}
                                             sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",

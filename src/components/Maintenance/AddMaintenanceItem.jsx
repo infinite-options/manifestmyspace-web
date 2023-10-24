@@ -36,7 +36,6 @@ import ImageUploader from '../ImageUploader';
 
 import theme from '../../theme/theme';
 import dataURItoBlob from '../utils/dataURItoBlob'
-import { type } from "@testing-library/user-event/dist/type";
 import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop"; 
