@@ -85,25 +85,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                     obj.documents = contractfee2.documents;
                     let contactObj = JSON.parse(contractfee2.contact);
                     obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
-                    // contractfee1.forEach((contractfee) => {
-
-                    //     if (contractfee!==undefined && contractfee.fee_name=="Monthly Service Charge") {
-                    //         obj.monthly_service_charge = contractfee.charge                
-                    //     }
-                    //     if (contractfee!==undefined && contractfee.fee_name=="Tenant Setup Fee") {
-                    //         obj.tenant_setup_fee = contractfee.charge                
-                    //     }
-                    //     if (contractfee!==undefined && contractfee.fee_name=="Annual Inspection Fee") {
-                    //         obj.annual_inspection_fee = contractfee.charge                
-                    //     }
-                    //     if (contractfee!==undefined && contractfee.fee_name=="Re-Keying Charge") {
-                    //         obj.re_keying_charge = contractfee.charge                
-                    //     }
-                    //     if (contractfee!==undefined && contractfee.fee_name=="Postage and Communication Fee") {
-                    //         obj.postage_and_communication_fee = contractfee.charge                
-                    //     }
-     
-                    // });
+                  
                     console.log(JSON.stringify(obj))
                     feeData.push(obj)    
                  
@@ -721,6 +703,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         </Box>
                                     </Grid>
                                     <Grid item xs={11}>
+                                        <Box onClick={handleManagerChange}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -744,7 +727,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             `${item.business_name}`:
                                             "No Manager"}
                                         </Typography>
-
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>

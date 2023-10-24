@@ -188,6 +188,7 @@ const SearchManager = () => {
 function DocumentCard(props) {
   const obj = props.data;
   const ownerId = props.ownerId;
+  const navigate = useNavigate();
 
 //  console.log("Business Profile "+JSON.stringify(obj))
 
@@ -196,42 +197,14 @@ function DocumentCard(props) {
   let distance = location1[0]!==undefined ? location1[0].distance : "";
   let feesArray = JSON.parse(obj.business_services_fees);
 
-  const handleRequestQuotes = async () => {
+  const handleRequestQuotes = async (obj) => {
 
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-
-    let data = JSON.stringify({
-
-      "announcement_title":"New PM Request",
-      "announcement_msg":"PM Quote Requested", 
-      "announcement_sender":ownerId,
-      "announcement_date":formattedDate,
-      "announcement_properties":"",
-      "announcement_mode":"",
-      "announcement_receiver":" ", 
-      "announcement_type":"PM Request",
-      "Email":0, "Text":0, "App":1,
-    });
-    
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/'+ownerId,
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      data : data
-    };
-    
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-    
+    navigate("/requestQuotes",{
+      state:{
+        managerData:obj
+      }
+    }
+    );    
   };
 
   return (
@@ -298,7 +271,7 @@ function DocumentCard(props) {
               top: `10%`,
               borderRadius: "10px 10px 10px 10px",
             }}
-            onClick={handleRequestQuotes}
+            onClick={() => handleRequestQuotes(obj)}
           >
             Request Quote
           </Button>
