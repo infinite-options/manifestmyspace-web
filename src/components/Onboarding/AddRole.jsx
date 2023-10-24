@@ -5,12 +5,15 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 
 export default function AddRole() {
   const [cookie, setCookie] = useCookies(["user"]);
   const cookiesData = cookie["user"];
   const user = cookiesData;
-
+  const {onboardingState, setOnboardingState } = useUser();
+  const navigate = useNavigate();
   const initialRoles = cookiesData.role.split(",").map((role) => role.toUpperCase());
   const [selectedRoles, setSelectedRoles] = useState(initialRoles);
   let real_time_selected_roles = selectedRoles; // To avoid state update delay
@@ -25,25 +28,28 @@ export default function AddRole() {
     MAINT_EMPLOYEE: "/employee"
   };
 
-  
 
   const handleNextStep = async () => {
     if (selectedRoles.length === 0) {
       alert("Please select a role");
       return;
     }
-    // Your logic for the "Add Roles" button here
+    // Updating the Role and Starting the OnBoard Flow
     user.role=[selectedRoles].join('')
     let newRoles= selectedRoles.filter(val=> !initialRoles.includes(val))
-    let response={}
-    for (let role of newRoles){
-      response[role] = await axios.post(
-        baseURL+postURLs[role], // to each role endpoint
-        user //Sending user 
-      );
-      
-    }
+    const updatePayload={user_uid: user.user_uid, role: user.role}
+    setOnboardingState({
+      ...onboardingState ?? {},
+      roles:newRoles,
+    });
+    const updateURL=`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE` //Updating user in the DB
+    const response = await axios.put(
+      updateURL,
+      updatePayload
+    );
     setCookie("user", user);
+    setCookie("isPrivateRoute", true);
+    navigate(`/privateonboardingRouter`, { state: { isPrivate:true } });
   };
   
   // Function to get selected roles

@@ -181,39 +181,20 @@ export default function MaintenanceWorker(){
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
             console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
-            let array1 = maintenanceRequestsData1.result.REQUESTED.maintenance_items;
-            let array2 = maintenanceRequestsData1.result.SUBMITTED.maintenance_items;
-            let array3 = maintenanceRequestsData1.result.ACCEPTED.maintenance_items;
-            let array4 = maintenanceRequestsData1.result.SCHEDULED.maintenance_items;
-            let array5 = maintenanceRequestsData1.result.FINISHED.maintenance_items;
-            let array6 = maintenanceRequestsData1.result.PAID.maintenance_items;
+            let array1 = maintenanceRequestsData1.result.REQUESTED?.maintenance_items ??[];
+            let array2 = maintenanceRequestsData1.result.SUBMITTED?.maintenance_items ?? [];
+            let array3 = maintenanceRequestsData1.result.ACCEPTED?.maintenance_items ??[];
+            let array4 = maintenanceRequestsData1.result.SCHEDULED?.maintenance_items ?? [];
+            let array5 = maintenanceRequestsData1.result.FINISHED?.maintenance_items ??[];
+            let array6 = maintenanceRequestsData1.result.PAID?.maintenance_items ?? [];
            
+            dataObject["REQUESTED"] = [...array1];
+            dataObject["SUBMITTED"] = [...array2];
+            dataObject["ACCEPTED"] = [...array3];
+            dataObject["SCHEDULED"] = [...array4];
+            dataObject["FINISHED"] = [...array5];
+            dataObject["PAID"] = [...array6];
 
-            dataObject["REQUESTED"] = [];
-            dataObject["SUBMITTED"] = [];
-            dataObject["ACCEPTED"] = [];
-            dataObject["SCHEDULED"] = [];
-            dataObject["FINISHED"] = [];
-            dataObject["PAID"] = [];
-
-            for (const item of array1) {
-                dataObject["REQUESTED"].push(item);
-            }
-            for (const item of array2) {
-                dataObject["SUBMITTED"].push(item);
-            }
-            for (const item of array3) {
-                dataObject["ACCEPTED"].push(item);
-            }
-            for (const item of array4) {
-                dataObject["SCHEDULED"].push(item);
-            }
-            for (const item of array5) {
-                dataObject["FINISHED"].push(item);
-            }
-            for (const item of array6) {
-                dataObject["PAID"].push(item);
-            }
             
             console.log("dataObject from new api call", dataObject)
             setMaintenanceData(prevData => ({

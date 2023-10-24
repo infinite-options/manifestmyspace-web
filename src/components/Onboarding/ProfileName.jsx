@@ -23,6 +23,7 @@ import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import NewBusinessLogo from "../../images/NewBusinessLogo.svg";
 import NewProfilePicture from "../../images/NewProfilePicture.svg";
 import { objToQueryString } from "../utils/helper";
+import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +51,12 @@ const useStyles = makeStyles((theme) => ({
 const ProfileName = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
+  const isPrivateRoute = cookie["isPrivateRoute"];
+
+  console.log('Is PrivateRoute ProfileName')
+  console.log(isPrivateRoute)
+  console.log('Is PrivateRoute ProfileName')
   const [statusImg, setStatusImg] = useState();
   const [title, setTitle] = useState();
   const [addPhotoImg, setAddPhotoImg] = useState();
@@ -68,6 +75,8 @@ const ProfileName = () => {
     photo,
     setPhoto,
   } = useOnboardingContext();
+  const personalInfoPage= isPrivateRoute? "/privatePersonalInfo" : "/personalInfo" 
+  const profileInfoPage= isPrivateRoute? "/privateProfileInfo" : "/profileInfo"
 
   const handleNextStep = () => {
     if (isBusiness() && businessName === "") {
@@ -85,10 +94,10 @@ const ProfileName = () => {
       }
     }
     if (isEmployee())
-      navigate("/personalInfo", {
-        state: { businessId: selectedBusiness.business_uid },
+      navigate(personalInfoPage, {
+        state: { businessId: selectedBusiness.business_uid},
       });
-    else navigate("/profileInfo");
+    else navigate(profileInfoPage)
   };
 
   const handleNameChange = (event) => {

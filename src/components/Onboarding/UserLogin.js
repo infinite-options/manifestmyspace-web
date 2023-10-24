@@ -9,6 +9,7 @@ import { useUser } from "../../contexts/UserContext";
 import PasswordModal from './PasswordModal';
 import UserDoesNotExistModal from './UserDoesNotExistModal';
 import { roleMap } from './helper';
+import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 function UserLogin() {
-
+    const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
+    const isPrivateRoute = cookie["isPrivateRoute"];
     const classes = useStyles();
     const navigate = useNavigate();
     const [passModal, setpassModal] = useState(false);
@@ -105,6 +107,7 @@ function UserLogin() {
                         const openingRole = role.split(",")[0];
                         selectRole(openingRole);
                         setLoggedIn(true);
+                        setCookie("isPrivateRoute", true);
                         const { dashboardUrl } = roleMap[openingRole];
                         navigate(dashboardUrl);
                         }

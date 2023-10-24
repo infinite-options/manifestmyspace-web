@@ -52,7 +52,7 @@ function SelectRole() {
       } else {
         setAuthData(response.data.result);
         setShowSpinner(false);
-        navigate("/onboardingRouter");
+        navigate(`/onboardingRouter`, { state: { isPrivate:false } });
       }
     } else {
       const response = await axios.post(
@@ -66,7 +66,7 @@ function SelectRole() {
       } else {
         setAuthData(response.data.result);
         setShowSpinner(false);
-        navigate("/onboardingRouter");
+        navigate(`/onboardingRouter`, { state: { isPrivate:false } });
       }
     }
   };
