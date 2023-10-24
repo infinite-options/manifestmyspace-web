@@ -22,21 +22,44 @@ function NewOwnerInquiry(props) {
     const navigate = useNavigate();
 
     const [showSpinner, setShowSpinner] = useState(false);
+    const [propertyData, setPropertyData] = useState([]);
+
+
 
     useEffect(() => {
         console.log("New Owner Inquiry UseEffect");
         
         const fetchData = async () => {
         setShowSpinner(true);
-        
+    
+        const contractData = { //from props
+            "contract_uid": "010-000057",
+            "contract_property_id": "200-000087",
+            "contract_business_id": "600-000003",
+            "contract_start_date": "2023-10-23",
+            "contract_end_date": null,
+            "contract_fees": null,
+            "contract_assigned_contacts": null,
+            "contract_documents": null,
+            "contract_name": null,
+            "contract_status": "NEW",
+            "contract_early_end_date": null
+        }
+        console.log("CONTRACT DATA", contractData)
+
+
         // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
         
         
         // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
-        const propertyData = await response.json();
-        console.log(propertyData)
+        const response = await fetch(`http://localhost:4000/propertyDetails/${contractData["contract_property_id"]}`)
+        const responseData = await response.json();
+
+        setPropertyData(responseData["Property"]["result"][0]);
+
+        console.log("PROPERTY DATA", propertyData);
+
 
         setShowSpinner(false);
     };
@@ -130,7 +153,8 @@ function NewOwnerInquiry(props) {
                             fontWeight: 'bold',
                         }}>
                             {/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
-                            789 Maple Lane, San Diego, CA 92101, USA
+                            {/* 789 Maple Lane, San Diego, CA 92101, USA */}
+                            {propertyData.property_address}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}
                         </Box>
                         <Box sx={{
                             fontSize: '14px',
@@ -143,23 +167,364 @@ function NewOwnerInquiry(props) {
                             fontSize: '14px',
                             fontWeight: 'bold',
                         }}>
-                            Steve Albini
+                            {propertyData.owner_first_name}{' '}{propertyData.owner_last_name}
                         </Box>
                         <Box sx={{
                             fontSize: '12px',
                             fontWeight: 'bold',
                             paddingTop: '5px',
                         }}>
-                            Not Rented
+                            {'<Not Rented>'}
                         </Box>
                         <Box sx={{
                             fontSize: '10px',
                             paddingTop: '10px',
                             color: '#3D5CAC',
                         }}>
-                            3 hours ago
+                            { '<3 hours ago>'}
                         </Box>
                     </Box>
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                    }}>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Rent: {propertyData.property_listed_rent? propertyData.property_listed_rent : '<RENT>' }
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Due: {'<DUE>' }
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                View lease
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Expiring: {'<DATE>' }
+                        </Box>
+                    </Box>
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                    }}>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Property Value: {propertyData.property_listed_rent? propertyData.property_listed_rent : '<RENT>' }
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<$$$>' }
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                $ Per SqFt
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<$$$>' }
+                        </Box>
+                    </Box>
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                    }}>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Type
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<TYPE>' }
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                SqFt
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<SQFT>' }
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Bed
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<BEDS>' }
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Bath
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<BATHS>' }
+                        </Box>
+                    </Box>
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                    }}>
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Tenant:
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<TENANT_NAME>' }
+                        </Box>
+                    </Box>
+
+                    
+                    
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                    }}>
+
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Owner:
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<OWNER_NAME>' }
+                        </Box>
+                    </Box>
+                    
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                    }}>
+
+                    <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                Open Maintenance Tickets: {'<COUNT>'}
+                        </Box>
+                        <Box sx={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingTop: '0px',
+                                    color: 'text.darkblue',
+                            }}
+                        >
+                            
+                                {'<TICKET>' }
+                        </Box>
+                    </Box>
+                    
                 </Box>
                 <Box sx={{
                             fontSize: '15px',

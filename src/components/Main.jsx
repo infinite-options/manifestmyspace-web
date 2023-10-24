@@ -133,6 +133,8 @@ import TenantApplication from "./Applications/TenantApplication";
 import AddListing from "./Property/AddListing";
 import RequestQuotes from "./Property/RequestQuotes";
 
+import PMNotifications from "./Notifications/PMNotifications";
+
 function Main() {
   return (
     <div
@@ -285,6 +287,8 @@ function Main() {
             <Route path="requestQuotes" element={<RequestQuotes />} />
 
             <Route path="tenantApplication" element={<TenantApplication />} />
+
+            <Route path="pmNotifications" element={<PMNotifications />} />
             
           </Route>
         </Routes>
