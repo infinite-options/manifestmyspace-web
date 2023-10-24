@@ -26,12 +26,12 @@ export default function PropertyDetail({}){
     const location = useLocation();
     let navigate = useNavigate(); 
 
-    const property = location.state.property
+    // const property = location.state.property
     const index = location.state.index;
     const propertyList = location.state.propertyList;
     // const maintenanceData = location.state.maintenanceData;
 
-    console.log("property from PropertyDetail", property)
+    // console.log("property from PropertyDetail", property)
 
     // console.log("Maintenance Data in Property Detail", maintenanceData)
     // console.log("This maintenance data's thing", maintenanceData[index])

@@ -46,12 +46,21 @@ export default function PMQuotesRequested({}){
 //         miles: (address!==null||address!==undefined||address!=="")?JSON.parse(address)[0].miles:""
 //     }
     const address = property[index].business_locations
-    console.log("propertyLocation "+JSON.parse(address)[0].city)
+  //  console.log("propertyLocation "+JSON.parse(address)[0].city)
 
-    const dataValue = {
+  let dataValue = {};
+
+  if(address!=null && address!=undefined){
+    dataValue = {
         city: JSON.parse(address)[0].city,
         miles: JSON.parse(address)[0].miles
     }
+  }else{
+    dataValue = {
+        city: "No data",
+        miles: "No data"
+    }
+  }
 
     const [data, setData] = useState(property[index]);
 
@@ -159,7 +168,7 @@ export default function PMQuotesRequested({}){
                         }}>
 
                             {
-                                contractsFeeData.map(data=>{
+                                contractsFeeData.length>0 && contractsFeeData.map(data=>{
                                     return<DocumentCard data={data}/>;
                                 })
                             }
@@ -230,7 +239,10 @@ function DocumentCard(props) {
                 <Typography sx={textStyle}> Estimated Fees </Typography>
                     
                 </Box>
-                <Box>
+                {obj.fees.map((fee) =>{
+                  return( <FeesTextCard fee={fee}/>)
+                })}
+                {/* <Box>
                 <Typography sx={textStyle}> Monthly Service Charge: {obj.monthly_service_charge}% of all rent </Typography>
                     
                 </Box>
@@ -249,7 +261,7 @@ function DocumentCard(props) {
                 <Box>
                 <Typography sx={textStyle}> Annual Postage and Communication Fee: ${obj.postage_and_communication_fee} </Typography>
                     
-                </Box>
+                </Box> */}
                 <Box></Box>
                 View Documents <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
 
@@ -292,3 +304,11 @@ function DocumentCard(props) {
         </Box>
     );
 }
+
+
+function FeesTextCard(props) {
+
+    let fee = props.fee;
+   return(<Typography>{fee.fee_name}:{fee.charge}{fee.fee_type}</Typography>)
+  }
+  

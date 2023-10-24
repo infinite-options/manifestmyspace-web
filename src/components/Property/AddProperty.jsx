@@ -220,7 +220,7 @@ export default function AddProperty({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
-        formData.append('property_owner_id', selectedOwner);
+     //   formData.append('property_owner_id', selectedOwner);
 
         for (let i = 0; i < selectedImageList.length; i++) {
             console.log("selectedImageList[i].file", selectedImageList[i].data_url)

@@ -32,19 +32,26 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
     const [showSpinner, setShowSpinner] = useState(false);
     const color = theme.palette.form.main
     const maxSteps = images.length;
-    //const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
-    const [propertyId, setPropertyId] = useState('200-000028')
+    const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
+    //const [propertyId, setPropertyId] = useState('200-000028')
     const [contractsFeeData, setContractsFeeData] = useState([]) 
     useEffect(() => {
         const getMintenanceForProperty = async () => {
             setShowSpinner(true);
             try {
                 console.log("Fetch maintenance data for "+item.property_uid)
-//                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
+               const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
 
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
+                }
+
+                const propertyMaintenanceData = await responseProperty.json();
+
+
+                if(propertyMaintenanceData!=undefined){
+                    setMaintenanceData(propertyMaintenanceData.MaintenanceProjects.result);
                 }
                 const contractdata = await response.json();
                 console.log("Contract Data", contractdata)
@@ -74,28 +81,11 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                     let contractArray = JSON.parse(db);
                    
                     let contractfee1 = JSON.parse(contractArray)
+                    obj.fees = contractfee1;
                     obj.documents = contractfee2.documents;
                     let contactObj = JSON.parse(contractfee2.contact);
                     obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
-                    contractfee1.forEach((contractfee) => {
-
-                        if (contractfee!==undefined && contractfee.fee_name=="Monthly Service Charge") {
-                            obj.monthly_service_charge = contractfee.charge                
-                        }
-                        if (contractfee!==undefined && contractfee.fee_name=="Tenant Setup Fee") {
-                            obj.tenant_setup_fee = contractfee.charge                
-                        }
-                        if (contractfee!==undefined && contractfee.fee_name=="Annual Inspection Fee") {
-                            obj.annual_inspection_fee = contractfee.charge                
-                        }
-                        if (contractfee!==undefined && contractfee.fee_name=="Re-Keying Charge") {
-                            obj.re_keying_charge = contractfee.charge                
-                        }
-                        if (contractfee!==undefined && contractfee.fee_name=="Postage and Communication Fee") {
-                            obj.postage_and_communication_fee = contractfee.charge                
-                        }
-     
-                    });
+                  
                     console.log(JSON.stringify(obj))
                     feeData.push(obj)    
                  
@@ -590,13 +580,14 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             >
                                                 Open Maintenance Tickets
                                             </Typography>
+                                            <Box onClick={()=>(navigate('/ownerMaintenance'))}>
                                             <Badge 
                                                 badgeContent={numberOfMaintenanceItems(maintenanceData)} 
                                                 color="error"
                                                 sx={{
                                                     paddingRight:"10px"
                                                 }}
-                                            />
+                                            /></Box>
                                             {/* <div style={{paddingLeft: "20px"}}>
                                                 {maintenanceData && maintenanceData.length > 0 ? (
                                                     <Box display="flex" alignItems="right">
@@ -608,6 +599,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                     </Grid>
                                     <Grid item xs={1}></Grid>
                                     <Grid item xs={11}>
+                                    <Box onClick={()=>(navigate('/ownerMaintenance'))}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -618,10 +610,13 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         >
                                             {displayTopMaintenanceItem()}
                                         </Typography>
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={1}>
+                                    <Box onClick={()=>(navigate('/ownerMaintenance'))}>
                                         {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
+                                    </Box>
                                     </Grid>
                                     {/* <Grid item xs={2}>
                                         <Badge badgeContent={numberOfMaintenanceItems(maintenanceData)} color="error" width="20px" height="20px" 
@@ -708,6 +703,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         </Box>
                                     </Grid>
                                     <Grid item xs={11}>
+                                        <Box onClick={handleManagerChange}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -731,7 +727,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             `${item.business_name}`:
                                             "No Manager"}
                                         </Typography>
-
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>

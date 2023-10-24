@@ -175,7 +175,7 @@ export default function PropertyList({}) {
 
     console.log("theoretically property", property)
     console.log("handlePropertyDetailNavigation");
-    navigate(`/propertyDetail`, { state: { property, index, propertyList } });
+    navigate(`/propertyDetail`, { state: { index, propertyList } });
   }
 
   function getBadgeContent(index) {

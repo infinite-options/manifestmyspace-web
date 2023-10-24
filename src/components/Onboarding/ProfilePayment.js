@@ -26,7 +26,7 @@ import Venmo from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import { headers } from "./helper";
-
+import { useCookies } from "react-cookie";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -44,9 +44,14 @@ function ProfilePayment() {
   const navigate = useNavigate();
   const location = useLocation();
   const { profileId } = location.state;
+  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
+  const isPrivateRoute= cookie["isPrivateRoute"];
   const [statusImg, setStatusImg] = useState();
   const { user, isBusiness, roleName } =
     useUser();
+    console.log('Is Private Payment')
+    console.log(isPrivateRoute)
+    console.log('Is Private Payment')
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false },
     apple_pay: { value: "", checked: false },
@@ -96,7 +101,8 @@ function ProfilePayment() {
     if (checkedCreditCard) navigate("");
     if (isBusiness())
       navigate("/personalInfo", { state: { businessId: profileId } });
-    else navigate("/onboardingRouter");
+    else 
+    navigate(`/onboardingRouter`, );
   };
 
   const handleRoleSpecifics = () => {

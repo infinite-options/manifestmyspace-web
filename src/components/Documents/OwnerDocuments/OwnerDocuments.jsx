@@ -47,13 +47,14 @@ function OwnerDocuments() {
     }, []);
 
     return (
+        <>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
         <ThemeProvider theme={theme}>
-            <Backdrop
-                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={showSpinner}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
             <Box sx={{
                 fontFamily: 'Source Sans Pro',
                 color: 'text.darkblue',
@@ -220,6 +221,7 @@ function OwnerDocuments() {
                 </Box>
             </Box>
         </ThemeProvider>
+        </>
     );
 }
 

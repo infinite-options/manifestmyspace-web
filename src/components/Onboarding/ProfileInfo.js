@@ -32,6 +32,8 @@ import {
   photoFields,
 } from "./helper";
 import AES from "crypto-js/aes";
+import { useCookies } from "react-cookie";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,6 +75,11 @@ const ProfileInfo = () => {
   //     roleName: () => "Property Manager",
   //     selectedRole: "MANAGER",
   //   };
+  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
+  const isPrivateRoute = cookie["isPrivateRoute"];
+  console.log('is Private ProfileInfo')
+  console.log(isPrivateRoute)
+  console.log('is Private ProfileInfo')
   const {
     firstName,
     lastName,
@@ -172,6 +179,7 @@ const ProfileInfo = () => {
     const data = await createProfile(form, selectedRole);
     setShowSpinner(false);
     handleUpdateProfileUid(data);
+    const paymentURL= isPrivateRoute? "/privateProfilePayment" : "/profilePayment"
     navigate("/profilePayment", {
       state: {
         profileId: data.business_uid || data.owner_uid || data.tenant_uid,

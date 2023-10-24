@@ -122,6 +122,7 @@ import ProfileName from "./Onboarding/ProfileName";
 import ProfileInfo from "./Onboarding/ProfileInfo";
 import PersonalInfo from "./Onboarding/PersonalInfo";
 import ProfilePayment from "./Onboarding/ProfilePayment";
+
 import Forbidden from "./utils/Forbidden";
 import AddRole from "./Onboarding/AddRole";
 
@@ -130,6 +131,7 @@ import PMQuotesRequested from "./Property/PMQuotesRequested";
 
 import TenantApplication from "./Applications/TenantApplication";
 import AddListing from "./Property/AddListing";
+import RequestQuotes from "./Property/RequestQuotes";
 
 function Main() {
   return (
@@ -175,6 +177,16 @@ function Main() {
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
             <Route path="leaseDocument" element={<LeasePDF />} />
+
+
+            <Route path="PrivateprofileName" element={<ProfileName />} />
+            <Route path="PrivateprofileInfo" element={<ProfileInfo />} />
+            <Route path="PrivatepersonalInfo" element={<PersonalInfo />} />
+            <Route path="PrivateprofilePayment" element={<ProfilePayment />} />
+            <Route path="PrivateonboardingRouter" element={<OnboardingRouter />} />
+
+
+
 
             <Route path="announcement" element={<Announcement />} />
             <Route path="ownerProfile" element={<OwnerProfile />} />
@@ -270,6 +282,7 @@ function Main() {
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
             <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
+            <Route path="requestQuotes" element={<RequestQuotes />} />
 
             <Route path="tenantApplication" element={<TenantApplication />} />
             
