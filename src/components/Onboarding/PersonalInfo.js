@@ -51,10 +51,12 @@ const PersonalInfo = () => {
   const location = useLocation();
   const { businessId } = location.state;
   const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  const isPrivateRoute = cookie["isPrivateRoute"];
-
+  let isPrivateRoute = cookie["isPrivateRoute"];
+  const {isLoggedIn } = useUser(); // Access the user object from UserContext
+  isPrivateRoute=isLoggedIn;
+  
   console.log('Is Private Personal Info')
-  console.log(isPrivateRoute)
+  console.log(isLoggedIn)
   console.log('Is Private Personal Info')
   const [showSpinner, setShowSpinner] = useState(false);
   const [firstName, setFirstName] = useState("");

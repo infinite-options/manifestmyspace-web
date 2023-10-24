@@ -66,6 +66,7 @@ const ProfileInfo = () => {
     roleName,
     selectedRole,
     updateProfileUid,
+    isLoggedIn
   } = useUser();
   //   {
   //     user: { user_uid: "" },
@@ -75,10 +76,9 @@ const ProfileInfo = () => {
   //     roleName: () => "Property Manager",
   //     selectedRole: "MANAGER",
   //   };
-  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  const isPrivateRoute = cookie["isPrivateRoute"];
+  
   console.log('is Private ProfileInfo')
-  console.log(isPrivateRoute)
+  console.log(isLoggedIn)
   console.log('is Private ProfileInfo')
   const {
     firstName,
@@ -179,7 +179,7 @@ const ProfileInfo = () => {
     const data = await createProfile(form, selectedRole);
     setShowSpinner(false);
     handleUpdateProfileUid(data);
-    const paymentURL= isPrivateRoute? "/privateProfilePayment" : "/profilePayment"
+    const paymentURL= isLoggedIn ? "/privateProfilePayment" : "/profilePayment"
     navigate("/profilePayment", {
       state: {
         profileId: data.business_uid || data.owner_uid || data.tenant_uid,

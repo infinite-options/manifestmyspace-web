@@ -48,8 +48,8 @@ export default function AddRole() {
       updatePayload
     );
     setCookie("user", user);
-    setCookie("isPrivateRoute", true);
-    navigate(`/privateonboardingRouter`, { state: { isPrivate:true } });
+    
+    navigate(`/privateonboardingRouter`);
   };
   
   // Function to get selected roles
