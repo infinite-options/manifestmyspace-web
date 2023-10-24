@@ -17,7 +17,7 @@ const GoogleSignup = () => {
   const [refreshToken, setRefreshToken] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
-  let google=null;
+  // let google=null;
   let codeClient = {};
 
   //   run onclick for authorization and eventually sign up

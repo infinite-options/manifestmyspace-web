@@ -14,7 +14,7 @@ let SCOPES =
 
 function GoogleLogin(props) {
   const navigate = useNavigate();
-  let google=null;
+  // let google=null;
   const [email, setEmail] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const [accessToken, setAccessToken] = useState("");
