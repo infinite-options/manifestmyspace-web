@@ -47,6 +47,7 @@ const PropertyInfo = (props) => {
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
+    console.log(property)
 
     useEffect(() => {
         window.scrollTo(0, 0);

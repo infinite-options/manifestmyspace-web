@@ -176,9 +176,9 @@ export default function TenantApplication(){
             },
             body: JSON.stringify({
                 "lease_property_id": property.property_uid,
-                "lease_start": "2023-11-01",
-                "lease_end": "2024-10-31",
-                "lease_status": "Application",
+                // "lease_start": "",
+                // "lease_end": "",
+                "lease_status": "APPLICATION",
                 "lease_assigned_contacts": "[]",
                 "lease_documents": "[]",
                 "lease_adults": JSON.stringify(adultOccupants),
@@ -187,9 +187,12 @@ export default function TenantApplication(){
                 "lease_vehicles": "[]", //JSON.stringify(vehicles),
                 "lease_referred": "[]",
                 "lease_rent": "[]",
-                "lease_effective_date": "2023-11-01",
+                "lease_application_date": date.toDateString(),
+                "tenant_uid": getProfileId(),
             })
         })
+
+        
 
         Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
             console.log(values)
