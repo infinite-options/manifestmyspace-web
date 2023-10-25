@@ -58,7 +58,7 @@ export function Footer() {
           case 'MANAGER':
             return '/managerDashboard';
           case 'TENANT':
-            return '/tenantDashboard';
+            return '/announcements';
           case 'MAINTENANCE':
             return '/maintenanceDashboard';
           case 'PM_EMPLOYEE':

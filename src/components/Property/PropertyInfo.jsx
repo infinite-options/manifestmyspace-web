@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import theme from '../../theme/theme';
 import {
     ThemeProvider,
@@ -31,6 +31,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import ReactImageGallery from 'react-image-gallery';
 import { useNavigate, useLocation } from 'react-router-dom';
+import backButton from '../Payments/backIcon.png';
 
 
 dayjs.extend(utc);
@@ -46,6 +47,10 @@ const PropertyInfo = (props) => {
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -88,46 +93,42 @@ const PropertyInfo = (props) => {
 
     return (
         <ThemeProvider theme={theme}>
-            {/* <Box
-                style={{
-                    display: 'flex',
-                    fontFamily: 'Source Sans Pro',
-                    justifyContent: 'flex-start',
-                    marginTop: theme.spacing(2),
-                    paddingLeft: '25px',
-                }}
-            >
-                <Stack
-                    direction="row"
-                    justifyContent="center"
-                    alignItems="center"
-                >
-                    <Box>
-                        <Button>
-                            <svg
-                                width="19"
-                                height="16"
-                                viewBox="0 0 19 16"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z"
-                                    fill="#160449"
-                                />
-                            </svg>
-                        </Button>
-                    </Box>
-                </Stack>
-            </Box> */}
             <Scheduler 
                 show={showScheduler} 
                 setShow={setShowScheduler} 
                 date={schedulerDate} 
                 setDate={setSchedulerDate} 
             />
+            <Box
+                component="span"
+                display='flex'
+                justifyContent='center'
+                alignItems='center'
+                position='relative'
+            >
+                <Button
+                    onClick={() => navigate(-1)}
+                    sx={{
+                        textTransform: 'none',
+                        padding: '10px 10px 0px 10px',
+                        textDecoration: 'underline',
+                        position: 'relative',
+                    }}
+                >
+                    <img src={backButton} style={{width: '20px', height: '20px', margin:'0 5px'}}/>
+                    <Typography
+                        sx={{
+                            justifySelf: 'center',
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.medium.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textAlign: 'center',
+                        }}>
+
+                        <u>Return to All Listings</u>
+                    </Typography>
+                </Button>
+            </Box>
             <Box
                 style={{
                     display: 'flex',
@@ -142,6 +143,7 @@ const PropertyInfo = (props) => {
                     style={{
                         margin: '15px 30px 30px',
                         padding: '15px',
+                        paddingTop: '0px',
                         backgroundColor: theme.palette.primary.main,
                         width: '85%', // Occupy full width with 25px margins on each side
                         [theme.breakpoints.down('sm')]: {
