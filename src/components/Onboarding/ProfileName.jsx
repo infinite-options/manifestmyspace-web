@@ -50,9 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfileName = () => {
   const classes = useStyles();
-  const navigate = useNavigate();
-  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  
+  const navigate = useNavigate();  
   const [statusImg, setStatusImg] = useState();
   const [title, setTitle] = useState();
   const [addPhotoImg, setAddPhotoImg] = useState();

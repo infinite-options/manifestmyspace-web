@@ -77,9 +77,7 @@ const ProfileInfo = () => {
   //     selectedRole: "MANAGER",
   //   };
   
-  console.log('is Private ProfileInfo')
-  console.log(isLoggedIn)
-  console.log('is Private ProfileInfo')
+
   const {
     firstName,
     lastName,

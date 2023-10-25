@@ -47,17 +47,12 @@ const useStyles = makeStyles((theme) => ({
 const PersonalInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const { user, isEmployee, roleName, updateProfileUid } = useUser();
+  const { user, isLoggedIn, isEmployee, roleName, updateProfileUid } = useUser();
   const location = useLocation();
   const { businessId } = location.state;
-  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  let isPrivateRoute = cookie["isPrivateRoute"];
-  const {isLoggedIn } = useUser(); // Access the user object from UserContext
-  isPrivateRoute=isLoggedIn;
+
   
-  console.log('Is Private Personal Info')
-  console.log(isLoggedIn)
-  console.log('Is Private Personal Info')
+  
   const [showSpinner, setShowSpinner] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
