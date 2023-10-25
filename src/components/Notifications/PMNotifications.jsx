@@ -30,13 +30,31 @@ function PMNotifications(props) {
         const fetchData = async () => {
             setShowSpinner(true);
             
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
 
-            const response = await fetch(`http://localhost:4000/announcements/600-000003`);
+            // const response = await fetch(`http://localhost:4000/announcements/600-000003`);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000003`);
             const announcementData = await response.json();
             
             setAnnouncements(announcementData['result']);
             
+            const testData = [
+                {
+                    "announcement_uid": "020-000103",
+                    "announcement_title": "New PM Request",
+                    "announcement_msg": "PM Quote Requested",
+                    "announcement_sender": "110-000096",
+                    "announcement_date": "2023-10-24 01:01:13",
+                    "announcement_properties": "200-000096",
+                    "announcement_mode": "NEW",
+                    "announcement_receiver": "600-000003",
+                    "announcement_type": null,
+                    "Email": null,
+                    "Text": null,
+                    "App": null
+                }
+            ]
+            setAnnouncements(testData);
 
             setShowSpinner(false);
             
@@ -50,6 +68,7 @@ function PMNotifications(props) {
         console.log("ANNOUNCEMENT DATA:");
         console.log(announcements);
     }, [announcements]);
+    
     const handleBackBtn = () => {
         navigate(-1);
     };
@@ -127,7 +146,24 @@ function PMNotifications(props) {
                 </Box>
                 
                 {announcements.map((announcement) => (
-                    <Box
+                    <AnnouncementCard data={announcement}/>
+                
+                ))}
+              
+            </Box>
+        </ThemeProvider>
+    )
+
+}
+
+function AnnouncementCard(props){
+    const announcement = props.data;
+
+    const navigate = useNavigate();
+
+    
+
+    return (<Box
                         sx={{
                             display:'flex',
                             flexDirection: "column",
@@ -139,6 +175,9 @@ function PMNotifications(props) {
                             color: 'text.darkblue',
                         }}
                         key={announcement.announcement_uid}
+                        onClick={() => {
+                            navigate('/NewOwnerInquiry', {state: {announcementData: announcement}});
+                        }}
                     >     
                     
                         <Box sx={{
@@ -157,13 +196,8 @@ function PMNotifications(props) {
                         {announcement.announcement_title}
                         </Box>
                     </Box>
-                
-                ))}
-              
-            </Box>
-        </ThemeProvider>
-    )
+    );
 
-}
+} 
 
 export default PMNotifications;
