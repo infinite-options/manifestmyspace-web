@@ -17,10 +17,33 @@ import { getPaymentStatusColor, getPaymentStatus } from './PropertyList.jsx';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from '@mui/icons-material/PostAdd';
-
+import { DataGrid } from '@mui/x-data-grid';
 import { useUser } from "../../contexts/UserContext";
 
-export default function PropertyNavigator({index, propertyData, paymentStatus, paymentStatusColor}){
+const maintenanceColumns = [
+    { 
+      field: 'maintenance_request_uid', 
+      headerName: 'UID', 
+      flex: 1,
+    },
+    {
+      field: 'maintenance_request_created_date',
+      headerName: 'Created Date',
+      flex: 1,
+    },
+    {
+      field: 'maintenance_title',
+      headerName: 'Title',
+      flex: 1,
+    },
+    {
+      field: 'maintenance_request_status',
+      headerName: 'Status',
+      flex: 1,
+    },
+];
+
+export default function PropertyNavigator({index, propertyData}){
     const navigate = useNavigate();
     const { user, getProfileId, roleName } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -40,9 +63,10 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
             setShowSpinner(true);
             try {
                 console.log("Fetch maintenance data for "+item.property_uid)
-               const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
+                // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
+                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-            //  const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);  
+                //  const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);  
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }
@@ -109,14 +133,24 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
     }, []);
 
     function displayTopMaintenanceItem(){
-
-        console.log(maintenanceData)
         if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
-            const date = new Date(maintenanceData[0].maintenance_request_created_date)
-            // console.log(date.toLocaleDateString())
-            const title = maintenanceData[0].maintenance_title 
-            // console.log(title)
-            return date.toLocaleDateString() + "  " + title
+            return (
+                <DataGrid
+                    rows={maintenanceData}
+                    columns={maintenanceColumns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
+                            },
+                        },
+                    }}
+                    getRowId={(row) => row.maintenance_request_uid}
+                    pageSizeOptions={[5]}
+                    disableRowSelectionOnClick
+                    onRowClick={()=>{}}
+                />
+            )
         } else {
             return "No Open Maintenance Tickets"
         }
@@ -383,7 +417,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             sx={{
                                                 padding: "0px"
                                             }}
-                                            onClick={() => {console.log("View Lease")}}
+                                            onClick={() => navigate('/viewLease')}
                                         >
                                             <Typography
                                                 sx={{
@@ -429,7 +463,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                ${/* 527,000 (2022) */}
+                                                ${item.property_value}
 
                                         </Typography>
                                     </Grid>
@@ -470,9 +504,17 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         >
                                             <Button
                                                 sx={{
-                                                    paddingLeft: "0px"
+                                                    paddingLeft: "0px",
+                                                    "&:hover, &:focus, &:active": {
+                                                        backgroundColor: color,
+                                                    },
                                                 }}
-                                                onClick={() => {navigate('/editProperty', {state:{ currentId, item }})}}
+                                                onClick={() => {navigate('/editProperty', 
+                                                    { state: {
+                                                        index, 
+                                                        propertyList:propertyData 
+                                                    }}
+                                                )}}
                                             >
                                                 <CreateIcon sx={{
                                                     color: theme.typography.common.blue,
@@ -603,9 +645,14 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             </div> */}
                                         </div>
                                     </Grid>
-                                    <Grid item xs={1}></Grid>
-                                    <Grid item xs={11}>
+                                    <Grid item xs={1}>
                                     <Box onClick={()=>(navigate('/ownerMaintenance'))}>
+                                        {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
+                                    </Box>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                    <Box>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -617,12 +664,6 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             {displayTopMaintenanceItem()}
                                         </Typography>
                                         </Box>
-                                    </Grid>
-                                    <Grid item xs={1}>
-                                    <Box onClick={()=>(navigate('/ownerMaintenance'))}>
-                                        {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
-                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
-                                    </Box>
                                     </Grid>
                                     {/* <Grid item xs={2}>
                                         <Badge badgeContent={numberOfMaintenanceItems(maintenanceData)} color="error" width="20px" height="20px" 
@@ -750,7 +791,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                             <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                Create Listing
+                                                {"Create Listing"}
                                             </Typography>
                                         </Button>
                                     </Grid>
