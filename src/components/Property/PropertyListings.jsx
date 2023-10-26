@@ -32,38 +32,26 @@ import leaseIcon from './leaseIcon.png';
 const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
     const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
+    const [sortedProperties, setSortedProperties] = useState([]);
     const { getProfileId } = useUser();
     const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
 
-    // const images = [
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //     },
-    // ];
-
-    const url =
-        'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
-    // 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003';
+    const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
     useEffect(() => {
         console.log('fetch data')
         setShowSpinner(true);
         fetchData();
         getLeaseDetails();
+        sortProperties();
     }, []);
 
     async function getLeaseDetails(){
         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         const leaseData = await response.json();
         console.log(leaseData)
-        setTenantLeaseDetails(leaseData);
+        setTenantLeaseDetails(leaseData.Lease_Details.result);
         setShowSpinner(false);
     }
     
@@ -73,6 +61,26 @@ const PropertyListings = (props) => {
         console.log(propertyData)
         setPropertyData(propertyData.Property_Dashboard.result)
         setShowSpinner(false);
+    }
+
+
+    function sortProperties(){
+        // move the properties the tenant has applied to, to the top of the list
+
+        // console.log("tenantLeaseDetails", tenantLeaseDetails)
+        // console.log("propertyData", propertyData)
+
+        var sortedProperties = propertyData;
+
+        tenantLeaseDetails.forEach((lease) => {
+            const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
+
+            const appliedProperty = sortedProperties.splice(appliedPropertyIndex);
+
+            sortedProperties.unshift(appliedProperty);
+        })
+
+        setSortedProperties(sortedProperties)
     }
 
     return (
@@ -313,8 +321,14 @@ const PropertyListings = (props) => {
                             {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    {propertyData.map((property, index) => {
-                        return <PropertyCard data={property} key={index} />;
+                    {/* {console.log("tenantLeaseDetails", tenantLeaseDetails)} */}
+                    {/* {console.log("propertyData", propertyData)} */}
+                    
+                    {sortedProperties.map((property, index) => {
+                        var status = false
+                        const applied = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        if (applied) { status = true; }
+                        return <PropertyCard data={property} key={index} status={status} lease={applied}/>;
                     })}
                 </Paper>
             </Box>
@@ -326,6 +340,12 @@ function PropertyCard(props) {
     const navigate = useNavigate();
 
     const property = props.data;
+
+    const applied = props.status;
+
+    const lease = props.lease;
+
+    console.log("applied in PropertyCard", applied)
 
     const ppt_images = property.property_images.split(',');
 
@@ -363,6 +383,7 @@ function PropertyCard(props) {
             state: {
                 index: props.index,
                 data: property,
+                status: applied
             },
         });
     };
@@ -404,6 +425,7 @@ function PropertyCard(props) {
                         <span style={{ opacity: '60%' }}> / Month</span>
                     </Typography>
                 </Box>
+                {applied ? (
                 <Box
                     sx={{
                         backgroundColor: theme.typography.common.blue,
@@ -428,7 +450,7 @@ function PropertyCard(props) {
                     >
                         Applied
                     </Typography>
-                </Box>
+                </Box>): (null)}
             </Stack>
             <CardContent>
                 <Stack
@@ -640,19 +662,21 @@ function PropertyCard(props) {
                     >
                         View Details
                     </Button>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: theme.typography.common.blue,
-                            color: theme.typography.secondary.white,
-                            marginLeft: '5px',
-                            textTransform: 'none',
-                            whiteSpace: 'nowrap'
-                        }}
-                        onClick={() => console.log("view app")}
-                        >
-                            View Application
-                    </Button>
+                    {applied ? (
+                         <Button
+                         variant="contained"
+                         sx={{
+                             backgroundColor: theme.typography.common.blue,
+                             color: theme.typography.secondary.white,
+                             marginLeft: '5px',
+                             textTransform: 'none',
+                             whiteSpace: 'nowrap'
+                         }}
+                         onClick={() => navigate('/tenantApplication', {state: { property: property, status: applied, lease: lease }})}
+                         >
+                             View Application
+                     </Button>
+                    ) : (null)}
                 </Stack>
             </CardActions>
         </Card>
