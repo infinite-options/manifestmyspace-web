@@ -13,9 +13,9 @@ import AddUtility from "./Cashflow/AddUtility";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
-import FindProperty from "./Property/FindProperty";
+import PropertyListings from "./Property/PropertyListings";
 
-import Announcement from "./Announcement/Announcement";
+import Announcements from "./Announcement/Announcements";
 import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
@@ -132,6 +132,7 @@ import PMQuotesRequested from "./Property/PMQuotesRequested";
 import TenantApplication from "./Applications/TenantApplication";
 import AddListing from "./Property/AddListing";
 import RequestQuotes from "./Property/RequestQuotes";
+import ViewDocument from "./Property/ViewDocument";
 
 import PMNotifications from "./Notifications/PMNotifications";
 
@@ -173,7 +174,7 @@ function Main() {
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
-            <Route path="listings" element={<FindProperty />} />
+            <Route path="listings" element={<PropertyListings />} />
             <Route path="addListing" element={<AddListing />} />
 
             <Route path="viewLease" element={<ViewLease />} />
@@ -190,7 +191,7 @@ function Main() {
 
 
 
-            <Route path="announcement" element={<Announcement />} />
+            <Route path="announcements" element={<Announcements />} />
             <Route path="ownerProfile" element={<OwnerProfile />} />
             <Route path="ownerDocuments" element={<OwnerDocuments />} />
             <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
@@ -285,6 +286,7 @@ function Main() {
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
             <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
             <Route path="requestQuotes" element={<RequestQuotes />} />
+            <Route path="viewDocument" element={<ViewDocument />} />
 
             <Route path="tenantApplication" element={<TenantApplication />} />
 

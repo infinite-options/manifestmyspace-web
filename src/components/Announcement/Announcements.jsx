@@ -7,7 +7,7 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-function Announcement() {
+export default function Announcements() {
     const { getProfileId } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
@@ -91,5 +91,3 @@ function Announcement() {
         </div>
     );
 }
-
-export default Announcement;

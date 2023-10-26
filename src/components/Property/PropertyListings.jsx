@@ -27,9 +27,11 @@ import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import leaseIcon from './leaseIcon.png';
 
-const FindProperty = (props) => {
+const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
+    const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
     const { getProfileId } = useUser();
     const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
@@ -52,11 +54,20 @@ const FindProperty = (props) => {
 
     useEffect(() => {
         console.log('fetch data')
+        setShowSpinner(true);
         fetchData();
+        getLeaseDetails();
     }, []);
+
+    async function getLeaseDetails(){
+        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        const leaseData = await response.json();
+        console.log(leaseData)
+        setTenantLeaseDetails(leaseData);
+        setShowSpinner(false);
+    }
     
     async function fetchData(){
-        setShowSpinner(true);
         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
         const propertyData = await response.json();
         console.log(propertyData)
@@ -365,28 +376,60 @@ function PropertyCard(props) {
                 showThumbnails={false}
             />
 
-            <Box
-                sx={{
-                    backgroundColor: '#8897BA',
-                    color: theme.typography.secondary.white,
-                    boxShadow: '4px 4px 3px #00000009',
-                    zIndex: 5,
-                    width: '50%',
-                    position: 'relative',
-                    borderRadius: '8px',
-                    margin: '-17px 15px 5px',
-                }}
+            <Stack
+                direction="row" 
+                justifyContent="space-between" 
             >
-                <Typography
+                <Box
                     sx={{
-                        padding: '10px',
-                        fontSize: '18px',
+                        backgroundColor: '#8897BA',
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
                     }}
                 >
-                    {listed_rent}
-                    <span style={{ opacity: '60%' }}> / Month</span>
-                </Typography>
-            </Box>
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                        }}
+                    >
+                        {listed_rent}
+                        <span style={{ opacity: '60%' }}> / Month</span>
+                    </Typography>
+                </Box>
+                <Box
+                    sx={{
+                        backgroundColor: theme.typography.common.blue,
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Applied
+                    </Typography>
+                </Box>
+            </Stack>
             <CardContent>
                 <Stack
                     direction="row"
@@ -555,14 +598,22 @@ function PropertyCard(props) {
             </CardContent>
             <CardActions
                 sx={{
-                    justifyContent: 'space-evenly',
+                    // justifyContent: 'space-evenly',
+                    justifyContent: 'center',
+                    flexWrap: { xs: 'wrap', sm: 'wrap', md: 'nowrap' },
+                    display: 'flex',
+                    width: '100%'
                 }}
             >
                 <Stack
                     alignItems="center"
-                    justifyContent="center"
+                    justifyContent="space-evenly"
                     direction="row"
-                    sx={{ paddingBottom: '10px' }}
+                    spacing={2}
+                    sx={{
+                        flexWrap: 'wrap',
+                        rowGap: '10px',
+                    }}
                 >
                     <Button
                         variant="text"
@@ -570,6 +621,8 @@ function PropertyCard(props) {
                             border: '1px solid',
                             color: theme.typography.common.blue,
                             marginRight: '5px',
+                            textTransform: 'none',
+                            whiteSpace: 'nowrap'
                         }}
                     >
                         Contact Property
@@ -577,13 +630,28 @@ function PropertyCard(props) {
                     <Button
                         variant="contained"
                         sx={{
-                            backgroundColor: theme.typography.common.blue,
+                            backgroundColor: "#97A7CF",
                             color: theme.typography.secondary.white,
                             marginLeft: '5px',
+                            textTransform: 'none',
+                            whiteSpace: 'nowrap'
                         }}
                         onClick={handleDetailsButton}
                     >
                         View Details
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: theme.typography.common.blue,
+                            color: theme.typography.secondary.white,
+                            marginLeft: '5px',
+                            textTransform: 'none',
+                            whiteSpace: 'nowrap'
+                        }}
+                        onClick={() => console.log("view app")}
+                        >
+                            View Application
                     </Button>
                 </Stack>
             </CardActions>
@@ -591,4 +659,4 @@ function PropertyCard(props) {
     );
 }
 
-export default FindProperty;
+export default PropertyListings;

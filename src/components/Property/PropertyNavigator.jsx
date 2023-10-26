@@ -42,7 +42,7 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                 console.log("Fetch maintenance data for "+item.property_uid)
                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-
+            //  const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);  
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }
@@ -63,9 +63,11 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                     if (contract.contract_property_id==propertyId) {
 
                         let obj = {
+                            contract_uid: contract.contract_uid,
                             fees: contract.contract_fees,
                             documents: contract.contract_documents,
-                            contact: contract.contract_assigned_contacts
+                            contact: contract.contract_assigned_contacts,
+                            contract_status : contract.contract_status,
                         }
                         //console.log("C fee "+JSON.stringify(contract.contract_fees))
                         //contracts.push(contract.contract_fees); 
@@ -80,12 +82,16 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                     var db = JSON.stringify(contractfee2.fees);
                     let contractArray = JSON.parse(db);
                    
+                    obj.contract_uid = contractfee2.contract_uid
+                    obj.contract_status = contractfee2.contract_status
                     let contractfee1 = JSON.parse(contractArray)
                     obj.fees = contractfee1;
                     obj.documents = contractfee2.documents;
                     let contactObj = JSON.parse(contractfee2.contact);
-                    obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
-                  
+                    if (contactObj!==undefined && contactObj!==null){
+                        obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+                    }
+                    obj.contact = "";
                     console.log(JSON.stringify(obj))
                     feeData.push(obj)    
                  
@@ -698,7 +704,8 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                                             <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
                                             onClick={()=> {navigate("/pmQuotesRequested",{state :{
                                                 index: index,
-                                                propertyData, propertyData
+                                                propertyData, propertyData,
+                                                contractsFeeData: contractsFeeData
                                             }})}}/>
                                         </Box>
                                     </Grid>

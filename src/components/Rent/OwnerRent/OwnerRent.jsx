@@ -97,7 +97,7 @@ function OwnerRent(props) {
             <Box sx={{
                 marginTop: '20px',
             }}
-            onClick={()=>{navigate('/findProperty')}}>
+            onClick={()=>{navigate('/listings')}}>
                 <ViewAllButton>
                     View 8 Property Listings
                 </ViewAllButton>
