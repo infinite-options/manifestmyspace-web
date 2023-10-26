@@ -176,8 +176,6 @@ export default function TenantApplication(){
             },
             body: JSON.stringify({
                 "lease_property_id": property.property_uid,
-                // "lease_start": "",
-                // "lease_end": "",
                 "lease_status": "APPLICATION",
                 "lease_assigned_contacts": "[]",
                 "lease_documents": "[]",

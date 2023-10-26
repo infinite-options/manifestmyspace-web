@@ -70,6 +70,7 @@ const PropertyInfo = (props) => {
         return imageString;
     }
 
+
     const images = ppt_images.map((data) => {
         try {
             const url = parseImageData(data);
