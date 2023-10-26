@@ -30,14 +30,14 @@ function PMNotifications(props) {
         const fetchData = async () => {
             setShowSpinner(true);
             
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
-
             // const response = await fetch(`http://localhost:4000/announcements/600-000003`);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000003`);
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000003`);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
             const announcementData = await response.json();
             
             setAnnouncements(announcementData['result']);
             
+            //rohit - using testData as announcements API needs to be updated. Need to get announcements where the current profile is the receiver
             const testData = [
                 {
                     "announcement_uid": "020-000103",

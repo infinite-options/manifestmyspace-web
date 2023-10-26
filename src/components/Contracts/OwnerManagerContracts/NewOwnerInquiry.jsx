@@ -18,7 +18,9 @@ import {
     TextField,
     Radio,
     RadioGroup,
-    FormControlLabel
+    FormControlLabel,
+    Select,
+    MenuItem,
 } from '@mui/material';
 import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
@@ -31,17 +33,31 @@ function NewOwnerInquiry(props) {
 
     const {state} = useLocation();
     const { announcementData } = state;
+    
+    const [contractBusinessID, setContractBusinessID] = useState(null);
+    useEffect(() => {
+        console.log('CONTRACT BUSINESS ID: ', contractBusinessID);
+    }, [contractBusinessID]);
+    // let contractBusinessID = "";
+
+    const [contractPropertyID, setContractPropertyID] = useState(null);
+    useEffect(() => {
+        console.log('CONTRACT PROPERTY ID: ', contractPropertyID);
+    }, [contractPropertyID]);
+    // let contractPropertyID = "";
 
     const [showSpinner, setShowSpinner] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [propertiesData, setPropertiesData] = useState([]);
     const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
     
-
+    // useEffect(() => {
+    //     // setContractPropertyID(filteredPropertiesData["property_uid"]);
+    // }, [filteredPropertiesData]); // rohit
+    
     
     const [index, setIndex] = useState(0);
     const [timeDiff, setTimeDiff] = useState(null);
-
-
 
     useEffect(() => {
         console.log("New Owner Inquiry UseEffect");
@@ -49,35 +65,47 @@ function NewOwnerInquiry(props) {
         const fetchData = async () => {
             setShowSpinner(true);
 
+            
+
+            console.log("ANNOUNCEMENT DATA", announcementData);
+
+            setContractBusinessID(announcementData["announcement_receiver"]);
+            
+
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
             
-            
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
-
-            
 
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${announcementData["announcement_sender"]}`)
             
             const responseData = await response.json();
 
-            setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
-            setFilteredPropertiesData(propertiesData.filter(property => announcementData.announcement_properties.includes(property.property_uid)));
+            
+            // setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
+            const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
+            console.log("PROPERTIES", properties);
+            setPropertiesData(properties);
 
-            console.log("PROPERTIES DATA", propertiesData);
+            // setFilteredPropertiesData(propertiesData.filter(property => announcementData.announcement_properties.includes(property.property_uid)));
+
+            
 
             
             const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
-            const filteredProperties = propertiesData.filter(property => announcementPropertiesArray.includes(property.property_uid));
+            const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
             // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
-            // console.log("FILTERED PROPERTIES DATA", filteredProperties);
+            console.log("FILTERED PROPERTIES", filteredProperties);
             setFilteredPropertiesData(filteredProperties)
 
-            console.log("FILTERED PROPERTIES DATA", filteredPropertiesData);
+            // console.log("FILTERED PROPERTIES DATA", filteredProperties);
+
+            setContractPropertyID(filteredProperties[0]["property_uid"]);
+            
+            
+            
 
 
-            console.log("ANNOUNCEMENT DATA", announcementData);
-
-
+            setIsLoading(false);
             setShowSpinner(false);
         };
         const calculateTimeDiff = () => {
@@ -115,7 +143,9 @@ function NewOwnerInquiry(props) {
         navigate(-1);
     };
 
-
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
     return (
         <ThemeProvider theme={theme}>
             <Backdrop
@@ -221,7 +251,7 @@ function NewOwnerInquiry(props) {
                         </svg>
                     </Box>
                 </Box>
-                <PropertyCard data={filteredPropertiesData[index]? filteredPropertiesData[index]: []} timeDifference={timeDiff}/>
+                <PropertyCard data={filteredPropertiesData[index]? filteredPropertiesData[index]: []} timeDifference={timeDiff} contractBusinessID={contractBusinessID} contractPropertyID={contractPropertyID}/>
                 
             </Box>
         </ThemeProvider>
@@ -232,15 +262,152 @@ function NewOwnerInquiry(props) {
 function PropertyCard(props) {
     const propertyData = props.data;
     const timeDiff = props.timeDifference;
+    const contractBusinessID = props.contractBusinessID;
+    const contractPropertyID = props.contractPropertyID;
+
     const [showEditFees, setShowEditFees] = useState(false);
 
-    const handleOpenEditFees = () => {
+    const handleAddFee = (newFee) => {
+        // const newFee = {
+        //     // Add properties for the new fee item here
+        //     feeName: 'New Fee',
+        //     feeAmount: 0,
+        // };
+        setContractFees((prevContractFees) => [...prevContractFees, newFee]);
+    }
+
+    const handleOpenAddFee = () => {
         setShowEditFees(true);
     };
 
-    const handleCloseEditFees = () => {
+    const handleCloseAddFee = () => {
         setShowEditFees(false);
     };
+
+    //Contract Details
+    const [contractUID, setContractUID] = useState();
+    const [contractName, setContractName] = useState("");
+    const [contractStartDate, setContractStartDate] = useState("");
+    const [contractEndDate, setContractEndDate] = useState("");
+    const [contractFees, setContractFees] = useState([]);
+
+    useEffect(()=> {
+        console.log("CONTRACT FEES - ", contractFees);
+
+        let JSONstring = JSON.stringify(contractFees);
+        console.log("CONTRACT FEES JSON string- ", JSONstring);
+    }, [contractFees]);
+
+    
+
+    const handleContractNameChange = (event) => {
+        setContractName(event.target.value);
+    }
+
+    const handleStartDateChange = (event) => {
+        setContractStartDate(event.target.value);
+    }
+
+    const handleEndDateChange = (event) => {
+        setContractEndDate(event.target.value);
+    }
+
+    const handleContractFeesChange = (feesList) => {
+        console.log("In handleContractFeesChange()");
+        //rohit
+        //setContractFees() // map to the correct keys
+    }
+
+    const sendPutRequest = (data) => {
+        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+        // const url = `http://localhost:4000/contracts`; 
+    
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            } else{
+                console.log("Data updated successfully");
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    };
+
+    const handleDeclineOfferClick = () => {
+        console.log("Decline Offer Clicked");
+        // let contractFeesJSONString = JSON.stringify(contractFees);
+        // console.log("Decline Offer - contractFeesJSONString : ", contractFeesJSONString);
+        // const data = {
+        //     "contract_uid": contractUID,
+        //     "contract_name": contractName,
+        //     "contract_start_date": contractStartDate,
+        //     "contract_end_date": contractEndDate,
+        //     "contract_fees": contractFeesJSONString,
+        //     "contract_status": "REFUSED"
+        // };
+
+        const data = {
+            "contract_uid": contractUID,
+            "contract_status": "REFUSED"
+        };
+
+        console.log("Declined offer. Data sent - ", data);
+
+        sendPutRequest(data);    
+    };
+    
+
+    const handleSendQuoteClick = () => {
+        console.log("Send Quote Clicked");
+        let contractFeesJSONString = JSON.stringify(contractFees);
+        console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
+        const data = {
+            "contract_uid": contractUID,
+            "contract_name": contractName,
+            "contract_start_date": contractStartDate,
+            "contract_end_date": contractEndDate,
+            "contract_fees": contractFeesJSONString,
+            "contract_status": "SENT"
+        };
+
+        console.log("Quote sent. Data sent - ", data);
+
+        sendPutRequest(data);
+    }
+
+    useEffect(() => {
+        console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
+        console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
+
+        //get contracts
+        const fetchData = async () => {
+            const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
+            const data = await result.json();
+
+            const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID);
+            
+            console.log("CONTRACT - ", contractData);
+            setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+            setContractName(contractData["contract_name"]? contractData["contract_name"] : "");
+            setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
+            setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
+            setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
+          };
+      
+          fetchData();
+      
+
+        
+        
+    }, []);
 
     return (
         <>
@@ -663,7 +830,7 @@ function PropertyCard(props) {
                 
                     Management Agreement Name
             </Box>
-            <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={""} onChange={console.log("input changed")}>First Name</TextInputField>
+            <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange}>First Name</TextInputField>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -683,7 +850,7 @@ function PropertyCard(props) {
                     
                         Start Date
                     </Box>
-                    <TextInputField name="start_date" placeholder="mm/dd/yy" value={""} onChange={() => {console.log("input changed")}}>First Name</TextInputField>
+                    <TextInputField name="start_date" placeholder="mm/dd/yy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
                 </Box>
                 <Box>
                     <Box sx={{
@@ -696,7 +863,7 @@ function PropertyCard(props) {
                     
                         End Date
                     </Box>
-                    <TextInputField name="end_date" placeholder="mm/dd/yy" value={""} onChange={console.log("input changed")}>First Name</TextInputField>
+                    <TextInputField name="end_date" placeholder="mm/dd/yy" value={contractEndDate} onChange={handleEndDateChange}>End Date</TextInputField>
                 </Box>
 
             </Box>
@@ -714,9 +881,9 @@ function PropertyCard(props) {
                         Management Fees
                     </Box>
                     <Box
-                        onClick={handleOpenEditFees}
+                        onClick={handleOpenAddFee}
                     >
-                        Edit Fees
+                        Add Fee
                     </Box>
                     
             </Box>
@@ -729,7 +896,32 @@ function PropertyCard(props) {
 
                 }}
             >   
-                <Box>
+                {contractFees.length === 0 ? (
+                    <p>No fees to display</p>
+                ) : (
+                    contractFees.map((fee, index) => (
+                        <Box 
+                            key={index}
+                            sx = {{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                
+                            }}
+                        >
+                            {/* <Box>{'Fee Name'}: {fee.feeName}</Box>
+                            <Box>{'Fee Frequency'}: {fee.feeFrequency}</Box>
+                            <Box>{'Fee Type'}: {fee.feeType}</Box>
+                            <Box>{'Is percentage?'}: {fee.isPercentage? 'True' : 'False'}</Box>
+                            <Box>{'percentage'}: {fee.isPercentage ? `Percentage: ${fee.feePercentage}, Applied To: ${fee.feeAppliedTo}` : 'False'}</Box>
+                            <Box>{'Is flat-rate?'}: {fee.isFlatRate? 'True' : 'False'}</Box>
+                            <Box>{'flat-rate'}: {fee.isFlatRate ? `Amount: ${fee.feeAmount}` : 'False'}</Box> */}
+                            <Box>{fee.feeName}: {fee.isPercentage ? `${fee.feePercentage}% of ${fee.feeAppliedTo}` : ` $${fee.feeAmount}`}</Box>
+                        </Box>
+                        
+                    ))
+                )}
+                
+                {/* <Box>
                     Monthly service charge: {'15% of all rent'}
                 </Box>
                 <Box>
@@ -743,7 +935,7 @@ function PropertyCard(props) {
                 </Box>
                 <Box>
                     Annual Postage and Communication Fee: $20
-                </Box>
+                </Box> */}
             </Box>
             <Box sx={{
                 display: 'flex',
@@ -803,7 +995,7 @@ function PropertyCard(props) {
                         display: 'flex',
                         width: "45%",
                     }}
-                    // onClick={() => handleSubmit("SENT")}
+                    onClick={handleDeclineOfferClick}
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 
@@ -824,7 +1016,7 @@ function PropertyCard(props) {
                         display: 'flex',
                         width: "45%",
                     }}
-                    // onClick={() => handleSubmit("SENT")}
+                    onClick={handleSendQuoteClick}
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 
@@ -838,7 +1030,7 @@ function PropertyCard(props) {
             </Box>
             {showEditFees && (
                 <Box>
-                    <EditFeesComponent open={showEditFees} handleClose={handleCloseEditFees} />
+                    <EditFeesDialog open={showEditFees} handleClose={handleCloseAddFee} onAddFee={handleAddFee} />
                 </Box>
             )}
         </>
@@ -871,34 +1063,98 @@ function TextInputField(props) {
     );
 }
 
-function EditFeesComponent({ open, handleClose }) {
-    const [selectedFeeType, setSelectedFeeType] = useState('PERCENT');
+function EditFeesDialog({ open, handleClose, onAddFee }) {
 
+    const [feeName, setFeeName] = useState('');
     useEffect(() => {
-        console.log('FEE TYPE: ', selectedFeeType);
-    }, [selectedFeeType]);
+        console.log('FEE Name: ', feeName);
+    }, [feeName]);
+    
+    const [feeType, setFeeType] = useState('PERCENT');
+    useEffect(() => {
+        console.log('FEE TYPE: ', feeType);
+    }, [feeType]);
+
+    const [isPercentage, setIsPercentage] = useState(true);
+    useEffect(() => {
+        console.log('IS PERCENTAGE?: ', isPercentage);
+    }, [isPercentage]);
 
     const [percentage, setPercentage] = useState('0');
-
     useEffect(() => {
         console.log('PERCENTAGE: ', percentage);
     }, [percentage]);
 
-    const [flatRate, setFlatRate] = useState('0');
-
+    const [isFlatRate, setIsFlatRate] = useState(false);
     useEffect(() => {
-        console.log('FEE TYPE: ', flatRate);
-    }, [flatRate]);
+        console.log('IS FLAT RATE?: ', isFlatRate);
+    }, [isFlatRate]);
 
+    const [feeAmount, setFlatRate] = useState('0');
+    useEffect(() => {
+        console.log('FEE TYPE: ', feeAmount);
+    }, [feeAmount]);
 
+    const [feeFrequency, setFeeFrequency] = useState("One Time");
+    useEffect(() => {
+        console.log('FEE FREQUENCY: ', feeFrequency);
+    }, [feeFrequency]);
+
+    const [feeAppliedTo, setFeeAppliedTo] = useState("Gross Rent");
+    useEffect(() => {
+        console.log('FEE APPLIED TO: ', feeAppliedTo);
+    }, [feeAppliedTo]);
 
     const handleFeeTypeChange = (event) => {
-        setSelectedFeeType(event.target.value);
+        setFeeType(event.target.value);
         // console.log('FEE TYPE: ', selectedFeeType);
+        if(event.target.value === "PERCENT"){
+            setIsPercentage(true)
+            setIsFlatRate(false);
+        }else{
+            setIsFlatRate(true);
+            setIsPercentage(false)
+        } 
     };
 
+    const handleFrequencyChange = (event) => {
+        setFeeFrequency(event.target.value)
+    }
+    
+    const handleAppliedToChange = (event) => {
+        setFeeAppliedTo(event.target.value)
+    }
+
+
+    const handleAddFee = (event) => {
+        event.preventDefault();
+        
+        console.log("FORM SUBMITTED ");
+        console.log('feeName:', feeName);
+        console.log('feeFrequency:', feeFrequency);
+        console.log('feeType:', feeType);
+        console.log('Is percentage?:', isPercentage);
+        console.log('percentage:', percentage);
+        console.log('Is feeAmount?:', isFlatRate);
+        console.log('feeAmount:', feeAmount);
+        console.log('feeAppliedTo:', feeAppliedTo);
+
+        const newFee = {
+            feeName: feeName,
+            feeType: feeType,
+            feeFrequency: feeFrequency,
+            isPercentage: isPercentage,
+            ...(isPercentage && { feePercentage: percentage }),
+            ...(isPercentage && { feeAppliedTo: feeAppliedTo }),
+            isFlatRate: isFlatRate,
+            ...(isFlatRate && { feeAmount: feeAmount }),
+        }
+        onAddFee(newFee);
+        handleClose();
+    }
+
     return (
-        <>
+        <form onSubmit={handleAddFee}>
             <Dialog 
                 open={open}
                 onClose={handleClose}
@@ -909,8 +1165,8 @@ function EditFeesComponent({ open, handleClose }) {
                 maxWidth="xl"
                 sx={{
                     '& .MuiDialog-paper': {
-                      width: '60%',
-                      maxWidth: 'none',
+                    width: '60%',
+                    maxWidth: 'none',
                     },
                 }}
             >
@@ -961,8 +1217,10 @@ function EditFeesComponent({ open, handleClose }) {
                                 <TextField
                                     name="fee_name"
                                     placeholder=""
-                                    value={""}
-                                    onChange={console.log("input changed")}
+                                    value={feeName}
+                                    onChange={(event) => {
+                                        setFeeName(event.target.value);
+                                    }}
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
@@ -986,7 +1244,7 @@ function EditFeesComponent({ open, handleClose }) {
                                 >
                                     Fee Name
                                 </TextInputField> */}
-                                <TextField
+                                {/* <TextField
                                     name="frequency"
                                     placeholder=""
                                     value={""}
@@ -997,7 +1255,26 @@ function EditFeesComponent({ open, handleClose }) {
                                             height: '16px',
                                         },
                                     }}
-                                />
+                                /> */}
+                                <Select
+                                    value={feeFrequency}
+                                    label="Frequency"
+                                    onChange={handleFrequencyChange}
+                                    sx={{
+                                        backgroundColor: '#D6D5DA',
+                                        height: '16px',
+                                        width: '200px', // Adjust the width as needed
+                                        padding: '8px', // Adjust the padding as needed
+                                    }}
+                                >
+                                    <MenuItem value={"One Time"}>One Time</MenuItem>
+                                    <MenuItem value={"hourly"}>hourly</MenuItem>
+                                    <MenuItem value={"daily"}>daily</MenuItem>
+                                    <MenuItem value={"weekly"}>weekly</MenuItem>
+                                    <MenuItem value={"biweekly"}>biweekly</MenuItem>
+                                    <MenuItem value={"monthly"}>monthly</MenuItem>
+                                    <MenuItem value={"annually"}>annually</MenuItem>
+                                </Select>
                             </Box>
                         </Box>
 
@@ -1016,7 +1293,7 @@ function EditFeesComponent({ open, handleClose }) {
                         row
                         aria-label="fee-type-group-label"
                         name="fee-type-radio-buttons-group"
-                        value={selectedFeeType}
+                        value={feeType}
                         onChange={handleFeeTypeChange}
                     >
                         <Box sx = {{
@@ -1029,7 +1306,7 @@ function EditFeesComponent({ open, handleClose }) {
                         
                             <FormControlLabel value="PERCENT" control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />} label="Percent" />
                             {/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
-                            {selectedFeeType === 'PERCENT' && (
+                            {feeType === 'PERCENT' && (
                                 <Box>
                                     <TextField
                                         value={percentage}
@@ -1066,7 +1343,7 @@ function EditFeesComponent({ open, handleClose }) {
                         </Box>
                             
                         </Box>
-                        {selectedFeeType === 'FLAT-RATE' && (
+                        {feeType === 'FLAT-RATE' && (
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -1077,7 +1354,7 @@ function EditFeesComponent({ open, handleClose }) {
                                     Amount
                                     <TextField
                                         name="flat-rate"
-                                        value={flatRate}
+                                        value={feeAmount}
                                         placeholder=""
                                         label=""
                                         variant="outlined"
@@ -1100,7 +1377,7 @@ function EditFeesComponent({ open, handleClose }) {
                                     />
                                 </Box>
                             )}
-                            {selectedFeeType === 'PERCENT' && (
+                            {feeType === 'PERCENT' && (
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -1109,9 +1386,9 @@ function EditFeesComponent({ open, handleClose }) {
                                     }}
                                 >
                                     Applied To
-                                    <TextField
+                                    {/* <TextField
                                         name="flat-rate"
-                                        value={flatRate}
+                                        value={feeAmount}
                                         placeholder=""
                                         label=""
                                         variant="outlined"
@@ -1131,23 +1408,34 @@ function EditFeesComponent({ open, handleClose }) {
                                         onChange={(event) => {
                                             setFlatRate(event.target.value);
                                         }}
-                                    />
+                                    /> */}
+                                    <Select
+                                        value={feeAppliedTo}
+                                        label="Applied To"
+                                        onChange={handleAppliedToChange}
+                                        sx={{
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                            width: '200px', // Adjust the width as needed
+                                            padding: '8px', // Adjust the padding as needed
+                                        }}
+                                    >
+                                        <MenuItem value={"Gross Rent"}>Gross Rent</MenuItem>
+                                        <MenuItem value={"Utility Bill"}>Utility Bill</MenuItem>
+                                        <MenuItem value={"Maintenance Bill"}>Maintenance Bill</MenuItem>
+                                    </Select>
                                 </Box>
                             )}
                     </RadioGroup> 
-
                 </Box>
                 <DialogActions>
                     <Button onClick={handleClose}>Close</Button>
-                    <Button onClick={handleClose}>Save</Button>
+                    <Button type="submit" onClick={handleAddFee}>Add Fee</Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </form>
     );
 
 }
-
-
-
 
 export default NewOwnerInquiry;
