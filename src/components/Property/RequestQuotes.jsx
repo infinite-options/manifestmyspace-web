@@ -62,7 +62,7 @@ const RequestQuotes = () => {
       "announcement_date":formattedDate,
       "announcement_properties":selectedProperty,
       "announcement_mode":"NEW",
-      "announcement_receiver":managerData.business_uid, 
+      "announcement_receiver":[managerData.business_uid], 
       "announcement_type":"PM Request",
       "Email":0, "Text":0, "App":1,
     });

@@ -18,6 +18,8 @@ import {
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 
+import backButton from '../Payments/backIcon.png';
+
 export default function TenantApplication(){
     const location = useLocation();
     const navigate = useNavigate();
@@ -39,40 +41,37 @@ export default function TenantApplication(){
         return `${property.property_address} ${property.property_unit} ${property.property_city} ${property.property_state} ${property.property_zip}`
     }
 
-    function formatPreviousAddress(){
+    function formatTenantAddress(){
         // let address = "test"
         if (!tenantProfile){
             return "No Previous Address"
         } else{
-            let address = JSON.parse(tenantProfile?.tenant_previous_address)
-            return `${address.street} ${address.unit} ${address.city} ${address.state} ${address.zip}`
+            //return `${tenantProfile.tenant_address} ${tenantProfile.tenant_unit} ${tenantProfile.tenant_city} ${tenantProfile.tenant_state} ${tenantProfile.tenant_zip}`
+            return `${tenantProfile.tenant_address}`
         }
     }
 
-    function formatPreviousCityState(){
+    function formatTenantCityState(){
         if (!tenantProfile){
             return "No Previous Address"
         } else{
-            let address = JSON.parse(tenantProfile?.tenant_previous_address)
-            return `${address.city}, ${address.state}`
+            return `${tenantProfile.tenant_city}, ${tenantProfile.tenant_state}`
         }
     }
 
-    function formatPreviousZip(){
+    function formatTenantZip(){
         if (!tenantProfile){
             return "No Previous Address"
         } else{
-            let address = JSON.parse(tenantProfile?.tenant_previous_address)
-            return `${address.zip}`
+            return `${tenantProfile.tenant_zip}`
         }
     }
 
-    function formatPreviousUnit(){
+    function formatTenantUnit(){
         if (!tenantProfile){
             return "No Previous Address"
         } else{
-            let address = JSON.parse(tenantProfile?.tenant_previous_address)
-            return `${address.unit}`
+            return `${tenantProfile.tenant_unit}`
         }
     }
 
@@ -177,9 +176,7 @@ export default function TenantApplication(){
             },
             body: JSON.stringify({
                 "lease_property_id": property.property_uid,
-                "lease_start": "2023-11-01",
-                "lease_end": "2024-10-31",
-                "lease_status": "Application",
+                "lease_status": "APPLICATION",
                 "lease_assigned_contacts": "[]",
                 "lease_documents": "[]",
                 "lease_adults": JSON.stringify(adultOccupants),
@@ -188,24 +185,18 @@ export default function TenantApplication(){
                 "lease_vehicles": "[]", //JSON.stringify(vehicles),
                 "lease_referred": "[]",
                 "lease_rent": "[]",
-                "lease_effective_date": "2023-11-01",
+                "lease_application_date": date.toDateString(),
+                "tenant_uid": getProfileId(),
             })
         })
-    }
 
-                    
-//     "lease_property_id":"200-000022"
-//     , "lease_start":"2023-11-01"
-//     , "lease_end":"2023-10-31"
-//     , "lease_status":"Application"
-//     , "lease_assigned_contacts":"[{\"email\": \"pmarathay@gmail.com\", \"last_name\": \"Marathay\", \"first_name\": \"Prashant\", \"company_role\": \"Property Manager\", \"phone_number\": \"(408) 476-0001\"}]"
-//     , "lease_documents":"[]"
-//     , "lease_adults":"[]"
-//     , "lease_children":"[]"
-//     , "lease_pets":"[]"
-//     , "lease_vehicles":"[]"
-//     , "lease_referred":"[]"
-//     , "lease_effective_date":"2023-11-01"
+        
+
+        Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
+            console.log(values)
+            navigate(-1)
+        })
+    }
 
     return(
         <ThemeProvider theme={theme}>
@@ -240,7 +231,6 @@ export default function TenantApplication(){
                     justifyContent='center'
                     alignItems='center'
                     position='relative'
-                    sx={{  paddingBottom: "20px"}}
                 >
                     <Typography
                         sx={{
@@ -251,6 +241,35 @@ export default function TenantApplication(){
                         }}>
                             {formattedAddress()}
                     </Typography>
+                </Box>
+                <Box
+                    component="span"
+                    display='flex'
+                    justifyContent='center'
+                    alignItems='center'
+                    position='relative'
+                    sx={{  paddingBottom: "10px"}}
+                >
+                    <Button
+                        
+                        onClick={() => navigate(-1)}
+                        sx={{
+                            textTransform: 'none',
+                            textDecoration: 'underline',
+                        }}
+                    >
+                        <img src={backButton} style={{width: '20px', height: '20px', margin:'5px'}}/>
+                        <Typography
+                            sx={{
+                                justifySelf: 'center',
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.medium.fontWeight,
+                                fontSize: theme.typography.smallFont
+                            }}>
+
+                            Return to Property Details
+                        </Typography>
+                    </Button>
                 </Box>
                 <Divider light />
                 <Paper
@@ -501,7 +520,7 @@ export default function TenantApplication(){
                                     fontSize: theme.typography.smallFont
                                 }}
                             >
-                                {formatPreviousAddress()}
+                                {formatTenantAddress()}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -523,7 +542,7 @@ export default function TenantApplication(){
                                     fontSize: theme.typography.smallFont
                                 }}
                             >
-                                {formatPreviousUnit()}
+                                {formatTenantUnit()}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -545,7 +564,7 @@ export default function TenantApplication(){
                                     fontSize: theme.typography.smallFont
                                 }}
                             >
-                                {formatPreviousCityState()}
+                                {formatTenantCityState()}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -567,7 +586,7 @@ export default function TenantApplication(){
                                     fontSize: theme.typography.smallFont
                                 }}
                             >
-                                {formatPreviousZip()}
+                                {formatTenantZip()}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>

@@ -46,12 +46,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 
 export default function EditProperty({}){
-    const location = useLocation();
+    const { state } = useLocation();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
-    const propertyData = location.state.item
-    const propertyId = location.state.propertyId;
-
+    // const propertyData = location.state.item
+    // const propertyId = location.state.propertyId;
+    let { index, propertyList } = state;
+    const propertyData = propertyList[index];
     // console.log("Property Id", propertyId)
     console.log("Property Data in Edit Property", propertyData)
 
@@ -164,11 +165,19 @@ export default function EditProperty({}){
                 })
                 const data = await response.json();
                 console.log("data", data)
+                const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+                const updatedJson = await updateResponse.json();
+                const updatedProperty = updatedJson.result[0];
+                propertyList = propertyList.map(property => {
+                    if(property.property_uid===updatedProperty.property_uid)
+                        return { ...property, ...updatedProperty};
+                    return property;
+                });
             } catch(error){
                 console.log("Error posting data:", error)
             }
             setShowSpinner(false);
-            navigate(-1)
+            navigate("/propertyDetail", { state: { index, propertyList }});
         }
         putData();
     }

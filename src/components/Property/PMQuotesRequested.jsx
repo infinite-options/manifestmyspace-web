@@ -16,12 +16,10 @@ import documentIcon from "../../images/Subtract.png"
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import AddIcon from '@mui/icons-material/Add';
-import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
-import PropertyNavigator from '../Property/PropertyNavigator';
 import refundIcon from './refundIcon.png';
 import SearchIcon from '@mui/icons-material/Search';
+import axios from "axios";
+
 export default function PMQuotesRequested({}){
     const location = useLocation();
     let navigate = useNavigate(); 
@@ -169,7 +167,7 @@ export default function PMQuotesRequested({}){
 
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                    return<DocumentCard data={data}/>;
+                                    return data.contract_status=="SENT" && <DocumentCard data={data}/>;
                                 })
                             }
                             </Box>
@@ -203,6 +201,66 @@ function NavTab(props) {
 
 function DocumentCard(props) {
 
+    const obj = props.data
+    console.log(JSON.stringify(obj))
+   
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
+
+    function handleAccept(){
+
+        try {
+            const input = {
+                contract_uid:obj.contract_uid,
+                contract_status:"ACTIVE"
+            };
+
+            console.log(input.contract_uid);
+            console.log(input.contract_status);
+
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
+            input,
+            headers);
+            console.log("PUT result", response);
+            if (response.code === 200) {
+                return true;
+            }
+        } catch (error){
+            console.log("error", error)
+            return false;
+        }
+    }
+
+    function handleDecline(){
+        
+        try {
+            const input = {
+                contract_uid:obj.contract_uid,
+                contract_status:"REJECTED"
+             };
+
+             console.log(input.contract_uid);
+             console.log(input.contract_status);
+
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
+            input,
+            headers);
+            console.log("PUT result", response);
+            if (response.code === 200) {
+                return true;
+            }
+        } catch (error){
+            console.log("error", error)
+            return false;
+        }
+    }
+
+    let navigate = useNavigate(); 
+    
     const textStyle = {
         textTransform: 'none',
         color: theme.typography.propertyPage.color,
@@ -210,8 +268,7 @@ function DocumentCard(props) {
         fontSize:theme.typography.smallFont,
     };
 
-    const obj = props.data
-    console.log(JSON.stringify(obj))
+    
     return (
         <Box sx={{
             backgroundColor: '#D6D5DA',
@@ -239,32 +296,17 @@ function DocumentCard(props) {
                 <Typography sx={textStyle}> Estimated Fees </Typography>
                     
                 </Box>
-                {obj.fees.map((fee) =>{
+                {obj!==null && obj.fees!==null && obj.fees.map((fee) =>{
                   return( <FeesTextCard fee={fee}/>)
                 })}
-                {/* <Box>
-                <Typography sx={textStyle}> Monthly Service Charge: {obj.monthly_service_charge}% of all rent </Typography>
-                    
-                </Box>
-                <Box>
-                <Typography sx={textStyle}> Tenant Setup Fee: ${obj.tenant_setup_fee} </Typography>
-                    
-                </Box>
-                <Box>
-                <Typography sx={textStyle}>  Annual Inspection Fee: ${obj.annual_inspection_fee} </Typography>
-                    
-                </Box>
-                <Box>
-                <Typography sx={textStyle}> Re-Keying Charge: ${obj.re_keying_charge} </Typography>
-                    
-                </Box>
-                <Box>
-                <Typography sx={textStyle}> Annual Postage and Communication Fee: ${obj.postage_and_communication_fee} </Typography>
-                    
-                </Box> */}
-                <Box></Box>
+             
+                <Box onClick={navigate("/viewDocument",{
+                    state: {
+                        documents : obj.documents
+                    }
+                })}>
                 View Documents <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
-
+                </Box>
                 <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -283,7 +325,7 @@ function DocumentCard(props) {
                     top: `10%`,
                     borderRadius: '10px 10px 10px 10px',
                     fontSize: `10px`
-                }} >
+                }} onClick={handleDecline}>
                     Decline
                     </Button>
                     <Button 
@@ -297,7 +339,7 @@ function DocumentCard(props) {
                     top: `10%`,
                     borderRadius: '10px 10px 10px 10px',
                     fontSize: `10px`
-                }} >
+                }} onClick={handleAccept}>
                     Accept
                     </Button>
                     </Stack>
