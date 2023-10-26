@@ -42,47 +42,56 @@ const PropertyListings = (props) => {
     useEffect(() => {
         console.log('fetch data')
         setShowSpinner(true);
-        fetchData();
-        getLeaseDetails();
-        sortProperties();
+        fetchData()
     }, []);
 
-    async function getLeaseDetails(){
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-        const leaseData = await response.json();
-        console.log(leaseData)
-        setTenantLeaseDetails(leaseData.Lease_Details.result);
-        setShowSpinner(false);
-    }
-    
     async function fetchData(){
-        const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
-        const propertyData = await response.json();
-        console.log(propertyData)
+        const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        const propertyResponse = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
+
+        if (!leaseResponse.ok || !propertyResponse.ok) {
+            // Handle the error as needed (maybe set an error state or log the error)
+            console.error("API call failed");
+            setShowSpinner(false);
+            return;
+        }
+
+        const leaseData = await leaseResponse.json();
+        const propertyData = await propertyResponse.json();
+
+        if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
+            // Handle the case where data is missing as needed
+            console.error("Data is missing from the API response");
+            setShowSpinner(false);
+            return;
+        }
+
+        setTenantLeaseDetails(leaseData.Lease_Details.result);
         setPropertyData(propertyData.Property_Dashboard.result)
+
+        sortProperties(leaseData.Lease_Details.result, propertyData.Property_Dashboard.result)
+
         setShowSpinner(false);
     }
 
-
-    function sortProperties(){
-        // move the properties the tenant has applied to, to the top of the list
-
-        // console.log("tenantLeaseDetails", tenantLeaseDetails)
+    function sortProperties(leaseData, propertyData) {
+        // console.log("leaseData", leaseData)
         // console.log("propertyData", propertyData)
 
-        var sortedProperties = propertyData;
-
-        tenantLeaseDetails.forEach((lease) => {
+        var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
+    
+        leaseData.forEach((lease) => {
             const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
-
-            const appliedProperty = sortedProperties.splice(appliedPropertyIndex);
-
-            sortedProperties.unshift(appliedProperty);
-        })
-
-        setSortedProperties(sortedProperties)
+    
+            if (appliedPropertyIndex > -1) { // Make sure the property was found
+                const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
+                sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
+            }
+        });
+    
+        setSortedProperties(sortedProperties);
     }
-
+    
     return (
         <ThemeProvider theme={theme}>
             <Backdrop
@@ -345,7 +354,7 @@ function PropertyCard(props) {
 
     const lease = props.lease;
 
-    console.log("applied in PropertyCard", applied)
+    // console.log("applied in PropertyCard", applied)
 
     const ppt_images = property.property_images.split(',');
 
