@@ -96,6 +96,7 @@ import SettingsACH3 from "./SettingsACH/SettingsACH3";
 import SettingsACH4 from "./SettingsACH/SettingsACH4";
 import SettingsACH5 from "./SettingsACH/SettingsACH5";
 import POContracts from "./Contracts/POContracts/POContracts";
+import NewOwnerInquiry from "./Contracts/OwnerManagerContracts/NewOwnerInquiry";
 import QuoteAcceptForm from "./Maintenance/Manager/QuoteAcceptForm";
 import QuoteRequestForm from "./Maintenance/Manager/QuoteRequestForm";
 import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
@@ -132,6 +133,8 @@ import TenantApplication from "./Applications/TenantApplication";
 import AddListing from "./Property/AddListing";
 import RequestQuotes from "./Property/RequestQuotes";
 import ViewDocument from "./Property/ViewDocument";
+
+import PMNotifications from "./Notifications/PMNotifications";
 
 function Main() {
   return (
@@ -206,7 +209,7 @@ function Main() {
 
             <Route path="pmProfile" element={<PMProfile />} />
             <Route path="pmLeases" element={<PMLeases />} />
-            <Route path="pmContracts" element={<PMContracts />} />
+            <Route path="pmContracts" element={<PMContracts />} /> 
             <Route path="pmDocuments" element={<PMDocuments />} />
             <Route path="pmUploadDocuments" element={<PMUploadDocuments />} />
             <Route path="pmRent" element={<PMRent />} />
@@ -281,10 +284,13 @@ function Main() {
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+            <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
             <Route path="requestQuotes" element={<RequestQuotes />} />
             <Route path="viewDocument" element={<ViewDocument />} />
 
             <Route path="tenantApplication" element={<TenantApplication />} />
+
+            <Route path="pmNotifications" element={<PMNotifications />} />
             
           </Route>
         </Routes>
