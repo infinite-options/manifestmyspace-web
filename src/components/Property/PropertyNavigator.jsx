@@ -42,7 +42,6 @@ export default function PropertyNavigator({index, propertyData, paymentStatus, p
                 console.log("Fetch maintenance data for "+item.property_uid)
                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-            //  const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);  
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }

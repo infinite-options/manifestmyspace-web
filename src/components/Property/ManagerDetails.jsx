@@ -145,7 +145,7 @@ const ManagerDetails = () => {
                   marginBottom: "30px",
                 }}
               >
-                {properties[0].business_name}
+                {properties[0] && properties[0].business_name}
               </Typography>
               <Avatar
                 src={properties[0].business_photo_url}

@@ -62,6 +62,71 @@ export default function PMQuotesRequested({}){
 
     const [data, setData] = useState(property[index]);
 
+    function handleAccept(obj){
+
+        try {
+    
+            const headers = { 
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials":"*"
+            };
+    
+            const input = {
+                contract_uid:obj.contract_uid,
+                contract_status:"ACTIVE"
+            };
+    
+            console.log(input.contract_uid);
+            console.log(input.contract_status);
+    
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
+            input,
+            headers);
+            console.log("PUT result", response);
+            if (response.code === 200) {
+                return true;
+            }
+        } catch (error){
+            console.log("error", error)
+            return false;
+        }
+    }
+    
+    function handleDecline(obj){
+        
+        try {
+    
+            const headers = { 
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials":"*"
+            };
+    
+            const input = {
+                contract_uid:obj.contract_uid,
+                contract_status:"REJECTED"
+             };
+    
+             console.log(input.contract_uid);
+             console.log(input.contract_status);
+    
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
+            input,
+            headers);
+            console.log("PUT result", response);
+            if (response.code === 200) {
+                return true;
+            }
+        } catch (error){
+            console.log("error", error)
+            return false;
+        }
+    }
+    
+
     return( 
         <ThemeProvider theme={theme}>
             <Box
@@ -167,10 +232,50 @@ export default function PMQuotesRequested({}){
 
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                    return data.contract_status=="SENT" && <DocumentCard data={data}/>;
+                                   // return data.contract_status=="SENT" && <DocumentCard data={data}/>;
+                                    return <div>
+                                        <DocumentCard data={data}/>
+                                        <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        position="relative"
+                        sx={{ padding: '8px', paddingTop: '8%' }}
+                    >
+                        <Button 
+                variant="contained"
+                sx={{
+                    textTransform: 'none',
+                    background: '#A52A2A',
+                    color: theme.palette.background.default,
+                    width: `40%`,
+                    height: `85%`,
+                    top: `10%`,
+                    borderRadius: '10px 10px 10px 10px',
+                    fontSize: `10px`
+                }} onClick={()=>{handleDecline(data)}}>
+                    Decline
+                    </Button>
+                    <Button 
+                variant="contained"
+                sx={{
+                    textTransform: 'none',
+                    background: '#76B148',
+                    color: theme.palette.background.default,
+                    width: `40%`,
+                    height: `85%`,
+                    top: `10%`,
+                    borderRadius: '10px 10px 10px 10px',
+                    fontSize: `10px`
+                }} onClick={()=>{handleAccept(data)}}>
+                    Accept
+                    </Button>
+                    </Stack>
+                                        </div>;
                                 })
                             }
                             </Box>
+                            
                             </Box>
                         </Box>
                     </Stack>
@@ -199,65 +304,11 @@ function NavTab(props) {
 
 }
 
+
 function DocumentCard(props) {
 
     const obj = props.data
     console.log(JSON.stringify(obj))
-   
-        const headers = { 
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Credentials":"*"
-        };
-
-    function handleAccept(){
-
-        try {
-            const input = {
-                contract_uid:obj.contract_uid,
-                contract_status:"ACTIVE"
-            };
-
-            console.log(input.contract_uid);
-            console.log(input.contract_status);
-
-            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
-            input,
-            headers);
-            console.log("PUT result", response);
-            if (response.code === 200) {
-                return true;
-            }
-        } catch (error){
-            console.log("error", error)
-            return false;
-        }
-    }
-
-    function handleDecline(){
-        
-        try {
-            const input = {
-                contract_uid:obj.contract_uid,
-                contract_status:"REJECTED"
-             };
-
-             console.log(input.contract_uid);
-             console.log(input.contract_status);
-
-            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
-            input,
-            headers);
-            console.log("PUT result", response);
-            if (response.code === 200) {
-                return true;
-            }
-        } catch (error){
-            console.log("error", error)
-            return false;
-        }
-    }
 
     let navigate = useNavigate(); 
     
@@ -300,49 +351,15 @@ function DocumentCard(props) {
                   return( <FeesTextCard fee={fee}/>)
                 })}
              
-                <Box onClick={navigate("/viewDocument",{
+                <Box onClick={()=>{navigate("/viewDocument",{
                     state: {
                         documents : obj.documents
                     }
-                })}>
+                }
+                )}}>
                 View Documents <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
                 </Box>
-                <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        position="relative"
-                        sx={{ padding: '8px', paddingTop: '8%' }}
-                    >
-                        <Button 
-                variant="contained"
-                sx={{
-                    textTransform: 'none',
-                    background: '#A52A2A',
-                    color: theme.palette.background.default,
-                    width: `40%`,
-                    height: `85%`,
-                    top: `10%`,
-                    borderRadius: '10px 10px 10px 10px',
-                    fontSize: `10px`
-                }} onClick={handleDecline}>
-                    Decline
-                    </Button>
-                    <Button 
-                variant="contained"
-                sx={{
-                    textTransform: 'none',
-                    background: '#76B148',
-                    color: theme.palette.background.default,
-                    width: `40%`,
-                    height: `85%`,
-                    top: `10%`,
-                    borderRadius: '10px 10px 10px 10px',
-                    fontSize: `10px`
-                }} onClick={handleAccept}>
-                    Accept
-                    </Button>
-                    </Stack>
+               
         </Box>
     );
 }
