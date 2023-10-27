@@ -31,30 +31,32 @@ function PMNotifications(props) {
             setShowSpinner(true);
             
             // const response = await fetch(`http://localhost:4000/announcements/600-000003`);
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000003`);
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000051`);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
             const announcementData = await response.json();
+
+            console.log(announcementData);
             
-            setAnnouncements(announcementData['result']);
+            setAnnouncements(announcementData["received"]["result"]);
             
-            //rohit - using testData as announcements API needs to be updated. Need to get announcements where the current profile is the receiver
-            const testData = [
-                {
-                    "announcement_uid": "020-000103",
-                    "announcement_title": "New PM Request",
-                    "announcement_msg": "PM Quote Requested",
-                    "announcement_sender": "110-000096",
-                    "announcement_date": "2023-10-24 01:01:13",
-                    "announcement_properties": "200-000096",
-                    "announcement_mode": "NEW",
-                    "announcement_receiver": "600-000003",
-                    "announcement_type": null,
-                    "Email": null,
-                    "Text": null,
-                    "App": null
-                }
-            ]
-            setAnnouncements(testData);
+            
+            // const testData = [
+            //     {
+            //         "announcement_uid": "020-000103",
+            //         "announcement_title": "New PM Request",
+            //         "announcement_msg": "PM Quote Requested",
+            //         "announcement_sender": "110-000096",
+            //         "announcement_date": "2023-10-24 01:01:13",
+            //         "announcement_properties": "200-000096",
+            //         "announcement_mode": "NEW",
+            //         "announcement_receiver": "600-000003",
+            //         "announcement_type": null,
+            //         "Email": null,
+            //         "Text": null,
+            //         "App": null
+            //     }
+            // ]
+            // setAnnouncements(testData);
 
             setShowSpinner(false);
             
@@ -146,7 +148,7 @@ function PMNotifications(props) {
                 </Box>
                 
                 {announcements.map((announcement) => (
-                    <AnnouncementCard data={announcement}/>
+                    <AnnouncementCard data={announcement} key={announcement.announcement_uid}/>
                 
                 ))}
               
