@@ -7,22 +7,12 @@ import {
     Paper,
     Button,
     ThemeProvider,
-    Form,
     TextField,
-    ToggleButton,
-    ToggleButtonGroup,
-    FormControl,
-    InputLabel,
     MenuItem,
     Select,
     Grid,
-    Input,
-    Container,
-    Radio,
-    FormLabel,
     FormControlLabel,
-    RadioGroup,
-    UploadFile,
+    Checkbox,
     CardMedia,
     InputAdornment
 } from "@mui/material";
@@ -62,7 +52,7 @@ export default function AddProperty({}){
     const [notes, setNotes] = useState('');
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
     const [activeStep, setActiveStep] = useState(0);
-
+    const [isListed, setListed] = useState(false);
 
     const [ownerId, setOwnerId] = useState(getProfileId());
 
@@ -189,6 +179,10 @@ export default function AddProperty({}){
         setSelectedOwner(event.target.value);
     };
 
+    const handleListedChange = (event) => {
+        setListed(event.target.checked);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(event.target)
@@ -199,7 +193,7 @@ export default function AddProperty({}){
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
         formData.append('property_owner_id', ownerId);
-        formData.append('property_available_to_rent', 1);
+        formData.append('property_available_to_rent', isListed?1:0);
         formData.append('property_active_date', formattedDate);
         formData.append('property_address', address);
         formData.append('property_unit', unit);
@@ -613,6 +607,15 @@ export default function AddProperty({}){
                                         </Select>
                                     
                                    </div>:<div></div>} 
+                                   </Grid>
+                                   <Grid item xs={12}>
+                                        <FormControlLabel control={
+                                            <Checkbox
+                                                checked={isListed}
+                                                onChange={handleListedChange}
+                                            />}
+                                            label="Available to rent"
+                                        />    
                                    </Grid>
                                 </Grid>                              
                             </Box>

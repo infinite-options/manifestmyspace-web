@@ -160,7 +160,7 @@ export default function PropertyList({}) {
     const fetchData = async () => {
       setShowSpinner(true);
       console.log("Profile ID :"+profileId);
-//      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
+      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       console.log(propertyData)
@@ -180,6 +180,10 @@ export default function PropertyList({}) {
 
   function getBadgeContent(index) {
     return propertyList?.[index]?.num_open_maintenace_req ?? 0;
+  }
+
+  function getNoOfApplications(index) {
+    return propertyList?.[index]?.num_open_application ?? 0;
   }
 
   function getCoverPhoto(property) {
@@ -341,18 +345,36 @@ export default function PropertyList({}) {
                       margin: "0px",
                     }}
                   >
-                    <Typography
-                      sx={{
-                        color: theme.palette.primary.main,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                        margin: "0px", // Ensure no margin
-                        padding: "0px", // Ensure no padding
-                        textAlign: "center", // Ensure text is centered within itself
+                    <Badge
+                      overlap="circular"
+                      color="success"
+                      badgeContent={getNoOfApplications(index)}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      style={{
+                        color: "#000000",
+                        width: "100%",
                       }}
                     >
-                      {getPaymentStatus(property.rent_status)}
-                    </Typography>
+                      <Typography
+                        sx={{
+                          color: theme.palette.primary.main,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                          margin: "0px", // Ensure no margin
+                          padding: "0px", // Ensure no padding
+                          height: "50px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "100%",
+                        }}
+                      >
+                        {getPaymentStatus(property.rent_status)}
+                      </Typography>
+                    </Badge>
                   </Box>
                   <Badge
                     overlap="circular"
