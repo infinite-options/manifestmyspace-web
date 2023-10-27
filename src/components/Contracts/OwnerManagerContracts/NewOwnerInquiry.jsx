@@ -110,6 +110,14 @@ function NewOwnerInquiry(props) {
         };
         const calculateTimeDiff = () => {
             const announcement_date = new Date(announcementData["announcement_date"]);
+            // const announcement_date = new Date(Date.UTC(
+            //     announcementData["announcement_date"].getFullYear(),
+            //     announcementData["announcement_date"].getMonth(),
+            //     announcementData["announcement_date"].getDate(),
+            //     announcementData["announcement_date"].getHours(),
+            //     announcementData["announcement_date"].getMinutes(),
+            //     announcementData["announcement_date"].getSeconds()
+            // ));
             if (announcement_date === null) {
                 return "<TIME AGO>";
             }
@@ -132,7 +140,7 @@ function NewOwnerInquiry(props) {
                 durationString = `${seconds} seconds ago`;
             }
 
-            // console.log(durationString, seconds, minutes, hours, days, now);
+            console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
             return durationString;
         };
         fetchData();
@@ -265,24 +273,10 @@ function PropertyCard(props) {
     const contractBusinessID = props.contractBusinessID;
     const contractPropertyID = props.contractPropertyID;
 
-    const [showEditFees, setShowEditFees] = useState(false);
+    const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
+    const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
 
-    const handleAddFee = (newFee) => {
-        // const newFee = {
-        //     // Add properties for the new fee item here
-        //     feeName: 'New Fee',
-        //     feeAmount: 0,
-        // };
-        setContractFees((prevContractFees) => [...prevContractFees, newFee]);
-    }
-
-    const handleOpenAddFee = () => {
-        setShowEditFees(true);
-    };
-
-    const handleCloseAddFee = () => {
-        setShowEditFees(false);
-    };
+    const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false)
 
     //Contract Details
     const [contractUID, setContractUID] = useState();
@@ -297,6 +291,57 @@ function PropertyCard(props) {
         let JSONstring = JSON.stringify(contractFees);
         console.log("CONTRACT FEES JSON string- ", JSONstring);
     }, [contractFees]);
+
+    
+
+    const handleAddFee = (newFee) => {
+        // const newFee = {
+        //     // Add properties for the new fee item here
+        //     feeName: 'New Fee',
+        //     feeAmount: 0,
+        // };
+        setContractFees((prevContractFees) => [...prevContractFees, newFee]);
+    }
+
+    const handleEditFee = (newFee, index) => {
+        // const newFee = {
+        //     // Add properties for the new fee item here
+        //     feeName: 'New Fee',
+        //     feeAmount: 0,
+        // };
+        // setContractFees((prevContractFees) => [...prevContractFees, newFee]); // rohit - edit replace the current fee with the edited one
+        console.log("IN handleEditFee of PropertyCard");
+        console.log(newFee, index);
+        setContractFees((prevContractFees) => {
+            const updatedContractFees = prevContractFees.map((fee, i) => {
+                if (i === index) {
+                    return newFee;
+                }
+                return fee;
+            });
+            return updatedContractFees;
+        });
+    }
+
+    const handleOpenAddFee = () => {
+        setShowAddFeeDialog(true);
+    };
+
+    const handleCloseAddFee = () => {
+        setShowAddFeeDialog(false);
+    };
+
+    const handleOpenEditFee = (feeIndex) => {
+        setShowEditFeeDialog(true);
+        console.log("EDITING FEE, Index", feeIndex);
+        setIndexForEditFeeDialog(feeIndex);
+    };
+
+    const handleCloseEditFee = () => {
+        setShowEditFeeDialog(false);
+    };
+
+    
 
     
 
@@ -340,6 +385,29 @@ function PropertyCard(props) {
             console.error('There was a problem with the fetch operation:', error);
         });
     };
+
+    const handleFileUpload = (e) => {
+        if (!e.target.files) {
+          return;
+        }
+      
+        const files = Array.from(e.target.files);
+      
+        files.forEach((file) => {
+          const { name } = file;
+      
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            if (!evt?.target?.result) {
+              return;
+            }
+            const { result } = evt.target;
+            // Handle the file data here or perform any necessary actions
+            console.log("File data for", name, ":", result);
+          };
+          reader.readAsDataURL(file); // Use readAsDataURL for document files
+        });
+      };
 
     const handleDeclineOfferClick = () => {
         console.log("Decline Offer Clicked");
@@ -392,6 +460,7 @@ function PropertyCard(props) {
             const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
             const data = await result.json();
 
+            // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
             const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID);
             
             console.log("CONTRACT - ", contractData);
@@ -464,7 +533,7 @@ function PropertyCard(props) {
                         fontWeight: 'bold',
                         paddingTop: '5px',
                     }}>
-                        {'<Not Rented>'}
+                        {propertyData.property_available_to_rent === 1? 'Not Rented' : 'Rented'}
                     </Box>
                     <Box sx={{
                         fontSize: '10px',
@@ -897,16 +966,24 @@ function PropertyCard(props) {
                 }}
             >   
                 {contractFees.length === 0 ? (
-                    <p>No fees to display</p>
+                    // <p>No fees to display</p>
+                    <Box
+                        sx={{
+                            height: "13px",
+                        }}
+                    >
+                    </Box>
                 ) : (
                     contractFees.map((fee, index) => (
                         <Box 
                             key={index}
+                            // FeeIndex={index}
                             sx = {{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 
                             }}
+                            onClick={() => handleOpenEditFee(index)}
                         >
                             {/* <Box>{'Fee Name'}: {fee.feeName}</Box>
                             <Box>{'Fee Frequency'}: {fee.feeFrequency}</Box>
@@ -915,7 +992,7 @@ function PropertyCard(props) {
                             <Box>{'percentage'}: {fee.isPercentage ? `Percentage: ${fee.feePercentage}, Applied To: ${fee.feeAppliedTo}` : 'False'}</Box>
                             <Box>{'Is flat-rate?'}: {fee.isFlatRate? 'True' : 'False'}</Box>
                             <Box>{'flat-rate'}: {fee.isFlatRate ? `Amount: ${fee.feeAmount}` : 'False'}</Box> */}
-                            <Box>{fee.feeName}: {fee.isPercentage ? `${fee.feePercentage}% of ${fee.feeAppliedTo}` : ` $${fee.feeAmount}`}</Box>
+                            <Box>{fee.fee_name}: {fee.isPercentage ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
                         </Box>
                         
                     ))
@@ -960,7 +1037,7 @@ function PropertyCard(props) {
                     
                 </Box>
                 <Box>
-                    <Box sx={{
+                    {/* <Box sx={{
                             fontSize: '15px',
                             fontWeight: 'bold',
                             padding: '5px',
@@ -969,7 +1046,27 @@ function PropertyCard(props) {
                     >
                     
                         Add Document
-                    </Box>
+                        <input type="file" hidden onChange={handleFileUpload} />
+                    </Box> */}
+                    <Box
+                        sx={{
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                        }}
+                        >
+                        <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
+                            Add Document
+                        </label>
+                        <input
+                            id="file-upload"
+                            type="file"
+                            hidden
+                            onChange={handleFileUpload}
+                            multiple
+                        />
+                    </Box>  
                     
                 </Box>
 
@@ -1028,9 +1125,14 @@ function PropertyCard(props) {
                     </Typography>
                 </Button>
             </Box>
-            {showEditFees && (
+            {showAddFeeDialog && (
                 <Box>
-                    <EditFeesDialog open={showEditFees} handleClose={handleCloseAddFee} onAddFee={handleAddFee} />
+                    <AddFeeDialog open={showAddFeeDialog} handleClose={handleCloseAddFee} onAddFee={handleAddFee} />
+                </Box>
+            )}
+            {showEditFeeDialog && (
+                <Box>
+                    <EditFeeDialog open={showEditFeeDialog} handleClose={handleCloseEditFee} onEditFee={handleEditFee} feeIndex={indexForEditFeeDialog} fees={contractFees} />
                 </Box>
             )}
         </>
@@ -1063,7 +1165,7 @@ function TextInputField(props) {
     );
 }
 
-function EditFeesDialog({ open, handleClose, onAddFee }) {
+function AddFeeDialog({ open, handleClose, onAddFee }) {
 
     const [feeName, setFeeName] = useState('');
     useEffect(() => {
@@ -1140,14 +1242,14 @@ function EditFeesDialog({ open, handleClose, onAddFee }) {
         console.log('feeAppliedTo:', feeAppliedTo);
 
         const newFee = {
-            feeName: feeName,
-            feeType: feeType,
-            feeFrequency: feeFrequency,
+            fee_name: feeName,
+            fee_type: feeType,
+            frequency: feeFrequency,
             isPercentage: isPercentage,
-            ...(isPercentage && { feePercentage: percentage }),
-            ...(isPercentage && { feeAppliedTo: feeAppliedTo }),
+            ...(isPercentage && { charge: percentage }),
+            ...(isPercentage && { of: feeAppliedTo }),
             isFlatRate: isFlatRate,
-            ...(isFlatRate && { feeAmount: feeAmount }),
+            ...(isFlatRate && { charge: feeAmount }),
         }
         onAddFee(newFee);
         handleClose();
@@ -1431,6 +1533,381 @@ function EditFeesDialog({ open, handleClose, onAddFee }) {
                 <DialogActions>
                     <Button onClick={handleClose}>Close</Button>
                     <Button type="submit" onClick={handleAddFee}>Add Fee</Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+
+}
+
+function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
+
+    const [feeName, setFeeName] = useState(fees[feeIndex].fee_name);
+    useEffect(() => {
+        console.log('FEE Name: ', feeName);
+    }, [feeName]);
+    
+    const [feeType, setFeeType] = useState(fees[feeIndex].fee_type);
+    useEffect(() => {
+        console.log('FEE TYPE: ', feeType);
+    }, [feeType]);
+
+    const [isPercentage, setIsPercentage] = useState(fees[feeIndex].isPercentage);
+    useEffect(() => {
+        console.log('IS PERCENTAGE?: ', isPercentage);
+    }, [isPercentage]);
+
+    const [percentage, setPercentage] = useState(fees[feeIndex].charge);
+    useEffect(() => {
+        console.log('PERCENTAGE: ', percentage);
+    }, [percentage]);
+
+    const [isFlatRate, setIsFlatRate] = useState(fees[feeIndex].isFlatRate);
+    useEffect(() => {
+        console.log('IS FLAT RATE?: ', isFlatRate);
+    }, [isFlatRate]);
+
+    const [feeAmount, setFlatRate] = useState(fees[feeIndex].charge);
+    useEffect(() => {
+        console.log('FEE TYPE: ', feeAmount);
+    }, [feeAmount]);
+
+    const [feeFrequency, setFeeFrequency] = useState(fees[feeIndex].frequency);
+    useEffect(() => {
+        console.log('FEE FREQUENCY: ', feeFrequency);
+    }, [feeFrequency]);
+
+    const [feeAppliedTo, setFeeAppliedTo] = useState(fees[feeIndex].of);
+    useEffect(() => {
+        console.log('FEE APPLIED TO: ', feeAppliedTo);
+    }, [feeAppliedTo]);
+
+    const handleFeeTypeChange = (event) => {
+        setFeeType(event.target.value);
+        // console.log('FEE TYPE: ', selectedFeeType);
+        if(event.target.value === "PERCENT"){
+            setIsPercentage(true)
+            setIsFlatRate(false);
+        }else{
+            setIsFlatRate(true);
+            setIsPercentage(false)
+        } 
+    };
+
+    const handleFrequencyChange = (event) => {
+        setFeeFrequency(event.target.value)
+    }
+    
+    const handleAppliedToChange = (event) => {
+        setFeeAppliedTo(event.target.value)
+    }
+
+
+    const handleEditFee = (event) => {
+        event.preventDefault();
+        
+        console.log("FORM SUBMITTED ");
+        console.log('feeName:', feeName);
+        console.log('feeFrequency:', feeFrequency);
+        console.log('feeType:', feeType);
+        console.log('Is percentage?:', isPercentage);
+        console.log('percentage:', percentage);
+        console.log('Is feeAmount?:', isFlatRate);
+        console.log('feeAmount:', feeAmount);
+        console.log('feeAppliedTo:', feeAppliedTo);
+
+        const newFee = {
+            fee_name: feeName,
+            fee_type: feeType,
+            frequency: feeFrequency,
+            isPercentage: isPercentage,
+            ...(isPercentage && { charge: percentage }),
+            ...(isPercentage && { of: feeAppliedTo }),
+            isFlatRate: isFlatRate,
+            ...(isFlatRate && { charge: feeAmount }),
+        }
+        onEditFee(newFee, feeIndex); // pass index also
+        handleClose();
+    }
+
+    return (
+        <form onSubmit={handleEditFee}>
+            <Dialog 
+                open={open}
+                onClose={handleClose}
+                // sx = {{
+                //     width: '100%',
+                //     maxWidth: 'none',
+                // }}
+                maxWidth="xl"
+                sx={{
+                    '& .MuiDialog-paper': {
+                    width: '60%',
+                    maxWidth: 'none',
+                    },
+                }}
+            >
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+                    
+                        Management Fees
+                </Box>
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+                    
+                        <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent:'space-between',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>Fee Name</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="fee_name"
+                                    placeholder=""
+                                    value={feeName}
+                                    onChange={(event) => {
+                                        setFeeName(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <Box>Frequency</Box>
+                                {/* <TextInputField 
+                                    name="fee_name"
+                                    placeholder=""
+                                    value={""} 
+                                    onChange={console.log("input changed")}
+                                    sx={{ backgroundColor: '#D6D5DA' }}
+                                >
+                                    Fee Name
+                                </TextInputField> */}
+                                {/* <TextField
+                                    name="frequency"
+                                    placeholder=""
+                                    value={""}
+                                    onChange={console.log("input changed")}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                /> */}
+                                <Select
+                                    value={feeFrequency}
+                                    label="Frequency"
+                                    onChange={handleFrequencyChange}
+                                    sx={{
+                                        backgroundColor: '#D6D5DA',
+                                        height: '16px',
+                                        width: '200px', // Adjust the width as needed
+                                        padding: '8px', // Adjust the padding as needed
+                                    }}
+                                >
+                                    <MenuItem value={"One Time"}>One Time</MenuItem>
+                                    <MenuItem value={"hourly"}>hourly</MenuItem>
+                                    <MenuItem value={"daily"}>daily</MenuItem>
+                                    <MenuItem value={"weekly"}>weekly</MenuItem>
+                                    <MenuItem value={"biweekly"}>biweekly</MenuItem>
+                                    <MenuItem value={"monthly"}>monthly</MenuItem>
+                                    <MenuItem value={"annually"}>annually</MenuItem>
+                                </Select>
+                            </Box>
+                        </Box>
+
+                </Box>
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fontSize: '13px',
+                            fontWeight: 'bold',
+                            padding: '15px',
+                            color: '#3D5CAC',
+                    }}
+                >
+                    <RadioGroup
+                        row
+                        aria-label="fee-type-group-label"
+                        name="fee-type-radio-buttons-group"
+                        value={feeType}
+                        onChange={handleFeeTypeChange}
+                    >
+                        <Box sx = {{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+
+
+                        
+                            <FormControlLabel value="PERCENT" control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />} label="Percent" />
+                            {/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
+                            {feeType === 'PERCENT' && (
+                                <Box>
+                                    <TextField
+                                        value={percentage}
+                                        label=""
+                                        variant="outlined"
+                                        // sx={{
+                                        //     width: '45px',
+                                        //     height: '3px',
+                                        // }}
+                                        InputProps={{
+                                            sx: {
+                                                backgroundColor: '#D6D5DA',
+                                                width: '60px',
+                                                height: '20px',
+                                            },
+                                        }}
+
+                                        onChange={(event) => {
+                                            setPercentage(event.target.value);
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                        </Box>
+
+
+                        <Box sx = {{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />} label="Flat Rate" />
+                            <Box sx={{width: '60px', height: '20px',}}>
+                        </Box>
+                            
+                        </Box>
+                        {feeType === 'FLAT-RATE' && (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        paddingLeft: '20px',
+                                    }}
+                                >
+                                    Amount
+                                    <TextField
+                                        name="flat-rate"
+                                        value={feeAmount}
+                                        placeholder=""
+                                        label=""
+                                        variant="outlined"
+                                        // sx={{
+                                        //     width: '45px',
+                                        //     height: '3px',
+                                        // }}
+
+                                        InputProps={{
+                                            sx: {
+                                                backgroundColor: '#D6D5DA',
+                                                width: '60px',
+                                                height: '20px',
+                                            },
+                                        }}
+
+                                        onChange={(event) => {
+                                            setFlatRate(event.target.value);
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                            {feeType === 'PERCENT' && (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        paddingLeft: '20px',
+                                    }}
+                                >
+                                    Applied To
+                                    {/* <TextField
+                                        name="flat-rate"
+                                        value={feeAmount}
+                                        placeholder=""
+                                        label=""
+                                        variant="outlined"
+                                        // sx={{
+                                        //     width: '45px',
+                                        //     height: '3px',
+                                        // }}
+
+                                        InputProps={{
+                                            sx: {
+                                                backgroundColor: '#D6D5DA',
+                                                width: '60px',
+                                                height: '20px',
+                                            },
+                                        }}
+
+                                        onChange={(event) => {
+                                            setFlatRate(event.target.value);
+                                        }}
+                                    /> */}
+                                    <Select
+                                        value={feeAppliedTo}
+                                        label="Applied To"
+                                        onChange={handleAppliedToChange}
+                                        sx={{
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                            width: '200px', // Adjust the width as needed
+                                            padding: '8px', // Adjust the padding as needed
+                                        }}
+                                    >
+                                        <MenuItem value={"Gross Rent"}>Gross Rent</MenuItem>
+                                        <MenuItem value={"Utility Bill"}>Utility Bill</MenuItem>
+                                        <MenuItem value={"Maintenance Bill"}>Maintenance Bill</MenuItem>
+                                    </Select>
+                                </Box>
+                            )}
+                    </RadioGroup> 
+                </Box>
+                <DialogActions>
+                    <Button onClick={handleClose}>Close</Button>
+                    <Button type="submit" onClick={handleEditFee}>Save Fee</Button>
                 </DialogActions>
             </Dialog>
         </form>
