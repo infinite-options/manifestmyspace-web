@@ -7,23 +7,12 @@ import {
     Paper,
     Button,
     ThemeProvider,
-    Form,
     TextField,
-    Badge,
-    ToggleButton,
-    ToggleButtonGroup,
-    FormControl,
-    InputLabel,
     MenuItem,
     Select,
     Grid,
-    Input,
-    Container,
-    Radio,
-    FormLabel,
+    Checkbox,
     FormControlLabel,
-    RadioGroup,
-    UploadFile,
     CardMedia,
     InputAdornment
 } from "@mui/material";
@@ -43,7 +32,6 @@ import { useUser } from "../../contexts/UserContext";
 import IconButton from '@mui/material/IconButton';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
 
 export default function EditProperty({}){
     const { state } = useLocation();
@@ -67,6 +55,7 @@ export default function EditProperty({}){
     const [squareFootage, setSquareFootage] = useState(0);
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
+    const [isListed, setListed] = useState(propertyData.property_available_to_rent==="1"?true:false);
     // const [existingImages, setExistingImages] = useState(JSON.parse(propertyData.property_images));
 
     const [description, setDescription] = useState('test');
@@ -109,6 +98,10 @@ export default function EditProperty({}){
         navigate(-1);
     }
 
+    const handleListedChange = (event) => {
+        setListed(event.target.checked);
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("handleSubmit")
@@ -136,6 +129,7 @@ export default function EditProperty({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
+        formData.append('property_available_to_rent', isListed?1:0);
 
         for (let i = 0; i < selectedImageList.length; i++) {
             try{
@@ -740,7 +734,20 @@ export default function EditProperty({}){
                             </Box>
                         </Stack>
                     </Paper>
-
+                    <Stack
+                        direction="column"
+                        justifyContent="left"
+                        padding="15px"
+                        width="85%"
+                    >
+                        <FormControlLabel control={
+                            <Checkbox
+                                checked={isListed}
+                                onChange={handleListedChange}
+                            />}
+                            label="Available to rent"
+                        />
+                    </Stack>
                     {/* Submit Button */}
                     <Stack
                         direction="column"
@@ -767,7 +774,7 @@ export default function EditProperty({}){
                                 </Button>
                             </Grid>
                         </Grid>
-                    </Box>
+                        </Box>
                 </Stack>
             </Stack>
         </ThemeProvider>
