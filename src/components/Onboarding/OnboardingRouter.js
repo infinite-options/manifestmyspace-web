@@ -5,13 +5,12 @@ import { roleMap } from "./helper";
 import { useCookies } from "react-cookie";
 
 const OnboardingRouter = () => {
-  const { onboardingState, setOnboardingState, selectRole, setLoggedIn } =
+  const { onboardingState, setOnboardingState, selectRole, setLoggedIn, isLoggedIn } =
     useUser();
   const { roles, openingRole } = onboardingState;
   const navigate = useNavigate();
-  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  const isPrivateRoute = cookie["isPrivateRoute"];
-  const pageToNavigate = isPrivateRoute ? "/privateProfileName" : "/profileName";
+  
+  const pageToNavigate = isLoggedIn ? "/privateProfileName" : "/profileName";
   useEffect(() => {
     if (roles.length === 0) {
       selectRole(openingRole);

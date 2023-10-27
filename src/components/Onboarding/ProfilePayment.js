@@ -44,14 +44,12 @@ function ProfilePayment() {
   const navigate = useNavigate();
   const location = useLocation();
   const { profileId } = location.state;
-  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  const isPrivateRoute= cookie["isPrivateRoute"];
   const [statusImg, setStatusImg] = useState();
-  const { user, isBusiness, roleName } =
+  const { user, isBusiness, roleName, isLoggedIn } =
     useUser();
-    console.log('Is Private Payment')
-    console.log(isPrivateRoute)
-    console.log('Is Private Payment')
+  
+
+
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false },
     apple_pay: { value: "", checked: false },

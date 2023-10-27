@@ -27,43 +27,71 @@ import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import leaseIcon from './leaseIcon.png';
 
-const FindProperty = (props) => {
+const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
+    const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
+    const [sortedProperties, setSortedProperties] = useState([]);
     const { getProfileId } = useUser();
     const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
 
-    // const images = [
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //     },
-    // ];
-
-    const url =
-        'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
-    // 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003';
+    const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
     useEffect(() => {
         console.log('fetch data')
-        fetchData();
-    }, []);
-    
-    async function fetchData(){
         setShowSpinner(true);
-        const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
-        const propertyData = await response.json();
-        console.log(propertyData)
+        fetchData()
+    }, []);
+
+    async function fetchData(){
+        const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        const propertyResponse = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
+
+        if (!leaseResponse.ok || !propertyResponse.ok) {
+            // Handle the error as needed (maybe set an error state or log the error)
+            console.error("API call failed");
+            setShowSpinner(false);
+            return;
+        }
+
+        const leaseData = await leaseResponse.json();
+        const propertyData = await propertyResponse.json();
+
+        if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
+            // Handle the case where data is missing as needed
+            console.error("Data is missing from the API response");
+            setShowSpinner(false);
+            return;
+        }
+
+        setTenantLeaseDetails(leaseData.Lease_Details.result);
         setPropertyData(propertyData.Property_Dashboard.result)
+
+        sortProperties(leaseData.Lease_Details.result, propertyData.Property_Dashboard.result)
+
         setShowSpinner(false);
     }
 
+    function sortProperties(leaseData, propertyData) {
+        // console.log("leaseData", leaseData)
+        // console.log("propertyData", propertyData)
+
+        var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
+    
+        leaseData.forEach((lease) => {
+            const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
+    
+            if (appliedPropertyIndex > -1) { // Make sure the property was found
+                const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
+                sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
+            }
+        });
+    
+        setSortedProperties(sortedProperties);
+    }
+    
     return (
         <ThemeProvider theme={theme}>
             <Backdrop
@@ -302,8 +330,14 @@ const FindProperty = (props) => {
                             {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    {propertyData.map((property, index) => {
-                        return <PropertyCard data={property} key={index} />;
+                    {/* {console.log("tenantLeaseDetails", tenantLeaseDetails)} */}
+                    {/* {console.log("propertyData", propertyData)} */}
+                    
+                    {sortedProperties.map((property, index) => {
+                        var status = false
+                        const applied = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        if (applied) { status = true; }
+                        return <PropertyCard data={property} key={index} status={status} lease={applied}/>;
                     })}
                 </Paper>
             </Box>
@@ -315,6 +349,12 @@ function PropertyCard(props) {
     const navigate = useNavigate();
 
     const property = props.data;
+
+    const applied = props.status;
+
+    const lease = props.lease;
+
+    // console.log("applied in PropertyCard", applied)
 
     const ppt_images = property.property_images.split(',');
 
@@ -352,6 +392,7 @@ function PropertyCard(props) {
             state: {
                 index: props.index,
                 data: property,
+                status: applied
             },
         });
     };
@@ -365,28 +406,61 @@ function PropertyCard(props) {
                 showThumbnails={false}
             />
 
-            <Box
-                sx={{
-                    backgroundColor: '#8897BA',
-                    color: theme.typography.secondary.white,
-                    boxShadow: '4px 4px 3px #00000009',
-                    zIndex: 5,
-                    width: '50%',
-                    position: 'relative',
-                    borderRadius: '8px',
-                    margin: '-17px 15px 5px',
-                }}
+            <Stack
+                direction="row" 
+                justifyContent="space-between" 
             >
-                <Typography
+                <Box
                     sx={{
-                        padding: '10px',
-                        fontSize: '18px',
+                        backgroundColor: '#8897BA',
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
                     }}
                 >
-                    {listed_rent}
-                    <span style={{ opacity: '60%' }}> / Month</span>
-                </Typography>
-            </Box>
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                        }}
+                    >
+                        {listed_rent}
+                        <span style={{ opacity: '60%' }}> / Month</span>
+                    </Typography>
+                </Box>
+                {applied ? (
+                <Box
+                    sx={{
+                        backgroundColor: theme.typography.common.blue,
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Applied
+                    </Typography>
+                </Box>): (null)}
+            </Stack>
             <CardContent>
                 <Stack
                     direction="row"
@@ -555,14 +629,22 @@ function PropertyCard(props) {
             </CardContent>
             <CardActions
                 sx={{
-                    justifyContent: 'space-evenly',
+                    // justifyContent: 'space-evenly',
+                    justifyContent: 'center',
+                    flexWrap: { xs: 'wrap', sm: 'wrap', md: 'nowrap' },
+                    display: 'flex',
+                    width: '100%'
                 }}
             >
                 <Stack
                     alignItems="center"
-                    justifyContent="center"
+                    justifyContent="space-evenly"
                     direction="row"
-                    sx={{ paddingBottom: '10px' }}
+                    spacing={2}
+                    sx={{
+                        flexWrap: 'wrap',
+                        rowGap: '10px',
+                    }}
                 >
                     <Button
                         variant="text"
@@ -570,6 +652,8 @@ function PropertyCard(props) {
                             border: '1px solid',
                             color: theme.typography.common.blue,
                             marginRight: '5px',
+                            textTransform: 'none',
+                            whiteSpace: 'nowrap'
                         }}
                     >
                         Contact Property
@@ -577,18 +661,35 @@ function PropertyCard(props) {
                     <Button
                         variant="contained"
                         sx={{
-                            backgroundColor: theme.typography.common.blue,
+                            backgroundColor: "#97A7CF",
                             color: theme.typography.secondary.white,
                             marginLeft: '5px',
+                            textTransform: 'none',
+                            whiteSpace: 'nowrap'
                         }}
                         onClick={handleDetailsButton}
                     >
                         View Details
                     </Button>
+                    {applied ? (
+                         <Button
+                         variant="contained"
+                         sx={{
+                             backgroundColor: theme.typography.common.blue,
+                             color: theme.typography.secondary.white,
+                             marginLeft: '5px',
+                             textTransform: 'none',
+                             whiteSpace: 'nowrap'
+                         }}
+                         onClick={() => navigate('/tenantApplication', {state: { property: property, status: applied, lease: lease }})}
+                         >
+                             View Application
+                     </Button>
+                    ) : (null)}
                 </Stack>
             </CardActions>
         </Card>
     );
 }
 
-export default FindProperty;
+export default PropertyListings;

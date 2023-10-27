@@ -2,7 +2,8 @@ import {
   Box,
   Button,
   Typography,
-  Stack
+  Stack,
+  Grid,
 } from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
@@ -14,6 +15,9 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from '../../theme/theme';
 import { useUser } from "../../contexts/UserContext";
+
+import SearchIcon from '@mui/icons-material/Search';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 function TenantDashboard(props) {
   
@@ -47,13 +51,24 @@ function TenantDashboard(props) {
       setShowSpinner(true);
       const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/${getProfileId()}`);
       // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
-      const tenantRequestsData = await tenantRequests.json()        
+      const tenantRequestsData = await tenantRequests.json()  
+      
+      console.log(tenantRequestsData)
 
       let propertyData = tenantRequestsData?.property?.result;
       let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
       let announcementsData = tenantRequestsData?.announcements?.result;
 
-      if(!propertyData || propertyData.length === 0) navigate("/listings");
+      if(!propertyData || propertyData.length === 0){
+        navigate("/listings")
+      } else{
+        for (const item of propertyData){
+            if (item.lease_status == "APPLICATION"){
+                navigate("/listings")
+            }
+        }
+      }
+
 
       setPropertyData(propertyData || []);
       setMaintenanceRequestsData(maintenanceRequestsData || []);
@@ -140,67 +155,85 @@ function TenantDashboard(props) {
       >
           <CircularProgress color="inherit" />
       </Backdrop>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-        }}
-      >
-        {/* <Box>
-          <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z"
-              fill="#160449"
-            />
-          </svg>
-        </Box> */}
-        <Box
-          sx={{
-            fontSize: "22px",
-            fontWeight: "600",
-          }}
-        >
-          Hello {firstName}!
-        </Box>
-        <Box sx={{ width: "19", height: "16" }}></Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "#160449",
-        }}
-      >
-        <Box
-          sx={{
-            height: "30px",
-            width: "30px",
-            backgroundColor: "#bbb",
-            borderRadius: "50%",
-            marginRight: "10px",
-          }}
-        ></Box>
-        <Box
-          sx={{
-            fontSize: "11px",
-            fontWeight: "600",
-          }}
-          onClick={()=>{navigate('/myProperty',
-          {state: 
-            {propertyData, propertyData}
-          })
-        }}
-        >
-          {propertyAddr}
-        </Box>
-      </Box>
+      <Grid container sx={{
+        paddingBottom: "10px",
+        // paddingLeft: "20px",
+        paddingRight: "20px"
+      }}>
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+            }}
+          >
+            <Box
+              sx={{
+                fontSize: "22px",
+                fontWeight: "600",
+              }}
+            >
+              Hello {firstName}!
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={10}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    color: "#160449",
+                }}
+            >
+                <Box
+                    sx={{
+                        height: "30px",
+                        width: "30px",
+                        backgroundColor: "#bbb",
+                        borderRadius: "50%",
+                        marginRight: "10px",
+                    }}
+                ></Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: "22px",
+                        fontWeight: "600",
+                        color: "#3D5CAC",
+                    }}
+                    onClick={ () => {navigate('/myProperty', {
+                            state: {propertyData, propertyData}
+                        })}
+                    }
+                >
+                    {propertyAddr}
+                    <KeyboardArrowDownIcon sx={{alignItem: "center"}}/>
+                </Box>
+                
+            </Box>
+        </Grid>
+        <Grid item xs={2}>
+            <Button
+                variant="contained"
+                sx={{
+                    backgroundColor: "#97A7CF",
+                    color: theme.typography.secondary.white,
+                    textTransform: 'none',
+                    whiteSpace: 'nowrap'
+                }}
+                onClick={() => navigate("/listings")}   
+            >
+                <SearchIcon/>
+                Search Property
+            </Button>
+        </Grid>
+      </Grid>
       <DashboardTab>
         <Box
           sx={{

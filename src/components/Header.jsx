@@ -5,10 +5,12 @@ import Button from "@material-ui/core/Button";
 import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { ReactComponent as Logo } from "../images/logo.svg";
-
+import { useCookies } from "react-cookie";
 function Header() {
   const { user, selectedRole, selectRole, roleName } = useUser();
-  const userRoles = user ? user.role.split(",") : [];
+  const [cookie, setCookie] = useCookies(["user"]);
+  const cookiesData = cookie["user"];
+  const userRoles = user ? cookiesData.role.split(",") : [];
 
   const navigate = useNavigate();
 

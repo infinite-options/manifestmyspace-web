@@ -4,16 +4,24 @@ import { useEffect, useState, createContext, useContext  } from "react";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
+
+import backButton from '../../Payments/backIcon.png'
+import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 
 
 const TenantProfileEditContext = createContext(null);
 
 function TenantProfileEdit(props) {
+
+    const navigate = useNavigate();
     const { getProfileId } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState({});
     const [modifiedData, setModifiedData] = useState({});
     const [isEdited, setIsEdited] = useState(false);
+
+    const [tenantProfileImage, setTenantProfileImage] = useState(ProfileImg);
 
     const [tenantFirstName, setTenantFirstName] = useState('');
     const [tenantLastName, setTenantLastName] = useState('');
@@ -108,6 +116,9 @@ function TenantProfileEdit(props) {
             setTenantState(responseData.tenant_state)
             setTenantCity(responseData.tenant_city)
             setTenantZip(responseData.tenant_zip)
+            if (responseData.tenant_profile_image) {
+                setTenantProfileImage(responseData.tenant_profile_image);
+            }
             // setTenantLeaseStartDate(responseData.tenant_lease_start_date)
             // setTenantLeaseEndDate(responseData.tenant_lease_end_date)
             // setTenantMonthlyRent(responseData.tenant_monthly_rent)
@@ -201,13 +212,13 @@ function TenantProfileEdit(props) {
         // Make a PUT request with formData to update data on the backend
         if(isEdited){
             console.log("EDITED")
-            //rohit - replace localhost with aws url
             // axios.put('http://localhost:4000/tenantProfile', modifiedData, headers)
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile', modifiedData, headers)
             
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
+                navigate(-1)
             })
             .catch((error) => {
                 if(error.response){
@@ -246,6 +257,10 @@ function TenantProfileEdit(props) {
                             <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="white" />
                             </svg>
+                            {/* <Button>
+                                <img src={backButton} alt="Back Button" style={{width: '19px', height: '16px'}}/>
+                                
+                            </Button> */}
                         </Box>
                         <Box sx={{
                             fontSize: '25px',
@@ -283,7 +298,7 @@ function TenantProfileEdit(props) {
                         zIndex: '2',
                     }}>
                         <img
-                            src={profileData.tenant_photo_url}
+                            src={tenantProfileImage}
                             alt="Tenant Profile"
                             style={{
                                 width: '100%',
@@ -497,7 +512,7 @@ function TenantProfileEdit(props) {
                                             <Box>
                                                 Current Address
                                             </Box>                                            
-                                            {!(tenantAddress && tenantUnit && tenantCity && tenantZip && tenantState) && (
+                                            {!(tenantAddress && tenantCity && tenantZip && tenantState) && (
                                                 <Box sx={{
                                                     display: 'flex',
                                                     alignItems: 'center',

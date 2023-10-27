@@ -50,20 +50,14 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfileName = () => {
   const classes = useStyles();
-  const navigate = useNavigate();
-  const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-  const isPrivateRoute = cookie["isPrivateRoute"];
-
-  console.log('Is PrivateRoute ProfileName')
-  console.log(isPrivateRoute)
-  console.log('Is PrivateRoute ProfileName')
+  const navigate = useNavigate();  
   const [statusImg, setStatusImg] = useState();
   const [title, setTitle] = useState();
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState();
   const [selectedBizRole, setSelectedBizRole] = useState();
-  const { user, isBusiness, isEmployee, roleName, isManagementEmployee } =
+  const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee } =
     useUser();
   const {
     firstName,
@@ -75,8 +69,8 @@ const ProfileName = () => {
     photo,
     setPhoto,
   } = useOnboardingContext();
-  const personalInfoPage= isPrivateRoute? "/privatePersonalInfo" : "/personalInfo" 
-  const profileInfoPage= isPrivateRoute? "/privateProfileInfo" : "/profileInfo"
+  const personalInfoPage= isLoggedIn? "/privatePersonalInfo" : "/personalInfo" 
+  const profileInfoPage= isLoggedIn ? "/privateProfileInfo" : "/profileInfo"
 
   const handleNextStep = () => {
     if (isBusiness() && businessName === "") {

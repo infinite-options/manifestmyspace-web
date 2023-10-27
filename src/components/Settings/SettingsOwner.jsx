@@ -241,6 +241,20 @@ export default function Settings() {
                     </Typography>
                     <ArrowForwardIosIcon sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}/>
                     </Box>
+                    <Box
+                    component="span"
+                    m={5}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <Typography sx={{color: theme.typography.primary.black}}>
+                    Add Role
+                    </Typography>
+                    <ArrowForwardIosIcon sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
+                        onClick={()=>{navigate('/AddRole')}}
+                    />
+                    </Box>
             </Paper>
             <Button
             variant="contained"
