@@ -24,8 +24,7 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 function UserLogin() {
-    const [cookie, setCookie] = useCookies(["isPrivateRoute"]);
-    const isPrivateRoute = cookie["isPrivateRoute"];
+    
     const classes = useStyles();
     const navigate = useNavigate();
     const [passModal, setpassModal] = useState(false);
@@ -107,7 +106,6 @@ function UserLogin() {
                         const openingRole = role.split(",")[0];
                         selectRole(openingRole);
                         setLoggedIn(true);
-                        setCookie("isPrivateRoute", true);
                         const { dashboardUrl } = roleMap[openingRole];
                         navigate(dashboardUrl);
                         }

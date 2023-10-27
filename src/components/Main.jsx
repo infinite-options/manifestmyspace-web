@@ -226,6 +226,10 @@ function Main() {
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
             <Route path="settingsOwner" element={<Settings />} />
             <Route path="settingsTenant" element={<Settings />} />
+            <Route path="settingsManager" element={<Settings />} />
+            <Route path="settingsPM_Employee" element={<Settings />} />
+            <Route path="settingsMaintenance" element={<Settings />} />
+            <Route path="settingsMaint_Employee" element={<Settings />} />
             <Route path="editProfileSettings" element={<EditProfileSettings />} />
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
             <Route path="addCardSettings" element={<AddCard />} />
