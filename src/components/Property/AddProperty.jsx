@@ -199,8 +199,8 @@ export default function AddProperty({}){
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
         formData.append('property_owner_id', ownerId);
-        formData.append('available_to_rent', 1);
-        formData.append('active_date', formattedDate);
+        formData.append('property_available_to_rent', 1);
+        formData.append('property_active_date', formattedDate);
         formData.append('property_address', address);
         formData.append('property_unit', unit);
         formData.append('property_city', city);
