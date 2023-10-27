@@ -123,7 +123,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator index={index} propertyData={propertyList}/>
+                            <PropertyNavigator index={index} propertyData={propertyList} />
                         </Box>
                     </Stack>
                 </Paper>

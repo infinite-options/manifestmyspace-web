@@ -44,6 +44,7 @@ const PropertyInfo = (props) => {
     const navigate = useNavigate();
     const index = location.state.index;
     const property = location.state.data;
+    const status = location.state.status;
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
@@ -80,6 +81,14 @@ const PropertyInfo = (props) => {
             return { original: '' };
         }
     });
+
+    function renderCorrectButtonText() {
+        if (status) {
+            return 'View Application';
+        } else {
+            return 'Apply Now';
+        }
+    }
 
     // const images = [
     //     {
@@ -287,15 +296,16 @@ const PropertyInfo = (props) => {
                             <strong>{listed_rent}</strong> Per Month
                         </Typography>
                         <Button
-                            variant="contained"
-                            sx={{
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                            }}
-                            onClick={() => navigate('/tenantApplication', {state: { property: property }})}
-                        >
-                            Apply Now
-                        </Button>
+                             variant="contained"
+                             sx={{
+                                 background: '#3D5CAC',
+                                 color: theme.palette.background.default,
+                                 textTransform: 'none',
+                             }}
+                             onClick={() => navigate('/tenantApplication', {state: { property: property, status: status }})}
+                         >
+                           {renderCorrectButtonText()}
+                         </Button>
                     </Stack>
                     <Stack
                         justifyContent="space-between"

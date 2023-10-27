@@ -27,6 +27,8 @@ export default function TenantApplication(){
 
 
     const [property, setProperty] = useState(location.state.property)
+    const [status, setStatus] = useState(location.state.status)
+    const [lease, setLease] = useState(location.state.lease)
     console.log(property)
 
     const [tenantProfile, setTenantProfile] = useState(null);
@@ -42,13 +44,8 @@ export default function TenantApplication(){
     }
 
     function formatTenantAddress(){
-        // let address = "test"
-        if (!tenantProfile){
-            return "No Previous Address"
-        } else{
-            //return `${tenantProfile.tenant_address} ${tenantProfile.tenant_unit} ${tenantProfile.tenant_city} ${tenantProfile.tenant_state} ${tenantProfile.tenant_zip}`
-            return `${tenantProfile.tenant_address}`
-        }
+        if (!tenantProfile){ return "No Previous Address"} 
+        else { return `${tenantProfile.tenant_address}` }
     }
 
     function formatTenantCityState(){
@@ -141,6 +138,10 @@ export default function TenantApplication(){
         formatTenantChildOccupants()
     }, [tenantProfile])
 
+    function getApplicationDate(){
+        return "10-31-2023"
+    }
+
     function handleApplicationSubmit(){
         //submit to backend
         console.log("Application Submitted")
@@ -176,7 +177,7 @@ export default function TenantApplication(){
             },
             body: JSON.stringify({
                 "lease_property_id": property.property_uid,
-                "lease_status": "APPLICATION",
+                "lease_status": "NEW",
                 "lease_assigned_contacts": "[]",
                 "lease_documents": "[]",
                 "lease_adults": JSON.stringify(adultOccupants),
@@ -272,6 +273,27 @@ export default function TenantApplication(){
                     </Button>
                 </Box>
                 <Divider light />
+                {status ? (
+                    <Box
+                        component="span"
+                        display='flex'
+                        justifyContent='center'
+                        alignItems='center'
+                        position='relative'
+                        sx={{  padding: "10px"}}
+                    >
+                        <Typography
+                            sx={{
+                                justifySelf: 'center',
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.secondaryFont
+                            }}
+                        >
+                            Applied on {getApplicationDate()}
+                        </Typography>
+                    </Box>   
+                ) : (null)}
                 <Paper
                     style={{
                         margin: '25px',
@@ -721,44 +743,49 @@ export default function TenantApplication(){
                                 Porsche Cayenne S | SUV | ASD1235 | CA
                             </Typography> */}
                         </Grid>
-
-                        <Grid item xs={6} alignContent={'center'}>
-                            <Button
-                                sx={{
-                                    justifyContent: 'center',
-                                    color: "#160449",
-                                    backgroundColor: "#9EAED6",
-                                    fontWeight: theme.typography.medium.fontWeight,
-                                    fontSize: theme.typography.mediumFont,
-                                    textTransform: "none",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-
-                                }}
-                                onClick={() => handleApplicationSubmit()}
-                            >
-                                Submit
-                            </Button>
-                        </Grid>
-                        <Grid item xs={6} alignContent={'center'}>
-                            <Button
-                                sx={{
-                                    justifyContent: 'center',
-                                    color: "#000000",
-                                    backgroundColor: "#CB8E8E",
-                                    fontWeight: theme.typography.medium.fontWeight,
-                                    fontSize: theme.typography.mediumFont,
-                                    textTransform: "none",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                                onClick={() => navigate("/tenantProfileEdit")}
-                            >
-                                Edit
-                            </Button>
-                        </Grid>
+                        {status ? (
+                          null
+                        ) : (
+                            <>
+                                <Grid item xs={6} alignContent={'center'}>
+                                    <Button
+                                        sx={{
+                                            justifyContent: 'center',
+                                            color: "#160449",
+                                            backgroundColor: "#9EAED6",
+                                            fontWeight: theme.typography.medium.fontWeight,
+                                            fontSize: theme.typography.mediumFont,
+                                            textTransform: "none",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+        
+                                        }}
+                                        onClick={() => handleApplicationSubmit()}
+                                    >
+                                        Submit
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={6} alignContent={'center'}>
+                                    <Button
+                                        sx={{
+                                            justifyContent: 'center',
+                                            color: "#000000",
+                                            backgroundColor: "#CB8E8E",
+                                            fontWeight: theme.typography.medium.fontWeight,
+                                            fontSize: theme.typography.mediumFont,
+                                            textTransform: "none",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                        onClick={() => navigate("/tenantProfileEdit")}
+                                    >
+                                        Edit
+                                    </Button>
+                                </Grid>
+                            </>
+                        )}
                     </Grid>
                 </Paper>
             </Box>
