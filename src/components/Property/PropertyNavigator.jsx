@@ -80,7 +80,7 @@ export default function PropertyNavigator({index, propertyData}){
                 const propertyApplicationData = await responseApplication.json();
 
                 if(propertyApplicationData) {
-                    setApplicationData(propertyApplicationData.Lease_Details.result);
+                    setApplicationData(propertyApplicationData.Lease_Details.result || []);
                 }
 
                 if(propertyMaintenanceData!=undefined){
