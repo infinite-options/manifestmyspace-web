@@ -212,7 +212,7 @@ export default function PropertyNavigator({index, propertyData}){
     };
 
     const handleAppClick = (index) => {
-        navigate("/tenantApplicationNav", { state:{ applicationList: applicationData, index } });
+        navigate("/tenantApplicationNav", { state:{ applicationList: applicationData, index, property: item } });
     };
 
     return(
@@ -826,7 +826,7 @@ export default function PropertyNavigator({index, propertyData}){
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
                                     </Grid>
-                                    {item.property_available_to_rent!=="1" && 
+                                    {item.property_available_to_rent!==1 && 
                                     <Grid item xs={12}>
                                         <Button
                                             variant="outlined" 

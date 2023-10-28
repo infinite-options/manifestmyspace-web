@@ -186,7 +186,7 @@ export default function TenantApplication(){
                 "lease_vehicles": "[]", //JSON.stringify(vehicles),
                 "lease_referred": "[]",
                 "lease_rent": "[]",
-                "lease_application_date": date.toDateString(),
+                "lease_application_date": date.toLocaleDateString(),
                 "tenant_uid": getProfileId(),
             })
         })

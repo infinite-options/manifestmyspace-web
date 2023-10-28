@@ -18,12 +18,11 @@ import PhoneIcon from "../Property/phoneIconDark.png";
 
 const TenantApplicationNav = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const applicationList = location.state.applicationList;
-  const [currentIndex, setCurrentIndex] = useState(location.state.index || 0);
+  const { state } = useLocation();
+  const { applicationList, index, property } = state;
+  const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applicationList[currentIndex]);
   const [showSpinner, setShowSpinner] = useState(false);
-  // const [tenantInfo, setTenantInfo] = useState({});
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % applicationList.length);
   };
@@ -51,10 +50,10 @@ const TenantApplicationNav = () => {
     setShowSpinner(false);
   };
   const handleCreateLease = () =>
-    navigate("/tenantLease", { state: { application } });
+    navigate("/tenantLease", { state: { application, property } });
   useEffect(() => {
     setApplication(applicationList[currentIndex]);
-  }, [currentIndex]);
+  }, [currentIndex, applicationList]);
   return (
     <ThemeProvider theme={theme}>
       <Backdrop
@@ -459,7 +458,8 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {application.tenant_city}/ {application.tenant_state}
+                            {application.tenant_city}/{" "}
+                            {application.tenant_state}
                           </Typography>
                         </Stack>
                       </Grid>
@@ -518,7 +518,7 @@ const TenantApplicationNav = () => {
                           },
                         }}
                       >
-                        {"Reject Tenant"}
+                        {"New Lease"}
                       </Button>
                     </Stack>
                   </Box>
