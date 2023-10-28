@@ -13,7 +13,7 @@ export default function Announcements() {
     const [showSpinner, setShowSpinner] = useState(false);
     useEffect(() => {
         setShowSpinner(true);
-        axios.get(`https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/announcement?receiver=${getProfileId()}`)
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
             .then((res) => {
                 setAnnouncementData(res.data.result);
                 // console.log(res.data.result);

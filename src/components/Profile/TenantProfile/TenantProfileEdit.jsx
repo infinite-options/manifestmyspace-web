@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, ThemeProvider } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, createContext, useContext  } from "react";
 import { useUser } from "../../../contexts/UserContext";
@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 import backButton from '../../Payments/backIcon.png'
 import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
+import AddIcon from '@mui/icons-material/Add';
+import theme from '../../../theme/theme';
 
 
 const TenantProfileEditContext = createContext(null);
@@ -230,7 +232,7 @@ function TenantProfileEdit(props) {
     };
 
     return (
-        <TenantProfileEditContext.Provider value={{modifiedData, setModifiedData,isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete }}>
+        <TenantProfileEditContext.Provider value={{modifiedData, setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete }}>
             <Box sx={{
                 fontFamily: 'Source Sans Pro',
 
@@ -647,10 +649,6 @@ function TenantProfileEdit(props) {
                                     </ProfileAccordionSummary>
                                     <ProfileAccordionDetail>
                                         <Box>
-                                            {/* <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} widths={['25%', '25%', '25%', '25%']}/>
-                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} widths={['25%', '25%', '25%', '25%']}/>
-                                            <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} widths={['25%', '25%', '25%', '25%']}/>
-                                            <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Type", "Lisense", "State"]} widths={['20%', '20%', '20%', '20%', '20%']}/> */}
                                             <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_adult_occupants || profileData.tenant_adult_occupants} field={'tenant_adult_occupants'} />
                                             <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_children_occupants || profileData.tenant_children_occupants} field={'tenant_children_occupants'} />
                                             <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={modifiedData.tenant_pet_occupants || profileData.tenant_pet_occupants} field={'tenant_pet_occupants'} />
@@ -706,8 +704,6 @@ function TenantProfileEdit(props) {
                                             {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
                                                 <DocumentCard key={index} data={{ title: document.name, description:document.description, date: document.created_date, link: document.link,  }} />
                                             ))}
-                                            {/* <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} />
-                                            <DocumentCard data={{ title: "Drivers license   ", date: "Jun 22, 23" }} /> */}
                                         </Box>
                                     </ProfileAccordionDetail>
                                 </ProfileAccordion>
@@ -908,15 +904,22 @@ function DocumentCard(props) {
 function ProfileTenantTable(props) {
     const title = props.title;
     const headers = props.headers;
-    // const widthList = props.widths;
+    var data = props.data;
+    const field = props.field;
 
-    const data = props.data;
-    const field = props.field
+    if (!Array.isArray(data) || data.length < 1) {
+        console.log("data is empty or not an array");
+        const item = headers.reduce((acc, curr) => {
+            acc[curr] = "";
+            return acc;
+        }, {});
+        
+        data = [item]; // Set data to an array containing the new item
+    }
     
     const headerToDataKeyMap = {
         'Name': 'name',
         'Last Name': 'last_name',
-        // 'Last Name': 'last_name', // Map to the appropriate key in your data
         'Relation': 'relationship',
         'DOB (YY/MM/DD)': 'dob',
         'Type': 'type',
@@ -935,55 +938,61 @@ function ProfileTenantTable(props) {
     };
 
     return (
-        <Box>
-            <Box sx={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                paddingLeft: '10px',
+        <Box sx={{
+            paddingBottom: "30px"
+        }}>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>
+                        {title}
+                    </Typography>
+                </Grid>
+            </Grid>
 
-            }}>
-                {title}
-            </Box>
-            <Box sx={{
-                fontSize: '10px',
-                fontWeight: '600',
-            }}>
-                <table style={tableStyle}>
-                    <thead>
-                        <tr>
-                            {headers.map((text, index) => (
-                                <ProfileTableHeader key={index} text={text} />
-                            ))}
-                        </tr>
-                        
-                    </thead>
-                    <tbody>
-                        {data && data.map((rowData, index) => (
-                        <tr key={index}>
+            <Grid container spacing={2}>
+                {headers.map((text, index) => (
+                    <Grid item key={index} xs={12 / (headers.length)} >
+                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            {text}
+                        </Typography>
+                    </Grid>
+                ))}
+            </Grid>
+
+            <Grid container columnSpacing={2} rowSpacing={2}>
+                {data && data.length > 0 ? (
+                    data.map((rowData, index) => (
+                        <>
                             {headers.map((header, i) => (
-                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} />
+                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} headers={headers}/>
                             ))}
-                        </tr>
+                        </>
+                ))) : (
+                    <>
+                        {headers.map((header, i) => (
+                            <ProfileTableCell field={field} key={i} value={""} subField={""} headers={headers}/>
                         ))}
-                    </tbody>
-                </table>
-            </Box>
+                    </>
+                )}
+                <Grid item xs={12} >
+                    <Button
+                        sx={{
+                            padding: "0px", 
+                            marginLeft: "10px"
+                        }}
+                    >
+                        <AddIcon/> Add Row
+                    </Button>
+                </Grid>
+            </Grid>
         </Box>
     );
 }
-function ProfileTableHeader(props) {
-    const tableHeaderStyle = {
-        paddingLeft: '10px',
-    }
-    return (
-        <th style={tableHeaderStyle}>
-            {props.text}
-        </th>
-    );
-}
+
 function ProfileTableCell(props) {
     const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const cellWidth = props.style;
+    const headersLength = props.headers.length;
     const cellStyle = {
         width: cellWidth,
     }
@@ -1026,9 +1035,18 @@ function ProfileTableCell(props) {
         }));
     };
     return (
-        <td style={cellStyle}>
-            <input type='text' style={inputStyle} value={props.value} onChange={handleInputChange} />
-        </td>
+         <Grid item xs={12 / (headersLength)}>
+            <TextField
+                size="small"
+                value={props.value}
+                defaultValue={props.value}
+                sx={{
+                    padding: "0px",
+                    margin: "0px"
+                }}
+                onChange={handleInputChange}
+            />
+        </Grid>
     );
 }
 export default TenantProfileEdit;
