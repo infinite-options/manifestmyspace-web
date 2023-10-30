@@ -135,6 +135,8 @@ import RequestQuotes from "./Property/RequestQuotes";
 import ViewDocument from "./Property/ViewDocument";
 
 import PMNotifications from "./Notifications/PMNotifications";
+import TenantApplicationNav from "./Applications/TenantApplicationNav";
+import TenantLease from "./Applications/TenantLease";
 
 function Main() {
   return (
@@ -292,8 +294,9 @@ function Main() {
             <Route path="requestQuotes" element={<RequestQuotes />} />
             <Route path="viewDocument" element={<ViewDocument />} />
 
+            <Route path="tenantLease" element={<TenantLease />} />
             <Route path="tenantApplication" element={<TenantApplication />} />
-
+            <Route path="tenantApplicationNav" element={<TenantApplicationNav />} />
             <Route path="pmNotifications" element={<PMNotifications />} />
             
           </Route>

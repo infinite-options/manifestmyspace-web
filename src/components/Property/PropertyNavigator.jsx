@@ -43,14 +43,17 @@ const maintenanceColumns = [
     },
 ];
 
+const getAppColor = (app) => app.lease_status!=="REJECTED"?"#778DC5":"#A52A2A";
+
 export default function PropertyNavigator({index, propertyData}){
     const navigate = useNavigate();
-    const { user, getProfileId, roleName } = useUser();
+    const { getProfileId } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
+    const [applicationData, setApplicationData] = useState([]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
     const [showSpinner, setShowSpinner] = useState(false);
     const color = theme.palette.form.main
@@ -65,6 +68,8 @@ export default function PropertyNavigator({index, propertyData}){
                 console.log("Fetch maintenance data for "+item.property_uid)
                 const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
+                const responseApplication = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${item.business_uid}`);
+                //  const responseLeases = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication/350-000046/200-000040`);  
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
                 //  const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/600-000003`);  
                 if(!response.ok){
@@ -72,7 +77,11 @@ export default function PropertyNavigator({index, propertyData}){
                 }
 
                 const propertyMaintenanceData = await responseProperty.json();
+                const propertyApplicationData = await responseApplication.json();
 
+                if(propertyApplicationData) {
+                    setApplicationData(propertyApplicationData.Lease_Details.result || []);
+                }
 
                 if(propertyMaintenanceData!=undefined){
                     setMaintenanceData(propertyMaintenanceData.MaintenanceProjects.result);
@@ -200,6 +209,10 @@ export default function PropertyNavigator({index, propertyData}){
     const handleManagerChange = () => {
         if(item.business_uid) navigate("/managerDetails", { state: { ownerId: item.owner_uid, managerBusinessId: item.business_uid } });
         else navigate("/searchManager");
+    };
+
+    const handleAppClick = (index) => {
+        navigate("/tenantApplicationNav", { state:{ applicationList: applicationData, index, property: item } });
     };
 
     return(
@@ -615,6 +628,39 @@ export default function PropertyNavigator({index, propertyData}){
                                                 {item.property_num_baths}
                                         </Typography>
                                     </Grid>
+                                    {item.rent_status==="VACANT"?
+                                    <>
+                                        <Grid item xs={12}>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                    paddingRight: "10px"
+                                                }}
+                                            >
+                                                {"Applications"}
+                                            </Typography>
+                                        </Grid>
+                                        {applicationData.map((app, index) => 
+                                            <Grid item xs={6}>
+                                                <Button onClick={()=>handleAppClick(index)} 
+                                                    sx={{ backgroundColor: getAppColor(app), 
+                                                        color: "#FFFFFF", 
+                                                        textTransform: "none", 
+                                                        width: "100%", 
+                                                        "&:hover, &:focus, &:active": {
+                                                            backgroundColor: getAppColor(app),
+                                                        }}}>
+                                                    <Stack>
+                                                        <Typography>{app.tenant_first_name+" "+app.tenant_last_name}</Typography>
+                                                        <Typography sx={{ fontWeight: "bold" }}>{app.lease_status}</Typography>
+                                                    </Stack>
+                                                </Button>
+                                            </Grid>
+                                        )}
+                                    </> : <>
                                     <Grid item xs={11}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Typography
@@ -707,7 +753,7 @@ export default function PropertyNavigator({index, propertyData}){
                                     </Grid>
                                     <Grid item xs={1}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
-                                    </Grid>
+                                    </Grid></>}
                                     <Grid item xs={11}>
                                         <Box onClick={()=> {navigate("/pmQuotesRequested",
                                         {state :{
@@ -745,7 +791,7 @@ export default function PropertyNavigator({index, propertyData}){
                                             <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
                                             onClick={()=> {navigate("/pmQuotesRequested",{state :{
                                                 index: index,
-                                                propertyData, propertyData,
+                                                propertyData: propertyData,
                                                 contractsFeeData: contractsFeeData
                                             }})}}/>
                                         </Box>
@@ -780,6 +826,7 @@ export default function PropertyNavigator({index, propertyData}){
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
                                     </Grid>
+                                    {item.property_available_to_rent!==1 && 
                                     <Grid item xs={12}>
                                         <Button
                                             variant="outlined" 
@@ -794,7 +841,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 {"Create Listing"}
                                             </Typography>
                                         </Button>
-                                    </Grid>
+                                    </Grid>}
                                 </Grid>
                             </div>
                         </CardContent>
