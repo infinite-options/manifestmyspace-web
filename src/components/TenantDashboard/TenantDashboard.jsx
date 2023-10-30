@@ -63,7 +63,7 @@ function TenantDashboard(props) {
         navigate("/listings")
       } else{
         for (const item of propertyData){
-            if (item.lease_status == "APPLICATION"){
+            if (item.lease_status !== "ACTIVE"){
                 navigate("/listings")
             }
         }
