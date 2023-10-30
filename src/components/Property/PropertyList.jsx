@@ -145,7 +145,7 @@ function getPropertyList(data) {
   });
   return propertyList.map(p => {
     p.applications = appsMap.get(p.property_uid) || [];
-    p.applicationsCount = p.applications.filter(a => a.lease_status === "NEW").length;
+    p.applicationsCount = [...p.applications].filter(a => a.lease_status === "NEW").length;
     return p;
   })
 }
