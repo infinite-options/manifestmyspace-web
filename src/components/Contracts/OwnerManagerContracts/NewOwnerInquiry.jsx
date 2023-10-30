@@ -25,6 +25,13 @@ import {
 import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
 
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ChatIcon from '@mui/icons-material/Chat';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EditIcon from '@mui/icons-material/Edit';
+import PersonIcon from '@mui/icons-material/Person';
+
 
 
 function NewOwnerInquiry(props) {
@@ -285,6 +292,8 @@ function PropertyCard(props) {
     const [contractEndDate, setContractEndDate] = useState("");
     const [contractFees, setContractFees] = useState([]);
 
+    const formData = new FormData();
+
     useEffect(()=> {
         console.log("CONTRACT FEES - ", contractFees);
 
@@ -363,16 +372,13 @@ function PropertyCard(props) {
         //setContractFees() // map to the correct keys
     }
 
-    const sendPutRequest = (data) => {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
-        // const url = `http://localhost:4000/contracts`; 
+    const sendPutRequest = () => {
+        // const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+        const url = `http://localhost:4000/contracts`; 
     
         fetch(url, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+            body: formData,
         })
         .then(response => {
             if (!response.ok) {
@@ -393,7 +399,7 @@ function PropertyCard(props) {
       
         const files = Array.from(e.target.files);
       
-        files.forEach((file) => {
+        files.forEach((file, index) => {
           const { name } = file;
       
           const reader = new FileReader();
@@ -404,8 +410,12 @@ function PropertyCard(props) {
             const { result } = evt.target;
             // Handle the file data here or perform any necessary actions
             console.log("File data for", name, ":", result);
+            
+            // Append each file to an array
+            formData.append(`contract_documents[${index}]`, file, file.name);
           };
-          reader.readAsDataURL(file); // Use readAsDataURL for document files
+        //   reader.readAsDataURL(file); // Use readAsDataURL for document files
+          reader.readAsArrayBuffer(file); 
         });
       };
 
@@ -437,18 +447,30 @@ function PropertyCard(props) {
         console.log("Send Quote Clicked");
         let contractFeesJSONString = JSON.stringify(contractFees);
         console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
-        const data = {
-            "contract_uid": contractUID,
-            "contract_name": contractName,
-            "contract_start_date": contractStartDate,
-            "contract_end_date": contractEndDate,
-            "contract_fees": contractFeesJSONString,
-            "contract_status": "SENT"
-        };
+        // const data = {
+        //     "contract_uid": contractUID,
+        //     "contract_name": contractName,
+        //     "contract_start_date": contractStartDate,
+        //     "contract_end_date": contractEndDate,
+        //     "contract_fees": contractFeesJSONString,
+        //     "contract_status": "SENT"
+        // };
+        
+        formData.append("contract_uid", contractUID)
+        formData.append("contract_name", contractName)
+        formData.append("contract_start_date", contractStartDate)
+        formData.append("contract_end_date", contractEndDate)
+        formData.append("contract_fees", contractFeesJSONString)
+        formData.append("contract_status", "SENT")
 
-        console.log("Quote sent. Data sent - ", data);
 
-        sendPutRequest(data);
+        console.log("Quote sent. Data sent - ");
+        for (const pair of formData.entries()) {
+            console.log(`${pair[0]}, ${pair[1]}`);
+        }
+  
+
+        sendPutRequest(formData);
     }
 
     useEffect(() => {
@@ -480,6 +502,7 @@ function PropertyCard(props) {
 
     return (
         <>
+            {/* Property Image Carousel */}
             <Box sx={{
                 display: 'flex',
                 padding: '5px',
@@ -489,61 +512,86 @@ function PropertyCard(props) {
                 color: '#160449',
                 // color: '#3D5CAC',
             }}>
-                <Box
-                    sx={{
-                        minWidth: '130px',
-                        height: '130px',
-                        marginRight: '20px',
-                        backgroundColor: 'grey',
-                    }}
-                >
-                    <img src={"https://squarefootphotography.com/wp-content/uploads/2022/01/SQFT-9754-min-scaled.jpg"} alt="Property Img" style={{
-                        width: '130px',
-                        height: '130px',
-                    }} />
-                    
-                </Box>
+                <ImageCarousel images={propertyData.property_images? JSON.parse(propertyData.property_images) : []}/>
+            </Box>
+            {/* Time since Inquiry was created */}
+            <Box sx={{
+                display: 'flex',
+                padding: '5px',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                fontSize: '20px',
+                color: '#160449',
+                // color: '#3D5CAC',
+            }}>
                 <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}>
-                    <Box sx={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
+                        fontSize: '13px',
+                    }}>
+                        { timeDiff }
+                    </Box>
+            </Box>
+            {/* Property Address */}
+            <Box sx={{
+                display: 'flex',
+                padding: '5px',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                fontSize: '20px',
+                color: '#160449',
+                // color: '#3D5CAC',
+            }}>
+                <Box sx={{
+                        fontSize: '16px',
+                        fontWeight: '600',
                     }}>
                         {/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
                         {/* 789 Maple Lane, San Diego, CA 92101, USA */}
                         {propertyData.property_address}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}
                     </Box>
-                    <Box sx={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        paddingTop: '10px',
+            </Box>
+            {/* Property Owner and Status */}
+            <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent:'space-between',
+                }}
+            >
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}>
-                        Owner:
+                    <Box sx={{
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                paddingBottom: '0px',
+                                color: 'text.darkblue',
+                        }}
+                    >
+                        
+                            Owner: {propertyData.owner_first_name}{' '}{propertyData.owner_last_name} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  />
                     </Box>
-                    <Box sx={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}>
-                        {propertyData.owner_first_name}{' '}{propertyData.owner_last_name}
-                    </Box>
                     <Box sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        paddingTop: '5px',
-                    }}>
-                        {propertyData.property_available_to_rent === 1? 'Not Rented' : 'Rented'}
-                    </Box>
-                    <Box sx={{
-                        fontSize: '10px',
-                        paddingTop: '10px',
-                        color: '#3D5CAC',
-                    }}>
-                        { timeDiff }
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                paddingBottom: '0px',
+                                color: 'text.darkblue',
+                        }}
+                    >
+                        
+                        Status: {propertyData.property_available_to_rent === 1? 'Vacant' : 'Rented'}
                     </Box>
                 </Box>
             </Box>
+
+            
+            {/* Rent and Lease */}
             <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -591,7 +639,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            View lease
+                            View lease <DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC'}} />
                     </Box>
                     <Box sx={{
                                 fontSize: '13px',
@@ -606,11 +654,13 @@ function PropertyCard(props) {
                     </Box>
                 </Box>
             </Box>
+            {/* Property Value*/}
             <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent:'space-between',
-                }}>
+                }}
+            >
                 <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -667,6 +717,7 @@ function PropertyCard(props) {
                     </Box>
                 </Box>
             </Box>
+            {/* Property Type */}
             <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -889,6 +940,10 @@ function PropertyCard(props) {
                 </Box>
                 
             </Box> */}
+
+
+            {/* Contract Details */}
+            {/* Contract Name */}
             <Box sx={{
                         fontSize: '15px',
                         fontWeight: 'bold',
@@ -900,6 +955,8 @@ function PropertyCard(props) {
                     Management Agreement Name
             </Box>
             <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange}>First Name</TextInputField>
+
+            {/* Contract Start date and end date */}
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -952,7 +1009,7 @@ function PropertyCard(props) {
                     <Box
                         onClick={handleOpenAddFee}
                     >
-                        Add Fee
+                        <EditIcon  sx={{ fontSize: 16, color: '#3D5CAC'}} />
                     </Box>
                     
             </Box>
@@ -1025,14 +1082,16 @@ function PropertyCard(props) {
             }}>
                 <Box>
                     <Box sx={{
-                            fontSize: '15px',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             padding: '5px',
                             color: '#3D5CAC',
                         }}
                     >
                     
-                        Add Contact
+                        <PersonIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />Add Contact
                     </Box>
                     
                 </Box>
@@ -1050,14 +1109,16 @@ function PropertyCard(props) {
                     </Box> */}
                     <Box
                         sx={{
-                            fontSize: '15px',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             padding: '5px',
                             color: '#3D5CAC',
                         }}
-                        >
+                    >
                         <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-                            Add Document
+                            <DescriptionIcon sx={{ fontSize: 19, color: '#3D5CAC'}} /> Add Document
                         </label>
                         <input
                             id="file-upload"
@@ -1140,6 +1201,93 @@ function PropertyCard(props) {
     );
 }
 
+function ImageCarousel(props) {
+    let images = props.images;
+    const [ currentImageIndex, setCurrentImageIndex ] = useState(0);
+
+    useEffect(() => {
+        console.log("IMAGE INDEX:", currentImageIndex);
+    }, [currentImageIndex]);
+
+    // console.log("IMAGE LINK:", images[2]);
+
+    return (
+        <>
+            <Box
+                sx={{
+                    width: '20%',
+                    height: '150px',
+                    backgroundColor: '#F2F2F2',
+                    backgroundImage: currentImageIndex > 0? `url(${images[currentImageIndex - 1]})` : ``,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    opacity: '0.5',
+                }}
+                onClick={ ()=> {
+                        setCurrentImageIndex(currentImageIndex > 0? currentImageIndex - 1 : 0)
+                    }                    
+                }
+            >
+                <ArrowBackIosIcon
+                    sx={{
+                        marginTop: '100%',
+                        marginLeft: '30%',
+                        fontWeight: 'bold',
+                    }}
+                />
+
+            </Box>
+            <Box
+                sx={{
+                    width: '60%',
+                    height: '150px',
+                    backgroundColor: 'black',
+                }}
+            >
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                    }}
+                >
+                    <img src={images[currentImageIndex]} alt="Property Img" style={{
+                            width: '100%',
+                            height: '100%',
+                    }} />
+
+                </Box>
+                
+            </Box>
+            <Box
+                sx={{
+                    width: '20%',
+                    height: '150px',
+                    backgroundColor: '#F2F2F2',
+                    backgroundImage: currentImageIndex < images.length - 1? `url(${images[currentImageIndex + 1]})` : ``,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    opacity: '0.7',
+                
+                }}
+                onClick={ ()=> {
+                    setCurrentImageIndex(currentImageIndex < images.length - 1? currentImageIndex + 1 : images.length - 1);
+                }                    
+            }
+            >
+                <ArrowForwardIosIcon
+                    sx={{
+                        marginTop: '100%',
+                        marginLeft: '30%',
+                        fontWeight: 'bold',
+                    }}
+                />
+
+            </Box>
+        </>
+    );
+}
 function TextInputField(props) {
     const inputStyle = {
         border: 'none',        
