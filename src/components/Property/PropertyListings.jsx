@@ -59,6 +59,8 @@ const PropertyListings = (props) => {
         const leaseData = await leaseResponse.json();
         const propertyData = await propertyResponse.json();
 
+        console.log(leaseData)
+
         if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
             // Handle the case where data is missing as needed
             console.error("Data is missing from the API response");
@@ -75,8 +77,8 @@ const PropertyListings = (props) => {
     }
 
     function sortProperties(leaseData, propertyData) {
-        // console.log("leaseData", leaseData)
-        // console.log("propertyData", propertyData)
+        console.log("leaseData", leaseData)
+        console.log("propertyData", propertyData)
 
         var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
     
@@ -334,10 +336,13 @@ const PropertyListings = (props) => {
                     {/* {console.log("propertyData", propertyData)} */}
                     
                     {sortedProperties.map((property, index) => {
-                        var status = false
-                        const applied = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
-                        if (applied) { status = true; }
-                        return <PropertyCard data={property} key={index} status={status} lease={applied}/>;
+                        var status = ""
+                        const appliedData = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        if (appliedData) { 
+                            status = appliedData.lease_status;
+                            console.log(`Lease Status for ${appliedData.property_address}: ${appliedData.status}`)
+                        }
+                        return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
                     })}
                 </Paper>
             </Box>
@@ -350,9 +355,9 @@ function PropertyCard(props) {
 
     const property = props.data;
 
-    const applied = props.status;
+    const status = props.status;
 
-    const lease = props.lease;
+    const lease = props.leaseData;
 
     // console.log("applied in PropertyCard", applied)
 
@@ -392,7 +397,7 @@ function PropertyCard(props) {
             state: {
                 index: props.index,
                 data: property,
-                status: applied
+                status: status
             },
         });
     };
@@ -434,7 +439,7 @@ function PropertyCard(props) {
                         <span style={{ opacity: '60%' }}> / Month</span>
                     </Typography>
                 </Box>
-                {applied ? (
+                {status === "NEW" ? (
                 <Box
                     sx={{
                         backgroundColor: theme.typography.common.blue,
@@ -449,6 +454,7 @@ function PropertyCard(props) {
                         alignSelf: 'flex-start',
                         textTransform: 'none'
                     }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
                 >
                     <Typography
                         sx={{
@@ -458,6 +464,60 @@ function PropertyCard(props) {
                         }}
                     >
                         Applied
+                    </Typography>
+                </Box>): (null)}
+                {status === "PROCESSING" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#7AD15B",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Approved {lease.lease_start_date}
+                    </Typography>
+                </Box>): (null)}
+                {status === "REJECTED" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#490404",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Not Approved {lease.lease_start_date}
                     </Typography>
                 </Box>): (null)}
             </Stack>
@@ -671,7 +731,7 @@ function PropertyCard(props) {
                     >
                         View Details
                     </Button>
-                    {applied ? (
+                    {status === "NEW" ? (
                          <Button
                          variant="contained"
                          sx={{
@@ -681,9 +741,25 @@ function PropertyCard(props) {
                              textTransform: 'none',
                              whiteSpace: 'nowrap'
                          }}
-                         onClick={() => navigate('/tenantApplication', {state: { property: property, status: applied, lease: lease }})}
+                         onClick={() => navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})}
                          >
                              View Application
+                     </Button>
+                    ) : (null)}
+                     {status === "PROCESSING" ? (
+                         <Button
+                         variant="contained"
+                         sx={{
+                             //backgroundColor: theme.typography.common.blue,
+                             backgroundColor: "#7AD15B",
+                             color: theme.typography.secondary.white,
+                             marginLeft: '5px',
+                             textTransform: 'none',
+                             whiteSpace: 'nowrap'
+                         }}
+                         onClick={() => navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})}
+                         >
+                             View Lease
                      </Button>
                     ) : (null)}
                 </Stack>

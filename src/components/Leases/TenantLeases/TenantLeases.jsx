@@ -1,24 +1,47 @@
-import { Box } from '@mui/system';
+import {
+    ThemeProvider,
+    Box,
+    Paper,
+    Stack,
+    Typography,
+    Grid,
+    Divider,
+    Button,
+    ButtonGroup,
+    Rating,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+} from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 function TenantLeases(props) {
+    const location = useLocation();
+    const navigate = useNavigate();
     const { getProfileId } = useUser();
     const [tenantLeases, setTenantLeases] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+    const [property, setProperty] = useState(location.state.property)
+    const [status, setStatus] = useState(location.state.status)
+    const [lease, setLease] = useState(location.state.lease)
     useEffect(() => {
-    //axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-    setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
-    .then((res) => {
-                const fetchData = res.data['Lease_Details'].result;
-                // console.log(fetchData[0]);
-                setTenantLeases(fetchData[0]);
-                setShowSpinner(false);
-            });
+        console.log("property", property)
+        console.log("status", status);
+        console.log("lease", lease);
+    // setShowSpinner(true);
+    // // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
+    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+    // .then((res) => {
+    //             const fetchData = res.data['Lease_Details'].result;
+    //             // console.log(fetchData[0]);
+    //             setTenantLeases(fetchData[0]);
+    //             setShowSpinner(false);
+    //         });
     }, [])
 
     function getDayText(day) {
@@ -86,7 +109,7 @@ function TenantLeases(props) {
                         fontSize: '11px',
                         fontWeight: '600',
                     }}>
-                        {tenantLeases.property_address}
+                        {lease.property_address}
                     </Box>
                 </Box>
             </Box>
@@ -130,7 +153,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.lease_start}
+                                {lease.lease_start}
                             </Box>
                         </Box>
                         <Box>
@@ -146,7 +169,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.lease_end}
+                                ${lease.lease_actual_rent}
                             </Box>
                         </Box>
                         <Box>
@@ -162,7 +185,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${tenantLeases.late_fee}
+                                ${lease.lease_rent_late_fee}
                             </Box>
                         </Box>
                         <Box>
@@ -178,7 +201,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {getDayText(tenantLeases.due_by)} of month
+                                {getDayText(lease.lease_rent_due_by)} of month
                             </Box>
                         </Box>
                         <Box>
@@ -210,7 +233,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'}
+                                {JSON.parse(lease.lease_pets).length}
                             </Box>
                         </Box>
                     </Box>
@@ -230,7 +253,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.lease_end}
+                                {lease.lease_end}
                             </Box>
                         </Box>
                         <Box>
@@ -262,7 +285,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${tenantLeases.perDay_late_fee}
+                                ${lease.lease_rent_perDay_late_fee}
                             </Box>
                         </Box>
                         <Box>
@@ -294,7 +317,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'}
+                                {JSON.parse(lease.lease_adults).length + JSON.parse(lease.lease_children).length}
                             </Box>
                         </Box>
                         <Box>
@@ -310,7 +333,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'}
+                                {JSON.parse(lease.lease_vehicles).length}
                             </Box>
                         </Box>
                     </Box>
@@ -318,37 +341,47 @@ function TenantLeases(props) {
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-between', // changed from 'center' to 'space-between'
+                    alignItems: 'center', // added for vertical alignment, if needed
                     width: '100%',
+                    padding: '0 20px', // optional: added padding to the sides of the container
                 }}>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#CB8E8E',
-                        borderRadius: '5px',
-                        padding: '5px',
-                        minWidth: '150px',
-                        fontSize: '20px',
-                        fontWeight: '700',
-                        color: '#160449',
-                    }}>
-                        End Lease
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#9EAED6',
-                        borderRadius: '5px',
-                        padding: '5px',
-                        minWidth: '150px',
-                        fontSize: '20px',
-                        fontWeight: '600',
-                        color: '#160449',
-                    }}>
-                        Renew Lease
-                    </Box>
+                    <Button 
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#CB8E8E',
+                            borderRadius: '5px',
+                            padding: '5px',
+                            minWidth: '150px',
+                            fontSize: '20px',
+                            fontWeight: '700',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                        onClick={() => console.log("reject lease")}
+                    >
+                        Reject Lease
+                    </Button>
+                    <Button 
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#9EAED6',
+                            borderRadius: '5px',
+                            padding: '5px',
+                            minWidth: '150px',
+                            fontSize: '20px',
+                            fontWeight: '600',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                        onClick={() => console.log("accept lease")}
+                    >
+                        Accept Lease
+                    </Button>
                 </Box>
                 <Box sx={{
                     display: 'flex',

@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
-
 import backButton from '../Payments/backIcon.png';
 
 export default function TenantApplication(){
@@ -203,6 +202,28 @@ export default function TenantApplication(){
                     paddingBottom: "50px",
                 }}
             >
+                <Button
+                    onClick={() => navigate(-1)}
+                    sx={{
+                        textTransform: 'none',
+                        padding: '10px 10px 0px 10px',
+                        textDecoration: 'underline',
+                        position: 'relative',
+                    }}
+                >
+                    <img src={backButton} style={{width: '20px', height: '20px', margin:'0 5px'}}/>
+                    <Typography
+                        sx={{
+                            justifySelf: 'center',
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.medium.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textAlign: 'center',
+                        }}>
+
+                        <u>Return to All Listings</u>
+                    </Typography>
+                </Button>
                 <Box
                     component="span"
                     display='flex'
