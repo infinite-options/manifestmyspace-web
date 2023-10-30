@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import backButton from '../../Payments/backIcon.png'
 import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import theme from '../../../theme/theme';
 
 
@@ -95,7 +96,7 @@ function TenantProfileEdit(props) {
             }
             setProfileData(responseData);
             setModifiedData({
-                'tenant_uid':responseData.tenant_uid,
+                'tenant_uid': responseData.tenant_uid,
                 'tenant_adult_occupants': responseData.tenant_adult_occupants,
                 'tenant_children_occupants': responseData.tenant_children_occupants,
                 'tenant_pet_occupants': responseData.tenant_pet_occupants,
@@ -140,8 +141,7 @@ function TenantProfileEdit(props) {
 
     useEffect(() => {
         if (modifiedData !== null) {
-            console.log('Modified Data:');
-            console.log(modifiedData);
+            console.log('Modified Data: ', modifiedData);
         }
     });
 
@@ -902,19 +902,51 @@ function DocumentCard(props) {
 }
 
 function ProfileTenantTable(props) {
+    const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const title = props.title;
     const headers = props.headers;
-    var data = props.data;
+    // var data = props.data;
     const field = props.field;
 
-    if (!Array.isArray(data) || data.length < 1) {
-        console.log("data is empty or not an array");
-        const item = headers.reduce((acc, curr) => {
-            acc[curr] = "";
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        if (props.data) {
+          setData(props.data);
+        } else{
+            setData([]);
+        }
+      }, [props.data]);
+
+    console.log(props.data)
+    console.log("data state", data)
+
+    useEffect(() => {
+        console.log(data);
+    }, [data])
+
+    const addRow = () => {
+        const newRow = headers.reduce((acc, header) => {
+            acc[headerToDataKeyMap[header]] = "";
             return acc;
         }, {});
-        
-        data = [item]; // Set data to an array containing the new item
+
+        console.log("new Row", newRow)
+        if (data.length < 1) {
+            setData([newRow]);
+            return;
+        }
+        setData(prevData => [...prevData, newRow]);
+        setModifiedData(prevData => ({
+            ...prevData,
+            [field]: [...(prevData[field] || []), newRow],
+        }));
+    }
+
+    const deleteRow = (index) => {
+        let newData = [...data]
+        newData.splice(index, 1)
+        setData(newData)
     }
     
     const headerToDataKeyMap = {
@@ -966,20 +998,26 @@ function ProfileTenantTable(props) {
                             {headers.map((header, i) => (
                                 <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} headers={headers}/>
                             ))}
+                            <Grid item>
+                                <Button
+                                    sx={{
+                                    padding: "0px", 
+                                    marginLeft: "10px"
+                                    }}
+                                    onClick={() => deleteRow(index)}
+                                >
+                                    <DeleteIcon />
+                                </Button>
+                            </Grid>
                         </>
-                ))) : (
-                    <>
-                        {headers.map((header, i) => (
-                            <ProfileTableCell field={field} key={i} value={""} subField={""} headers={headers}/>
-                        ))}
-                    </>
-                )}
+                ))) : (<p> no row </p>)}
                 <Grid item xs={12} >
                     <Button
                         sx={{
                             padding: "0px", 
                             marginLeft: "10px"
                         }}
+                        onClick={addRow}
                     >
                         <AddIcon/> Add Row
                     </Button>
@@ -1014,28 +1052,56 @@ function ProfileTableCell(props) {
     // props - field, index, subField, value
     const handleInputChange = (event) => {
         if (!isEdited){
+            console.log("set is edited")
             setIsEdited(true);
         }
         console.log("Input changed");
         const { value } = event.target;
-        console.log(value);
       
         const fieldName = props.field;
-        setModifiedData((prevData) => ({
-          ...prevData,
-          [fieldName]: prevData[fieldName].map((item, i) => {
-            if (i === props.index) {
-              return {
-                ...item,
+
+        console.log(fieldName, value)
+
+        // setModifiedData((prevData) => {
+        //     const newData = [...prevData];
+        //     newData[props.index] = {
+        //       ...newData[props.index],
+        //       [props.subField]: value,
+        //     };
+        //     return newData;
+        // });
+    
+        setModifiedData((prevData) => {
+            const newData = [...prevData];
+            if (!newData[props.index]) {
+              // If the row doesn't exist, add a new object
+              newData[props.index] = { [props.subField]: value };
+            } else {
+              // If the row exists, update the specific field
+              newData[props.index] = {
+                ...newData[props.index],
                 [props.subField]: value,
               };
             }
-            return item;
-          }),
-        }));
+            return newData;
+          });
+        
+        // setModifiedData((prevData) => ({
+        //   ...prevData,
+        //   [fieldName]: prevData[fieldName].map((item, i) => {
+        //     console.log("item", prevData[fieldName])
+        //     if (i === props.index) {
+        //       return {
+        //         ...item,
+        //         [props.subField]: value,
+        //       };
+        //     }
+        //     return item;
+        //   }),
+        // }));
     };
     return (
-         <Grid item xs={12 / (headersLength)}>
+         <Grid item xs={12 / (headersLength+1)}>
             <TextField
                 size="small"
                 value={props.value}
