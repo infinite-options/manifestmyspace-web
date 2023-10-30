@@ -60,7 +60,8 @@ function ProfilePayment() {
   const [checkedCreditCard, setCheckedCreditCard] = useState(false);
   const [checkedBankAccount, setCheckedBankAccount] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-
+  const personalInfoPage= isLoggedIn? "/privatePersonalInfo" : "/personalInfo" 
+  const onBoaringPage= isLoggedIn? "/privateOnboardingRouter" : "/onboardingRouter";
   const handleChangeValue = (e) => {
     const map = { ...paymentMethods };
     map[e.target.name].value = e.target.value;
@@ -98,9 +99,9 @@ function ProfilePayment() {
     setShowSpinner(false);
     if (checkedCreditCard) navigate("");
     if (isBusiness())
-      navigate("/personalInfo", { state: { businessId: profileId } });
+      navigate(personalInfoPage, { state: { businessId: profileId } });
     else 
-    navigate(`/onboardingRouter`, );
+    navigate( onBoaringPage );
   };
 
   const handleRoleSpecifics = () => {

@@ -177,8 +177,8 @@ const ProfileInfo = () => {
     const data = await createProfile(form, selectedRole);
     setShowSpinner(false);
     handleUpdateProfileUid(data);
-    const paymentURL= isLoggedIn ? "/privateProfilePayment" : "/profilePayment"
-    navigate("/profilePayment", {
+    const profilePaymentPage= isLoggedIn ? "/privateProfilePayment" : "/profilePayment"
+    navigate(profilePaymentPage, {
       state: {
         profileId: data.business_uid || data.owner_uid || data.tenant_uid,
       },

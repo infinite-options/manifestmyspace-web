@@ -65,7 +65,8 @@ const PersonalInfo = () => {
   const [zip, setZip] = useState("");
   const [ssn, setSsn] = useState("");
   const [mask, setMask] = useState("");
-
+  const profilePage= isLoggedIn? "/privateProfilePayment" :"/profilePayment";
+  const onBoaringPage= isLoggedIn? "/privateOnboardingRouter" : "/onboardingRouter";
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
   };
@@ -151,8 +152,8 @@ const PersonalInfo = () => {
     handleUpdateProfileUid(data);
     setShowSpinner(false);
     if (isEmployee())
-      navigate("/profilePayment", { state: { profileId: businessId } });
-    else navigate("/onboardingRouter" );
+      navigate(profilePage, { state: { profileId: businessId } });
+    else navigate(onBoaringPage );
   };
   const handleUpdateProfileUid = (data) => {
     if (isEmployee()) {
