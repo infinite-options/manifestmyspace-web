@@ -18,7 +18,7 @@ import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import { useUser } from "../../contexts/UserContext";
 import Status14 from "../../images/status_1_4.svg";
 import Status13 from "../../images/status_1_3.svg";
-import Status12 from "../../images/status_1_2.svg";
+// import Status12 from "../../images/status_1_2.svg";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import NewBusinessLogo from "../../images/NewBusinessLogo.svg";
 import NewProfilePicture from "../../images/NewProfilePicture.svg";
@@ -89,7 +89,7 @@ const ProfileName = () => {
     }
     if (isEmployee())
       navigate(personalInfoPage, {
-        state: { businessId: selectedBusiness.business_uid},
+        state: { businessId: selectedBusiness?.business_uid},
       });
     else navigate(profileInfoPage)
   };
@@ -140,7 +140,7 @@ const ProfileName = () => {
 
   const handleRoleSpecifics = () => {
     if (isBusiness()) setStatusImg(Status14);
-    else if (isEmployee()) setStatusImg(Status12);
+    // else if (isEmployee()) setStatusImg(Status12);
     else setStatusImg(Status13);
     setTitle(roleName() + " Profile Info");
     if (isBusiness()) {
