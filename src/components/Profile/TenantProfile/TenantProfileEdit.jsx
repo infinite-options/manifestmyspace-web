@@ -901,7 +901,7 @@ function DocumentCard(props) {
 }
 
 function ProfileTenantTable(props) {
-    const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
+    const { isEdited, setIsEdited } = useContext(TenantProfileEditContext)
     const title = props.title;
     const headers = props.headers;
     
@@ -910,9 +910,9 @@ function ProfileTenantTable(props) {
     const data = props.data;
     const setData = props.setData;
 
-    useEffect(() => {
-        console.log(`${field} --> ${data}`);
-    }, [data])
+    // useEffect(() => {
+    //     console.log(`${field} --> ${data}`);
+    // }, [data])
 
     const addRow = () => {
         const newRow = headers.reduce((acc, header) => {
@@ -1046,7 +1046,7 @@ function ProfileTableCell(props) {
               ...newData[index],
               [props.subField]: value,
             };
-            console.log("Updated ", fieldName, " with ", newData)
+            // console.log("Updated ", fieldName, " with ", newData)
             return newData;
         });
     };
