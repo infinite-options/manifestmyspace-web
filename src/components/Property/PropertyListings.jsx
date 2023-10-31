@@ -28,8 +28,7 @@ import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import leaseIcon from './leaseIcon.png';
-import defaultPropertyImage from './propertyImage.png';
-import defaultImage from './defaultImage.png';
+import defaultPropertyImage from './paintedLadies.jpeg';
 
 import { set } from 'date-fns';
 
@@ -375,7 +374,7 @@ function PropertyCard(props) {
         try {
             const url = parseImageData(data);
             if (url == "") {
-                return { original: defaultImage };
+                return { original: defaultPropertyImage };
             }
             return { original: url };
         } catch (e) {
@@ -383,7 +382,6 @@ function PropertyCard(props) {
         }
     });
     
-    // console.log("Debug images", images);
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
