@@ -93,7 +93,7 @@ function ManagerDashboard() {
         const fetchData = async () => {
             // console.log("in useEffect")
             setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/managerDashboard/${getProfileId()}`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
             const jsonData = await response.json()
             // console.log(jsonData)   
             // console.log("--DEBUG-- maintenance status result for ", getProfileId(), jsonData.MaintenanceStatus.result)

@@ -51,24 +51,6 @@ export function Footer() {
             return '/';
         }
     };
-    const getBellButtonNav = () => {
-        switch (selectedRole) {
-          case 'OWNER':
-            return '/ownerDashboard';
-          case 'MANAGER':
-            return '/managerDashboard';
-          case 'TENANT':
-            return '/announcements';
-          case 'MAINTENANCE':
-            return '/maintenanceDashboard';
-          case 'PM_EMPLOYEE':
-            return '/managerDashboard';
-          case 'MAINT_EMPLOYEE':
-            return '/maintenanceDashboard';
-          default:
-            return '/';
-        }
-    };
     const getCommentButtonNav = () => {
         switch (selectedRole) {
           case 'OWNER':
@@ -116,7 +98,7 @@ export function Footer() {
                     <img
                       src={Home_fill}
                       alt="Home Icon"
-                      style={{ display: 'block', margin: '0 auto' }}
+                      style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                       onClick={()=>{navigate(getHomeButtonNav())}}
                     />
                 </Box>
@@ -125,7 +107,7 @@ export function Footer() {
                   <img
                     src={User_fill}
                     alt="User Icon"
-                    style={{ display: 'block', margin: '0 auto' }}
+                    style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                     onClick={()=>{navigate(getProfileButtonNav())}}
                   />
               </Grid>
@@ -133,15 +115,15 @@ export function Footer() {
                 <img
                   src={Bell_fill}
                   alt="Bell Icon"
-                  style={{ display: 'block', margin: '0 auto' }}
-                  onClick={()=>{navigate(getBellButtonNav())}}
+                  style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
+                  onClick={()=>{navigate("/announcements")}}
                 />
               </Grid>
               <Grid item xs={3}>
                 <img
                   src={comment_fill}
                   alt="Comment Icon"
-                  style={{ display: 'block', margin: '0 auto' }}
+                  style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                   onClick={()=>{navigate(getCommentButtonNav())}}
                 />
               </Grid>

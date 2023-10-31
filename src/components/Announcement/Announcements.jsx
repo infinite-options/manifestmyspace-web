@@ -15,7 +15,7 @@ export default function Announcements() {
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
             .then((res) => {
-                setAnnouncementData(res.data.result);
+                setAnnouncementData(res.data?.received?.result || []);
                 // console.log(res.data.result);
                 setShowSpinner(false);
             });
@@ -35,12 +35,12 @@ export default function Announcements() {
                     </svg>
                 </div>
                 <div className="announcement-title-text">
-                    Announcement
+                    {"Notifications"}
                 </div>
                 <div className="announcement-title-emptybox" />
             </div>
             <hr />
-            <div className="announcement-location">
+            {/* <div className="announcement-location">
                 <div className="announcement-location-icon">
                     <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="14.5" cy="14.5" r="14.5" fill="#D9D9D9" />
@@ -49,7 +49,7 @@ export default function Announcements() {
                 <div className="announcement-location-text">
                     103 N. Abel St unit #104
                 </div>
-            </div>
+            </div> */}
             <div className="announcement-menu-container">
                 <Searchbar />
                 <div className="announcement-menu-bar">
@@ -81,7 +81,7 @@ export default function Announcements() {
                             <div key={i}>
                                 <AnnouncementCard data={announcement} />
                             </div>
-                        )) : <>Loading...</>}
+                        )) : "No announcements"}
                 </div>
             </div>
             {/**
