@@ -102,14 +102,6 @@ function TenantProfileEdit(props) {
             }
             setProfileData(responseData);
             
-            setModifiedData({
-                'tenant_uid': responseData.tenant_uid,
-                'tenant_adult_occupants': responseData.tenant_adult_occupants,
-                'tenant_children_occupants': responseData.tenant_children_occupants,
-                'tenant_pet_occupants': responseData.tenant_pet_occupants,
-                'tenant_vehicle_info': responseData.tenant_vehicle_info,
-            });
-
             setTenantAdultOccupants(responseData.tenant_adult_occupants);
             setTenantChildrenOccupants(responseData.tenant_children_occupants);
             setTenantPetOccupants(responseData.tenant_pet_occupants);
@@ -134,6 +126,13 @@ function TenantProfileEdit(props) {
             if (responseData.tenant_profile_image) {
                 setTenantProfileImage(responseData.tenant_profile_image);
             }
+            setModifiedData({
+                'tenant_uid': responseData.tenant_uid,
+                'tenant_adult_occupants': responseData.tenant_adult_occupants,
+                'tenant_children_occupants': responseData.tenant_children_occupants,
+                'tenant_pet_occupants': responseData.tenant_pet_occupants,
+                'tenant_vehicle_info': responseData.tenant_vehicle_info,
+            });
             // setTenantLeaseStartDate(responseData.tenant_lease_start_date)
             // setTenantLeaseEndDate(responseData.tenant_lease_end_date)
             // setTenantMonthlyRent(responseData.tenant_monthly_rent)
@@ -144,30 +143,28 @@ function TenantProfileEdit(props) {
         });
     }, []);
 
-    useEffect(() => {
-        if (profileData !== null) {
-            console.log('Profile Data:', profileData);
-        }
-    });
-
-    useEffect(() => {
-        if (modifiedData !== null) {
-            console.log('Modified Data: ', modifiedData);
-        }
-    });
+    // useEffect(() => {
+    //     if (profileData !== null) {
+    //         console.log('Profile Data:', profileData);
+    //     }
+    // });
 
     // useEffect(() => {
-    //     if(isEdited){
-    //         console.log("isEditted useEffect to update occupants")
-    //        setModifiedData((prevData) => ({
-    //             ...prevData,
-    //             'tenant_adult_occupants': tenantAdultOccupants,
-    //             'tenant_children_occupants': tenantChildrenOccupants,
-    //             'tenant_pet_occupants': tenantPetOccupants,
-    //             'tenant_vehicle_info': tenantVehicleInfo,
-    //         }));
+    //     if (modifiedData !== null) {
+    //         console.log('Modified Data: ', modifiedData);
     //     }
-    // }, [isEdited]);
+    // });
+
+    useEffect(() => {
+        setModifiedData((prevData) => ({
+            ...prevData,
+            'tenant_adult_occupants': tenantAdultOccupants,
+            'tenant_children_occupants': tenantChildrenOccupants,
+            'tenant_pet_occupants': tenantPetOccupants,
+            'tenant_vehicle_info': tenantVehicleInfo,
+        }));
+    }, [tenantAdultOccupants, tenantChildrenOccupants, tenantPetOccupants, tenantVehicleInfo]);
+
 
     // Handle changes to form fields
     const handleInputChange = (event) => {
@@ -208,14 +205,6 @@ function TenantProfileEdit(props) {
             setTenantCity(value);
         } else if (name === 'tenant_zip') {
             setTenantZip(value);
-        } else if (name === 'tenant_adult_occupants') {
-            setTenantAdultOccupants(value);
-        } else if (name === 'tenant_children_occupants') {
-            setTenantChildrenOccupants(value);
-        } else if (name === 'tenant_pet_occupants') {
-            setTenantPetOccupants(value);
-        } else if (name === 'tenant_vehicle_info') {
-            setTenantVehicleInfo(value);
         }
         
         setModifiedData((prevData) => ({
@@ -223,10 +212,6 @@ function TenantProfileEdit(props) {
             [name]: value
         }));
 
-        // setFormData({
-        //     ...formData,
-        //     [name]: value,
-        // });
         setIsEdited(true); // Mark the form as edited
     };
 
@@ -940,10 +925,8 @@ function ProfileTenantTable(props) {
     const data = props.data;
     const setData = props.setData;
 
-    console.log("data state", data)
-
     useEffect(() => {
-        console.log("data state", data);
+        console.log(`${field} --> ${data}`);
     }, [data])
 
     const addRow = () => {
@@ -1059,40 +1042,25 @@ function ProfileTableCell(props) {
 
     const handleInputChange = (event) => {
         if (!isEdited){
-            console.log("set is edited")
             setIsEdited(true);
         }
-        console.log("Input changed");
         const { value } = event.target;
       
         const fieldName = props.field;
 
-        console.log(fieldName, value)
+        // console.log(fieldName, value)
 
         setData((prevData) => {
-            console.log("prevData", prevData)
             const newData = [...prevData];
             newData[index] = {
               ...newData[index],
               [props.subField]: value,
             };
-            console.log("this is new data:", newData)
+            console.log("Updated ", fieldName, " with ", newData)
             return newData;
         });
     };
 
-    // useEffect(() => {
-    //     if(isEdited){
-    //         console.log("isEditted useEffect to update occupants")
-    //         setModifiedData((prevData) => ({
-    //             ...prevData,
-    //             'tenant_adult_occupants': tenantAdultOccupants,
-    //             'tenant_children_occupants': tenantChildrenOccupants,
-    //             'tenant_pet_occupants': tenantPetOccupants,
-    //             'tenant_vehicle_info': tenantVehicleInfo,
-    //         }));
-    //     }
-    // }, [isEdited]);
 
 
     return (
