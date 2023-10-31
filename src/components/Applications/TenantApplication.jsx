@@ -160,13 +160,10 @@ export default function TenantApplication(){
                 "announcement_msg" : "You have a new tenant application for your property",
                 "announcement_sender": getProfileId(),
                 "announcement_date": date.toDateString(),
-                "announcement_properties": property.property_uid,
+                "announcement_properties": property.contract_property_id,
                 "announcement_mode": "",
-                "announcement_receiver": "",
-                "announcement_type": "",
-                "Email": 1,
-                "Text": 1,
-                "App": 1,
+                "announcement_receiver": property.contract_business_id,
+                "announcement_type": ["App"]
             })
         })
 
@@ -186,7 +183,7 @@ export default function TenantApplication(){
                 "lease_vehicles": "[]", //JSON.stringify(vehicles),
                 "lease_referred": "[]",
                 "lease_rent": "[]",
-                "lease_application_date": date.toDateString(),
+                "lease_application_date": date.toLocaleDateString(),
                 "tenant_uid": getProfileId(),
             })
         })

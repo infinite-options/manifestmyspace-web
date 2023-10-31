@@ -47,13 +47,12 @@ const getAppColor = (app) => app.lease_status!=="REJECTED"?"#778DC5":"#A52A2A";
 
 export default function PropertyNavigator({index, propertyData}){
     const navigate = useNavigate();
-    const { getProfileId } = useUser();
+    const { getProfileId, isManager } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
-    const [applicationData, setApplicationData] = useState([]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
     const [showSpinner, setShowSpinner] = useState(false);
     const color = theme.palette.form.main
@@ -68,19 +67,12 @@ export default function PropertyNavigator({index, propertyData}){
                 console.log("Fetch maintenance data for "+item.property_uid)
                 const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
                 // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
-                const responseApplication = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${item.business_uid}`);
-                //  const responseLeases = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication/350-000046/200-000040`);  
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }
 
                 const propertyMaintenanceData = await responseProperty.json();
-                const propertyApplicationData = await responseApplication.json();
-
-                if(propertyApplicationData) {
-                    setApplicationData(propertyApplicationData.Lease_Details.result);
-                }
 
                 if(propertyMaintenanceData!=undefined){
                     setMaintenanceData(propertyMaintenanceData.MaintenanceProjects.result);
@@ -212,7 +204,7 @@ export default function PropertyNavigator({index, propertyData}){
     };
 
     const handleAppClick = (index) => {
-        navigate("/tenantApplicationNav", { state:{ applicationList: applicationData, index } });
+        navigate("/tenantApplicationNav", { state:{ index, property: item } });
     };
 
     return(
@@ -628,7 +620,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 {item.property_num_baths}
                                         </Typography>
                                     </Grid>
-                                    {item.rent_status==="VACANT"?
+                                    {isManager() && item.applications.length>0 &&
                                     <>
                                         <Grid item xs={12}>
                                             <Typography
@@ -643,7 +635,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 {"Applications"}
                                             </Typography>
                                         </Grid>
-                                        {applicationData && applicationData.map((app, index) => 
+                                        {item.applications.map((app, index) => 
                                             <Grid item xs={6}>
                                                 <Button onClick={()=>handleAppClick(index)} 
                                                     sx={{ backgroundColor: getAppColor(app), 
@@ -660,7 +652,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 </Button>
                                             </Grid>
                                         )}
-                                    </> : <>
+                                    </>}
                                     <Grid item xs={11}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Typography
@@ -753,7 +745,7 @@ export default function PropertyNavigator({index, propertyData}){
                                     </Grid>
                                     <Grid item xs={1}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
-                                    </Grid></>}
+                                    </Grid>
                                     <Grid item xs={11}>
                                         <Box onClick={()=> {navigate("/pmQuotesRequested",
                                         {state :{
@@ -826,7 +818,7 @@ export default function PropertyNavigator({index, propertyData}){
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
                                     </Grid>
-                                    {item.property_available_to_rent!=="1" && 
+                                    {item.property_available_to_rent!==1 && 
                                     <Grid item xs={12}>
                                         <Button
                                             variant="outlined" 

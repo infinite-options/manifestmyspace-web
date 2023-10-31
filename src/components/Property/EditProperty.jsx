@@ -55,7 +55,7 @@ export default function EditProperty({}){
     const [squareFootage, setSquareFootage] = useState(0);
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
-    const [isListed, setListed] = useState(propertyData.property_available_to_rent==="1"?true:false);
+    const [isListed, setListed] = useState(propertyData.property_available_to_rent===1?true:false);
     // const [existingImages, setExistingImages] = useState(JSON.parse(propertyData.property_images));
 
     const [description, setDescription] = useState('test');

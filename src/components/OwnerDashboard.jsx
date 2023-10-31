@@ -71,8 +71,8 @@ export default function OwnerDashboard() {
             console.log("PROFILE ID: ", getProfileId())
             
             setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/${getProfileId()}`)
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDashboard/110-000003`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/110-000003`)
             const jsonData = await response.json()
             setRentStatus(jsonData.RentStatus.result);
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
