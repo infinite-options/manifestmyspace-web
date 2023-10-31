@@ -26,6 +26,15 @@ import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
 
 
+import ChatIcon from '@mui/icons-material/Chat';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EditIcon from '@mui/icons-material/Edit';
+import PersonIcon from '@mui/icons-material/Person';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import ImageCarousel from "../../ImageCarousel";
+
+
 
 function NewOwnerInquiry(props) {
     const { getProfileId } = useUser();
@@ -284,6 +293,9 @@ function PropertyCard(props) {
     const [contractStartDate, setContractStartDate] = useState("");
     const [contractEndDate, setContractEndDate] = useState("");
     const [contractFees, setContractFees] = useState([]);
+    const [contractFiles, setContractFiles] = useState([]);
+
+    
 
     useEffect(()=> {
         console.log("CONTRACT FEES - ", contractFees);
@@ -309,7 +321,7 @@ function PropertyCard(props) {
         //     feeName: 'New Fee',
         //     feeAmount: 0,
         // };
-        // setContractFees((prevContractFees) => [...prevContractFees, newFee]); // rohit - edit replace the current fee with the edited one
+        // setContractFees((prevContractFees) => [...prevContractFees, newFee]); 
         console.log("IN handleEditFee of PropertyCard");
         console.log(newFee, index);
         setContractFees((prevContractFees) => {
@@ -357,11 +369,11 @@ function PropertyCard(props) {
         setContractEndDate(event.target.value);
     }
 
-    const handleContractFeesChange = (feesList) => {
-        console.log("In handleContractFeesChange()");
-        //rohit
-        //setContractFees() // map to the correct keys
-    }
+    // const handleContractFeesChange = (feesList) => {
+    //     console.log("In handleContractFeesChange()");
+    //     //rohit
+    //     //setContractFees() // map to the correct keys
+    // }
 
     const sendPutRequest = (data) => {
         const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
@@ -369,10 +381,7 @@ function PropertyCard(props) {
     
         fetch(url, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+            body: data,
         })
         .then(response => {
             if (!response.ok) {
@@ -386,28 +395,13 @@ function PropertyCard(props) {
         });
     };
 
-    const handleFileUpload = (e) => {
-        if (!e.target.files) {
-          return;
-        }
-      
-        const files = Array.from(e.target.files);
-      
-        files.forEach((file) => {
-          const { name } = file;
-      
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            if (!evt?.target?.result) {
-              return;
-            }
-            const { result } = evt.target;
-            // Handle the file data here or perform any necessary actions
-            console.log("File data for", name, ":", result);
-          };
-          reader.readAsDataURL(file); // Use readAsDataURL for document files
+    const handleRemoveFile = (index) => {
+        setContractFiles(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
         });
-      };
+    };
 
     const handleDeclineOfferClick = () => {
         console.log("Decline Offer Clicked");
@@ -435,20 +429,41 @@ function PropertyCard(props) {
 
     const handleSendQuoteClick = () => {
         console.log("Send Quote Clicked");
+        const formData = new FormData();
         let contractFeesJSONString = JSON.stringify(contractFees);
         console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
-        const data = {
-            "contract_uid": contractUID,
-            "contract_name": contractName,
-            "contract_start_date": contractStartDate,
-            "contract_end_date": contractEndDate,
-            "contract_fees": contractFeesJSONString,
-            "contract_status": "SENT"
-        };
+        // const data = {
+        //     "contract_uid": contractUID,
+        //     "contract_name": contractName,
+        //     "contract_start_date": contractStartDate,
+        //     "contract_end_date": contractEndDate,
+        //     "contract_fees": contractFeesJSONString,
+        //     "contract_status": "SENT"
+        // };
+        
+        formData.append("contract_uid", contractUID)
+        formData.append("contract_name", contractName)
+        formData.append("contract_start_date", contractStartDate)
+        formData.append("contract_end_date", contractEndDate)
+        formData.append("contract_fees", contractFeesJSONString)
+        formData.append("contract_status", "SENT")
+        // formData.append("contract_documents", contractFiles)
 
-        console.log("Quote sent. Data sent - ", data);
+        
+        if(contractFiles.length){
+            [...contractFiles].forEach((file, i) => {
+                formData.append(`file-${i}`, file, file.name)
+            })
+        }
 
-        sendPutRequest(data);
+
+        console.log("Quote sent. Data sent - ");
+        for (const pair of formData.entries()) {
+            console.log(`${pair[0]}, ${pair[1]}`);
+        }
+  
+
+        sendPutRequest(formData);
     }
 
     useEffect(() => {
@@ -480,6 +495,7 @@ function PropertyCard(props) {
 
     return (
         <>
+            {/* Property Image Carousel */}
             <Box sx={{
                 display: 'flex',
                 padding: '5px',
@@ -489,61 +505,86 @@ function PropertyCard(props) {
                 color: '#160449',
                 // color: '#3D5CAC',
             }}>
-                <Box
-                    sx={{
-                        minWidth: '130px',
-                        height: '130px',
-                        marginRight: '20px',
-                        backgroundColor: 'grey',
-                    }}
-                >
-                    <img src={"https://squarefootphotography.com/wp-content/uploads/2022/01/SQFT-9754-min-scaled.jpg"} alt="Property Img" style={{
-                        width: '130px',
-                        height: '130px',
-                    }} />
-                    
-                </Box>
+                <ImageCarousel images={propertyData.property_images? JSON.parse(propertyData.property_images) : []}/>
+            </Box>
+            {/* Time since Inquiry was created */}
+            <Box sx={{
+                display: 'flex',
+                padding: '5px',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                fontSize: '20px',
+                color: '#160449',
+                // color: '#3D5CAC',
+            }}>
                 <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}>
-                    <Box sx={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
+                        fontSize: '13px',
+                    }}>
+                        { timeDiff }
+                    </Box>
+            </Box>
+            {/* Property Address */}
+            <Box sx={{
+                display: 'flex',
+                padding: '5px',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                fontSize: '20px',
+                color: '#160449',
+                // color: '#3D5CAC',
+            }}>
+                <Box sx={{
+                        fontSize: '16px',
+                        fontWeight: '600',
                     }}>
                         {/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
                         {/* 789 Maple Lane, San Diego, CA 92101, USA */}
                         {propertyData.property_address}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}
                     </Box>
-                    <Box sx={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        paddingTop: '10px',
+            </Box>
+            {/* Property Owner and Status */}
+            <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent:'space-between',
+                }}
+            >
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}>
-                        Owner:
+                    <Box sx={{
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                paddingBottom: '0px',
+                                color: 'text.darkblue',
+                        }}
+                    >
+                        
+                            Owner: {propertyData.owner_first_name}{' '}{propertyData.owner_last_name} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  />
                     </Box>
-                    <Box sx={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
+                </Box>
+                <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}>
-                        {propertyData.owner_first_name}{' '}{propertyData.owner_last_name}
-                    </Box>
                     <Box sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        paddingTop: '5px',
-                    }}>
-                        {propertyData.property_available_to_rent === 1? 'Not Rented' : 'Rented'}
-                    </Box>
-                    <Box sx={{
-                        fontSize: '10px',
-                        paddingTop: '10px',
-                        color: '#3D5CAC',
-                    }}>
-                        { timeDiff }
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                paddingBottom: '0px',
+                                color: 'text.darkblue',
+                        }}
+                    >
+                        
+                        Status: {propertyData.property_available_to_rent === 1? 'Vacant' : 'Rented'}
                     </Box>
                 </Box>
             </Box>
+
+            
+            {/* Rent and Lease */}
             <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -591,7 +632,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            View lease
+                            View lease <DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC'}} />
                     </Box>
                     <Box sx={{
                                 fontSize: '13px',
@@ -606,11 +647,13 @@ function PropertyCard(props) {
                     </Box>
                 </Box>
             </Box>
+            {/* Property Value*/}
             <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent:'space-between',
-                }}>
+                }}
+            >
                 <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -667,6 +710,7 @@ function PropertyCard(props) {
                     </Box>
                 </Box>
             </Box>
+            {/* Property Type */}
             <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -889,6 +933,10 @@ function PropertyCard(props) {
                 </Box>
                 
             </Box> */}
+
+
+            {/* Contract Details */}
+            {/* Contract Name */}
             <Box sx={{
                         fontSize: '15px',
                         fontWeight: 'bold',
@@ -900,6 +948,8 @@ function PropertyCard(props) {
                     Management Agreement Name
             </Box>
             <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange}>First Name</TextInputField>
+
+            {/* Contract Start date and end date */}
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -952,7 +1002,7 @@ function PropertyCard(props) {
                     <Box
                         onClick={handleOpenAddFee}
                     >
-                        Add Fee
+                        <EditIcon  sx={{ fontSize: 16, color: '#3D5CAC'}} />
                     </Box>
                     
             </Box>
@@ -1019,20 +1069,22 @@ function PropertyCard(props) {
                 flexDirection: 'row',
                 justifyContent:'space-between',
                 alignItems: 'center',
-                paddingTop: '50px',
+                paddingTop: '20px',
                 marginBottom: '7px',
                 width: '100%',
             }}>
                 <Box>
                     <Box sx={{
-                            fontSize: '15px',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             padding: '5px',
                             color: '#3D5CAC',
                         }}
                     >
                     
-                        Add Contact
+                        <PersonIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />Add Contact
                     </Box>
                     
                 </Box>
@@ -1050,20 +1102,23 @@ function PropertyCard(props) {
                     </Box> */}
                     <Box
                         sx={{
-                            fontSize: '15px',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             padding: '5px',
                             color: '#3D5CAC',
                         }}
-                        >
+                    >
                         <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-                            Add Document
+                            <DescriptionIcon sx={{ fontSize: 19, color: '#3D5CAC'}} /> Add Document
                         </label>
                         <input
                             id="file-upload"
                             type="file"
+                            accept=".doc,.docx,.txt,.pdf"
                             hidden
-                            onChange={handleFileUpload}
+                            onChange={(e) => setContractFiles(e.target.files)}
                             multiple
                         />
                     </Box>  
@@ -1071,6 +1126,67 @@ function PropertyCard(props) {
                 </Box>
 
             </Box>
+            {
+                contractFiles.length? (
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                    }}>
+                        
+                        <Box
+                            sx={{
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                                width: '100%',
+                            }}
+                        >
+                            Added Documents:
+                            {[...contractFiles].map((f, i) => (
+                                <Box
+                                    key={i} 
+                                    sx={{
+                                        display:'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <Box>
+                                    {f.name}
+                                    </Box>
+                                    <Button 
+                                        variant="text"
+                                        onClick={() => {
+                                            // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
+                                            handleRemoveFile(i)
+                                        }}
+                                        sx={{
+                                             
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC', 
+                                        }}
+                                        
+                                    >
+                                        <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                    </Button>
+                                </Box>
+        
+                                
+                            ))}
+                        </Box>
+        
+                    </Box>
+                ) : (<></>)
+            }
+            
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -1139,6 +1255,7 @@ function PropertyCard(props) {
 
     );
 }
+
 
 function TextInputField(props) {
     const inputStyle = {

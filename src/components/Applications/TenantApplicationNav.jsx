@@ -19,17 +19,18 @@ import PhoneIcon from "../Property/phoneIconDark.png";
 const TenantApplicationNav = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { applicationList, index, property } = state;
+  const { index, property } = state;
+  const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
-  const [application, setApplication] = useState(applicationList[currentIndex]);
+  const [application, setApplication] = useState(applications[currentIndex]);
   const [showSpinner, setShowSpinner] = useState(false);
   const handleNextCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % applicationList.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
   };
   const handlePreviousCard = () => {
     setCurrentIndex(
       (prevIndex) =>
-        (prevIndex - 1 + applicationList.length) % applicationList.length
+        (prevIndex - 1 + applications.length) % applications.length
     );
   };
   const handleRejectLease = async () => {
@@ -52,8 +53,8 @@ const TenantApplicationNav = () => {
   const handleCreateLease = () =>
     navigate("/tenantLease", { state: { application, property } });
   useEffect(() => {
-    setApplication(applicationList[currentIndex]);
-  }, [currentIndex, applicationList]);
+    setApplication(applications[currentIndex]);
+  }, [currentIndex, applications]);
   return (
     <ThemeProvider theme={theme}>
       <Backdrop
@@ -163,15 +164,15 @@ const TenantApplicationNav = () => {
                             }}
                           >
                             {`${currentIndex + 1} of ${
-                              applicationList.length
+                              applications.length
                             } Applicants`}
                           </Typography>
                         </Stack>
                         <Button
                           onClick={handleNextCard}
-                          disabled={currentIndex === applicationList.length - 1}
+                          disabled={currentIndex === applications.length - 1}
                         >
-                          {currentIndex === applicationList.length - 1 ? (
+                          {currentIndex === applications.length - 1 ? (
                             <ArrowForwardIcon
                               sx={{
                                 color: "#A0A0A0",

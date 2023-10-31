@@ -134,6 +134,22 @@ function getPaymentStatus(paymentStatus) {
   }
 }
 
+function getPropertyList(data) {
+  const propertyList = data["Property"].result;
+  const applications = data["Applications"].result;
+  const appsMap = new Map();
+  applications.forEach(a => {
+    const appsByProperty = appsMap.get(a.property_uid) || []
+    appsByProperty.push(a);
+    appsMap.set(a.property_uid, appsByProperty);
+  });
+  return propertyList.map(p => {
+    p.applications = appsMap.get(p.property_uid) || [];
+    p.applicationsCount = [...p.applications].filter(a => a.lease_status === "NEW").length;
+    return p;
+  })
+}
+
 export default function PropertyList({}) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -159,13 +175,12 @@ export default function PropertyList({}) {
     console.log(propertyList);
     const fetchData = async () => {
       setShowSpinner(true);
-      console.log("Profile ID :"+profileId);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
-      console.log(propertyData)
-      setPropertyList([...propertyData["Property"].result]);
-      setDisplayedItems([...propertyData["Property"].result]);
+      const propertyList = getPropertyList(propertyData)
+      setPropertyList([...propertyList]);
+      setDisplayedItems([...propertyList]);
       setShowSpinner(false);
     };
     fetchData();
@@ -183,7 +198,7 @@ export default function PropertyList({}) {
   }
 
   function getNoOfApplications(index) {
-    return propertyList?.[index]?.num_open_application ?? 0;
+    return propertyList?.[index]?.applicationsCount || 0;
   }
 
   function getCoverPhoto(property) {
@@ -349,6 +364,7 @@ export default function PropertyList({}) {
                       overlap="circular"
                       color="success"
                       badgeContent={getNoOfApplications(index)}
+                      invisible={!getNoOfApplications(index)}
                       anchorOrigin={{
                         vertical: "top",
                         horizontal: "right",

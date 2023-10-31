@@ -49,8 +49,8 @@ function TenantDashboard(props) {
 
     const getTenantData = async () => {
       setShowSpinner(true);
-      const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/${getProfileId()}`);
-      // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDashboard/350-000040')
+      const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+      // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/350-000040')
       const tenantRequestsData = await tenantRequests.json()  
       
       console.log(tenantRequestsData)
@@ -63,7 +63,7 @@ function TenantDashboard(props) {
         navigate("/listings")
       } else{
         for (const item of propertyData){
-            if (item.lease_status == "APPLICATION"){
+            if (item.lease_status !== "ACTIVE"){
                 navigate("/listings")
             }
         }
