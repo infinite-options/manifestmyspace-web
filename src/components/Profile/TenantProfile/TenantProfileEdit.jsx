@@ -901,6 +901,7 @@ function DocumentCard(props) {
 }
 
 function ProfileTenantTable(props) {
+    const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const title = props.title;
     const headers = props.headers;
     
@@ -928,10 +929,15 @@ function ProfileTenantTable(props) {
     }
 
     const deleteRow = (index) => {
-        let newData = [...data]
-        newData.splice(index, 1)
-        setData(newData)
-    }
+        if (!isEdited){
+            setIsEdited(true);
+        }
+        setData((prevData) => {
+            const newData = prevData.filter((_, i) => i !== index);
+            console.log("Deleted row at index ", index, ", new data: ", newData);
+            return newData;
+        });
+    };
     
     const headerToDataKeyMap = {
         'Name': 'name',
