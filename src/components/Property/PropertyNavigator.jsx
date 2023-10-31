@@ -135,22 +135,21 @@ export default function PropertyNavigator({index, propertyData}){
     function displayTopMaintenanceItem(){
         if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
             return (
-                // <DataGrid
-                //     rows={maintenanceData}
-                //     columns={maintenanceColumns}
-                //     initialState={{
-                //         pagination: {
-                //             paginationModel: {
-                //                 pageSize: 5,
-                //             },
-                //         },
-                //     }}
-                //     getRowId={(row) => row.maintenance_request_uid}
-                //     pageSizeOptions={[5]}
-                //     disableRowSelectionOnClick
-                //     onRowClick={()=>{}}
-                // />
-                <div></div>
+                <DataGrid
+                    rows={maintenanceData}
+                    columns={maintenanceColumns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
+                            },
+                        },
+                    }}
+                    getRowId={(row) => row.maintenance_request_uid}
+                    pageSizeOptions={[5]}
+                    disableRowSelectionOnClick
+                    onRowClick={()=>{}}
+                />
             )
         } else {
             return "No Open Maintenance Tickets"
