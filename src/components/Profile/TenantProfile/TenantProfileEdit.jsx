@@ -84,14 +84,10 @@ function TenantProfileEdit(props) {
     };
 
 
-    useEffect(()=>{
-        console.log("TENANT EDIT USE EFFECT")
+    useEffect(() => {
         setShowSpinner(true);
-        
-        // axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000060')
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
         .then((res)=>{
-            // console.log(res.data.Profile.result[0]);
             let responseData = res.data.Profile.result[0];
             parseJSONFields(responseData);
             console.log('responseData.tenant_ssn:', responseData.tenant_ssn);
@@ -142,18 +138,6 @@ function TenantProfileEdit(props) {
             setShowSpinner(false);
         });
     }, []);
-
-    // useEffect(() => {
-    //     if (profileData !== null) {
-    //         console.log('Profile Data:', profileData);
-    //     }
-    // });
-
-    // useEffect(() => {
-    //     if (modifiedData !== null) {
-    //         console.log('Modified Data: ', modifiedData);
-    //     }
-    // });
 
     useEffect(() => {
         setModifiedData((prevData) => ({
