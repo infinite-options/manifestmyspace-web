@@ -11,6 +11,7 @@ import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from '../../../theme/theme';
+import { set } from "date-fns";
 
 
 const TenantProfileEditContext = createContext(null);
@@ -47,6 +48,11 @@ function TenantProfileEdit(props) {
     const [tenantMonthlyRent, setTenantMonthlyRent] = useState('');
     const [tenantPMName, setTenantPMName] = useState('');
     const [tenantPMPhone, setTenantPMPhone] = useState('');
+
+    const [tenantAdultOccupants, setTenantAdultOccupants] = useState([]);
+    const [tenantChildrenOccupants, setTenantChildrenOccupants] = useState([]);
+    const [tenantPetOccupants, setTenantPetOccupants] = useState([]);
+    const [tenantVehicleInfo, setTenantVehicleInfo] = useState([]);
     
     // const [tenant, setTenant] = useState('');
 
@@ -95,6 +101,7 @@ function TenantProfileEdit(props) {
                 responseData.tenant_ssn = null; // or any other default value
             }
             setProfileData(responseData);
+            
             setModifiedData({
                 'tenant_uid': responseData.tenant_uid,
                 'tenant_adult_occupants': responseData.tenant_adult_occupants,
@@ -102,6 +109,11 @@ function TenantProfileEdit(props) {
                 'tenant_pet_occupants': responseData.tenant_pet_occupants,
                 'tenant_vehicle_info': responseData.tenant_vehicle_info,
             });
+
+            setTenantAdultOccupants(responseData.tenant_adult_occupants);
+            setTenantChildrenOccupants(responseData.tenant_children_occupants);
+            setTenantPetOccupants(responseData.tenant_pet_occupants);
+            setTenantVehicleInfo(responseData.tenant_vehicle_info);
 
             setTenantFirstName(responseData.tenant_first_name)
             setTenantLastName(responseData.tenant_last_name)
@@ -134,8 +146,7 @@ function TenantProfileEdit(props) {
 
     useEffect(() => {
         if (profileData !== null) {
-            console.log('Profile Data:');
-            console.log(profileData);
+            console.log('Profile Data:', profileData);
         }
     });
 
@@ -184,8 +195,15 @@ function TenantProfileEdit(props) {
             setTenantCity(value);
         } else if (name === 'tenant_zip') {
             setTenantZip(value);
+        } else if (name === 'tenant_adult_occupants') {
+            setTenantAdultOccupants(value);
+        } else if (name === 'tenant_children_occupants') {
+            setTenantChildrenOccupants(value);
+        } else if (name === 'tenant_pet_occupants') {
+            setTenantPetOccupants(value);
+        } else if (name === 'tenant_vehicle_info') {
+            setTenantVehicleInfo(value);
         }
-        //add lease_start_date etc.
         
         setModifiedData((prevData) => ({
             ...prevData,
@@ -215,8 +233,7 @@ function TenantProfileEdit(props) {
         if(isEdited){
             console.log("EDITED")
             // axios.put('http://localhost:4000/tenantProfile', modifiedData, headers)
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile', modifiedData, headers)
-            
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -649,10 +666,10 @@ function TenantProfileEdit(props) {
                                     </ProfileAccordionSummary>
                                     <ProfileAccordionDetail>
                                         <Box>
-                                            <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_adult_occupants || profileData.tenant_adult_occupants} field={'tenant_adult_occupants'} />
-                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_children_occupants || profileData.tenant_children_occupants} field={'tenant_children_occupants'} />
-                                            <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={modifiedData.tenant_pet_occupants || profileData.tenant_pet_occupants} field={'tenant_pet_occupants'} />
-                                            <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Year", "License", "State"]} data={modifiedData.tenant_vehicle_info || profileData.tenant_vehicle_info} field={'tenant_vehicle_info'} />
+                                            <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={tenantAdultOccupants} setData={setTenantAdultOccupants} field={'tenant_adult_occupants'} />
+                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={tenantChildrenOccupants} setData={setTenantChildrenOccupants} field={'tenant_children_occupants'} />
+                                            <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={tenantPetOccupants} setData={setTenantPetOccupants} field={'tenant_pet_occupants'} />
+                                            <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Year", "License", "State"]} data={tenantVehicleInfo} setData={setTenantVehicleInfo} field={'tenant_vehicle_info'} />
                                         </Box>
                                     </ProfileAccordionDetail>
                                 </ProfileAccordion>
@@ -902,23 +919,14 @@ function DocumentCard(props) {
 }
 
 function ProfileTenantTable(props) {
-    const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const title = props.title;
     const headers = props.headers;
-    // var data = props.data;
+    
     const field = props.field;
 
-    const [data, setData] = useState(null);
+    const data = props.data;
+    const setData = props.setData;
 
-    useEffect(() => {
-        if (props.data) {
-          setData(props.data);
-        } else{
-            setData([]);
-        }
-      }, [props.data]);
-
-    console.log(props.data)
     console.log("data state", data)
 
     useEffect(() => {
@@ -937,10 +945,6 @@ function ProfileTenantTable(props) {
             return;
         }
         setData(prevData => [...prevData, newRow]);
-        setModifiedData(prevData => ({
-            ...prevData,
-            [field]: [...(prevData[field] || []), newRow],
-        }));
     }
 
     const deleteRow = (index) => {
@@ -996,7 +1000,7 @@ function ProfileTenantTable(props) {
                     data.map((rowData, index) => (
                         <>
                             {headers.map((header, i) => (
-                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} headers={headers}/>
+                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} headers={headers} data={data} setData={setData}/>
                             ))}
                             <Grid item>
                                 <Button
@@ -1031,25 +1035,15 @@ function ProfileTableCell(props) {
     const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const cellWidth = props.style;
     const headersLength = props.headers.length;
-    const cellStyle = {
-        width: cellWidth,
-    }
-    if ((!props.value) && occupantsDataComplete)
-    {
+
+    const data = props.data;
+    const setData = props.setData;
+    const index = props.index
+
+    if ((!props.value) && occupantsDataComplete){
         setOccupantsDataComplete(false)
     }
-    const inputStyle = {
-        border: 'none',
-        backgroundColor: '#D9D9D980',
-        width: '85%',
-        fontFamily: 'inherit',
-        fontWeight: 'inherit',
-        paddingLeft: '5px',
-        paddingRight: '5px',
-        borderRadius: '5px',
-    };
-    // handle input change for each table cell
-    // props - field, index, subField, value
+
     const handleInputChange = (event) => {
         if (!isEdited){
             console.log("set is edited")
@@ -1062,43 +1056,15 @@ function ProfileTableCell(props) {
 
         console.log(fieldName, value)
 
-        // setModifiedData((prevData) => {
-        //     const newData = [...prevData];
-        //     newData[props.index] = {
-        //       ...newData[props.index],
-        //       [props.subField]: value,
-        //     };
-        //     return newData;
-        // });
-    
-        setModifiedData((prevData) => {
+        setData((prevData) => {
+            console.log("prevData", prevData)
             const newData = [...prevData];
-            if (!newData[props.index]) {
-              // If the row doesn't exist, add a new object
-              newData[props.index] = { [props.subField]: value };
-            } else {
-              // If the row exists, update the specific field
-              newData[props.index] = {
-                ...newData[props.index],
-                [props.subField]: value,
-              };
-            }
+            newData[index] = {
+              ...newData[index],
+              [props.subField]: value,
+            };
             return newData;
-          });
-        
-        // setModifiedData((prevData) => ({
-        //   ...prevData,
-        //   [fieldName]: prevData[fieldName].map((item, i) => {
-        //     console.log("item", prevData[fieldName])
-        //     if (i === props.index) {
-        //       return {
-        //         ...item,
-        //         [props.subField]: value,
-        //       };
-        //     }
-        //     return item;
-        //   }),
-        // }));
+        });
     };
     return (
          <Grid item xs={12 / (headersLength+1)}>
