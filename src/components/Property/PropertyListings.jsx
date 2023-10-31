@@ -28,6 +28,10 @@ import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import leaseIcon from './leaseIcon.png';
+import defaultPropertyImage from './propertyImage.png';
+import defaultImage from './defaultImage.png';
+
+import { set } from 'date-fns';
 
 const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
@@ -359,9 +363,8 @@ function PropertyCard(props) {
 
     const lease = props.leaseData;
 
-    // console.log("applied in PropertyCard", applied)
-
-    const ppt_images = property.property_images.split(',');
+    const propertyImages = property.property_images || "";
+    const ppt_images = propertyImages.split(',');
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -376,14 +379,17 @@ function PropertyCard(props) {
     const images = ppt_images.map((data) => {
         try {
             const url = parseImageData(data);
+            console.log("--debug-- url:", url)
+            if (url == "") {
+                return { original: defaultImage };
+            }
             return { original: url };
         } catch (e) {
             console.error(e);
-            return { original: '' };
         }
     });
-
-    // console.log(images);
+    
+    console.log("Debug images", images);
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
