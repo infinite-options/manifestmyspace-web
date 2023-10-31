@@ -178,8 +178,8 @@ const RequestQuotes = () => {
             <Box
               sx={{
                 position: "relative",
-                backgroundColor: "#FFFFFF",
-                paddingBottom:"10%"
+                backgroundColor: "background.gray",
+                paddingBottom:"5%"
                 }}
             > <Box
             sx={{
@@ -212,11 +212,13 @@ const RequestQuotes = () => {
                   }}
                   size="small"  multiline={true} onChange={handleMsgChange}/>
                   </Grid>
-                  <Grid item xs={12}>
+                  {/* <Grid item xs={12}>
 
-                  </Grid>
+                  </Grid> */}
               </Grid>
               </Box>
+
+              <div style={{height: "195px", overflow: "auto"}}>
               <Box
                 sx={{
                   padding: "13px",
@@ -248,6 +250,7 @@ const RequestQuotes = () => {
                 
                 ))}
               </Box>
+              </div>
             </Box>
             <Button
             variant="contained"
@@ -261,8 +264,7 @@ const RequestQuotes = () => {
               top: `30%`,
               borderRadius: "10px 10px 10px 10px",
             }}
-           onClick={handleRequestQuotes}
-          >
+           onClick={handleRequestQuotes}>
             Request Quote
           </Button>
           </Box>
