@@ -54,7 +54,7 @@ export function Footer() {
     const getBellButtonNav = () => {
         switch (selectedRole) {
           case 'OWNER':
-            return '/ownerDashboard';
+            return '/poNotifications';
           case 'MANAGER':
             return '/managerDashboard';
           case 'TENANT':

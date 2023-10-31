@@ -143,21 +143,22 @@ export default function PropertyNavigator({index, propertyData}){
     function displayTopMaintenanceItem(){
         if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
             return (
-                <DataGrid
-                    rows={maintenanceData}
-                    columns={maintenanceColumns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 5,
-                            },
-                        },
-                    }}
-                    getRowId={(row) => row.maintenance_request_uid}
-                    pageSizeOptions={[5]}
-                    disableRowSelectionOnClick
-                    onRowClick={()=>{}}
-                />
+                // <DataGrid
+                //     rows={maintenanceData}
+                //     columns={maintenanceColumns}
+                //     initialState={{
+                //         pagination: {
+                //             paginationModel: {
+                //                 pageSize: 5,
+                //             },
+                //         },
+                //     }}
+                //     getRowId={(row) => row.maintenance_request_uid}
+                //     pageSizeOptions={[5]}
+                //     disableRowSelectionOnClick
+                //     onRowClick={()=>{}}
+                // />
+                <div></div>
             )
         } else {
             return "No Open Maintenance Tickets"
@@ -642,7 +643,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 {"Applications"}
                                             </Typography>
                                         </Grid>
-                                        {applicationData.map((app, index) => 
+                                        {applicationData && applicationData.map((app, index) => 
                                             <Grid item xs={6}>
                                                 <Button onClick={()=>handleAppClick(index)} 
                                                     sx={{ backgroundColor: getAppColor(app), 

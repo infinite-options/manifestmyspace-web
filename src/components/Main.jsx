@@ -136,6 +136,8 @@ import ViewDocument from "./Property/ViewDocument";
 
 import PMNotifications from "./Notifications/PMNotifications";
 import TenantApplicationNav from "./Applications/TenantApplicationNav";
+import PONotifications from "./Notifications/PONotifications";
+import PropertyContract from "./Notifications/PropertyContract";
 
 function Main() {
   return (
@@ -296,6 +298,8 @@ function Main() {
             <Route path="tenantApplication" element={<TenantApplication />} />
             <Route path="tenantApplicationNav" element={<TenantApplicationNav />} />
             <Route path="pmNotifications" element={<PMNotifications />} />
+            <Route path="poNotifications" element={<PONotifications />} />
+            <Route path="propertyContract" element={<PropertyContract />} />
             
           </Route>
         </Routes>
