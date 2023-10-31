@@ -25,12 +25,14 @@ import {
 import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
 
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import ImageCarousel from "../../ImageCarousel";
 
 
 
@@ -291,8 +293,9 @@ function PropertyCard(props) {
     const [contractStartDate, setContractStartDate] = useState("");
     const [contractEndDate, setContractEndDate] = useState("");
     const [contractFees, setContractFees] = useState([]);
+    const [contractFiles, setContractFiles] = useState([]);
 
-    const formData = new FormData();
+    
 
     useEffect(()=> {
         console.log("CONTRACT FEES - ", contractFees);
@@ -318,7 +321,7 @@ function PropertyCard(props) {
         //     feeName: 'New Fee',
         //     feeAmount: 0,
         // };
-        // setContractFees((prevContractFees) => [...prevContractFees, newFee]); // rohit - edit replace the current fee with the edited one
+        // setContractFees((prevContractFees) => [...prevContractFees, newFee]); 
         console.log("IN handleEditFee of PropertyCard");
         console.log(newFee, index);
         setContractFees((prevContractFees) => {
@@ -366,19 +369,19 @@ function PropertyCard(props) {
         setContractEndDate(event.target.value);
     }
 
-    const handleContractFeesChange = (feesList) => {
-        console.log("In handleContractFeesChange()");
-        //rohit
-        //setContractFees() // map to the correct keys
-    }
+    // const handleContractFeesChange = (feesList) => {
+    //     console.log("In handleContractFeesChange()");
+    //     //rohit
+    //     //setContractFees() // map to the correct keys
+    // }
 
-    const sendPutRequest = () => {
-        // const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
-        const url = `http://localhost:4000/contracts`; 
+    const sendPutRequest = (data) => {
+        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+        // const url = `http://localhost:4000/contracts`; 
     
         fetch(url, {
             method: 'PUT',
-            body: formData,
+            body: data,
         })
         .then(response => {
             if (!response.ok) {
@@ -392,32 +395,13 @@ function PropertyCard(props) {
         });
     };
 
-    const handleFileUpload = (e) => {
-        if (!e.target.files) {
-          return;
-        }
-      
-        const files = Array.from(e.target.files);
-      
-        files.forEach((file, index) => {
-          const { name } = file;
-      
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            if (!evt?.target?.result) {
-              return;
-            }
-            const { result } = evt.target;
-            // Handle the file data here or perform any necessary actions
-            console.log("File data for", name, ":", result);
-            
-            // Append each file to an array
-            formData.append(`contract_documents[${index}]`, file, file.name);
-          };
-        //   reader.readAsDataURL(file); // Use readAsDataURL for document files
-          reader.readAsArrayBuffer(file); 
+    const handleRemoveFile = (index) => {
+        setContractFiles(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
         });
-      };
+    };
 
     const handleDeclineOfferClick = () => {
         console.log("Decline Offer Clicked");
@@ -445,6 +429,7 @@ function PropertyCard(props) {
 
     const handleSendQuoteClick = () => {
         console.log("Send Quote Clicked");
+        const formData = new FormData();
         let contractFeesJSONString = JSON.stringify(contractFees);
         console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
         // const data = {
@@ -462,6 +447,14 @@ function PropertyCard(props) {
         formData.append("contract_end_date", contractEndDate)
         formData.append("contract_fees", contractFeesJSONString)
         formData.append("contract_status", "SENT")
+        // formData.append("contract_documents", contractFiles)
+
+        
+        if(contractFiles.length){
+            [...contractFiles].forEach((file, i) => {
+                formData.append(`file-${i}`, file, file.name)
+            })
+        }
 
 
         console.log("Quote sent. Data sent - ");
@@ -1076,7 +1069,7 @@ function PropertyCard(props) {
                 flexDirection: 'row',
                 justifyContent:'space-between',
                 alignItems: 'center',
-                paddingTop: '50px',
+                paddingTop: '20px',
                 marginBottom: '7px',
                 width: '100%',
             }}>
@@ -1123,8 +1116,9 @@ function PropertyCard(props) {
                         <input
                             id="file-upload"
                             type="file"
+                            accept=".doc,.docx,.txt,.pdf"
                             hidden
-                            onChange={handleFileUpload}
+                            onChange={(e) => setContractFiles(e.target.files)}
                             multiple
                         />
                     </Box>  
@@ -1132,6 +1126,67 @@ function PropertyCard(props) {
                 </Box>
 
             </Box>
+            {
+                contractFiles.length? (
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                    }}>
+                        
+                        <Box
+                            sx={{
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                                width: '100%',
+                            }}
+                        >
+                            Added Documents:
+                            {[...contractFiles].map((f, i) => (
+                                <Box
+                                    key={i} 
+                                    sx={{
+                                        display:'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <Box>
+                                    {f.name}
+                                    </Box>
+                                    <Button 
+                                        variant="text"
+                                        onClick={() => {
+                                            // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
+                                            handleRemoveFile(i)
+                                        }}
+                                        sx={{
+                                             
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC', 
+                                        }}
+                                        
+                                    >
+                                        <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                    </Button>
+                                </Box>
+        
+                                
+                            ))}
+                        </Box>
+        
+                    </Box>
+                ) : (<></>)
+            }
+            
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -1201,93 +1256,7 @@ function PropertyCard(props) {
     );
 }
 
-function ImageCarousel(props) {
-    let images = props.images;
-    const [ currentImageIndex, setCurrentImageIndex ] = useState(0);
 
-    useEffect(() => {
-        console.log("IMAGE INDEX:", currentImageIndex);
-    }, [currentImageIndex]);
-
-    // console.log("IMAGE LINK:", images[2]);
-
-    return (
-        <>
-            <Box
-                sx={{
-                    width: '20%',
-                    height: '150px',
-                    backgroundColor: '#F2F2F2',
-                    backgroundImage: currentImageIndex > 0? `url(${images[currentImageIndex - 1]})` : ``,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    opacity: '0.5',
-                }}
-                onClick={ ()=> {
-                        setCurrentImageIndex(currentImageIndex > 0? currentImageIndex - 1 : 0)
-                    }                    
-                }
-            >
-                <ArrowBackIosIcon
-                    sx={{
-                        marginTop: '100%',
-                        marginLeft: '30%',
-                        fontWeight: 'bold',
-                    }}
-                />
-
-            </Box>
-            <Box
-                sx={{
-                    width: '60%',
-                    height: '150px',
-                    backgroundColor: 'black',
-                }}
-            >
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: '100%',
-                    }}
-                >
-                    <img src={images[currentImageIndex]} alt="Property Img" style={{
-                            width: '100%',
-                            height: '100%',
-                    }} />
-
-                </Box>
-                
-            </Box>
-            <Box
-                sx={{
-                    width: '20%',
-                    height: '150px',
-                    backgroundColor: '#F2F2F2',
-                    backgroundImage: currentImageIndex < images.length - 1? `url(${images[currentImageIndex + 1]})` : ``,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    opacity: '0.7',
-                
-                }}
-                onClick={ ()=> {
-                    setCurrentImageIndex(currentImageIndex < images.length - 1? currentImageIndex + 1 : images.length - 1);
-                }                    
-            }
-            >
-                <ArrowForwardIosIcon
-                    sx={{
-                        marginTop: '100%',
-                        marginLeft: '30%',
-                        fontWeight: 'bold',
-                    }}
-                />
-
-            </Box>
-        </>
-    );
-}
 function TextInputField(props) {
     const inputStyle = {
         border: 'none',        
