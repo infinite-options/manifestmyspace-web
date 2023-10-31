@@ -338,7 +338,7 @@ const PropertyListings = (props) => {
                         const appliedData = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
                         if (appliedData) { 
                             status = appliedData.lease_status;
-                            console.log(`Lease Status for ${appliedData.property_address}: ${appliedData.status}`)
+                            console.log(`Lease Status for ${appliedData.property_address}: ${status}`)
                         }
                         return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
                     })}
@@ -399,6 +399,13 @@ function PropertyCard(props) {
             },
         });
     };
+
+    function formatAddress(){
+        if(property.property_unit !== ""){
+            return property.property_address + " Unit " + property.property_unit;
+        }
+        return property.property_address;
+    }
 
     return (
         <Card sx={{ margin: 5 }}>
@@ -560,7 +567,7 @@ function PropertyCard(props) {
                             fontSize: '18px',
                         }}
                     >
-                        {property.property_address}
+                        {formatAddress()}
                     </Typography>
                     <Typography
                         sx={{
