@@ -145,6 +145,7 @@ function getPropertyList(data) {
   });
   return propertyList.map(p => {
     p.applications = appsMap.get(p.property_uid) || [];
+    p.applicationsCount = [...p.applications].filter(a => a.lease_status === "NEW").length;
     return p;
   })
 }
@@ -197,7 +198,7 @@ export default function PropertyList({}) {
   }
 
   function getNoOfApplications(index) {
-    return propertyList?.[index]?.applications?.length ?? 0;
+    return propertyList?.[index]?.applicationsCount || 0;
   }
 
   function getCoverPhoto(property) {
@@ -363,6 +364,7 @@ export default function PropertyList({}) {
                       overlap="circular"
                       color="success"
                       badgeContent={getNoOfApplications(index)}
+                      invisible={!getNoOfApplications(index)}
                       anchorOrigin={{
                         vertical: "top",
                         horizontal: "right",

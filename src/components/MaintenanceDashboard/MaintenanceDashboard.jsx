@@ -82,7 +82,7 @@ export default function MaintenanceDashboard(){
         const getMaintenanceWorkerDashboardData = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceDashboard/${getProfileId()}`, {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',                    

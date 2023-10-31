@@ -7,14 +7,25 @@ import {
     Paper,
     Button,
     ThemeProvider,
+    Form,
     TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    FormControl,
+    InputLabel,
     MenuItem,
     Select,
     Grid,
+    Input,
+    Container,
+    Radio,
+    FormLabel,
     FormControlLabel,
-    Checkbox,
+    RadioGroup,
+    UploadFile,
     CardMedia,
-    InputAdornment
+    InputAdornment,
+    Checkbox
 } from "@mui/material";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -214,6 +225,8 @@ export default function AddProperty({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
+       // formData.append('po_owner_percent', '100');
+        
      //   formData.append('property_owner_id', selectedOwner);
 
         for (let i = 0; i < selectedImageList.length; i++) {

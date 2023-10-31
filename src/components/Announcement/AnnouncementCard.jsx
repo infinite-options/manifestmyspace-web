@@ -1,62 +1,18 @@
+import { calculateAge } from "../utils/helper"; 
 
 function AnnouncementCard(props) {
     const data = props.data;
-    const pm_info = data.pm_details[0];
-    function getDateText(date_announcement) {
-        // Format: "2023-05-23 15:30:55"
-        const date = date_announcement.substring(0, date_announcement.indexOf(' '));
-        const date_list = date.split('-');
-        const year = getYearText(date_list[0]);
-        const month = getMonthText(date_list[1]);
-        const day = date_list[2];
-
-        function getYearText(year) {
-            return year.substring(2);
-        }
-        function getMonthText(month) {
-            switch (month) {
-                case "01":
-                    return "Jan"
-                case "02":
-                    return "Feb"
-                case "03":
-                    return "Mar"
-                case "04":
-                    return "Apr"
-                case "05":
-                    return "May"
-                case "06":
-                    return "Jun"
-                case "07":
-                    return "Jul"
-                case "08":
-                    return "Aug"
-                case "09":
-                    return "Sep"
-                case "10":
-                    return "Oct"
-                case "11":
-                    return "Nov"
-                case "12":
-                    return "Dec"
-                default:
-                    return "N/A";
-            }
-        }
-        return month + " " + day + ", " + year;
-    }
-    const dateText = getDateText(data.date_announcement);
     return (
         <div className="announcement-list-card">
             <div className="announcement-list-card-text-container">
                 <div className="announcement-list-card-text-from">
-                    {"From: " + pm_info.business_name}
+                    {"From: " + data.announcement_sender}
                 </div>
                 <div className="announcement-list-card-text-contents">
                     {data.announcement_title}
                 </div>
                 <div className="announcement-list-card-text-date">
-                    {"Added: " + dateText}
+                    {"Added: " + calculateAge(data.announcement_date)}
                 </div>
             </div>
             <div className="announcement-list-card-options">

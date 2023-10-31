@@ -30,7 +30,6 @@ function TenantProfile() {
     const [vehicleTenantData, setVehicleTenantData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     useEffect(() => {
-        console.log("TENANT PROFILE USE EFFECT")
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
             .then((res) => {

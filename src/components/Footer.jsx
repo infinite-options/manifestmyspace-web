@@ -54,7 +54,7 @@ export function Footer() {
     const getBellButtonNav = () => {
         switch (selectedRole) {
           case 'OWNER':
-            return '/ownerDashboard';
+            return '/poNotifications';
           case 'MANAGER':
             return '/managerDashboard';
           case 'TENANT':
@@ -116,7 +116,7 @@ export function Footer() {
                     <img
                       src={Home_fill}
                       alt="Home Icon"
-                      style={{ display: 'block', margin: '0 auto' }}
+                      style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                       onClick={()=>{navigate(getHomeButtonNav())}}
                     />
                 </Box>
@@ -125,7 +125,7 @@ export function Footer() {
                   <img
                     src={User_fill}
                     alt="User Icon"
-                    style={{ display: 'block', margin: '0 auto' }}
+                    style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                     onClick={()=>{navigate(getProfileButtonNav())}}
                   />
               </Grid>
@@ -133,7 +133,7 @@ export function Footer() {
                 <img
                   src={Bell_fill}
                   alt="Bell Icon"
-                  style={{ display: 'block', margin: '0 auto' }}
+                  style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                   onClick={()=>{navigate(getBellButtonNav())}}
                 />
               </Grid>
@@ -141,7 +141,7 @@ export function Footer() {
                 <img
                   src={comment_fill}
                   alt="Comment Icon"
-                  style={{ display: 'block', margin: '0 auto' }}
+                  style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
                   onClick={()=>{navigate(getCommentButtonNav())}}
                 />
               </Grid>

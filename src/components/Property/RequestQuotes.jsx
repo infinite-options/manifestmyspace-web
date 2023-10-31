@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import axios from "axios";
-import { Typography, Button, Checkbox } from "@mui/material";
+import { Typography, Button, Checkbox, Grid, TextField } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
 
@@ -31,7 +31,10 @@ const RequestQuotes = () => {
   const { getProfileId } = useUser();
   const profileId = getProfileId();
   const [ownerId, setOwnerId] = useState(getProfileId());
-
+  
+  const [announcementTitle, setAnnouncementTitle] = useState('');
+  const [announcementMsg, setAnnouncementMsg] = useState('');
+  
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
@@ -56,15 +59,14 @@ const RequestQuotes = () => {
    
     let announcement_data = JSON.stringify({
 
-      "announcement_title":"New PM Request",
-      "announcement_msg":"PM Quote Requested", 
+      "announcement_title":announcementTitle,
+      "announcement_msg":announcementMsg, 
       "announcement_sender":ownerId,
       "announcement_date":formattedDate,
-      "announcement_properties":selectedProperty,
+      "announcement_properties":[selectedProperty],
       "announcement_mode":"NEW",
-      "announcement_receiver":[managerData.business_uid], 
-      "announcement_type":"PM Request",
-      "Email":0, "Text":0, "App":1,
+      "announcement_receiver":[ownerId], 
+      "announcement_type":["App"],
     });
     
     let config = {
@@ -120,6 +122,14 @@ const RequestQuotes = () => {
 
   let propertyDisplayValue = "";
 
+  const handleTitleChange = (event) => {
+    setAnnouncementTitle(event.target.value);
+  };
+
+  const handleMsgChange = (event) => {
+    setAnnouncementMsg(event.target.value);
+  };
+
   return (
     <ThemeProvider theme={theme}>
      
@@ -170,10 +180,44 @@ const RequestQuotes = () => {
               sx={{
                 position: "relative",
                 backgroundColor: "#FFFFFF",
-                borderRadius: "10px",
-                top: "10px",
-              }}
-            >
+                paddingBottom:"10%"
+                }}
+            > <Box
+            sx={{
+              padding: "13px",
+              backgroundColor: "#D6D5DA",
+              borderRadius: "10px",
+              justifyContent: "center",
+            }}
+          >
+              <Grid container columnSpacing={12} rowSpacing={6}>
+                <Grid item xs={12}>
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                  Title</Typography>
+                  <TextField fullWidth
+                  sx={{
+                      backgroundColor: 'white',
+                      borderColor: 'black',
+                      borderRadius: '7px',
+                  }}
+                  size="small"  multiline={true} onChange={handleTitleChange}/>
+                  </Grid>
+                  <Grid item xs={12}>
+                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                  Message</Typography>
+                  <TextField fullWidth
+                  sx={{
+                      backgroundColor: 'white',
+                      borderColor: 'black',
+                      borderRadius: '7px',
+                  }}
+                  size="small"  multiline={true} onChange={handleMsgChange}/>
+                  </Grid>
+                  <Grid item xs={12}>
+
+                  </Grid>
+              </Grid>
+              </Box>
               <Box
                 sx={{
                   padding: "13px",
