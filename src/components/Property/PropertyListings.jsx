@@ -44,7 +44,6 @@ const PropertyListings = (props) => {
     const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
     useEffect(() => {
-        console.log('fetch data')
         setShowSpinner(true);
         fetchData()
     }, []);
@@ -62,8 +61,6 @@ const PropertyListings = (props) => {
 
         const leaseData = await leaseResponse.json();
         const propertyData = await propertyResponse.json();
-
-        console.log(leaseData)
 
         if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
             // Handle the case where data is missing as needed
@@ -164,8 +161,8 @@ const PropertyListings = (props) => {
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
                                     <path
-                                        fill-rule="evenodd"
-                                        clip-rule="evenodd"
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
                                         d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z"
                                         fill="#160449"
                                     />
@@ -336,8 +333,6 @@ const PropertyListings = (props) => {
                             {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    {/* {console.log("tenantLeaseDetails", tenantLeaseDetails)} */}
-                    {/* {console.log("propertyData", propertyData)} */}
                     
                     {sortedProperties.map((property, index) => {
                         var status = ""
@@ -379,7 +374,6 @@ function PropertyCard(props) {
     const images = ppt_images.map((data) => {
         try {
             const url = parseImageData(data);
-            console.log("--debug-- url:", url)
             if (url == "") {
                 return { original: defaultImage };
             }
@@ -389,7 +383,7 @@ function PropertyCard(props) {
         }
     });
     
-    console.log("Debug images", images);
+    // console.log("Debug images", images);
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
