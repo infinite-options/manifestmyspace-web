@@ -24,7 +24,8 @@ import {
     RadioGroup,
     UploadFile,
     CardMedia,
-    InputAdornment
+    InputAdornment,
+    Checkbox
 } from "@mui/material";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
