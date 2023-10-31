@@ -87,31 +87,30 @@ const RequestQuotes = () => {
       console.log(error);
     });
 
-    let contract_data = JSON.stringify({
-        "contract_property_id":selectedProperty,
-        "contract_business_id": managerData.business_uid,
-        "contract_start_date": formattedDate,
-        "contract_status":"NEW"
-      });  
 
-    let config_contract = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        data : contract_data
-      };
-  
-    
-      axios.request(config_contract)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const formData = new FormData();
+    formData.append("contract_property_id", selectedProperty)
+    formData.append("contract_business_id", managerData.business_uid)
+    formData.append("contract_start_date", formattedDate)
+    formData.append("contract_status", "NEW")
+
+
+    const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        } else{
+            console.log("Data added successfully");
+        }
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
 
       navigate("/managerDetails",{ state: 
         {   ownerId: ownerId, 
@@ -241,7 +240,9 @@ const RequestQuotes = () => {
                     }}>     
                     <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} />  
                     <Typography sx={{paddingTop:"2%"}}>
-                    { propertyDisplayValue =   property.property_unit+" "+property.property_address+" "+property.property_city+" "+property.property_state+" "+property.property_zip} 
+                    {/* { propertyDisplayValue =   property.property_address+" "+property.property_city+" "+property.property_state+" "+property.property_zip+" #"+property.property_unit}  */}
+                    { propertyDisplayValue =   property.property_address+" #"+property.property_unit} 
+
                     </Typography>
                     </Box></div>
                 
