@@ -156,6 +156,19 @@ function TenantProfileEdit(props) {
         }
     });
 
+    // useEffect(() => {
+    //     if(isEdited){
+    //         console.log("isEditted useEffect to update occupants")
+    //        setModifiedData((prevData) => ({
+    //             ...prevData,
+    //             'tenant_adult_occupants': tenantAdultOccupants,
+    //             'tenant_children_occupants': tenantChildrenOccupants,
+    //             'tenant_pet_occupants': tenantPetOccupants,
+    //             'tenant_vehicle_info': tenantVehicleInfo,
+    //         }));
+    //     }
+    // }, [isEdited]);
+
     // Handle changes to form fields
     const handleInputChange = (event) => {
         console.log("Input changed")
@@ -930,7 +943,7 @@ function ProfileTenantTable(props) {
     console.log("data state", data)
 
     useEffect(() => {
-        console.log(data);
+        console.log("data state", data);
     }, [data])
 
     const addRow = () => {
@@ -1063,9 +1076,25 @@ function ProfileTableCell(props) {
               ...newData[index],
               [props.subField]: value,
             };
+            console.log("this is new data:", newData)
             return newData;
         });
     };
+
+    // useEffect(() => {
+    //     if(isEdited){
+    //         console.log("isEditted useEffect to update occupants")
+    //         setModifiedData((prevData) => ({
+    //             ...prevData,
+    //             'tenant_adult_occupants': tenantAdultOccupants,
+    //             'tenant_children_occupants': tenantChildrenOccupants,
+    //             'tenant_pet_occupants': tenantPetOccupants,
+    //             'tenant_vehicle_info': tenantVehicleInfo,
+    //         }));
+    //     }
+    // }, [isEdited]);
+
+
     return (
          <Grid item xs={12 / (headersLength+1)}>
             <TextField
