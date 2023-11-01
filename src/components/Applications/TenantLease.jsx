@@ -17,27 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
-
-const calculateAge = (date) => {
-  if (!date) return "N/A";
-  const now = new Date();
-  const timeDiff = now - new Date(date);
-  const seconds = Math.floor(timeDiff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  let durationString;
-  if (days > 0) {
-    durationString = `${days} days ago`;
-  } else if (hours > 0) {
-    durationString = `${hours} hours ago`;
-  } else if (minutes > 0) {
-    durationString = `${minutes} minutes ago`;
-  } else {
-    durationString = `${seconds} seconds ago`;
-  }
-  return durationString;
-};
+import { calculateAge } from "../utils/helper";
 
 const TenantLease = () => {
   const navigate = useNavigate();

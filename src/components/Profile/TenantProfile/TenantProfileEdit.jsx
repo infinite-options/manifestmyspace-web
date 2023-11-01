@@ -9,7 +9,9 @@ import { useNavigate } from "react-router-dom";
 import backButton from '../../Payments/backIcon.png'
 import ProfileImg from '../Images/PMProfileImagePlaceholder.png';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import theme from '../../../theme/theme';
+import { set } from "date-fns";
 
 
 const TenantProfileEditContext = createContext(null);
@@ -46,6 +48,11 @@ function TenantProfileEdit(props) {
     const [tenantMonthlyRent, setTenantMonthlyRent] = useState('');
     const [tenantPMName, setTenantPMName] = useState('');
     const [tenantPMPhone, setTenantPMPhone] = useState('');
+
+    const [tenantAdultOccupants, setTenantAdultOccupants] = useState([]);
+    const [tenantChildrenOccupants, setTenantChildrenOccupants] = useState([]);
+    const [tenantPetOccupants, setTenantPetOccupants] = useState([]);
+    const [tenantVehicleInfo, setTenantVehicleInfo] = useState([]);
     
     // const [tenant, setTenant] = useState('');
 
@@ -77,14 +84,10 @@ function TenantProfileEdit(props) {
     };
 
 
-    useEffect(()=>{
-        console.log("TENANT EDIT USE EFFECT")
+    useEffect(() => {
         setShowSpinner(true);
-        
-        // axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/350-000060')
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
         .then((res)=>{
-            // console.log(res.data.Profile.result[0]);
             let responseData = res.data.Profile.result[0];
             parseJSONFields(responseData);
             console.log('responseData.tenant_ssn:', responseData.tenant_ssn);
@@ -94,13 +97,11 @@ function TenantProfileEdit(props) {
                 responseData.tenant_ssn = null; // or any other default value
             }
             setProfileData(responseData);
-            setModifiedData({
-                'tenant_uid':responseData.tenant_uid,
-                'tenant_adult_occupants': responseData.tenant_adult_occupants,
-                'tenant_children_occupants': responseData.tenant_children_occupants,
-                'tenant_pet_occupants': responseData.tenant_pet_occupants,
-                'tenant_vehicle_info': responseData.tenant_vehicle_info,
-            });
+            
+            setTenantAdultOccupants(responseData.tenant_adult_occupants);
+            setTenantChildrenOccupants(responseData.tenant_children_occupants);
+            setTenantPetOccupants(responseData.tenant_pet_occupants);
+            setTenantVehicleInfo(responseData.tenant_vehicle_info);
 
             setTenantFirstName(responseData.tenant_first_name)
             setTenantLastName(responseData.tenant_last_name)
@@ -121,6 +122,13 @@ function TenantProfileEdit(props) {
             if (responseData.tenant_profile_image) {
                 setTenantProfileImage(responseData.tenant_profile_image);
             }
+            setModifiedData({
+                'tenant_uid': responseData.tenant_uid,
+                'tenant_adult_occupants': responseData.tenant_adult_occupants,
+                'tenant_children_occupants': responseData.tenant_children_occupants,
+                'tenant_pet_occupants': responseData.tenant_pet_occupants,
+                'tenant_vehicle_info': responseData.tenant_vehicle_info,
+            });
             // setTenantLeaseStartDate(responseData.tenant_lease_start_date)
             // setTenantLeaseEndDate(responseData.tenant_lease_end_date)
             // setTenantMonthlyRent(responseData.tenant_monthly_rent)
@@ -132,18 +140,15 @@ function TenantProfileEdit(props) {
     }, []);
 
     useEffect(() => {
-        if (profileData !== null) {
-            console.log('Profile Data:');
-            console.log(profileData);
-        }
-    });
+        setModifiedData((prevData) => ({
+            ...prevData,
+            'tenant_adult_occupants': tenantAdultOccupants,
+            'tenant_children_occupants': tenantChildrenOccupants,
+            'tenant_pet_occupants': tenantPetOccupants,
+            'tenant_vehicle_info': tenantVehicleInfo,
+        }));
+    }, [tenantAdultOccupants, tenantChildrenOccupants, tenantPetOccupants, tenantVehicleInfo]);
 
-    useEffect(() => {
-        if (modifiedData !== null) {
-            console.log('Modified Data:');
-            console.log(modifiedData);
-        }
-    });
 
     // Handle changes to form fields
     const handleInputChange = (event) => {
@@ -185,17 +190,12 @@ function TenantProfileEdit(props) {
         } else if (name === 'tenant_zip') {
             setTenantZip(value);
         }
-        //add lease_start_date etc.
         
         setModifiedData((prevData) => ({
             ...prevData,
             [name]: value
         }));
 
-        // setFormData({
-        //     ...formData,
-        //     [name]: value,
-        // });
         setIsEdited(true); // Mark the form as edited
     };
 
@@ -215,8 +215,7 @@ function TenantProfileEdit(props) {
         if(isEdited){
             console.log("EDITED")
             // axios.put('http://localhost:4000/tenantProfile', modifiedData, headers)
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile', modifiedData, headers)
-            
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -649,10 +648,10 @@ function TenantProfileEdit(props) {
                                     </ProfileAccordionSummary>
                                     <ProfileAccordionDetail>
                                         <Box>
-                                            <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_adult_occupants || profileData.tenant_adult_occupants} field={'tenant_adult_occupants'} />
-                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={modifiedData.tenant_children_occupants || profileData.tenant_children_occupants} field={'tenant_children_occupants'} />
-                                            <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={modifiedData.tenant_pet_occupants || profileData.tenant_pet_occupants} field={'tenant_pet_occupants'} />
-                                            <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Year", "License", "State"]} data={modifiedData.tenant_vehicle_info || profileData.tenant_vehicle_info} field={'tenant_vehicle_info'} />
+                                            <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={tenantAdultOccupants} setData={setTenantAdultOccupants} field={'tenant_adult_occupants'} />
+                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={tenantChildrenOccupants} setData={setTenantChildrenOccupants} field={'tenant_children_occupants'} />
+                                            <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={tenantPetOccupants} setData={setTenantPetOccupants} field={'tenant_pet_occupants'} />
+                                            <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Year", "License", "State"]} data={tenantVehicleInfo} setData={setTenantVehicleInfo} field={'tenant_vehicle_info'} />
                                         </Box>
                                     </ProfileAccordionDetail>
                                 </ProfileAccordion>
@@ -904,17 +903,34 @@ function DocumentCard(props) {
 function ProfileTenantTable(props) {
     const title = props.title;
     const headers = props.headers;
-    var data = props.data;
+    
     const field = props.field;
 
-    if (!Array.isArray(data) || data.length < 1) {
-        console.log("data is empty or not an array");
-        const item = headers.reduce((acc, curr) => {
-            acc[curr] = "";
+    const data = props.data;
+    const setData = props.setData;
+
+    useEffect(() => {
+        console.log(`${field} --> ${data}`);
+    }, [data])
+
+    const addRow = () => {
+        const newRow = headers.reduce((acc, header) => {
+            acc[headerToDataKeyMap[header]] = "";
             return acc;
         }, {});
-        
-        data = [item]; // Set data to an array containing the new item
+
+        console.log("new Row", newRow)
+        if (data.length < 1) {
+            setData([newRow]);
+            return;
+        }
+        setData(prevData => [...prevData, newRow]);
+    }
+
+    const deleteRow = (index) => {
+        let newData = [...data]
+        newData.splice(index, 1)
+        setData(newData)
     }
     
     const headerToDataKeyMap = {
@@ -964,22 +980,28 @@ function ProfileTenantTable(props) {
                     data.map((rowData, index) => (
                         <>
                             {headers.map((header, i) => (
-                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} headers={headers}/>
+                                <ProfileTableCell field={field} key={i} value={rowData[headerToDataKeyMap[header]]} index={index} subField={headerToDataKeyMap[header]} headers={headers} data={data} setData={setData}/>
                             ))}
+                            <Grid item>
+                                <Button
+                                    sx={{
+                                    padding: "0px", 
+                                    marginLeft: "10px"
+                                    }}
+                                    onClick={() => deleteRow(index)}
+                                >
+                                    <DeleteIcon />
+                                </Button>
+                            </Grid>
                         </>
-                ))) : (
-                    <>
-                        {headers.map((header, i) => (
-                            <ProfileTableCell field={field} key={i} value={""} subField={""} headers={headers}/>
-                        ))}
-                    </>
-                )}
+                ))) : (<p> no row </p>)}
                 <Grid item xs={12} >
                     <Button
                         sx={{
                             padding: "0px", 
                             marginLeft: "10px"
                         }}
+                        onClick={addRow}
                     >
                         <AddIcon/> Add Row
                     </Button>
@@ -993,49 +1015,40 @@ function ProfileTableCell(props) {
     const { setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete } = useContext(TenantProfileEditContext)
     const cellWidth = props.style;
     const headersLength = props.headers.length;
-    const cellStyle = {
-        width: cellWidth,
-    }
-    if ((!props.value) && occupantsDataComplete)
-    {
+
+    const data = props.data;
+    const setData = props.setData;
+    const index = props.index
+
+    if ((!props.value) && occupantsDataComplete){
         setOccupantsDataComplete(false)
     }
-    const inputStyle = {
-        border: 'none',
-        backgroundColor: '#D9D9D980',
-        width: '85%',
-        fontFamily: 'inherit',
-        fontWeight: 'inherit',
-        paddingLeft: '5px',
-        paddingRight: '5px',
-        borderRadius: '5px',
-    };
-    // handle input change for each table cell
-    // props - field, index, subField, value
+
     const handleInputChange = (event) => {
         if (!isEdited){
             setIsEdited(true);
         }
-        console.log("Input changed");
         const { value } = event.target;
-        console.log(value);
       
         const fieldName = props.field;
-        setModifiedData((prevData) => ({
-          ...prevData,
-          [fieldName]: prevData[fieldName].map((item, i) => {
-            if (i === props.index) {
-              return {
-                ...item,
-                [props.subField]: value,
-              };
-            }
-            return item;
-          }),
-        }));
+
+        // console.log(fieldName, value)
+
+        setData((prevData) => {
+            const newData = [...prevData];
+            newData[index] = {
+              ...newData[index],
+              [props.subField]: value,
+            };
+            console.log("Updated ", fieldName, " with ", newData)
+            return newData;
+        });
     };
+
+
+
     return (
-         <Grid item xs={12 / (headersLength)}>
+         <Grid item xs={12 / (headersLength+1)}>
             <TextField
                 size="small"
                 value={props.value}
