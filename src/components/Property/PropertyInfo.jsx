@@ -83,10 +83,12 @@ const PropertyInfo = (props) => {
     });
 
     function renderCorrectButtonText() {
-        if (status) {
-            return 'View Application';
-        } else {
+        if (status === "") {
             return 'Apply Now';
+        } else if (status === "NEW") {
+            return 'View Application';
+        } else if (status === ""){
+            
         }
     }
 
