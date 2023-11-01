@@ -76,13 +76,21 @@ export default function AddProperty({}){
     const maxSteps = selectedImageList.length;
 
     useEffect(() => {
+        console.log("OWNER ID", ownerId);
+    }, [ownerId]);
+
+    useEffect(() => {
+        console.log("SELECTED OWNER", selectedOwner);
+    }, [selectedOwner]);
+
+    useEffect(() => {
         console.log("useEffect")
         setCoverImage(selectedImageList[0]?.data_url || coverImage);
 
         const getOwnerContacts = async () => {
                 try {
-                    //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/`+);
-                    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000035`);
+                    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`);
+                    // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000035`);
     
                     if(!response.ok){
                         console.log("Error fetching owner data")
@@ -203,7 +211,7 @@ export default function AddProperty({}){
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
-        formData.append('property_owner_id', ownerId);
+        formData.append('property_owner_id', selectedOwner);
         formData.append('property_available_to_rent', isListed?1:0);
         formData.append('property_active_date', formattedDate);
         formData.append('property_address', address);
