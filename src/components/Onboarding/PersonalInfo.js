@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Paper,
   Box,
@@ -17,8 +17,8 @@ import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
-//import Status44 from "../../images/status_4_4.svg";
-import Status44 from "../../images/status_bar_8.png";
+import Status44 from "../../images/status_4_4.svg";
+import Status23 from "../../images/status_bar_6.png";
 import axios from "axios";
 import { formatPhoneNumber, headers, maskNumber } from "./helper";
 import AES from "crypto-js/aes";
@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
 const PersonalInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const { user, isLoggedIn, isEmployee, roleName, updateProfileUid } = useUser();
+  const { user, isLoggedIn, isEmployee, roleName, updateProfileUid, isBusiness } = useUser();
+  
   const location = useLocation();
   const { businessId } = location.state;
 
@@ -56,6 +57,8 @@ const PersonalInfo = () => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [statusImg, setStatusImg] = useState();
+  
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -65,7 +68,8 @@ const PersonalInfo = () => {
   const [zip, setZip] = useState("");
   const [ssn, setSsn] = useState("");
   const [mask, setMask] = useState("");
-
+  const profilePage= isLoggedIn? "/privateProfilePayment" :"/profilePayment";
+  const onBoaringPage= isLoggedIn? "/privateOnboardingRouter" : "/onboardingRouter";
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
   };
@@ -151,8 +155,8 @@ const PersonalInfo = () => {
     handleUpdateProfileUid(data);
     setShowSpinner(false);
     if (isEmployee())
-      navigate("/profilePayment", { state: { profileId: businessId } });
-    else navigate("/onboardingRouter" );
+      navigate(profilePage, { state: { profileId: businessId } });
+    else navigate(onBoaringPage );
   };
   const handleUpdateProfileUid = (data) => {
     if (isEmployee()) {
@@ -161,6 +165,16 @@ const PersonalInfo = () => {
       updateProfileUid({ business_owner_id: data.employee_uid });
     }
   };
+
+  useEffect(() => {
+    handleRoleSpecifics();
+  }, []);
+
+  const handleRoleSpecifics = () => {
+    if (isBusiness()) setStatusImg(Status44);
+    else setStatusImg(Status23);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop
@@ -202,7 +216,7 @@ const PersonalInfo = () => {
                     paddingTop: "10%",
                   }}
                 >
-                  <img src={Status44} alt="status" />
+                  <img src={statusImg } alt="status" />
                 </Box>
               </Stack>
               <Stack direction="row" justifyContent="center">
