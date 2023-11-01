@@ -76,11 +76,11 @@ export default function AddProperty({}){
     const maxSteps = selectedImageList.length;
 
     useEffect(() => {
-        console.log("ROHIT - OWNER ID", ownerId);
+        console.log("OWNER ID", ownerId);
     }, [ownerId]);
 
     useEffect(() => {
-        console.log("ROHIT - SELECTED OWNER", selectedOwner);
+        console.log("SELECTED OWNER", selectedOwner);
     }, [selectedOwner]);
 
     useEffect(() => {
