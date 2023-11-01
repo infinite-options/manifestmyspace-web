@@ -377,8 +377,8 @@ function PropertyCard(props) {
     // }
 
     const sendPutRequest = (data) => {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
-        // const url = `http://localhost:4000/contracts`; 
+        // const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+        const url = `http://localhost:4000/contracts`; 
     
         fetch(url, {
             method: 'PUT',
@@ -401,6 +401,11 @@ function PropertyCard(props) {
             const filesArray = Array.from(prevFiles);
             filesArray.splice(index, 1);
             return filesArray;
+        });
+        setContractFileTypes(prevTypes => {
+            const typesArray = [...prevTypes];
+            typesArray.splice(index, 1);
+            return typesArray;
         });
     };
 
@@ -452,9 +457,19 @@ function PropertyCard(props) {
 
         
         if(contractFiles.length){
+            const documentsDetails = [];
             [...contractFiles].forEach((file, i) => {
                 formData.append(`file-${i}`, file, file.name)
-            })
+                const fileType = contractFileTypes[i] || '';
+                const documentObject = {
+                    // file: file,
+                    fileIndex: i, // rohit - may not need fileIndex - will files be appended in the same order?
+                    fileName: file.name, // rohit -may not need filename
+                    fileType: fileType,
+                };
+                documentsDetails.push(documentObject)
+            });
+            formData.append("contract_documents_details", JSON.stringify(documentsDetails));
         }
 
 
@@ -633,7 +648,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            View lease <DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC'}} />
+                            View Contract <DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC'}} />
                     </Box>
                     <Box sx={{
                                 fontSize: '13px',
@@ -1119,7 +1134,9 @@ function PropertyCard(props) {
                             type="file"
                             accept=".doc,.docx,.txt,.pdf"
                             hidden
-                            onChange={(e) => setContractFiles(e.target.files)}
+                            // onChange={(e) => setContractFiles(e.target.files)}
+                            onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+                            
                             multiple
                         />
                     </Box>  
@@ -1158,9 +1175,35 @@ function PropertyCard(props) {
                                         justifyContent: 'space-between',
                                     }}
                                 >
-                                    <Box>
+                                    <Box
+                                        sx={{
+                                            
+                                            // height: '16px',
+                                            width: '50%', // Adjust the width as needed
+                                            padding: '8px', // Adjust the padding as needed
+                                        }}
+                                    >
                                     {f.name}
                                     </Box>
+                                    <Select
+                                        value={contractFileTypes[i]}
+                                        label="Document Type"
+                                        onChange={(e) => {
+                                                const updatedTypes = [...contractFileTypes];
+                                                updatedTypes[i] = e.target.value;
+                                                setContractFileTypes(updatedTypes);
+                                            }
+                                        }
+                                        sx={{
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                            width: '40%', // Adjust the width as needed
+                                            padding: '8px', // Adjust the padding as needed
+                                        }}
+                                    >
+                                        <MenuItem value={"contract"}>contract</MenuItem>
+                                        <MenuItem value={"other"}>other</MenuItem>
+                                    </Select>
                                     <Button 
                                         variant="text"
                                         onClick={() => {
@@ -1168,7 +1211,7 @@ function PropertyCard(props) {
                                             handleRemoveFile(i)
                                         }}
                                         sx={{
-                                             
+                                            width: '10%', 
                                             cursor: 'pointer',
                                             fontSize: '14px',
                                             fontWeight: 'bold', 

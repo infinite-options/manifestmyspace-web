@@ -17,9 +17,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
 import { Grid } from "@mui/material";
 import { useUser } from "../../contexts/UserContext";
-import Status24 from "../../images/status_2_4.svg";
+import Status33 from "../../images/status_bar_7.png";
 //import Status33 from "../../images/status_3_3.svg";
-import Status33 from "../../images/status_bar_9.png";
+import Status34 from "../../images/status_bar_9.png";
 import PayPal from "../../images/PayPal.png";
 import Zelle from "../../images/Zelle.png";
 import Venmo from "../../images/Venmo.png";
@@ -60,7 +60,8 @@ function ProfilePayment() {
   const [checkedCreditCard, setCheckedCreditCard] = useState(false);
   const [checkedBankAccount, setCheckedBankAccount] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-
+  const personalInfoPage= isLoggedIn? "/privatePersonalInfo" : "/personalInfo" 
+  const onBoaringPage= isLoggedIn? "/privateOnboardingRouter" : "/onboardingRouter";
   const handleChangeValue = (e) => {
     const map = { ...paymentMethods };
     map[e.target.name].value = e.target.value;
@@ -98,13 +99,13 @@ function ProfilePayment() {
     setShowSpinner(false);
     if (checkedCreditCard) navigate("");
     if (isBusiness())
-      navigate("/personalInfo", { state: { businessId: profileId } });
+      navigate(personalInfoPage, { state: { businessId: profileId } });
     else 
-    navigate(`/onboardingRouter`, );
+    navigate( onBoaringPage );
   };
 
   const handleRoleSpecifics = () => {
-    if (isBusiness()) setStatusImg(Status24);
+    if (isBusiness()) setStatusImg(Status34);
     else setStatusImg(Status33);
   };
 
