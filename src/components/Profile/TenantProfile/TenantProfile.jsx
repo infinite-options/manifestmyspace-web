@@ -538,6 +538,7 @@ function TenantProfile() {
                     </Box>
                 </Box>
             </Box>
+          </Box>
         </ThemeProvider>
         </>
     );
