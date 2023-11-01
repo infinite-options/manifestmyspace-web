@@ -294,7 +294,7 @@ function PropertyCard(props) {
     const [contractEndDate, setContractEndDate] = useState("");
     const [contractFees, setContractFees] = useState([]);
     const [contractFiles, setContractFiles] = useState([]);
-    const [contractFileTypes, setContractFileTypes] = useState(["other", "other", "other"]);
+    const [contractFileTypes, setContractFileTypes] = useState([]);
 
     
 
