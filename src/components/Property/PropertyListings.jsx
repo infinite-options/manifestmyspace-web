@@ -28,6 +28,9 @@ import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import leaseIcon from './leaseIcon.png';
+import defaultPropertyImage from './paintedLadies.jpeg';
+
+import { set } from 'date-fns';
 
 const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
@@ -40,7 +43,6 @@ const PropertyListings = (props) => {
     const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
     useEffect(() => {
-        console.log('fetch data')
         setShowSpinner(true);
         fetchData()
     }, []);
@@ -75,8 +77,8 @@ const PropertyListings = (props) => {
     }
 
     function sortProperties(leaseData, propertyData) {
-        // console.log("leaseData", leaseData)
-        // console.log("propertyData", propertyData)
+        console.log("leaseData", leaseData)
+        console.log("propertyData", propertyData)
 
         var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
     
@@ -158,8 +160,8 @@ const PropertyListings = (props) => {
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
                                     <path
-                                        fill-rule="evenodd"
-                                        clip-rule="evenodd"
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
                                         d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z"
                                         fill="#160449"
                                     />
@@ -330,14 +332,15 @@ const PropertyListings = (props) => {
                             {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    {/* {console.log("tenantLeaseDetails", tenantLeaseDetails)} */}
-                    {/* {console.log("propertyData", propertyData)} */}
                     
                     {sortedProperties.map((property, index) => {
-                        var status = false
-                        const applied = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
-                        if (applied) { status = true; }
-                        return <PropertyCard data={property} key={index} status={status} lease={applied}/>;
+                        var status = ""
+                        const appliedData = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        if (appliedData) { 
+                            status = appliedData.lease_status;
+                            console.log(`Lease Status for ${appliedData.property_address}: ${status}`)
+                        }
+                        return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
                     })}
                 </Paper>
             </Box>
@@ -350,13 +353,12 @@ function PropertyCard(props) {
 
     const property = props.data;
 
-    const applied = props.status;
+    const status = props.status;
 
-    const lease = props.lease;
+    const lease = props.leaseData;
 
-    // console.log("applied in PropertyCard", applied)
-
-    const ppt_images = property.property_images.split(',');
+    const propertyImages = property.property_images || "";
+    const ppt_images = propertyImages.split(',');
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -371,14 +373,15 @@ function PropertyCard(props) {
     const images = ppt_images.map((data) => {
         try {
             const url = parseImageData(data);
+            if (url == "") {
+                return { original: defaultPropertyImage };
+            }
             return { original: url };
         } catch (e) {
             console.error(e);
-            return { original: '' };
         }
     });
-
-    // console.log(images);
+    
 
     const listed_rent = Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -392,10 +395,17 @@ function PropertyCard(props) {
             state: {
                 index: props.index,
                 data: property,
-                status: applied
+                status: status
             },
         });
     };
+
+    function formatAddress(){
+        if(property.property_unit !== ""){
+            return property.property_address + " Unit " + property.property_unit;
+        }
+        return property.property_address;
+    }
 
     return (
         <Card sx={{ margin: 5 }}>
@@ -434,7 +444,7 @@ function PropertyCard(props) {
                         <span style={{ opacity: '60%' }}> / Month</span>
                     </Typography>
                 </Box>
-                {applied ? (
+                {status === "NEW" ? (
                 <Box
                     sx={{
                         backgroundColor: theme.typography.common.blue,
@@ -449,6 +459,7 @@ function PropertyCard(props) {
                         alignSelf: 'flex-start',
                         textTransform: 'none'
                     }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
                 >
                     <Typography
                         sx={{
@@ -458,6 +469,60 @@ function PropertyCard(props) {
                         }}
                     >
                         Applied
+                    </Typography>
+                </Box>): (null)}
+                {status === "PROCESSING" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#7AD15B",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Approved {lease.lease_start_date}
+                    </Typography>
+                </Box>): (null)}
+                {status === "REJECTED" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#490404",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Not Approved {lease.lease_start_date}
                     </Typography>
                 </Box>): (null)}
             </Stack>
@@ -502,7 +567,7 @@ function PropertyCard(props) {
                             fontSize: '18px',
                         }}
                     >
-                        {property.property_address}
+                        {formatAddress()}
                     </Typography>
                     <Typography
                         sx={{
@@ -671,7 +736,7 @@ function PropertyCard(props) {
                     >
                         View Details
                     </Button>
-                    {applied ? (
+                    {status === "NEW" ? (
                          <Button
                          variant="contained"
                          sx={{
@@ -681,9 +746,25 @@ function PropertyCard(props) {
                              textTransform: 'none',
                              whiteSpace: 'nowrap'
                          }}
-                         onClick={() => navigate('/tenantApplication', {state: { property: property, status: applied, lease: lease }})}
+                         onClick={() => navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})}
                          >
                              View Application
+                     </Button>
+                    ) : (null)}
+                     {status === "PROCESSING" ? (
+                         <Button
+                         variant="contained"
+                         sx={{
+                             //backgroundColor: theme.typography.common.blue,
+                             backgroundColor: "#7AD15B",
+                             color: theme.typography.secondary.white,
+                             marginLeft: '5px',
+                             textTransform: 'none',
+                             whiteSpace: 'nowrap'
+                         }}
+                         onClick={() => navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})}
+                         >
+                             View Lease
                      </Button>
                     ) : (null)}
                 </Stack>

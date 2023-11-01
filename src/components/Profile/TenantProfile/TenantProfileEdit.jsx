@@ -901,6 +901,7 @@ function DocumentCard(props) {
 }
 
 function ProfileTenantTable(props) {
+    const { isEdited, setIsEdited } = useContext(TenantProfileEditContext)
     const title = props.title;
     const headers = props.headers;
     
@@ -909,9 +910,9 @@ function ProfileTenantTable(props) {
     const data = props.data;
     const setData = props.setData;
 
-    useEffect(() => {
-        console.log(`${field} --> ${data}`);
-    }, [data])
+    // useEffect(() => {
+    //     console.log(`${field} --> ${data}`);
+    // }, [data])
 
     const addRow = () => {
         const newRow = headers.reduce((acc, header) => {
@@ -928,10 +929,15 @@ function ProfileTenantTable(props) {
     }
 
     const deleteRow = (index) => {
-        let newData = [...data]
-        newData.splice(index, 1)
-        setData(newData)
-    }
+        if (!isEdited){
+            setIsEdited(true);
+        }
+        setData((prevData) => {
+            const newData = prevData.filter((_, i) => i !== index);
+            console.log("Deleted row at index ", index, ", new data: ", newData);
+            return newData;
+        });
+    };
     
     const headerToDataKeyMap = {
         'Name': 'name',
@@ -1040,7 +1046,7 @@ function ProfileTableCell(props) {
               ...newData[index],
               [props.subField]: value,
             };
-            console.log("Updated ", fieldName, " with ", newData)
+            // console.log("Updated ", fieldName, " with ", newData)
             return newData;
         });
     };

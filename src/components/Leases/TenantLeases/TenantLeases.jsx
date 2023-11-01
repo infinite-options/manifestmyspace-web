@@ -1,24 +1,47 @@
-import { Box } from '@mui/system';
+import {
+    ThemeProvider,
+    Box,
+    Paper,
+    Stack,
+    Typography,
+    Grid,
+    Divider,
+    Button,
+    ButtonGroup,
+    Rating,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+} from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 function TenantLeases(props) {
+    const location = useLocation();
+    const navigate = useNavigate();
     const { getProfileId } = useUser();
     const [tenantLeases, setTenantLeases] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+    const [property, setProperty] = useState(location.state.property)
+    const [status, setStatus] = useState(location.state.status)
+    const [lease, setLease] = useState(location.state.lease)
     useEffect(() => {
-    //axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-    setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
-    .then((res) => {
-                const fetchData = res.data['Lease_Details'].result;
-                // console.log(fetchData[0]);
-                setTenantLeases(fetchData[0]);
-                setShowSpinner(false);
-            });
+        console.log("property", property)
+        console.log("status", status);
+        console.log("lease", lease);
+    // setShowSpinner(true);
+    // // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
+    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+    // .then((res) => {
+    //             const fetchData = res.data['Lease_Details'].result;
+    //             // console.log(fetchData[0]);
+    //             setTenantLeases(fetchData[0]);
+    //             setShowSpinner(false);
+    //         });
     }, [])
 
     function getDayText(day) {
@@ -52,7 +75,7 @@ function TenantLeases(props) {
             }}>
                 <Box>
                     <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="#160449" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="#160449" />
                     </svg>
                 </Box>
                 <Box sx={{
@@ -86,7 +109,7 @@ function TenantLeases(props) {
                         fontSize: '11px',
                         fontWeight: '600',
                     }}>
-                        {tenantLeases.property_address}
+                        {lease.property_address}
                     </Box>
                 </Box>
             </Box>
@@ -130,7 +153,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.lease_start}
+                                {lease.lease_start}
                             </Box>
                         </Box>
                         <Box>
@@ -146,7 +169,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.lease_end}
+                                ${lease.lease_actual_rent}
                             </Box>
                         </Box>
                         <Box>
@@ -162,7 +185,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${tenantLeases.late_fee}
+                                ${lease.lease_rent_late_fee}
                             </Box>
                         </Box>
                         <Box>
@@ -178,7 +201,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {getDayText(tenantLeases.due_by)} of month
+                                {getDayText(lease.lease_rent_due_by)} of month
                             </Box>
                         </Box>
                         <Box>
@@ -210,7 +233,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'}
+                                {JSON.parse(lease.lease_pets).length}
                             </Box>
                         </Box>
                     </Box>
@@ -230,7 +253,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.lease_end}
+                                {lease.lease_end}
                             </Box>
                         </Box>
                         <Box>
@@ -262,7 +285,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${tenantLeases.perDay_late_fee}
+                                ${lease.lease_rent_perDay_late_fee}
                             </Box>
                         </Box>
                         <Box>
@@ -294,7 +317,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'}
+                                {JSON.parse(lease.lease_adults).length + JSON.parse(lease.lease_children).length}
                             </Box>
                         </Box>
                         <Box>
@@ -310,7 +333,7 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {'?'}
+                                {JSON.parse(lease.lease_vehicles).length}
                             </Box>
                         </Box>
                     </Box>
@@ -318,37 +341,47 @@ function TenantLeases(props) {
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-between', // changed from 'center' to 'space-between'
+                    alignItems: 'center', // added for vertical alignment, if needed
                     width: '100%',
+                    padding: '0 20px', // optional: added padding to the sides of the container
                 }}>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#CB8E8E',
-                        borderRadius: '5px',
-                        padding: '5px',
-                        minWidth: '150px',
-                        fontSize: '20px',
-                        fontWeight: '700',
-                        color: '#160449',
-                    }}>
-                        End Lease
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#9EAED6',
-                        borderRadius: '5px',
-                        padding: '5px',
-                        minWidth: '150px',
-                        fontSize: '20px',
-                        fontWeight: '600',
-                        color: '#160449',
-                    }}>
-                        Renew Lease
-                    </Box>
+                    <Button 
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#CB8E8E',
+                            borderRadius: '5px',
+                            padding: '5px',
+                            minWidth: '150px',
+                            fontSize: '20px',
+                            fontWeight: '700',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                        onClick={() => console.log("reject lease")}
+                    >
+                        Reject Lease
+                    </Button>
+                    <Button 
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#9EAED6',
+                            borderRadius: '5px',
+                            padding: '5px',
+                            minWidth: '150px',
+                            fontSize: '20px',
+                            fontWeight: '600',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                        onClick={() => console.log("accept lease")}
+                    >
+                        Accept Lease
+                    </Button>
                 </Box>
                 <Box sx={{
                     display: 'flex',
@@ -360,7 +393,7 @@ function TenantLeases(props) {
                 }}>
                     <Box>
                         <svg width="14" height="19" viewBox="0 0 14 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.96875 1.1875C8.96875 1.12948 8.9457 1.07384 8.90468 1.03282C8.86366 0.991797 8.80802 0.96875 8.75 0.96875H2.625C1.98682 0.96875 1.37478 1.22226 0.923524 1.67352C0.472265 2.12478 0.21875 2.73682 0.21875 3.375V15.625C0.21875 16.2632 0.472265 16.8752 0.923524 17.3265C1.37478 17.7777 1.98682 18.0312 2.625 18.0312H11.375C12.0132 18.0312 12.6252 17.7777 13.0765 17.3265C13.5277 16.8752 13.7812 16.2632 13.7812 15.625V7.00363C13.7812 6.94561 13.7582 6.88997 13.7172 6.84895C13.6762 6.80792 13.6205 6.78488 13.5625 6.78488H9.625C9.45095 6.78488 9.28403 6.71573 9.16096 6.59266C9.03789 6.46959 8.96875 6.30267 8.96875 6.12863V1.1875ZM9.625 9.71875C9.79905 9.71875 9.96597 9.78789 10.089 9.91096C10.2121 10.034 10.2812 10.201 10.2812 10.375C10.2812 10.549 10.2121 10.716 10.089 10.839C9.96597 10.9621 9.79905 11.0312 9.625 11.0312H4.375C4.20095 11.0312 4.03403 10.9621 3.91096 10.839C3.78789 10.716 3.71875 10.549 3.71875 10.375C3.71875 10.201 3.78789 10.034 3.91096 9.91096C4.03403 9.78789 4.20095 9.71875 4.375 9.71875H9.625ZM9.625 13.2188C9.79905 13.2188 9.96597 13.2879 10.089 13.411C10.2121 13.534 10.2812 13.701 10.2812 13.875C10.2812 14.049 10.2121 14.216 10.089 14.339C9.96597 14.4621 9.79905 14.5312 9.625 14.5312H4.375C4.20095 14.5312 4.03403 14.4621 3.91096 14.339C3.78789 14.216 3.71875 14.049 3.71875 13.875C3.71875 13.701 3.78789 13.534 3.91096 13.411C4.03403 13.2879 4.20095 13.2188 4.375 13.2188H9.625Z" fill="#3D5CAC" />
+                            <path fillRule="evenodd" clipRule="evenodd" d="M8.96875 1.1875C8.96875 1.12948 8.9457 1.07384 8.90468 1.03282C8.86366 0.991797 8.80802 0.96875 8.75 0.96875H2.625C1.98682 0.96875 1.37478 1.22226 0.923524 1.67352C0.472265 2.12478 0.21875 2.73682 0.21875 3.375V15.625C0.21875 16.2632 0.472265 16.8752 0.923524 17.3265C1.37478 17.7777 1.98682 18.0312 2.625 18.0312H11.375C12.0132 18.0312 12.6252 17.7777 13.0765 17.3265C13.5277 16.8752 13.7812 16.2632 13.7812 15.625V7.00363C13.7812 6.94561 13.7582 6.88997 13.7172 6.84895C13.6762 6.80792 13.6205 6.78488 13.5625 6.78488H9.625C9.45095 6.78488 9.28403 6.71573 9.16096 6.59266C9.03789 6.46959 8.96875 6.30267 8.96875 6.12863V1.1875ZM9.625 9.71875C9.79905 9.71875 9.96597 9.78789 10.089 9.91096C10.2121 10.034 10.2812 10.201 10.2812 10.375C10.2812 10.549 10.2121 10.716 10.089 10.839C9.96597 10.9621 9.79905 11.0312 9.625 11.0312H4.375C4.20095 11.0312 4.03403 10.9621 3.91096 10.839C3.78789 10.716 3.71875 10.549 3.71875 10.375C3.71875 10.201 3.78789 10.034 3.91096 9.91096C4.03403 9.78789 4.20095 9.71875 4.375 9.71875H9.625ZM9.625 13.2188C9.79905 13.2188 9.96597 13.2879 10.089 13.411C10.2121 13.534 10.2812 13.701 10.2812 13.875C10.2812 14.049 10.2121 14.216 10.089 14.339C9.96597 14.4621 9.79905 14.5312 9.625 14.5312H4.375C4.20095 14.5312 4.03403 14.4621 3.91096 14.339C3.78789 14.216 3.71875 14.049 3.71875 13.875C3.71875 13.701 3.78789 13.534 3.91096 13.411C4.03403 13.2879 4.20095 13.2188 4.375 13.2188H9.625Z" fill="#3D5CAC" />
                         </svg>
                     </Box>
                     <Box sx={{
