@@ -207,7 +207,7 @@ export default function TenantApplication(){
                 }}
             >
                 <Button
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/listings")}
                     sx={{
                         textTransform: 'none',
                         padding: '10px 10px 0px 10px',
@@ -273,7 +273,7 @@ export default function TenantApplication(){
                     position='relative'
                     sx={{  paddingBottom: "10px"}}
                 >
-                    <Button
+                    {/* <Button
                         
                         onClick={() => navigate(-1)}
                         sx={{
@@ -292,7 +292,7 @@ export default function TenantApplication(){
 
                             Return to Property Details
                         </Typography>
-                    </Button>
+                    </Button> */}
                 </Box>
                 <Divider light />
                 {status ? (
