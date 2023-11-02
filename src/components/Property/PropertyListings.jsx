@@ -61,37 +61,54 @@ const PropertyListings = (props) => {
         const leaseData = await leaseResponse.json();
         const propertyData = await propertyResponse.json();
 
-        if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
-            // Handle the case where data is missing as needed
-            console.error("Data is missing from the API response");
-            setShowSpinner(false);
-            return;
+        console.log("leaseData"+ JSON.stringify(leaseData))
+        // if ((leaseData!==undefined && !leaseData.Lease_Details.result) || !propertyData.Property_Dashboard.result) {
+        //     // Handle the case where data is missing as needed
+        //     console.error("Data is missing from the API response");
+        //     setShowSpinner(false);
+        //     return;
+        // }
+
+        if((JSON.stringify(leaseData) == "{}")){
+            console.log("No Lease Data")
+            if(!propertyData.Property_Dashboard.result){
+                console.error("Data is missing from the API response");
+                setShowSpinner(false);
+                return;
+            }
+        } else{
+            if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
+                console.error("Data is missing from the API response");
+                setShowSpinner(false);
+                return;
+            }
+            setTenantLeaseDetails(leaseData.Lease_Details.result);
+            setPropertyData(propertyData.Property_Dashboard.result);
         }
 
-        setTenantLeaseDetails(leaseData.Lease_Details.result);
-        setPropertyData(propertyData.Property_Dashboard.result)
-
-        sortProperties(leaseData.Lease_Details.result, propertyData.Property_Dashboard.result)
+        sortProperties(leaseData, propertyData.Property_Dashboard.result)
 
         setShowSpinner(false);
     }
 
     function sortProperties(leaseData, propertyData) {
-        console.log("leaseData", leaseData)
-        console.log("propertyData", propertyData)
-
-        var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
-    
-        leaseData.forEach((lease) => {
-            const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
-    
-            if (appliedPropertyIndex > -1) { // Make sure the property was found
-                const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
-                sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
-            }
-        });
-    
-        setSortedProperties(sortedProperties);
+        if (JSON.stringify(leaseData) !== "{}") {
+            const leases = leaseData.Lease_Details.result;
+            var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
+        
+            leases.forEach((lease) => {
+                const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
+        
+                if (appliedPropertyIndex > -1) { // Make sure the property was found
+                    const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
+                    sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
+                }
+            });
+        
+            setSortedProperties(sortedProperties);
+        } else {
+            setSortedProperties(propertyData);
+        }
     }
     
     return (
