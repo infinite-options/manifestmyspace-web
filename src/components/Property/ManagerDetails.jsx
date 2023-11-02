@@ -148,7 +148,7 @@ const ManagerDetails = () => {
                 {properties[0] && properties[0].business_name}
               </Typography>
               <Avatar
-                src={properties[0].business_photo_url}
+                src={properties[0]?.business_photo_url}
                 sx={{
                   width: "60px",
                   height: "60px",
@@ -180,7 +180,7 @@ const ManagerDetails = () => {
                       color: "#160449",
                     }}
                   >
-                    {properties[0].business_email}
+                    {properties[0]?.business_email}
                   </Typography>
                 </Grid>
                 <Grid item xs={4}>
@@ -207,7 +207,7 @@ const ManagerDetails = () => {
                       color: "#160449",
                     }}
                   >
-                    {properties[0].business_phone_number}
+                    {properties[0]?.business_phone_number}
                   </Typography>
                 </Grid>
                 <Grid item xs={4}>
@@ -233,7 +233,7 @@ const ManagerDetails = () => {
                       fontFamily: "Source Sans Pro, sans-serif",
                       color: "#160449",
                     }}
-                  >{`${properties[0].business_address}, ${properties[0].business_city}, ${properties[0].business_state} ${properties[0].business_zip}`}</Typography>
+                  >{`${properties[0]?.business_address}, ${properties[0]?.business_city}, ${properties[0]?.business_state} ${properties[0]?.business_zip}`}</Typography>
                 </Grid>
               </Grid>
 
