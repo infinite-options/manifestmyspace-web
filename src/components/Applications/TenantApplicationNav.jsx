@@ -24,13 +24,26 @@ const TenantApplicationNav = () => {
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [vehicles, setVehicles] = useState(
+    JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]')
+  );
+  const [adultOccupants, setAdultOccupants] = useState(
+    JSON.parse(application?.tenant_adult_occupants || '["No Adult Occupants"]')
+  );
+  const [petOccupants, setPetOccupants] = useState(
+    JSON.parse(application?.tenant_pet_occupants || '["No Pet Occupants"]')
+  );
+  const [childOccupants, setChildOccupants] = useState(
+    JSON.parse(
+      application?.tenant_children_occupants || '["No Child Occupants"]'
+    )
+  );
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
   };
   const handlePreviousCard = () => {
     setCurrentIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + applications.length) % applications.length
+      (prevIndex) => (prevIndex - 1 + applications.length) % applications.length
     );
   };
   const handleRejectLease = async () => {
@@ -53,7 +66,20 @@ const TenantApplicationNav = () => {
   const handleCreateLease = () =>
     navigate("/tenantLease", { state: { application, property } });
   useEffect(() => {
-    setApplication(applications[currentIndex]);
+    const currApp = applications[currentIndex];
+    setApplication(currApp);
+    setVehicles(
+      JSON.parse(currApp?.tenant_vehicle_info || '["No Vehicle Information"]')
+    );
+    setAdultOccupants(
+      JSON.parse(currApp?.tenant_adult_occupants || '["No Adult Occupants"]')
+    );
+    setPetOccupants(
+      JSON.parse(currApp?.tenant_pet_occupants || '["No Pet Occupants"]')
+    );
+    setChildOccupants(
+      JSON.parse(currApp?.tenant_children_occupants || '["No Child Occupants"]')
+    );
   }, [currentIndex, applications]);
   return (
     <ThemeProvider theme={theme}>
@@ -486,6 +512,106 @@ const TenantApplicationNav = () => {
                           </Typography>
                         </Stack>
                       </Grid>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            fontSize: 13,
+                            fontFamily: "Source Sans Pro, sans-serif",
+                            color: "#3D5CAC",
+                          }}
+                        >
+                          {adultOccupants?.length} {"Adults"}
+                        </Typography>
+                        {adultOccupants &&
+                          adultOccupants.map((occupant, index) => (
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                color: "#160449",
+                              }}
+                              key={index}
+                            >
+                              {occupant.name} {occupant.last_name} |{" "}
+                              {occupant.relationship} | DOB: {occupant.dob}
+                            </Typography>
+                          ))}
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            fontSize: 13,
+                            fontFamily: "Source Sans Pro, sans-serif",
+                            color: "#3D5CAC",
+                          }}
+                        >
+                          {childOccupants?.length} {"Children"}
+                        </Typography>
+                        {childOccupants &&
+                          childOccupants.map((occupant, index) => (
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                color: "#160449",
+                              }}
+                              key={index}
+                            >
+                              {occupant.name} {occupant.last_name} |{" "}
+                              {occupant.relationship} | DOB: {occupant.dob}
+                            </Typography>
+                          ))}
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            fontSize: 13,
+                            fontFamily: "Source Sans Pro, sans-serif",
+                            color: "#3D5CAC",
+                          }}
+                        >
+                          {petOccupants?.length} {"Pets"}
+                        </Typography>
+                        {petOccupants &&
+                          petOccupants.map((occupant, index) => (
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                color: "#160449",
+                              }}
+                              key={index}
+                            >
+                              {occupant.name} | {occupant.type} |{" "}
+                              {occupant.breed} | Weight: {occupant.weight}
+                            </Typography>
+                          ))}
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            fontSize: 13,
+                            fontFamily: "Source Sans Pro, sans-serif",
+                            color: "#3D5CAC",
+                          }}
+                        >
+                          {vehicles?.length} {"Vehicles"}
+                        </Typography>
+                        {vehicles &&
+                          vehicles.map((vehicle, index) => (
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                color: "#160449",
+                              }}
+                              key={index}
+                            >
+                              {vehicle.make} {vehicle.model} | {vehicle.year} |{" "}
+                              {vehicle.license} | {vehicle.state}
+                            </Typography>
+                          ))}
+                      </Grid>
                     </Grid>
                     <Stack
                       direction="row"
@@ -493,20 +619,22 @@ const TenantApplicationNav = () => {
                       justifyContent="space-around"
                       sx={{ padding: "30px 0", paddingRight: "15px" }}
                     >
-                      <Button
-                        onClick={handleRejectLease}
-                        sx={{
-                          backgroundColor: "#CB8E8E",
-                          color: "#160449",
-                          textTransform: "none",
-                          width: "120px",
-                          "&:hover, &:focus, &:active": {
+                      {application.lease_status === "NEW" && (
+                        <Button
+                          onClick={handleRejectLease}
+                          sx={{
                             backgroundColor: "#CB8E8E",
-                          },
-                        }}
-                      >
-                        {"Reject Tenant"}
-                      </Button>
+                            color: "#160449",
+                            textTransform: "none",
+                            width: "120px",
+                            "&:hover, &:focus, &:active": {
+                              backgroundColor: "#CB8E8E",
+                            },
+                          }}
+                        >
+                          {"Reject Tenant"}
+                        </Button>
+                      )}
                       <Button
                         onClick={handleCreateLease}
                         sx={{
