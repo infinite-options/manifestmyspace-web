@@ -245,27 +245,41 @@ const ManagerDetails = () => {
                   color: "#160449",
                 }}
               >{`Manages ${properties.length} of your properties`}</Typography>
-              {properties.map((p) => (
+              {properties.sort((a, b) => {
+    if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
+      return -1;
+    }
+    if (a.contract_status !== "NEW" && b.contract_status === "NEW") {
+      return 1;
+    }
+    return a.contract_status > b.contract_status;
+  }).map((p) => (
                 <>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      paddingLeft: "10px",
-                      fontFamily: "Source Sans Pro, sans-serif",
-                      color: "#160449",
-                    }}
-                  >
-                    {p.contract_status}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      paddingLeft: "15px",
-                      fontFamily: "Source Sans Pro, sans-serif",
-                      fontWeight: 600,
-                      color: "#160449",
-                      textDecoration: "underline",
-                    }}
-                  >{`${p.property_address}, ${p.property_city}, ${p.property_state} ${p.property_zip}`}</Typography>
+                <Grid container direction="row">
+  
+                <Typography
+    sx={{
+      paddingLeft: "15px",
+      fontFamily: "Source Sans Pro, sans-serif",
+      fontWeight: 600,
+      color: "#160449",
+      textDecoration: "underline",
+    }}
+  >
+    {`${p.property_address}, ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+  </Typography>
+  <Typography
+    sx={{
+      fontWeight: 800,
+      paddingLeft: "10px",
+      fontFamily: "Source Sans Pro, sans-serif",
+      color: "#160449",
+    }}
+  >
+    {p.contract_status}
+  </Typography>
+  
+</Grid>
                 </>
               ))}
             </Box>
