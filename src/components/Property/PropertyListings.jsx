@@ -468,7 +468,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Applied
+                        Applied {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "PROCESSING" ? (
@@ -495,7 +495,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Approved {lease.lease_start_date}
+                        Approved {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "REJECTED" ? (
@@ -522,7 +522,34 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Not Approved {lease.lease_start_date}
+                        Not Approved {lease.lease_application_date}
+                    </Typography>
+                </Box>): (null)}
+                {status === "REFUSED" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#CB8E8E",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Declined {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
             </Stack>
