@@ -141,6 +141,10 @@ export default function TenantApplication(){
         return "10-31-2023"
     }
 
+    function displaySSN(){
+        return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`
+    }
+
     function handleApplicationSubmit(){
         //submit to backend
         console.log("Application Submitted")
@@ -308,7 +312,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.secondaryFont
                             }}
                         >
-                            Applied on {getApplicationDate()}
+                            Applied on {lease.lease_application_date}
                         </Typography>
                     </Box>   
                 ) : (null)}
@@ -406,7 +410,8 @@ export default function TenantApplication(){
                                     fontSize: theme.typography.smallFont
                                 }}
                             >
-                                {tenantProfile?.tenant_ssn}
+                                {/* {tenantProfile?.tenant_ssn} */}
+                                {displaySSN()}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
