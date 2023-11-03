@@ -18,6 +18,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import { calculateAge } from "../utils/helper";
+import { useUser } from "../../contexts/UserContext";
 import { makeStyles } from "@material-ui/core/styles";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
 
@@ -91,6 +92,7 @@ const initialFees = (property, application) => {
 const TenantLease = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
   const [showSpinner, setShowSpinner] = useState(false);
@@ -194,6 +196,22 @@ const TenantLease = () => {
         }),
       }
     );
+    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "announcement_title" : "New Lease created",
+                "announcement_msg" : "You have a new lease to be approved for your property",
+                "announcement_sender": getProfileId(),
+                "announcement_date": new Date().toDateString(),
+                "announcement_properties": property.property_uid,
+                "announcement_mode": "LEASE",
+                "announcement_receiver": application.tenant_uid,
+                "announcement_type": ["App"]
+            })
+        })
     navigate("/managerDashboard");
     setShowSpinner(false);
   };
