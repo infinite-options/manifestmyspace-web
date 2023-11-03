@@ -142,7 +142,6 @@ function getPaymentStatus(paymentStatus) {
 function getPropertyList(data) {
   const propertyList = data["Property"].result;
   const applications = data["Applications"].result;
-  // const newPMRequests = data["NewPMRequests"].result; //rohit
   const appsMap = new Map();
   applications.forEach(a => {
     const appsByProperty = appsMap.get(a.property_uid) || []
@@ -198,10 +197,10 @@ export default function PropertyList({}) {
     const fetchData = async () => {
       setShowSpinner(true);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`) //rohit
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
-      const propertyList = getPropertyList(propertyData);
-      // const newPMRequestList = propertyData["NewPMRequests"].result; //rohit
+      const propertyList = getPropertyList(propertyData)
+      // const newPMRequestList = propertyData["NewPMRequests"].result;
       const newPMRequestList = getNewPMRequestList(propertyData);
       setPropertyList([...propertyList]);
       setNewPMRequestList([...newPMRequestList]);
@@ -549,7 +548,6 @@ export default function PropertyList({}) {
                           fontSize: '10px',
                         }}
                       >
-<<<<<<< HEAD
                         <Box
                           sx={{
                             margin: 'auto',
@@ -564,50 +562,6 @@ export default function PropertyList({}) {
                     
                   </ListItem>
                 )
-=======
-                        {getPaymentStatus(property.rent_status)}
-                      </Typography>
-                    </Badge>
-                  </Box>
-                  <Badge
-                    overlap="circular"
-                    color="error"
-                    badgeContent={getBadgeContent(index)}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    style={{
-                      color: "#000000",
-                      // color: theme.palette.custom.blue,
-                    }}
-                  >
-                    <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": {backgroundColor: "#d6d5da"}}}>
-                      <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
-                      {/* <Box fixed sx={{
-                           height: '20px',
-                           width: '20px',
-                           background: '#A52A2A',
-                           borderRadius: '50%',
-                           marginLeft: 'auto',
-                           marginRight: 'auto',
-                           marginBottom: '30%',
-                           boxShadow: '0px 4px 4px #A52A2A',
-                      }}>
-                        <Typography
-                      sx={{
-                        color: theme.palette.primary.main,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                        textAlign: "center", // Ensure text is centered within itself
-                      }}
-                    ></Typography>
-                      </Box> */}
-                      
-                    </Button>
-                  </Badge>
-                </ListItem>
->>>>>>> master
               ))}
             </List>
             

@@ -201,7 +201,6 @@ export default function PMProperties({}) {
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       const propertyList = getPropertyList(propertyData);
-      // const newPMRequestList = propertyData["NewPMRequests"].result; //rohit
       const newPMRequestList = getNewPMRequestList(propertyData);
       setPropertyList([...propertyList]);
       setNewPMRequestList([...newPMRequestList]);
@@ -472,7 +471,7 @@ export default function PMProperties({}) {
                     }}
                     onClick={() => {
                         navigate('/managementContractDetails', {state: {contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
-                    }} // rohit - fix
+                    }} 
                   >
                     <Avatar
                       src={getCoverPhoto(property)}

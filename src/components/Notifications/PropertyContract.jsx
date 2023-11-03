@@ -50,7 +50,7 @@ function PropertyContract(props) {
 
     // useEffect(() => {
     //     // setContractPropertyID(filteredPropertiesData["property_uid"]);
-    // }, [filteredPropertiesData]); // rohit
+    // }, [filteredPropertiesData]); 
     const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
    
     const [timeDiff, setTimeDiff] = useState(null);
@@ -146,19 +146,9 @@ function PropertyContract(props) {
         navigate(-1);
     };
 
-
-
     if (isLoading) {
         return <div>Loading...</div>;
     }
-
-    const handleAcceptOfferClick = () => {
-
-    };
-
-    const handleDeclineOfferClick = () => {
-
-    };
 
     const handleContractNameChange = (event) => {
         setContractName(event.target.value);
@@ -250,7 +240,7 @@ function PropertyContract(props) {
                         fontWeight: 'bold',
                         paddingTop: '10px',
                     }}>
-                        Owner:
+                        Manager:
                     </Box>
                     <Box sx={{
                         fontSize: '14px',
@@ -395,7 +385,6 @@ function PropertyContract(props) {
                     alt="User Icon"
                     style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}
                     /> */}
-                    Property Manager
                     Marie Schrader
                     </Box>
                 </Box>
@@ -442,7 +431,7 @@ function PropertyContract(props) {
                         display: 'flex',
                         width: "45%",
                     }}
-                    onClick={handleDeclineOfferClick}
+                   // onClick={handleDeclineOfferClick}
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 
@@ -463,7 +452,7 @@ function PropertyContract(props) {
                         display: 'flex',
                         width: "45%",
                     }}
-                    onClick={handleAcceptOfferClick}
+                //    onClick={handleSendQuoteClick}
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 

@@ -272,8 +272,8 @@ function Main() {
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
-            <Route path="PMProperties" element={<PMProperties />} /> {/*rohit*/}
-            <Route path="POProperties" element={<POProperties />} /> {/*rohit*/}
+            <Route path="PMProperties" element={<PMProperties />} /> 
+            <Route path="POProperties" element={<POProperties />} /> 
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
