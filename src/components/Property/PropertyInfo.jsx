@@ -48,10 +48,24 @@ const PropertyInfo = (props) => {
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
+    const [buttonColor, setButtonColor] = useState('#3D5CAC');
     console.log(property)
+    console.log(status)
 
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        if (status === "") {
+            setButtonColor("#3D5CAC")
+        } else if (status === "NEW") {
+            setButtonColor("#3D5CAC")
+        } else if (status === "TENANT APPROVED"){
+            setButtonColor("#7AD15B")
+        } else if (status === "REJECTED"){
+            setButtonColor("#490404")
+        } else if (status === "REFUSED"){
+            setButtonColor("#CB8E8E")
+        }
     }, []);
 
     const listed_rent = Intl.NumberFormat('en-US', {
@@ -82,27 +96,40 @@ const PropertyInfo = (props) => {
         }
     });
 
-    function renderCorrectButtonText() {
-        if (status === "") {
-            return 'Apply Now';
-        } else if (status === "NEW") {
-            return 'View Application';
-        } else if (status === ""){
-            
+    function displayListingDate(date) {
+        const d = dayjs(date);
+
+        const daysAgo = dayjs().diff(d, 'day');
+        if (daysAgo === 0) {
+            return 'Listed today';
+        } else if (daysAgo === 1) {
+            return 'Listed yesterday';
+        } else {
+            return 'Listed ' + daysAgo + ' days ago';
         }
     }
 
-    // const images = [
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //     },
-    // ];
+    function renderCorrectButtonText() {
+        if (status === "") { 
+            return 'Apply Now';
+        } else if (status === "NEW") {
+            return 'View Application';
+        } else if (status === "TENANT APPROVED"){
+            return 'Approved'
+        } else if (status === "REJECTED"){
+            return 'Not Approved'
+        }
+    }
+
+    function navigateToCorrectPage(){
+        if (status === "" || status === "NEW") {
+            navigate('/tenantApplication', {state: { property: property, status: status }})
+        } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
+            navigate('/tenantLeases', {state: { property: property, status: status }})
+        } else {
+            return null
+        }
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -277,7 +304,7 @@ const PropertyInfo = (props) => {
                                     fontsize: theme.typography.smallFont,
                                 }}
                             >
-                                6 days ago
+                                {displayListingDate(property.property_listed_date)}
                             </Typography>
                         </Box>
                     </Stack>
@@ -300,11 +327,11 @@ const PropertyInfo = (props) => {
                         <Button
                              variant="contained"
                              sx={{
-                                 background: '#3D5CAC',
+                                 background: buttonColor,
                                  color: theme.palette.background.default,
                                  textTransform: 'none',
                              }}
-                             onClick={() => navigate('/tenantApplication', {state: { property: property, status: status }})}
+                             onClick={() => navigateToCorrectPage()}
                          >
                            {renderCorrectButtonText()}
                          </Button>
