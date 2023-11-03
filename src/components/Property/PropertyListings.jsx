@@ -67,12 +67,17 @@ const PropertyListings = (props) => {
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
+            } else {
+                setPropertyData(propertyData.Property_Dashboard.result);
             }
         } else{
             if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
+            } else {
+                setTenantLeaseDetails(leaseData.Lease_Details.result);
+                setPropertyData(propertyData.Property_Dashboard.result);
             }
         }
 
@@ -342,7 +347,7 @@ const PropertyListings = (props) => {
                     
                     {sortedProperties.map((property, index) => {
                         var status = ""
-                        const appliedData = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        const appliedData = tenantLeaseDetails.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
                             status = appliedData.lease_status;
                             console.log(`Lease Status for ${appliedData.property_address}: ${status}`)
