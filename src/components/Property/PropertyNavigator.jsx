@@ -58,11 +58,12 @@ export default function PropertyNavigator({index, propertyData}){
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
+
     //const [propertyId, setPropertyId] = useState('200-000028')
     const [contractsFeeData, setContractsFeeData] = useState([]) 
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
     "No Tenant";
-
+    const [showIconButton, setShowIconButton]= useState(false);
     const manager_detail= (item.business_uid)?  `${item.business_name}`:     "No Manager"
     const [arrowButton1_color, set_arrow1_color]=useState(tenant_detail=== "No Tenant" && manager_detail==="No Manager"? theme.typography.common.gray : theme.typography.common.blue)
     let arrowButton1_onClick=()=>{
@@ -84,7 +85,8 @@ export default function PropertyNavigator({index, propertyData}){
                 if(!response.ok){
                     console.log("Error fetching maintenance data")
                 }
-
+                
+                 
                 const propertyMaintenanceData = await responseProperty.json();
                 let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
                 propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
@@ -107,10 +109,11 @@ export default function PropertyNavigator({index, propertyData}){
                         }
                         //console.log("C fee "+JSON.stringify(contract.contract_fees))
                         //contracts.push(contract.contract_fees); 
-                        contracts.push(obj);                  
+                        contracts.push(obj);   
+                        setShowIconButton(true);               
                     }
                 });
-              
+                
                 let obj = {};
                 const feeData = [];
                 contracts.forEach((contractfee2) => {
@@ -429,7 +432,7 @@ export default function PropertyNavigator({index, propertyData}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Button
+                                        {showIconButton && <Button
                                             sx={{
                                                 padding: "0px"
                                             }}
@@ -444,10 +447,10 @@ export default function PropertyNavigator({index, propertyData}){
                                                     paddingRight: "10px"
                                                 }}
                                             >
-                                                View Lease
+                                                View Contract
                                             </Typography>
                                             <img src={LeaseIcon} style={{ margin:'0px'}}/>
-                                        </Button>
+                                        </Button>}
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',

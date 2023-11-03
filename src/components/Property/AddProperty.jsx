@@ -52,6 +52,7 @@ export default function AddProperty({}){
     const [type, setType] = useState('');
     const [squareFootage, setSquareFootage] = useState('');
     const [bedrooms, setBedrooms] = useState('');
+    const [cost, setCost] = useState('');
     const [bathrooms, setBathrooms] = useState('');
     const [showSpinner, setShowSpinner] = useState(false);
     const [deposit, setDeposit] = useState(0);
@@ -160,6 +161,10 @@ export default function AddProperty({}){
         setBathrooms(event.target.value);
     };
 
+    const handleCostChange = (event) => {
+        setCost(event.target.value);
+    };
+
     const handleBackButton = () => {
         console.log("handleBackButton")
         navigate(-1);
@@ -225,6 +230,7 @@ export default function AddProperty({}){
         formData.append('property_type', type);
         formData.append('property_num_beds', bedrooms);
         formData.append('property_num_baths', bathrooms);
+        formData.append('property_value', cost);
         formData.append('property_area', squareFootage);
         formData.append('property_listed', 0);
         formData.append('property_deposit', deposit);
@@ -259,9 +265,13 @@ export default function AddProperty({}){
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
                 method: "POST",
                 body: formData,
-            })
+            }
+            )
+            // console.log('formData')
+            // console.log(formData)
+            // console.log('formData')
             const data = await response.json();
-            console.log("data response", data)
+            // console.log("data response", data)
         } catch (error) {
             console.log("Error posting data:", error);
         }
@@ -286,7 +296,7 @@ export default function AddProperty({}){
         setActiveStep(0);
         setShowSpinner(false);
         navigate('/properties');
-    };
+      };
 
 
     return (
@@ -542,7 +552,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            // onChange={handleCostChange}
+                                            
                                         />
                                     </Grid>
 
@@ -582,7 +592,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            // onChange={handleCostChange}
+                                            
                                         />
                                     </Grid>
 
@@ -591,7 +601,7 @@ export default function AddProperty({}){
                                             Bedrooms
                                         </Typography>
                                         <TextField
-                                            onClick={handleBedroomsChange}
+                                            onChange={handleBedroomsChange}
                                             fullWidth
                                             sx={{
                                                 backgroundColor: 'white',
@@ -599,7 +609,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            // onChange={handleCostChange}
+                                            
                                         />
                                     </Grid>
                                             
@@ -608,7 +618,7 @@ export default function AddProperty({}){
                                             Bathrooms
                                         </Typography>
                                         <TextField
-                                            onClick={handleBathroomsChange}
+                                            onChange={handleBathroomsChange}
                                             fullWidth
                                             sx={{
                                                 backgroundColor: 'white',
@@ -616,7 +626,7 @@ export default function AddProperty({}){
                                                 borderRadius: '7px',
                                             }}
                                             size="small"
-                                            // onChange={handleCostChange}
+                                            
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -636,7 +646,7 @@ export default function AddProperty({}){
                                                     <InputAdornment position="start">$</InputAdornment>
                                                 ),
                                             }}
-                                            // onChange={handleCostChange}
+                                             onChange={handleCostChange}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
