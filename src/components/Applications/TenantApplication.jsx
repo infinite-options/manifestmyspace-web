@@ -178,14 +178,14 @@ export default function TenantApplication(){
             body: JSON.stringify({
                 "lease_property_id": property.property_uid,
                 "lease_status": "NEW",
-                "lease_assigned_contacts": "[]", // profileId from sender
+                "lease_assigned_contacts": [getProfileId()], // profileId from sender
                 "lease_documents": "[]", // from tenant documents
                 "lease_adults": JSON.stringify(adultOccupants),
                 "lease_children": JSON.stringify(childOccupants),
                 "lease_pets": JSON.stringify(petOccupants),
                 "lease_vehicles": JSON.stringify(vehicles),
                 "lease_referred": "[]",
-                "lease_rent": "[]",
+                "lease_rent": "[]", // advertised rent
                 "lease_application_date": date.toLocaleDateString(),
                 "tenant_uid": getProfileId(),
             })

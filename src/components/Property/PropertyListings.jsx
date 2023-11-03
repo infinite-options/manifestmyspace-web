@@ -59,20 +59,26 @@ const PropertyListings = (props) => {
         }
 
         const leaseData = await leaseResponse.json();
+        console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result)
         const propertyData = await propertyResponse.json();
 
-        if(JSON.stringify(leaseData) == "{}"){
+        if(JSON.stringify(leaseData) === "{}"){
             console.log("No Lease Data")
             if(!propertyData.Property_Dashboard.result){
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
+            } else {
+                setPropertyData(propertyData.Property_Dashboard.result);
             }
         } else{
             if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
+            } else{
+                setTenantLeaseDetails(leaseData.Lease_Details.result);
+                setPropertyData(propertyData.Property_Dashboard.result);
             }
         }
 
@@ -85,10 +91,9 @@ const PropertyListings = (props) => {
         if (JSON.stringify(leaseData) !== "{}") {
             const leases = leaseData.Lease_Details.result;
             var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
-        
             leases.forEach((lease) => {
                 const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
-        
+                // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
                 if (appliedPropertyIndex > -1) { // Make sure the property was found
                     const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
                     sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
@@ -340,12 +345,15 @@ const PropertyListings = (props) => {
                         </Typography>
                     </Stack>
                     
-                    {sortedProperties.map((property, index) => {
+                    {console.log("Sorted Properties", sortedProperties)}
+                    {console.log(tenantLeaseDetails)}
+                    {sortedProperties.length > 0 && sortedProperties.map((property, index) => {
                         var status = ""
-                        const appliedData = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        const appliedData = tenantLeaseDetails.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
+                            console.log("Found lease data for property", property.property_address, appliedData.lease_status)
                             status = appliedData.lease_status;
-                            console.log(`Lease Status for ${appliedData.property_address}: ${status}`)
+                            console.log(`Lease Status for ${appliedData.property_address} ${appliedData.property_unit}: ${status}`)
                         }
                         return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
                     })}
@@ -358,14 +366,18 @@ const PropertyListings = (props) => {
 function PropertyCard(props) {
     const navigate = useNavigate();
 
-    const property = props.data;
+    const [status, setStatus] = useState(props.status);
 
-    const status = props.status;
+    const property = props.data;
 
     const lease = props.leaseData;
 
     const propertyImages = property.property_images || "";
     const ppt_images = propertyImages.split(',');
+
+    useEffect(() => {
+        console.log(property.property_address, "has status", status)
+    }, []);
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -533,6 +545,33 @@ function PropertyCard(props) {
                     </Typography>
                 </Box>): (null)}
                 {status === "REFUSED" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#CB8E8E",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Declined {lease.lease_application_date}
+                    </Typography>
+                </Box>): (null)}
+                {status === "TENANT APPROVED" ? (
                 <Box
                     sx={{
                         backgroundColor: "#CB8E8E",
