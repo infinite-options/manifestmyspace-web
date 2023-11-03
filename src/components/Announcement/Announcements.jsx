@@ -15,7 +15,7 @@ export default function Announcements() {
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
             .then((res) => {
-                setAnnouncementData(res.data?.received?.result || []);
+                setAnnouncementData(res.data?.received?.result || res.data?.result || []);
                 // console.log(res.data.result);
                 setShowSpinner(false);
             });

@@ -40,8 +40,9 @@ function OwnerLeases(props) {
 
     async function fetchData() {
         setShowSpinner(true);
-        // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003`)
-        const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003`)
+        // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+                                    
         // console.log(res.data['Lease_Details'].result);
         const fetchData = res.data['Lease_Details'].result;
         console.log("leases fetchData", fetchData)

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-
+import settingsIcon from "../../../images/Setting_fill.png";
 const theme = createTheme({
     palette: {
         background: {
@@ -56,6 +56,9 @@ function TenantProfile() {
                 "font-family": 'Source Sans Pro',
                 color: 'text.primary',
             }}>
+            <Box sx={{marginTop:'5px'}}>
+            <img src={settingsIcon } alt="settings"   onClick={()=>{navigate('/settingsTenant')}}/>
+            </Box>
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -99,6 +102,8 @@ function TenantProfile() {
                         borderRadius: '50%',
                         marginLeft: 'auto',
                         marginRight: 'auto',
+                        
+                        marginBottom:'50px',
                         boxShadow: '0px 4px 4px #00000032'
                     }}>
                         <img src={ProfileImg} alt='Profile' style={{
@@ -106,12 +111,31 @@ function TenantProfile() {
                             width: '121px',
                         }} />
                     </Box>
+
+                <Box sx={{
+                    position: 'relative',
+                    bottom: '90px',
+                    padding: '25px',
+                }}>
+                    
+
+                    
+                    <Box sx={{
+                        marginLeft: '0px',
+                        marginRight: 'auto',
+                        marginBottom:'20px'
+                    }}>
+
+
+                    </Box>
+                    
                     <Box sx={{
                         fontSize: '20px',
                         fontWeight: 'bold',
                     }}>
+                      
                         <TextBox>
-                            {`${profileData.tenant_first_name} ${profileData.tenant_last_name}`}
+                            {`${profileData?.tenant_first_name} ${profileData?.tenant_last_name}`}
                         </TextBox>
                     </Box>
                     <Box sx={{
@@ -148,18 +172,22 @@ function TenantProfile() {
                     </Box>
                     <GrayBox>
                         <FlexBox direction="column">
-                            <TextBox fontSize={'16px'} fontWeight={'bold'} decoration={'underline'}>
-                                {profileData.tenant_email}
-                            </TextBox>
-                            <TextBox fontSize={'12px'}>
+                        <TextBox fontSize={'12px'}>
                                 Email
                             </TextBox>
-                            <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                {profileData.tenant_phone_number}
+
+                            <TextBox fontSize={'16px'} fontWeight={'bold'} decoration={'underline'}>
+                                {profileData?.tenant_email}
                             </TextBox>
+                            
                             <TextBox fontSize={'12px'}>
                                 Phone Number
                             </TextBox>
+
+                            <TextBox fontSize={'16px'} fontWeight={'bold'}>
+                                {profileData?.tenant_phone_number}
+                            </TextBox>
+                            
                         </FlexBox>
                     </GrayBox>
                     <GrayBox>
@@ -184,7 +212,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_current_salary}
+                                        {profileData?.tenant_current_salary ?? 100000}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -198,7 +226,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_current_job_company}
+                                        {profileData?.tenant_current_job_company ?? "Infinite Options"}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -212,7 +240,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_address}
+                                        {profileData?.tenant_address ?? '123ABC Dr' }
                                     </Box>
                                     <Box sx={{
                                     display: 'inline-block',
@@ -230,8 +258,95 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {`${profileData.tenant_city}/${profileData.tenant_state}`}
+                                        {`${profileData?.tenant_city}/${profileData?.tenant_state}`}
                                     </Box>
+
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        {adultTenantData?.length ?? 0} Adults
+                                    </Box>
+
+                                    {adultTenantData?.map((adult) => (
+                                        <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                                    {`${adult?.name} | ${adult?.relationship} | DOB: ${adult?.dob}`}
+                                                </Box>
+                                            ))}
+
+                                   
+                                   
+
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        {childTenantData?.length ?? 0} Child
+                                    </Box>
+                                    {childTenantData?.map((child) => (
+                                        <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                                    {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
+                                                </Box>
+                                            ))}
+
+                                   
+                                       
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        {petTenantData?.length ??  0} Pets
+                                    </Box>
+                                    
+                                        {petTenantData?.map((pet) => (
+                                            <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                                    {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
+                                                </Box>
+                                            ))}
+                               
+                                    <Box sx={{
+                                        fontSize: '13px',
+                                        marginTop: '7px',
+                                        marginBottom: '7px',
+                                    }}>
+                                        {vehicleTenantData?.length ?? 0} Vehicles
+                                    </Box>
+                                    
+
+
+                                    {vehicleTenantData?.map((vehicle) => (
+                                        <Box sx={{
+                                        fontSize: '13px',
+                                        color: '#160449',
+                                        marginBottom: '7px', 
+                                    }}>
+                                                    {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
+                                                </Box>
+                                            ))}  
+                                        
+                                        
+                                        
+                                            
+                                        
+                                 
+                                    
+                                    
+
                                 </Box>
                                 </Box>
                                 <Box sx={{
@@ -250,7 +365,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_salary_frequency}
+                                        {profileData?.tenant_salary_frequency ?? 123456}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -264,7 +379,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_current_job_title}
+                                        {profileData?.tenant_current_job_title ?? 'UI/UX Designer'  }
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -278,7 +393,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_unit}
+                                        {profileData?.tenant_unit}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -287,12 +402,12 @@ function TenantProfile() {
                                     }}>
                                         Zip Code
                                     </Box>
-                                    <Box sx={{
+                                  <Box sx={{
                                         fontSize: '13px',
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData.tenant_zip}
+                                        {profileData?.tenant_zip}
                                     </Box>
                                 </Box>
                             </FlexBox>
@@ -304,68 +419,7 @@ function TenantProfile() {
                                     display: 'inline-block',
                                     textAlign: 'left',
                                 }}>
-                                    <FlexBox direction="column">
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                        }}>
-                                            {adultTenantData?.length ?? 0} Adults
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                            color: '#160449',
-                                        }}>
-                                            {adultTenantData?.map((adult) => (
-                                                <Box>
-                                                    {`${adult.name} | ${adult.relationship} | DOB: ${adult.dob}`}
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                        }}>
-                                            {childTenantData?.length ?? 0} Child
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                            color: '#160449',
-                                        }}>
-                                            {childTenantData?.map((child) => (
-                                                <Box>
-                                                    {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                        }}>
-                                            {petTenantData?.length ??  0} Pets
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                            color: '#160449',
-                                        }}>
-                                            {petTenantData?.map((pet) => (
-                                                <Box>
-                                                    {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                        }}>
-                                            {vehicleTenantData?.length ?? 0} Vehicles
-                                        </Box>
-                                        <Box sx={{
-                                            fontSize: '13px',
-                                            color: '#160449',
-                                        }}>
-                                            {vehicleTenantData?.map((vehicle) => (
-                                                <Box>
-                                                    {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                    </FlexBox>
+                                    
                                 </Box>
                             </Box>
                         </FlexBox>
@@ -454,7 +508,7 @@ function TenantProfile() {
                         <FlexBox direction="row">
                             <Box>
                                 <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                    {profileData.tenant_ssn}
+                                    {"*********" ?? profileData?.tenant_ssn}
                                 </TextBox>
                                 <TextBox fontSize={'12px'}>
                                     SSN
@@ -484,6 +538,7 @@ function TenantProfile() {
                     </Box>
                 </Box>
             </Box>
+          </Box>
         </ThemeProvider>
         </>
     );

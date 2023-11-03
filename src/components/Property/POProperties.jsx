@@ -150,7 +150,7 @@ function getPropertyList(data) {
   })
 }
 
-export default function PropertyList({}) {
+export default function POProperties({}) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -171,7 +171,7 @@ export default function PropertyList({}) {
 }
 
   useEffect(() => {
-    console.log("PropertyList useEffect");
+    console.log("POProperties useEffect");
     console.log(propertyList);
     const fetchData = async () => {
       setShowSpinner(true);
