@@ -129,8 +129,8 @@ export default function AddListing({}){
 
         formData.append('property_uid', propertyData.property_uid)
         formData.append('property_owner_id', ownerId);
-        formData.append('available_to_rent', 1);
-        formData.append('active_date', formattedDate);
+        formData.append('property_available_to_rent', 1);
+        formData.append('property_active_date', formattedDate);
         formData.append('property_address', address);
         formData.append('property_unit', unit);
         formData.append('property_city', city);
@@ -140,7 +140,7 @@ export default function AddListing({}){
         formData.append('property_num_beds', bedrooms);
         formData.append('property_num_baths', bathrooms);
         formData.append('property_area', squareFootage);
-        formData.append('property_listed', 0);
+        formData.append('property_listed_rent', rent);
         formData.append('property_deposit', deposit);
         formData.append('property_pets_allowed', petsAllowed);
         formData.append('property_deposit_for_rent', depositForRent);

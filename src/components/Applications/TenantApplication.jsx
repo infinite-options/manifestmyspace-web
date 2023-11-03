@@ -164,7 +164,7 @@ export default function TenantApplication(){
                 "announcement_sender": getProfileId(),
                 "announcement_date": date.toDateString(),
                 "announcement_properties": property.contract_property_id,
-                "announcement_mode": "",
+                "announcement_mode": "LEASE",
                 "announcement_receiver": property.contract_business_id,
                 "announcement_type": ["App"]
             })
