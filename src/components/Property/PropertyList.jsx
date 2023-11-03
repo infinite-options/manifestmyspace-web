@@ -49,22 +49,17 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 // import PropertyData from './PropertyData';
 
-const SearchBar = ({ propertyList, newPMRequestList, setFilteredItems }) => {
+const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchTerm(query);
     if (query.trim() === "") {
-      setFilteredItems([...newPMRequestList, ...propertyList]);  // Reset to the original list if the search bar is cleared
+      setFilteredItems(propertyList);  // Reset to the original list if the search bar is cleared
     } else{
-      const terms = query.split(" ").map(term => term.toLowerCase());
-      const combinedList = [ ...newPMRequestList, ...propertyList];  // Split the search term into individual terms
-      const filtered = combinedList.filter(item => 
-        terms.some(
-          term => 
-            item.property_address.toLowerCase().includes(term)
-        
-          )
+      const terms = query.split(" ").map(term => term.toLowerCase());  // Split the search term into individual terms
+      const filtered = propertyList.filter(item => 
+        terms.some(term => item.property_address.toLowerCase().includes(term))
       );
       setFilteredItems(filtered);  // Updating the state with filtered items
     }
@@ -149,19 +144,9 @@ function getPropertyList(data) {
     appsMap.set(a.property_uid, appsByProperty);
   });
   return propertyList.map(p => {
-    p.type = "property"
     p.applications = appsMap.get(p.property_uid) || [];
     p.applicationsCount = [...p.applications].filter(a => a.lease_status === "NEW").length;
     return p;
-  })
-}
-
-function getNewPMRequestList(data) {
-  const newPMRequestList = data["NewPMRequests"].result;
-
-  return newPMRequestList.map(r => {
-    r.type = "new_pm_request"
-    return r;
   })
 }
 
@@ -169,11 +154,6 @@ export default function PropertyList({}) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const [propertyList, setPropertyList] = useState([]);
-  const [newPMRequestList, setNewPMRequestList] = useState([]);
-  useEffect(() => {
-    console.log("ROHIT - propertyList");
-    console.log(propertyList);
-  }, [propertyList]);
   const [displayedItems, setDisplayedItems] = useState([]);
   // const [maintenanceData, setMaintenanceData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -190,7 +170,6 @@ export default function PropertyList({}) {
     }
 }
 
-
   useEffect(() => {
     console.log("PropertyList useEffect");
     console.log(propertyList);
@@ -200,11 +179,8 @@ export default function PropertyList({}) {
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       const propertyList = getPropertyList(propertyData)
-      // const newPMRequestList = propertyData["NewPMRequests"].result;
-      const newPMRequestList = getNewPMRequestList(propertyData);
       setPropertyList([...propertyList]);
-      setNewPMRequestList([...newPMRequestList]);
-      setDisplayedItems([...newPMRequestList, ...propertyList]);
+      setDisplayedItems([...propertyList]);
       setShowSpinner(false);
     };
     fetchData();
@@ -318,253 +294,144 @@ export default function PropertyList({}) {
             </Button>
           </Stack>
           <Box sx={{ padding: "10px" }}>
-            <SearchBar propertyList={propertyList} newPMRequestList={newPMRequestList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
+            <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
             <List>
               {displayedItems.map((property, index) => (
-                property.type === "property"?
-                (
-                  <ListItem
-                    key={index}
-                    style={{
-                      justifyContent: "space-between",
-                      display: "flex",
-                      height: "100%",
-                      alignItems: "flex-start",
-                      backgroundColor: theme.palette.form.main,
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
+                <ListItem
+                  key={index}
+                  style={{
+                    justifyContent: "space-between",
+                    display: "flex",
+                    height: "100%",
+                    alignItems: "flex-start",
+                    backgroundColor: theme.palette.form.main,
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                  }}
+                  onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                >
+                  <Avatar
+                    src={getCoverPhoto(property)}
+                    alt="property image"
+                    sx={{
+                      borderRadius: "0",
+                      marginRight: "10px",
+                      width: "75px",
+                      height: "75px",
                     }}
-                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center", // vertically align items to the center
+                      justifyContent: "center", // horizontally align items to the center
+                      height: "100%", // to take full height of its parent
+                      width: "50%", // to take full width of its parent
+                    }}
                   >
-                    <Avatar
-                      src={getCoverPhoto(property)}
-                      alt="property image"
+                    {/* <Typography
                       sx={{
-                        borderRadius: "0",
-                        marginRight: "10px",
-                        width: "75px",
-                        height: "75px",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        margin: "0px", // Ensure no margin
+                        padding: "0px", // Ensure no padding
+                        textAlign: "center", // Ensure text is centered within itself
+                        verticalAlign: "middle", // Vertically align text in the middle
                         alignItems: "center", // vertically align items to the center
-                        justifyContent: "center", // horizontally align items to the center
-                        height: "100%", // to take full height of its parent
-                        width: "50%", // to take full width of its parent
                       }}
-                    >
-                      {/* <Typography
-                        sx={{
-                          color: theme.typography.common.blue,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          margin: "0px", // Ensure no margin
-                          padding: "0px", // Ensure no padding
-                          textAlign: "center", // Ensure text is centered within itself
-                          verticalAlign: "middle", // Vertically align text in the middle
-                          alignItems: "center", // vertically align items to the center
-                        }}
-                      > */}
-                        {/* {property.property_address}  #{property.property_unit}<br />
-                        {property.property_city + " " + property.property_state + " " + property.property_zip}
-                        */}
-                        {displayAddress(property)}
-                      {/* </Typography> */}
-                    </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: getPaymentStatusColor(property.rent_status),
-                        width: "25%", // Ensure it takes up full width of its parent
-                        height: "100%", // Ensure it takes up full height of its parent
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "0px",
-                        border: "none",
-                        margin: "0px",
-                      }}
-                    >
-                      <Badge
-                        overlap="circular"
-                        color="success"
-                        badgeContent={getNoOfApplications(index)}
-                        invisible={!getNoOfApplications(index)}
-                        anchorOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}
-                        style={{
-                          color: "#000000",
-                          width: "100%",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            color: theme.palette.primary.main,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            margin: "0px", // Ensure no margin
-                            padding: "0px", // Ensure no padding
-                            height: "50px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                          }}
-                        >
-                          {getPaymentStatus(property.rent_status)}
-                        </Typography>
-                      </Badge>
-                    </Box>
+                    > */}
+                      {/* {property.property_address}  #{property.property_unit}<br />
+                      {property.property_city + " " + property.property_state + " " + property.property_zip}
+                       */}
+                      {displayAddress(property)}
+                    {/* </Typography> */}
+                  </Box>
+                  <Box
+                    sx={{
+                      backgroundColor: getPaymentStatusColor(property.rent_status),
+                      width: "25%", // Ensure it takes up full width of its parent
+                      height: "100%", // Ensure it takes up full height of its parent
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "0px",
+                      border: "none",
+                      margin: "0px",
+                    }}
+                  >
                     <Badge
                       overlap="circular"
-                      color="error"
-                      badgeContent={getBadgeContent(index)}
+                      color="success"
+                      badgeContent={getNoOfApplications(index)}
+                      invisible={!getNoOfApplications(index)}
                       anchorOrigin={{
                         vertical: "top",
                         horizontal: "right",
                       }}
                       style={{
                         color: "#000000",
-                        // color: theme.palette.custom.blue,
+                        width: "100%",
                       }}
                     >
-                      <Button onClick={() => navigate("/maintenance")} sx={{ border: "none" }}>
-                        <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
-                        {/* <Box fixed sx={{
-                            height: '20px',
-                            width: '20px',
-                            background: '#A52A2A',
-                            borderRadius: '50%',
-                            marginLeft: 'auto',
-                            marginRight: 'auto',
-                            marginBottom: '30%',
-                            boxShadow: '0px 4px 4px #A52A2A',
-                        }}>
-                          <Typography
+                      <Typography
                         sx={{
                           color: theme.palette.primary.main,
                           fontWeight: theme.typography.primary.fontWeight,
                           fontSize: theme.typography.smallFont,
-                          textAlign: "center", // Ensure text is centered within itself
-                        }}
-                      ></Typography>
-                        </Box> */}
-                        
-                      </Button>
-                    </Badge>
-                  </ListItem>
-                ) : (
-                  <ListItem
-                    key={index}
-                    style={{
-                      justifyContent: "space-between",
-                      display: "flex",
-                      height: "100%",
-                      alignItems: "flex-start",
-                      backgroundColor: theme.palette.form.main,
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
-                    }}
-                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)} // rohit - fix
-                  >
-                    <Avatar
-                      src={getCoverPhoto(property)}
-                      alt="property image"
-                      sx={{
-                        borderRadius: "0",
-                        marginRight: "10px",
-                        width: "75px",
-                        height: "75px",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center", // vertically align items to the center
-                        justifyContent: "center", // horizontally align items to the center
-                        height: "100%", // to take full height of its parent
-                        width: "50%", // to take full width of its parent
-                      }}
-                    >
-                      {/* <Typography
-                        sx={{
-                          color: theme.typography.common.blue,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
                           margin: "0px", // Ensure no margin
                           padding: "0px", // Ensure no padding
-                          textAlign: "center", // Ensure text is centered within itself
-                          verticalAlign: "middle", // Vertically align text in the middle
-                          alignItems: "center", // vertically align items to the center
-                        }}
-                      > */}
-                        {/* {property.property_address}  #{property.property_unit}<br />
-                        {property.property_city + " " + property.property_state + " " + property.property_zip}
-                        */}
-                        {displayAddress(property)}
-                      {/* </Typography> */}
-                    </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: '#428038',
-                        width: "25%", // Ensure it takes up full width of its parent
-                        height: "100%", // Ensure it takes up full height of its parent
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "0px",
-                        border: "none",
-                        margin: "0px",
-                      }}
-                    >
-                      
-                        <Typography
-                          sx={{
-                            color: theme.palette.primary.main,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            // fontSize: theme.typography.smallFont,
-                            fontSize: '13px',
-                            margin: "0px", // Ensure no margin
-                            padding: "0px", // Ensure no padding
-                            height: "50px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                          }}
-                        >
-                          {property.contract_status === "NEW"? "New Request" : property.contract_status}
-                        </Typography>
-                    </Box>
-                    
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          padding: '5px',
-                          fontSize: '10px',
+                          height: "50px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "100%",
                         }}
                       >
-                        <Box
-                          sx={{
-                            margin: 'auto',
-                          }}
-                        >
-                          Open
-                        </Box>
-                        <Box>
-                          4 days
-                        </Box>
-                      </Box>
-                    
-                  </ListItem>
-                )
+                        {getPaymentStatus(property.rent_status)}
+                      </Typography>
+                    </Badge>
+                  </Box>
+                  <Badge
+                    overlap="circular"
+                    color="error"
+                    badgeContent={getBadgeContent(index)}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    style={{
+                      color: "#000000",
+                      // color: theme.palette.custom.blue,
+                    }}
+                  >
+                    <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": {backgroundColor: "#d6d5da"}}}>
+                      <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
+                      {/* <Box fixed sx={{
+                           height: '20px',
+                           width: '20px',
+                           background: '#A52A2A',
+                           borderRadius: '50%',
+                           marginLeft: 'auto',
+                           marginRight: 'auto',
+                           marginBottom: '30%',
+                           boxShadow: '0px 4px 4px #A52A2A',
+                      }}>
+                        <Typography
+                      sx={{
+                        color: theme.palette.primary.main,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        textAlign: "center", // Ensure text is centered within itself
+                      }}
+                    ></Typography>
+                      </Box> */}
+                      
+                    </Button>
+                  </Badge>
+                </ListItem>
               ))}
             </List>
-            
           </Box>
         </Paper>
       </Box>
