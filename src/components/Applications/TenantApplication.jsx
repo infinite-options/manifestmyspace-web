@@ -141,6 +141,10 @@ export default function TenantApplication(){
         return "10-31-2023"
     }
 
+    function displaySSN(){
+        return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`
+    }
+
     function handleApplicationSubmit(){
         //submit to backend
         console.log("Application Submitted")
@@ -203,7 +207,7 @@ export default function TenantApplication(){
                 }}
             >
                 <Button
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/listings")}
                     sx={{
                         textTransform: 'none',
                         padding: '10px 10px 0px 10px',
@@ -269,7 +273,7 @@ export default function TenantApplication(){
                     position='relative'
                     sx={{  paddingBottom: "10px"}}
                 >
-                    <Button
+                    {/* <Button
                         
                         onClick={() => navigate(-1)}
                         sx={{
@@ -288,7 +292,7 @@ export default function TenantApplication(){
 
                             Return to Property Details
                         </Typography>
-                    </Button>
+                    </Button> */}
                 </Box>
                 <Divider light />
                 {status ? (
@@ -308,7 +312,7 @@ export default function TenantApplication(){
                                 fontSize: theme.typography.secondaryFont
                             }}
                         >
-                            Applied on {getApplicationDate()}
+                            Applied on {lease.lease_application_date}
                         </Typography>
                     </Box>   
                 ) : (null)}
@@ -406,7 +410,8 @@ export default function TenantApplication(){
                                     fontSize: theme.typography.smallFont
                                 }}
                             >
-                                {tenantProfile?.tenant_ssn}
+                                {/* {tenantProfile?.tenant_ssn} */}
+                                {displaySSN()}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>

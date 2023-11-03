@@ -43,7 +43,7 @@ const maintenanceColumns = [
     },
 ];
 
-const getAppColor = (app) => app.lease_status!=="REJECTED"?"#778DC5":"#A52A2A";
+const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
 export default function PropertyNavigator({index, propertyData}){
     const navigate = useNavigate();
@@ -88,10 +88,9 @@ export default function PropertyNavigator({index, propertyData}){
                 
                  
                 const propertyMaintenanceData = await responseProperty.json();
-
-                if(propertyMaintenanceData!=undefined){
-                    setMaintenanceData(propertyMaintenanceData.MaintenanceProjects.result);
-                }
+                let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
+                propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
+                setMaintenanceData(propMaintList);
                 const contractdata = await response.json();
                 console.log("Contract Data", contractdata)
 
