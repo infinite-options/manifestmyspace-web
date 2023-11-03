@@ -183,7 +183,7 @@ export default function TenantApplication(){
                 "lease_adults": JSON.stringify(adultOccupants),
                 "lease_children": JSON.stringify(childOccupants),
                 "lease_pets": JSON.stringify(petOccupants),
-                "lease_vehicles": "[]", //JSON.stringify(vehicles),
+                "lease_vehicles": JSON.stringify(vehicles),
                 "lease_referred": "[]",
                 "lease_rent": "[]",
                 "lease_application_date": date.toLocaleDateString(),
@@ -206,28 +206,6 @@ export default function TenantApplication(){
                     paddingBottom: "50px",
                 }}
             >
-                <Button
-                    onClick={() => navigate("/listings")}
-                    sx={{
-                        textTransform: 'none',
-                        padding: '10px 10px 0px 10px',
-                        textDecoration: 'underline',
-                        position: 'relative',
-                    }}
-                >
-                    <img src={backButton} style={{width: '20px', height: '20px', margin:'0 5px'}}/>
-                    <Typography
-                        sx={{
-                            justifySelf: 'center',
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.medium.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            textAlign: 'center',
-                        }}>
-
-                        <u>Return to All Listings</u>
-                    </Typography>
-                </Button>
                 <Box
                     component="span"
                     display='flex'
@@ -273,26 +251,28 @@ export default function TenantApplication(){
                     position='relative'
                     sx={{  paddingBottom: "10px"}}
                 >
-                    {/* <Button
-                        
-                        onClick={() => navigate(-1)}
+                   <Button
+                        onClick={() => navigate("/listings")}
                         sx={{
                             textTransform: 'none',
+                            padding: '10px 10px 0px 10px',
                             textDecoration: 'underline',
+                            position: 'relative',
                         }}
                     >
-                        <img src={backButton} style={{width: '20px', height: '20px', margin:'5px'}}/>
+                        <img src={backButton} style={{width: '20px', height: '20px', margin:'0 5px'}}/>
                         <Typography
                             sx={{
                                 justifySelf: 'center',
                                 color: theme.typography.primary.black,
                                 fontWeight: theme.typography.medium.fontWeight,
-                                fontSize: theme.typography.smallFont
+                                fontSize: theme.typography.smallFont,
+                                textAlign: 'center',
                             }}>
 
-                            Return to Property Details
+                            <u>Return to All Listings</u>
                         </Typography>
-                    </Button> */}
+                    </Button>
                 </Box>
                 <Divider light />
                 {status ? (
