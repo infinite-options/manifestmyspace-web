@@ -432,7 +432,7 @@ export default function PMProperties({}) {
                         // color: theme.palette.custom.blue,
                       }}
                     >
-                      <Button onClick={() => navigate("/maintenance")} sx={{ border: "none" }}>
+                      <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#F2F2F2"}, }}>
                         <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
                         {/* <Box fixed sx={{
                             height: '20px',

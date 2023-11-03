@@ -833,22 +833,22 @@ export default function PropertyNavigator({index, propertyData}){
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
                                     </Grid>
-                                    {item.property_available_to_rent!==1 && 
                                     <Grid item xs={12}>
                                         <Button
                                             variant="outlined" 
                                             sx={{
                                                 background: '#3D5CAC',
                                                 color: theme.palette.background.default,
+                                                cursor: "pointer",
                                             }}
                                             onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                             <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                {"Create Listing"}
+                                                {item.property_available_to_rent!==1 ? "Create Listing" : "Edit Listing"}
                                             </Typography>
                                         </Button>
-                                    </Grid>}
+                                    </Grid>
                                 </Grid>
                             </div>
                         </CardContent>
