@@ -31,6 +31,7 @@ import OwnerRent from "./Rent/OwnerRent/OwnerRent";
 import PMProfile from "./Profile/PMProfile/PMProfile";
 import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
+import ManagementContractDetails from "./Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
 import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
@@ -61,6 +62,8 @@ import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceCont
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
+import PMProperties from "./Property/PMProperties";
+import POProperties from "./Property/POProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import MaintenanceOwner from "./Maintenance/MaintenanceOwner";
@@ -213,7 +216,8 @@ function Main() {
 
             <Route path="pmProfile" element={<PMProfile />} />
             <Route path="pmLeases" element={<PMLeases />} />
-            <Route path="pmContracts" element={<PMContracts />} /> 
+            <Route path="pmContracts" element={<PMContracts />} />
+            <Route path="managementContractDetails" element={<ManagementContractDetails />} />
             <Route path="pmDocuments" element={<PMDocuments />} />
             <Route path="pmUploadDocuments" element={<PMUploadDocuments />} />
             <Route path="pmRent" element={<PMRent />} />
@@ -268,6 +272,8 @@ function Main() {
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
+            <Route path="PMProperties" element={<PMProperties />} /> {/*rohit*/}
+            <Route path="POProperties" element={<POProperties />} /> {/*rohit*/}
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />

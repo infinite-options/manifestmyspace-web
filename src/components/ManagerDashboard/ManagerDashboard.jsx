@@ -226,7 +226,7 @@ function ManagerDashboard() {
                                             fill: '#160449',
                                             fontWeight: '600',
                                         }}
-                                        onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
+                                        onClick={(e) => { e.stopPropagation(); navigate('/PMProperties') }}
                                     >
                                         View All {totalPropertiesCount}
                                         <tspan x={85} y={110}>properties</tspan>

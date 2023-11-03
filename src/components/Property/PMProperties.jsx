@@ -166,7 +166,7 @@ function getNewPMRequestList(data) {
   })
 }
 
-export default function PropertyList({}) {
+export default function PMProperties({}) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -193,12 +193,12 @@ export default function PropertyList({}) {
 
 
   useEffect(() => {
-    console.log("PropertyList useEffect");
+    console.log("PMProperties useEffect");
     console.log(propertyList);
     const fetchData = async () => {
       setShowSpinner(true);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`) //rohit
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       const propertyList = getPropertyList(propertyData);
       // const newPMRequestList = propertyData["NewPMRequests"].result; //rohit
@@ -335,7 +335,8 @@ export default function PropertyList({}) {
                       paddingLeft: "10px",
                       paddingRight: "10px",
                     }}
-                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                    // onClick={() => handlePropertyDetailNavigation(property, (index - newPMRequestList.length), propertyList)}
+                    onClick={() => handlePropertyDetailNavigation(property, index, displayedItems)}
                   >
                     <Avatar
                       src={getCoverPhoto(property)}
@@ -469,7 +470,9 @@ export default function PropertyList({}) {
                       paddingLeft: "10px",
                       paddingRight: "10px",
                     }}
-                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)} // rohit - fix
+                    onClick={() => {
+                        navigate('/managementContractDetails', {state: {contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
+                    }} // rohit - fix
                   >
                     <Avatar
                       src={getCoverPhoto(property)}

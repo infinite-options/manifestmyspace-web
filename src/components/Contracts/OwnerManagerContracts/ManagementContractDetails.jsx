@@ -36,12 +36,13 @@ import ImageCarousel from "../../ImageCarousel";
 
 
 
-function NewOwnerInquiry(props) {
+function ManagementContractDetails(props) {
     const { getProfileId } = useUser();
     const navigate = useNavigate();
 
     const {state} = useLocation();
-    const { announcementData } = state;
+    // const { announcementData } = state;
+    const { contract_business_id, contract_property_id, property_owner_id  } = state;
     
     const [contractBusinessID, setContractBusinessID] = useState(null);
     useEffect(() => {
@@ -69,23 +70,27 @@ function NewOwnerInquiry(props) {
     const [timeDiff, setTimeDiff] = useState(null);
 
     useEffect(() => {
-        console.log("New Owner Inquiry UseEffect");
+        console.log("Management Contract Details UseEffect");
         
         const fetchData = async () => {
             setShowSpinner(true);
 
             
 
-            console.log("ANNOUNCEMENT DATA", announcementData);
+            // console.log("ANNOUNCEMENT DATA", announcementData);
 
-            setContractBusinessID(announcementData["announcement_receiver"]);
+            // setContractBusinessID(announcementData["announcement_receiver"]);
+            setContractBusinessID(contract_business_id);
+
             
 
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
             
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${announcementData["announcement_sender"]}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${announcementData["announcement_sender"]}`)
+
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
             
             const responseData = await response.json();
 
@@ -100,7 +105,8 @@ function NewOwnerInquiry(props) {
             
 
             
-            const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
+            // const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
+            const announcementPropertiesArray = [contract_property_id];
             const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
             // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
             console.log("FILTERED PROPERTIES", filteredProperties);
@@ -108,7 +114,10 @@ function NewOwnerInquiry(props) {
 
             // console.log("FILTERED PROPERTIES DATA", filteredProperties);
 
-            setContractPropertyID(filteredProperties[0]["property_uid"]);
+
+
+            // setContractPropertyID(filteredProperties[0]["property_uid"]);
+            setContractPropertyID(contract_property_id);
             
             
             
@@ -118,7 +127,8 @@ function NewOwnerInquiry(props) {
             setShowSpinner(false);
         };
         const calculateTimeDiff = () => {
-            const announcement_date = new Date(announcementData["announcement_date"]);
+            // const announcement_date = new Date("announcementData["announcement_date"]");
+            const announcement_date = new Date();
             // const announcement_date = new Date(Date.UTC(
             //     announcementData["announcement_date"].getFullYear(),
             //     announcementData["announcement_date"].getMonth(),
@@ -149,7 +159,7 @@ function NewOwnerInquiry(props) {
                 durationString = `${seconds} seconds ago`;
             }
 
-            console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
+            // console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
             return durationString;
         };
         fetchData();
@@ -209,7 +219,7 @@ function NewOwnerInquiry(props) {
                             minWidth: '300px',
                         }}
                     >
-                        New Owner Inquiry
+                        Management Contract
                     </Box>
                 </Stack>
                 <Box flexDirection ="row"
@@ -2075,4 +2085,4 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 
 }
 
-export default NewOwnerInquiry;
+export default ManagementContractDetails;
