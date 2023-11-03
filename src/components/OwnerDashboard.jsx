@@ -233,7 +233,8 @@ export default function OwnerDashboard() {
                                         ))}
                         
                                     </Pie>
-                                        {(totalPropertiesCount>0) ? viewProperty : createProperty}
+                                    
+                                    {(totalPropertiesCount>0) ? viewProperty : createProperty}
 
                                 </PieChart>
                             </div>
