@@ -61,7 +61,6 @@ const PropertyListings = (props) => {
         const leaseData = await leaseResponse.json();
         const propertyData = await propertyResponse.json();
 
-<<<<<<< HEAD
         if(JSON.stringify(leaseData) == "{}"){
             console.log("No Lease Data")
             if(!propertyData.Property_Dashboard.result){
@@ -75,32 +74,6 @@ const PropertyListings = (props) => {
                 setShowSpinner(false);
                 return;
             }
-        }
-=======
-        console.log("leaseData"+ JSON.stringify(leaseData))
-        // if ((leaseData!==undefined && !leaseData.Lease_Details.result) || !propertyData.Property_Dashboard.result) {
-        //     // Handle the case where data is missing as needed
-        //     console.error("Data is missing from the API response");
-        //     setShowSpinner(false);
-        //     return;
-        // }
->>>>>>> master
-
-        if((JSON.stringify(leaseData) == "{}")){
-            console.log("No Lease Data")
-            if(!propertyData.Property_Dashboard.result){
-                console.error("Data is missing from the API response");
-                setShowSpinner(false);
-                return;
-            }
-        } else{
-            if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
-                console.error("Data is missing from the API response");
-                setShowSpinner(false);
-                return;
-            }
-            setTenantLeaseDetails(leaseData.Lease_Details.result);
-            setPropertyData(propertyData.Property_Dashboard.result);
         }
 
         sortProperties(leaseData, propertyData.Property_Dashboard.result)
