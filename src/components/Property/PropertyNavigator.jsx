@@ -43,7 +43,7 @@ const maintenanceColumns = [
     },
 ];
 
-const getAppColor = (app) => app.lease_status!=="REJECTED"?"#778DC5":"#A52A2A";
+const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
 export default function PropertyNavigator({index, propertyData}){
     const navigate = useNavigate();
@@ -60,6 +60,19 @@ export default function PropertyNavigator({index, propertyData}){
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
     //const [propertyId, setPropertyId] = useState('200-000028')
     const [contractsFeeData, setContractsFeeData] = useState([]) 
+    const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
+    "No Tenant";
+
+    const manager_detail= (item.business_uid)?  `${item.business_name}`:     "No Manager"
+    const [arrowButton1_color, set_arrow1_color]=useState(tenant_detail=== "No Tenant" && manager_detail==="No Manager"? theme.typography.common.gray : theme.typography.common.blue)
+    let arrowButton1_onClick=()=>{
+        if (tenant_detail=== "No Tenant" && manager_detail==="No Manager")
+            return;
+        else
+        navigate("/searchManager");
+    }
+    
+
     useEffect(() => {
         const getMintenanceForProperty = async () => {
             setShowSpinner(true);
@@ -73,10 +86,9 @@ export default function PropertyNavigator({index, propertyData}){
                 }
 
                 const propertyMaintenanceData = await responseProperty.json();
-
-                if(propertyMaintenanceData!=undefined){
-                    setMaintenanceData(propertyMaintenanceData.MaintenanceProjects.result);
-                }
+                let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
+                propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
+                setMaintenanceData(propMaintList);
                 const contractdata = await response.json();
                 console.log("Contract Data", contractdata)
 
@@ -737,13 +749,14 @@ export default function PropertyNavigator({index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                {(item.lease_start && item.tenant_uid)?
-                                                `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
-                                                "No Tenant"}
+                                                {tenant_detail}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={1}>
-                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
+                                        <KeyboardArrowRightIcon sx={{ color: arrowButton1_color, cursor: "pointer" }} onClick={arrowButton1_onClick} 
+                                        
+
+                                        />
                                     </Grid>
                                     <Grid item xs={11}>
                                         <Box onClick={()=> {navigate("/pmQuotesRequested",

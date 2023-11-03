@@ -549,6 +549,7 @@ export default function PropertyList({}) {
                           fontSize: '10px',
                         }}
                       >
+<<<<<<< HEAD
                         <Box
                           sx={{
                             margin: 'auto',
@@ -563,6 +564,50 @@ export default function PropertyList({}) {
                     
                   </ListItem>
                 )
+=======
+                        {getPaymentStatus(property.rent_status)}
+                      </Typography>
+                    </Badge>
+                  </Box>
+                  <Badge
+                    overlap="circular"
+                    color="error"
+                    badgeContent={getBadgeContent(index)}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    style={{
+                      color: "#000000",
+                      // color: theme.palette.custom.blue,
+                    }}
+                  >
+                    <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": {backgroundColor: "#d6d5da"}}}>
+                      <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
+                      {/* <Box fixed sx={{
+                           height: '20px',
+                           width: '20px',
+                           background: '#A52A2A',
+                           borderRadius: '50%',
+                           marginLeft: 'auto',
+                           marginRight: 'auto',
+                           marginBottom: '30%',
+                           boxShadow: '0px 4px 4px #A52A2A',
+                      }}>
+                        <Typography
+                      sx={{
+                        color: theme.palette.primary.main,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        textAlign: "center", // Ensure text is centered within itself
+                      }}
+                    ></Typography>
+                      </Box> */}
+                      
+                    </Button>
+                  </Badge>
+                </ListItem>
+>>>>>>> master
               ))}
             </List>
             
