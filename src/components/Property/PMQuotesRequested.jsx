@@ -73,21 +73,39 @@ export default function PMQuotesRequested({}){
                 "Access-Control-Allow-Credentials":"*"
             };
     
-            const input = {
-                contract_uid:obj.contract_uid,
-                contract_status:"ACTIVE"
-            };
+            const formData = new FormData();
+            formData.append("contract_uid", obj.contract_uid)
+            formData.append("contract_status", "ACTIVE")
+
+             console.log(formData.contract_uid);
+             console.log(formData.contract_status);
     
-            console.log(input.contract_uid);
-            console.log(input.contract_status);
-    
-            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
-            input,
-            headers);
-            console.log("PUT result", response);
-            if (response.code === 200) {
-                return true;
-            }
+            // const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
+            // formData,
+            // headers);
+            // console.log("PUT result", response);
+            // if (response.code === 200) {
+            //     return true;
+            // }
+
+            const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+
+            fetch(url, {
+                method: 'PUT',
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                } else{
+                    console.log("Data added successfully");
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        
+        
         } catch (error){
             console.log("error", error)
             return false;
@@ -104,22 +122,22 @@ export default function PMQuotesRequested({}){
                 "Access-Control-Allow-Headers": "*",
                 "Access-Control-Allow-Credentials":"*"
             };
-    
-            const input = {
-                contract_uid:obj.contract_uid,
-                contract_status:"REJECTED"
-             };
-    
-             console.log(input.contract_uid);
-             console.log(input.contract_status);
-    
+
+            const formData = new FormData();
+            formData.append("contract_uid", obj.contract_uid)
+            formData.append("contract_status", "REJECTED")
+
+             console.log(formData.contract_uid);
+             console.log(formData.contract_status);
+
             const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
-            input,
+            formData,
             headers);
             console.log("PUT result", response);
             if (response.code === 200) {
                 return true;
             }
+
         } catch (error){
             console.log("error", error)
             return false;
@@ -232,8 +250,7 @@ export default function PMQuotesRequested({}){
 
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                   // data.contract_status=="SENT" &&  
-                                    return <div>
+                                    return  data.contract_status=="SENT" && <div>
                                         <DocumentCard data={data}/>
                                         <Stack
                         direction="row"
