@@ -33,6 +33,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import ImageCarousel from "../../ImageCarousel";
+import defaultHouseImage from "../../Property/defaultHouseImage.png"
 
 
 
@@ -63,7 +64,7 @@ function ManagementContractDetails(props) {
     
     // useEffect(() => {
     //     // setContractPropertyID(filteredPropertiesData["property_uid"]);
-    // }, [filteredPropertiesData]); // rohit
+    // }, [filteredPropertiesData]);
     
     
     const [index, setIndex] = useState(0);
@@ -85,10 +86,10 @@ function ManagementContractDetails(props) {
             
 
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
+
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`) 
             
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
-
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${announcementData["announcement_sender"]}`)
 
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
             
@@ -287,6 +288,8 @@ function ManagementContractDetails(props) {
 }
 
 function PropertyCard(props) {
+    const navigate = useNavigate();
+
     const propertyData = props.data;
     const timeDiff = props.timeDifference;
     const contractBusinessID = props.contractBusinessID;
@@ -302,6 +305,7 @@ function PropertyCard(props) {
     const [contractName, setContractName] = useState("");
     const [contractStartDate, setContractStartDate] = useState("");
     const [contractEndDate, setContractEndDate] = useState("");
+    const [contractStatus, setContractStatus] = useState("");
     const [contractFees, setContractFees] = useState([]);
     const [contractFiles, setContractFiles] = useState([]);
     const [contractFileTypes, setContractFileTypes] = useState([]);
@@ -382,12 +386,11 @@ function PropertyCard(props) {
 
     // const handleContractFeesChange = (feesList) => {
     //     console.log("In handleContractFeesChange()");
-    //     //rohit
     //     //setContractFees() // map to the correct keys
     // }
 
     const sendPutRequest = (data) => {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
         // const url = `http://localhost:4000/contracts`; 
     
         fetch(url, {
@@ -399,6 +402,7 @@ function PropertyCard(props) {
                 throw new Error('Network response was not ok');
             } else{
                 console.log("Data updated successfully");
+                navigate("/PMProperties");
             }
         })
         .catch(error => {
@@ -438,7 +442,8 @@ function PropertyCard(props) {
 
         console.log("Declined offer. Data sent - ", formData);
 
-        sendPutRequest(formData);    
+        sendPutRequest(formData);
+        
     };
     
 
@@ -472,8 +477,8 @@ function PropertyCard(props) {
                 const fileType = contractFileTypes[i] || '';
                 const documentObject = {
                     // file: file,
-                    fileIndex: i, // rohit - may not need fileIndex - will files be appended in the same order?
-                    fileName: file.name, // rohit -may not need filename
+                    fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                    fileName: file.name, //may not need filename
                     fileType: fileType,
                 };
                 documentsDetails.push(documentObject)
@@ -508,6 +513,7 @@ function PropertyCard(props) {
             setContractName(contractData["contract_name"]? contractData["contract_name"] : "");
             setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
             setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
+            setContractStatus(contractData["contract_status"]? contractData["contract_status"] : "");
             setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
           };
       
@@ -530,7 +536,7 @@ function PropertyCard(props) {
                 color: '#160449',
                 // color: '#3D5CAC',
             }}>
-                <ImageCarousel images={propertyData.property_images? JSON.parse(propertyData.property_images) : []}/>
+                <ImageCarousel images={propertyData.property_images  && JSON.parse(propertyData.property_images).length > 0 ? JSON.parse(propertyData.property_images) : [defaultHouseImage]}/>
             </Box>
             {/* Time since Inquiry was created */}
             <Box sx={{
@@ -603,7 +609,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                        Status: {propertyData.property_available_to_rent === 1? 'Vacant' : 'Rented'}
+                        Property Management Contract Status: {contractStatus? contractStatus : '<CONTRACT_STATUS>'}
                     </Box>
                 </Box>
             </Box>
@@ -668,7 +674,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            Expiring: {propertyData.lease_end? propertyData.lease_end : '<DATE>' }
+                            Expiring: {contractEndDate? contractEndDate : '' }
                     </Box>
                 </Box>
             </Box>
@@ -731,7 +737,7 @@ function PropertyCard(props) {
                     >
 
 
-                        {'$'}{(propertyData.property_value && propertyData.property_area)? (propertyData.property_value / propertyData.property_area) : '<$$$>' }
+                        {'$'}{(propertyData.property_value && propertyData.property_area)? (propertyData.property_value / propertyData.property_area).toFixed(2) : '<$$$>' }
                     </Box>
                 </Box>
             </Box>
@@ -970,9 +976,9 @@ function PropertyCard(props) {
                 }}
             >
                 
-                    Management Agreement Name
+                    Management Agreement Name *
             </Box>
-            <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange}>First Name</TextInputField>
+            <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange} required>First Name</TextInputField>
 
             {/* Contract Start date and end date */}
             <Box sx={{
@@ -992,9 +998,9 @@ function PropertyCard(props) {
                         }}
                     >
                     
-                        Start Date
+                        Start Date *
                     </Box>
-                    <TextInputField name="start_date" placeholder="mm/dd/yy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
+                    <TextInputField name="start_date" placeholder="mm-dd-yy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
                 </Box>
                 <Box>
                     <Box sx={{
@@ -1005,9 +1011,17 @@ function PropertyCard(props) {
                         }}
                     >
                     
-                        End Date
+                        End Date *
                     </Box>
-                    <TextInputField name="end_date" placeholder="mm/dd/yy" value={contractEndDate} onChange={handleEndDateChange}>End Date</TextInputField>
+                    <TextInputField 
+                        name="end_date"
+                        placeholder="mm-dd-yy"
+                        value={contractEndDate}
+                        onChange={handleEndDateChange}
+                        required
+                    >
+                        End Date
+                    </TextInputField>
                 </Box>
 
             </Box>
@@ -1022,7 +1036,7 @@ function PropertyCard(props) {
                 }}
             >
                     <Box>
-                        Management Fees
+                        Management Fees *
                     </Box>
                     <Box
                         onClick={handleOpenAddFee}
@@ -1260,6 +1274,9 @@ function PropertyCard(props) {
                         borderRadius: "5px",
                         display: 'flex',
                         width: "45%",
+                        '&:hover': {
+                            backgroundColor: "#CB8E8E",
+                        },
                     }}
                     onClick={handleDeclineOfferClick}
                     >
@@ -1281,8 +1298,12 @@ function PropertyCard(props) {
                         borderRadius: "5px",
                         display: 'flex',
                         width: "45%",
+                        '&:hover': {
+                            backgroundColor: "#9EAED6",
+                        },
                     }}
                     onClick={handleSendQuoteClick}
+                    disabled={!contractName || !contractStartDate || !contractEndDate  || !contractFees}
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 
@@ -1701,8 +1722,29 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                     </RadioGroup> 
                 </Box>
                 <DialogActions>
-                    <Button onClick={handleClose}>Close</Button>
-                    <Button type="submit" onClick={handleAddFee}>Add Fee</Button>
+                    <Button 
+                        onClick={handleClose}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#fff",
+                            },
+                            color: '#160449',
+                        }}
+                    >
+                        Close
+                    </Button>
+                    <Button 
+                        type="submit"
+                        onClick={handleAddFee}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#fff",
+                            },
+                            color: '#160449',
+                        }}
+                    >
+                        Add Fee
+                    </Button>
                 </DialogActions>
             </Dialog>
         </form>
