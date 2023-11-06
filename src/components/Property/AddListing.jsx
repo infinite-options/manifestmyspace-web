@@ -54,9 +54,6 @@ export default function AddListing({}){
     const propertyData = location.state.item
     const propertyId = location.state.propertyId;
 
-    console.log("Property Id", propertyId)
-    console.log("Property Data in Edit Property", propertyData)
-
     const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
 
@@ -128,7 +125,7 @@ export default function AddListing({}){
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
         formData.append('property_uid', propertyData.property_uid)
-        formData.append('property_owner_id', ownerId);
+        // formData.append('property_owner_id', ownerId);
         formData.append('property_available_to_rent', 1);
         formData.append('property_active_date', formattedDate);
         formData.append('property_address', address);
@@ -165,6 +162,10 @@ export default function AddListing({}){
                 })
                 const data = await response.json();
                 console.log("data", data)
+                if (data.code === 200){
+                    navigate(-1);
+                    // should navigate to the listing page
+                }
             } catch(error){
                 console.log("Error posting data:", error)
             }
