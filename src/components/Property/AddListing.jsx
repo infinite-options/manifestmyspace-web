@@ -54,9 +54,6 @@ export default function AddListing({}){
     const propertyData = location.state.item
     const propertyId = location.state.propertyId;
 
-    console.log("Property Id", propertyId)
-    console.log("Property Data in Edit Property", propertyData)
-
     const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
 
@@ -165,6 +162,10 @@ export default function AddListing({}){
                 })
                 const data = await response.json();
                 console.log("data", data)
+                if (data.code === 200){
+                    navigate(-1);
+                    // should navigate to the listing page
+                }
             } catch(error){
                 console.log("Error posting data:", error)
             }

@@ -31,10 +31,19 @@ function TenantLeases(props) {
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
+
+    const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
+    const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
+    const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
+    const [childrenOccupants, setChildrenOccupants] = useState(JSON.parse(lease.lease_children));
+    const [fees, setFees] = useState(lease.fees);
+
+
     useEffect(() => {
         console.log("property", property)
         console.log("status", status);
         console.log("lease", lease);
+        console.log("fees", fees)
     }, [])
 
     function getDayText(day) {
@@ -168,7 +177,6 @@ function TenantLeases(props) {
                 padding: '15px',
                 justifyContent: 'center',
                 alignItems: 'center',
-
                 color: '#3D5CAC',
             }}>
                 <Box sx={{
@@ -184,7 +192,9 @@ function TenantLeases(props) {
                     width: '100%',
                 }}>
                     <Box sx={{
-                        margin: '20px',
+                        marginTop: '20px',
+                        marginLeft: '20px',
+                        marginRight: '20px',
                     }}>
                         <Box>
                             <Box sx={{
@@ -215,7 +225,13 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${lease.lease_actual_rent}
+                                 {fees["Rent"] ? (
+                                    <Box>
+                                        ${fees["Rent"].charge}
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -231,7 +247,13 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${lease.lease_rent_late_fee}
+                                {fees["Rent"] ? (
+                                    <Box>
+                                        {fees["Rent"].late_by} days
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -247,7 +269,13 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {getDayText(lease.lease_rent_due_by)} of month
+                                {fees["Rent"] ? (
+                                    <Box>
+                                        {getDayText(fees["Rent"].due_by)} of month
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -279,8 +307,17 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {console.log(JSON.parse(lease.lease_pets))}
-                                {JSON.parse(lease.lease_pets).length}
+                                {
+                                    pets.length > 0 ? (
+                                        pets.map((pet) => (
+                                        <Box key={pet.pet_id /* use a unique property from pet as key */}>
+                                            {pet.pet_name}
+                                        </Box>
+                                        ))
+                                    ) : (
+                                        <Box>No pets listed.</Box> // This will be displayed if there are no pets
+                                    )
+                                }
                             </Box>
                         </Box>
                         <Box>
@@ -297,6 +334,28 @@ function TenantLeases(props) {
                                 marginBottom: '10px',
                             }}>
                                 {JSON.parse(lease.lease_vehicles).length}
+                            </Box>
+                        </Box>
+                        <Box>
+                            <Box sx={{
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                            }}>
+                                Deposit
+                            </Box>
+                            <Box sx={{
+                                fontSize: '14px',
+                                marginTop: '5px',
+                                marginLeft: '10px',
+                                marginBottom: '10px',
+                            }}>
+                                {fees["Deposit"] ? (
+                                    <Box>
+                                        {fees["Deposit"].fee_type}{fees["Deposit"].charge}
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                     </Box>
@@ -332,7 +391,13 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.frequency}
+                                {fees["Rent"] ? (
+                                    <Box>
+                                        {fees["Rent"].frequency}
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -348,7 +413,13 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                ${lease.lease_rent_perDay_late_fee}
+                                {fees["Rent"] ? (
+                                    <Box>
+                                        {fees["Rent"].fee_type}{fees["Rent"].late_fee}
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -364,7 +435,13 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {tenantLeases.available_topay} days before
+                                {fees["Rent"] ? (
+                                    <Box>
+                                        {fees["Rent"].available_topay} days before due date
+                                    </Box>
+                                ) : (
+                                    <Box>No rent fees listed.</Box> // This will be displayed if there are no rent fees
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -380,7 +457,24 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {JSON.parse(lease.lease_adults).length + JSON.parse(lease.lease_children).length}
+                                {
+                                    adultOccupants.length > 0 || childrenOccupants.length > 0 ? (
+                                        <>
+                                        {adultOccupants.map((adult, index) => (
+                                            <Box key={`adult-${adult.id || index}`}>
+                                            {adult.name} {adult.last_name} {adult.dob}
+                                            </Box>
+                                        ))}
+                                        {childrenOccupants.map((child, index) => (
+                                            <Box key={`child-${child.id || index}`}>
+                                            {child.name} {child.last_name} {child.dob}
+                                            </Box>
+                                        ))}
+                                        </>
+                                    ) : (
+                                        <Box>No occupants listed.</Box> // This will be displayed if there are neither adults nor children
+                                    )
+                                }
                             </Box>
                         </Box>
                         <Box>
@@ -396,7 +490,18 @@ function TenantLeases(props) {
                                 marginLeft: '10px',
                                 marginBottom: '10px',
                             }}>
-                                {JSON.parse(lease.lease_vehicles).length}
+                                {vehicles.map((vehicle) => {
+                                    return (
+                                        <>
+                                            <Box>
+                                                {vehicle.year} {vehicle.make} {vehicle.model}
+                                            </Box>
+                                            <Box>
+                                                {vehicle.state} {vehicle.license}
+                                            </Box>
+                                        </>
+                                    )}
+                                )}
                             </Box>
                         </Box>
                         <Box>
@@ -412,7 +517,6 @@ function TenantLeases(props) {
                                 justifyContent: 'left',
                                 alignItems: 'center',
                                 width: '90%',
-                                margin: '10px',
                             }}>
                                 <Box>
                                     <svg width="14" height="19" viewBox="0 0 14 19" fill="none" xmlns="http://www.w3.org/2000/svg">
