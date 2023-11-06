@@ -15,6 +15,7 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import EmailIcon from "../Property/messageIconDark.png";
 import PhoneIcon from "../Property/phoneIconDark.png";
+import AES from "crypto-js/aes";
 
 const TenantApplicationNav = () => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const TenantApplicationNav = () => {
       }
     );
     setShowSpinner(false);
+    navigate("/managerDashboard");
   };
   const handleCreateLease = () =>
     navigate("/tenantLease", { state: { application, property } });
@@ -299,7 +301,13 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {application.tenant_ssn}
+                            {"***-**-" +
+                              AES.decrypt(
+                                application.tenant_ssn,
+                                process.env.REACT_APP_ENKEY
+                              )
+                                .toString()
+                                .slice(-4)}
                           </Typography>
                           <Typography
                             sx={{

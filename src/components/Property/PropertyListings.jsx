@@ -61,29 +61,24 @@ const PropertyListings = (props) => {
         const leaseData = await leaseResponse.json();
         const propertyData = await propertyResponse.json();
 
-        console.log("leaseData"+ JSON.stringify(leaseData))
-        // if ((leaseData!==undefined && !leaseData.Lease_Details.result) || !propertyData.Property_Dashboard.result) {
-        //     // Handle the case where data is missing as needed
-        //     console.error("Data is missing from the API response");
-        //     setShowSpinner(false);
-        //     return;
-        // }
-
-        if((JSON.stringify(leaseData) == "{}")){
+        if(JSON.stringify(leaseData) == "{}"){
             console.log("No Lease Data")
             if(!propertyData.Property_Dashboard.result){
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
+            } else {
+                setPropertyData(propertyData.Property_Dashboard.result);
             }
         } else{
             if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
+            } else {
+                setTenantLeaseDetails(leaseData.Lease_Details.result);
+                setPropertyData(propertyData.Property_Dashboard.result);
             }
-            setTenantLeaseDetails(leaseData.Lease_Details.result);
-            setPropertyData(propertyData.Property_Dashboard.result);
         }
 
         sortProperties(leaseData, propertyData.Property_Dashboard.result)
@@ -352,7 +347,7 @@ const PropertyListings = (props) => {
                     
                     {sortedProperties.map((property, index) => {
                         var status = ""
-                        const appliedData = tenantLeaseDetails.find((lease) => lease.property_id === property.property_uid);
+                        const appliedData = tenantLeaseDetails.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
                             status = appliedData.lease_status;
                             console.log(`Lease Status for ${appliedData.property_address}: ${status}`)
@@ -476,7 +471,7 @@ function PropertyCard(props) {
                         alignSelf: 'flex-start',
                         textTransform: 'none'
                     }}
-                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                    onClick={() => navigate("/tenantApplication", {state: { property: property, status: status, lease: lease }})}
                 >
                     <Typography
                         sx={{
@@ -503,7 +498,7 @@ function PropertyCard(props) {
                         alignSelf: 'flex-start',
                         textTransform: 'none'
                     }}
-                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                    onClick={() => navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})}
                 >
                     <Typography
                         sx={{

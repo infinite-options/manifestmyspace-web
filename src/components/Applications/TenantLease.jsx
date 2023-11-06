@@ -18,22 +18,135 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import { calculateAge } from "../utils/helper";
+import { useUser } from "../../contexts/UserContext";
+import { makeStyles } from "@material-ui/core/styles";
+import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& .MuiFilledInput-root": {
+      backgroundColor: "#D6D5DA",
+      borderRadius: 10,
+      height: 30,
+      marginBlock: 10,
+      paddingBottom: "15px",
+    },
+  },
+  select: {
+    backgroundColor: "#D6D5DA",
+    height: 30,
+    borderRadius: "10px !important",
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#D6D5DA",
+    },
+  },
+}));
+
+const initialFees = (property, application) => {
+  const fees = [];
+  if (property.property_listed_rent) {
+    fees.push({
+      id: fees.length + 1,
+      fee_name: "Rent",
+      fee_type: "$",
+      frequency: "Monthly",
+      charge: property.property_listed_rent,
+      due_by: application.lease_rent_due_by,
+      late_by: application.lease_rent_late_by,
+      late_fee: application.lease_rent_late_fee,
+      perDay_late_fee: application.lease_rent_perDay_late_fee,
+      available_topay: application.lease_rent_available_topay,
+    });
+  }
+  if (property.property_deposit) {
+    fees.push({
+      id: fees.length + 1,
+      fee_name: "Deposit",
+      fee_type: "$",
+      frequency: "One-time",
+      charge: property.property_deposit,
+      due_by: application.lease_rent_due_by,
+      late_by: application.lease_rent_late_by,
+      late_fee: application.lease_rent_late_fee,
+      perDay_late_fee: application.lease_rent_perDay_late_fee,
+      available_topay: application.lease_rent_available_topay,
+    });
+  }
+  if (fees.length === 0) {
+    fees.push({
+      id: fees.length + 1,
+      fee_name: "",
+      fee_type: "$",
+      frequency: "",
+      charge: "",
+      due_by: "",
+      late_by: "",
+      late_fee: "",
+      perDay_late_fee: "",
+      available_topay: "",
+    });
+  }
+  return fees;
+};
 
 const TenantLease = () => {
+  const classes = useStyles();
   const navigate = useNavigate();
+  const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(dayjs());
-  const [endDate, setEndDate] = useState(dayjs());
+  const [endDate, setEndDate] = useState(
+    dayjs().add(1, "year").subtract(1, "day")
+  );
   const [moveInDate, setMoveInDate] = useState(dayjs());
-  const [noOfOccupants, setNoOfOccupants] = useState("");
-  const [rent, setRent] = useState("");
-  const [rentFrequency, setRentFrequency] = useState("");
-  const [lateFeesAfter, setLateFeesAfter] = useState("");
-  const [lateFeesPerDay, setLateFeesPerDay] = useState("");
-  const [rentDueDate, setRentDueDate] = useState("");
-  const [availableToPay, setAvailableToPay] = useState("");
+  const [noOfOccupants, setNoOfOccupants] = useState(
+    JSON.parse(application.lease_adults).length +
+      JSON.parse(application.lease_children).length
+  );
+  // const [rent, setRent] = useState(property.property_listed_rent);
+  // const [rentFrequency, setRentFrequency] = useState("Monthly");
+  // const [lateFeesAfter, setLateFeesAfter] = useState(
+  //   application.lease_rent_late_by
+  // );
+  // const [lateFeesPerDay, setLateFeesPerDay] = useState(
+  //   application.lease_rent_perDay_late_fee
+  // );
+  // const [rentDueDate, setRentDueDate] = useState(application.lease_rent_due_by);
+  // const [availableToPay, setAvailableToPay] = useState(
+  //   application.lease_rent_available_topay
+  // );
+  const [fees, setFees] = useState(initialFees(property, application));
+  const addFeeRow = () => {
+    setFees((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        fee_name: "",
+        fee_type: "$",
+        frequency: "",
+        charge: "",
+        due_by: "",
+        late_by: "",
+        late_fee: "",
+        perDay_late_fee: "",
+        available_topay: "",
+      },
+    ]);
+  };
+  const handleFeeChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...fees];
+    list[index - 1][name] = value;
+    setFees(list);
+  };
+  const handleFrequencyChange = (e, index) => {
+    const value = e.target.value;
+    let list = [...fees];
+    list[index - 1].frequency = value;
+    setFees(list);
+  };
   const handleStartDateChange = (v) => {
     setStartDate(v);
     if (endDate < v) setEndDate(v);
@@ -47,24 +160,24 @@ const TenantLease = () => {
   const handleNoOfOccupantsChange = (e) => {
     setNoOfOccupants(e.target.value);
   };
-  const handleRentChange = (e) => {
-    setRent(e.target.value);
-  };
-  const handleRentFrequencyChange = (e) => {
-    setRentFrequency(e.target.value);
-  };
-  const handleLateFeesAfterChange = (e) => {
-    setLateFeesAfter(e.target.value);
-  };
-  const handleLateFeesPerDayChange = (e) => {
-    setLateFeesPerDay(e.target.value);
-  };
-  const handleRentDueDateChange = (e) => {
-    setRentDueDate(e.target.value);
-  };
-  const handleAvailableToPayChange = (e) => {
-    setAvailableToPay(e.target.value);
-  };
+  // const handleRentChange = (e) => {
+  //   setRent(e.target.value);
+  // };
+  // const handleRentFrequencyChange = (e) => {
+  //   setRentFrequency(e.target.value);
+  // };
+  // const handleLateFeesAfterChange = (e) => {
+  //   setLateFeesAfter(e.target.value);
+  // };
+  // const handleLateFeesPerDayChange = (e) => {
+  //   setLateFeesPerDay(e.target.value);
+  // };
+  // const handleRentDueDateChange = (e) => {
+  //   setRentDueDate(e.target.value);
+  // };
+  // const handleAvailableToPayChange = (e) => {
+  //   setAvailableToPay(e.target.value);
+  // };
   const handleCreateLease = async () => {
     setShowSpinner(true);
     await fetch(
@@ -79,14 +192,26 @@ const TenantLease = () => {
           lease_status: "PROCESSING",
           lease_start: new Date(startDate).toLocaleDateString(),
           lease_end: new Date(endDate).toLocaleDateString(),
-          lease_rent_available_topay: availableToPay,
-          lease_rent_due_by: rentDueDate,
-          lease_rent_late_by: lateFeesAfter,
-          lease_rent_perDay_late_fee: lateFeesPerDay,
-          lease_actual_rent: rent,
+          lease_fees: fees,
         }),
       }
     );
+    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "announcement_title" : "New Lease created",
+                "announcement_msg" : "You have a new lease to be approved for your property",
+                "announcement_sender": getProfileId(),
+                "announcement_date": new Date().toDateString(),
+                "announcement_properties": property.property_uid,
+                "announcement_mode": "LEASE",
+                "announcement_receiver": application.tenant_uid,
+                "announcement_type": ["App"]
+            })
+        })
     navigate("/managerDashboard");
     setShowSpinner(false);
   };
@@ -109,7 +234,14 @@ const TenantLease = () => {
       >
         <Grid container>
           <Grid item xs={1}>
-            <Button onClick={() => navigate(-1)}>
+            <Button
+              sx={{
+                "&:hover, &:focus, &:active": {
+                  backgroundColor: "#F2F2F2",
+                },
+              }}
+              onClick={() => navigate(-1)}
+            >
               <svg
                 width="24"
                 height="24"
@@ -242,7 +374,7 @@ const TenantLease = () => {
             </Box>
           </Box>
         </Box>
-        <Grid container spacing={10}>
+        <Grid container spacing={10} sx={{ paddingBottom: 5 }}>
           <Grid item xs={6} md={6}>
             <Stack>
               <Typography
@@ -379,7 +511,219 @@ const TenantLease = () => {
               />
             </Stack>
           </Grid>
-          <Grid item xs={6} md={6}>
+          <Grid item xs={12}>
+            <hr />
+          </Grid>
+          {fees.map((row) => (
+            <Grid item xs={12} key={row.id}>
+              <Grid
+                container
+                rowSpacing={1}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+              >
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Fee Name"}
+                    </Typography>
+                    <TextField
+                      name="fee_name"
+                      value={row.fee_name}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Charge"}
+                    </Typography>
+                    <TextField
+                      name="charge"
+                      value={row.charge}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        paddingBottom: 5,
+                      }}
+                    >
+                      {"Frequency"}
+                    </Typography>
+                    <Select
+                      value={row.frequency}
+                      size="small"
+                      fullWidth
+                      onChange={(e) => handleFrequencyChange(e, row.id)}
+                      placeholder="Select frequency"
+                      className={classes.select}
+                    >
+                      <MenuItem value="One-time">One-time</MenuItem>
+                      <MenuItem value="Monthly">Monthly</MenuItem>
+                      <MenuItem value="Annually">Annually</MenuItem>
+                    </Select>
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Due By"}
+                    </Typography>
+                    <TextField
+                      name="due_by"
+                      value={row.due_by}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Late By"}
+                    </Typography>
+                    <TextField
+                      name="late_by"
+                      value={row.late_by}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Late Fee"}
+                    </Typography>
+                    <TextField
+                      name="late_fee"
+                      value={row.late_fee}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Per Day Late Fee"}
+                    </Typography>
+                    <TextField
+                      name="perDay_late_fee"
+                      value={row.perDay_late_fee}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={4}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {"Available To Pay"}
+                    </Typography>
+                    <TextField
+                      name="available_topay"
+                      value={row.available_topay}
+                      variant="filled"
+                      fullWidth
+                      className={classes.root}
+                      onChange={(e) => handleFeeChange(e, row.id)}
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+              {row.id === fees.length ? (
+                <Stack
+                  direction="row"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "right",
+                  }}
+                >
+                  <div onClick={addFeeRow} style={{ cursor: "pointer" }}>
+                    <img src={AddFeeRowImg} alt="add fee" />
+                  </div>
+                </Stack>
+              ) : (
+                <hr />
+              )}
+            </Grid>
+          ))}
+          <Grid item xs={12}>
+            <hr />
+          </Grid>
+          {/* <Grid item xs={6} md={6}>
             <Stack>
               <Typography
                 sx={{
@@ -554,8 +898,8 @@ const TenantLease = () => {
                 }}
               />
             </Stack>
-          </Grid>
-          <Grid item xs={12} sx={{ textAlign: "center" }}>
+          </Grid> */}
+          <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
             <Button
               onClick={handleCreateLease}
               sx={{

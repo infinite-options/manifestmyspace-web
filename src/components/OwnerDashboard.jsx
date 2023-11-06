@@ -63,6 +63,41 @@ export default function OwnerDashboard() {
         const num = data.find(item => item.fill === color)?.number;
         return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
     };
+
+    const viewProperty= <text
+    x={85}
+    y={100}
+    textAnchor="middle"
+    dominantBaseline="middle"
+    cursor="pointer"
+    style={{
+        fontFamily: 'Source Sans Pro',
+        fontSize: '9px',
+        fill: '#160449',
+        fontWeight: '600',
+    }}
+    onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
+>
+    View All {totalPropertiesCount}
+    <tspan x={85} y={110}>properties</tspan>
+</text>
+    const createProperty= <text
+    x={85}
+    y={100}
+    textAnchor="middle"
+    dominantBaseline="middle"
+    cursor="pointer"
+    style={{
+        fontFamily: 'Source Sans Pro',
+        fontSize: '9px',
+        fill: '#160449',
+        fontWeight: '600',
+    }}
+    onClick={(e) => { e.stopPropagation(); navigate('/addProperty') }}
+>
+    Create a new property
+    
+</text>
     
     useEffect(() => {
         const dataObject = {};
@@ -198,23 +233,9 @@ export default function OwnerDashboard() {
                                         ))}
                         
                                     </Pie>
-                                    <text
-                                        x={85}
-                                        y={100}
-                                        textAnchor="middle"
-                                        dominantBaseline="middle"
-                                        cursor="pointer"
-                                        style={{
-                                            fontFamily: 'Source Sans Pro',
-                                            fontSize: '9px',
-                                            fill: '#160449',
-                                            fontWeight: '600',
-                                        }}
-                                        onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
-                                    >
-                                        View All {totalPropertiesCount}
-                                        <tspan x={85} y={110}>properties</tspan>
-                                    </text>
+                                    
+                                    {(totalPropertiesCount>0) ? viewProperty : createProperty}
+
                                 </PieChart>
                             </div>
                         </div>

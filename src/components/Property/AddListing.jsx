@@ -127,10 +127,10 @@ export default function AddListing({}){
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
-
-        formData.append('property_owner_id', ownerId);
-        formData.append('available_to_rent', 1);
-        formData.append('active_date', formattedDate);
+        formData.append('property_uid', propertyData.property_uid)
+        // formData.append('property_owner_id', ownerId);
+        formData.append('property_available_to_rent', 1);
+        formData.append('property_active_date', formattedDate);
         formData.append('property_address', address);
         formData.append('property_unit', unit);
         formData.append('property_city', city);
@@ -140,7 +140,7 @@ export default function AddListing({}){
         formData.append('property_num_beds', bedrooms);
         formData.append('property_num_baths', bathrooms);
         formData.append('property_area', squareFootage);
-        formData.append('property_listed', 0);
+        formData.append('property_listed_rent', rent);
         formData.append('property_deposit', deposit);
         formData.append('property_pets_allowed', petsAllowed);
         formData.append('property_deposit_for_rent', depositForRent);
@@ -741,7 +741,7 @@ export default function AddListing({}){
                                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
                                 <Button variant="contained" type="submit" form="editPropertyForm"  sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
                                     <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Create Listing
+                                        {propertyData.property_available_to_rent!==1 ? "Create Listing" : "Edit Listing"}
                                     </Typography>
                                 </Button>
                             </Grid>

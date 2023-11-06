@@ -60,6 +60,7 @@ function TenantDashboard(props) {
       let announcementsData = tenantRequestsData?.announcements?.result;
 
       if(!propertyData || propertyData.length === 0){
+        console.log("!propertyData || propertyData.length === 0")
         navigate("/listings")
       } else{
         for (const item of propertyData){
