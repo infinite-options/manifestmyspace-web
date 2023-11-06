@@ -142,7 +142,6 @@ function getPaymentStatus(paymentStatus) {
 function getPropertyList(data) {
   const propertyList = data["Property"].result;
   const applications = data["Applications"].result;
-  // const newPMRequests = data["NewPMRequests"].result; //rohit
   const appsMap = new Map();
   applications.forEach(a => {
     const appsByProperty = appsMap.get(a.property_uid) || []
@@ -172,7 +171,7 @@ export default function PMProperties({}) {
   const [propertyList, setPropertyList] = useState([]);
   const [newPMRequestList, setNewPMRequestList] = useState([]);
   useEffect(() => {
-    console.log("ROHIT - propertyList");
+    console.log("propertyList - ");
     console.log(propertyList);
   }, [propertyList]);
   const [displayedItems, setDisplayedItems] = useState([]);
@@ -210,7 +209,7 @@ export default function PMProperties({}) {
     fetchData();
   }, []);
 
-  function handlePropertyDetailNavigation(property, index, propertyList) {
+  function handlePropertyDetailNavigation(property, index, propertyList) { 
 
     console.log("theoretically property", property)
     console.log("handlePropertyDetailNavigation");
@@ -218,11 +217,14 @@ export default function PMProperties({}) {
   }
 
   function getBadgeContent(index) {
-    return propertyList?.[index]?.num_open_maintenace_req ?? 0;
+    // return propertyList?.[index]?.num_open_maintenace_req ?? 0;
+    return displayedItems?.[index]?.num_open_maintenace_req ?? 0;
+    
   }
 
   function getNoOfApplications(index) {
-    return propertyList?.[index]?.applicationsCount || 0;
+    // return propertyList?.[index]?.applicationsCount || 0;
+    return displayedItems?.[index]?.applicationsCount || 0;
   }
 
   function getCoverPhoto(property) {
@@ -513,12 +515,12 @@ export default function PMProperties({}) {
                     <Box
                       sx={{
                         backgroundColor: '#428038',
-                        width: "25%", // Ensure it takes up full width of its parent
-                        height: "100%", // Ensure it takes up full height of its parent
+                        width: "50%", 
+                        height: "100%",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        padding: "0px",
+                        padding: "5px",
                         border: "none",
                         margin: "0px",
                       }}
@@ -547,6 +549,7 @@ export default function PMProperties({}) {
                         sx={{
                           display: 'flex',
                           flexDirection: 'column',
+                          maxWidth: '20%',
                           padding: '5px',
                           fontSize: '10px',
                         }}
@@ -559,7 +562,7 @@ export default function PMProperties({}) {
                           Open
                         </Box>
                         <Box>
-                          4 days
+                          {"<NUM_DAYS>"}
                         </Box>
                       </Box>
                     

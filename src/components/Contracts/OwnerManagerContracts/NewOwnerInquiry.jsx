@@ -62,7 +62,7 @@ function NewOwnerInquiry(props) {
     
     // useEffect(() => {
     //     // setContractPropertyID(filteredPropertiesData["property_uid"]);
-    // }, [filteredPropertiesData]); // rohit
+    // }, [filteredPropertiesData]); 
     
     
     const [index, setIndex] = useState(0);
@@ -462,8 +462,8 @@ function PropertyCard(props) {
                 const fileType = contractFileTypes[i] || '';
                 const documentObject = {
                     // file: file,
-                    fileIndex: i, // rohit - may not need fileIndex - will files be appended in the same order?
-                    fileName: file.name, // rohit -may not need filename
+                    fileIndex: i, // may not need fileIndex - will files be appended in the same order?
+                    fileName: file.name, //may not need filename
                     fileType: fileType,
                 };
                 documentsDetails.push(documentObject)
@@ -1250,6 +1250,9 @@ function PropertyCard(props) {
                         borderRadius: "5px",
                         display: 'flex',
                         width: "45%",
+                        '&:hover': {
+                            backgroundColor: "#CB8E8E",
+                        },
                     }}
                     onClick={handleDeclineOfferClick}
                     >
@@ -1271,8 +1274,13 @@ function PropertyCard(props) {
                         borderRadius: "5px",
                         display: 'flex',
                         width: "45%",
+                        '&:hover': {
+                            backgroundColor: "#9EAED6",
+                        },
                     }}
                     onClick={handleSendQuoteClick}
+                    disabled={!contractName || !contractStartDate || !contractEndDate  || !contractFees}
+                    
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 
