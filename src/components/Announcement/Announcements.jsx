@@ -72,7 +72,7 @@ export default function Announcements() {
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
             .then((res) => {
              //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
-             setAnnouncementData(result);
+             setAnnouncementData(res.data);
              setSentData(res.data.sent.result)
              setReceivedData(res.data.received.result)
             
