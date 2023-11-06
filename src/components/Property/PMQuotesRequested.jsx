@@ -232,8 +232,8 @@ export default function PMQuotesRequested({}){
 
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                   // data.contract_status=="SENT" &&  
-                                    return <div>
+                                     
+                                    return  data.contract_status=="SENT" && <div>
                                         <DocumentCard data={data}/>
                                         <Stack
                         direction="row"
