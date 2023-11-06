@@ -65,7 +65,7 @@ const RequestQuotes = () => {
       "announcement_date":formattedDate,
       "announcement_properties":[selectedProperty],
       "announcement_mode":"CONTRACT",
-      "announcement_receiver":managerData.business_uid,
+      "announcement_receiver":[managerData.business_uid],
       "announcement_type":["App"],
     });
     

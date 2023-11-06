@@ -459,7 +459,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                Expiring: {item.lease_end}
+                                                PM Contract Expiring : {item.lease_end}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>

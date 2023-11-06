@@ -165,6 +165,7 @@ const ManagerDetails = () => {
                 flex: 3,
                 border: "0 0 10px 10px",
                 paddingTop: "35px",
+                paddingBottom: "35px",
               }}
             >
               <Grid container>
@@ -256,7 +257,9 @@ const ManagerDetails = () => {
   }).map((p) => (
                 <>
                 <Grid container direction="row">
-  
+                  {/* <Box onClick={()=>{
+                    navigate('/propertyDetail')
+                  }}> */}
                 <Typography
     sx={{
       paddingLeft: "15px",
@@ -266,7 +269,7 @@ const ManagerDetails = () => {
       textDecoration: "underline",
     }}
   >
-    {`${p.property_address}, ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+    {`${p.property_unit}, ${p.property_address}, ${p.property_city}, ${p.property_state} ${p.property_zip}`}
   </Typography>
   <Typography
     sx={{
@@ -278,8 +281,8 @@ const ManagerDetails = () => {
   >
     {p.contract_status}
   </Typography>
-  
-</Grid>
+  {/* </Box> */}
+                </Grid>
                 </>
               ))}
             </Box>

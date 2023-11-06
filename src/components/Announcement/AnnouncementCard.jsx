@@ -1,7 +1,14 @@
 import { calculateAge } from "../utils/helper"; 
+import { useUser } from "../../contexts/UserContext";
 
 function AnnouncementCard(props) {
+    const { user, selectedRole, selectRole, Name } = useUser();
+    console.log("Select role: "+selectedRole)
     const data = props.data;
+
+    const handleAnnouncements = (data) => {
+        console.log("Handling ann "+selectedRole+" "+data.announcement_sender)
+    };
     return (
         <div className="announcement-list-card">
             <div className="announcement-list-card-text-container">

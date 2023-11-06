@@ -7,19 +7,97 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { Box } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
+import AnnouncementPopUp from "./AnnouncementPopUp";
+
 export default function Announcements() {
     const { getProfileId } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
+    const [sentData, setSentData] = useState([]);
+    const [receivedData, setReceivedData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+    const navigate = useNavigate();
+
+    const [showAnnouncement, setShowAnnouncement] = useState(false);
+    const [annData, setAnnData] = useState("");
+
+    const result =[
+        {
+        "announcement_uid": "020-000223",
+        "announcement_title": "test formdata LEASE",
+        "announcement_msg": "test formdata LEASE",
+        "announcement_sender": "110-000096",
+        "announcement_date": "2023-10-31 18:43:26",
+        "announcement_properties": "200-000114",
+        "announcement_mode": "LEASE",
+        "announcement_receiver": "110-000096",
+        "announcement_type": null,
+        "Email": null,
+        "Text": null,
+        "App": 1
+        },
+        {
+        "announcement_uid": "020-000210",
+        "announcement_title": "test notification PROPERTIES",
+        "announcement_msg": "test notification PROPERTIES",
+        "announcement_sender": "110-000096",
+        "announcement_date": "2023-10-30 02:39:13",
+        "announcement_properties": "200-000114",
+        "announcement_mode": "PROPERTIES",
+        "announcement_receiver": "110-000096",
+        "announcement_type": null,
+        "Email": null,
+        "Text": null,
+        "App": 1
+        },
+        {
+            "announcement_uid": "020-000210",
+            "announcement_title": "test notification contract",
+            "announcement_msg": "test notification contract",
+            "announcement_sender": "110-000096",
+            "announcement_date": "2023-10-30 02:39:13",
+            "announcement_properties": "200-000114",
+            "announcement_mode": "CONTRACT",
+            "announcement_receiver": "110-000096",
+            "announcement_type": null,
+            "Email": null,
+            "Text": null,
+            "App": 1
+            }
+        ];
+
     useEffect(() => {
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
             .then((res) => {
-                setAnnouncementData(res.data?.received?.result || res.data?.result || []);
-                // console.log(res.data.result);
-                setShowSpinner(false);
+             //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
+             setAnnouncementData(res.data);
+             setSentData(res.data.sent.result)
+             setReceivedData(res.data.received.result)
+            
+            setShowSpinner(false);
             });
     }, []);
+
+
+    const { user, selectedRole, selectRole, Name } = useUser();
+    
+    const handleAnnouncements = (announcement) => {
+            if(announcement.announcement_mode=="PROPERTIES"){
+                console.log(announcement.announcement_title)
+                navigate("/newOwnerInquiry",{state: {announcementData: announcement}});
+            }else if(announcement.announcement_mode=="CONTRACT"){
+                console.log(announcement.announcement_title)      
+                navigate("/propertyContract",{state: {announcementData: announcement}});          
+            }else if(announcement.announcement_mode=="LEASE"){
+                console.log(announcement.announcement_title)    
+                setAnnData(announcement)
+                setShowAnnouncement(true)
+
+            }
+    };
+
     return (
         <div className="announcement-container">
             <Backdrop
@@ -75,19 +153,54 @@ export default function Announcements() {
                         </div>
                     </div>
                 </div>
-                <div className="announcement-list-container">
+                {/* <div className="announcement-list-container">
                     {announcementData.length > 0 ? (
                         announcementData.map((announcement, i) =>
                             <div key={i}>
-                                <AnnouncementCard data={announcement} />
+                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
+                                    <AnnouncementCard data={announcement} role={getProfileId}/>
+                                </Box>
                             </div>
                         )) : "No announcements"}
+                </div> */}
+                <div className="announcement-view-text">
+                           Sent
+                </div>
+                <div style={{width:"100%", height: "150px", overflow: "auto"}}>
+                 <div className="announcement-list-container">
+                    {sentData.length > 0 ? (
+                        sentData.map((announcement, i) =>
+                            <div key={i}>
+                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
+                                    <AnnouncementCard data={announcement} role={getProfileId}/>
+                                </Box>
+                            </div>
+                        )) : "No announcements"}
+                </div>
+                </div>
+
+                <div className="announcement-view-text">
+                           Received
+                </div>
+                <div style={{width:"100%", height: "150px", overflow: "auto"}}>
+                 <div className="announcement-list-container">
+                    {receivedData.length > 0 ? (
+                        receivedData.map((announcement, i) =>
+                            <div key={i}>
+                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
+                                    <AnnouncementCard data={announcement} role={getProfileId}/>
+                                </Box>
+                            </div>
+                        )) : "No announcements"}
+                </div>
                 </div>
             </div>
             {/**
             <hr/>
             <SearchFilter/>
              */}
+            <AnnouncementPopUp showAnnouncement={showAnnouncement} setShowAnnouncement={setShowAnnouncement} annData={annData} />
+             <Box sx={{paddingBottom:"10%"}}></Box>
         </div>
     );
 }
