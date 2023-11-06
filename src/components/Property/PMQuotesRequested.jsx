@@ -232,8 +232,8 @@ export default function PMQuotesRequested({}){
 
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                   
-                                    return data.contract_status=="SENT" &&  <div>
+                                   // data.contract_status=="SENT" &&  
+                                    return <div>
                                         <DocumentCard data={data}/>
                                         <Stack
                         direction="row"
@@ -357,7 +357,8 @@ function DocumentCard(props) {
                     }
                 }
                 )}}>
-                View Documents <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
+           
+               View Documents<img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
                 </Box>
                
         </Box>
@@ -367,7 +368,23 @@ function DocumentCard(props) {
 
 function FeesTextCard(props) {
 
+    const textStyle = {
+        textTransform: 'none',
+        color: theme.typography.propertyPage.color,
+        fontWeight: theme.typography.light.fontWeight,
+        fontSize:theme.typography.smallFont,
+    };
+
     let fee = props.fee;
-   return(<Typography>{fee.fee_name}:{fee.charge}{fee.fee_type}</Typography>)
+
+    let type=fee.fee_type;
+    if(fee.fee_type=="PERCENT"){
+        type="%";
+    }
+    if(fee.fee_type=="DOLLAR"){
+        type="$";
+    }
+
+   return(<Typography  sx={textStyle}>{fee.fee_name}:{fee.charge}{type} of {fee.of}</Typography>)
   }
   
