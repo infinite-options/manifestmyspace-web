@@ -21,6 +21,7 @@ import { calculateAge } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
 import { makeStyles } from "@material-ui/core/styles";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,6 +106,7 @@ const TenantLease = () => {
     JSON.parse(application.lease_adults).length +
       JSON.parse(application.lease_children).length
   );
+  const [documents, setDocuments] = useState([]);
   // const [rent, setRent] = useState(property.property_listed_rent);
   // const [rentFrequency, setRentFrequency] = useState("Monthly");
   // const [lateFeesAfter, setLateFeesAfter] = useState(
@@ -178,6 +180,18 @@ const TenantLease = () => {
   // const handleAvailableToPayChange = (e) => {
   //   setAvailableToPay(e.target.value);
   // };
+  const handleRemoveFile = (index) => {
+    setDocuments((prevFiles) => {
+      const filesArray = Array.from(prevFiles);
+      filesArray.splice(index, 1);
+      return filesArray;
+    });
+    // setDocumentTypes(prevTypes => {
+    //     const typesArray = [...prevTypes];
+    //     typesArray.splice(index, 1);
+    //     return typesArray;
+    // });
+  };
   const handleCreateLease = async () => {
     setShowSpinner(true);
     await fetch(
@@ -196,22 +210,26 @@ const TenantLease = () => {
         }),
       }
     );
-    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "announcement_title" : "New Lease created",
-                "announcement_msg" : "You have a new lease to be approved for your property",
-                "announcement_sender": getProfileId(),
-                "announcement_date": new Date().toDateString(),
-                "announcement_properties": property.property_uid,
-                "announcement_mode": "LEASE",
-                "announcement_receiver": application.tenant_uid,
-                "announcement_type": ["App"]
-            })
-        })
+    await fetch(
+      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          announcement_title: "New Lease created",
+          announcement_msg:
+            "You have a new lease to be approved for your property",
+          announcement_sender: getProfileId(),
+          announcement_date: new Date().toDateString(),
+          announcement_properties: property.property_uid,
+          announcement_mode: "LEASE",
+          announcement_receiver: application.tenant_uid,
+          announcement_type: ["App"],
+        }),
+      }
+    );
     navigate("/managerDashboard");
     setShowSpinner(false);
   };
@@ -668,11 +686,11 @@ const TenantLease = () => {
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {"Per Day Late Fee"}
+                      {"Available To Pay"}
                     </Typography>
                     <TextField
-                      name="perDay_late_fee"
-                      value={row.perDay_late_fee}
+                      name="available_topay"
+                      value={row.available_topay}
                       variant="filled"
                       fullWidth
                       className={classes.root}
@@ -680,6 +698,7 @@ const TenantLease = () => {
                     />
                   </Stack>
                 </Grid>
+                <Grid item xs={4}></Grid>
                 <Grid item xs={4}>
                   <Stack spacing={-2} m={2}>
                     <Typography
@@ -690,11 +709,11 @@ const TenantLease = () => {
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {"Available To Pay"}
+                      {"Per Day Late Fee"}
                     </Typography>
                     <TextField
-                      name="available_topay"
-                      value={row.available_topay}
+                      name="perDay_late_fee"
+                      value={row.perDay_late_fee}
                       variant="filled"
                       fullWidth
                       className={classes.root}
@@ -722,6 +741,34 @@ const TenantLease = () => {
           ))}
           <Grid item xs={12}>
             <hr />
+          </Grid>
+          <Grid item xs={12}>
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  padding: "5px",
+                  color: "#3D5CAC",
+                }}
+              >
+                <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+                  <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />{" "}
+                  Add Document
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".doc,.docx,.txt,.pdf"
+                  hidden
+                  //onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+
+                  multiple
+                />
+              </Box>
+            </Box>
           </Grid>
           {/* <Grid item xs={6} md={6}>
             <Stack>
