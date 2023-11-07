@@ -367,7 +367,7 @@ function TenantLeases(props) {
                                         Due By
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] ? <> {getDayText(lease.fees[key].due_by)} of the month </> : "N/A"}
+                                        {lease.fees[key] && lease.fees[key].due_by ? <> {getDayText(lease.fees[key].due_by)} of the month </> : "N/A"}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
@@ -377,7 +377,7 @@ function TenantLeases(props) {
                                         Late By
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] ? <> {getDayText(lease.fees[key].late_by)} of the month</> : "N/A"}
+                                        {lease.fees[key] && lease.fees[key].late_by ? <> {getDayText(lease.fees[key].late_by)} of the month</> : "N/A"}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>

@@ -96,17 +96,23 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
+
+  console.log("DEBUG:", application)
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(
     dayjs().add(1, "year").subtract(1, "day")
   );
   const [moveInDate, setMoveInDate] = useState(dayjs());
+
   const [noOfOccupants, setNoOfOccupants] = useState(
     JSON.parse(application.lease_adults).length +
       JSON.parse(application.lease_children).length
   );
   const [documents, setDocuments] = useState([]);
+
+  console.log("# of Occupants", noOfOccupants)
+    
   // const [rent, setRent] = useState(property.property_listed_rent);
   // const [rentFrequency, setRentFrequency] = useState("Monthly");
   // const [lateFeesAfter, setLateFeesAfter] = useState(
@@ -199,9 +205,15 @@ const TenantLease = () => {
 
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
     leaseApplicationFormData.append("lease_status", "PROCESSING");
-    leaseApplicationFormData.append("lease_start", startDate);
-    leaseApplicationFormData.append("lease_end", endDate);
+    leaseApplicationFormData.append("lease_start", startDate.format('MM-DD-YYYY'));
+    leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
     leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+    leaseApplicationFormData.append("lease_move_in_date", moveInDate.format('MM-DD-YYYY'));
+    leaseApplicationFormData.append("documents", documents);
+
+    // for (let [key, value] of leaseApplicationFormData.entries()) {
+    //   console.log(key, value);
+    // }
 
     await fetch(
       `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
