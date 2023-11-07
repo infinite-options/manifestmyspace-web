@@ -90,15 +90,16 @@ function ManagementContractDetails(props) {
 
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`) 
             
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
             
             const responseData = await response.json();
 
             
             // setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
-            const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
+            // const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
+            const properties = responseData["NewPMRequests"]["result"]? responseData["NewPMRequests"]["result"] : [];
             console.log("PROPERTIES", properties);
             setPropertiesData(properties);
 
@@ -107,10 +108,11 @@ function ManagementContractDetails(props) {
             
 
             
-            // const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
-            const announcementPropertiesArray = [contract_property_id];
-            const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
-            // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
+            // // const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
+            // const announcementPropertiesArray = [contract_property_id];
+            // const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
+            // // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
+            const filteredProperties = properties.filter(property => property.property_uid === contract_property_id);
             console.log("FILTERED PROPERTIES", filteredProperties);
             setFilteredPropertiesData(filteredProperties)
 
