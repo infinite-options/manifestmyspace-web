@@ -97,16 +97,30 @@ const TenantLease = () => {
   const { state } = useLocation();
   const { application, property } = state;
   const [showSpinner, setShowSpinner] = useState(false);
-  const [startDate, setStartDate] = useState(dayjs());
-  const [endDate, setEndDate] = useState(
-    dayjs().add(1, "year").subtract(1, "day")
-  );
-  const [moveInDate, setMoveInDate] = useState(dayjs());
+  const [startDate, setStartDate] = useState(formatDate(false));
+  const [endDate, setEndDate] = useState(formatDate(true));
+  const [moveInDate, setMoveInDate] = useState(formatDate(false));
+
   const [noOfOccupants, setNoOfOccupants] = useState(
     JSON.parse(application.lease_adults).length +
       JSON.parse(application.lease_children).length
   );
   const [documents, setDocuments] = useState([]);
+
+  function formatDate(plusOneYear) {
+    const today = new Date();
+    if (plusOneYear) {
+      today.setFullYear(today.getFullYear() + 1);
+      today.setDate(today.getDate() - 1);
+    }
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // remember to add 1 because months are 0-indexed
+    const year = today.getFullYear();
+    const formattedDate = `${month}-${day}-${year}`;
+    return formattedDate
+}
+    
+    
   // const [rent, setRent] = useState(property.property_listed_rent);
   // const [rentFrequency, setRentFrequency] = useState("Monthly");
   // const [lateFeesAfter, setLateFeesAfter] = useState(
