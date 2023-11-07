@@ -89,6 +89,7 @@ const PropertyListings = (props) => {
 
     function sortProperties(leaseData, propertyData) {
         if (JSON.stringify(leaseData) !== "{}") {
+            var activePropertyArray = [];
             const leases = leaseData.Lease_Details.result;
             var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
             leases.forEach((lease) => {
@@ -96,11 +97,15 @@ const PropertyListings = (props) => {
                 // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
                 if (appliedPropertyIndex > -1) { // Make sure the property was found
                     const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
-                    sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
+                    if(appliedProperty.lease_status === "ACTIVE"){
+                        activePropertyArray.push(appliedProperty);
+                    } else{
+                        sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
+                    }
                 }
             });
         
-            setSortedProperties(sortedProperties);
+            setSortedProperties([...activePropertyArray, ...sortedProperties]);
         } else {
             setSortedProperties(propertyData);
         }
@@ -344,16 +349,16 @@ const PropertyListings = (props) => {
                             {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    
-                    {console.log("Sorted Properties", sortedProperties)}
-                    {console.log(tenantLeaseDetails)}
+                    {console.log("sorted properties", sortedProperties)}
                     {sortedProperties.length > 0 && sortedProperties.map((property, index) => {
                         var status = ""
                         const appliedData = tenantLeaseDetails.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
-                            console.log("Found lease data for property", property.property_address, appliedData.lease_status)
+                            console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status)
                             status = appliedData.lease_status;
-                            console.log(`Lease Status for ${appliedData.property_address} ${appliedData.property_unit}: ${status}`)
+                            console.log(appliedData.property_address, "lease status", status)
+                        } else{
+                            console.log("No Lease Data for Property", property.property_address)
                         }
                         return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
                     })}
@@ -376,7 +381,9 @@ function PropertyCard(props) {
     const ppt_images = propertyImages.split(',');
 
     useEffect(() => {
-        console.log(property.property_address, "has status", status)
+        if(status !== "" || status !== null){
+            console.log(property.property_address, "has status", status)
+        }
     }, []);
 
     function parseImageData(data) {
@@ -595,7 +602,34 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Declined {lease.lease_application_date}
+                        Tenant Approved {lease.lease_application_date}
+                    </Typography>
+                </Box>): (null)}
+                {status === "ACTIVE" ? (
+                <Box
+                    sx={{
+                        backgroundColor: "#412591",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Active {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
             </Stack>
