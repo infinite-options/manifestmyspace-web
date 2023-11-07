@@ -48,18 +48,17 @@ const TenantApplicationNav = () => {
     );
   };
   const handleRejectLease = async () => {
+
+    const leaseApplicationFormData = new FormData();
+    leaseApplicationFormData.append("lease_uid", application.lease_uid);
+    leaseApplicationFormData.append("lease_status", "REJECTED");
+
     setShowSpinner(true);
     await fetch(
       `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lease_uid: application.lease_uid,
-          lease_status: "REJECTED",
-        }),
+        body: leaseApplicationFormData
       }
     );
     setShowSpinner(false);

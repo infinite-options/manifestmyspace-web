@@ -97,17 +97,17 @@ function TenantLeases(props) {
     }
 
     async function handleTenantRefuse(){
+
+        const leaseApplicationFormData = new FormData();
+
+        leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+        leaseApplicationFormData.append("lease_status", "REFUSED");
+
         try {
             const response =  await fetch(
                 `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        lease_uid: lease.lease_uid,
-                        lease_status: "REFUSED",
-                    }),
+                    body: leaseApplicationFormData
                 }
             );
             const data = await response.json();
@@ -122,6 +122,10 @@ function TenantLeases(props) {
     }
 
     async function handleTenantAccept(){
+
+        const leaseApplicationFormData = new FormData();
+        leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+
         try {
             var status = "TENANT APPROVED";
             const date = new Date();
@@ -129,17 +133,11 @@ function TenantLeases(props) {
             if (lease.lease_effective_date < date) {
                 status = "ACTIVE";
             }
-    
+            leaseApplicationFormData.append("lease_status", status);
             const response =  await fetch(
                 `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        lease_uid: lease.lease_uid,
-                        lease_status: status,
-                    }),
+                    body: leaseApplicationFormData
                 }
             );
             const data = await response.json();
