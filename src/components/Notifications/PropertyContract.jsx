@@ -243,7 +243,7 @@ function PropertyContract(props) {
                     }}>
                         {/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
                         {/* 789 Maple Lane, San Diego, CA 92101, USA */}
-                        {propertyData.property_address}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}
+                        {propertyData!==undefined && propertyData.property_address}{', '}{propertyData!==undefined && propertyData.property_city}{', '}{propertyData!==undefined && propertyData.property_state}{' '}{propertyData!==undefined && propertyData.property_zip}
                     </Box>
                     <Box sx={{
                         fontSize: '14px',
@@ -256,14 +256,14 @@ function PropertyContract(props) {
                         fontSize: '14px',
                         fontWeight: 'bold',
                     }}>
-                        {propertyData.owner_first_name}{' '}{propertyData.owner_last_name}
+                        {propertyData!==undefined && propertyData.owner_first_name}{' '}{propertyData!==undefined && propertyData.owner_last_name}
                     </Box>
                     <Box sx={{
                         fontSize: '12px',
                         fontWeight: 'bold',
                         paddingTop: '5px',
                     }}>
-                        {propertyData.property_available_to_rent === 1? 'Not Rented' : 'Rented'}
+                        {propertyData!==undefined && propertyData.property_available_to_rent === 1? 'Not Rented' : 'Rented'}
                     </Box>
                     <Box sx={{
                         fontSize: '10px',
