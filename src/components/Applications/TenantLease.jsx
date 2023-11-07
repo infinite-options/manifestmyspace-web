@@ -97,9 +97,14 @@ const TenantLease = () => {
   const { state } = useLocation();
   const { application, property } = state;
   const [showSpinner, setShowSpinner] = useState(false);
-  const [startDate, setStartDate] = useState(formatDate(false));
-  const [endDate, setEndDate] = useState(formatDate(true));
-  const [moveInDate, setMoveInDate] = useState(formatDate(false));
+  const [startDate, setStartDate] = useState(dayjs());
+  const [endDate, setEndDate] = useState(
+    dayjs().add(1, "year").subtract(1, "day")
+  );
+  const [moveInDate, setMoveInDate] = useState(dayjs());
+  // const [startDate, setStartDate] = useState(formatDate(false));
+  // const [endDate, setEndDate] = useState(formatDate(true));
+  // const [moveInDate, setMoveInDate] = useState(formatDate(false));
 
   const [noOfOccupants, setNoOfOccupants] = useState(
     JSON.parse(application.lease_adults).length +
@@ -107,7 +112,7 @@ const TenantLease = () => {
   );
   const [documents, setDocuments] = useState([]);
 
-  function formatDate(plusOneYear) {
+  function formatDate(date, plusOneYear) {
     const today = new Date();
     if (plusOneYear) {
       today.setFullYear(today.getFullYear() + 1);
@@ -207,7 +212,7 @@ const TenantLease = () => {
     // });
   };
   const handleCreateLease = async () => {
-    setShowSpinner(true);
+    // setShowSpinner(true);
 
     const leaseApplicationFormData = new FormData();
 
@@ -217,35 +222,37 @@ const TenantLease = () => {
     leaseApplicationFormData.append("lease_end", endDate);
     leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
 
-    await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
-      {
-        method: "PUT",
-        body: leaseApplicationFormData
-      }
-    );
-    await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          announcement_title: "New Lease created",
-          announcement_msg:
-            "You have a new lease to be approved for your property",
-          announcement_sender: getProfileId(),
-          announcement_date: new Date().toDateString(),
-          announcement_properties: property.property_uid,
-          announcement_mode: "LEASE",
-          announcement_receiver: application.tenant_uid,
-          announcement_type: ["App"],
-        }),
-      }
-    );
-    navigate("/managerDashboard");
-    setShowSpinner(false);
+    console.log(leaseApplicationFormData)
+
+    // await fetch(
+    //   `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
+    //   {
+    //     method: "PUT",
+    //     body: leaseApplicationFormData
+    //   }
+    // );
+    // await fetch(
+    //   `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       announcement_title: "New Lease created",
+    //       announcement_msg:
+    //         "You have a new lease to be approved for your property",
+    //       announcement_sender: getProfileId(),
+    //       announcement_date: new Date().toDateString(),
+    //       announcement_properties: property.property_uid,
+    //       announcement_mode: "LEASE",
+    //       announcement_receiver: application.tenant_uid,
+    //       announcement_type: ["App"],
+    //     }),
+    //   }
+    // );
+    // navigate("/managerDashboard");
+    // setShowSpinner(false);
   };
   return (
     <ThemeProvider theme={theme}>
