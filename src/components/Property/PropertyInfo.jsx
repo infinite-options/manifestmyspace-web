@@ -32,6 +32,7 @@ import timezone from 'dayjs/plugin/timezone';
 import ReactImageGallery from 'react-image-gallery';
 import { useNavigate, useLocation } from 'react-router-dom';
 import backButton from '../Payments/backIcon.png';
+import { set } from 'date-fns';
 
 
 dayjs.extend(utc);
@@ -65,6 +66,8 @@ const PropertyInfo = (props) => {
             setButtonColor("#490404")
         } else if (status === "REFUSED"){
             setButtonColor("#CB8E8E")
+        } else if (status === "ACTIVE"){
+            setButtonColor("#412591")
         }
     }, []);
 
@@ -118,6 +121,8 @@ const PropertyInfo = (props) => {
             return 'Approved'
         } else if (status === "REJECTED"){
             return 'Not Approved'
+        } else if (status === "ACTIVE"){
+            return 'Active'
         }
     }
 

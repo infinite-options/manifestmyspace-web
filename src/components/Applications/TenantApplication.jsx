@@ -15,7 +15,7 @@ import {
     AccordionSummary,
     AccordionDetails,
 } from '@mui/material';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Form, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import backButton from '../Payments/backIcon.png';
 
@@ -171,32 +171,29 @@ export default function TenantApplication(){
             })
         })
 
+        const leaseApplicationData = new FormData();
+        leaseApplicationData.append('lease_property_id', property.property_uid)
+        leaseApplicationData.append('lease_status', "NEW")
+        leaseApplicationData.append('lease_assigned_contacts', JSON.stringify([getProfileId()]))
+        leaseApplicationData.append('lease_documents', "[]")
+        leaseApplicationData.append('lease_adults', tenantProfile?.tenant_adult_occupants)
+        leaseApplicationData.append('lease_children', tenantProfile?.tenant_children_occupants)
+        leaseApplicationData.append('lease_pets', tenantProfile?.tenant_pet_occupants)
+        leaseApplicationData.append('lease_vehicles', tenantProfile?.tenant_vehicle_info)
+        leaseApplicationData.append('lease_referred', "[]")
+        leaseApplicationData.append('lease_rent', "[]")
+        leaseApplicationData.append('lease_application_date', date.toLocaleDateString())
+        leaseApplicationData.append('tenant_uid', getProfileId())
+        
         const leaseApplicationResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "lease_property_id": property.property_uid,
-                "lease_status": "NEW",
-                "lease_assigned_contacts": JSON.stringify([getProfileId()]), // profileId from sender
-                "lease_documents": "[]", // from tenant documents
-                "lease_adults": tenantProfile?.tenant_adult_occupants,
-                "lease_children": tenantProfile?.tenant_children_occupants,
-                "lease_pets": tenantProfile?.tenant_pet_occupants,
-                "lease_vehicles": tenantProfile?.tenant_vehicle_info,
-                "lease_referred": "[]",
-                "lease_rent": "[]", // advertised rent
-                "lease_application_date": date.toLocaleDateString(),
-                "tenant_uid": getProfileId(),
-            })
+            body: leaseApplicationData
         })
 
         
 
         Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
-            console.log(values)
-            navigate(-1) // send success data back to the propertyInfo page
+            navigate("/listings") // send success data back to the propertyInfo page
         })
     }
 
