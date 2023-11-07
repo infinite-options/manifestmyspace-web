@@ -194,20 +194,20 @@ const TenantLease = () => {
   };
   const handleCreateLease = async () => {
     setShowSpinner(true);
+
+    const leaseApplicationFormData = new FormData();
+
+    leaseApplicationFormData.append("lease_uid", application.lease_uid);
+    leaseApplicationFormData.append("lease_status", "PROCESSING");
+    leaseApplicationFormData.append("lease_start", startDate);
+    leaseApplicationFormData.append("lease_end", endDate);
+    leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+
     await fetch(
       `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lease_uid: application.lease_uid,
-          lease_status: "PROCESSING",
-          lease_start: new Date(startDate).toLocaleDateString(),
-          lease_end: new Date(endDate).toLocaleDateString(),
-          lease_fees: fees,
-        }),
+        body: leaseApplicationFormData
       }
     );
     await fetch(
