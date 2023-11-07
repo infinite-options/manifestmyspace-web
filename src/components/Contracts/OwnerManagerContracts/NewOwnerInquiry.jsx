@@ -372,7 +372,6 @@ function PropertyCard(props) {
 
     // const handleContractFeesChange = (feesList) => {
     //     console.log("In handleContractFeesChange()");
-    //     //rohit
     //     //setContractFees() // map to the correct keys
     // }
 

@@ -188,8 +188,44 @@ export default function PMProperties({}) {
     } else {
         return 0
     }
-}
+  }
 
+  const calculateTimeDiff = (date) => {
+    // const announcement_date = new Date("announcementData["announcement_date"]");
+    const announcement_date = new Date(date);
+    // const announcement_date = new Date(Date.UTC(
+    //     announcementData["announcement_date"].getFullYear(),
+    //     announcementData["announcement_date"].getMonth(),
+    //     announcementData["announcement_date"].getDate(),
+    //     announcementData["announcement_date"].getHours(),
+    //     announcementData["announcement_date"].getMinutes(),
+    //     announcementData["announcement_date"].getSeconds()
+    // ));
+    if (announcement_date === null) {
+        return "<TIME AGO>";
+    }
+    const now = new Date();
+    const timeDiff = now - announcement_date;
+
+    const seconds = Math.floor(timeDiff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    let durationString;
+    if (days > 0) {
+        durationString = `${days} days`;
+    } else if (hours > 0) {
+        durationString = `${hours} hours`;
+    } else if (minutes > 0) {
+        durationString = `${minutes} minutes`;
+    } else {
+        durationString = `${seconds} seconds`;
+    }
+
+    console.log(now, announcement_date, durationString, seconds, minutes, hours, days);
+    return durationString;
+  };
 
   useEffect(() => {
     console.log("PMProperties useEffect");
@@ -562,7 +598,7 @@ export default function PMProperties({}) {
                           Open
                         </Box>
                         <Box>
-                          {"<NUM_DAYS>"}
+                          {property.contract_start_date? calculateTimeDiff(property.contract_start_date) : "<NUM_DAYS>"}
                         </Box>
                       </Box>
                     

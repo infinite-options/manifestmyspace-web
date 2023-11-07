@@ -74,7 +74,6 @@ export default function AddProperty({}){
     const [selectedOwner, setSelectedOwner] = useState('');
     const [ownerList, setOwnerList] = useState([]);
     const [selectedImageList, setSelectedImageList] = useState([]);
-    
     const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole==="MANAGER"?true:false);
 
     const maxSteps = selectedImageList.length;

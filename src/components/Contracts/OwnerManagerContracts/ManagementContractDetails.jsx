@@ -21,6 +21,7 @@ import {
     FormControlLabel,
     Select,
     MenuItem,
+    Grid,
 } from '@mui/material';
 import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
@@ -89,15 +90,16 @@ function ManagementContractDetails(props) {
 
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`) 
             
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
             
             const responseData = await response.json();
 
             
             // setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
-            const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
+            // const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
+            const properties = responseData["NewPMRequests"]["result"]? responseData["NewPMRequests"]["result"] : [];
             console.log("PROPERTIES", properties);
             setPropertiesData(properties);
 
@@ -106,10 +108,11 @@ function ManagementContractDetails(props) {
             
 
             
-            // const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
-            const announcementPropertiesArray = [contract_property_id];
-            const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
-            // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
+            // // const announcementPropertiesArray = announcementData.announcement_properties.split(','); //If "announcement_properties" is a string
+            // const announcementPropertiesArray = [contract_property_id];
+            // const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
+            // // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
+            const filteredProperties = properties.filter(property => property.property_uid === contract_property_id);
             console.log("FILTERED PROPERTIES", filteredProperties);
             setFilteredPropertiesData(filteredProperties)
 
@@ -297,6 +300,7 @@ function PropertyCard(props) {
 
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
+    const [showAddContactDialog, setShowAddContactDialog] = useState(false);
 
     const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false)
 
@@ -309,6 +313,7 @@ function PropertyCard(props) {
     const [contractFees, setContractFees] = useState([]);
     const [contractFiles, setContractFiles] = useState([]);
     const [contractFileTypes, setContractFileTypes] = useState([]);
+    const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
 
     
 
@@ -368,9 +373,9 @@ function PropertyCard(props) {
         setShowEditFeeDialog(false);
     };
 
-    
-
-    
+    const handleCloseAddContact = () => {
+        setShowAddContactDialog(false);
+    };
 
     const handleContractNameChange = (event) => {
         setContractName(event.target.value);
@@ -388,6 +393,10 @@ function PropertyCard(props) {
     //     console.log("In handleContractFeesChange()");
     //     //setContractFees() // map to the correct keys
     // }
+
+    const handleAddContact = (newContact) => {
+        setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
+    }
 
     const sendPutRequest = (data) => {
         const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
@@ -452,6 +461,8 @@ function PropertyCard(props) {
         const formData = new FormData();
         let contractFeesJSONString = JSON.stringify(contractFees);
         console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
+        let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
+        console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
         // const data = {
         //     "contract_uid": contractUID,
         //     "contract_name": contractName,
@@ -461,19 +472,20 @@ function PropertyCard(props) {
         //     "contract_status": "SENT"
         // };
         
-        formData.append("contract_uid", contractUID)
-        formData.append("contract_name", contractName)
-        formData.append("contract_start_date", contractStartDate)
-        formData.append("contract_end_date", contractEndDate)
-        formData.append("contract_fees", contractFeesJSONString)
-        formData.append("contract_status", "SENT")
+        formData.append("contract_uid", contractUID);
+        formData.append("contract_name", contractName);
+        formData.append("contract_start_date", contractStartDate);
+        formData.append("contract_end_date", contractEndDate);
+        formData.append("contract_fees", contractFeesJSONString);
+        formData.append("contract_status", "SENT");
+        formData.append("contract_assigned_contacts", contractContactsJSONString);
         // formData.append("contract_documents", contractFiles)
 
         
         if(contractFiles.length){
             const documentsDetails = [];
             [...contractFiles].forEach((file, i) => {
-                formData.append(`file-${i}`, file, file.name)
+                formData.append(`file-${i}`, file, file.name);
                 const fileType = contractFileTypes[i] || '';
                 const documentObject = {
                     // file: file,
@@ -481,7 +493,7 @@ function PropertyCard(props) {
                     fileName: file.name, //may not need filename
                     fileType: fileType,
                 };
-                documentsDetails.push(documentObject)
+                documentsDetails.push(documentObject);
             });
             formData.append("contract_documents_details", JSON.stringify(documentsDetails));
         }
@@ -1112,7 +1124,11 @@ function PropertyCard(props) {
                 marginBottom: '7px',
                 width: '100%',
             }}>
-                <Box>
+                <Box
+                    onClick={()=> {
+                        setShowAddContactDialog(true);
+                    }}
+                >
                     <Box sx={{
                             display: 'flex',
                             flexDirection: 'row',
@@ -1286,7 +1302,7 @@ function PropertyCard(props) {
                         color: "#160449",
                         textTransform: "none",
                     }}>
-                        Decline Offer
+                        {(contractStatus === "NEW")? "Decline Offer" : "Withdraw Offer"}
                     </Typography>
                 </Button>
                 <Button
@@ -1311,7 +1327,7 @@ function PropertyCard(props) {
                         color: "#160449",
                         textTransform: "none",
                     }}>
-                        Send Quote
+                        {(contractStatus === "NEW")? "Send Quote" : "Update Quote"}
                     </Typography>
                 </Button>
             </Box>
@@ -1323,6 +1339,11 @@ function PropertyCard(props) {
             {showEditFeeDialog && (
                 <Box>
                     <EditFeeDialog open={showEditFeeDialog} handleClose={handleCloseEditFee} onEditFee={handleEditFee} feeIndex={indexForEditFeeDialog} fees={contractFees} />
+                </Box>
+            )}
+            {showAddContactDialog && (
+                <Box>
+                    <AddContactDialog open={showAddContactDialog} handleClose={handleCloseAddContact} onAddContact={handleAddContact} />
                 </Box>
             )}
         </>
@@ -2120,6 +2141,182 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                 <DialogActions>
                     <Button onClick={handleClose}>Close</Button>
                     <Button type="submit" onClick={handleEditFee}>Save Fee</Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+
+}
+
+
+function AddContactDialog({ open, handleClose, onAddContact }) {
+
+    const [contactFirstName, setContactFirstName] = useState('');
+    const [contactLastName, setContactLastName] = useState('');
+    const [contactEmail, setContactEmail] = useState('');
+    const [contactPhone, setContactPhone] = useState('');
+
+    const handleSaveContact = (event) => {
+        event.preventDefault();
+        
+        console.log("Adding Contact ");
+        console.log('   firstName:', contactFirstName);
+        console.log('   lastName:', contactLastName);
+        console.log('   email:', contactEmail);
+        console.log('   phone:', contactPhone);
+        
+        const newContact = {
+            contact_first_name: contactFirstName,
+            contact_last_name: contactLastName,
+            contact_email: contactEmail,
+            contact_phone_number: contactPhone,
+        }
+        onAddContact(newContact);
+        handleClose();
+    }
+
+    return (
+        <form onSubmit={handleSaveContact}>
+            <Dialog 
+                open={open}
+                onClose={handleClose}
+                fullWidth
+                maxWidth="sm"
+                sx={{
+                    fontSize: '13px',
+                    fontWeight: 'bold',
+                    padding: '5px',
+                    color: '#3D5CAC',
+                }}
+            >
+                <DialogContent>
+                    {/* Dialog Title */}
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Box 
+                                sx={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    fontSize: '15px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    color: '#3D5CAC',
+                                }}
+                            >
+                                Add Contact
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    {/* First name and last name */}
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{color: '#3D5CAC',}}>First Name</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="contact_first_name"
+                                    placeholder=""
+                                    value={contactFirstName}
+                                    onChange={(event) => {
+                                        setContactFirstName(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{color: '#3D5CAC',}}>Last Name</Box>
+                                <TextField
+                                    name="contact_last_name"
+                                    placeholder=""
+                                    value={contactLastName}
+                                    onChange={(event) => {
+                                        setContactLastName(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                    </Grid>
+                    {/* Email and phone */}
+                    <Grid container spacing={2} sx={{ paddingTop:'10px',}}>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{color: '#3D5CAC',}}>Email</Box>
+                                <TextField
+                                    name="contact_email"
+                                    placeholder=""
+                                    value={contactEmail}
+                                    onChange={(event) => {
+                                        setContactEmail(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                        <Grid 
+                            item
+                            xs={12}
+                            sm={6}
+                        >
+                            <Box sx={{color: '#3D5CAC',}}>Phone Number</Box>
+                                <TextField
+                                    name="contact_phone_number"
+                                    placeholder=""
+                                    value={contactPhone}
+                                    onChange={(event) => {
+                                        setContactPhone(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        onClick={handleClose}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#3D5CAC",
+                            },
+                            backgroundColor:'#9EAED6',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                    >
+                        Close
+                    </Button>
+                    <Button 
+                        type="submit"
+                        onClick={handleSaveContact}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#3D5CAC",
+                            },
+                            backgroundColor:'#9EAED6',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                    >
+                        Save
+                    </Button>
                 </DialogActions>
             </Dialog>
         </form>

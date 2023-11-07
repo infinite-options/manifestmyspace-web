@@ -36,7 +36,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 
-export default function ImageUploader({selectedImageList, setSelectedImageList}){
+export default function ImageUploader({selectedImageList, setSelectedImageList, page}){
 
 
     const handleImageSelect = (event) => {
@@ -126,7 +126,9 @@ export default function ImageUploader({selectedImageList, setSelectedImageList})
                             >
                                 <Grid item xs={2} key={index}>
                                     <img
-                                        src={image.data_url}
+                                        src={page=="Edit"?
+                                         (image.data_url===undefined||image.data_url===null?image:image.data_url)
+                                        :image.data_url}
                                         alt="new"
                                         key={index}
                                         style={{
@@ -140,6 +142,7 @@ export default function ImageUploader({selectedImageList, setSelectedImageList})
                                             borderRadius: '7px',
                                         }}
                                     />
+                                    
                                      <Box
                                         sx={{
                                             position: 'relative',
