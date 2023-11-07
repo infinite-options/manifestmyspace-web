@@ -87,6 +87,7 @@ export default function TenantApplication(){
         if (!tenantProfile){
             return "No Adult Occupants"
         } else {
+            console.log(tenantProfile?.tenant_adult_occupants)
             let info = JSON.parse(tenantProfile?.tenant_adult_occupants)
             setAdultOccupants(info)
             for (const occupant of info){
@@ -178,12 +179,12 @@ export default function TenantApplication(){
             body: JSON.stringify({
                 "lease_property_id": property.property_uid,
                 "lease_status": "NEW",
-                "lease_assigned_contacts": [getProfileId()], // profileId from sender
+                "lease_assigned_contacts": JSON.stringify([getProfileId()]), // profileId from sender
                 "lease_documents": "[]", // from tenant documents
-                "lease_adults": JSON.stringify(adultOccupants),
-                "lease_children": JSON.stringify(childOccupants),
-                "lease_pets": JSON.stringify(petOccupants),
-                "lease_vehicles": JSON.stringify(vehicles),
+                "lease_adults": tenantProfile?.tenant_adult_occupants,
+                "lease_children": tenantProfile?.tenant_children_occupants,
+                "lease_pets": tenantProfile?.tenant_pet_occupants,
+                "lease_vehicles": tenantProfile?.tenant_vehicle_info,
                 "lease_referred": "[]",
                 "lease_rent": "[]", // advertised rent
                 "lease_application_date": date.toLocaleDateString(),
@@ -195,7 +196,7 @@ export default function TenantApplication(){
 
         Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
             console.log(values)
-            navigate(-1)
+            navigate(-1) // send success data back to the propertyInfo page
         })
     }
 
@@ -707,7 +708,7 @@ export default function TenantApplication(){
                                         }}
                                         key={index}
                                     >
-                                        {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
+                                        {occupant.name} {occupant.type} | {occupant.relationship} | DOB: {occupant.dob}
                                     </Typography>    
                                 ))}
                         </Grid>
