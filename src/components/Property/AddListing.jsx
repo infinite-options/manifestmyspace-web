@@ -53,7 +53,7 @@ export default function AddListing({}){
     const { getProfileId } = useUser();
     const propertyData = location.state.item
     const propertyId = location.state.propertyId;
-
+    const { user, selectedRole, selectRole, Name } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
 
@@ -86,8 +86,11 @@ export default function AddListing({}){
 
     const [activeDate, setActiveDate] = useState("");
     const [isDepositLastMonth, setIsDepositLastMonth] = useState(false);
-
-
+    const [isListed, setListed] = useState(false);
+   
+    const handleListedChange = (event) => {
+        setListed(event.target.checked);
+    };
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -147,7 +150,7 @@ export default function AddListing({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
-
+        formData.append('property_available_to_rent', isListed?1:0);
 
         for (let [key, value] of formData.entries()) {
             console.log(key, value);    
@@ -475,6 +478,24 @@ export default function AddListing({}){
                                             onChange={(e) => setNotes(e.target.value)}
                                             value={notes}
                                         />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                    {selectedRole==='MANAGER'|| selectedRole==='OWNER'?
+                                    <Stack
+                                        direction="column"
+                                        justifyContent="left"
+                                        padding="15px"
+                                        width="85%"
+                                    >
+                                        <FormControlLabel control={
+                                            <Checkbox
+                                                checked={isListed}
+                                                onChange={handleListedChange}
+                                            />}
+                                            label="Available to rent"
+                                        />
+                                    </Stack>
+                                    :<div></div>}
                                     </Grid>
                                 </Grid>
                             </Box>
