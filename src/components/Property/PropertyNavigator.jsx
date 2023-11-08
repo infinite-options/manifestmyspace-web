@@ -61,6 +61,7 @@ export default function PropertyNavigator({index, propertyData}){
 
     //const [propertyId, setPropertyId] = useState('200-000028')
     const [contractsFeeData, setContractsFeeData] = useState([]) 
+    const [activeContracts, setActiveContracts] = useState([]) 
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
     "No Tenant";
     const [showIconButton, setShowIconButton]= useState(false);
@@ -95,7 +96,7 @@ export default function PropertyNavigator({index, propertyData}){
                 console.log("Contract Data", contractdata)
 
                 const contracts = [];
-               
+        
                 contractdata.result.forEach((contract) => {
                   
                     if (contract.contract_property_id==propertyId) {
@@ -106,6 +107,7 @@ export default function PropertyNavigator({index, propertyData}){
                             documents: contract.contract_documents,
                             contact: contract.contract_assigned_contacts,
                             contract_status : contract.contract_status,
+                            contract_business_id: contract.contract_business_id,
                         }
                         //console.log("C fee "+JSON.stringify(contract.contract_fees))
                         //contracts.push(contract.contract_fees); 
@@ -114,29 +116,34 @@ export default function PropertyNavigator({index, propertyData}){
                     }
                 });
                 
+                let activeContractsArray = [];
                 let obj = {};
                 const feeData = [];
                 contracts.forEach((contractfee2) => {
 
-                    var db = JSON.stringify(contractfee2.fees);
-                    let contractArray = JSON.parse(db);
-                   
-                    obj.contract_uid = contractfee2.contract_uid
-                    obj.contract_status = contractfee2.contract_status
-                    let contractfee1 = JSON.parse(contractArray)
-                    obj.fees = contractfee1;
-                    obj.documents = contractfee2.documents;
-                    let contactObj = JSON.parse(contractfee2.contact);
-                    if (contactObj!==undefined && contactObj!==null){
-                        obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+                    if(contractfee2.contract_status=="SENT"){
+                        var db = JSON.stringify(contractfee2.fees);
+                        let contractArray = JSON.parse(db);
+                       
+                        obj.contract_uid = contractfee2.contract_uid
+                        obj.contract_status = contractfee2.contract_status
+                        let contractfee1 = JSON.parse(contractArray)
+                        obj.fees = contractfee1;
+                        obj.documents = contractfee2.documents;
+                        let contactObj = JSON.parse(contractfee2.contact);
+                        if (contactObj!==undefined && contactObj!==null){
+                            obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+                        }
+                        obj.contact = "";
+                        console.log(JSON.stringify(obj))
+                        feeData.push(obj)        
+                    }else if (contractfee2.contract_status=="ACTIVE"){
+                        activeContractsArray.push(contractfee2.contract_business_id)
                     }
-                    obj.contact = "";
-                    console.log(JSON.stringify(obj))
-                    feeData.push(obj)    
                  
                 });
 
-               
+                setActiveContracts(activeContractsArray);
                 setContractsFeeData(feeData);
 
             } catch (error) {
@@ -447,7 +454,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                     paddingRight: "10px"
                                                 }}
                                             >
-                                                View Contract
+                                                View Lease
                                             </Typography>
                                             <img src={LeaseIcon} style={{ margin:'0px'}}/>
                                         </Button>}
@@ -459,7 +466,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                PM Contract Expiring : {item.lease_end}
+                                                Lease Expiring : {item.lease_end}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -787,9 +794,12 @@ export default function PropertyNavigator({index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                {(item.lease_start && item.tenant_uid)?
-                                                `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
-                                                "No PM Quotes"}
+                                               {activeContracts.length>0?
+                                               activeContracts.map(contract => {
+                                                return( <ActiveContract contract={contract}/>)
+                                               })
+                                               :"No PM Quotes"}
+                                                
                                         </Typography>
                                         </Box>
                                     </Grid>
@@ -858,3 +868,19 @@ export default function PropertyNavigator({index, propertyData}){
         </Paper>
     )
 }
+
+function ActiveContract(props) {
+
+    const textStyle = {
+        textTransform: 'none',
+        color: theme.typography.propertyPage.color,
+        fontWeight: theme.typography.light.fontWeight,
+        fontSize:theme.typography.smallFont,
+    };
+
+    let contract = props.contract;
+
+   return(<Typography  sx={textStyle}>{contract}</Typography>)
+  }
+  
+

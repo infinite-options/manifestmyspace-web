@@ -43,7 +43,7 @@ export default function EditProperty({}){
     const propertyData = propertyList[index];
     // console.log("Property Id", propertyId)
     console.log("Property Data in Edit Property", propertyData)
-
+    const { user, selectedRole, selectRole, Name } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
 
@@ -782,6 +782,7 @@ export default function EditProperty({}){
                             </Box>
                         </Stack>
                     </Paper>
+                    {/* {selectedRole==='MANAGER'?
                     <Stack
                         direction="column"
                         justifyContent="left"
@@ -796,6 +797,7 @@ export default function EditProperty({}){
                             label="Available to rent"
                         />
                     </Stack>
+                    :<div></div>}  */}
                     {/* Submit Button */}
                     <Stack
                         direction="column"
