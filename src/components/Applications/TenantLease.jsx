@@ -45,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
 
 const initialFees = (property, application) => {
   const fees = [];
+  console.log('--debug-- property', property)
+  console.log('--debug-- application', application)
   if (property.property_listed_rent) {
     fees.push({
       id: fees.length + 1,
@@ -113,27 +115,6 @@ const TenantLease = () => {
 
   console.log("# of Occupants", noOfOccupants)
     
-//   const initialFees = (property, application) => {
-//     var fees = []
-//     console.log("initialFees", property, application)
-//     if (fees.length === 0) {
-//         fees.push({
-//             id: fees.length + 1,
-//             fee_name: "",
-//             fee_type: "$",
-//             frequency: "",
-//             charge: "",
-//             due_by: "",
-//             late_by: "",
-//             late_fee: "",
-//             perDay_late_fee: "",
-//             available_topay: "",
-//         });
-//     }
-//     console.log(fees)
-//     return fees
-//   }
-
   const [fees, setFees] = useState(initialFees(property, application));
   
   const addFeeRow = () => {
@@ -160,6 +141,7 @@ const TenantLease = () => {
     setFees(list);
   }
   const handleFeeChange = (e, index) => {
+    console.log("handleFeeChange", e, index)
     const { name, value } = e.target;
     const list = [...fees];
     list[index - 1][name] = value;
@@ -750,25 +732,50 @@ const TenantLease = () => {
                     />
                   </Stack>
                 </Grid>
+                <Grid item xs={12}>
+                    <Box
+                        sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        }}
+                    >
+                        <Button onClick={() => deleteFeeRow(row.id)}
+                            sx={{
+                                textTransform: "none",
+                                backgroundColor: "#CB8E8E",
+                                color: "#160449"
+                            }}>
+                            Delete Fee
+                        </Button>
+                    </Box>
+                </Grid>
               </Grid>
-              {row.id === fees.length ? (
+              {/* {row.id === fees.length ? (
                 <Stack
                   direction="row"
                   sx={{
                     display: "flex",
                   }}
                 >
-                    <Box sx={{
-                        justifyContent: "left",
-                    }}>
-                        <div onClick={deleteFeeRow(row)} style={{ cursor: "pointer" }}>
-                            <img src={AddFeeRowImg} alt="add fee" />
-                        </div>
-                    </Box>
+                <Box
+                    sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    }}
+                >
+                    <Button onClick={deleteFeeRow(row.id)}
+                        sx={{
+                            textTransform: "none",
+                            backgroundColor: "#9EAED6",
+                            color: "#160449"
+                        }}>
+                        Delete Fee
+                    </Button>
+                </Box>
                 </Stack>
               ) : (
                 <hr />
-              )}
+              )} */}
             </Grid>
           ))}
             <Grid item xs={12}>
@@ -781,7 +788,8 @@ const TenantLease = () => {
                     <Button onClick={addFeeRow}
                         sx={{
                             textTransform: "none",
-                            backgroudnColor: "#000000",
+                            backgroundColor: "#9EAED6",
+                            color: "#160449"
                         }}>
                         Add Fee
                     </Button>
