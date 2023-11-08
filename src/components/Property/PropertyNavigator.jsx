@@ -108,6 +108,7 @@ export default function PropertyNavigator({index, propertyData}){
                             contact: contract.contract_assigned_contacts,
                             contract_status : contract.contract_status,
                             contract_business_id: contract.contract_business_id,
+                            business_name: contract.business_name,
                         }
                         //console.log("C fee "+JSON.stringify(contract.contract_fees))
                         //contracts.push(contract.contract_fees); 
@@ -121,7 +122,11 @@ export default function PropertyNavigator({index, propertyData}){
                 const feeData = [];
                 contracts.forEach((contractfee2) => {
 
-                    if(contractfee2.contract_status=="SENT"){
+                    if(contractfee2.contract_status=="NEW"
+                    || contractfee2.contract_status=="SENT"
+                    ||contractfee2.contract_status=="REFUSED"
+                    || contractfee2.contract_status=="WITHDRAW"
+                    ||contractfee2.contract_status=="REJECT"){
                         var db = JSON.stringify(contractfee2.fees);
                         let contractArray = JSON.parse(db);
                        
@@ -138,7 +143,7 @@ export default function PropertyNavigator({index, propertyData}){
                         console.log(JSON.stringify(obj))
                         feeData.push(obj)        
                     }else if (contractfee2.contract_status=="ACTIVE"){
-                        activeContractsArray.push(contractfee2.contract_business_id)
+                        activeContractsArray.push(contractfee2)
                     }
                  
                 });
@@ -880,7 +885,7 @@ function ActiveContract(props) {
 
     let contract = props.contract;
 
-   return(<Typography  sx={textStyle}>{contract}</Typography>)
+   return(<Typography  sx={textStyle}>{contract.contract_business_id} {contract.business_name}</Typography>)
   }
   
 
