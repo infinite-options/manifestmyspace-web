@@ -20,14 +20,20 @@ function ImageCarousel(props) {
         <>
             <Box
                 sx={{
-                    width: '20%',
+                    width: '10%',
                     height: '150px',
                     backgroundColor: '#F2F2F2',
                     backgroundImage: currentImageIndex > 0? `url(${images[currentImageIndex - 1]})` : ``,
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundPosition: 'right',
                     backgroundRepeat: 'no-repeat',
-                    opacity: '0.5',
+                    opacity: '0.7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    '@media screen and (max-width: 600px)': {
+                        width: '20%',
+                    },
                 }}
                 onClick={ ()=> {
                         setCurrentImageIndex(currentImageIndex > 0? currentImageIndex - 1 : 0)
@@ -36,8 +42,6 @@ function ImageCarousel(props) {
             >
                 <ArrowBackIosIcon
                     sx={{
-                        marginTop: '100%',
-                        marginLeft: '30%',
                         fontWeight: 'bold',
                     }}
                 />
@@ -45,7 +49,7 @@ function ImageCarousel(props) {
             </Box>
             <Box
                 sx={{
-                    width: '60%',
+                    
                     height: '150px',
                     backgroundColor: 'black',
                 }}
@@ -59,6 +63,7 @@ function ImageCarousel(props) {
                     <img src={images[currentImageIndex]} alt="Property Img" style={{
                             width: '100%',
                             height: '100%',
+                            objectFit: 'contain',
                     }} />
 
                 </Box>
@@ -66,14 +71,20 @@ function ImageCarousel(props) {
             </Box>
             <Box
                 sx={{
-                    width: '20%',
+                    width: '10%',
                     height: '150px',
                     backgroundColor: '#F2F2F2',
                     backgroundImage: currentImageIndex < images.length - 1? `url(${images[currentImageIndex + 1]})` : ``,
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundPosition: 'left',
                     backgroundRepeat: 'no-repeat',
                     opacity: '0.7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    '@media screen and (max-width: 600px)': {
+                        width: '20%',
+                    },
                 
                 }}
                 onClick={ ()=> {
@@ -83,8 +94,6 @@ function ImageCarousel(props) {
             >
                 <ArrowForwardIosIcon
                     sx={{
-                        marginTop: '100%',
-                        marginLeft: '30%',
                         fontWeight: 'bold',
                     }}
                 />
