@@ -256,7 +256,7 @@ export default function PMQuotesRequested({}){
 
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                    return  data.contract_status=="SENT" && <div>
+                                    return  <div>
                                         <DocumentCard data={data}/>
                                         <Stack
                         direction="row"
@@ -365,6 +365,10 @@ function DocumentCard(props) {
                 </Box>                
                 <Box>
                 <Typography sx={textStyle}> Area of service:{obj.city} +-{obj.miles} miles</Typography>
+                </Box>
+                
+                <Box>
+                <Typography sx={textStyle}> Status:{obj.contract_status}</Typography>
                 </Box>
                 <Box>
                 <Typography sx={textStyle}> Estimated Fees </Typography>
