@@ -551,7 +551,7 @@ export default function PMProperties({}) {
                     <Box
                       sx={{
                         backgroundColor: '#428038',
-                        width: "50%", 
+                        width: "25%", 
                         height: "100%",
                         display: "flex",
                         justifyContent: "center",

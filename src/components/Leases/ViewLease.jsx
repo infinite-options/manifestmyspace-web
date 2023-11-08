@@ -26,12 +26,16 @@ const ViewLease = (props) => {
     const handleBackButton = () => {};
 
     const handleViewButton = (leaseData) => {
-        navigate('/leaseDocument',{
-            state:{
-                document: leaseData.ld_link
-            }
-        }
-        );
+        console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
+        let link = JSON.parse(leaseData.lease_documents)[0]?.link
+        
+        // navigate('/leaseDocument',{
+        //     state:{
+        //         document: leaseData.ld_link
+        //     }
+        // }
+        // );
+        window.open(link,'_blank', 'rel=noopener noreferrer')
     };
 
     const handleRenewLease = () => {
@@ -138,15 +142,15 @@ const ViewLease = (props) => {
                             </Typography>
                         </Box>
                         <Box position="absolute" right={0}
-                        onClick={()=>{handleViewButton(leaseData)}}>
-                                <Visibility
-                                    sx={{
-                                        color: theme.typography.primary.black,
-                                        fontSize: '20px',
-                                        margin: '5px',
-                                    }}
-                                />
-                            
+                        onClick={()=>{handleViewButton(leaseData)}}
+                        >
+                            <Visibility
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontSize: '20px',
+                                    margin: '5px',
+                                }}
+                            />
                         </Box>
                     </Stack>
                     <Table>
