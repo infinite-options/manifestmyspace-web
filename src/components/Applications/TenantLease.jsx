@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import theme from "../../theme/theme";
@@ -45,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
 
 const initialFees = (property, application) => {
   const fees = [];
+  console.log('--debug-- property', property)
+  console.log('--debug-- application', application)
   if (property.property_listed_rent) {
     fees.push({
       id: fees.length + 1,
@@ -113,19 +115,8 @@ const TenantLease = () => {
 
   console.log("# of Occupants", noOfOccupants)
     
-  // const [rent, setRent] = useState(property.property_listed_rent);
-  // const [rentFrequency, setRentFrequency] = useState("Monthly");
-  // const [lateFeesAfter, setLateFeesAfter] = useState(
-  //   application.lease_rent_late_by
-  // );
-  // const [lateFeesPerDay, setLateFeesPerDay] = useState(
-  //   application.lease_rent_perDay_late_fee
-  // );
-  // const [rentDueDate, setRentDueDate] = useState(application.lease_rent_due_by);
-  // const [availableToPay, setAvailableToPay] = useState(
-  //   application.lease_rent_available_topay
-  // );
   const [fees, setFees] = useState(initialFees(property, application));
+  
   const addFeeRow = () => {
     setFees((prev) => [
       ...prev,
@@ -143,7 +134,14 @@ const TenantLease = () => {
       },
     ]);
   };
+
+  const deleteFeeRow = (index) => {
+    const list = [...fees];
+    list.splice(index - 1, 1);
+    setFees(list);
+  }
   const handleFeeChange = (e, index) => {
+    console.log("handleFeeChange", e, index)
     const { name, value } = e.target;
     const list = [...fees];
     list[index - 1][name] = value;
@@ -544,6 +542,7 @@ const TenantLease = () => {
           <Grid item xs={12}>
             <hr />
           </Grid>
+          {console.log("Fees right before we loop through it", fees)}
           {fees.map((row) => (
             <Grid item xs={12} key={row.id}>
               <Grid
@@ -733,27 +732,69 @@ const TenantLease = () => {
                     />
                   </Stack>
                 </Grid>
+                <Grid item xs={12}>
+                    <Box
+                        sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        }}
+                    >
+                        <Button onClick={() => deleteFeeRow(row.id)}
+                            sx={{
+                                textTransform: "none",
+                                backgroundColor: "#CB8E8E",
+                                color: "#160449"
+                            }}>
+                            Delete Fee
+                        </Button>
+                    </Box>
+                </Grid>
               </Grid>
-              {row.id === fees.length ? (
+              {/* {row.id === fees.length ? (
                 <Stack
                   direction="row"
                   sx={{
                     display: "flex",
-                    justifyContent: "right",
                   }}
                 >
-                  <div onClick={addFeeRow} style={{ cursor: "pointer" }}>
-                    <img src={AddFeeRowImg} alt="add fee" />
-                  </div>
+                <Box
+                    sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    }}
+                >
+                    <Button onClick={deleteFeeRow(row.id)}
+                        sx={{
+                            textTransform: "none",
+                            backgroundColor: "#9EAED6",
+                            color: "#160449"
+                        }}>
+                        Delete Fee
+                    </Button>
+                </Box>
                 </Stack>
               ) : (
                 <hr />
-              )}
+              )} */}
             </Grid>
           ))}
-          <Grid item xs={12}>
-            <hr />
-          </Grid>
+            <Grid item xs={12}>
+                <Box
+                    sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    }}
+                >
+                    <Button onClick={addFeeRow}
+                        sx={{
+                            textTransform: "none",
+                            backgroundColor: "#9EAED6",
+                            color: "#160449"
+                        }}>
+                        Add Fee
+                    </Button>
+                </Box>
+            </Grid>
           <Grid item xs={12}>
             <Box>
               <Box
@@ -776,188 +817,11 @@ const TenantLease = () => {
                   accept=".doc,.docx,.txt,.pdf"
                   hidden
                   //onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
-
                   multiple
                 />
               </Box>
             </Box>
           </Grid>
-          {/* <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Rent"}
-              </Typography>
-              <TextField
-                name="rent"
-                value={rent}
-                onChange={handleRentChange}
-                variant="filled"
-                fullWidth
-                placeholder="$"
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "15px",
-                  },
-                }}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Rent Frequency"}
-              </Typography>
-              <Select
-                value={rentFrequency}
-                onChange={handleRentFrequencyChange}
-                sx={{
-                  backgroundColor: "#D6D5DA",
-                  borderRadius: 10,
-                  height: 40,
-                }}
-              >
-                <MenuItem value="Monthly">{"Monthly"}</MenuItem>
-                <MenuItem value="Yearly">{"Yearly"}</MenuItem>
-              </Select>
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Late Fees After"}
-              </Typography>
-              <TextField
-                name="lateFeesAfter"
-                value={lateFeesAfter}
-                onChange={handleLateFeesAfterChange}
-                variant="filled"
-                fullWidth
-                placeholder="days"
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "15px",
-                  },
-                }}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Late Fees Per Day"}
-              </Typography>
-              <TextField
-                name="lateFeesPerDay"
-                value={lateFeesPerDay}
-                onChange={handleLateFeesPerDayChange}
-                variant="filled"
-                fullWidth
-                placeholder="$"
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "15px",
-                  },
-                }}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Rent Due Date"}
-              </Typography>
-              <TextField
-                name="rentDueDate"
-                value={rentDueDate}
-                onChange={handleRentDueDateChange}
-                variant="filled"
-                fullWidth
-                placeholder="of month"
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "15px",
-                  },
-                }}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Available To Pay"}
-              </Typography>
-              <TextField
-                name="availableToPay"
-                value={availableToPay}
-                onChange={handleAvailableToPayChange}
-                variant="filled"
-                fullWidth
-                placeholder="days before"
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "15px",
-                  },
-                }}
-              />
-            </Stack>
-          </Grid> */}
           <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
             <Button
               onClick={handleCreateLease}
@@ -971,7 +835,7 @@ const TenantLease = () => {
                 },
               }}
             >
-              {"Create Lease"}
+              Create Lease
             </Button>
           </Grid>
         </Grid>
