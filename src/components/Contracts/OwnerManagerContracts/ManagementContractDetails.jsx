@@ -301,6 +301,7 @@ function PropertyCard(props) {
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
     const [showAddContactDialog, setShowAddContactDialog] = useState(false);
+    const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
 
     const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false)
 
@@ -312,6 +313,8 @@ function PropertyCard(props) {
     const [contractStatus, setContractStatus] = useState("");
     const [contractFees, setContractFees] = useState([]);
     const [contractFiles, setContractFiles] = useState([]);
+    const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
+    const [contractDocument, setContractDocument] = useState(null);
     const [contractFileTypes, setContractFileTypes] = useState([]);
     const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
 
@@ -324,6 +327,19 @@ function PropertyCard(props) {
         console.log("CONTRACT FEES JSON string- ", JSONstring);
     }, [contractFees]);
 
+    useEffect(()=> {
+        console.log("CONTRACT FILE TYPES - ", contractFileTypes);
+
+        let JSONstring = JSON.stringify(contractFileTypes);
+        console.log("CONTRACT FEES JSON string- ", JSONstring);
+    }, [contractFileTypes]);
+
+    useEffect(()=> {
+        console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
+
+        let JSONstring = JSON.stringify(previouslyUploadedDocs);
+        console.log("CONTRACT FEES JSON string- ", JSONstring);
+    }, [previouslyUploadedDocs]);
     
 
     const handleAddFee = (newFee) => {
@@ -454,6 +470,21 @@ function PropertyCard(props) {
         sendPutRequest(formData);
         
     };
+
+    const checkFileTypeSelected = () => {
+        for (let i = 0; i < contractFiles.length; i++) {
+          if (i >= contractFileTypes.length) {
+            return false; // Return false if the index is out of bounds
+          }
+          const fileType = contractFileTypes[i];
+          console.log("FILE TYPE: ", fileType);
+          if (!fileType || fileType.trim() === "") {
+            return false;
+          }
+        }
+        setShowMissingFileTypePrompt(false);
+        return true;
+    };
     
 
     const handleSendQuoteClick = () => {
@@ -480,6 +511,14 @@ function PropertyCard(props) {
         formData.append("contract_status", "SENT");
         formData.append("contract_assigned_contacts", contractContactsJSONString);
         // formData.append("contract_documents", contractFiles)
+
+        const hasMissingType = !checkFileTypeSelected();
+        console.log("HAS MISSING TYPE", hasMissingType);
+
+        if (hasMissingType) {
+            setShowMissingFileTypePrompt(true);
+            return;
+        }
 
         
         if(contractFiles.length){
@@ -527,6 +566,12 @@ function PropertyCard(props) {
             setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
             setContractStatus(contractData["contract_status"]? contractData["contract_status"] : "");
             setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
+            const oldDocs = (contractData["contract_documents"]? JSON.parse(contractData["contract_documents"]): []);
+            setPreviouslyUploadedDocs(oldDocs);
+            const contractDoc = oldDocs?.find(doc => doc.type === "contract");
+            if(contractDoc){
+                setContractDocument(contractDoc);
+            }
           };
       
           fetchData();
@@ -542,7 +587,7 @@ function PropertyCard(props) {
             <Box sx={{
                 display: 'flex',
                 padding: '5px',
-                justifyContent: 'space-evenly',
+                justifyContent: 'center',
                 alignItems: 'center',
                 fontSize: '20px',
                 color: '#160449',
@@ -666,17 +711,31 @@ function PropertyCard(props) {
                         display: 'flex',
                         flexDirection: 'column',
                     }}>
-                    <Box sx={{
-                                fontSize: '13px',
-                                fontWeight: 'bold',
-                                padding: '5px',
-                                paddingBottom: '0px',
-                                color: 'text.darkblue',
-                        }}
-                    >
+                        {contractDocument? (
+                            
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    paddingBottom: '0px',
+                                    color: 'text.darkblue',
+                                }}
+                            >
                         
-                            View Contract <DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC'}} />
-                    </Box>
+                                Contract:
+                                <a href={contractDocument.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'text.darkblue', }}>
+                                    <Box sx={{cursor:'pointer',}}>
+                                        <DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC'}} />
+                                    </Box>
+                                </a>
+                            </Box>
+                            
+                            ):(
+                                <></>
+                            )
+                        }
                     <Box sx={{
                                 fontSize: '13px',
                                 fontWeight: 'bold',
@@ -736,7 +795,6 @@ function PropertyCard(props) {
                                 color: 'text.darkblue',
                         }}
                     >
-                        
                             $ Per SqFt
                     </Box>
                     <Box sx={{
@@ -1115,6 +1173,173 @@ function PropertyCard(props) {
                     Annual Postage and Communication Fee: $20
                 </Box> */}
             </Box>
+            {
+                previouslyUploadedDocs.length? (
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                    }}>
+                        
+                        <Box
+                            sx={{
+                                fontSize: '15px',
+                                fontWeight: 'bold',
+                                paddingTop: '10px',
+                                paddingLeft: '5px',
+                                color: '#3D5CAC',
+                                width: '100%',
+                            }}
+                        >
+                            Previously Uploaded Documents:
+                            <Box
+                                sx={{
+                                    display:'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    paddingTop: '5px',
+                                    color: 'black',
+                                }}
+                            >
+                                <Box>filename</Box>
+                                <Box>type</Box>
+                            </Box>
+                            {[...previouslyUploadedDocs].map((doc, i) => (                                
+                                <Box
+                                    key={i} 
+                                    sx={{
+                                        display:'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                        <Box
+                                            sx={{
+                                                // height: '16px',
+                                                width: '100%', 
+                                                
+                                                
+                                                cursor: 'pointer', // Change cursor to indicate clickability
+                                                color: '#3D5CAC',
+                                            }}
+                                        >
+                                        {doc.filename}
+                                        </Box>
+                                    </a>
+                                    {doc.type}
+                                </Box>
+        
+                                
+                            ))}
+                        </Box>
+        
+                    </Box>
+                ) : (<></>)
+            }
+            {
+                contractFiles.length? (
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                    }}>
+                        
+                        <Box
+                            sx={{
+                                fontSize: '15px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                                width: '100%',
+                            }}
+                        >
+                            Added Documents:
+                            {[...contractFiles].map((f, i) => (
+                                <Box
+                                    key={i} 
+                                    sx={{
+                                        display:'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            
+                                            // height: '16px',
+                                            width: '50%', // Adjust the width as needed
+                                            padding: '8px', // Adjust the padding as needed
+                                        }}
+                                    >
+                                    {f.name}
+                                    </Box>
+                                    <Select
+                                        value={contractFileTypes[i]}
+                                        label="Document Type"
+                                        onChange={(e) => {
+                                                const updatedTypes = [...contractFileTypes];
+                                                updatedTypes[i] = e.target.value;
+                                                setContractFileTypes(updatedTypes);
+                                            }
+                                        }
+                                        required
+                                        sx={{
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                            width: '40%', // Adjust the width as needed
+                                            padding: '8px', // Adjust the padding as needed
+                                        }}
+                                    >
+                                        <MenuItem value={"contract"}>contract</MenuItem>
+                                        <MenuItem value={"other"}>other</MenuItem>
+                                    </Select>
+                                    <Button 
+                                        variant="text"
+                                        onClick={() => {
+                                            // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
+                                            handleRemoveFile(i)
+                                        }}
+                                        sx={{
+                                            width: '10%', 
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC', 
+                                        }}
+                                        
+                                    >
+                                        <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                    </Button>
+                                </Box>
+        
+                                
+                            ))}
+                            
+                            {showMissingFileTypePrompt && (
+                                <Box
+                                    sx={{
+                                        color: 'red',
+                                        fontSize: '13px',
+                                    }}
+                                >
+                                    Please select document types for all documents before proceeding.
+                                </Box>
+                            )}
+                        </Box>
+        
+                    </Box>
+                ) : (<></>)
+            }
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -1183,92 +1408,7 @@ function PropertyCard(props) {
                 </Box>
 
             </Box>
-            {
-                contractFiles.length? (
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent:'space-between',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                    }}>
-                        
-                        <Box
-                            sx={{
-                                fontSize: '16px',
-                                fontWeight: 'bold',
-                                padding: '5px',
-                                color: '#3D5CAC',
-                                width: '100%',
-                            }}
-                        >
-                            Added Documents:
-                            {[...contractFiles].map((f, i) => (
-                                <Box
-                                    key={i} 
-                                    sx={{
-                                        display:'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            
-                                            // height: '16px',
-                                            width: '50%', // Adjust the width as needed
-                                            padding: '8px', // Adjust the padding as needed
-                                        }}
-                                    >
-                                    {f.name}
-                                    </Box>
-                                    <Select
-                                        value={contractFileTypes[i]}
-                                        label="Document Type"
-                                        onChange={(e) => {
-                                                const updatedTypes = [...contractFileTypes];
-                                                updatedTypes[i] = e.target.value;
-                                                setContractFileTypes(updatedTypes);
-                                            }
-                                        }
-                                        sx={{
-                                            backgroundColor: '#D6D5DA',
-                                            height: '16px',
-                                            width: '40%', // Adjust the width as needed
-                                            padding: '8px', // Adjust the padding as needed
-                                        }}
-                                    >
-                                        <MenuItem value={"contract"}>contract</MenuItem>
-                                        <MenuItem value={"other"}>other</MenuItem>
-                                    </Select>
-                                    <Button 
-                                        variant="text"
-                                        onClick={() => {
-                                            // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
-                                            handleRemoveFile(i)
-                                        }}
-                                        sx={{
-                                            width: '10%', 
-                                            cursor: 'pointer',
-                                            fontSize: '14px',
-                                            fontWeight: 'bold', 
-                                            color: '#3D5CAC', 
-                                        }}
-                                        
-                                    >
-                                        <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
-                                    </Button>
-                                </Box>
-        
-                                
-                            ))}
-                        </Box>
-        
-                    </Box>
-                ) : (<></>)
-            }
+            
             
             <Box sx={{
                 display: 'flex',
