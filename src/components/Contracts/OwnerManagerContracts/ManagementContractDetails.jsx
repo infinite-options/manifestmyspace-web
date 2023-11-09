@@ -562,7 +562,7 @@ function PropertyCard(props) {
 
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-            console.log("ROHIT - props p contractUID:", props.contractUID);
+            console.log("props.contractUID:", props.contractUID);
             setContractUID(props.contractUID); 
             const contractData = data["result"].find(contract => contract.contract_uid === props.contractUID);
             
