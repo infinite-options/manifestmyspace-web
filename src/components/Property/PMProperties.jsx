@@ -175,6 +175,9 @@ export default function PMProperties({}) {
     console.log(propertyList);
   }, [propertyList]);
   const [displayedItems, setDisplayedItems] = useState([]);
+  // useEffect(()=> {
+  //   console.log("displayedItems", displayedItems);
+  // }, [displayedItems]);
   // const [maintenanceData, setMaintenanceData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const profileId = getProfileId();
@@ -495,7 +498,7 @@ export default function PMProperties({}) {
                       </Button>
                     </Badge>
                   </ListItem>
-                ) : (
+                ) : (                  
                   <ListItem
                     key={index}
                     style={{
@@ -508,7 +511,8 @@ export default function PMProperties({}) {
                       paddingRight: "10px",
                     }}
                     onClick={() => {
-                        navigate('/managementContractDetails', {state: {contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
+                        console.log("Contract clicked - contract_uid: ", property.contract_uid);
+                        navigate('/managementContractDetails', {state: {contract_uid: property.contract_uid, contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
                     }} 
                   >
                     <Avatar
