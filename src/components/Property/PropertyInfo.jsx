@@ -46,6 +46,7 @@ const PropertyInfo = (props) => {
     const index = location.state.index;
     const property = location.state.data;
     const status = location.state.status;
+    const lease = location.state.lease;
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
@@ -60,6 +61,8 @@ const PropertyInfo = (props) => {
             setButtonColor("#3D5CAC")
         } else if (status === "NEW") {
             setButtonColor("#3D5CAC")
+        } else if (status === "PROCESSING"){
+            setButtonColor("#7AD15B")
         } else if (status === "TENANT APPROVED"){
             setButtonColor("#7AD15B")
         } else if (status === "REJECTED"){
@@ -116,7 +119,9 @@ const PropertyInfo = (props) => {
         if (status === "") { 
             return 'Apply Now';
         } else if (status === "NEW") {
-            return 'View Application';
+            return 'View Application';            
+        } else if (status === "PROCESSING"){
+            return 'Approved'
         } else if (status === "TENANT APPROVED"){
             return 'Approved'
         } else if (status === "REJECTED"){
@@ -128,9 +133,9 @@ const PropertyInfo = (props) => {
 
     function navigateToCorrectPage(){
         if (status === "" || status === "NEW") {
-            navigate('/tenantApplication', {state: { property: property, status: status }})
+            navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
         } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
-            navigate('/tenantLeases', {state: { property: property, status: status }})
+            navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
         } else {
             return null
         }
