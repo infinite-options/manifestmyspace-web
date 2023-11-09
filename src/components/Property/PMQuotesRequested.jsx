@@ -23,14 +23,20 @@ import axios from "axios";
 export default function PMQuotesRequested({}){
     const location = useLocation();
     let navigate = useNavigate(); 
-
+    
+    const activeContracts = location.state.activeContracts;
     const contractsFeeData = location.state.contractsFeeData;
+
+    console.log("In PMQ: contractsFeeData "+JSON.stringify(contractsFeeData))
+    console.log("In PMQ: activeContracts "+JSON.stringify(activeContracts))
+
     const property = location.state.propertyData;
     const index = location.state.index;
 
     const statusList = ["New Quotes", "Contracts"];
     const statusColor = ['#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
+
     function getColor(status) {
         return statusColor[status];
     }
@@ -254,8 +260,9 @@ export default function PMQuotesRequested({}){
                             padding: '13px',
                         }}>
 
+
                             {
-                                contractsFeeData.length>0 && contractsFeeData.map(data=>{
+                                tabStatus==0 && contractsFeeData.length>0 && contractsFeeData.map(data=>{
                                     return  <div>
                                         <DocumentCard data={data}/>
                                         <Stack
@@ -297,6 +304,50 @@ export default function PMQuotesRequested({}){
                                         </div>;
                                 })
                             }
+                            {
+                                tabStatus==1 && activeContracts.length>0 && activeContracts.map(data=>{
+                                    return  <div>
+                                        <DocumentCard data={data}/>
+                                        <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        position="relative"
+                        sx={{ padding: '8px', paddingTop: '8%' }}
+                    >
+                        <Button 
+                variant="contained"
+                sx={{
+                    textTransform: 'none',
+                    background: '#A52A2A',
+                    color: theme.palette.background.default,
+                    width: `40%`,
+                    height: `85%`,
+                    top: `10%`,
+                    borderRadius: '10px 10px 10px 10px',
+                    fontSize: `10px`
+                }} onClick={()=>{handleDecline(data)}}>
+                    Decline
+                    </Button>
+                    <Button 
+                variant="contained"
+                sx={{
+                    textTransform: 'none',
+                    background: '#76B148',
+                    color: theme.palette.background.default,
+                    width: `40%`,
+                    height: `85%`,
+                    top: `10%`,
+                    borderRadius: '10px 10px 10px 10px',
+                    fontSize: `10px`
+                }} onClick={()=>{handleAccept(data)}}>
+                    Accept
+                    </Button>
+                    </Stack>
+                                        </div>;
+                                })
+                            }
+
                             </Box>
                             
                             </Box>
@@ -331,7 +382,33 @@ function NavTab(props) {
 function DocumentCard(props) {
 
     const obj = props.data
-    console.log(JSON.stringify(obj))
+   // console.log("obj : "+JSON.stringify(obj))
+             
+
+                if(obj && obj.fees){
+                    try {
+                        obj.fees = JSON.parse(obj.fees);
+                    } catch (e) {
+                        obj.fees = null;
+                        console.log("Not in JSON format")
+                        
+                    }
+                }else{
+                    obj.fees = null;
+                }
+
+                  let contactObj ;
+                  try {
+                    contactObj = JSON.parse(obj.contact);
+                } catch (e) {
+                    contactObj = null;
+                    console.log("Not in JSON format")
+                    
+                }
+                  if (contactObj!==undefined && contactObj!==null){
+                      obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+                  }
+                  obj.contact = "";
 
     let navigate = useNavigate(); 
     
@@ -341,6 +418,8 @@ function DocumentCard(props) {
         fontWeight: theme.typography.light.fontWeight,
         fontSize:theme.typography.smallFont,
     };
+
+    console.log("obj.fees : "+JSON.stringify(obj.fees))
 
     
     return (

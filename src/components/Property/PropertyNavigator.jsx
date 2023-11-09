@@ -45,7 +45,7 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({index, propertyData}){
+export default function PropertyNavigator({index, propertyData,combinedData}){
     const navigate = useNavigate();
     const { getProfileId, isManager } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -57,11 +57,18 @@ export default function PropertyNavigator({index, propertyData}){
     const [showSpinner, setShowSpinner] = useState(false);
     const color = theme.palette.form.main
     const maxSteps = images.length;
-    const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
+    //const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
 
     //const [propertyId, setPropertyId] = useState('200-000028')
-    const [contractsFeeData, setContractsFeeData] = useState([]) 
-    const [activeContracts, setActiveContracts] = useState([]) 
+
+    const otherItem = combinedData[currentIndex];
+
+    let contractsFeeData= otherItem.contracts_fee;
+    let activeContracts= otherItem.active_contracts; 
+
+    console.log("In Nav: contractsFeeData "+JSON.stringify(contractsFeeData))
+    console.log("In Nav: activeContracts "+JSON.stringify(activeContracts))
+   
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
     "No Tenant";
     const [showIconButton, setShowIconButton]= useState(false);
@@ -78,82 +85,83 @@ export default function PropertyNavigator({index, propertyData}){
     useEffect(() => {
         const getMintenanceForProperty = async () => {
             setShowSpinner(true);
-            try {
-                console.log("Fetch maintenance data for "+item.property_uid)
-                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
-                // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-                if(!response.ok){
-                    console.log("Error fetching maintenance data")
-                }
+            // try {
+            //     console.log("Fetch maintenance data for "+currentId)
+            //     const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${currentId}`);
+            //     // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
+            //     const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+            //     if(!response.ok){
+            //         console.log("Error fetching maintenance data")
+            //     }
                 
                  
-                const propertyMaintenanceData = await responseProperty.json();
-                let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
-                propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
-                setMaintenanceData(propMaintList);
-                const contractdata = await response.json();
-                console.log("Contract Data", contractdata)
+            //     const propertyMaintenanceData = await responseProperty.json();
+            //     let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
+            //     propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
+            //     setMaintenanceData(propMaintList);
+            //     const contractdata = await response.json();
+            //     console.log("Contract Data", contractdata)
 
-                const contracts = [];
+            //     const contracts = [];
         
-                contractdata.result.forEach((contract) => {
+            //     contractdata.result.forEach((contract) => {
                   
-                    if (contract.contract_property_id==propertyId) {
+            //         console.log("Displayed pid:"+item.property_id)
+            //         if (contract.contract_property_id==item.property_id) {
 
-                        let obj = {
-                            contract_uid: contract.contract_uid,
-                            fees: contract.contract_fees,
-                            documents: contract.contract_documents,
-                            contact: contract.contract_assigned_contacts,
-                            contract_status : contract.contract_status,
-                            contract_business_id: contract.contract_business_id,
-                            business_name: contract.business_name,
-                        }
-                        //console.log("C fee "+JSON.stringify(contract.contract_fees))
-                        //contracts.push(contract.contract_fees); 
-                        contracts.push(obj);   
-                        setShowIconButton(true);               
-                    }
-                });
+            //             let obj = {
+            //                 contract_uid: contract.contract_uid,
+            //                 fees: contract.contract_fees,
+            //                 documents: contract.contract_documents,
+            //                 contact: contract.contract_assigned_contacts,
+            //                 contract_status : contract.contract_status,
+            //                 contract_business_id: contract.contract_business_id,
+            //                 business_name: contract.business_name,
+            //             }
+            //             //console.log("C fee "+JSON.stringify(contract.contract_fees))
+            //             //contracts.push(contract.contract_fees); 
+            //             contracts.push(obj);   
+            //             setShowIconButton(true);               
+            //         }
+            //     });
                 
-                let activeContractsArray = [];
-                let obj = {};
-                const feeData = [];
-                contracts.forEach((contractfee2) => {
+            //     let activeContractsArray = [];
+            //     let obj = {};
+            //     const feeData = [];
+            //     contracts.forEach((contractfee2) => {
 
-                    if(contractfee2.contract_status=="NEW"
-                    || contractfee2.contract_status=="SENT"
-                    ||contractfee2.contract_status=="REFUSED"
-                    || contractfee2.contract_status=="WITHDRAW"
-                    ||contractfee2.contract_status=="REJECT"){
-                        var db = JSON.stringify(contractfee2.fees);
-                        let contractArray = JSON.parse(db);
+            //         if(contractfee2.contract_status=="NEW"
+            //         || contractfee2.contract_status=="SENT"
+            //         ||contractfee2.contract_status=="REFUSED"
+            //         || contractfee2.contract_status=="WITHDRAW"
+            //         ||contractfee2.contract_status=="REJECT"){
+            //             var db = JSON.stringify(contractfee2.fees);
+            //             let contractArray = JSON.parse(db);
                        
-                        obj.contract_uid = contractfee2.contract_uid
-                        obj.contract_status = contractfee2.contract_status
-                        let contractfee1 = JSON.parse(contractArray)
-                        obj.fees = contractfee1;
-                        obj.documents = contractfee2.documents;
-                        let contactObj = JSON.parse(contractfee2.contact);
-                        if (contactObj!==undefined && contactObj!==null){
-                            obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
-                        }
-                        obj.contact = "";
-                        console.log(JSON.stringify(obj))
-                        feeData.push(obj)        
-                    }else if (contractfee2.contract_status=="ACTIVE"){
-                        activeContractsArray.push(contractfee2)
-                    }
+            //             obj.contract_uid = contractfee2.contract_uid
+            //             obj.contract_status = contractfee2.contract_status
+            //             let contractfee1 = JSON.parse(contractArray)
+            //             obj.fees = contractfee1;
+            //             obj.documents = contractfee2.documents;
+            //             let contactObj = JSON.parse(contractfee2.contact);
+            //             if (contactObj!==undefined && contactObj!==null){
+            //                 obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+            //             }
+            //             obj.contact = "";
+            //             console.log(JSON.stringify(obj))
+            //             feeData.push(obj)        
+            //         }else if (contractfee2.contract_status=="ACTIVE"){
+            //             activeContractsArray.push(contractfee2)
+            //         }
                  
-                });
+            //     });
 
-                setActiveContracts(activeContractsArray);
-                setContractsFeeData(feeData);
+            //     setActiveContracts(activeContractsArray);
+            //     setContractsFeeData(feeData);
 
-            } catch (error) {
-                console.log(error);
-            }
+            // } catch (error) {
+            //     console.log(error);
+            // }
             setShowSpinner(false);
         }
         getMintenanceForProperty();
@@ -319,6 +327,9 @@ export default function PropertyNavigator({index, propertyData}){
                         >
                             <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
                                 {item.property_address} {item.property_unit}, {item.property_city} {item.property_state} {item.property_zip}
+                            </Typography>
+                            <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
+                                {item.property_id} 
                             </Typography>
                             <Box
                                 sx={{
@@ -778,7 +789,8 @@ export default function PropertyNavigator({index, propertyData}){
                                         {state :{
                                             index: index,
                                             propertyData: propertyData,
-                                            contractsFeeData: contractsFeeData
+                                            contractsFeeData: contractsFeeData,
+                                            activeContracts: activeContracts
                                         }})}}>
                                         <Typography
                                             sx={{
@@ -814,7 +826,8 @@ export default function PropertyNavigator({index, propertyData}){
                                             onClick={()=> {navigate("/pmQuotesRequested",{state :{
                                                 index: index,
                                                 propertyData: propertyData,
-                                                contractsFeeData: contractsFeeData
+                                                contractsFeeData: contractsFeeData,
+                                                activeContracts: activeContracts
                                             }})}}/>
                                         </Box>
                                     </Grid>

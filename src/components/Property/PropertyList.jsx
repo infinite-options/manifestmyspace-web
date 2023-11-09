@@ -7,29 +7,8 @@ import {
   Paper,
   Button,
   ThemeProvider,
-  Form,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Grid,
-  Input,
-  Container,
-  Radio,
-  FormLabel,
-  FormControlLabel,
-  RadioGroup,
-  UploadFile,
-  InputAdornment,
   InputBase,
   IconButton,
-  CardMedia,
-  CardContent,
-  CardActions,
-  ListItemText,
   ListItem,
   List,
   Avatar,
@@ -48,6 +27,7 @@ import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 // import PropertyData from './PropertyData';
+import axios from "axios";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -158,8 +138,12 @@ export default function PropertyList({}) {
   // const [maintenanceData, setMaintenanceData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const profileId = getProfileId();
+//  const [maintenanceData, setMaintenanceData] = useState([{}]);
 
-  console.log("getProfileId information", getProfileId());
+  const [combinedData, setCombinedData] = useState();
+  const [maintenanceData, setMaintenanceData] = useState();
+  const [activeContracts, setActiveContracts] = useState();
+  const [contractsFeeData, setContractsFeeData] = useState();
 
   function numberOfMaintenanceItems(maintenanceItems){
     console.log(maintenanceItems)
@@ -174,23 +158,123 @@ export default function PropertyList({}) {
     console.log("PropertyList useEffect");
     console.log(propertyList);
     const fetchData = async () => {
+
       setShowSpinner(true);
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
       const propertyData = await response.json();
       const propertyList = getPropertyList(propertyData)
+      
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
+
+      try {
+
+        const response =  await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+        if(!response.ok){
+            console.log("Error fetching maintenance data")
+        }
+        const contractdata = await response.json();
+        console.log("Contract Data", contractdata)
+
+        let combinedArry = [];
+        let maintenanceDataArray = [];
+        let activeContractsArray=[];
+        let contractsFeeDataArray=[];
+
+        console.log(propertyList.length)
+        propertyList.map(async property => {
+          
+          let resultObj ={};
+          axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`)
+          .then((res) => {
+            let propMaintList = res.data.MaintenanceProjects?.result || []
+            propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
+            maintenanceDataArray.push(propMaintList);
+            
+          });
+
+          resultObj.property_data = property;
+          resultObj.maintenance_data = maintenanceDataArray;
+         const contracts = [];
+          contractdata.result.forEach((contract) => {
+            
+              if (contract.contract_property_id==property.property_uid) {
+
+                  let obj = {
+                      contract_uid: contract.contract_uid,
+                      fees: contract.contract_fees,
+                      documents: contract.contract_documents,
+                      contact: contract.contract_assigned_contacts,
+                      contract_status : contract.contract_status,
+                      contract_business_id: contract.contract_business_id,
+                      business_name: contract.business_name,
+                  }
+                  contracts.push(obj);   
+                         
+              }
+          });
+          
+          let activeContractsArray = [];
+          let obj = {};
+          const feeData = [];
+          contracts.forEach((contractfee2) => {
+
+              if(contractfee2.contract_status=="NEW"
+              || contractfee2.contract_status=="SENT"
+              ||contractfee2.contract_status=="REFUSED"
+              || contractfee2.contract_status=="WITHDRAW"
+              ||contractfee2.contract_status=="REJECT"){
+                  // var db = JSON.stringify(contractfee2.fees);
+                  // let contractArray = JSON.parse(db);
+                 
+                  // obj.contract_uid = contractfee2.contract_uid
+                  // obj.contract_status = contractfee2.contract_status
+                  // let contractfee1 = JSON.parse(contractArray)
+                  // obj.fees = contractfee1;
+                  // obj.documents = contractfee2.documents;
+                  // let contactObj = JSON.parse(contractfee2.contact);
+                  // if (contactObj!==undefined && contactObj!==null){
+                  //     obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
+                  // }
+                  // obj.contact = "";
+                  //console.log(JSON.stringify(obj))
+                  feeData.push(contractfee2)        
+              }else if (contractfee2.contract_status=="ACTIVE"){
+                  activeContractsArray.push(contractfee2)
+              }
+           
+          });
+          resultObj.active_contracts = activeContractsArray;
+          resultObj.contracts_fee = feeData;
+          combinedArry.push(resultObj);
+        })
+
+        setCombinedData(combinedArry);
+        console.log(combinedArry);
+        setMaintenanceData(maintenanceDataArray);
+        console.log(maintenanceDataArray);
+        
+
+      } catch (error) {
+          console.log(error);
+      }
       setShowSpinner(false);
     };
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const getMintenanceForProperty = async () => {
+    
+    }
+    getMintenanceForProperty();
+}, []);
+
   function handlePropertyDetailNavigation(property, index, propertyList) {
 
     console.log("theoretically property", property)
     console.log("handlePropertyDetailNavigation");
-    navigate(`/propertyDetail`, { state: { index, propertyList } });
+    navigate(`/propertyDetail`, { state: { index, propertyList, combinedData } });
   }
 
   function getBadgeContent(index) {

@@ -29,6 +29,7 @@ export default function PropertyDetail({}){
     // const property = location.state.property
     const index = location.state.index;
     const propertyList = location.state.propertyList;
+    const combinedData = location.state.combinedData;
     // const maintenanceData = location.state.maintenanceData;
 
     // console.log("property from PropertyDetail", property)
@@ -123,7 +124,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator index={index} propertyData={propertyList} />
+                            <PropertyNavigator index={index} propertyData={propertyList} combinedData={combinedData} />
                         </Box>
                     </Stack>
                 </Paper>
