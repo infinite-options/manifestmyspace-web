@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
@@ -6,18 +6,22 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import theme from '../theme/theme';
 
-export default function UtilitySelection({existingSelection}){
+export default function UtilitySelection({existingSelection, onChangeUtilities}){
     const defaultUtilitySelection = {
-        electricity: 'Owner',
-        trash: 'Tenant',
-        water: 'Tenant',
-        wifi: 'Tenant',
-        gas: 'Tenant',
+        electricity: 'owner',
+        trash: 'tenant',
+        water: 'tenant',
+        internet: 'tenant',
+        gas: 'tenant',
     };
     
     const [utilitySelection, setUtilitySelection] = useState(
         existingSelection || defaultUtilitySelection
     );
+
+    useEffect(()=>{
+        onChangeUtilities(utilitySelection);
+    }, [utilitySelection]);
 
     const handleUtilityChange = (utility, value) => {
         setUtilitySelection({
@@ -26,9 +30,10 @@ export default function UtilitySelection({existingSelection}){
         });
     };
 
-    const capitalizeUtility = (utility) => {
+    const capitalizeFirstChar = (utility) => {
         return utility.charAt(0).toUpperCase() + utility.slice(1);
     }
+
 
     return (
         <Grid container columnSpacing={2} rowSpacing={3}>
@@ -41,26 +46,26 @@ export default function UtilitySelection({existingSelection}){
                 <Fragment key={utility}>
                     <Grid item xs={6}>
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                        {capitalizeUtility(utility)}
+                        {capitalizeFirstChar(utility)}
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
                         <FormControlLabel
-                        value="Owner"
+                        value="owner"
                         control={
                             <Radio
-                            checked={selectedValue === 'Owner'}
-                            onChange={() => handleUtilityChange(utility, 'Owner')}
+                            checked={selectedValue === 'owner'}
+                            onChange={() => handleUtilityChange(utility, 'owner')}
                             />
                         }
                         label="Owner"
                         />
                         <FormControlLabel
-                        value="Tenant"
+                        value="tenant"
                         control={
                             <Radio
-                            checked={selectedValue === 'Tenant'}
-                            onChange={() => handleUtilityChange(utility, 'Tenant')}
+                            checked={selectedValue === 'tenant'}
+                            onChange={() => handleUtilityChange(utility, 'tenant')}
                             />
                         }
                         label="Tenant"

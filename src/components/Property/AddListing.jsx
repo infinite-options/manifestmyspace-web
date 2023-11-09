@@ -46,6 +46,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import StateMenuItems from '../StateMenuItems';
 import UtilitySelection from '../UtilitySelector'
+import { DragHandleOutlined } from '@mui/icons-material';
 
 export default function AddListing({}){
     const location = useLocation();
@@ -87,6 +88,77 @@ export default function AddListing({}){
     const [activeDate, setActiveDate] = useState("");
     const [isDepositLastMonth, setIsDepositLastMonth] = useState(false);
     const [isListed, setListed] = useState(false);
+
+    const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
+
+    useEffect(()=> {
+        console.log("AddListing - utilitiesPaidBy");
+        console.log("   ", utilitiesPaidBy);
+        console.log("AddListing - utilitiesPaidBy JSON string");
+        console.log("   ", JSON.stringify(utilitiesPaidBy));
+
+        //mapped utilities
+        // console.log("AddListing - Mapped Utilities and entities - ");
+        // console.log("   ", JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy)));
+    },[utilitiesPaidBy]);
+
+    //rohit - replace with actual data from props - item.
+    const utilitiesFromProps = {
+        electricity: 'owner',
+        trash: 'tenant',
+        water: 'tenant',
+        internet: 'tenant',
+        gas: 'tenant',
+    }
+    
+    useEffect(() => {
+        setUtilitiesPaidBy(utilitiesFromProps);
+    }, []); // rohit - delete this. get utilities from props
+    
+    const utilitiesMap = {
+        electricity     : '050-000001',
+        water           : '050-000002', 
+        gas             : '050-000003', 
+        trash           : '050-000004',
+        sewer           : '050-000005', 
+        internet        : '050-000006', 
+        cable           : '050-000007', 
+        hoa_dues        : '050-000008', 
+        security_system : '050-000009',
+        pest_control    : '050-000010',
+        gardener        : '050-000011', 
+        maintenance     : '050-000012',
+    }
+
+    const entitiesMap = {
+        'owner'             : '050-000041',
+        'property manager'  : '050-000042',
+        'tenant'            : '050-000043',
+        'user'              : '050-000049',
+    }
+
+    const mapUtilitiesAndEntities = (utilitiesObject) => {
+        const mappedResults = {};
+        for (const [key, value] of Object.entries(utilitiesObject)) {
+          if (utilitiesMap[key] && entitiesMap[value]) {
+            mappedResults[utilitiesMap[key]] = entitiesMap[value];
+          }
+        }
+        return mappedResults;
+    };
+    
+    const test = {
+        "050-000001":"050-000041",
+        "050-000004":"050-000043",
+        "050-000002":"050-000043",
+        "050-000006":"050-000043",
+        "050-000003":"050-000043",
+    }
+
+    const handleUtilityChange = (utilities) => {
+        // setUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
+        setUtilitiesPaidBy(utilities);
+    };
    
     const handleListedChange = (event) => {
         setListed(event.target.checked);
@@ -121,11 +193,14 @@ export default function AddListing({}){
     }
 
     const handleSubmit = (event) => {
+        
         event.preventDefault();
         console.log("handleSubmit")
         const formData = new FormData();
+        const utilitiesFormData = new FormData();
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+ 
 
         formData.append('property_uid', propertyData.property_uid)
         // formData.append('property_owner_id', ownerId);
@@ -151,6 +226,14 @@ export default function AddListing({}){
         formData.append('property_description', description);
         formData.append('property_notes', notes);
         formData.append('property_available_to_rent', isListed?1:0);
+        
+        //utilities data
+        const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy));
+        console.log("uitilitiesPaidBy JSON string");
+        console.log(utilitiesJSONString);
+
+        utilitiesFormData.append('property_uid', propertyData.property_uid);
+        utilitiesFormData.append('property_utility', utilitiesJSONString);
 
         for (let [key, value] of formData.entries()) {
             console.log(key, value);    
@@ -163,6 +246,56 @@ export default function AddListing({}){
                     method: "PUT",
                     body: formData
                 })
+                // const response = await fetch("http://localhost:4000/properties",{
+                //     method: "PUT",
+                //     body: formData
+                // })
+                const data = await response.json();
+                console.log("data", data)
+                if (data.code === 200){
+                    navigate(-1);
+                    // should navigate to the listing page
+                }
+            } catch(error){
+                console.log("Error posting data:", error)
+            }
+            // setShowSpinner(false);
+        }
+        const postUtilitiesData = async () => {
+            // setShowSpinner(true);
+            try{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                    method: "POST",
+                    body: utilitiesFormData
+                })
+                // const response = await fetch("http://localhost:4000/utilities",{
+                //     method: "POST",
+                //     body: utilitiesFormData
+                // })
+                const data = await response.json();
+                console.log("data", data)
+                if (data.code === 200){
+                    navigate(-1);
+                    // should navigate to the listing page
+                }
+            } catch(error){
+                console.log("Error posting data:", error)
+            }
+            setShowSpinner(false);
+        }
+
+
+        const putUtilitiesData = async () => {
+            // setShowSpinner(true);
+            try{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                    method: "PUT",
+                    body: utilitiesFormData
+                })
+                // const response = await fetch("http://localhost:4000/utilities",{
+                //     method: "PUT",
+                //     body: utilitiesFormData
+                // })
                 const data = await response.json();
                 console.log("data", data)
                 if (data.code === 200){
@@ -176,6 +309,8 @@ export default function AddListing({}){
         }
 
         putData();
+        // postUtilitiesData();
+        putUtilitiesData();
     }
 
 
@@ -645,7 +780,7 @@ export default function AddListing({}){
                                 noValidate
                                 autoComplete="off"
                             >
-                                <UtilitySelection existingSelection={null}/>
+                                <UtilitySelection existingSelection={utilitiesPaidBy} onChangeUtilities={handleUtilityChange}/>
                             </Box>
                         </Stack>
                     </Paper>
