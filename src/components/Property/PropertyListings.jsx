@@ -21,6 +21,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     ArrowDropDown,
+    FilterDrama,
     LocationOn,
     Search,
     Tune,
@@ -85,9 +86,15 @@ const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
     )
 }
 
-const FilterButtons = ({ propertyList, setFilteredItems, ...props }) => {
-    const [anchorEl, setAnchorEl] = useState(null);
+const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props }) => {
+    const [menuStates, setMenuStates] = useState({
+        price: null,
+        type: null,
+        beds: null,
+        bath: null
+    });
     const [param, setParam] = useState(null);
+    const [openMenu, setOpenMenu] = useState(null);
     const [selectedFilters, setSelectedFilters] = useState({
         price: '',
         type: '',
@@ -95,160 +102,240 @@ const FilterButtons = ({ propertyList, setFilteredItems, ...props }) => {
         bath: ''
     });
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    useEffect(() => {
+        console.log(selectedFilters);
+    }, [selectedFilters]);
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const areAnyFiltersSet = Object.values(selectedFilters).some(value => value !== '');
 
+    const handleClick = (filterName, event) => {
+        setMenuStates(prev => ({ ...prev, [filterName]: event.currentTarget }));
+    };
 
     const handleSelect = (filterName, value) => {
         setSelectedFilters(prev => ({
             ...prev,
             [filterName]: value
         }));
-        handleClose();
-        // Call the filter function here
         filterResults(filterName, value);
     };
 
+    const sortPropertiesByRent = (propertyList, value) => {
+        const sortedProperties = [...propertyList].sort((a, b) => {
+            const rentA = Number(a.property_listed_rent);
+            const rentB = Number(b.property_listed_rent);
+            if (value === 'Low-High') {
+                return rentA - rentB;
+            } else { //High-Low
+                return rentB - rentA;
+            }
+        });
+        return sortedProperties;
+    };
+
     const filterResults = (filterName, value) => {
-        const filtered = propertyList.filter(item => item[filterName] === value);
+        let filtered = [...filteredItems];
+
+        if (filterName === 'price') {
+            filtered = sortPropertiesByRent(filtered, value);
+        } 
+        
+        if (filterName === 'type') {
+            filtered = filtered.filter(item => item.property_type === value);            
+        }
+        
+        if (filterName === 'beds') {
+            filtered = filtered.filter(item => {
+                if (value == "3+") {
+                    return item.property_num_beds >= 3;
+                }
+                return item.property_num_beds === parseInt(value);
+            });
+        } 
+        
+        if (filterName === 'bath') {
+            filtered = filtered.filter(item => {
+                if (value == "3+") {
+                    return item.property_num_baths >= 3;
+                }
+                return item.property_num_baths === parseInt(value);
+            });
+        }
         setFilteredItems(filtered);
     }
 
-    const clearFilters = () => {
+    const clearFilters = (filterName) => {
+        setSelectedFilters(prev => ({
+            ...prev,
+            [filterName]: ''
+        }));
+        setFilteredItems(propertyList);
+    }
+
+    const clearAllFilters = () => {
+        setSelectedFilters({
+            price: '',
+            type: '',
+            beds: '',
+            bath: ''
+        });
         setFilteredItems(propertyList);
     }
 
     return (
-        <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        position="relative"
-        sx={{ padding: '10px' }}
-    >
-        <Box>
+        <>
             <Stack
-                direction="column"
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                position="relative"
+                sx={{ padding: '10px' }}
             >
-                <Button
-                    variant="contained"
-                    sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.common.fontWeight,
-                        backgroundColor: theme.palette.custom.blue,
-                        margin: '5px',
-                    }}
-                    onClick={handleClick}
-                >
-                    Price
-                    <ArrowDropDown />
-                </Button>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    {/* The values here are just examples */}
-                    <MenuItem onClick={() => handleSelect('price', 'Low-High')}>Low-High</MenuItem>
-                    <MenuItem onClick={() => handleSelect('price', 'High-Low')}>High-Low</MenuItem>
-                </Menu>
-                {selectedFilters.price}
+                <Box>
+                    <Stack
+                        direction="column"
+                    >
+                        <Button
+                            variant="contained"
+                            sx={{
+                                color: theme.typography.secondary.white,
+                                fontWeight: theme.typography.common.fontWeight,
+                                backgroundColor: theme.palette.custom.blue,
+                                margin: '5px',
+                            }}
+                            onClick={(event) => handleClick('price', event)}
+                        >
+                            Price {selectedFilters.price}
+                            <ArrowDropDown />
+                        </Button>
+                        <Menu
+                            anchorEl={menuStates.price}
+                            open={Boolean(menuStates.price)}
+                            onClose={() => setMenuStates(prev => ({ ...prev, price: null }))}
+                        >
+                            {/* The values here are just examples */}
+                            <MenuItem onClick={() => handleSelect('price', 'Low-High')}>Low-High</MenuItem>
+                            <MenuItem onClick={() => handleSelect('price', 'High-Low')}>High-Low</MenuItem>
+                            {selectedFilters.price !== "" ? <MenuItem onClick={() => clearFilters('price')}>Clear</MenuItem> : null}
+                        </Menu>
+                    </Stack>
+                </Box>
+                <Box>
+                    <Stack
+                        direction="column"
+                    >
+                        <Button
+                            variant="contained"
+                            sx={{
+                                color: theme.typography.secondary.white,
+                                fontWeight: theme.typography.common.fontWeight,
+                                backgroundColor: theme.palette.custom.blue,
+                                margin: '5px',
+                            }}
+                            onClick={(event) => handleClick('type', event)}
+                        >
+                            Type {selectedFilters.type}
+                            <ArrowDropDown />
+                        </Button>
+                        <Menu
+                            anchorEl={menuStates.type}
+                            open={Boolean(menuStates.type)}
+                            onClose={() => setMenuStates(prev => ({ ...prev, type: null }))}
+                        >
+                            {/* The values here are just examples */}
+                            <MenuItem onClick={() => handleSelect('type', 'House')}>House</MenuItem>
+                            <MenuItem onClick={() => handleSelect('type', 'Apartment')}>Apartment</MenuItem>
+                            <MenuItem onClick={() => handleSelect('type', 'Condo')}>Condo</MenuItem>
+                            <MenuItem onClick={() => handleSelect('type', 'Multi Family')}>Multi Family</MenuItem>
+                            <MenuItem onClick={() => handleSelect('type', 'Single Family')}>Single Family</MenuItem>
+                            <MenuItem onClick={() => handleSelect('type', 'Townhome')}>Townhome</MenuItem>
+                            {selectedFilters.type !== "" ? <MenuItem onClick={() => clearFilters('type')}>Clear</MenuItem> : null}
+                        </Menu>
+                    </Stack>
+                </Box>
+                <Box>
+                    <Stack
+                        direction="column"
+                    >
+                        <Button
+                            variant="contained"
+                            sx={{
+                                color: theme.typography.secondary.white,
+                                fontWeight: theme.typography.common.fontWeight,
+                                backgroundColor: theme.palette.custom.blue,
+                                margin: '5px',
+                            }}
+                            onClick={(event) => handleClick('beds', event)}
+                        >
+                            Beds {selectedFilters.beds}
+                            <ArrowDropDown />
+                        </Button>
+                        <Menu
+                            anchorEl={menuStates.beds}
+                            open={Boolean(menuStates.beds)}   
+                            onClose={() => setMenuStates(prev => ({ ...prev, beds: null }))}
+                        >
+                            {/* The values here are just examples */}
+                            <MenuItem onClick={() => handleSelect('beds', '1')}>1</MenuItem>
+                            <MenuItem onClick={() => handleSelect('beds', '2')}>2</MenuItem>
+                            <MenuItem onClick={() => handleSelect('beds', '3+')}>3+</MenuItem>
+                            {selectedFilters.beds !== "" ? <MenuItem onClick={() => clearFilters('beds')}>Clear</MenuItem> : null}
+                        </Menu>
+                    </Stack>
+                </Box>
+                <Box>
+                    <Stack direction="column">
+                        <Button
+                            variant="contained"
+                            sx={{
+                                color: theme.typography.secondary.white,
+                                fontWeight: theme.typography.common.fontWeight,
+                                backgroundColor: theme.palette.custom.blue,
+                                margin: '5px',
+                            }}
+                            onClick={(event) => handleClick('bath', event)}
+                        >
+                            Bath {selectedFilters.bath}
+                            <ArrowDropDown />
+                        </Button>
+                        <Menu
+                            anchorEl={menuStates.bath}
+                            open={Boolean(menuStates.bath)}
+                            onClose={() => setMenuStates(prev => ({ ...prev, bath: null }))}
+                        >
+                            {/* The values here are just examples */}
+                            <MenuItem onClick={() => handleSelect('bath', '1')}>1</MenuItem>
+                            <MenuItem onClick={() => handleSelect('bath', '2')}>2</MenuItem>
+                            <MenuItem onClick={() => handleSelect('bath', '3+')}>3+</MenuItem>
+                            {selectedFilters.bath !== "" ? <MenuItem onClick={() => clearFilters('bath')}>Clear</MenuItem> : null }
+                        </Menu>
+                    </Stack>
+                </Box>
             </Stack>
-        </Box>
-        <Box>
-            <Stack
-                direction="column"
-            >
-                <Button
-                    variant="contained"
-                    sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.common.fontWeight,
-                        backgroundColor: theme.palette.custom.blue,
-                        margin: '5px',
-                    }}
-                    onClick={handleClick}
+            { areAnyFiltersSet ? (
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    position="relative"
+                    display="flex"
+                    sx={{ padding: '10px' }}
                 >
-                    Type
-                    <ArrowDropDown />
-                </Button>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    {/* The values here are just examples */}
-                    <MenuItem onClick={() => handleSelect('type', 'House')}>House</MenuItem>
-                    <MenuItem onClick={() => handleSelect('type', 'Apartment/Condo')}>Apartment/Condo</MenuItem>
-                    <MenuItem onClick={() => handleSelect('type', 'Townhome')}>Townhome</MenuItem>
-                </Menu>
-                {selectedFilters.type}
-            </Stack>
-        </Box>
-        <Box>
-            <Stack
-                direction="column"
-            >
-                <Button
-                    variant="contained"
-                    sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.common.fontWeight,
-                        backgroundColor: theme.palette.custom.blue,
-                        margin: '5px',
-                    }}
-                    onClick={handleClick}
-                >
-                    Beds
-                    <ArrowDropDown />
-                </Button>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    {/* The values here are just examples */}
-                    <MenuItem onClick={() => handleSelect('beds', '1')}>1</MenuItem>
-                    <MenuItem onClick={() => handleSelect('beds', '2')}>2</MenuItem>
-                    <MenuItem onClick={() => handleSelect('beds', '3+')}>3+</MenuItem>
-                </Menu>
-                {selectedFilters.beds}
-            </Stack>
-        </Box>
-        <Box>
-            <Stack direction="column">
-                <Button
-                    variant="contained"
-                    sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.common.fontWeight,
-                        backgroundColor: theme.palette.custom.blue,
-                        margin: '5px',
-                    }}
-                    onClick={handleClick}
-                >
-                    Bath
-                    <ArrowDropDown />
-                </Button>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    {/* The values here are just examples */}
-                    <MenuItem onClick={() => handleSelect('beds', '1')}>1</MenuItem>
-                    <MenuItem onClick={() => handleSelect('beds', '2')}>2</MenuItem>
-                    <MenuItem onClick={() => handleSelect('beds', '3+')}>3+</MenuItem>
-                </Menu>
-                {selectedFilters.bath}
-            </Stack>
-        </Box>
-    </Stack>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            color: theme.typography.secondary.white,
+                            fontWeight: theme.typography.common.fontWeight,
+                            backgroundColor: theme.palette.custom.blue,
+                            margin: '5px',
+                        }}
+                        onClick={clearAllFilters}
+                    >
+                        Clear All Filters
+                    </Button>
+                </Stack>
+            ) : (null)}
+        </>
     )
 }
 
@@ -414,7 +501,7 @@ const PropertyListings = (props) => {
                         <SearchBar propertyList={sortedProperties} setFilteredItems={setDisplayProperties} sx={{ width: "100%" }} />
                     </Stack>
                     <Stack>
-                        <FilterButtons propertyList={sortedProperties} setFilteredItems={setDisplayProperties} />
+                        <FilterButtons propertyList={sortedProperties} filteredItems={displayProperties} setFilteredItems={setDisplayProperties} />
                     </Stack>
                     <Stack
                         direction="row"
@@ -477,7 +564,7 @@ const PropertyListings = (props) => {
                                 fontSize: theme.typography.smallFont,
                             }}
                         >
-                            {propertyData.length} Available
+                            {displayProperties.length} Available
                         </Typography>
                     </Stack>
                     {console.log("sorted properties", displayProperties)}
