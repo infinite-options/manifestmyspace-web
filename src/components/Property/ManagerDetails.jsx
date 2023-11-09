@@ -269,7 +269,7 @@ const ManagerDetails = () => {
       textDecoration: "underline",
     }}
   >
-    {`${p.property_unit}, ${p.property_address}, ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+    {`${p.property_address}, ${p.property_unit && p.property_unit+ ' ,' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
   </Typography>
   <Typography
     sx={{
