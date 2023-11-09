@@ -58,18 +58,15 @@ function TenantDashboard(props) {
       let propertyData = tenantRequestsData?.property?.result;
       let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
       let announcementsData = tenantRequestsData?.announcements?.result;
+      const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
 
       if(!propertyData || propertyData.length === 0){
         console.log("!propertyData || propertyData.length === 0")
         navigate("/listings")
-      } else{
-        for (const item of propertyData){
-            if (item.lease_status !== "ACTIVE"){
-                navigate("/listings")
-            }
-        }
       }
-
+      if (allNonActiveLease) {
+          navigate('/listings');
+      }
 
       setPropertyData(propertyData || []);
       setMaintenanceRequestsData(maintenanceRequestsData || []);

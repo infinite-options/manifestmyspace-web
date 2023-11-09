@@ -51,6 +51,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchTerm(query);

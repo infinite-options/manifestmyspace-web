@@ -8,13 +8,17 @@ import {
     Stack,
     Typography,
     Button,
-    TextField,
-    InputAdornment,
+    Menu,
+    MenuItem,
+    IconButton,
+    InputBase,
     Card,
     CardContent,
     CardActions,
     Rating,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 import {
     ArrowDropDown,
     LocationOn,
@@ -24,21 +28,239 @@ import {
 } from '@mui/icons-material';
 import ReactImageGallery from 'react-image-gallery';
 import { useUser } from "../../contexts/UserContext";
-import axios from 'axios';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-import leaseIcon from './leaseIcon.png';
 import defaultPropertyImage from './paintedLadies.jpeg';
 
-import { set } from 'date-fns';
+
+
+const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchTerm(query);
+        if (query.trim() === "") {
+          setFilteredItems(propertyList);  // Reset to the original list if the search bar is cleared
+        } else{
+          const terms = query.split(" ").map(term => term.toLowerCase());  // Split the search term into individual terms
+          const filtered = propertyList.filter(item => 
+            terms.some(term => item.property_address.toLowerCase().includes(term))
+          );
+          setFilteredItems(filtered);  // Updating the state with filtered items
+        }
+    }
+    
+    const clearSearch = () => {
+        setSearchTerm("");
+        setFilteredItems(propertyList);
+    };
+
+    return (
+        <Box
+            sx={{
+                p: "2px 4px",
+                alignItems: "center",
+                backgroundColor: theme.palette.form.main,
+                display: "flex"
+            }}
+        >
+            <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
+                <SearchIcon />
+            </IconButton>
+            <InputBase
+                sx={{ ml: 1, zIndex: 1000, flexGrow: 1}}
+                placeholder="Search..."
+                inputProps={{ "aria-label": "search" }}
+                value={searchTerm}
+                onChange={handleSearchChange}
+                color={theme.typography.common.blue}
+            />
+            {searchTerm && (
+                <IconButton aria-label="clear" onClick={clearSearch}>
+                <CloseIcon />
+                </IconButton>
+            )}
+        </Box>
+    )
+}
+
+const FilterButtons = ({ propertyList, setFilteredItems, ...props }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [param, setParam] = useState(null);
+    const [selectedFilters, setSelectedFilters] = useState({
+        price: '',
+        type: '',
+        beds: '',
+        bath: ''
+    });
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+
+    const handleSelect = (filterName, value) => {
+        setSelectedFilters(prev => ({
+            ...prev,
+            [filterName]: value
+        }));
+        handleClose();
+        // Call the filter function here
+        filterResults(filterName, value);
+    };
+
+    const filterResults = (filterName, value) => {
+        const filtered = propertyList.filter(item => item[filterName] === value);
+        setFilteredItems(filtered);
+    }
+
+    const clearFilters = () => {
+        setFilteredItems(propertyList);
+    }
+
+    return (
+        <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        position="relative"
+        sx={{ padding: '10px' }}
+    >
+        <Box>
+            <Stack
+                direction="column"
+            >
+                <Button
+                    variant="contained"
+                    sx={{
+                        color: theme.typography.secondary.white,
+                        fontWeight: theme.typography.common.fontWeight,
+                        backgroundColor: theme.palette.custom.blue,
+                        margin: '5px',
+                    }}
+                    onClick={handleClick}
+                >
+                    Price
+                    <ArrowDropDown />
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    {/* The values here are just examples */}
+                    <MenuItem onClick={() => handleSelect('price', 'Low-High')}>Low-High</MenuItem>
+                    <MenuItem onClick={() => handleSelect('price', 'High-Low')}>High-Low</MenuItem>
+                </Menu>
+                {selectedFilters.price}
+            </Stack>
+        </Box>
+        <Box>
+            <Stack
+                direction="column"
+            >
+                <Button
+                    variant="contained"
+                    sx={{
+                        color: theme.typography.secondary.white,
+                        fontWeight: theme.typography.common.fontWeight,
+                        backgroundColor: theme.palette.custom.blue,
+                        margin: '5px',
+                    }}
+                    onClick={handleClick}
+                >
+                    Type
+                    <ArrowDropDown />
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    {/* The values here are just examples */}
+                    <MenuItem onClick={() => handleSelect('type', 'House')}>House</MenuItem>
+                    <MenuItem onClick={() => handleSelect('type', 'Apartment/Condo')}>Apartment/Condo</MenuItem>
+                    <MenuItem onClick={() => handleSelect('type', 'Townhome')}>Townhome</MenuItem>
+                </Menu>
+                {selectedFilters.type}
+            </Stack>
+        </Box>
+        <Box>
+            <Stack
+                direction="column"
+            >
+                <Button
+                    variant="contained"
+                    sx={{
+                        color: theme.typography.secondary.white,
+                        fontWeight: theme.typography.common.fontWeight,
+                        backgroundColor: theme.palette.custom.blue,
+                        margin: '5px',
+                    }}
+                    onClick={handleClick}
+                >
+                    Beds
+                    <ArrowDropDown />
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    {/* The values here are just examples */}
+                    <MenuItem onClick={() => handleSelect('beds', '1')}>1</MenuItem>
+                    <MenuItem onClick={() => handleSelect('beds', '2')}>2</MenuItem>
+                    <MenuItem onClick={() => handleSelect('beds', '3+')}>3+</MenuItem>
+                </Menu>
+                {selectedFilters.beds}
+            </Stack>
+        </Box>
+        <Box>
+            <Stack direction="column">
+                <Button
+                    variant="contained"
+                    sx={{
+                        color: theme.typography.secondary.white,
+                        fontWeight: theme.typography.common.fontWeight,
+                        backgroundColor: theme.palette.custom.blue,
+                        margin: '5px',
+                    }}
+                    onClick={handleClick}
+                >
+                    Bath
+                    <ArrowDropDown />
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    {/* The values here are just examples */}
+                    <MenuItem onClick={() => handleSelect('beds', '1')}>1</MenuItem>
+                    <MenuItem onClick={() => handleSelect('beds', '2')}>2</MenuItem>
+                    <MenuItem onClick={() => handleSelect('beds', '3+')}>3+</MenuItem>
+                </Menu>
+                {selectedFilters.bath}
+            </Stack>
+        </Box>
+    </Stack>
+    )
+}
 
 const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
     const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
     const [sortedProperties, setSortedProperties] = useState([]);
+    const [displayProperties, setDisplayProperties] = useState([]);
     const { getProfileId } = useUser();
     const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
+    const [searchText, setSearchText] = useState("");
 
     const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
@@ -106,8 +328,10 @@ const PropertyListings = (props) => {
             });
         
             setSortedProperties([...activePropertyArray, ...sortedProperties]);
+            setDisplayProperties([...activePropertyArray, ...sortedProperties])
         } else {
             setSortedProperties(propertyData);
+            setDisplayProperties(propertyData)
         }
     }
     
@@ -186,104 +410,11 @@ const PropertyListings = (props) => {
                             </Button>
                         </Box>
                     </Stack>
-                    <Stack
-                        justifyContent="center"
-                        alignItems="center"
-                        sx={{ padding: '0 15px' }}
-                    >
-                        <TextField
-                            variant="filled"
-                            label="Search Place"
-                            fullWidth
-                            sx={{
-                                border: '1px solid',
-                                borderRadius: 10,
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment
-                                        position="start"
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize:
-                                                theme.typography.smallFont,
-                                            paddingRight: '5px',
-                                        }}
-                                    >
-                                        <Search />
-                                    </InputAdornment>
-                                ),
-                                endAdornment: (
-                                    <InputAdornment
-                                        position="end"
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize:
-                                                theme.typography.smallFont,
-                                            paddingLeft: '5px',
-                                        }}
-                                    >
-                                        <Tune />
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
+                    <Stack>
+                        <SearchBar propertyList={sortedProperties} setFilteredItems={setDisplayProperties} sx={{ width: "100%" }} />
                     </Stack>
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        position="relative"
-                        sx={{ padding: '10px' }}
-                    >
-                        <Button
-                            variant="contained"
-                            sx={{
-                                color: theme.typography.secondary.white,
-                                fontWeight: theme.typography.common.fontWeight,
-                                backgroundColor: theme.palette.custom.blue,
-                                margin: '5px',
-                            }}
-                        >
-                            Price
-                            <ArrowDropDown />
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                color: theme.typography.secondary.white,
-                                fontWeight: theme.typography.common.fontWeight,
-                                backgroundColor: theme.palette.custom.blue,
-                                margin: '5px',
-                            }}
-                        >
-                            Type
-                            <ArrowDropDown />
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                color: theme.typography.secondary.white,
-                                fontWeight: theme.typography.common.fontWeight,
-                                backgroundColor: theme.palette.custom.blue,
-                                margin: '5px',
-                            }}
-                        >
-                            Beds
-                            <ArrowDropDown />
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                color: theme.typography.secondary.white,
-                                fontWeight: theme.typography.common.fontWeight,
-                                backgroundColor: theme.palette.custom.blue,
-                                margin: '5px',
-                            }}
-                        >
-                            Bath
-                            <ArrowDropDown />
-                        </Button>
+                    <Stack>
+                        <FilterButtons propertyList={sortedProperties} setFilteredItems={setDisplayProperties} />
                     </Stack>
                     <Stack
                         direction="row"
@@ -349,17 +480,18 @@ const PropertyListings = (props) => {
                             {propertyData.length} Available
                         </Typography>
                     </Stack>
-                    {console.log("sorted properties", sortedProperties)}
-                    {sortedProperties.length > 0 && sortedProperties.map((property, index) => {
+                    {console.log("sorted properties", displayProperties)}
+                    {displayProperties.length > 0 && displayProperties.map((property, index) => {
                         var status = ""
                         const appliedData = tenantLeaseDetails.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
                             console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status)
                             status = appliedData.lease_status;
                             console.log(appliedData.property_address, "lease status", status)
-                        } else{
-                            console.log("No Lease Data for Property", property.property_address)
-                        }
+                        } 
+                        // else{
+                        //     console.log("No Lease Data for Property", property.property_address)
+                        // }
                         return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
                     })}
                 </Paper>
@@ -373,18 +505,18 @@ function PropertyCard(props) {
 
     const [status, setStatus] = useState(props.status);
 
-    const property = props.data;
+    const [lease, setLease] = useState(props.leaseData || {})
 
-    const lease = props.leaseData;
+    const property = props.data;
 
     const propertyImages = property.property_images || "";
     const ppt_images = propertyImages.split(',');
 
-    useEffect(() => {
-        if(status !== "" || status !== null){
-            console.log(property.property_address, "has status", status)
-        }
-    }, []);
+    // useEffect(() => {
+    //     if(status !== "" || status !== null){
+    //         console.log(property.property_address, "has status", status)
+    //     }
+    // }, []);
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -421,7 +553,8 @@ function PropertyCard(props) {
             state: {
                 index: props.index,
                 data: property,
-                status: status
+                status: status,
+                lease: lease,
             },
         });
     };
