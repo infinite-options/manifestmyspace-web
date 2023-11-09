@@ -13,7 +13,7 @@ import {
     Grid,
 } from "@mui/material";
 import documentIcon from "../../images/Subtract.png"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import refundIcon from './refundIcon.png';
@@ -61,6 +61,11 @@ export default function PMQuotesRequested({}){
   }
 
     const [data, setData] = useState(property[index]);
+
+    useEffect(() => {
+        console.log("propertyData");
+        console.log(property);
+    }, []);
 
     function handleAccept(obj){
 
@@ -378,14 +383,18 @@ function DocumentCard(props) {
                   return( <FeesTextCard fee={fee}/>)
                 })}
              
-                <Box onClick={()=>{navigate("/viewDocument",{
+                {/* <Box onClick={()=>{navigate("/viewDocument",{
                     state: {
                         documents : obj.documents
                     }
                 }
                 )}}>
            
-               View Documents<img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
+                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
+                </Box> */}
+                
+                <Box>
+                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
                 </Box>
                
         </Box>

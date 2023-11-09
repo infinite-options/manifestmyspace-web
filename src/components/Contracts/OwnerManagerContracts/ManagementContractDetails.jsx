@@ -1070,7 +1070,7 @@ function PropertyCard(props) {
                     
                         Start Date *
                     </Box>
-                    <TextInputField name="start_date" placeholder="mm-dd-yy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
+                    <TextInputField name="start_date" placeholder="mm-dd-yyyy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
                 </Box>
                 <Box>
                     <Box sx={{
@@ -1085,7 +1085,7 @@ function PropertyCard(props) {
                     </Box>
                     <TextInputField 
                         name="end_date"
-                        placeholder="mm-dd-yy"
+                        placeholder="mm-dd-yyyy"
                         value={contractEndDate}
                         onChange={handleEndDateChange}
                         required
