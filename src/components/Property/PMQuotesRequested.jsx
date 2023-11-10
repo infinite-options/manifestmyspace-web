@@ -13,7 +13,7 @@ import {
     Grid,
 } from "@mui/material";
 import documentIcon from "../../images/Subtract.png"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import refundIcon from './refundIcon.png';
@@ -61,6 +61,13 @@ export default function PMQuotesRequested({}){
   }
 
     const [data, setData] = useState(property[index]);
+
+    useEffect(() => {
+        console.log("propertyData");
+        console.log(property);
+        console.log("contractsFeeData");
+        console.log(contractsFeeData);
+    }, []);
 
     function handleAccept(obj){
 
@@ -257,43 +264,43 @@ export default function PMQuotesRequested({}){
                             {
                                 contractsFeeData.length>0 && contractsFeeData.map(data=>{
                                     return  <div>
-                                        <DocumentCard data={data}/>
-                                        <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        position="relative"
-                        sx={{ padding: '8px', paddingTop: '8%' }}
-                    >
-                        <Button 
-                variant="contained"
-                sx={{
-                    textTransform: 'none',
-                    background: '#A52A2A',
-                    color: theme.palette.background.default,
-                    width: `40%`,
-                    height: `85%`,
-                    top: `10%`,
-                    borderRadius: '10px 10px 10px 10px',
-                    fontSize: `10px`
-                }} onClick={()=>{handleDecline(data)}}>
-                    Decline
-                    </Button>
-                    <Button 
-                variant="contained"
-                sx={{
-                    textTransform: 'none',
-                    background: '#76B148',
-                    color: theme.palette.background.default,
-                    width: `40%`,
-                    height: `85%`,
-                    top: `10%`,
-                    borderRadius: '10px 10px 10px 10px',
-                    fontSize: `10px`
-                }} onClick={()=>{handleAccept(data)}}>
-                    Accept
-                    </Button>
-                    </Stack>
+                                            <DocumentCard data={data}/>
+                                            <Stack
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                position="relative"
+                                                sx={{ padding: '8px', paddingTop: '8%' }}
+                                            >
+                                                <Button 
+                                                    variant="contained"
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        background: '#A52A2A',
+                                                        color: theme.palette.background.default,
+                                                        width: `40%`,
+                                                        height: `85%`,
+                                                        top: `10%`,
+                                                        borderRadius: '10px 10px 10px 10px',
+                                                        fontSize: `10px`
+                                                    }} onClick={()=>{handleDecline(data)}}>
+                                                        Decline
+                                                </Button>
+                                                <Button 
+                                                    variant="contained"
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        background: '#76B148',
+                                                        color: theme.palette.background.default,
+                                                        width: `40%`,
+                                                        height: `85%`,
+                                                        top: `10%`,
+                                                        borderRadius: '10px 10px 10px 10px',
+                                                        fontSize: `10px`
+                                                    }} onClick={()=>{handleAccept(data)}}>
+                                                        Accept
+                                                </Button>
+                                            </Stack>
                                         </div>;
                                 })
                             }
@@ -333,7 +340,17 @@ function DocumentCard(props) {
     const obj = props.data
     console.log(JSON.stringify(obj))
 
-    let navigate = useNavigate(); 
+    let navigate = useNavigate();
+
+    const getContractDocumentLink = () => {
+        const documents = JSON.parse(obj.documents);
+        const contractDocument = documents.find(doc => doc.type === "contract");
+        console.log("contractDocument link: ", contractDocument.link);
+        return contractDocument.link;
+    }
+
+    const contractDocumentLink = getContractDocumentLink();
+
     
     const textStyle = {
         textTransform: 'none',
@@ -378,14 +395,20 @@ function DocumentCard(props) {
                   return( <FeesTextCard fee={fee}/>)
                 })}
              
-                <Box onClick={()=>{navigate("/viewDocument",{
+                {/* <Box onClick={()=>{navigate("/viewDocument",{
                     state: {
                         documents : obj.documents
                     }
                 }
                 )}}>
            
-               View Documents<img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
+                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
+                </Box> */}
+                
+                <Box onClick={()=>{
+                    window.open(contractDocumentLink, "_blank");
+                }}>
+                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
                 </Box>
                
         </Box>

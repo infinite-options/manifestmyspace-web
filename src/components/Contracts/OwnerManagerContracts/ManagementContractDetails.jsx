@@ -44,8 +44,9 @@ function ManagementContractDetails(props) {
 
     const {state} = useLocation();
     // const { announcementData } = state;
-    const { contract_business_id, contract_property_id, property_owner_id  } = state;
+    const { contract_uid, contract_business_id, contract_property_id, property_owner_id  } = state;
     
+    const [contractUID, setContractUID] = useState(null);
     const [contractBusinessID, setContractBusinessID] = useState(null);
     useEffect(() => {
         console.log('CONTRACT BUSINESS ID: ', contractBusinessID);
@@ -83,6 +84,7 @@ function ManagementContractDetails(props) {
 
             // setContractBusinessID(announcementData["announcement_receiver"]);
             setContractBusinessID(contract_business_id);
+            setContractUID(contract_uid)
 
             
 
@@ -282,7 +284,7 @@ function ManagementContractDetails(props) {
                         </svg>
                     </Box>
                 </Box>
-                <PropertyCard data={filteredPropertiesData[index]? filteredPropertiesData[index]: []} timeDifference={timeDiff} contractBusinessID={contractBusinessID} contractPropertyID={contractPropertyID}/>
+                <PropertyCard data={filteredPropertiesData[index]? filteredPropertiesData[index]: []} timeDifference={timeDiff} contractUID={contractUID} contractBusinessID={contractBusinessID} contractPropertyID={contractPropertyID}/>
                 
             </Box>
         </ThemeProvider>
@@ -317,6 +319,8 @@ function PropertyCard(props) {
     const [contractDocument, setContractDocument] = useState(null);
     const [contractFileTypes, setContractFileTypes] = useState([]);
     const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
+
+    
 
     
 
@@ -557,10 +561,13 @@ function PropertyCard(props) {
             const data = await result.json();
 
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
-            const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID);
+            // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
+            console.log("props.contractUID:", props.contractUID);
+            setContractUID(props.contractUID); 
+            const contractData = data["result"].find(contract => contract.contract_uid === props.contractUID);
             
             console.log("CONTRACT - ", contractData);
-            setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+            // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
             setContractName(contractData["contract_name"]? contractData["contract_name"] : "");
             setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
             setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
@@ -1070,7 +1077,7 @@ function PropertyCard(props) {
                     
                         Start Date *
                     </Box>
-                    <TextInputField name="start_date" placeholder="mm-dd-yy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
+                    <TextInputField name="start_date" placeholder="mm-dd-yyyy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
                 </Box>
                 <Box>
                     <Box sx={{
@@ -1085,7 +1092,7 @@ function PropertyCard(props) {
                     </Box>
                     <TextInputField 
                         name="end_date"
-                        placeholder="mm-dd-yy"
+                        placeholder="mm-dd-yyyy"
                         value={contractEndDate}
                         onChange={handleEndDateChange}
                         required
