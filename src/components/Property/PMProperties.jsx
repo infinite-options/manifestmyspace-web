@@ -334,7 +334,7 @@ export default function PMProperties({}) {
         </Backdrop>
         <Paper
           sx={{
-            margin: "30px",
+            margin: "10px",
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
             width: "100%", // Occupy full width with 25px margins on each side
@@ -364,249 +364,230 @@ export default function PMProperties({}) {
               {displayedItems.map((property, index) => (
                 property.type === "property"?
                 (
-                  <ListItem
+                  <>
+                    <Grid
+                      container
+                      key={index}
+                      spacing={2} // Adjust the spacing as needed
+                      style={{
+                        backgroundColor: theme.palette.form.main,
+                        paddingLeft: "10px",
+                        paddingRight: "10px",
+                        paddingTop: "10px", // Adjust margin between items as needed
+                      }}
+                      // onClick={() => handlePropertyDetailNavigation(property, (index - newPMRequestList.length), propertyList)}
+                      onClick={() => handlePropertyDetailNavigation(property, index, displayedItems)}
+                    >
+                      <Grid item xs={3} sm = {1}>
+                        <Avatar
+                          src={getCoverPhoto(property)}
+                          alt="property image"
+                          sx={{
+                            borderRadius: "0",
+                            width: "75px",
+                            height: "75px",
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={4} sm = {6}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "75px",
+                            padding: "8px",
+                          }}
+                        >
+                          {displayAddress(property)}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={3} sm = {4}>
+                        <Box
+                          sx={{
+                            backgroundColor: getPaymentStatusColor(property.rent_status),
+                            height: "60px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: "8px",
+                          }}
+                        >
+                          <Badge
+                            overlap="circular"
+                            color="success"
+                            badgeContent={getNoOfApplications(index)}
+                            invisible={!getNoOfApplications(index)}
+                            anchorOrigin={{
+                              vertical: "top",
+                              horizontal: "right",
+                            }}
+                            style={{
+                              color: "#000000",
+                              width: "100%",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                color: theme.palette.primary.main,
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                margin: "0px",
+                                padding: "0px",
+                                height: "50px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+                              }}
+                            >
+                              {getPaymentStatus(property.rent_status)}
+                            </Typography>
+                          </Badge>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2} sm = {1}>
+                        
+                        <Badge
+                          overlap="circular"
+                          color="error"
+                          badgeContent={getBadgeContent(index)}
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                          style={{
+                            color: "#000000",
+                            // color: theme.palette.custom.blue,
+                            fontSize: '0.8rem',
+                            height: '75px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',  
+                            
+                            
+                          }}
+                        >
+                          <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#F2F2F2"}, }}>
+                            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
+                            {/* <Box fixed sx={{
+                                height: '20px',
+                                width: '20px',
+                                background: '#A52A2A',
+                                borderRadius: '50%',
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                marginBottom: '30%',
+                                boxShadow: '0px 4px 4px #A52A2A',
+                            }}>
+                              <Typography
+                            sx={{
+                              color: theme.palette.primary.main,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                              textAlign: "center", // Ensure text is centered within itself
+                            }}
+                          ></Typography>
+                            </Box> */}
+                            
+                          </Button>
+                        </Badge>
+                      </Grid>
+                    </Grid>
+                    
+                   
+                    
+                  </>
+
+                ) : (
+                  <>                    
+                    <Grid
+                    container
                     key={index}
+                    spacing={2} // Adjust the spacing as needed
                     style={{
-                      justifyContent: "space-between",
-                      display: "flex",
-                      height: "100%",
-                      alignItems: "flex-start",
                       backgroundColor: theme.palette.form.main,
                       paddingLeft: "10px",
                       paddingRight: "10px",
+                      paddingTop: "10px", // Adjust margin between items as needed
                     }}
-                    // onClick={() => handlePropertyDetailNavigation(property, (index - newPMRequestList.length), propertyList)}
-                    onClick={() => handlePropertyDetailNavigation(property, index, displayedItems)}
+                    onClick={() => {
+                      console.log("Contract clicked - contract_uid: ", property.contract_uid);
+                      navigate('/managementContractDetails', {state: {contract_uid: property.contract_uid, contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
+                    }} 
                   >
-                    <Avatar
-                      src={getCoverPhoto(property)}
-                      alt="property image"
-                      sx={{
-                        borderRadius: "0",
-                        marginRight: "10px",
-                        width: "75px",
-                        height: "75px",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center", // vertically align items to the center
-                        justifyContent: "center", // horizontally align items to the center
-                        height: "100%", // to take full height of its parent
-                        width: "50%", // to take full width of its parent
-                      }}
-                    >
-                      {/* <Typography
+                    <Grid item xs={3} sm = {1}>
+                      <Avatar
+                        src={getCoverPhoto(property)}
+                        alt="property image"
                         sx={{
-                          color: theme.typography.common.blue,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          margin: "0px", // Ensure no margin
-                          padding: "0px", // Ensure no padding
-                          textAlign: "center", // Ensure text is centered within itself
-                          verticalAlign: "middle", // Vertically align text in the middle
-                          alignItems: "center", // vertically align items to the center
+                          borderRadius: "0",
+                          width: "75px",
+                          height: "75px",
                         }}
-                      > */}
-                        {/* {property.property_address}  #{property.property_unit}<br />
-                        {property.property_city + " " + property.property_state + " " + property.property_zip}
-                        */}
+                      />
+                    </Grid>
+                    <Grid item xs={4} sm={6}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          height: "75px",
+                          padding: "8px",
+                        }}
+                      >
                         {displayAddress(property)}
-                      {/* </Typography> */}
-                    </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: getPaymentStatusColor(property.rent_status),
-                        width: "25%", // Ensure it takes up full width of its parent
-                        height: "100%", // Ensure it takes up full height of its parent
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "0px",
-                        border: "none",
-                        margin: "0px",
-                      }}
-                    >
-                      <Badge
-                        overlap="circular"
-                        color="success"
-                        badgeContent={getNoOfApplications(index)}
-                        invisible={!getNoOfApplications(index)}
-                        anchorOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}
-                        style={{
-                          color: "#000000",
-                          width: "100%",
+                      </Box>
+                    </Grid>
+                    <Grid item xs={3} sm={4}>
+                      <Box
+                        sx={{
+                          backgroundColor: '#428038',
+                          height: "60px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "8px",
                         }}
                       >
                         <Typography
                           sx={{
                             color: theme.palette.primary.main,
                             fontWeight: theme.typography.primary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            margin: "0px", // Ensure no margin
-                            padding: "0px", // Ensure no padding
-                            height: "50px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
+                            fontSize: '11px',
+                            margin: "0px",
+                            padding: "0px",
                           }}
                         >
-                          {getPaymentStatus(property.rent_status)}
+                          {/* {property.contract_status === "NEW" ? "New Request" : property.contract_status} */}
+                          {property.contract_status}
                         </Typography>
-                      </Badge>
-                    </Box>
-                    <Badge
-                      overlap="circular"
-                      color="error"
-                      badgeContent={getBadgeContent(index)}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      style={{
-                        color: "#000000",
-                        // color: theme.palette.custom.blue,
-                      }}
-                    >
-                      <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#F2F2F2"}, }}>
-                        <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
-                        {/* <Box fixed sx={{
-                            height: '20px',
-                            width: '20px',
-                            background: '#A52A2A',
-                            borderRadius: '50%',
-                            marginLeft: 'auto',
-                            marginRight: 'auto',
-                            marginBottom: '30%',
-                            boxShadow: '0px 4px 4px #A52A2A',
-                        }}>
-                          <Typography
-                        sx={{
-                          color: theme.palette.primary.main,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          textAlign: "center", // Ensure text is centered within itself
-                        }}
-                      ></Typography>
-                        </Box> */}
-                        
-                      </Button>
-                    </Badge>
-                  </ListItem>
-                ) : (                  
-                  <ListItem
-                    key={index}
-                    style={{
-                      justifyContent: "space-between",
-                      display: "flex",
-                      height: "100%",
-                      alignItems: "flex-start",
-                      backgroundColor: theme.palette.form.main,
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
-                    }}
-                    onClick={() => {
-                        console.log("Contract clicked - contract_uid: ", property.contract_uid);
-                        navigate('/managementContractDetails', {state: {contract_uid: property.contract_uid, contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
-                    }} 
-                  >
-                    <Avatar
-                      src={getCoverPhoto(property)}
-                      alt="property image"
-                      sx={{
-                        borderRadius: "0",
-                        marginRight: "10px",
-                        width: "75px",
-                        height: "75px",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center", // vertically align items to the center
-                        justifyContent: "center", // horizontally align items to the center
-                        height: "100%", // to take full height of its parent
-                        width: "50%", // to take full width of its parent
-                      }}
-                    >
-                      {/* <Typography
-                        sx={{
-                          color: theme.typography.common.blue,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          margin: "0px", // Ensure no margin
-                          padding: "0px", // Ensure no padding
-                          textAlign: "center", // Ensure text is centered within itself
-                          verticalAlign: "middle", // Vertically align text in the middle
-                          alignItems: "center", // vertically align items to the center
-                        }}
-                      > */}
-                        {/* {property.property_address}  #{property.property_unit}<br />
-                        {property.property_city + " " + property.property_state + " " + property.property_zip}
-                        */}
-                        {displayAddress(property)}
-                      {/* </Typography> */}
-                    </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: '#428038',
-                        width: "25%", 
-                        height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "5px",
-                        border: "none",
-                        margin: "0px",
-                      }}
-                    >
-                      
-                        <Typography
-                          sx={{
-                            color: theme.palette.primary.main,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            // fontSize: theme.typography.smallFont,
-                            fontSize: '13px',
-                            margin: "0px", // Ensure no margin
-                            padding: "0px", // Ensure no padding
-                            height: "50px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                          }}
-                        >
-                          {property.contract_status === "NEW"? "New Request" : property.contract_status}
-                        </Typography>
-                    </Box>
-                    
+                      </Box>
+                    </Grid>
+                    <Grid item xs={2} sm={1}>
                       <Box
                         sx={{
                           display: 'flex',
                           flexDirection: 'column',
-                          maxWidth: '20%',
+                          justifyContent: 'center',
+                          alignItems: 'center',
                           padding: '5px',
                           fontSize: '10px',
+                          fontWeight: 'bold',
+                          height: '75px',
                         }}
                       >
-                        <Box
-                          sx={{
-                            margin: 'auto',
-                          }}
-                        >
-                          Open
-                        </Box>
+                        <Box>Open</Box>
                         <Box>
-                          {property.contract_start_date? calculateTimeDiff(property.contract_start_date) : "<NUM_DAYS>"}
+                          {property.contract_start_date ? calculateTimeDiff(property.contract_start_date) : "<NUM_DAYS>"}
                         </Box>
                       </Box>
-                    
-                  </ListItem>
+                    </Grid>
+                    </Grid>
+                  </>
                 )
               ))}
             </List>
@@ -619,3 +600,6 @@ export default function PMProperties({}) {
 }
 
 export { SearchBar, getPaymentStatusColor, getPaymentStatus };
+
+
+
