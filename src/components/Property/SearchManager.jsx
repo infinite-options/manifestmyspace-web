@@ -37,7 +37,6 @@ const SearchManager = () => {
   const location = useLocation();
   const { index, propertyData } = location.state;
 
-  console.log(index, propertyData)
   const [managers, setManagers] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
 
@@ -201,8 +200,6 @@ function DocumentCard(props) {
   const propertyData = props.propertyData;
   const index = props.index;
   const navigate = useNavigate();
-
-  console.log("--debug requestQuotes --", index, propertyData)
 
   let location1 = JSON.parse(obj.business_locations);
   let city = location1[0]!==undefined ? location1[0].location : "";

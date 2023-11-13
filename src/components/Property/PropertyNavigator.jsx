@@ -198,10 +198,10 @@ export default function PropertyNavigator({index, propertyData, contracts}){
         navigate("/tenantApplicationNav", { state:{ index, property: item } });
     };
 
-    function getNoOfNewQuotes(){
+    function getNoOfSentQuotes(){
         let count = 0;
         contractsData.forEach(contract => {
-            if(contract.contract_status === "NEW"){
+            if(contract.contract_status === "SENT"){
                 count++;
             }
         })
@@ -748,7 +748,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                             }}
                                                         >
                                                             {contractsData.length > 0 ? contractsData.map(contract => {
-                                                                if(contract.contract_status === "NEW"){
+                                                                if(contract.contract_status === "NEW" || contract.contract_status === "SENT"){
                                                                     return(
                                                                         <Contract contract={contract}/>   
                                                                     )
@@ -758,8 +758,8 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                     <Badge
                                                         overlap="circular"
                                                         color="success"
-                                                        badgeContent={getNoOfNewQuotes()}
-                                                        invisible={!getNoOfNewQuotes()}
+                                                        badgeContent={getNoOfSentQuotes()}
+                                                        invisible={!getNoOfSentQuotes()}
                                                         anchorOrigin={{
                                                             vertical: "top",
                                                             horizontal: "right",
