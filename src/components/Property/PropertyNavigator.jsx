@@ -55,9 +55,15 @@ export default function PropertyNavigator({index, propertyData}){
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
     const [showSpinner, setShowSpinner] = useState(false);
+    const [contractsData, setContractsData] = useState([])
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
+
+    useEffect(() => {
+        console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
+        setPropertyId(propertyData[currentIndex].property_uid)
+    }, [item])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
     const [contractsFeeData, setContractsFeeData] = useState([]) 
@@ -67,96 +73,66 @@ export default function PropertyNavigator({index, propertyData}){
     const [showIconButton, setShowIconButton]= useState(false);
     const manager_detail= (item.business_uid)?  `${item.business_name}`:     "No Manager"
     const [arrowButton1_color, set_arrow1_color]=useState(tenant_detail=== "No Tenant" && manager_detail==="No Manager"? theme.typography.common.gray : theme.typography.common.blue)
-    let arrowButton1_onClick=()=>{
-        if (tenant_detail=== "No Tenant" && manager_detail==="No Manager")
-            return;
-        else
-        navigate("/searchManager");
-    }
     
+    // let arrowButton1_onClick=()=>{
+    //     if (tenant_detail=== "No Tenant" && manager_detail==="No Manager")
+    //         return;
+    //     else
+    //     navigate("/searchManager", {
+    //         state: {
+    //             index,
+    //             propertyData
+    //         }
+    //     });
+    // }
+    // console.log("Property Data", propertyData)
 
     useEffect(() => {
-        const getMintenanceForProperty = async () => {
-            setShowSpinner(true);
+        const getContractsForProperty = async () => {
             try {
-                console.log("Fetch maintenance data for "+item.property_uid)
-                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
-                // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
+                console.log("fetching contracts for property", propertyData[currentIndex].property_uid)
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
                 if(!response.ok){
-                    console.log("Error fetching maintenance data")
+                    console.log("Error fetching contracts data")
                 }
-                
-                 
+                const contractsResponse = await response.json();
+                // console.log("Contract Data", contractsData.result)
+
+                const contracts = contractsResponse.result.filter(item => item.contract_property_id == propertyId && item.contract_status !== "ACTIVE")
+                const activeContracts = contractsResponse.result.filter(item => item.contract_property_id == propertyId && item.contract_status === "ACTIVE")
+
+                setContractsData(contracts)
+            }
+            catch (error){
+                console.log(error);
+            }
+        }
+        getContractsForProperty();
+    }, [item]);
+
+    useEffect(() => {
+        const getMaintenanceForProperty = async () => {
+            setShowSpinner(true);
+            try {
+                // console.log("Fetch maintenance data for " + item.property_uid)
+                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
+                // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
+                // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+                // if(!response.ok){
+                //     console.log("Error fetching maintenance data")
+                // }
+                                 
                 const propertyMaintenanceData = await responseProperty.json();
                 let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
                 propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
                 setMaintenanceData(propMaintList);
-                const contractdata = await response.json();
-                console.log("Contract Data", contractdata)
-
-                const contracts = [];
-        
-                contractdata.result.forEach((contract) => {
-                  
-                    if (contract.contract_property_id==propertyId) {
-
-                        let obj = {
-                            contract_uid: contract.contract_uid,
-                            fees: contract.contract_fees,
-                            documents: contract.contract_documents,
-                            contact: contract.contract_assigned_contacts,
-                            contract_status : contract.contract_status,
-                            contract_business_id: contract.contract_business_id,
-                            business_name: contract.business_name,
-                        }
-                        //console.log("C fee "+JSON.stringify(contract.contract_fees))
-                        //contracts.push(contract.contract_fees); 
-                        contracts.push(obj);   
-                        setShowIconButton(true);               
-                    }
-                });
-                
-                let activeContractsArray = [];
-                let obj = {};
-                const feeData = [];
-                contracts.forEach((contractfee2) => {
-
-                    if(contractfee2.contract_status=="NEW"
-                    || contractfee2.contract_status=="SENT"
-                    ||contractfee2.contract_status=="REFUSED"
-                    || contractfee2.contract_status=="WITHDRAW"
-                    ||contractfee2.contract_status=="REJECT"){
-                        var db = JSON.stringify(contractfee2.fees);
-                        let contractArray = JSON.parse(db);
-                       
-                        obj.contract_uid = contractfee2.contract_uid
-                        obj.contract_status = contractfee2.contract_status
-                        let contractfee1 = JSON.parse(contractArray)
-                        obj.fees = contractfee1;
-                        obj.documents = contractfee2.documents;
-                        let contactObj = JSON.parse(contractfee2.contact);
-                        if (contactObj!==undefined && contactObj!==null){
-                            obj.contact = contactObj[0]!==undefined ? contactObj[0].first_name:"";
-                        }
-                        obj.contact = "";
-                        console.log(JSON.stringify(obj))
-                        feeData.push(obj)        
-                    }else if (contractfee2.contract_status=="ACTIVE"){
-                        activeContractsArray.push(contractfee2)
-                    }
-                 
-                });
-
-                setActiveContracts(activeContractsArray);
-                setContractsFeeData(feeData);
 
             } catch (error) {
                 console.log(error);
             }
             setShowSpinner(false);
         }
-        getMintenanceForProperty();
+        getMaintenanceForProperty();
     }, []);
 
     function displayTopMaintenanceItem(){
@@ -224,9 +200,12 @@ export default function PropertyNavigator({index, propertyData}){
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleManagerChange = () => {
+    const handleManagerChange = (index) => {
         if(item.business_uid) navigate("/managerDetails", { state: { ownerId: item.owner_uid, managerBusinessId: item.business_uid } });
-        else navigate("/searchManager");
+        else {
+            console.log("--debug--", index, propertyData)
+            navigate("/searchManager", { state: { index, propertyData } });
+        }
     };
 
     const handleAppClick = (index) => {
@@ -319,6 +298,9 @@ export default function PropertyNavigator({index, propertyData}){
                         >
                             <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
                                 {item.property_address} {item.property_unit}, {item.property_city} {item.property_state} {item.property_zip}
+                            </Typography>
+                            <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
+                                {item.property_uid}
                             </Typography>
                             <Box
                                 sx={{
@@ -430,7 +412,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 fontSize:theme.typography.smallFont,
                                             }}
                                         >
-                                            Rent: ${item.property_listed_rent}
+                                            Rent: {item.property_listed_rent ? ("$"+item.property_listed_rent) : "No Rent Listed"}
                                         </Typography>
                                         <Typography
                                             sx={{
@@ -440,7 +422,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                 paddingBottom: "10px"
                                             }}
                                         >
-                                            Due: {item.lease_rent_due_by}
+                                            Due: {item.lease_rent_due_by ? (item.lease_rent_due_by) : "No Due Date Listed"}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -471,7 +453,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                Lease Expiring : {item.lease_end}
+                                                Lease Expiring : {item.lease_end ? item.lease_end : "No Lease"}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -518,9 +500,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                ${item.property_area.toFixed(2)}
-                                                
-
+                                                ${(item.property_value/item.property_area).toFixed(2)}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -646,39 +626,40 @@ export default function PropertyNavigator({index, propertyData}){
                                                 {item.property_num_baths}
                                         </Typography>
                                     </Grid>
-                                    {isManager() && item.applications.length>0 &&
-                                    <>
-                                        <Grid item xs={12}>
-                                            <Typography
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: theme.typography.primary.black,
-                                                    fontWeight: theme.typography.secondary.fontWeight,
-                                                    fontSize:theme.typography.smallFont,
-                                                    paddingRight: "10px"
-                                                }}
-                                            >
-                                                {"Applications"}
-                                            </Typography>
-                                        </Grid>
-                                        {item.applications.map((app, index) => 
-                                            <Grid item xs={6}>
-                                                <Button onClick={()=>handleAppClick(index)} 
-                                                    sx={{ backgroundColor: getAppColor(app), 
-                                                        color: "#FFFFFF", 
-                                                        textTransform: "none", 
-                                                        width: "100%", 
-                                                        "&:hover, &:focus, &:active": {
-                                                            backgroundColor: getAppColor(app),
-                                                        }}}>
-                                                    <Stack>
-                                                        <Typography>{app.tenant_first_name+" "+app.tenant_last_name}</Typography>
-                                                        <Typography sx={{ fontWeight: "bold" }}>{app.lease_status}</Typography>
-                                                    </Stack>
-                                                </Button>
+                                    {isManager() && item.applications.length > 0 &&
+                                        <>
+                                            <Grid item xs={12}>
+                                                <Typography
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        color: theme.typography.primary.black,
+                                                        fontWeight: theme.typography.secondary.fontWeight,
+                                                        fontSize:theme.typography.smallFont,
+                                                        paddingRight: "10px"
+                                                    }}
+                                                >
+                                                    {"Applications"}
+                                                </Typography>
                                             </Grid>
-                                        )}
-                                    </>}
+                                            {item.applications.map((app, index) => 
+                                                <Grid item xs={6}>
+                                                    <Button onClick={()=>handleAppClick(index)} 
+                                                        sx={{ backgroundColor: getAppColor(app), 
+                                                            color: "#FFFFFF", 
+                                                            textTransform: "none", 
+                                                            width: "100%", 
+                                                            "&:hover, &:focus, &:active": {
+                                                                backgroundColor: getAppColor(app),
+                                                            }}}>
+                                                        <Stack>
+                                                            <Typography>{app.tenant_first_name+" "+app.tenant_last_name}</Typography>
+                                                            <Typography sx={{ fontWeight: "bold" }}>{app.lease_status}</Typography>
+                                                        </Stack>
+                                                    </Button>
+                                                </Grid>
+                                            )}
+                                        </>
+                                    }
                                     <Grid item xs={11}>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <Typography
@@ -693,20 +674,14 @@ export default function PropertyNavigator({index, propertyData}){
                                                 Open Maintenance Tickets
                                             </Typography>
                                             <Box onClick={()=>(navigate('/ownerMaintenance'))}>
-                                            <Badge 
-                                                badgeContent={numberOfMaintenanceItems(maintenanceData)} 
-                                                color="error"
-                                                sx={{
-                                                    paddingRight:"10px"
-                                                }}
-                                            /></Box>
-                                            {/* <div style={{paddingLeft: "20px"}}>
-                                                {maintenanceData && maintenanceData.length > 0 ? (
-                                                    <Box display="flex" alignItems="right">
-                                                        <KeyboardArrowRightIcon sx={{paddingRight: "10px"}} onClick={() => navigateToMaintenanceAccordion()}/>
-                                                    </Box>
-                                                ) : (null)}
-                                            </div> */}
+                                                <Badge 
+                                                    badgeContent={numberOfMaintenanceItems(maintenanceData)} 
+                                                    color="error"
+                                                    sx={{
+                                                        paddingRight:"10px"
+                                                    }}
+                                                />
+                                            </Box>
                                         </div>
                                     </Grid>
                                     <Grid item xs={1}>
@@ -729,21 +704,6 @@ export default function PropertyNavigator({index, propertyData}){
                                         </Typography>
                                         </Box>
                                     </Grid>
-                                    {/* <Grid item xs={2}>
-                                        <Badge badgeContent={numberOfMaintenanceItems(maintenanceData)} color="error" width="20px" height="20px" 
-                                            sx={{
-                                                paddingRight:"10px"
-                                            }}
-                                        >
-                                        </Badge>
-                                    </Grid> */}
-                                    {/* <Grid item xs={6}>
-                                        {maintenanceData && maintenanceData.length > 0 ? (
-                                            <Box display="flex" alignItems="right">
-                                                <KeyboardArrowRightIcon sx={{paddingRight: "10px"}} onClick={() => navigateToMaintenanceAccordion()}/>
-                                            </Box>
-                                        ) : (null)}
-                                    </Grid> */}
                                     <Grid item xs={11}>
                                         <Typography
                                             sx={{
@@ -766,55 +726,66 @@ export default function PropertyNavigator({index, propertyData}){
                                             >
                                                 {tenant_detail}
                                         </Typography>
-                                    </Grid>
-                                    <Grid item xs={1}>
-                                        <KeyboardArrowRightIcon sx={{ color: arrowButton1_color, cursor: "pointer" }} onClick={arrowButton1_onClick} 
-                                        
-
-                                        />
-                                    </Grid>
-                                    <Grid item xs={11}>
-                                        <Box onClick={()=> {navigate("/pmQuotesRequested",
-                                        {state :{
-                                            index: index,
-                                            propertyData: propertyData,
-                                            contractsFeeData: contractsFeeData
-                                        }})}}>
-                                        <Typography
-                                            sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                                paddingRight: "10px"
-                                            }}
-                                        >
-                                            PM Quotes Requested
-                                        </Typography>
-                                        <Typography
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: theme.typography.primary.black,
-                                                    fontWeight: theme.typography.light.fontWeight,
-                                                    fontSize:theme.typography.smallFont,
-                                                }}
-                                            >
-                                               {activeContracts.length>0?
-                                               activeContracts.map(contract => {
-                                                return( <ActiveContract contract={contract}/>)
-                                               })
-                                               :"No PM Quotes"}
-                                                
-                                        </Typography>
-                                        </Box>
-                                    </Grid>
+                                    </Grid>    
+                                    {console.log("--debug-- this is contractsData", contractsData)}
+                                    {contractsData && contractsData.length > 0 ? (
+                                        <>
+                                            <Grid item xs={1}>
+                                                <KeyboardArrowRightIcon sx={{ color: arrowButton1_color, cursor: "pointer" }} onClick={
+                                                    ()=> {navigate("/pmQuotesRequested",
+                                                    {
+                                                        state :{
+                                                            index: index,
+                                                            propertyData: propertyData,
+                                                            contracts: contractsData,
+                                                        }
+                                                    })}
+                                                } />
+                                            </Grid>
+                                            <Grid item xs={11}>
+                                                {/* <Box onClick={()=> {navigate("/pmQuotesRequested",
+                                                {state :{
+                                                    index: index,
+                                                    test: propertyData,
+                                                    contracts: contractsData,
+                                                }})}}> */}
+                                                <Typography
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        color: theme.typography.primary.black,
+                                                        fontWeight: theme.typography.secondary.fontWeight,
+                                                        fontSize:theme.typography.smallFont,
+                                                        paddingRight: "10px"
+                                                    }}
+                                                >
+                                                    PM Quotes Requested
+                                                </Typography>
+                                                <Typography
+                                                        sx={{
+                                                            textTransform: 'none',
+                                                            color: theme.typography.primary.black,
+                                                            fontWeight: theme.typography.light.fontWeight,
+                                                            fontSize:theme.typography.smallFont,
+                                                        }}
+                                                    >
+                                                        {contractsData.length > 0 ? contractsData.map(contract => {
+                                                            return(<Contract contract={contract}/>)
+                                                        }) : "No PM Quotes"}
+                                                </Typography>
+                                                {/* </Box> */}
+                                            </Grid>
+                                        </>
+                                        ) : (
+                                            null
+                                        )
+                                    }
                                     <Grid item xs={1}>
                                         <Box>
                                             <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
                                             onClick={()=> {navigate("/pmQuotesRequested",{state :{
                                                 index: index,
                                                 propertyData: propertyData,
-                                                contractsFeeData: contractsFeeData
+                                                contracts: contractsData
                                             }})}}/>
                                         </Box>
                                     </Grid>
@@ -829,7 +800,7 @@ export default function PropertyNavigator({index, propertyData}){
                                                     paddingRight: "10px"
                                                 }}
                                             >
-                                            Property Manager
+                                            {item.business_uid ? "Property Manager" : "Find A Property Manager"}
                                         </Typography>
                                         <Typography
                                                 sx={{
@@ -841,12 +812,12 @@ export default function PropertyNavigator({index, propertyData}){
                                             >
                                             {(item.business_uid)?
                                             `${item.business_name}`:
-                                            "No Manager"}
+                                            "No Manager Selected"}
                                         </Typography>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
-                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={handleManagerChange}/>
+                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Button
@@ -874,7 +845,7 @@ export default function PropertyNavigator({index, propertyData}){
     )
 }
 
-function ActiveContract(props) {
+function Contract(props) {
 
     const textStyle = {
         textTransform: 'none',

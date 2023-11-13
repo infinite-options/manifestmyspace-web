@@ -6,6 +6,7 @@ import axios from "axios";
 import { Typography, Button, Checkbox, Grid, TextField } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
+import ReturnArrow from "../../images/refund_back.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,6 +28,12 @@ const RequestQuotes = () => {
   const [properties, setProperties] = useState([]);
   const location = useLocation();
   const managerData = location.state.managerData;
+  const propertyData = location.state.propertyData;
+  const index = location.state.index;
+
+//   console.log('--debug--', index, propertyData)
+  
+  const requestingPropertyId = propertyData[index].property_uid;
 
   const { getProfileId } = useUser();
   const profileId = getProfileId();
@@ -48,6 +55,14 @@ const RequestQuotes = () => {
 
   const handlePropertyCheck = (event) => {
     setSelectedProperty(event.target.name);
+  };
+
+  const determineChecked = (property) => {
+    if (property.property_uid === requestingPropertyId) {
+        return true;
+    } else {
+      return false;
+    }
   };
 
   const handleRequestQuotes = async () => {
@@ -112,10 +127,12 @@ const RequestQuotes = () => {
         console.error('There was a problem with the fetch operation:', error);
     });
 
-      navigate("/managerDetails",{ state: 
-        {   ownerId: ownerId, 
-            managerBusinessId: managerData.business_uid
-        }});
+        navigate("/propertyDetail", { state:
+            {
+                propertyList: propertyData,
+                index: index,
+            }
+        });
   
   };
 
@@ -148,13 +165,41 @@ const RequestQuotes = () => {
             paddingRight: "15px",
           }}
         >
-          <Box
+
+        <Box
             sx={{
-              padding: "13px",
-              backgroundColor: "#F2F2F2",
-              borderRadius: "9px",
+                padding: "13px",
+                backgroundColor: "#F2F2F2",
+                borderRadius: "9px",
             }}
-          >
+        >
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center', // This ensures vertical alignment with the image
+                        paddingLeft: "5px",
+                    }}
+                    onClick={() => navigate(-1)}
+                >
+                    <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
+                    <Typography
+                        sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        cursor: "pointer",
+                        }}
+                    >
+                        {"Back"}
+                    </Typography>
+                </Box>
+            </Box>
             <Box
               sx={{
                 display: "flex",
@@ -163,17 +208,16 @@ const RequestQuotes = () => {
                 justifyContent: "center",
               }}
             >
-              <Box
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  color: "text.darkblue",
-                }}
-              >
-                {"Search For Property"}
-              </Box>
+                <Box
+                    sx={{
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    color: "text.darkblue",
+                    }}
+                >
+                    Send a Quote Request to <u>{managerData.business_name}</u>
+                </Box>
             </Box>
-        
 
             <Box
               sx={{
@@ -181,95 +225,102 @@ const RequestQuotes = () => {
                 backgroundColor: "background.gray",
                 paddingBottom:"5%"
                 }}
-            > <Box
-            sx={{
-              padding: "13px",
-              backgroundColor: "#D6D5DA",
-              borderRadius: "10px",
-              justifyContent: "center",
-            }}
-          >
-              <Grid container columnSpacing={12} rowSpacing={6}>
-                <Grid item xs={12}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                  Title</Typography>
-                  <TextField fullWidth
-                  sx={{
-                      backgroundColor: 'white',
-                      borderColor: 'black',
-                      borderRadius: '7px',
-                  }}
-                  size="small"  multiline={true} onChange={handleTitleChange}/>
-                  </Grid>
-                  <Grid item xs={12}>
-                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                  Message</Typography>
-                  <TextField fullWidth
-                  sx={{
-                      backgroundColor: 'white',
-                      borderColor: 'black',
-                      borderRadius: '7px',
-                  }}
-                  size="small"  multiline={true} onChange={handleMsgChange}/>
-                  </Grid>
-                  {/* <Grid item xs={12}>
-
-                  </Grid> */}
-              </Grid>
-              </Box>
-
-              <div style={{height: "195px", overflow: "auto"}}>
-              <Box
-                sx={{
-                  padding: "13px",
-                  backgroundColor: "#D6D5DA",
-                  borderRadius: "10px",
-                  justifyContent: "center",
-                  
-                }}
-              >
-                {properties.map((property) => (
-
-                    <div>
-                        <Box
+            > 
+                <Box
                     sx={{
-                        backgroundColor: "#FFFFFF",
-                        borderRadius: "10px",
-                        padding: "5px",
-                        marginBottom: "10px",
-                        fontSize: "13px",
-                        display: "flex",
-                    }}>     
-                    <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} />  
-                    <Typography sx={{paddingTop:"2%"}}>
-                    {/* { propertyDisplayValue =   property.property_address+" "+property.property_city+" "+property.property_state+" "+property.property_zip+" #"+property.property_unit}  */}
-                    { propertyDisplayValue =   property.property_address+" #"+property.property_unit} 
+                    padding: "13px",
+                    backgroundColor: "#D6D5DA",
+                    borderRadius: "10px",
+                    justifyContent: "center",
+                    }}
+                >
+                    <Grid container columnSpacing={12} rowSpacing={6}>
+                        <Grid item xs={12}>
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                        Title</Typography>
+                        <TextField fullWidth
+                        sx={{
+                            backgroundColor: 'white',
+                            borderColor: 'black',
+                            borderRadius: '7px',
+                        }}
+                        size="small"  multiline={true} onChange={handleTitleChange}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                        Message</Typography>
+                        <TextField fullWidth
+                        sx={{
+                            backgroundColor: 'white',
+                            borderColor: 'black',
+                            borderRadius: '7px',
+                        }}
+                        size="small"  multiline={true} onChange={handleMsgChange}/>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box sx={{padding: '10px'}}></Box>
+                <Box 
+                    sx={{
+                        height: "195px", 
+                        overflow: "auto",
+                        paddingBottom: '20px'
+                    }}
+                >
+                    <Box
+                        sx={{
+                            padding: "15px",
+                            backgroundColor: "#D6D5DA",
+                            borderRadius: "10px",
+                            justifyContent: "center",
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {properties.map((property) => (
 
-                    </Typography>
-                    </Box></div>
-                
-                ))}
-              </Box>
-              </div>
+                            <Box key={property.property_uid} 
+                                sx={{
+                                    paddingBottom: "10px",
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        backgroundColor: "#FFFFFF",
+                                        borderRadius: "10px",
+                                        padding: "5px",
+                                        fontSize: "13px",
+                                        display: "flex",
+                                    }}>     
+                                    <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} checked={determineChecked(property)}/>  
+                                    <Typography sx={{paddingTop:"2%"}}>
+                                        { propertyDisplayValue =   property.property_address+" #"+property.property_unit} 
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        
+                        ))}
+                    </Box>
+                </Box>
             </Box>
-            <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              background: "#3D5CAC",
-              color: theme.palette.background.default,
-              width: `40%`,
-              height: `5%`,
-              left: `30%`,
-              top: `30%`,
-              borderRadius: "10px 10px 10px 10px",
-            }}
-           onClick={handleRequestQuotes}>
-            Request Quote
-          </Button>
-          </Box>
+                <Button
+                    variant="contained"
+                    sx={{
+                        textTransform: "none",
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        width: `40%`,
+                        height: `5%`,
+                        left: `30%`,
+                        top: `30%`,
+                        borderRadius: "10px 10px 10px 10px",
+                    }}
+                    onClick={handleRequestQuotes}
+                >
+                    Request Quote
+                </Button>
+                </Box>
+            </Box>
         </Box>
-      </Box>
     </ThemeProvider>
   );
 };

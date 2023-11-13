@@ -68,7 +68,7 @@ import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import MaintenanceOwner from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
-import MaintenanceRequestDetail from "./Maintenance/MaintenanceRequestDetail";
+import { MaintenanceRequestDetail } from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
 import EditProperty from "./Property/EditProperty";
 import PropertyDetail from "./Property/PropertyDetail";

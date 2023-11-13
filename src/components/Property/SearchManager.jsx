@@ -1,11 +1,11 @@
 import { Box, ThemeProvider } from "@mui/system";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ReturnArrow from "../../images/refund_back.png";
 import ArrowDown from "../../images/ArrowDown.png";
 import theme from "../../theme/theme";
 import axios from "axios";
-import { Typography, Button, TextField, InputAdornment } from "@mui/material";
+import { Typography, Button, TextField, InputAdornment, Grid } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { ReactComponent as SearchIcon } from "../../images/search.svg";
 import { objToQueryString } from "../utils/helper";
@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
 const SearchManager = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { index, propertyData } = location.state;
+
+  console.log(index, propertyData)
   const [managers, setManagers] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
 
@@ -120,18 +124,24 @@ const SearchManager = () => {
                   alignItems: "center",
                 }}
               >
-                <img src={ReturnArrow} alt="back" />
-                <Box>
-                  <Typography
+                <Box
                     sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      cursor: "pointer",
+                        display: 'flex',
+                        alignItems: 'center', // This ensures vertical alignment with the image
+                        paddingLeft: "5px",
                     }}
                     onClick={() => navigate(-1)}
-                  >
-                    {"Return to viewing Property Manager"}
-                  </Typography>
+                >
+                    <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
+                    <Typography
+                        sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        cursor: "pointer",
+                        }}
+                    >
+                        {"Return to viewing Property Manager"}
+                    </Typography>
                 </Box>
               </Box>
             </Box>
@@ -174,7 +184,7 @@ const SearchManager = () => {
                   }}
                 />
                 {managers.map((m) => (
-                  <DocumentCard data={m} ownerId={ownerId} />
+                  <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} />
                 ))}
               </Box>
             </Box>
@@ -188,9 +198,11 @@ const SearchManager = () => {
 function DocumentCard(props) {
   const obj = props.data;
   const ownerId = props.ownerId;
+  const propertyData = props.propertyData;
+  const index = props.index;
   const navigate = useNavigate();
 
-//  console.log("Business Profile "+JSON.stringify(obj))
+  console.log("--debug requestQuotes --", index, propertyData)
 
   let location1 = JSON.parse(obj.business_locations);
   let city = location1[0]!==undefined ? location1[0].location : "";
@@ -201,7 +213,9 @@ function DocumentCard(props) {
 
     navigate("/requestQuotes",{
       state:{
-        managerData:obj
+        managerData: obj,
+        propertyData: propertyData,
+        index: index,
       }
     }
     );    
@@ -212,88 +226,77 @@ function DocumentCard(props) {
       sx={{
         backgroundColor: "#FFFFFF",
         borderRadius: "10px",
-        padding: "5px",
+        padding: "10px",
         marginBottom: "10px",
         fontSize: "13px",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          sx={{
-            fontWeight: "bold",
-          }}
-        >
-          <Typography>{obj.business_name}</Typography>
+        <Grid container>
+            <Grid item xs={8}>
+                <Box
+                    sx={{
+                        fontWeight: "bold",
+                    }}
+                >
+                    <Typography>{obj.business_name}</Typography>
+                </Box>
+                <Box>
+                    <Typography>
+                        Area of service: {city} +-{" "}{distance} miles
+                    </Typography>
+                </Box>
+            </Grid>
+            <Grid item xs={4}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                    }}
+                >
+                    <Button
+                        variant="contained"
+                        sx={{
+                            textTransform: "none",
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            borderRadius: "10px 10px 10px 10px",
+                        }}
+                        onClick={() => handleRequestQuotes(obj)}
+                    >
+                        Request Quote
+                    </Button>
+                </Box>
+            </Grid>
+        </Grid>
+        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
+                    <Typography>
+                        Estimated Fees
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {feesArray.map((fee) =>{
+                        return( <FeesTextCard fee={fee}/>)
+                    })}
+                </AccordionDetails>
+            </Accordion>
         </Box>
-      </Box>
-      <Box></Box>
-      <Box
-        sx={{
-          display: "grid",
-        }}
-      >
-        <Box>
-          <Typography>
-           Area of service: {city} +-{" "}{distance} miles
-          </Typography>
-        </Box>
-        <Box>
-        <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-      
-          <Typography sx={{
-              textTransform: "none",
-              width: `40%`,
-              height: `5%`,
-              left: `15%`,
-              top: `10%`,
-            }} >Estimated Fees</Typography>
-          
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              background: "#3D5CAC",
-              color: theme.palette.background.default,
-              width: `40%`,
-              height: `5%`,
-              left: `15%`,
-              top: `10%`,
-              borderRadius: "10px 10px 10px 10px",
-            }}
-            onClick={() => handleRequestQuotes(obj)}
-          >
-            Request Quote
-          </Button>
-        
-        </AccordionSummary>
-            <AccordionDetails>
-                {feesArray.map((fee) =>{
-                  return( <FeesTextCard fee={fee}/>)
-                })}
-              </AccordionDetails>
-        </Accordion>
-        </Box>
-        <Box></Box>
-      </Box>
     </Box>
   );
 }
 
 function FeesTextCard(props) {
-
-  let fee = props.fee;
- return(<Typography>{fee.fee_name}:{fee.charge}{fee.fee_type}</Typography>)
+    let fee = props.fee;
+    return(
+        <Typography>
+            {fee.fee_name}:{fee.charge}{fee.fee_type}
+        </Typography>
+    )
 }
 
 export default SearchManager;
