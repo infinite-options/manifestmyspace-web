@@ -514,7 +514,9 @@ export default function PMProperties({}) {
                     }}
                     onClick={() => {
                       console.log("Contract clicked - contract_uid: ", property.contract_uid);
-                      navigate('/managementContractDetails', {state: {contract_uid: property.contract_uid, contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
+                      // navigate('/managementContractDetails', {state: {contract_uid: property.contract_uid, contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id, property_owner_id: property.property_owner_id}});
+                      navigate('/managementContractDetails', {state: {contract_uid: property.contract_uid, contract_business_id: property.contract_business_id, contract_property_id: property.contract_property_id}});
+
                     }} 
                   >
                     <Grid item xs={3} sm = {1}>
