@@ -67,27 +67,29 @@ export default function AddListing({}){
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState(propertyData.property_description);
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
     const [notes, setNotes] = useState(propertyData.property_notes);
     const [unit, setUnit] = useState(propertyData.property_unit);
-    const [propertyValue, setPropertyValue] = useState(0);
-    const [deposit, setDeposit] = useState(0);
-    const [petsAllowed, setPetsAllowed] = useState(0);
-    const [depositForRent, setDepositForRent] = useState(0);
-    const [taxes, setTaxes] = useState(0);
-    const [mortgages, setMortgages] = useState(0);
-    const [insurance, setInsurance] = useState(0);
-    const [rent, setRent] = useState(0);
-    const [communityAmenities, setCommunityAmenities] = useState("");
-    const [apartmentAmenities, setApartmentAmenities] = useState("");
+    const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
+    const [assessmentYear, setAssessmentYear] = useState(propertyData.property_value);
+    const [deposit, setDeposit] = useState(propertyData.property_deposit);
+    const [petsAllowed, setPetsAllowed] = useState(propertyData.property_pets_allowed);
+    const [depositForRent, setDepositForRent] = useState(propertyData.property_deposit_for_rent);
+    const [taxes, setTaxes] = useState(propertyData.property_taxes);
+    const [mortgages, setMortgages] = useState(propertyData.property_mortgages);
+    const [insurance, setInsurance] = useState(propertyData.property_insurance);
+    const [rent, setRent] = useState(propertyData.property_listed_rent);
+    const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
+    const [apartmentAmenities, setApartmentAmenities] = useState(propertyData.property_amenities_unit);
+    const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
+    // const [isDepositLastMonth, setIsDepositLastMonth] = useState(propertyData.property_deposit_for_rent);
 
-    const [activeDate, setActiveDate] = useState("");
-    const [isDepositLastMonth, setIsDepositLastMonth] = useState(false);
-    const [isListed, setListed] = useState(false);
+    const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
+    const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
 
     const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
 
@@ -225,7 +227,7 @@ export default function AddListing({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
-        formData.append('property_available_to_rent', isListed?1:0);
+        formData.append('property_available_to_rent', isListed ? 1 : 0);
         formData.append('property_amenities_community', communityAmenities);
         formData.append('property_amenities_unit', apartmentAmenities);
         
@@ -365,7 +367,7 @@ export default function AddListing({}){
                                 alignItems="center"
                             >
                                 <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                    Create Listing
+                                    {propertyData.property_available_to_rent!==1 ? "Create Listing" : "Update Listing"}
                                 </Typography>
                             </Box>
                             <Box position="absolute" right={0}>
@@ -393,11 +395,11 @@ export default function AddListing({}){
                                     <Grid item xs={12}>
                                         <div
                                             style={{
-                                            display: "flex",
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            width: "100%",
+                                                display: "flex",
+                                                flexDirection: "row",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                width: "100%",
                                             }}
                                         >
                                         <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
@@ -734,8 +736,8 @@ export default function AddListing({}){
                                             Deposit can be used for last month’s rent
                                         </Typography>
                                         <Checkbox
-                                            checked={isDepositLastMonth}
-                                            onChange={(e) => setIsDepositLastMonth(e.target.checked)}
+                                            checked={depositForRent}
+                                            onChange={(e) => setDepositForRent(e.target.checked)}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -875,6 +877,24 @@ export default function AddListing({}){
                                             value={apartmentAmenities}
                                         />
                                     </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                            Near By Amenities
+                                        </Typography>
+                                        <TextField
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            multiline={true}
+                                            placeholder={nearbyAmenities}
+                                            onChange={(e) => setNearbyAmenities(e.target.value)}
+                                            value={nearbyAmenities}
+                                        />
+                                    </Grid>
                                 </Grid>
                             </Box>
                         </Stack>
@@ -901,7 +921,7 @@ export default function AddListing({}){
                                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
                                 <Button variant="contained" type="submit" form="editPropertyForm"  sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
                                     <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                        {propertyData.property_available_to_rent!==1 ? "Create Listing" : "Edit Listing"}
+                                        {propertyData.property_available_to_rent!==1 ? "Create Listing" : "Update Listing"}
                                     </Typography>
                                 </Button>
                             </Grid>

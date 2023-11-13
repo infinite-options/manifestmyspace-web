@@ -86,78 +86,10 @@ export default function PMQuotesRequested({}){
                 {contracts.length > 0 ? (
                     <div>
                         {contracts.map(contract => {
-                            // if (contract.contract_status !== "ACTIVE" && contract.contract_status !== "SENT" && contract.contract_status !== "NEW" && contract.contract_status !== "WITHDRAW" && contract.contract_status !== "REJECTED"){
-                            //     return (
-                            //         <div>
-                            //             <DocumentCard data={contract}/>
-                            //             <Stack
-                            //                 direction="row"
-                            //                 justifyContent="space-between"
-                            //                 alignItems="center"
-                            //                 position="relative"
-                            //                 sx={{ padding: '8px', paddingTop: '8px' }}
-                            //             >
-                            //                 <Button 
-                            //                     variant="contained"
-                            //                     sx={{
-                            //                         textTransform: 'none',
-                            //                         background: '#A52A2A',
-                            //                         color: theme.palette.background.default,
-                            //                         width: `40%`,
-                            //                         height: `85%`,
-                            //                         top: `10%`,
-                            //                         borderRadius: '10px 10px 10px 10px',
-                            //                         fontSize: `10px`
-                            //                     }} onClick={()=>{handleDecline(contract)}}>
-                            //                         Decline
-                            //                 </Button>
-                            //                 <Button 
-                            //                     variant="contained"
-                            //                     sx={{
-                            //                         textTransform: 'none',
-                            //                         background: '#76B148',
-                            //                         color: theme.palette.background.default,
-                            //                         width: `40%`,
-                            //                         height: `85%`,
-                            //                         top: `10%`,
-                            //                         borderRadius: '10px 10px 10px 10px',
-                            //                         fontSize: `10px`
-                            //                     }} onClick={()=>{handleAccept(contract)}}>
-                            //                         Accept
-                            //                 </Button>
-                            //             </Stack>
-                            //         </div>
-                            //     )
-                            // } 
                             if(contract.contract_status === "SENT"){
                                 return (
                                     <div>
                                         <DocumentCard data={contract}/>
-                                        
-                                        {/* <Stack 
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            position="relative"
-                                            sx={{ padding: '8px', paddingTop: '8px' }}
-                                        >
-                                            <Button 
-                                                variant="contained"
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    background: '#A52A2A',
-                                                    color: theme.palette.background.default,
-                                                    width: `40%`,
-                                                    height: `85%`,
-                                                    top: `10%`,
-                                                    borderRadius: '10px 10px 10px 10px',
-                                                    fontSize: `10px`
-                                                }} 
-                                                onClick={()=>{handleStatusChange(contract, "WITHDRAW")}}
-                                            >
-                                                Withdraw
-                                            </Button>
-                                        </Stack> */}
                                          <Stack
                                             direction="row"
                                             justifyContent="space-between"
