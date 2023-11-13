@@ -13,7 +13,7 @@ import {
     Grid,
 } from "@mui/material";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -25,21 +25,29 @@ import refundIcon from './refundIcon.png';
 export default function PropertyDetail({}){
     const location = useLocation();
     let navigate = useNavigate(); 
+    const [contractsForProperty, setContractsForProperty] = useState([]);
+    const index = location.state.index; // need to pass to property navigator
+    const propertyList = location.state.propertyList; // need to pass to property navigator
+    const contracts = location.state.contracts;
 
-    // const property = location.state.property
-    const index = location.state.index;
-    const propertyList = location.state.propertyList;
-    // const maintenanceData = location.state.maintenanceData;
+    console.log("--debug-- all contracts PropertyDetail", contracts)
 
-    // console.log("property from PropertyDetail", property)
+    useEffect(() => {
+        // filter contracts for this property
+        if (contracts === undefined){
+            // get contracts from database
 
-    // console.log("Maintenance Data in Property Detail", maintenanceData)
-    // console.log("This maintenance data's thing", maintenanceData[index])
+        } else{
+            console.log(propertyList[index])
+            let contractsForThisProperty = contracts.filter(contract => contract.property_id === propertyList[index].property_uid);
+            console.log("--debug-- contracts for this property", contractsForThisProperty)
+            setContractsForProperty(contractsForThisProperty);
+        }
+    }, [])
 
-    
     function handleBackButton(){
         console.log("handleBackButton")
-        navigate(-1); 
+        navigate("/properties"); 
     }
 
     function navigateToAddProperty(){
@@ -123,7 +131,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator index={index} propertyData={propertyList} />
+                            <PropertyNavigator index={index} propertyData={propertyList} contracts={contractsForProperty}/>
                         </Box>
                     </Stack>
                 </Paper>
