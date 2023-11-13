@@ -12,7 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function MaintenanceWorkerDashboardWidget(){
+export default function MaintenanceWorkerDashboardWidget(props){
     const navigate = useNavigate();
 
     const { getProfileId } = useUser();
@@ -29,8 +29,11 @@ export default function MaintenanceWorkerDashboardWidget(){
         const fetchMaintenanceDashboardData = async () => {
             console.log("in useEffect")
             setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
-            const jsonData = await response.json()
+            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
+            
+            // const jsonData = await response.json()
+            const jsonData = props.dashboard_data
+            
             console.log("CurrentActivities", jsonData.CurrentActivities.result)
             console.log("WorkOrders", jsonData.WorkOrders.result)
             setWorkOrders(jsonData.WorkOrders.result)

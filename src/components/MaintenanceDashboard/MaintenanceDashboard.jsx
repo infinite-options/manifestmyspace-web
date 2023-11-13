@@ -37,9 +37,9 @@ export default function MaintenanceDashboard(){
     const [paidCount, setPaidCount] = useState(0);
     const [showSpinner, setShowSpinner] = useState(false);
     const [quotesAcceptedCashflow, setQuotesAcceptedCashflow] = useState(0);
-    const [quotesScheduledCashflow, setQuotesScheduledCashflow] = useState(0);
+    const [quotesSentCashflow, setQuotesSentCashflow] = useState(0);
     const [quotesFinishedCashflow, setQuotesFinishedCashflow] = useState(0);
-
+    const [api_data, set_api_data]= useState({});
 
     const data = [
         {
@@ -88,34 +88,36 @@ export default function MaintenanceDashboard(){
                         'Content-Type': 'application/json',                    
                     }
                 });
+                
                 const data = await response.json();
-                console.log(data);
-                console.log("CurrentActivities", data.CurrentActivities);
-                console.log("WorkOrders", data.WorkOrders);
+                set_api_data(data);
 
+                
                 for (const item of data.CurrentActivities.result) {
-                    switch(item.maintenance_request_status) {
+                    switch(item.maintenance_status) {
                         case "REQUESTED": 
-                            setQuoteRequestedCount(prevCount => prevCount + 1) 
+                            setQuoteRequestedCount(item.num) 
                             break;
                         case "SUBMITTED": 
-                            setSubmittedCount(prevCount => prevCount + 1)
+                            setSubmittedCount(item.num+50);
+                            setQuotesSentCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate));
                             break;
                         case "ACCEPTED": 
-                            setQuoteAcceptedCount(prevCount => prevCount + 1)
-                            setQuotesAcceptedCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
+                            setQuoteAcceptedCount(prevCount =>  item.num)
+                            setQuotesAcceptedCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate))
                             break;
-                        case "SCHEDULED": 
-                            setScheduledCount(prevCount => prevCount + 1)
-                            setQuotesScheduledCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
+                        case "SCHEDULED" : 
+                            setScheduledCount(prevCount =>  item.num+100)
+                            
+                            setQuotesAcceptedCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate))
                             break;
                         case "FINISHED":
-                            setFinishedCount(prevCount => prevCount + 1)
+                            setFinishedCount(item.num)
                             console.log("item.maintenance_request_cost", item.maintenance_request_cost)
-                            setQuotesFinishedCashflow(prevCashflow => prevCashflow + parseInt(item.maintenance_request_cost))
+                            setQuotesFinishedCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate))
                             break;
                         case "PAID":
-                            setPaidCount(prevCount => prevCount + 1)
+                            setPaidCount(prevCount => item.num)
                             console.log("item.maintenance_request_cost", item.maintenance_request_cost)
                             break;
                         default: 
@@ -251,10 +253,10 @@ export default function MaintenanceDashboard(){
                                         }}
                                     >
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                                            Quotes Accepted Cashflow
+                                            Quotes Sent Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
-                                            ${quotesAcceptedCashflow}
+                                            ${quotesSentCashflow}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -276,10 +278,10 @@ export default function MaintenanceDashboard(){
                                         }}
                                     >
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                                            Quotes Scheduled Cashflow
+                                            Quotes Accepted Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
-                                            ${quotesScheduledCashflow}
+                                            ${quotesAcceptedCashflow}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -338,7 +340,7 @@ export default function MaintenanceDashboard(){
                                     },
                                     paddingTop: '10px',
                                 }}>
-                                    <MaintenanceWorkerDashboardWidget/>
+                                    <MaintenanceWorkerDashboardWidget dashboard_data= {api_data}/>
                                 </Paper>
                             </Box>
                         </Grid>
