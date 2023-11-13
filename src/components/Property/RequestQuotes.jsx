@@ -31,7 +31,7 @@ const RequestQuotes = () => {
   const propertyData = location.state.propertyData;
   const index = location.state.index;
 
-//   console.log('--debug--', index, propertyData)
+  // console.log('--debug--', index, propertyData, managerData)
   
   const requestingPropertyId = propertyData[index].property_uid;
 
@@ -79,7 +79,7 @@ const RequestQuotes = () => {
       "announcement_sender":ownerId,
       "announcement_date":formattedDate,
       "announcement_properties":[selectedProperty],
-      "announcement_mode":"CONTRACT",
+      "announcement_mode": "CONTRACT",
       "announcement_receiver":[managerData.business_uid],
       "announcement_type":["App"],
     });
@@ -104,7 +104,7 @@ const RequestQuotes = () => {
 
 
     const formData = new FormData();
-    formData.append("contract_property_id", selectedProperty)
+    formData.append("contract_property_id", requestingPropertyId)
     formData.append("contract_business_id", managerData.business_uid)
     formData.append("contract_start_date", formattedDate)
     formData.append("contract_status", "NEW")

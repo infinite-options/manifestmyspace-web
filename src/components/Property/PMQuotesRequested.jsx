@@ -85,14 +85,80 @@ export default function PMQuotesRequested({}){
             <div>
                 {contracts.length > 0 ? (
                     <div>
-                        These are all the Quotes Requested contracts
                         {contracts.map(contract => {
-                            if (contract.contract_status !== "ACTIVE" && contract.contract_status !== "SENT" && contract.contract_status !== "WITHDRAW" && contract.contract_status !== "REJECTED"){
+                            // if (contract.contract_status !== "ACTIVE" && contract.contract_status !== "SENT" && contract.contract_status !== "NEW" && contract.contract_status !== "WITHDRAW" && contract.contract_status !== "REJECTED"){
+                            //     return (
+                            //         <div>
+                            //             <DocumentCard data={contract}/>
+                            //             <Stack
+                            //                 direction="row"
+                            //                 justifyContent="space-between"
+                            //                 alignItems="center"
+                            //                 position="relative"
+                            //                 sx={{ padding: '8px', paddingTop: '8px' }}
+                            //             >
+                            //                 <Button 
+                            //                     variant="contained"
+                            //                     sx={{
+                            //                         textTransform: 'none',
+                            //                         background: '#A52A2A',
+                            //                         color: theme.palette.background.default,
+                            //                         width: `40%`,
+                            //                         height: `85%`,
+                            //                         top: `10%`,
+                            //                         borderRadius: '10px 10px 10px 10px',
+                            //                         fontSize: `10px`
+                            //                     }} onClick={()=>{handleDecline(contract)}}>
+                            //                         Decline
+                            //                 </Button>
+                            //                 <Button 
+                            //                     variant="contained"
+                            //                     sx={{
+                            //                         textTransform: 'none',
+                            //                         background: '#76B148',
+                            //                         color: theme.palette.background.default,
+                            //                         width: `40%`,
+                            //                         height: `85%`,
+                            //                         top: `10%`,
+                            //                         borderRadius: '10px 10px 10px 10px',
+                            //                         fontSize: `10px`
+                            //                     }} onClick={()=>{handleAccept(contract)}}>
+                            //                         Accept
+                            //                 </Button>
+                            //             </Stack>
+                            //         </div>
+                            //     )
+                            // } 
+                            if(contract.contract_status === "SENT"){
                                 return (
                                     <div>
                                         <DocumentCard data={contract}/>
-                                        <p>{contract.contract_uid}</p>
-                                        <Stack
+                                        
+                                        {/* <Stack 
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            position="relative"
+                                            sx={{ padding: '8px', paddingTop: '8px' }}
+                                        >
+                                            <Button 
+                                                variant="contained"
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    background: '#A52A2A',
+                                                    color: theme.palette.background.default,
+                                                    width: `40%`,
+                                                    height: `85%`,
+                                                    top: `10%`,
+                                                    borderRadius: '10px 10px 10px 10px',
+                                                    fontSize: `10px`
+                                                }} 
+                                                onClick={()=>{handleStatusChange(contract, "WITHDRAW")}}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        </Stack> */}
+                                         <Stack
                                             direction="row"
                                             justifyContent="space-between"
                                             alignItems="center"
@@ -130,11 +196,16 @@ export default function PMQuotesRequested({}){
                                         </Stack>
                                     </div>
                                 )
-                            } if(contract.contract_status === "SENT"){
+                            } if (contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED"){
                                 return (
                                     <div>
                                         <DocumentCard data={contract}/>
-                                        <p>{contract.contract_uid}</p>
+                                    </div>
+                                )
+                            } if (contract.contract_status === "NEW"){
+                                return (
+                                    <div>
+                                        <DocumentCard data={contract}/>
                                         <Stack 
                                             direction="row"
                                             justifyContent="space-between"
@@ -154,21 +225,14 @@ export default function PMQuotesRequested({}){
                                                     borderRadius: '10px 10px 10px 10px',
                                                     fontSize: `10px`
                                                 }} 
-                                                onClick={()=>{handleWithdraw(contract)}}
+                                                onClick={()=>{handleStatusChange(contract, "CANCELLED")}}
                                             >
-                                                Withdraw
+                                                Cancel
                                             </Button>
                                         </Stack>
-                                    </div>
+                                    </div>  
                                 )
-                            } if (contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED"){
-                                return (
-                                    <div>
-                                        <DocumentCard data={contract}/>
-                                        <p>{contract.contract_uid}</p>
-                                    </div>
-                                )
-                            } 
+                            }
                         })}
                     </div>
                 ) : (
@@ -187,9 +251,9 @@ export default function PMQuotesRequested({}){
                     <div>
                         These are all the active contracts
 
-                        {activeContracts.map(contract => {
+                        {activeContracts.map((contract, index) => {
                             return (
-                                <div>
+                                <div key={index}>
                                     <DocumentCard data={contract}/>
                                     <p>{contract.contract_uid}</p>
                                 </div>
@@ -237,7 +301,7 @@ export default function PMQuotesRequested({}){
             return false;
         }
 
-        navigate("/properties")
+        setTabStatus(1);
     }
     
     function handleDecline(obj){
@@ -260,17 +324,14 @@ export default function PMQuotesRequested({}){
             console.log("error", error)
             return false;
         }
-
-        navigate("/properties")
-
     }
     
-    function handleWithdraw(obj){
+    function handleStatusChange(obj, status){
         try {
 
             const formData = new FormData();
             formData.append("contract_uid", obj.contract_uid)
-            formData.append("contract_status", "WITHDRAW")
+            formData.append("contract_status", status)
 
             console.log(formData.contract_uid);
             console.log(formData.contract_status);
@@ -374,7 +435,6 @@ export default function PMQuotesRequested({}){
                                     [theme.breakpoints.up('sm')]: {
                                         height: '5px', // padding for screens wider than 'sm'
                                         },
-
                                 }}
                             >
                                 
@@ -442,102 +502,6 @@ export default function PMQuotesRequested({}){
                                     padding: '15px',
                                 }}>
                                     {tabStatus === 0 ? displayPMQuotesRequested() : displayActiveContracts() }
-                                    {/* {
-                                        contracts.length > 0 && contracts.map(contract => {
-                                            // if (tabStatus === 1){
-                                            //     if(contract.contract_status === "ACTIVE"){
-                                            //         return (
-                                            //             <div>
-                                            //                 These are all the active contracts
-                                            //             </div>
-                                            //         )
-                                            //     } else {
-                                            //         return (
-                                            //             <div>
-                                            //                 Not active contracts
-                                            //             </div>
-                                            //         )
-                                            //     }
-                                            // } else 
-                                            if (tabStatus === 0 && contract.contract_status !== "ACTIVE"){
-                                                if (contract.contract_status === "SENT"){
-                                                    return (
-                                                        <div>
-                                                            This particular contract has been sent to the property manager. Please wait for the property manager to respond.
-                                                            {contract.contract_contract_uid}
-                                                            <Stack 
-                                                                direction="row"
-                                                                justifyContent="space-between"
-                                                                alignItems="center"
-                                                                position="relative"
-                                                                sx={{ padding: '8px', paddingTop: '8px' }}
-                                                            >
-                                                                <Button 
-                                                                    variant="contained"
-                                                                    sx={{
-                                                                        textTransform: 'none',
-                                                                        background: '#A52A2A',
-                                                                        color: theme.palette.background.default,
-                                                                        width: `40%`,
-                                                                        height: `85%`,
-                                                                        top: `10%`,
-                                                                        borderRadius: '10px 10px 10px 10px',
-                                                                        fontSize: `10px`
-                                                                    }} 
-                                                                    onClick={()=>{handleWithdraw(contract)}}
-                                                                >
-                                                                    Withdraw
-                                                                </Button>
-                                                            </Stack>
-                                                        </div>
-                                                    )
-                                                } else{
-                                                    return  (
-                                                        <div>
-                                                            <DocumentCard data={contract}/>
-                                                            <p>{contract.contract_uid}</p>
-                                                            <Stack
-                                                                direction="row"
-                                                                justifyContent="space-between"
-                                                                alignItems="center"
-                                                                position="relative"
-                                                                sx={{ padding: '8px', paddingTop: '8px' }}
-                                                            >
-                                                                <Button 
-                                                                    variant="contained"
-                                                                    sx={{
-                                                                        textTransform: 'none',
-                                                                        background: '#A52A2A',
-                                                                        color: theme.palette.background.default,
-                                                                        width: `40%`,
-                                                                        height: `85%`,
-                                                                        top: `10%`,
-                                                                        borderRadius: '10px 10px 10px 10px',
-                                                                        fontSize: `10px`
-                                                                    }} onClick={()=>{handleDecline(contract)}}>
-                                                                        Decline
-                                                                </Button>
-                                                                <Button 
-                                                                    variant="contained"
-                                                                    sx={{
-                                                                        textTransform: 'none',
-                                                                        background: '#76B148',
-                                                                        color: theme.palette.background.default,
-                                                                        width: `40%`,
-                                                                        height: `85%`,
-                                                                        top: `10%`,
-                                                                        borderRadius: '10px 10px 10px 10px',
-                                                                        fontSize: `10px`
-                                                                    }} onClick={()=>{handleAccept(contract)}}>
-                                                                        Accept
-                                                                </Button>
-                                                            </Stack>
-                                                        </div>
-                                                    )
-                                                }
-                                            }
-                                        })
-                                    } */}
                                 </Box>
                             </Box>
                         </Box>
@@ -570,8 +534,7 @@ function NavTab(props) {
 
 function DocumentCard(props) {
 
-    const obj = props.data
-    console.log(JSON.stringify(obj))
+    const data = props.data
 
     // let navigate = useNavigate();
 
@@ -590,7 +553,7 @@ function DocumentCard(props) {
         textTransform: 'none',
         color: theme.typography.propertyPage.color,
         fontWeight: theme.typography.light.fontWeight,
-        fontSize:theme.typography.smallFont,
+        fontSize: theme.typography.secondaryFont,
     };
 
     
@@ -608,30 +571,40 @@ function DocumentCard(props) {
                 alignItems: 'center',
                 
             }}>
-                <Typography sx={{fontWeight: 'bold'}}>
-                   {obj.business_name}
+                <Typography sx={{fontWeight: 'bold', fontSize: "26px"}}>
+                   {data.business_name}
                 </Typography>
             </Box>                
             <Box>
                 <Typography sx={textStyle}>
-                    Area of service: {obj.city} +-{obj.miles} miles
+                    Area of service: {data.city} +-{data.miles} miles
                 </Typography>
             </Box>
             <Box>
                 <Typography sx={textStyle}>
-                    Status: {obj.contract_status}
+                    Status: {data.contract_status}
                 </Typography>
             </Box>
+            <Box>
+                <Typography sx={textStyle}>
+                    Contract ID: {data.contract_uid}
+                </Typography>
+            </Box>
+
             <Box>
                 <Typography sx={textStyle}>
                     Estimated Fees
-                </Typography>    
+                </Typography>
             </Box>
-                {/* {obj !== null && obj.fees !== null && obj.fees.map((fee) =>{
-                  return( <FeesTextCard fee={fee}/>)
-                })} */}
-            
-                
+            {data !== null && data.contract_fees !== null ? (
+                JSON.parse(data.contract_fees).map((fee, index) => {
+                    <FeesTextCard key={index} fee={fee}/>
+                })
+            ) : (
+                <Typography sx={textStyle}>
+                    No fees
+                </Typography>
+            )} 
             <Box onClick={()=>{
                 // window.open(contractDocumentLink, "_blank");
                 console.log("we should show a document here")
@@ -651,7 +624,7 @@ function FeesTextCard(props) {
         textTransform: 'none',
         color: theme.typography.propertyPage.color,
         fontWeight: theme.typography.light.fontWeight,
-        fontSize:theme.typography.smallFont,
+        fontSize:theme.typography.mediumFont,
     };
 
     let fee = props.fee;
@@ -664,6 +637,10 @@ function FeesTextCard(props) {
         type="$";
     }
 
-   return(<Typography sx={textStyle}>{fee.fee_name}:{fee.charge}{type} of {fee.of}</Typography>)
+   return(
+        <Typography sx={textStyle}>
+            {fee.fee_name}:{fee.charge}{type} of {fee.of}
+        </Typography>
+    )
   }
   

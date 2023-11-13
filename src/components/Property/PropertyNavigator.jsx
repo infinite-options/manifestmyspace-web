@@ -45,7 +45,7 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({index, propertyData}){
+export default function PropertyNavigator({index, propertyData, contracts}){
     const navigate = useNavigate();
     const { getProfileId, isManager } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -55,10 +55,33 @@ export default function PropertyNavigator({index, propertyData}){
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
     const [showSpinner, setShowSpinner] = useState(false);
-    const [contractsData, setContractsData] = useState([])
+    const [contractsData, setContractsData] = useState(contracts)
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
+
+    useEffect(() => {
+        console.log("--debug--", contractsData)
+        if (contractsData.length === 0){
+            const getContractsForOwner = async () => {
+                try {
+                    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+                    if(!response.ok){
+                        console.log("Error fetching contracts data")
+                    }
+                    const contractsResponse = await response.json();
+                    console.log("contractsResponse", contractsResponse.result)
+                    const contracts = contractsResponse.result.filter(contract => contract.property_id === propertyId)
+                    console.log(contracts)
+                    setContractsData(contracts)
+                }
+                catch (error){
+                    console.log(error);
+                }
+            }
+            getContractsForOwner();
+        }
+    }, [])
 
     useEffect(() => {
         console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
@@ -66,62 +89,17 @@ export default function PropertyNavigator({index, propertyData}){
     }, [item])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
-    const [contractsFeeData, setContractsFeeData] = useState([]) 
-    const [activeContracts, setActiveContracts] = useState([]) 
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
     "No Tenant";
     const [showIconButton, setShowIconButton]= useState(false);
     const manager_detail= (item.business_uid)?  `${item.business_name}`:     "No Manager"
     const [arrowButton1_color, set_arrow1_color]=useState(tenant_detail=== "No Tenant" && manager_detail==="No Manager"? theme.typography.common.gray : theme.typography.common.blue)
     
-    // let arrowButton1_onClick=()=>{
-    //     if (tenant_detail=== "No Tenant" && manager_detail==="No Manager")
-    //         return;
-    //     else
-    //     navigate("/searchManager", {
-    //         state: {
-    //             index,
-    //             propertyData
-    //         }
-    //     });
-    // }
-    // console.log("Property Data", propertyData)
-
-    useEffect(() => {
-        const getContractsForProperty = async () => {
-            try {
-                console.log("fetching contracts for property", propertyData[currentIndex].property_uid)
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-                if(!response.ok){
-                    console.log("Error fetching contracts data")
-                }
-                const contractsResponse = await response.json();
-                // console.log("Contract Data", contractsData.result)
-
-                const contracts = contractsResponse.result.filter(item => item.contract_property_id == propertyId && item.contract_status !== "ACTIVE")
-                const activeContracts = contractsResponse.result.filter(item => item.contract_property_id == propertyId && item.contract_status === "ACTIVE")
-
-                setContractsData(contracts)
-            }
-            catch (error){
-                console.log(error);
-            }
-        }
-        getContractsForProperty();
-    }, [item]);
-
     useEffect(() => {
         const getMaintenanceForProperty = async () => {
             setShowSpinner(true);
             try {
-                // console.log("Fetch maintenance data for " + item.property_uid)
-                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);
-                // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/200-000040`);
-                // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-                // if(!response.ok){
-                //     console.log("Error fetching maintenance data")
-                // }
-                                 
+                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);  
                 const propertyMaintenanceData = await responseProperty.json();
                 let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
                 propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
@@ -201,7 +179,15 @@ export default function PropertyNavigator({index, propertyData}){
     };
 
     const handleManagerChange = (index) => {
-        if(item.business_uid) navigate("/managerDetails", { state: { ownerId: item.owner_uid, managerBusinessId: item.business_uid } });
+        if(item.business_uid) navigate("/managerDetails", { 
+            state: { 
+                ownerId: item.owner_uid, 
+                managerBusinessId: item.business_uid,
+                managerData: item,
+                propertyData: propertyData,
+                index: index,
+            } 
+        });
         else {
             console.log("--debug--", index, propertyData)
             navigate("/searchManager", { state: { index, propertyData } });
@@ -211,6 +197,16 @@ export default function PropertyNavigator({index, propertyData}){
     const handleAppClick = (index) => {
         navigate("/tenantApplicationNav", { state:{ index, property: item } });
     };
+
+    function getNoOfNewQuotes(){
+        let count = 0;
+        contractsData.forEach(contract => {
+            if(contract.contract_status === "NEW"){
+                count++;
+            }
+        })
+        return count;
+    }
 
     return(
         <Paper 
@@ -704,7 +700,7 @@ export default function PropertyNavigator({index, propertyData}){
                                         </Typography>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={11}>
+                                    <Grid item xs={12}>
                                         <Typography
                                             sx={{
                                                 textTransform: 'none',
@@ -726,10 +722,55 @@ export default function PropertyNavigator({index, propertyData}){
                                             >
                                                 {tenant_detail}
                                         </Typography>
-                                    </Grid>    
+                                    </Grid>
                                     {console.log("--debug-- this is contractsData", contractsData)}
                                     {contractsData && contractsData.length > 0 ? (
                                         <>
+                                            <Grid item xs={11}>
+                                                <Typography
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        color: theme.typography.primary.black,
+                                                        fontWeight: theme.typography.secondary.fontWeight,
+                                                        fontSize:theme.typography.smallFont,
+                                                        paddingRight: "10px"
+                                                    }}
+                                                >
+                                                    PM Quotes Requested
+                                                </Typography>
+                                                <Grid container>
+                                                    <Typography
+                                                            sx={{
+                                                                textTransform: 'none',
+                                                                color: theme.typography.primary.black,
+                                                                fontWeight: theme.typography.light.fontWeight,
+                                                                fontSize:theme.typography.smallFont,
+                                                            }}
+                                                        >
+                                                            {contractsData.length > 0 ? contractsData.map(contract => {
+                                                                if(contract.contract_status === "NEW"){
+                                                                    return(
+                                                                        <Contract contract={contract}/>   
+                                                                    )
+                                                                }
+                                                            }) : "No PM Quotes"}
+                                                    </Typography>
+                                                    <Badge
+                                                        overlap="circular"
+                                                        color="success"
+                                                        badgeContent={getNoOfNewQuotes()}
+                                                        invisible={!getNoOfNewQuotes()}
+                                                        anchorOrigin={{
+                                                            vertical: "top",
+                                                            horizontal: "right",
+                                                        }}
+                                                        style={{
+                                                            color: "#000000",
+                                                            width: "100%",
+                                                        }}
+                                                    />
+                                                </Grid>
+                                            </Grid>
                                             <Grid item xs={1}>
                                                 <KeyboardArrowRightIcon sx={{ color: arrowButton1_color, cursor: "pointer" }} onClick={
                                                     ()=> {navigate("/pmQuotesRequested",
@@ -742,53 +783,11 @@ export default function PropertyNavigator({index, propertyData}){
                                                     })}
                                                 } />
                                             </Grid>
-                                            <Grid item xs={11}>
-                                                {/* <Box onClick={()=> {navigate("/pmQuotesRequested",
-                                                {state :{
-                                                    index: index,
-                                                    test: propertyData,
-                                                    contracts: contractsData,
-                                                }})}}> */}
-                                                <Typography
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                        color: theme.typography.primary.black,
-                                                        fontWeight: theme.typography.secondary.fontWeight,
-                                                        fontSize:theme.typography.smallFont,
-                                                        paddingRight: "10px"
-                                                    }}
-                                                >
-                                                    PM Quotes Requested
-                                                </Typography>
-                                                <Typography
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            color: theme.typography.primary.black,
-                                                            fontWeight: theme.typography.light.fontWeight,
-                                                            fontSize:theme.typography.smallFont,
-                                                        }}
-                                                    >
-                                                        {contractsData.length > 0 ? contractsData.map(contract => {
-                                                            return(<Contract contract={contract}/>)
-                                                        }) : "No PM Quotes"}
-                                                </Typography>
-                                                {/* </Box> */}
-                                            </Grid>
                                         </>
                                         ) : (
                                             null
                                         )
                                     }
-                                    <Grid item xs={1}>
-                                        <Box>
-                                            <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} 
-                                            onClick={()=> {navigate("/pmQuotesRequested",{state :{
-                                                index: index,
-                                                propertyData: propertyData,
-                                                contracts: contractsData
-                                            }})}}/>
-                                        </Box>
-                                    </Grid>
                                     <Grid item xs={11}>
                                         <Box onClick={handleManagerChange}>
                                         <Typography
@@ -856,7 +855,7 @@ function Contract(props) {
 
     let contract = props.contract;
 
-   return(<Typography  sx={textStyle}>{contract.contract_business_id} {contract.business_name}</Typography>)
+   return(<Typography sx={textStyle}>{contract.contract_business_id} {contract.business_name} {contract.contract_uid} </Typography>)
   }
   
 

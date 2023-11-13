@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import ReturnArrow from "../../images/refund_back.png";
 import theme from "../../theme/theme";
 import axios from "axios";
-import { Typography, Box, Avatar, Grid } from "@mui/material";
+import { Typography, Box, Avatar, Grid, Button } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../images/search.svg";
 import EmailIcon from "./messageIconDark.png";
 import PhoneIcon from "./phoneIconDark.png";
@@ -60,6 +60,35 @@ const ManagerDetails = () => {
     useEffect(() => {
         fetchManagerProperties();
     }, []);
+
+    function handleCancel(obj){
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
+
+        try {
+    
+            const formData = new FormData();
+            formData.append("contract_uid", obj.contract_uid)
+            formData.append("contract_status", "INACTIVE")
+
+             console.log(formData.contract_uid);
+             console.log(formData.contract_status);
+
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData, headers);
+            console.log("PUT result", response);
+            if (response.code === 200) {
+                return true;
+            }
+
+        } catch (error){
+            console.log("error", error)
+            return false;
+        }
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -261,54 +290,69 @@ const ManagerDetails = () => {
                         </Grid>
                     </Grid>
 
-                <Typography
-                    sx={{
-                    paddingLeft: "10px",
-                    fontFamily: "Source Sans Pro, sans-serif",
-                    fontWeight: 800,
-                    color: "#160449",
-                    }}
-                >
-                    {`Manages ${properties.length} of your properties`}
-                </Typography>
-                {properties.sort((a, b) => {
-                        if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
-                        return -1;
-                        }
-                        if (a.contract_status !== "NEW" && b.contract_status === "NEW") {
-                        return 1;
-                        }
-                        return a.contract_status > b.contract_status;
-                    }).map((p) => (
-                        <>
-                            <Grid container direction="row">
-                                <Typography
-                                    sx={{
-                                    paddingLeft: "15px",
-                                    fontFamily: "Source Sans Pro, sans-serif",
-                                    fontWeight: 600,
-                                    color: "#160449",
-                                    textDecoration: "underline",
-                                    }}
-                                >
-                                    {`${p.property_address}, ${p.property_unit && p.property_unit+ ' ,' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                    fontWeight: 800,
-                                    paddingLeft: "10px",
-                                    fontFamily: "Source Sans Pro, sans-serif",
-                                    color: "#160449",
-                                    }}
-                                >
-                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
-                                </Typography>
-                            </Grid>
-                        </>
-                    )
-                )}
-            </Box>
-        </Box>
+                        <Typography
+                            sx={{
+                            paddingLeft: "10px",
+                            fontFamily: "Source Sans Pro, sans-serif",
+                            fontWeight: 800,
+                            color: "#160449",
+                            }}
+                        >
+                            {`Manages ${properties.length} of your properties`}
+                        </Typography>
+                        {properties.sort((a, b) => {
+                                if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
+                                return -1;
+                                }
+                                if (a.contract_status !== "NEW" && b.contract_status === "NEW") {
+                                return 1;
+                                }
+                                return a.contract_status > b.contract_status;
+                            }).map((p) => (
+                                <>
+                                    <Grid container direction="row">
+                                        <Typography
+                                            sx={{
+                                            paddingLeft: "15px",
+                                            fontFamily: "Source Sans Pro, sans-serif",
+                                            fontWeight: 600,
+                                            color: "#160449",
+                                            textDecoration: "underline",
+                                            }}
+                                        >
+                                            {`${p.property_address}, ${p.property_unit && p.property_unit+ ' ,' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                            fontWeight: 800,
+                                            paddingLeft: "10px",
+                                            fontFamily: "Source Sans Pro, sans-serif",
+                                            color: "#160449",
+                                            }}
+                                        >
+                                            {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
+                                        </Typography>
+                                    </Grid>
+                                </>
+                            )
+                        )}
+                        {managerData.contract_status === "ACTIVE" ? (
+                            <Button
+                                sx={{
+                                paddingLeft: "15px",
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                fontWeight: 800,
+                                backgroundColor: "#160449",
+                                }}
+                                onClick={() => handleCancel(managerData)}
+                            >
+                                Cancel Contract
+                            </Button>
+                        ) : (
+                        null
+                        )}
+                    </Box>
+                </Box>
             </Box>
         </Box>
         </ThemeProvider>
