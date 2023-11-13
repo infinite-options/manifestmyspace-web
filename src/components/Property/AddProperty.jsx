@@ -43,7 +43,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 export default function AddProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
-    const { getProfileId } = useUser();
+    const { getProfileId } = useUser(); 
     const { user, selectedRole, selectRole, Name } = useUser();
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
@@ -260,6 +260,8 @@ export default function AddProperty({}){
             console.log(key, value);    
         }
 
+
+        let responsePropertyUID = null;
         try {
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
                 method: "POST",
@@ -270,9 +272,61 @@ export default function AddProperty({}){
             // console.log(formData)
             // console.log('formData')
             const data = await response.json();
-            // console.log("data response", data)
+            console.log("response data", data);
+            responsePropertyUID = data.property_UID;
+            console.log("response data - property UID: ", responsePropertyUID);
         } catch (error) {
             console.log("Error posting data:", error);
+        }
+
+
+        // create new contract if profile === manager
+        if (selectedRole === 'MANAGER'){
+            const contractFormData = new FormData();
+
+            console.log("In Create new contract");
+
+            const currentDate = new Date();
+            const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
+
+            contractFormData.append("contract_property_id", responsePropertyUID)
+            contractFormData.append("contract_business_id", getProfileId());
+            contractFormData.append("contract_start_date", formattedDate)
+            contractFormData.append("contract_status", "NEW")
+
+            console.log("In Create new contract - contractFormData = ", contractFormData);
+            const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
+
+            let responseContractUID = null;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: contractFormData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                console.log('contracts - POST - response data = ', data);
+
+                responseContractUID = data.contract_UID;
+                console.log('response data - contract UID: ', responseContractUID);
+
+                // console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
+                
+                navigate('/managementContractDetails', {
+                    state: {
+                    contract_uid: responseContractUID,
+                    contract_business_id: getProfileId(),
+                    contract_property_id: responsePropertyUID,
+                    },
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
 
         setAddress('');
@@ -294,7 +348,9 @@ export default function AddProperty({}){
         setSelectedImageList([]);
         setActiveStep(0);
         setShowSpinner(false);
-        navigate('/properties');
+        if (selectedRole === 'OWNER'){
+            navigate('/properties');
+        }
       };
 
 

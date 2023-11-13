@@ -44,7 +44,8 @@ function ManagementContractDetails(props) {
 
     const {state} = useLocation();
     // const { announcementData } = state;
-    const { contract_uid, contract_business_id, contract_property_id, property_owner_id  } = state;
+    // const { contract_uid, contract_business_id, contract_property_id, property_owner_id  } = state;
+    const { contract_uid, contract_business_id, contract_property_id } = state;
     
     const [contractUID, setContractUID] = useState(null);
     const [contractBusinessID, setContractBusinessID] = useState(null);
