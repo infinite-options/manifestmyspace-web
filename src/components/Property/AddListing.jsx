@@ -63,7 +63,7 @@ export default function AddListing({}){
     const [propertyState, setPropertyState] = useState(propertyData.property_state);
     const [zip, setZip] = useState(propertyData.property_zip);
     const [propertyType, setPropertyType] = useState(propertyData.property_type);
-    const [squareFootage, setSquareFootage] = useState(0);
+    const [squareFootage, setSquareFootage] = useState(propertyData.property_area);
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
@@ -226,11 +226,14 @@ export default function AddListing({}){
         formData.append('property_description', description);
         formData.append('property_notes', notes);
         formData.append('property_available_to_rent', isListed?1:0);
+        formData.append('property_amenities_community', communityAmenities);
+        formData.append('property_amenities_unit', apartmentAmenities);
         
         //utilities data
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy));
         console.log("uitilitiesPaidBy JSON string");
         console.log(utilitiesJSONString);
+        formData.append('property_utilities', utilitiesJSONString)
 
         utilitiesFormData.append('property_uid', propertyData.property_uid);
         utilitiesFormData.append('property_utility', utilitiesJSONString);

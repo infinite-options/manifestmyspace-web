@@ -19,66 +19,258 @@ import theme from '../../theme/theme';
 import refundIcon from './refundIcon.png';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
+import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
 
 export default function PMQuotesRequested({}){
     const location = useLocation();
     let navigate = useNavigate(); 
 
-    const contractsFeeData = location.state.contractsFeeData;
+    console.log("--debug location.state--", location.state)
+
+    const contracts = location.state.contracts;
+
     const property = location.state.propertyData;
     const index = location.state.index;
 
     const statusList = ["New Quotes", "Contracts"];
     const statusColor = ['#3D5CAC', '#160449'];
     const [tabStatus, setTabStatus] = useState(0);
+    const [activeContracts, setActiveContracts] = useState(getActiveContracts());
+
     function getColor(status) {
         return statusColor[status];
     }
-   
-//     const address =  (property[index].business_locations!==null||property[index].business_locations!==undefined)
-//     ?property[index].business_locations:"";
-//    // console.log("propertyLocation "+JSON.parse(address)[0].city)
 
-//     const dataValue = {
-//         city: (address!==null||address!==undefined||address!=="") ?JSON.parse(address)[0].city:"",
-//         miles: (address!==null||address!==undefined||address!=="")?JSON.parse(address)[0].miles:""
-//     }
+    function getActiveContracts(){
+        let activeContracts = [];
+        contracts.forEach(contract => {
+            if(contract.contract_status === "ACTIVE"){
+                activeContracts.push(contract);
+            }
+        });
+        return activeContracts;
+    }
+
     const address = property[index].business_locations
-  //  console.log("propertyLocation "+JSON.parse(address)[0].city)
+    const headers = { 
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials":"*"
+    };
 
-  let dataValue = {};
+    let dataValue = {};
 
-  if(address!=null && address!=undefined){
-    dataValue = {
-        city: JSON.parse(address)[0].city,
-        miles: JSON.parse(address)[0].miles
+    if(address!=null && address!=undefined){
+        dataValue = {
+            city: JSON.parse(address)[0].city,
+            miles: JSON.parse(address)[0].miles
+        }
+    } else {
+        dataValue = {
+            city: "No data",
+            miles: "No data"
+        }
     }
-  }else{
-    dataValue = {
-        city: "No data",
-        miles: "No data"
-    }
-  }
 
     const [data, setData] = useState(property[index]);
 
     useEffect(() => {
-        console.log("propertyData");
-        console.log(property);
-        console.log("contractsFeeData");
-        console.log(contractsFeeData);
+        console.log("propertyData", property);
+        console.log("contracts", contracts);
     }, []);
 
-    function handleAccept(obj){
+    function displayPMQuotesRequested(){
+        return (
+            <div>
+                {contracts.length > 0 ? (
+                    <div>
+                        {contracts.map(contract => {
+                            // if (contract.contract_status !== "ACTIVE" && contract.contract_status !== "SENT" && contract.contract_status !== "NEW" && contract.contract_status !== "WITHDRAW" && contract.contract_status !== "REJECTED"){
+                            //     return (
+                            //         <div>
+                            //             <DocumentCard data={contract}/>
+                            //             <Stack
+                            //                 direction="row"
+                            //                 justifyContent="space-between"
+                            //                 alignItems="center"
+                            //                 position="relative"
+                            //                 sx={{ padding: '8px', paddingTop: '8px' }}
+                            //             >
+                            //                 <Button 
+                            //                     variant="contained"
+                            //                     sx={{
+                            //                         textTransform: 'none',
+                            //                         background: '#A52A2A',
+                            //                         color: theme.palette.background.default,
+                            //                         width: `40%`,
+                            //                         height: `85%`,
+                            //                         top: `10%`,
+                            //                         borderRadius: '10px 10px 10px 10px',
+                            //                         fontSize: `10px`
+                            //                     }} onClick={()=>{handleDecline(contract)}}>
+                            //                         Decline
+                            //                 </Button>
+                            //                 <Button 
+                            //                     variant="contained"
+                            //                     sx={{
+                            //                         textTransform: 'none',
+                            //                         background: '#76B148',
+                            //                         color: theme.palette.background.default,
+                            //                         width: `40%`,
+                            //                         height: `85%`,
+                            //                         top: `10%`,
+                            //                         borderRadius: '10px 10px 10px 10px',
+                            //                         fontSize: `10px`
+                            //                     }} onClick={()=>{handleAccept(contract)}}>
+                            //                         Accept
+                            //                 </Button>
+                            //             </Stack>
+                            //         </div>
+                            //     )
+                            // } 
+                            if(contract.contract_status === "SENT"){
+                                return (
+                                    <div>
+                                        <DocumentCard data={contract}/>
+                                        
+                                        {/* <Stack 
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            position="relative"
+                                            sx={{ padding: '8px', paddingTop: '8px' }}
+                                        >
+                                            <Button 
+                                                variant="contained"
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    background: '#A52A2A',
+                                                    color: theme.palette.background.default,
+                                                    width: `40%`,
+                                                    height: `85%`,
+                                                    top: `10%`,
+                                                    borderRadius: '10px 10px 10px 10px',
+                                                    fontSize: `10px`
+                                                }} 
+                                                onClick={()=>{handleStatusChange(contract, "WITHDRAW")}}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        </Stack> */}
+                                         <Stack
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            position="relative"
+                                            sx={{ padding: '8px', paddingTop: '8px' }}
+                                        >
+                                            <Button 
+                                                variant="contained"
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    background: '#A52A2A',
+                                                    color: theme.palette.background.default,
+                                                    width: `40%`,
+                                                    height: `85%`,
+                                                    top: `10%`,
+                                                    borderRadius: '10px 10px 10px 10px',
+                                                    fontSize: `10px`
+                                                }} onClick={()=>{handleDecline(contract)}}>
+                                                    Decline
+                                            </Button>
+                                            <Button 
+                                                variant="contained"
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    background: '#76B148',
+                                                    color: theme.palette.background.default,
+                                                    width: `40%`,
+                                                    height: `85%`,
+                                                    top: `10%`,
+                                                    borderRadius: '10px 10px 10px 10px',
+                                                    fontSize: `10px`
+                                                }} onClick={()=>{handleAccept(contract)}}>
+                                                    Accept
+                                            </Button>
+                                        </Stack>
+                                    </div>
+                                )
+                            } if (contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED"){
+                                return (
+                                    <div>
+                                        <DocumentCard data={contract}/>
+                                    </div>
+                                )
+                            } if (contract.contract_status === "NEW"){
+                                return (
+                                    <div>
+                                        <DocumentCard data={contract}/>
+                                        <Stack 
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            position="relative"
+                                            sx={{ padding: '8px', paddingTop: '8px' }}
+                                        >
+                                            <Button 
+                                                variant="contained"
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    background: '#A52A2A',
+                                                    color: theme.palette.background.default,
+                                                    width: `40%`,
+                                                    height: `85%`,
+                                                    top: `10%`,
+                                                    borderRadius: '10px 10px 10px 10px',
+                                                    fontSize: `10px`
+                                                }} 
+                                                onClick={()=>{handleStatusChange(contract, "CANCELLED")}}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </Stack>
+                                    </div>  
+                                )
+                            }
+                        })}
+                    </div>
+                ) : (
+                    <div>
+                        No Requested Contract Quotes
+                    </div>
+                )}
+            </div>
+        )
+    }
 
+    function displayActiveContracts(){
+        return (
+            <div>
+                {activeContracts.length > 0 ? (
+                    <div>
+                        These are all the active contracts
+
+                        {activeContracts.map((contract, index) => {
+                            return (
+                                <div key={index}>
+                                    <DocumentCard data={contract}/>
+                                    <p>{contract.contract_uid}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
+                ) : (
+                    <div>
+                        No active contracts
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    function handleAccept(obj){
         try {
-    
-            const headers = { 
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials":"*"
-            };
     
             const formData = new FormData();
             formData.append("contract_uid", obj.contract_uid)
@@ -86,14 +278,6 @@ export default function PMQuotesRequested({}){
 
              console.log(formData.contract_uid);
              console.log(formData.contract_status);
-    
-            // const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
-            // formData,
-            // headers);
-            // console.log("PUT result", response);
-            // if (response.code === 200) {
-            //     return true;
-            // }
 
             const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
 
@@ -111,27 +295,18 @@ export default function PMQuotesRequested({}){
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
-        
-        
+
         } catch (error){
             console.log("error", error)
             return false;
         }
 
-        navigate("/properties")
+        setTabStatus(1);
     }
     
     function handleDecline(obj){
-        
         try {
     
-            const headers = { 
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials":"*"
-            };
-
             const formData = new FormData();
             formData.append("contract_uid", obj.contract_uid)
             formData.append("contract_status", "REJECTED")
@@ -139,9 +314,7 @@ export default function PMQuotesRequested({}){
              console.log(formData.contract_uid);
              console.log(formData.contract_status);
 
-            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts",
-            formData,
-            headers);
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData, headers);
             console.log("PUT result", response);
             if (response.code === 200) {
                 return true;
@@ -151,11 +324,29 @@ export default function PMQuotesRequested({}){
             console.log("error", error)
             return false;
         }
-
-        navigate("/properties")
-
     }
     
+    function handleStatusChange(obj, status){
+        try {
+
+            const formData = new FormData();
+            formData.append("contract_uid", obj.contract_uid)
+            formData.append("contract_status", status)
+
+            console.log(formData.contract_uid);
+            console.log(formData.contract_status);
+
+            const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData, headers);
+            console.log("PUT result", response);
+            if (response.code === 200) {
+                return true;
+            }
+
+        } catch (error){
+            console.log("error", error)
+            return false;
+        }
+    }
 
     return( 
         <ThemeProvider theme={theme}>
@@ -218,94 +409,100 @@ export default function PMQuotesRequested({}){
                         </Box>
                     </Stack>
                     <Stack
+                        sx={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Box sx={{ 
+                            borderBottom: 0,
+                            width: '95%',
+                        }}>
+                            <Tabs 
+                                variant="fullWidth" 
+                                value={tabStatus}
+                                onChange={(e) => console.log(e)} 
+                                TabIndicatorProps={{
+                                    style: {
+                                        backgroundColor: 'transparent',
+                                        border: '0px',
+                                        minWidth: '5px',
+                                        height: '10px',
+                                        padding: '0px',
+                                    }
+                                }}
+                                sx={{
+                                    [theme.breakpoints.up('sm')]: {
+                                        height: '5px', // padding for screens wider than 'sm'
+                                        },
+                                }}
+                            >
+                                
+                                <Tab
+                                    sx={{
+                                        backgroundColor: statusColor[0],
+                                        borderTopLeftRadius: '10px',
+                                        borderTopRightRadius: '10px',
+                                        height: '10%',
+                                        minWidth: '5px',
+                                        padding: '0px',
+                                        '&.Mui-selected': {
+                                            color: '#FFFFFF', // Highlight color for selected tab
+                                        },
+                                        '&.MuiTab-root': {
+                                            color: '#FFFFFF', // Highlight color for unselected tab
+                                        },
+                                        textTransform: 'none',
+                                    }}
+                                    onClick={() => setTabStatus(0)}
+                                    label="Quotes Requested"
+                                />
+                                <Tab
+                                    sx={{
+                                        backgroundColor: statusColor[1],
+                                        borderTopLeftRadius: '10px',
+                                        borderTopRightRadius: '10px',
+                                        height: '10%',
+                                        minWidth: '5px',
+                                        padding: '0px',
+                                        '&.Mui-selected': {
+                                            color: '#FFFFFF', // Highlight color for selected tab
+                                        },
+                                        '&.MuiTab-root': {
+                                            color: '#FFFFFF', // Highlight color for unselected tab
+                                        },
+                                        textTransform: 'none',
+                                    }}
+                                    onClick={() => setTabStatus(1)}
+                                    label="Active Contracts"
+                                />
+                            </Tabs>
+                            <Box sx={{
+                                backgroundColor: getColor(tabStatus),
+                                height: '15px',
+                            }}></Box>
+                        </Box>
+                    </Stack>
+                    <Stack
                         direction="column"
                         justifyContent="center"
                         alignItems="center"
                     >
                         <Box sx={{ 
                             borderBottom: 0,
-                            width: '75%',
+                            width: '95%',
                         }}>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        color: '#F2F2F2',
-                        fontWeight: 'bold',
-                        fontSize: '10px',
-                        textAlign: 'center',
-                    }}>
-                        <NavTab color={statusColor[0]}>
-                            <Box onClick={() => setTabStatus(0)}>
-                                {statusList[0]}
-                            </Box>
-                            
-                        </NavTab>
-                        <NavTab color={statusColor[1]}>
-                            <Box onClick={() => setTabStatus(1)}>
-                                {statusList[1]}
-                            </Box>
-                        </NavTab>
-                    </Box>
-                    <Box sx={{
-                        position: 'relative',
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '10px',
-                        bottom: '40px',
-                    }}>
-                        <Box sx={{
-                            backgroundColor: getColor(tabStatus),
-                            height: '14px',
-                            borderRadius: '9px 9px 0px 0px',
-                        }}></Box>
-                        <Box sx={{
-                            padding: '13px',
-                        }}>
-
-                            {
-                                contractsFeeData.length>0 && contractsFeeData.map(data=>{
-                                    return  <div>
-                                            <DocumentCard data={data}/>
-                                            <Stack
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                                position="relative"
-                                                sx={{ padding: '8px', paddingTop: '8%' }}
-                                            >
-                                                <Button 
-                                                    variant="contained"
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                        background: '#A52A2A',
-                                                        color: theme.palette.background.default,
-                                                        width: `40%`,
-                                                        height: `85%`,
-                                                        top: `10%`,
-                                                        borderRadius: '10px 10px 10px 10px',
-                                                        fontSize: `10px`
-                                                    }} onClick={()=>{handleDecline(data)}}>
-                                                        Decline
-                                                </Button>
-                                                <Button 
-                                                    variant="contained"
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                        background: '#76B148',
-                                                        color: theme.palette.background.default,
-                                                        width: `40%`,
-                                                        height: `85%`,
-                                                        top: `10%`,
-                                                        borderRadius: '10px 10px 10px 10px',
-                                                        fontSize: `10px`
-                                                    }} onClick={()=>{handleAccept(data)}}>
-                                                        Accept
-                                                </Button>
-                                            </Stack>
-                                        </div>;
-                                })
-                            }
-                            </Box>
-                            
+                        
+                            <Box sx={{
+                                backgroundColor: '#FFFFFF',
+                                borderRadius: "0px 0px 10px 10px",
+                                bottom: '40px',
+                            }}>
+                                <Box sx={{
+                                    padding: '15px',
+                                }}>
+                                    {tabStatus === 0 ? displayPMQuotesRequested() : displayActiveContracts() }
+                                </Box>
                             </Box>
                         </Box>
                     </Stack>
@@ -321,7 +518,7 @@ function NavTab(props) {
         <Box sx={{
             backgroundColor: color,
             width: '50%',
-            height: '60px',
+            height: '80px',
             borderRadius: '10px',
         }}>
             <Box sx={{
@@ -337,26 +534,26 @@ function NavTab(props) {
 
 function DocumentCard(props) {
 
-    const obj = props.data
-    console.log(JSON.stringify(obj))
+    const data = props.data
 
-    let navigate = useNavigate();
+    // let navigate = useNavigate();
 
-    const getContractDocumentLink = () => {
-        const documents = JSON.parse(obj.documents);
-        const contractDocument = documents.find(doc => doc.type === "contract");
-        console.log("contractDocument link: ", contractDocument.link);
-        return contractDocument.link;
-    }
+    // const getContractDocumentLink = () => {
+    //     const documents = JSON.parse(obj.documents);
+    //     if(documents === null || documents === undefined) return null;
+    //     const contractDocument = documents.find(doc => doc.type === "contract");
+    //     console.log("contractDocument link: ", contractDocument.link);
+    //     return contractDocument.link;
+    // }
 
-    const contractDocumentLink = getContractDocumentLink();
+    // const contractDocumentLink = getContractDocumentLink();
 
     
     const textStyle = {
         textTransform: 'none',
         color: theme.typography.propertyPage.color,
         fontWeight: theme.typography.light.fontWeight,
-        fontSize:theme.typography.smallFont,
+        fontSize: theme.typography.secondaryFont,
     };
 
     
@@ -374,43 +571,48 @@ function DocumentCard(props) {
                 alignItems: 'center',
                 
             }}>
-                <Box sx={{
-                    fontWeight: 'bold',
-                }}>
-                   Name
-                </Box>
-                </Box>                
-                <Box>
-                <Typography sx={textStyle}> Area of service:{obj.city} +-{obj.miles} miles</Typography>
-                </Box>
-                
-                <Box>
-                <Typography sx={textStyle}> Status:{obj.contract_status}</Typography>
-                </Box>
-                <Box>
-                <Typography sx={textStyle}> Estimated Fees </Typography>
-                    
-                </Box>
-                {obj!==null && obj.fees!==null && obj.fees.map((fee) =>{
-                  return( <FeesTextCard fee={fee}/>)
-                })}
-             
-                {/* <Box onClick={()=>{navigate("/viewDocument",{
-                    state: {
-                        documents : obj.documents
-                    }
-                }
-                )}}>
-           
-                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
-                </Box> */}
-                
-                <Box onClick={()=>{
-                    window.open(contractDocumentLink, "_blank");
-                }}>
-                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingRight: "15px"}}/>
-                </Box>
-               
+                <Typography sx={{fontWeight: 'bold', fontSize: "26px"}}>
+                   {data.business_name}
+                </Typography>
+            </Box>                
+            <Box>
+                <Typography sx={textStyle}>
+                    Area of service: {data.city} +-{data.miles} miles
+                </Typography>
+            </Box>
+            <Box>
+                <Typography sx={textStyle}>
+                    Status: {data.contract_status}
+                </Typography>
+            </Box>
+            <Box>
+                <Typography sx={textStyle}>
+                    Contract ID: {data.contract_uid}
+                </Typography>
+            </Box>
+
+            <Box>
+                <Typography sx={textStyle}>
+                    Estimated Fees
+                </Typography>
+            </Box>
+            {data !== null && data.contract_fees !== null ? (
+                JSON.parse(data.contract_fees).map((fee, index) => {
+                    <FeesTextCard key={index} fee={fee}/>
+                })
+            ) : (
+                <Typography sx={textStyle}>
+                    No fees
+                </Typography>
+            )} 
+            <Box onClick={()=>{
+                // window.open(contractDocumentLink, "_blank");
+                console.log("we should show a document here")
+            }}>
+                <Typography sx={textStyle}>
+                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingLeft: "15px"}}/>
+                </Typography>
+            </Box>
         </Box>
     );
 }
@@ -422,7 +624,7 @@ function FeesTextCard(props) {
         textTransform: 'none',
         color: theme.typography.propertyPage.color,
         fontWeight: theme.typography.light.fontWeight,
-        fontSize:theme.typography.smallFont,
+        fontSize:theme.typography.mediumFont,
     };
 
     let fee = props.fee;
@@ -435,6 +637,10 @@ function FeesTextCard(props) {
         type="$";
     }
 
-   return(<Typography  sx={textStyle}>{fee.fee_name}:{fee.charge}{type} of {fee.of}</Typography>)
+   return(
+        <Typography sx={textStyle}>
+            {fee.fee_name}:{fee.charge}{type} of {fee.of}
+        </Typography>
+    )
   }
   

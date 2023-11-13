@@ -635,7 +635,12 @@ function PropertyCard(props) {
                     }}>
                         {/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
                         {/* 789 Maple Lane, San Diego, CA 92101, USA */}
-                        {propertyData.property_address}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}
+                        {propertyData.property_unit ? (
+                            <span>{propertyData.property_address}{', '}{propertyData.property_unit}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}</span>
+                            ) : (
+                            <span>{propertyData.property_address}{', '}{propertyData.property_city}{', '}{propertyData.property_state}{' '}{propertyData.property_zip}</span>
+                            )
+                        }
                     </Box>
             </Box>
             {/* Property Owner and Status */}

@@ -36,7 +36,7 @@ import PaidMaintenance from "./Manager/PaidMaintenance";
 import { useUser } from "../../contexts/UserContext";
 
 
-function CustomTabPanel(props) {
+export function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
     return (
         <div
@@ -69,7 +69,7 @@ function a11yProps(index) {
   }
 
 
-export default function MaintenanceRequestDetail(){
+export function MaintenanceRequestDetail(){
     const location = useLocation();
     const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
     let navigate = useNavigate();
@@ -318,7 +318,6 @@ export default function MaintenanceRequestDetail(){
                                 <div key={index}>
                                     <CustomTabPanel key={index} value={value} index={index} style={{
                                         backgroundColor: item.color,
-
                                     }}>
                                         <Grid
                                             sx={{
