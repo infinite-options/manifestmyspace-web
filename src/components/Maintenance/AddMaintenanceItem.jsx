@@ -58,7 +58,6 @@ export default function AddMaintenanceItem(){
     const [description, setDescription] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
-    console.log(user)
 
     const profileId = getProfileId(); 
 

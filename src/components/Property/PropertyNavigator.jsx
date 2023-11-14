@@ -130,7 +130,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                     getRowId={(row) => row.maintenance_request_uid}
                     pageSizeOptions={[5]}
                     disableRowSelectionOnClick
-                    onRowClick={()=>{}}
+                    onRowClick={()=>{navigate("/ownerMaintenance")}}
                 />
             )
         } else {
@@ -685,23 +685,23 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         </div>
                                     </Grid>
                                     <Grid item xs={1}>
-                                    <Box onClick={()=>(navigate('/ownerMaintenance'))}>
-                                        {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
-                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
-                                    </Box>
+                                        <Box onClick={()=>(navigate('/ownerMaintenance'))}>
+                                            {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
+                                            <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={12}>
-                                    <Box>
-                                        <Typography
-                                            sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                            }}
-                                        >
-                                            {displayTopMaintenanceItem()}
-                                        </Typography>
+                                        <Box>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.light.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
+                                            >
+                                                {displayTopMaintenanceItem()}
+                                            </Typography>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={12}>
@@ -793,7 +793,6 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         )
                                     }
                                     <Grid item xs={11}>
-                                        <Box onClick={handleManagerChange}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -817,7 +816,6 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                             `${item.business_name}`:
                                             "No Manager Selected"}
                                         </Typography>
-                                        </Box>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
