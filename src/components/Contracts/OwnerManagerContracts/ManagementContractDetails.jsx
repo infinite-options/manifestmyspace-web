@@ -315,35 +315,55 @@ function PropertyCard(props) {
     const [contractEndDate, setContractEndDate] = useState("");
     const [contractStatus, setContractStatus] = useState("");
     const [contractFees, setContractFees] = useState([]);
+    const [defaultContractFees, setDefaultContractFees] = useState([]);
     const [contractFiles, setContractFiles] = useState([]);
     const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
     const [contractDocument, setContractDocument] = useState(null);
     const [contractFileTypes, setContractFileTypes] = useState([]);
     const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
+    const [propertyOwnerName, setPropertyOwnerName] = useState('');
 
     
+    useEffect(()=> {
+        console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
+        // let JSONstring = JSON.stringify(defaultContractFees);
+        // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
+        
+    }, [contractAssignedContacts]);
+    
 
+
+    useEffect(()=> {
+        console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
+        // let JSONstring = JSON.stringify(defaultContractFees);
+        // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
+
+        if (!contractFees.length){
+            setContractFees([...defaultContractFees]);
+        }
+        
+    }, [defaultContractFees]);
     
 
     useEffect(()=> {
         console.log("CONTRACT FEES - ", contractFees);
 
-        let JSONstring = JSON.stringify(contractFees);
-        console.log("CONTRACT FEES JSON string- ", JSONstring);
+        // let JSONstring = JSON.stringify(contractFees);
+        // console.log("CONTRACT FEES JSON string- ", JSONstring);
     }, [contractFees]);
 
     useEffect(()=> {
         console.log("CONTRACT FILE TYPES - ", contractFileTypes);
 
-        let JSONstring = JSON.stringify(contractFileTypes);
-        console.log("CONTRACT FEES JSON string- ", JSONstring);
+        // let JSONstring = JSON.stringify(contractFileTypes);
+        // console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);
     }, [contractFileTypes]);
 
     useEffect(()=> {
         console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
 
-        let JSONstring = JSON.stringify(previouslyUploadedDocs);
-        console.log("CONTRACT FEES JSON string- ", JSONstring);
+        // let JSONstring = JSON.stringify(previouslyUploadedDocs);
+        // console.log("PREVIOUSLY UPLOADED DOCS JSON string- ", JSONstring);
     }, [previouslyUploadedDocs]);
     
 
@@ -573,6 +593,7 @@ function PropertyCard(props) {
             setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
             setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
             setContractStatus(contractData["contract_status"]? contractData["contract_status"] : "");
+            setContractAssignedContacts(contractData["contract_assigned_contacts"]? JSON.parse(contractData["contract_assigned_contacts"]) : []);
             setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
             const oldDocs = (contractData["contract_documents"]? JSON.parse(contractData["contract_documents"]): []);
             setPreviouslyUploadedDocs(oldDocs);
@@ -580,6 +601,15 @@ function PropertyCard(props) {
             if(contractDoc){
                 setContractDocument(contractDoc);
             }
+            setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
+
+
+            //get default contract fees for manager
+            const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
+            const data2 = await businessProfileResult.json();
+            const businessProfileData = data2["result"][0];
+            console.log("Business Services Fees", businessProfileData["business_services_fees"]);
+            setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
           };
       
           fetchData();
@@ -663,7 +693,8 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            Owner: {propertyData.owner_first_name}{' '}{propertyData.owner_last_name} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  />
+                            {/* Owner: {propertyData.owner_first_name}{' '}{propertyData.owner_last_name} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  /> */}
+                            Owner: {propertyOwnerName} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  />
                     </Box>
                 </Box>
                 <Box sx={{
@@ -1348,6 +1379,75 @@ function PropertyCard(props) {
                                     Please select document types for all documents before proceeding.
                                 </Box>
                             )}
+                        </Box>
+        
+                    </Box>
+                ) : (<></>)
+            }
+            {
+                contractAssignedContacts.length? (
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent:'space-between',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                    }}>
+                        
+                        <Box
+                            sx={{
+                                fontSize: '15px',
+                                fontWeight: 'bold',
+                                paddingTop: '10px',
+                                paddingLeft: '5px',
+                                color: '#3D5CAC',
+                                width: '100%',
+                            }}
+                        >
+                            Contract Assigned Contacts:
+                            <Box
+                                sx={{
+                                    display:'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-start',
+                                    paddingTop: '5px',
+                                    color: 'black',
+                                }}
+                            >
+                                <Box sx={{width: '200px',}}>Name</Box>
+                                <Box sx={{width: '200px',}}>Email</Box>
+                                <Box sx={{width: '200px',}}>Phone Number</Box>
+                            </Box>
+                            {[...contractAssignedContacts].map((contact, i) => (                                
+                                <Box
+                                    key={i} 
+                                    sx={{
+                                        display:'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-start',
+                                    }}
+                                >
+                                    
+                                    <Box
+                                        sx={{
+                                            // height: '16px',
+                                            // width: '100%', 
+                                            color: '#3D5CAC',
+                                            width: '200px',
+                                        }}
+                                    >
+                                    {contact.contact_first_name} {contact.contact_last_name}
+                                    </Box>
+
+                                    <Box sx={{width: '200px',}}>{contact.contact_email}</Box>
+                                    <Box sx={{width: '200px',}}>{contact.contact_phone_number}</Box>
+                                </Box>
+        
+                                
+                            ))}
                         </Box>
         
                     </Box>
