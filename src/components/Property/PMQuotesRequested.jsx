@@ -468,6 +468,8 @@ function DocumentCard(props) {
 
     const data = props.data
 
+    const [fees, setFees] = useState([]);
+
     // let navigate = useNavigate();
 
     // const getContractDocumentLink = () => {
@@ -479,6 +481,30 @@ function DocumentCard(props) {
     // }
 
     // const contractDocumentLink = getContractDocumentLink();
+
+
+    useEffect(() => {
+        const getBusinessProfileFees = async (obj) => {
+            try{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/" + data.business_uid, {
+                    method: 'GET',
+                })
+                const responseData = await response.json()
+                // console.log(responseData.result[0].business_services_fees)
+                // console.log("data for businessProfile fees", responseData.result[0].business_services_fees)
+                if(responseData.result.business_services_fees !== null && responseData.result[0].business_services_fees !== undefined){
+                    setFees(JSON.parse(responseData.result[0].business_services_fees));
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+        }
+        if(data.contract_status === "NEW"){
+            getBusinessProfileFees(data);   
+        }
+
+    }, []);
+
 
     
     const textStyle = {
@@ -528,7 +554,30 @@ function DocumentCard(props) {
                     Estimated Fees
                 </Typography>
             </Box>
-            {data !== null && data.contract_fees !== null ? (
+            {
+                data !== null ? (
+                    data.contract_status === "NEW" ? (
+                        fees.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
+                    ) : data.contract_fees !== null ? (
+                        JSON.parse(data.contract_fees).map((fee, index) => (
+                            // <FeesTextCard key={index} fee={fee} />
+                            <Typography sx={textStyle}>
+                                {fee.service_name}: {fee.charge} {fee.hours} {fee.total_cost}
+                            </Typography>
+                        ))
+                    ) : (
+                        <Typography sx={textStyle}>
+                            No fees
+                        </Typography>
+                    )
+                ) : (
+                    <Typography sx={textStyle}>
+                        No data available
+                    </Typography>
+                )
+            }
+
+            {/* {data !== null && data.contract_fees !== null && data.contract_status !== "NEW" ? (
                 JSON.parse(data.contract_fees).map((fee, index) => {
                     <FeesTextCard key={index} fee={fee}/>
                 })
@@ -537,6 +586,18 @@ function DocumentCard(props) {
                     No fees
                 </Typography>
             )} 
+
+            {data.contract_status === "NEW" ? (
+                // console.log(JSON.parse(fees), typeof(JSON.parse(fees)))
+                // console.log(fees)
+                fees.map((fee, index) => {
+                    <FeesTextCard key={index} fee={fee}/>
+                })
+            ) : (
+                <Typography sx={textStyle}>
+                    No fees test test
+                </Typography>
+            )} */}
             <Box onClick={()=>{
                 // window.open(contractDocumentLink, "_blank");
                 console.log("we should show a document here")
@@ -560,18 +621,20 @@ function FeesTextCard(props) {
     };
 
     let fee = props.fee;
+    let type = fee.fee_type;
 
-    let type=fee.fee_type;
-    if(fee.fee_type=="PERCENT"){
+    if (fee.fee_type=="PERCENT"){
         type="%";
     }
-    if(fee.fee_type=="DOLLAR"){
+    if (fee.fee_type=="DOLLAR"){
         type="$";
     }
 
+    console.log(props)
+
    return(
         <Typography sx={textStyle}>
-            {fee.fee_name}:{fee.charge}{type} of {fee.of}
+            {fee.fee_name}: {fee.charge}{type} of {fee.of}
         </Typography>
     )
   }
