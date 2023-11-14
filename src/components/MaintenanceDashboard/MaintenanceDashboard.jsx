@@ -37,38 +37,39 @@ export default function MaintenanceDashboard(){
     const [paidCount, setPaidCount] = useState(0);
     const [showSpinner, setShowSpinner] = useState(false);
     const [quotesAcceptedCashflow, setQuotesAcceptedCashflow] = useState(0);
-    const [quotesSentCashflow, setQuotesSentCashflow] = useState(0);
+    const [quotesScheduledCashflow, setQuotesScheduledCashflow] = useState(0);
+    const [quotesSubmittedCashflow, setQuotesSubmittedCashflow] = useState(0);
     const [quotesFinishedCashflow, setQuotesFinishedCashflow] = useState(0);
     const [api_data, set_api_data]= useState({});
 
     const data = [
         {
-            "name": "Quotes Requested",
+            "name": "Quotes Requested" + '(' + quoteRequestedCount+')',
             "count": quoteRequestedCount,
             "fill": "#DB9687"
         },
         {
-            "name": "Submitted",
+            "name": "Quotes Submitted" + '(' + submittedCount+')',
             "count": submittedCount,
             "fill": "#CEA892"
         },
         {
-            "name": "Quotes Accepted",
+            "name": "Quotes Accepted" + '(' + quoteAcceptedCount+')',
             "count": quoteAcceptedCount,
             "fill": "#BAAC7A"
         },
         {
-            "name": "Scheduled",
+            "name": "Scheduled" + '(' + scheduledCount+')',
             "count": scheduledCount,
             "fill": "#959A76"
         },
         {
-            "name": "Finished",
+            "name": "Finished" + '(' + finishedCount+')',
             "count": finishedCount,
             "fill": "#598A96"
         },
         {
-            "name": "Paid",
+            "name": "Paid" + '(' + paidCount+')',
             "count": paidCount,
             "fill": "#6588AC"
         },
@@ -98,28 +99,32 @@ export default function MaintenanceDashboard(){
                         case "REQUESTED": 
                             setQuoteRequestedCount(item.num) 
                             break;
+
                         case "SUBMITTED": 
-                            setSubmittedCount(item.num+50);
-                            setQuotesSentCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate));
+                            setSubmittedCount(item.num);
+                            setQuotesSubmittedCashflow(parseInt(item.total_estimate));
                             break;
+
                         case "ACCEPTED": 
-                            setQuoteAcceptedCount(prevCount =>  item.num)
-                            setQuotesAcceptedCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate))
+                            setQuoteAcceptedCount(item.num)
+                            setQuotesAcceptedCashflow(parseInt(item.total_estimate))
                             break;
+
                         case "SCHEDULED" : 
-                            setScheduledCount(prevCount =>  item.num+100)
-                            
-                            setQuotesAcceptedCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate))
+                            setScheduledCount(item.num)
+                            setQuotesScheduledCashflow(parseInt(item.total_estimate))
                             break;
+
                         case "FINISHED":
                             setFinishedCount(item.num)
-                            console.log("item.maintenance_request_cost", item.maintenance_request_cost)
-                            setQuotesFinishedCashflow(prevCashflow => prevCashflow + parseInt(item.total_estimate))
+                            setQuotesFinishedCashflow(parseInt(item.total_estimate))
                             break;
+
                         case "PAID":
-                            setPaidCount(prevCount => item.num)
+                            setPaidCount(item.num)
                             console.log("item.maintenance_request_cost", item.maintenance_request_cost)
                             break;
+
                         default: 
                             // Handle unexpected status or do nothing
                             break;
@@ -240,7 +245,7 @@ export default function MaintenanceDashboard(){
                                         variant="contained"
                                         sx={{
                                             flexDirection: "column",
-                                            backgroundColor: "rgba(189, 169, 97, 0.7)",
+                                            backgroundColor: "#CEA892",
                                             textTransform: "none",
                                             paddingRight: "10px",
                                             paddingTop: "10px",
@@ -253,10 +258,10 @@ export default function MaintenanceDashboard(){
                                         }}
                                     >
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                                            Quotes Sent Cashflow
+                                            Quotes Submitted Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
-                                            ${quotesSentCashflow}
+                                            ${quotesSubmittedCashflow}
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -265,7 +270,7 @@ export default function MaintenanceDashboard(){
                                         variant="contained"
                                         sx={{
                                             flexDirection: "column",
-                                            backgroundColor: "rgba(149, 154, 118, 0.7)",
+                                            backgroundColor: "#BAAC7A",
                                             textTransform: "none",
                                             paddingRight: "10px",
                                             paddingTop: "10px",
@@ -285,13 +290,13 @@ export default function MaintenanceDashboard(){
                                         </Typography>
                                     </Box>
                                 </Grid>
+
                                 <Grid item xs={12}>
                                     <Box
                                         variant="contained"
-                                        disableElevation
                                         sx={{
                                             flexDirection: "column",
-                                            backgroundColor: "rgba(89, 138, 150, 0.7)",
+                                            backgroundColor: "#959A76",
                                             textTransform: "none",
                                             paddingRight: "10px",
                                             paddingTop: "10px",
@@ -304,7 +309,35 @@ export default function MaintenanceDashboard(){
                                         }}
                                     >
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                                            Quotes Finished Cashflow
+                                            Scheduled Cashflow
+                                        </Typography>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
+                                            ${quotesScheduledCashflow}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+
+
+                                <Grid item xs={12}>
+                                    <Box
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            flexDirection: "column",
+                                            backgroundColor: "#598A96",
+                                            textTransform: "none",
+                                            paddingRight: "10px",
+                                            paddingTop: "10px",
+                                            paddingBottom: "10px",
+                                            borderRadius: "10px",
+                                            paddingLeft: "10px",
+                                            display: 'flex',
+                                            width: "80%",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                                            Finished Cashflow
                                         </Typography>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
                                             ${quotesFinishedCashflow}
