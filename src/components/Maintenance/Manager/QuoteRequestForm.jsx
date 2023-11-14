@@ -10,6 +10,8 @@ import {
     Slider,
     Stack,
     Button,
+
+
     Grid,
     TextField,
     MenuItem,
@@ -28,7 +30,8 @@ import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-
+import IconButton from '@mui/material/IconButton';
+import ClearIcon from '@mui/icons-material/Clear';
 export default function QuoteRequestForm(){
 
     console.log("QuoteRequestFormPage")
@@ -44,7 +47,7 @@ export default function QuoteRequestForm(){
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [additionalInfo, setAdditionalInfo] = useState("")
     const [contactList, setContactList] = useState([])
-    const [maintenanceContacts, setMaintenanceContacts] = useState([])
+    const [maintenanceContacts, setMaintenanceContacts] = useState(new Set())
     const [loadingContacts, setLoadingContacts] = useState(true)
     const [maintenanceData, setMaintenanceData] = useState([])
     const [success, setSuccess] = useState(false)
@@ -53,8 +56,12 @@ export default function QuoteRequestForm(){
     const [displayImages, setDisplayImages] = useState([])
     const [showSpinner, setShowSpinner] = useState(false);
 
-    console.log(maintenanceItem)
- 
+    const handleMaintenanceChange = (event) => {
+        console.log("handleStateChange", event.target.value);
+        
+            setMaintenanceContacts((prevContacts) => new Set([...prevContacts, event.target.value]));
+        
+    };
 
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
@@ -100,73 +107,66 @@ export default function QuoteRequestForm(){
             setShowSpinner(false);
         }
 
-        const submitQuoteRequest = async () => {
+        let maintenanceContactIds = [];
+            for (let contact of maintenanceContacts) {
+                console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
+                maintenanceContactIds.push(contact.business_uid);
+            }
+
+
+        const submitQuoteRequest = async (contact) => {
             setShowSpinner(true);
             const formData = new FormData();
-
-            formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid)
-            formData.append("quote_pm_notes", additionalInfo)
-            // formData.append("quote_services_expenses", JSON.stringify({'parts': [{hours: 0, rate: 0, description: ""}], 'labor': [{part: "", cost: 0, quantity: ""}]}))
-
-            if (selectedImageList.length > 0){
-                for (let i = 0; i < selectedImageList.length; i++){
+        
+            formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid);
+            formData.append("quote_pm_notes", additionalInfo);
+        
+            if (selectedImageList.length > 0) {
+                for (let i = 0; i < selectedImageList.length; i++) {
                     const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-                    // console.log(imageBlob)
-                    formData.append(`img_${i}`, imageBlob)
+                    formData.append(`img_${i}`, imageBlob);
                 }
             }
-
-            // also make a put request to the maintenanceRequest endpoint to update the images there
-
-            let maintenanceContactIds = []
-            // console.log("maintenanceContactIds", maintenanceContactIds)
-            if (maintenanceContacts.length > 0){
-                for(let i = 0; i < maintenanceContacts.length; i++){
-                    console.log("maintenanceContacts[i].maintenance_contact_uid", maintenanceContacts[i].business_uid)
-                    maintenanceContactIds.push(maintenanceContacts[i].business_uid)
-               }
-               formData.append("quote_maintenance_contacts", maintenanceContactIds)
-            }
-
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
-
-
+        
+            
+        
+            formData.append("quote_maintenance_contacts", [contact]);
+        
             try {
-
-                console.log("right before call")
+                console.log("right before call");
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quotes", {
                     method: 'POST',
-                    body: formData
+                    body: formData,
                 });
-
+        
                 const responseData = await response.json();
-                console.log("responseData", responseData)
+                console.log("responseData", responseData);
         
                 if (response.status === 200) {
                     console.log("success");
-                    changeMaintenanceRequestStatus()
-                    navigate(maintenanceRoutingBasedOnSelectedRole())
-        
+                    changeMaintenanceRequestStatus();
+                    navigate(maintenanceRoutingBasedOnSelectedRole());
                 } else {
                     console.error(`Request failed with status: ${response.status}`);
                 }
-        
             } catch (error) {
                 console.log("An error occurred while submitting the quote:", error);
             }
-            setShowSpinner(false);
-        }
         
-        submitQuoteRequest();       
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+        
+            setShowSpinner(false);
+        };
+        
+ 
+        
+        for (let contact of maintenanceContactIds)
+        submitQuoteRequest(contact);       
     }
 
-    const handleMaintenanceChange = (event) => {
-        console.log("handleStateChange", event.target.value)
-        setMaintenanceContacts(prevContacts => [...prevContacts, event.target.value]);
-    }
-
+    
     function numImages(){
         if (displayImages.length == 0){
             return 0
@@ -412,6 +412,29 @@ export default function QuoteRequestForm(){
                                     </Select>
                                 </>
                             )}
+
+                                {[...new Set (maintenanceContacts)].map((c)=>{
+    return (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                    {c.business_name}
+                </Typography>
+                <IconButton onClick={()=>{
+                    let contacts= new Set ([...maintenanceContacts])
+                    contacts.delete(c)
+                    setMaintenanceContacts(contacts)
+                    }} >
+                    
+                <ClearIcon />
+                </IconButton>
+            </Box>
+        )
+        
+
+    
+
+    })}
+
 
                         </Grid>
                         <Grid item xs={12} sx={{width: '90%'}}>
