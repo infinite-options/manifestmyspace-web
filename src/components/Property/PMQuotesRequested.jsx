@@ -554,12 +554,14 @@ function DocumentCard(props) {
                     Estimated Fees
                 </Typography>
             </Box>
+
+            {console.log(data.contract_fees, typeof(data.contract_fees))}
             {
                 data !== null ? (
                     data.contract_status === "NEW" ? (
                         fees.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
                     ) : data.contract_fees !== null ? (
-                        JSON.parse(data.contract_fees).map((fee, index) => (
+                        JSON.parse(data.contract_fees).map((fee, index) => ( 
                             // <FeesTextCard key={index} fee={fee} />
                             <Typography sx={textStyle}>
                                 {fee.service_name}: {fee.charge} {fee.hours} {fee.total_cost}

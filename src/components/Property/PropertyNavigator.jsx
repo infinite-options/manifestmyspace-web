@@ -53,7 +53,8 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
-    const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
+    const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
+    // console.log(images)
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
     const color = theme.palette.form.main
@@ -129,7 +130,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                     getRowId={(row) => row.maintenance_request_uid}
                     pageSizeOptions={[5]}
                     disableRowSelectionOnClick
-                    onRowClick={()=>{}}
+                    onRowClick={()=>{navigate("/ownerMaintenance")}}
                 />
             )
         } else {
@@ -500,35 +501,38 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
-                                        <Typography
+                                        <Button
+                                            variant="outlined" 
                                             sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                                paddingRight: "10px"
+                                                background: '#3D5CAC',
+                                                color: theme.palette.background.default,
+                                                cursor: "pointer",
+                                                textTransform: "none",
                                             }}
-                                        >
-                                            <Button
-                                                sx={{
-                                                    paddingLeft: "0px",
-                                                    "&:hover, &:focus, &:active": {
-                                                        backgroundColor: color,
-                                                    },
+                                            size="small"
+                                            onClick={() => {navigate('/editProperty', 
+                                                { state: {
+                                                    index, 
+                                                    propertyList:propertyData 
                                                 }}
-                                                onClick={() => {navigate('/editProperty', 
-                                                    { state: {
-                                                        index, 
-                                                        propertyList:propertyData 
-                                                    }}
-                                                )}}
+                                            )}}
+                                        >
+                                            <CreateIcon sx={{
+                                                color: "#FFFFFF",
+                                                margin:"5px",
+                                                fontSize: "18px"
+                                            }}/>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: "#FFFFFF",
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
                                             >
-                                                <CreateIcon sx={{
-                                                    color: theme.typography.common.blue,
-                                                    paddingLeft: "0px"
-                                                }}/>
-                                            </Button>
-                                        </Typography>
+                                                Edit Property
+                                            </Typography>
+                                        </Button>
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography
@@ -681,23 +685,23 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         </div>
                                     </Grid>
                                     <Grid item xs={1}>
-                                    <Box onClick={()=>(navigate('/ownerMaintenance'))}>
-                                        {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
-                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
-                                    </Box>
+                                        <Box onClick={()=>(navigate('/ownerMaintenance'))}>
+                                            {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
+                                            <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={12}>
-                                    <Box>
-                                        <Typography
-                                            sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                            }}
-                                        >
-                                            {displayTopMaintenanceItem()}
-                                        </Typography>
+                                        <Box>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.light.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
+                                            >
+                                                {displayTopMaintenanceItem()}
+                                            </Typography>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={12}>
@@ -789,7 +793,6 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         )
                                     }
                                     <Grid item xs={11}>
-                                        <Box onClick={handleManagerChange}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -813,7 +816,6 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                             `${item.business_name}`:
                                             "No Manager Selected"}
                                         </Typography>
-                                        </Box>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
@@ -825,12 +827,14 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                 background: '#3D5CAC',
                                                 color: theme.palette.background.default,
                                                 cursor: "pointer",
+                                                textTransform: "none",
                                             }}
+                                            size="small"
                                             onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
-                                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                {item.property_available_to_rent!==1 ? "Create Listing" : "Edit Listing"}
+                                            <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                {item.property_available_to_rent !== 1 ? "Create Listing" : "Edit Listing"}
                                             </Typography>
                                         </Button>
                                     </Grid>
