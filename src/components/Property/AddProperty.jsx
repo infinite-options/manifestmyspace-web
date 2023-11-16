@@ -246,13 +246,17 @@ export default function AddProperty({}){
      //   formData.append('property_owner_id', selectedOwner);
 
         for (let i = 0; i < selectedImageList.length; i++) {
-            console.log("selectedImageList[i].file", selectedImageList[i].data_url)
-            const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-            console.log(imageBlob)
-            if(i === 0){
-                formData.append("img_cover", imageBlob);
-            } else{
-                formData.append("img_" + (i-1), imageBlob);
+            try {
+                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+
+                if(selectedImageList[i].startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                    formData.append(key, imageBlob)
+                } else {
+                    formData.append(key, selectedImageList[i])
+                }
+            } catch (error) {
+                console.log("Error uploading images", error)
             }
         }
 

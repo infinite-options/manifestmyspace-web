@@ -178,7 +178,7 @@ export default function AddListing({}){
 
     useEffect(() => {
         console.log("useEffect")
-        setCoverImage(selectedImageList[0]?.data_url || coverImage);
+        setCoverImage(selectedImageList[0] || coverImage);
     }, [selectedImageList])
 
     const handleUnitChange = (event) => {
@@ -238,6 +238,21 @@ export default function AddListing({}){
         console.log("uitilitiesPaidBy JSON string");
         console.log(utilitiesJSONString);
         formData.append('property_utilities', utilitiesJSONString)
+
+        for (let i = 0; i < selectedImageList.length; i++) {
+            try {
+                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+
+                if(selectedImageList[i].startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                    formData.append(key, imageBlob)
+                } else {
+                    formData.append(key, selectedImageList[i])
+                }
+            } catch (error) {
+                console.log("Error uploading images", error)
+            }
+        }
 
         utilitiesFormData.append('property_uid', propertyData.property_uid);
         utilitiesFormData.append('property_utility', utilitiesJSONString);

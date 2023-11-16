@@ -155,18 +155,19 @@ export default function AddMaintenanceItem(){
         formData.append("maintenance_request_adjustment_date", null);
 
         for (let i = 0; i < selectedImageList.length; i++) {
-            console.log("selectedImageList[i].file", selectedImageList[i].data_url)
-            const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-            console.log(imageBlob)
-            if(i === 0){
-                console.log("i === 0")
-                formData.append("img_cover", imageBlob);
-            } else if (i > 0){
-                console.log("i > 0")
-                formData.append("img_" + (i-1), imageBlob);
+            try {
+                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+
+                if(selectedImageList[i].startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                    formData.append(key, imageBlob)
+                } else {
+                    formData.append(key, selectedImageList[i])
+                }
+            } catch (error) {
+                console.log("Error uploading images", error)
             }
         }
-
 
         for (let [key, value] of formData.entries()) {
             console.log(key, value);    

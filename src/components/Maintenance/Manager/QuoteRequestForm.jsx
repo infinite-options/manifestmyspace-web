@@ -121,10 +121,18 @@ export default function QuoteRequestForm(){
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid);
             formData.append("quote_pm_notes", additionalInfo);
         
-            if (selectedImageList.length > 0) {
-                for (let i = 0; i < selectedImageList.length; i++) {
-                    const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-                    formData.append(`img_${i}`, imageBlob);
+            for (let i = 0; i < selectedImageList.length; i++) {
+                try {
+                    let key = i === 0 ? "img_cover" : `img_${i-1}`;
+    
+                    if(selectedImageList[i].startsWith("data:image")){
+                        const imageBlob = dataURItoBlob(selectedImageList[i]);
+                        formData.append(key, imageBlob)
+                    } else {
+                        formData.append(key, selectedImageList[i])
+                    }
+                } catch (error) {
+                    console.log("Error uploading images", error)
                 }
             }
         
