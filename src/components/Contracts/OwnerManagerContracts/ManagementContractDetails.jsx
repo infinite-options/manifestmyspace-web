@@ -519,6 +519,14 @@ function PropertyCard(props) {
         });
     };
 
+    const handleDeletePrevUploadedFile = (index) => {
+        setPreviouslyUploadedDocs(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
+        });
+    }
+
     const handleDeclineOfferClick = () => {
         console.log("Decline Offer Clicked");
         // let contractFeesJSONString = JSON.stringify(contractFees);
@@ -581,7 +589,7 @@ function PropertyCard(props) {
         formData.append("contract_fees", contractFeesJSONString);
         formData.append("contract_status", "SENT");
         formData.append("contract_assigned_contacts", contractContactsJSONString);
-        // formData.append("contract_documents", contractFiles)
+        formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
 
         const hasMissingType = !checkFileTypeSelected();
         console.log("HAS MISSING TYPE", hasMissingType);
@@ -664,6 +672,37 @@ function PropertyCard(props) {
         
         
     }, []);
+
+    const getFormattedFeeFrequency = (frequency) => {
+        console.log("ROHIT - getFormattedFeeFrequency", frequency);
+        let freq = ""
+        switch(frequency){
+            case "one_time":
+                freq =  "One Time";
+                break;
+            case "hourly":
+                freq =  "Hourly";
+                break;
+            case "daily":
+                freq =  "Daily";
+                break;
+            case "weekly":
+                freq =  "Weekly";
+                break;
+            case "bi_weekly":
+                freq =  "Biweekly";
+                break;
+            case "monthly":
+                freq =  "Monthly";
+                break;
+            case "annually":
+                freq =  "Annual";
+                break;
+            default:
+                freq =  "<FREQUENCY>";
+        }
+        return freq;       
+    }
 
     return (
         <>
@@ -1248,7 +1287,8 @@ function PropertyCard(props) {
                                 }}
                             
                             >
-                                <Box>{fee.fee_name}: {fee.isPercentage ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
+                                <Box>{getFormattedFeeFrequency(fee.frequency)} {fee.fee_name}: {fee.fee_type === "PERCENT" ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
+                                
                                 <Button 
                                     variant="text"
                                     onClick={(event) => {
@@ -1324,33 +1364,55 @@ function PropertyCard(props) {
                             >
                                 <Box>filename</Box>
                                 <Box>type</Box>
+                                <Box>{' '}</Box>
                             </Box>
-                            {[...previouslyUploadedDocs].map((doc, i) => (                                
-                                <Box
-                                    key={i} 
-                                    sx={{
-                                        display:'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <a href={doc.link} target="_blank" rel="noopener noreferrer">
-                                        <Box
-                                            sx={{
-                                                // height: '16px',
-                                                width: '100%', 
-                                                
-                                                
-                                                cursor: 'pointer', // Change cursor to indicate clickability
-                                                color: '#3D5CAC',
+                            {[...previouslyUploadedDocs].map((doc, i) => (
+                                <>                                
+                                    <Box
+                                        key={i} 
+                                        sx={{
+                                            display:'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                            <Box
+                                                sx={{
+                                                    // height: '16px',
+                                                    width: '100%', 
+                                                    
+                                                    
+                                                    cursor: 'pointer', // Change cursor to indicate clickability
+                                                    color: '#3D5CAC',
+                                                }}
+                                            >
+                                            {doc.filename}
+                                            </Box>
+                                        </a>
+                                        {doc.type}
+                                        <Button 
+                                            variant="text"
+                                            onClick={(event) => {
+                                                handleDeletePrevUploadedFile(i);
                                             }}
+                                            sx={{
+                                                width: '10%', 
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold', 
+                                                color: '#3D5CAC',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent', // Set to the same color as the default state
+                                                },
+                                            }}
+                                            
                                         >
-                                        {doc.filename}
-                                        </Box>
-                                    </a>
-                                    {doc.type}
-                                </Box>
+                                            <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                        </Button>
+                                    </Box>
+                                </>
         
                                 
                             ))}
@@ -1774,14 +1836,16 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 
     const handleFeeTypeChange = (event) => {
         setFeeType(event.target.value);
+        console.log("ROHIT - FEE TYPE SELECTED", event.target.value);
         // console.log('FEE TYPE: ', selectedFeeType);
-        if(event.target.value === "PERCENT"){
-            setIsPercentage(true)
-            setIsFlatRate(false);
-        }else{
-            setIsFlatRate(true);
-            setIsPercentage(false)
-        } 
+
+        // if(event.target.value === "PERCENT"){
+        //     setIsPercentage(true)
+        //     setIsFlatRate(false);
+        // }else{
+        //     setIsFlatRate(true);
+        //     setIsPercentage(false)
+        // } 
     };
 
     const handleFrequencyChange = (event) => {
@@ -1806,16 +1870,27 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
         console.log('feeAmount:', feeAmount);
         console.log('feeAppliedTo:', feeAppliedTo);
 
+        // const newFee = {
+        //     fee_name: feeName,
+        //     fee_type: feeType,
+        //     frequency: feeFrequency,
+        //     isPercentage: isPercentage,
+        //     ...(isPercentage && { charge: percentage }),
+        //     ...(isPercentage && { of: feeAppliedTo }),
+        //     isFlatRate: isFlatRate,
+        //     ...(isFlatRate && { charge: feeAmount }),
+        // }
+
         const newFee = {
             fee_name: feeName,
             fee_type: feeType,
             frequency: feeFrequency,
-            isPercentage: isPercentage,
-            ...(isPercentage && { charge: percentage }),
-            ...(isPercentage && { of: feeAppliedTo }),
-            isFlatRate: isFlatRate,
-            ...(isFlatRate && { charge: feeAmount }),
+            ...(feeType === "PERCENT" && { charge: percentage }),
+            ...(feeType === "PERCENT" && { of: feeAppliedTo }),
+            ...(feeType === "FLAT-RATE" && { charge: feeAmount }),
         }
+
+
         onAddFee(newFee);
         handleClose();
     }
@@ -2202,15 +2277,23 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
         console.log('feeAmount:', feeAmount);
         console.log('feeAppliedTo:', feeAppliedTo);
 
+        // const newFee = {
+        //     fee_name: feeName,
+        //     fee_type: feeType,
+        //     frequency: feeFrequency,
+        //     isPercentage: isPercentage,
+        //     ...(isPercentage && { charge: percentage }),
+        //     ...(isPercentage && { of: feeAppliedTo }),
+        //     isFlatRate: isFlatRate,
+        //     ...(isFlatRate && { charge: feeAmount }),
+        // }
         const newFee = {
             fee_name: feeName,
             fee_type: feeType,
             frequency: feeFrequency,
-            isPercentage: isPercentage,
-            ...(isPercentage && { charge: percentage }),
-            ...(isPercentage && { of: feeAppliedTo }),
-            isFlatRate: isFlatRate,
-            ...(isFlatRate && { charge: feeAmount }),
+            ...(feeType === "PERCENT" && { charge: percentage }),
+            ...(feeType === "PERCENT" && { of: feeAppliedTo }),
+            ...(feeType === "FLAT-RATE" && { charge: feeAmount }),
         }
         onEditFee(newFee, feeIndex); // pass index also
         handleClose();
@@ -2330,13 +2413,13 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                         padding: '8px', // Adjust the padding as needed
                                     }}
                                 >
-                                    <MenuItem value={"One Time"}>One Time</MenuItem>
-                                    <MenuItem value={"hourly"}>hourly</MenuItem>
-                                    <MenuItem value={"daily"}>daily</MenuItem>
-                                    <MenuItem value={"weekly"}>weekly</MenuItem>
-                                    <MenuItem value={"biweekly"}>biweekly</MenuItem>
-                                    <MenuItem value={"monthly"}>monthly</MenuItem>
-                                    <MenuItem value={"annually"}>annually</MenuItem>
+                                    <MenuItem value={"one_time"}>One Time</MenuItem>
+                                    <MenuItem value={"hourly"}>Hourly</MenuItem>
+                                    <MenuItem value={"daily"}>Daily</MenuItem>
+                                    <MenuItem value={"weekly"}>Weekly</MenuItem>
+                                    <MenuItem value={"bi_weekly"}>Biweekly</MenuItem>
+                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
+                                    <MenuItem value={"annually"}>Annually</MenuItem>
                                 </Select>
                             </Box>
                         </Box>
