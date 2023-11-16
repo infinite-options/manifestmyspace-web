@@ -178,7 +178,7 @@ export default function EditProperty({}){
                 
                 const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
                 const updatedJson = await updateResponse.json();
-                const updatedProperty = updatedJson.result[0];
+                const updatedProperty = updatedJson.result[0];  
                 propertyList = propertyList.map(property => {
                     if(property.property_uid === updatedProperty.property_uid)
                         return { ...property, ...updatedProperty};

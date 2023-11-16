@@ -45,7 +45,7 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({index, propertyData, contracts}){
+export default function PropertyNavigator({index, propertyData, contracts, props}){
     const navigate = useNavigate();
     const { getProfileId, isManager } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -54,7 +54,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
-    const [property, setProperty] = useState(propertyData);
+    const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
     const color = theme.palette.form.main
@@ -87,6 +87,23 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     useEffect(() => {
         console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
+
+        const refreshPropertyData = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+                if(!response.ok){
+                    console.log("Error fetching property data")
+                }
+                const propertyResponse = await response.json();
+                // console.log("propertyResponse", propertyResponse.result)
+                const property = propertyResponse.result
+                // console.log(property)
+                setProperty(propertyData[currentIndex])
+            } catch (error){
+                console.log(error);
+            }
+        }
+        refreshPropertyData();
     }, [item])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
