@@ -104,7 +104,7 @@ export default function PropertyNavigator({index, propertyData, contracts, props
             }
         }
         refreshPropertyData();
-    }, [item])
+    }, [propertyId])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
@@ -203,17 +203,17 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                 managerBusinessId: item.business_uid,
                 managerData: item,
                 propertyData: propertyData,
-                index: index,
+                index: currentIndex,
             } 
         });
         else {
             console.log("--debug--", index, propertyData)
-            navigate("/searchManager", { state: { index, propertyData } });
+            navigate("/searchManager", { state: { index: index, propertyData } });
         }
     };
 
     const handleAppClick = (index) => {
-        navigate("/tenantApplicationNav", { state:{ index, property: item } });
+        navigate("/tenantApplicationNav", { state:{ index: index, property: item } });
     };
 
     function getNoOfSentQuotes(){
@@ -529,8 +529,8 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                             size="small"
                                             onClick={() => {navigate('/editProperty', 
                                                 { state: {
-                                                    index, 
-                                                    propertyList:propertyData 
+                                                    index: currentIndex,
+                                                    propertyList: propertyData 
                                                 }}
                                             )}}
                                         >
@@ -797,7 +797,7 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                                     ()=> {navigate("/pmQuotesRequested",
                                                     {
                                                         state :{
-                                                            index: index,
+                                                            index: currentIndex,
                                                             propertyData: propertyData,
                                                             contracts: contractsData,
                                                         }
