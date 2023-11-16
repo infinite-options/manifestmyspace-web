@@ -38,21 +38,19 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export default function ImageUploader({selectedImageList, setSelectedImageList, page}){
 
-
     const handleImageSelect = (event) => {
-        console.log("handleImageSelect", event.target.value)
         const files = Array.from(event.target.files);
-        setSelectedImageList([...selectedImageList, ...files]);
-        for (let i = 0; i < files.length; i++) {
+        files.forEach((file) => {
             const reader = new FileReader();
-            
             reader.onloadend = () => {
-                selectedImageList.push({ data_url: reader.result });
-                setSelectedImageList([...selectedImageList]);
+                // file.data_url = reader.result;
+                setSelectedImageList([...selectedImageList, reader.result]);
             };
-
-            reader.readAsDataURL(files[i]);
-        }
+            reader.onerror = (error) => {
+                console.log('Error: ', error);
+            };
+            reader.readAsDataURL(file);
+        });
     };
 
     const handleImageFavorite = (event) => {

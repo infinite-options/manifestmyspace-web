@@ -62,7 +62,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
 
     useEffect(() => {
-        console.log("--debug--", contractsData)
+        // console.log("--debug--", contractsData)
         if (contractsData.length === 0){
             const getContractsForOwner = async () => {
                 try {
@@ -71,9 +71,9 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                         console.log("Error fetching contracts data")
                     }
                     const contractsResponse = await response.json();
-                    console.log("contractsResponse", contractsResponse.result)
+                    // console.log("contractsResponse", contractsResponse.result)
                     const contracts = contractsResponse.result.filter(contract => contract.property_id === propertyId)
-                    console.log(contracts)
+                    // console.log(contracts)
                     setContractsData(contracts)
                 }
                 catch (error){
@@ -85,7 +85,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     }, [])
 
     useEffect(() => {
-        console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
+        // console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
     }, [item])
 
@@ -727,7 +727,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                 {tenant_detail}
                                         </Typography>
                                     </Grid>
-                                    {console.log("--debug-- this is contractsData", contractsData)}
+                                    {/* {console.log("--debug-- this is contractsData", contractsData)} */}
                                     {contractsData && contractsData.length > 0 ? (
                                         <>
                                             <Grid item xs={11}>
@@ -751,10 +751,10 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                                 fontSize:theme.typography.smallFont,
                                                             }}
                                                         >
-                                                            {contractsData.length > 0 ? contractsData.map(contract => {
+                                                            {contractsData.length > 0 ? contractsData.map((index, contract) => {
                                                                 if(contract.contract_status === "NEW" || contract.contract_status === "SENT"){
                                                                     return(
-                                                                        <Contract contract={contract}/>   
+                                                                        <Contract contract={contract} key={index}/>   
                                                                     )
                                                                 }
                                                             }) : "No PM Quotes"}

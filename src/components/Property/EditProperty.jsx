@@ -42,7 +42,7 @@ export default function EditProperty({}){
     let { index, propertyList } = state;
     const propertyData = propertyList[index];
     // console.log("Property Id", propertyId)
-    // console.log("Property Data in Edit Property", propertyData)
+    console.log("Property Data in Edit Property", propertyData)
     const { user, selectedRole, selectRole, Name } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
@@ -87,16 +87,12 @@ export default function EditProperty({}){
     };
 
     useEffect(() => {
-        setCoverImage(selectedImageList[0]?.data_url || coverImage);
-    }, [selectedImageList])
-
-
-    useEffect(() => {
         //property_utilities
     }, [utilities])
 
     useEffect(() => {
         console.log("Size of selectedImageList:", selectedImageList.length)
+        console.log("Contents of selectedImageList:", selectedImageList)
     }, [selectedImageList])
 
     const handleUnitChange = (event) => {
@@ -149,32 +145,25 @@ export default function EditProperty({}){
         formData.append('property_amenities_unit', unitAmenities);
         formData.append('property_amenities_nearby', nearbyAmenities);
 
-
+        console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length)
+        
         for (let i = 0; i < selectedImageList.length; i++) {
-            try{
-                console.log("selectedImageList[", i ,"]", selectedImageList[i])
-                if (typeof(selectedImageList[i]) === "String" && selectedImageList[i].startsWith("http")){
-                    if(i === 0){
-                        formData.append("img_cover", selectedImageList[i]);
-                    } else{
-                        formData.append("img_" + (i-1), selectedImageList[i]);
-                    }
-                } else{
-                    const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-                    console.log(imageBlob)
-                    if(i === 0){
-                        formData.append("img_cover", imageBlob);
-                    } else{
-                        formData.append("img_" + (i-1), imageBlob);
-                    }
+            try {
+                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+
+                if(selectedImageList[i].startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                    formData.append(key, imageBlob)
+                } else {
+                    formData.append(key, selectedImageList[i])
                 }
-            } catch (error) { 
-                console.log("error uploading images", error)
+            } catch (error) {
+                console.log("Error uploading images", error)
             }
         }
 
         for (let [key, value] of formData.entries()) {
-            console.log(key, value);    
+            console.log(key, value);            
         }
 
         const putData = async () => {
