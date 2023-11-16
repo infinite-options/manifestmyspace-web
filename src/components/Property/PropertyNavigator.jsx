@@ -45,7 +45,7 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({index, propertyData, contracts}){
+export default function PropertyNavigator({index, propertyData, contracts, props}){
     const navigate = useNavigate();
     const { getProfileId, isManager } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -54,7 +54,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
-    // console.log(images)
+    const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
     const color = theme.palette.form.main
@@ -85,9 +85,26 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     }, [])
 
     useEffect(() => {
-        // console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
+        console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
-    }, [item])
+
+        const refreshPropertyData = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+                if(!response.ok){
+                    console.log("Error fetching property data")
+                }
+                const propertyResponse = await response.json();
+                // console.log("propertyResponse", propertyResponse.result)
+                const property = propertyResponse.result
+                // console.log(property)
+                setProperty(propertyData[currentIndex])
+            } catch (error){
+                console.log(error);
+            }
+        }
+        refreshPropertyData();
+    }, [propertyId])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
@@ -186,17 +203,17 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                 managerBusinessId: item.business_uid,
                 managerData: item,
                 propertyData: propertyData,
-                index: index,
+                index: currentIndex,
             } 
         });
         else {
             console.log("--debug--", index, propertyData)
-            navigate("/searchManager", { state: { index, propertyData } });
+            navigate("/searchManager", { state: { index: index, propertyData } });
         }
     };
 
     const handleAppClick = (index) => {
-        navigate("/tenantApplicationNav", { state:{ index, property: item } });
+        navigate("/tenantApplicationNav", { state:{ index: index, property: item } });
     };
 
     function getNoOfSentQuotes(){
@@ -512,8 +529,8 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                             size="small"
                                             onClick={() => {navigate('/editProperty', 
                                                 { state: {
-                                                    index, 
-                                                    propertyList:propertyData 
+                                                    index: currentIndex,
+                                                    propertyList: propertyData 
                                                 }}
                                             )}}
                                         >
@@ -780,7 +797,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                     ()=> {navigate("/pmQuotesRequested",
                                                     {
                                                         state :{
-                                                            index: index,
+                                                            index: currentIndex,
                                                             propertyData: propertyData,
                                                             contracts: contractsData,
                                                         }
