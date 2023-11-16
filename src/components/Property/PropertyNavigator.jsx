@@ -54,7 +54,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
-    // console.log(images)
+    const [property, setProperty] = useState(propertyData);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
     const color = theme.palette.form.main
@@ -85,7 +85,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     }, [])
 
     useEffect(() => {
-        // console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
+        console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
     }, [item])
 

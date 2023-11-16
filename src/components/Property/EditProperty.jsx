@@ -329,7 +329,7 @@ export default function EditProperty({}){
                                     </Grid>
 
                                     {/* Select Field for Issue and Cost Estimate */}
-                                    <Grid item xs={6}>a
+                                    <Grid item xs={6}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Unit
                                         </Typography>
