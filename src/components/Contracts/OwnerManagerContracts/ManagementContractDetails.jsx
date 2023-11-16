@@ -476,7 +476,7 @@ function PropertyCard(props) {
     }
 
     const handleDeleteContact = (index, event) => {
-        console.log("ROHIT - Assigned Contacts", contractAssignedContacts);
+        console.log("Contract Assigned Contacts", contractAssignedContacts);
         setContractAssignedContacts(prevContacts => {
             const contactsArray = Array.from(prevContacts);
             contactsArray.splice(index, 1);
@@ -674,7 +674,7 @@ function PropertyCard(props) {
     }, []);
 
     const getFormattedFeeFrequency = (frequency) => {
-        console.log("ROHIT - getFormattedFeeFrequency", frequency);
+        // console.log("getFormattedFeeFrequency(), frequency", frequency);
         let freq = ""
         switch(frequency){
             case "one_time":
@@ -1836,7 +1836,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 
     const handleFeeTypeChange = (event) => {
         setFeeType(event.target.value);
-        console.log("ROHIT - FEE TYPE SELECTED", event.target.value);
+        // console.log("FEE TYPE SELECTED", event.target.value);
         // console.log('FEE TYPE: ', selectedFeeType);
 
         // if(event.target.value === "PERCENT"){
