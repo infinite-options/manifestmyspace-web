@@ -30,7 +30,7 @@ export default function PropertyDetail({}){
     const propertyList = location.state.propertyList; // need to pass to property navigator
     const contracts = location.state.contracts;
 
-    console.log("--debug-- all contracts PropertyDetail", contracts)
+    // console.log("--debug-- all contracts PropertyDetail", contracts)
 
     useEffect(() => {
         // filter contracts for this property

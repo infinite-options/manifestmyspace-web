@@ -53,6 +53,7 @@ export default function AddListing({}){
     let navigate = useNavigate();
     const { getProfileId } = useUser();
     const propertyData = location.state.item
+    console.log("This is the property you are creating a listing for", propertyData)
     const propertyId = location.state.propertyId;
     const { user, selectedRole, selectRole, Name } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
@@ -68,7 +69,7 @@ export default function AddListing({}){
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
     const [description, setDescription] = useState(propertyData.property_description);
-    const [selectedImageList, setSelectedImageList] = useState([]);
+    const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
@@ -77,8 +78,8 @@ export default function AddListing({}){
     const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
     const [assessmentYear, setAssessmentYear] = useState(propertyData.property_value);
     const [deposit, setDeposit] = useState(propertyData.property_deposit);
-    const [petsAllowed, setPetsAllowed] = useState(propertyData.property_pets_allowed);
-    const [depositForRent, setDepositForRent] = useState(propertyData.property_deposit_for_rent);
+    const [petsAllowed, setPetsAllowed] = useState(propertyData.property_pets_allowed === 1 ? true : false);
+    const [depositForRent, setDepositForRent] = useState(propertyData.property_deposit_for_rent === 1 ? true : false);
     const [taxes, setTaxes] = useState(propertyData.property_taxes);
     const [mortgages, setMortgages] = useState(propertyData.property_mortgages);
     const [insurance, setInsurance] = useState(propertyData.property_insurance);
@@ -89,7 +90,8 @@ export default function AddListing({}){
     // const [isDepositLastMonth, setIsDepositLastMonth] = useState(propertyData.property_deposit_for_rent);
 
     const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
-    const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
+    // const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
+    const [isListed, setListed] = useState(true);
 
     const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
 
@@ -176,7 +178,7 @@ export default function AddListing({}){
 
     useEffect(() => {
         console.log("useEffect")
-        setCoverImage(selectedImageList[0]?.data_url || coverImage);
+        setCoverImage(selectedImageList[0] || coverImage);
     }, [selectedImageList])
 
     const handleUnitChange = (event) => {
@@ -219,8 +221,8 @@ export default function AddListing({}){
         formData.append('property_area', squareFootage);
         formData.append('property_listed_rent', rent);
         formData.append('property_deposit', deposit);
-        formData.append('property_pets_allowed', petsAllowed);
-        formData.append('property_deposit_for_rent', depositForRent);
+        formData.append('property_pets_allowed', petsAllowed ? 1 : 0);
+        formData.append('property_deposit_for_rent', depositForRent ? 1 : 0);
         formData.append('property_taxes', taxes);
         formData.append('property_mortgages', mortgages);
         formData.append('property_insurance', insurance);
@@ -236,6 +238,21 @@ export default function AddListing({}){
         console.log("uitilitiesPaidBy JSON string");
         console.log(utilitiesJSONString);
         formData.append('property_utilities', utilitiesJSONString)
+
+        for (let i = 0; i < selectedImageList.length; i++) {
+            try {
+                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+
+                if(selectedImageList[i].startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                    formData.append(key, imageBlob)
+                } else {
+                    formData.append(key, selectedImageList[i])
+                }
+            } catch (error) {
+                console.log("Error uploading images", error)
+            }
+        }
 
         utilitiesFormData.append('property_uid', propertyData.property_uid);
         utilitiesFormData.append('property_utility', utilitiesJSONString);
@@ -407,8 +424,8 @@ export default function AddListing({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            // image={selectedImageList[activeStep]}
-                                            image={coverImage}
+                                            image={selectedImageList[activeStep]}
+                                            // image={coverImage}
                                             sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
@@ -673,7 +690,7 @@ export default function AddListing({}){
                             >
                                 <Grid container columnSpacing={12} rowSpacing={6}>
                                     <Grid item xs={12}>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Active Date
                                         </Typography>
                                         <TextField
@@ -690,7 +707,7 @@ export default function AddListing({}){
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Deposit
                                         </Typography>
                                         <TextField
@@ -711,7 +728,7 @@ export default function AddListing({}){
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Rent
                                         </Typography>
                                         <TextField
@@ -731,17 +748,17 @@ export default function AddListing({}){
                                             value={rent}
                                         />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                                            Deposit can be used for last month’s rent
+                                    <Grid item xs={6}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                            Deposit for Last Month's Rent
                                         </Typography>
                                         <Checkbox
                                             checked={depositForRent}
                                             onChange={(e) => setDepositForRent(e.target.checked)}
                                         />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                                    <Grid item xs={6}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                             Pets Allowed
                                         </Typography>
                                         <Checkbox

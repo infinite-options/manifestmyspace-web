@@ -223,11 +223,11 @@
     }
 
     function getCoverPhoto(property) {
-        if (property.property_images) {
-        let imagesArray = JSON.parse(property.property_images);
-        return imagesArray[0];
+        const imageArray = JSON.parse(property.property_images);
+        if (imageArray.length !== 0) {
+            return imageArray[0];
         } else {
-        return propertyImage;
+            return propertyImage;
         }
     }
 
@@ -319,17 +319,17 @@
                 <List>
                 {displayedItems.map((property, index) => (
                     <ListItem
-                    key={index}
-                    style={{
-                        justifyContent: "space-between",
-                        display: "flex",
-                        height: "100%",
-                        alignItems: "flex-start",
-                        backgroundColor: theme.palette.form.main,
-                        paddingLeft: "10px",
-                        paddingRight: "10px",
-                    }}
-                    onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                        key={index}
+                        style={{
+                            justifyContent: "space-between",
+                            display: "flex",
+                            height: "100%",
+                            alignItems: "flex-start",
+                            backgroundColor: theme.palette.form.main,
+                            paddingLeft: "10px",
+                            paddingRight: "10px",
+                        }}
+                        onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
                     >
                     <Avatar
                         src={getCoverPhoto(property)}

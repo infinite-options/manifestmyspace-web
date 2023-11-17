@@ -45,7 +45,7 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({index, propertyData, contracts}){
+export default function PropertyNavigator({index, propertyData, contracts, props}){
     const navigate = useNavigate();
     const { getProfileId, isManager } = useUser();
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -53,7 +53,8 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
-    const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images));
+    const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
+    const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
     const color = theme.palette.form.main
@@ -61,7 +62,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
 
     useEffect(() => {
-        console.log("--debug--", contractsData)
+        // console.log("--debug--", contractsData)
         if (contractsData.length === 0){
             const getContractsForOwner = async () => {
                 try {
@@ -70,9 +71,9 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                         console.log("Error fetching contracts data")
                     }
                     const contractsResponse = await response.json();
-                    console.log("contractsResponse", contractsResponse.result)
+                    // console.log("contractsResponse", contractsResponse.result)
                     const contracts = contractsResponse.result.filter(contract => contract.property_id === propertyId)
-                    console.log(contracts)
+                    // console.log(contracts)
                     setContractsData(contracts)
                 }
                 catch (error){
@@ -84,9 +85,26 @@ export default function PropertyNavigator({index, propertyData, contracts}){
     }, [])
 
     useEffect(() => {
-        console.log("--debug propertyId--", propertyData[currentIndex].property_uid)
+        console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
-    }, [item])
+
+        const refreshPropertyData = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+                if(!response.ok){
+                    console.log("Error fetching property data")
+                }
+                const propertyResponse = await response.json();
+                // console.log("propertyResponse", propertyResponse.result)
+                const property = propertyResponse.result
+                // console.log(property)
+                setProperty(propertyData[currentIndex])
+            } catch (error){
+                console.log(error);
+            }
+        }
+        refreshPropertyData();
+    }, [propertyId])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
@@ -129,7 +147,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                     getRowId={(row) => row.maintenance_request_uid}
                     pageSizeOptions={[5]}
                     disableRowSelectionOnClick
-                    onRowClick={()=>{}}
+                    onRowClick={()=>{navigate("/ownerMaintenance")}}
                 />
             )
         } else {
@@ -185,17 +203,17 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                 managerBusinessId: item.business_uid,
                 managerData: item,
                 propertyData: propertyData,
-                index: index,
+                index: currentIndex,
             } 
         });
         else {
             console.log("--debug--", index, propertyData)
-            navigate("/searchManager", { state: { index, propertyData } });
+            navigate("/searchManager", { state: { index: index, propertyData } });
         }
     };
 
     const handleAppClick = (index) => {
-        navigate("/tenantApplicationNav", { state:{ index, property: item } });
+        navigate("/tenantApplicationNav", { state:{ index: index, property: item } });
     };
 
     function getNoOfSentQuotes(){
@@ -500,35 +518,38 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
-                                        <Typography
+                                        <Button
+                                            variant="outlined" 
                                             sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                                paddingRight: "10px"
+                                                background: '#3D5CAC',
+                                                color: theme.palette.background.default,
+                                                cursor: "pointer",
+                                                textTransform: "none",
                                             }}
-                                        >
-                                            <Button
-                                                sx={{
-                                                    paddingLeft: "0px",
-                                                    "&:hover, &:focus, &:active": {
-                                                        backgroundColor: color,
-                                                    },
+                                            size="small"
+                                            onClick={() => {navigate('/editProperty', 
+                                                { state: {
+                                                    index: currentIndex,
+                                                    propertyList: propertyData 
                                                 }}
-                                                onClick={() => {navigate('/editProperty', 
-                                                    { state: {
-                                                        index, 
-                                                        propertyList:propertyData 
-                                                    }}
-                                                )}}
+                                            )}}
+                                        >
+                                            <CreateIcon sx={{
+                                                color: "#FFFFFF",
+                                                margin:"5px",
+                                                fontSize: "18px"
+                                            }}/>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: "#FFFFFF",
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
                                             >
-                                                <CreateIcon sx={{
-                                                    color: theme.typography.common.blue,
-                                                    paddingLeft: "0px"
-                                                }}/>
-                                            </Button>
-                                        </Typography>
+                                                Edit Property
+                                            </Typography>
+                                        </Button>
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography
@@ -681,23 +702,23 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         </div>
                                     </Grid>
                                     <Grid item xs={1}>
-                                    <Box onClick={()=>(navigate('/ownerMaintenance'))}>
-                                        {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
-                                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
-                                    </Box>
+                                        <Box onClick={()=>(navigate('/ownerMaintenance'))}>
+                                            {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
+                                            <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={12}>
-                                    <Box>
-                                        <Typography
-                                            sx={{
-                                                textTransform: 'none',
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize:theme.typography.smallFont,
-                                            }}
-                                        >
-                                            {displayTopMaintenanceItem()}
-                                        </Typography>
+                                        <Box>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: theme.typography.primary.black,
+                                                    fontWeight: theme.typography.light.fontWeight,
+                                                    fontSize:theme.typography.smallFont,
+                                                }}
+                                            >
+                                                {displayTopMaintenanceItem()}
+                                            </Typography>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={12}>
@@ -723,7 +744,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                 {tenant_detail}
                                         </Typography>
                                     </Grid>
-                                    {console.log("--debug-- this is contractsData", contractsData)}
+                                    {/* {console.log("--debug-- this is contractsData", contractsData)} */}
                                     {contractsData && contractsData.length > 0 ? (
                                         <>
                                             <Grid item xs={11}>
@@ -747,10 +768,10 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                                 fontSize:theme.typography.smallFont,
                                                             }}
                                                         >
-                                                            {contractsData.length > 0 ? contractsData.map(contract => {
+                                                            {contractsData.length > 0 ? contractsData.map((index, contract) => {
                                                                 if(contract.contract_status === "NEW" || contract.contract_status === "SENT"){
                                                                     return(
-                                                                        <Contract contract={contract}/>   
+                                                                        <Contract contract={contract} key={index}/>   
                                                                     )
                                                                 }
                                                             }) : "No PM Quotes"}
@@ -776,7 +797,7 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                     ()=> {navigate("/pmQuotesRequested",
                                                     {
                                                         state :{
-                                                            index: index,
+                                                            index: currentIndex,
                                                             propertyData: propertyData,
                                                             contracts: contractsData,
                                                         }
@@ -789,7 +810,6 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                         )
                                     }
                                     <Grid item xs={11}>
-                                        <Box onClick={handleManagerChange}>
                                         <Typography
                                                 sx={{
                                                     textTransform: 'none',
@@ -813,7 +833,6 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                             `${item.business_name}`:
                                             "No Manager Selected"}
                                         </Typography>
-                                        </Box>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
@@ -825,12 +844,14 @@ export default function PropertyNavigator({index, propertyData, contracts}){
                                                 background: '#3D5CAC',
                                                 color: theme.palette.background.default,
                                                 cursor: "pointer",
+                                                textTransform: "none",
                                             }}
+                                            size="small"
                                             onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
-                                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                {item.property_available_to_rent!==1 ? "Create Listing" : "Edit Listing"}
+                                            <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                {item.property_available_to_rent !== 1 ? "Create Listing" : "Edit Listing"}
                                             </Typography>
                                         </Button>
                                     </Grid>

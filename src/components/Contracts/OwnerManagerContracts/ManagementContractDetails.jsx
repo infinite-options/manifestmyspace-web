@@ -304,9 +304,11 @@ function PropertyCard(props) {
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
     const [showAddContactDialog, setShowAddContactDialog] = useState(false);
+    const [showEditContactDialog, setShowEditContactDialog] = useState(false);    
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
 
-    const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false)
+    const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
+    const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
 
     //Contract Details
     const [contractUID, setContractUID] = useState();
@@ -396,6 +398,16 @@ function PropertyCard(props) {
         });
     }
 
+    const handleDeleteFee = (index, event) => {
+        console.log("Contract Fees", contractFees);
+        setContractFees(prevFees => {
+            const feesArray = Array.from(prevFees);
+            feesArray.splice(index, 1);
+            return feesArray;
+        });
+        event.stopPropagation();
+    }
+
     const handleOpenAddFee = () => {
         setShowAddFeeDialog(true);
     };
@@ -418,6 +430,16 @@ function PropertyCard(props) {
         setShowAddContactDialog(false);
     };
 
+    const handleOpenEditContact = (contactIndex) => {
+        setShowEditContactDialog(true);
+        console.log("EDITING CONTACT, Index", contactIndex);
+        setIndexForEditContactDialog(contactIndex);
+    };
+
+    const handleCloseEditContact = () => {
+        setShowEditContactDialog(false);
+    };
+
     const handleContractNameChange = (event) => {
         setContractName(event.target.value);
     }
@@ -437,6 +459,30 @@ function PropertyCard(props) {
 
     const handleAddContact = (newContact) => {
         setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
+    }
+
+    const handleEditContact = (newContact, index) => {
+        console.log("In handleEditContact of PropertyCard");
+        console.log(newContact, index);
+        setContractAssignedContacts((prevContacts) => {
+            const updatedContacts = prevContacts.map((contact, i) => {
+                if (i === index) {
+                    return newContact;
+                }
+                return contact;
+            });
+            return updatedContacts;
+        });
+    }
+
+    const handleDeleteContact = (index, event) => {
+        console.log("Contract Assigned Contacts", contractAssignedContacts);
+        setContractAssignedContacts(prevContacts => {
+            const contactsArray = Array.from(prevContacts);
+            contactsArray.splice(index, 1);
+            return contactsArray;
+        });
+        event.stopPropagation();
     }
 
     const sendPutRequest = (data) => {
@@ -472,6 +518,14 @@ function PropertyCard(props) {
             return typesArray;
         });
     };
+
+    const handleDeletePrevUploadedFile = (index) => {
+        setPreviouslyUploadedDocs(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
+        });
+    }
 
     const handleDeclineOfferClick = () => {
         console.log("Decline Offer Clicked");
@@ -535,7 +589,7 @@ function PropertyCard(props) {
         formData.append("contract_fees", contractFeesJSONString);
         formData.append("contract_status", "SENT");
         formData.append("contract_assigned_contacts", contractContactsJSONString);
-        // formData.append("contract_documents", contractFiles)
+        formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
 
         const hasMissingType = !checkFileTypeSelected();
         console.log("HAS MISSING TYPE", hasMissingType);
@@ -618,6 +672,37 @@ function PropertyCard(props) {
         
         
     }, []);
+
+    const getFormattedFeeFrequency = (frequency) => {
+        // console.log("getFormattedFeeFrequency(), frequency", frequency);
+        let freq = ""
+        switch(frequency){
+            case "one_time":
+                freq =  "One Time";
+                break;
+            case "hourly":
+                freq =  "Hourly";
+                break;
+            case "daily":
+                freq =  "Daily";
+                break;
+            case "weekly":
+                freq =  "Weekly";
+                break;
+            case "bi_weekly":
+                freq =  "Biweekly";
+                break;
+            case "monthly":
+                freq =  "Monthly";
+                break;
+            case "annually":
+                freq =  "Annual";
+                break;
+            default:
+                freq =  "<FREQUENCY>";
+        }
+        return freq;       
+    }
 
     return (
         <>
@@ -1195,7 +1280,35 @@ function PropertyCard(props) {
                             <Box>{'percentage'}: {fee.isPercentage ? `Percentage: ${fee.feePercentage}, Applied To: ${fee.feeAppliedTo}` : 'False'}</Box>
                             <Box>{'Is flat-rate?'}: {fee.isFlatRate? 'True' : 'False'}</Box>
                             <Box>{'flat-rate'}: {fee.isFlatRate ? `Amount: ${fee.feeAmount}` : 'False'}</Box> */}
-                            <Box>{fee.fee_name}: {fee.isPercentage ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                }}
+                            
+                            >
+                                <Box>{getFormattedFeeFrequency(fee.frequency)} {fee.fee_name}: {fee.fee_type === "PERCENT" ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
+                                
+                                <Button 
+                                    variant="text"
+                                    onClick={(event) => {
+                                        handleDeleteFee(index, event);
+                                    }}
+                                    sx={{
+                                        width: '10%', 
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold', 
+                                        color: '#3D5CAC',
+                                        '&:hover': {
+                                            backgroundColor: 'transparent', // Set to the same color as the default state
+                                        },
+                                    }}
+                                    
+                                >
+                                    <DeleteIcon  sx={{ fontSize: 14, color: '#3D5CAC'}} />
+                                </Button>
+                            </Box>
                         </Box>
                         
                     ))
@@ -1251,33 +1364,55 @@ function PropertyCard(props) {
                             >
                                 <Box>filename</Box>
                                 <Box>type</Box>
+                                <Box>{' '}</Box>
                             </Box>
-                            {[...previouslyUploadedDocs].map((doc, i) => (                                
-                                <Box
-                                    key={i} 
-                                    sx={{
-                                        display:'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <a href={doc.link} target="_blank" rel="noopener noreferrer">
-                                        <Box
-                                            sx={{
-                                                // height: '16px',
-                                                width: '100%', 
-                                                
-                                                
-                                                cursor: 'pointer', // Change cursor to indicate clickability
-                                                color: '#3D5CAC',
+                            {[...previouslyUploadedDocs].map((doc, i) => (
+                                <>                                
+                                    <Box
+                                        key={i} 
+                                        sx={{
+                                            display:'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                            <Box
+                                                sx={{
+                                                    // height: '16px',
+                                                    width: '100%', 
+                                                    
+                                                    
+                                                    cursor: 'pointer', // Change cursor to indicate clickability
+                                                    color: '#3D5CAC',
+                                                }}
+                                            >
+                                            {doc.filename}
+                                            </Box>
+                                        </a>
+                                        {doc.type}
+                                        <Button 
+                                            variant="text"
+                                            onClick={(event) => {
+                                                handleDeletePrevUploadedFile(i);
                                             }}
+                                            sx={{
+                                                width: '10%', 
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold', 
+                                                color: '#3D5CAC',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent', // Set to the same color as the default state
+                                                },
+                                            }}
+                                            
                                         >
-                                        {doc.filename}
-                                        </Box>
-                                    </a>
-                                    {doc.type}
-                                </Box>
+                                            <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                        </Button>
+                                    </Box>
+                                </>
         
                                 
                             ))}
@@ -1387,13 +1522,14 @@ function PropertyCard(props) {
             {
                 contractAssignedContacts.length? (
                     <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent:'space-between',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                    }}>
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent:'space-between',
+                            alignItems: 'center',
+                            marginBottom: '7px',
+                            width: '100%',
+                        }}
+                    >
                         
                         <Box
                             sx={{
@@ -1428,7 +1564,9 @@ function PropertyCard(props) {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         justifyContent: 'flex-start',
+                                        paddingTop: '10px',
                                     }}
+                                    onClick={() => handleOpenEditContact(i)}
                                 >
                                     
                                     <Box
@@ -1443,7 +1581,26 @@ function PropertyCard(props) {
                                     </Box>
 
                                     <Box sx={{width: '200px',}}>{contact.contact_email}</Box>
-                                    <Box sx={{width: '200px',}}>{contact.contact_phone_number}</Box>
+                                    <Box sx={{width: '80px',}}>{contact.contact_phone_number}</Box>
+                                    <Button 
+                                        variant="text"
+                                        onClick={(event) => {
+                                            handleDeleteContact(i, event);
+                                        }}
+                                        sx={{
+                                            width: '10%', 
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+                                        
+                                    >
+                                        <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                    </Button>
                                 </Box>
         
                                 
@@ -1599,6 +1756,11 @@ function PropertyCard(props) {
                     <AddContactDialog open={showAddContactDialog} handleClose={handleCloseAddContact} onAddContact={handleAddContact} />
                 </Box>
             )}
+            {showEditContactDialog && (
+                <Box>
+                    <EditContactDialog open={showEditContactDialog} handleClose={handleCloseEditContact} onEditContact={handleEditContact} contactIndex={indexForEditContactDialog} contacts={contractAssignedContacts} />
+                </Box>
+            )}
         </>
 
     );
@@ -1674,14 +1836,16 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 
     const handleFeeTypeChange = (event) => {
         setFeeType(event.target.value);
+        // console.log("FEE TYPE SELECTED", event.target.value);
         // console.log('FEE TYPE: ', selectedFeeType);
-        if(event.target.value === "PERCENT"){
-            setIsPercentage(true)
-            setIsFlatRate(false);
-        }else{
-            setIsFlatRate(true);
-            setIsPercentage(false)
-        } 
+
+        // if(event.target.value === "PERCENT"){
+        //     setIsPercentage(true)
+        //     setIsFlatRate(false);
+        // }else{
+        //     setIsFlatRate(true);
+        //     setIsPercentage(false)
+        // } 
     };
 
     const handleFrequencyChange = (event) => {
@@ -1706,16 +1870,27 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
         console.log('feeAmount:', feeAmount);
         console.log('feeAppliedTo:', feeAppliedTo);
 
+        // const newFee = {
+        //     fee_name: feeName,
+        //     fee_type: feeType,
+        //     frequency: feeFrequency,
+        //     isPercentage: isPercentage,
+        //     ...(isPercentage && { charge: percentage }),
+        //     ...(isPercentage && { of: feeAppliedTo }),
+        //     isFlatRate: isFlatRate,
+        //     ...(isFlatRate && { charge: feeAmount }),
+        // }
+
         const newFee = {
             fee_name: feeName,
             fee_type: feeType,
             frequency: feeFrequency,
-            isPercentage: isPercentage,
-            ...(isPercentage && { charge: percentage }),
-            ...(isPercentage && { of: feeAppliedTo }),
-            isFlatRate: isFlatRate,
-            ...(isFlatRate && { charge: feeAmount }),
+            ...(feeType === "PERCENT" && { charge: percentage }),
+            ...(feeType === "PERCENT" && { of: feeAppliedTo }),
+            ...(feeType === "FLAT-RATE" && { charge: feeAmount }),
         }
+
+
         onAddFee(newFee);
         handleClose();
     }
@@ -2102,15 +2277,23 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
         console.log('feeAmount:', feeAmount);
         console.log('feeAppliedTo:', feeAppliedTo);
 
+        // const newFee = {
+        //     fee_name: feeName,
+        //     fee_type: feeType,
+        //     frequency: feeFrequency,
+        //     isPercentage: isPercentage,
+        //     ...(isPercentage && { charge: percentage }),
+        //     ...(isPercentage && { of: feeAppliedTo }),
+        //     isFlatRate: isFlatRate,
+        //     ...(isFlatRate && { charge: feeAmount }),
+        // }
         const newFee = {
             fee_name: feeName,
             fee_type: feeType,
             frequency: feeFrequency,
-            isPercentage: isPercentage,
-            ...(isPercentage && { charge: percentage }),
-            ...(isPercentage && { of: feeAppliedTo }),
-            isFlatRate: isFlatRate,
-            ...(isFlatRate && { charge: feeAmount }),
+            ...(feeType === "PERCENT" && { charge: percentage }),
+            ...(feeType === "PERCENT" && { of: feeAppliedTo }),
+            ...(feeType === "FLAT-RATE" && { charge: feeAmount }),
         }
         onEditFee(newFee, feeIndex); // pass index also
         handleClose();
@@ -2230,13 +2413,13 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                         padding: '8px', // Adjust the padding as needed
                                     }}
                                 >
-                                    <MenuItem value={"One Time"}>One Time</MenuItem>
-                                    <MenuItem value={"hourly"}>hourly</MenuItem>
-                                    <MenuItem value={"daily"}>daily</MenuItem>
-                                    <MenuItem value={"weekly"}>weekly</MenuItem>
-                                    <MenuItem value={"biweekly"}>biweekly</MenuItem>
-                                    <MenuItem value={"monthly"}>monthly</MenuItem>
-                                    <MenuItem value={"annually"}>annually</MenuItem>
+                                    <MenuItem value={"one_time"}>One Time</MenuItem>
+                                    <MenuItem value={"hourly"}>Hourly</MenuItem>
+                                    <MenuItem value={"daily"}>Daily</MenuItem>
+                                    <MenuItem value={"weekly"}>Weekly</MenuItem>
+                                    <MenuItem value={"bi_weekly"}>Biweekly</MenuItem>
+                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
+                                    <MenuItem value={"annually"}>Annually</MenuItem>
                                 </Select>
                             </Box>
                         </Box>
@@ -2459,6 +2642,181 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
                                 }}
                             >
                                 Add Contact
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    {/* First name and last name */}
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{color: '#3D5CAC',}}>First Name</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="contact_first_name"
+                                    placeholder=""
+                                    value={contactFirstName}
+                                    onChange={(event) => {
+                                        setContactFirstName(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{color: '#3D5CAC',}}>Last Name</Box>
+                                <TextField
+                                    name="contact_last_name"
+                                    placeholder=""
+                                    value={contactLastName}
+                                    onChange={(event) => {
+                                        setContactLastName(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                    </Grid>
+                    {/* Email and phone */}
+                    <Grid container spacing={2} sx={{ paddingTop:'10px',}}>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{color: '#3D5CAC',}}>Email</Box>
+                                <TextField
+                                    name="contact_email"
+                                    placeholder=""
+                                    value={contactEmail}
+                                    onChange={(event) => {
+                                        setContactEmail(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                        <Grid 
+                            item
+                            xs={12}
+                            sm={6}
+                        >
+                            <Box sx={{color: '#3D5CAC',}}>Phone Number</Box>
+                                <TextField
+                                    name="contact_phone_number"
+                                    placeholder=""
+                                    value={contactPhone}
+                                    onChange={(event) => {
+                                        setContactPhone(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        onClick={handleClose}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#3D5CAC",
+                            },
+                            backgroundColor:'#9EAED6',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                    >
+                        Close
+                    </Button>
+                    <Button 
+                        type="submit"
+                        onClick={handleSaveContact}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#3D5CAC",
+                            },
+                            backgroundColor:'#9EAED6',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }}
+                    >
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+
+}
+
+function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
+
+    const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
+    const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
+    const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);
+    const [contactPhone, setContactPhone] = useState(contacts[contactIndex].contact_phone_number);
+
+    const handleSaveContact = (event) => {
+        event.preventDefault();
+        
+        console.log("Editing Contact ");
+        console.log('   firstName:', contactFirstName);
+        console.log('   lastName:', contactLastName);
+        console.log('   email:', contactEmail);
+        console.log('   phone:', contactPhone);
+        
+        const newContact = {
+            contact_first_name: contactFirstName,
+            contact_last_name: contactLastName,
+            contact_email: contactEmail,
+            contact_phone_number: contactPhone,
+        }
+        onEditContact(newContact, contactIndex);
+        handleClose();
+    }
+
+    return (
+        <form onSubmit={handleSaveContact}>
+            <Dialog 
+                open={open}
+                onClose={handleClose}
+                fullWidth
+                maxWidth="sm"
+                sx={{
+                    fontSize: '13px',
+                    fontWeight: 'bold',
+                    padding: '5px',
+                    color: '#3D5CAC',
+                }}
+            >
+                <DialogContent>
+                    {/* Dialog Title */}
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Box 
+                                sx={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    fontSize: '15px',
+                                    fontWeight: 'bold',
+                                    padding: '5px',
+                                    color: '#3D5CAC',
+                                }}
+                            >
+                                Edit Contact
                             </Box>
                         </Grid>
                     </Grid>

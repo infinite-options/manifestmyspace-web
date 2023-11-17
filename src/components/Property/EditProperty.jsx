@@ -56,9 +56,9 @@ export default function EditProperty({}){
     const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
     const [isListed, setListed] = useState(propertyData.property_available_to_rent===1?true:false);
-    // const [existingImages, setExistingImages] = useState(JSON.parse(propertyData.property_images));
-
-    const [description, setDescription] = useState('test');
+    const [utilities, setUtiltiies] = useState(propertyData.property_utilities)
+    const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
+    const [description, setDescription] = useState(propertyData.property_description);
     const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
@@ -66,12 +66,16 @@ export default function EditProperty({}){
     const [notes, setNotes] = useState(propertyData.property_notes);
     const [unit, setUnit] = useState(propertyData.property_unit);
     const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
-    const [deposit, setDeposit] = useState(0);
-    const [petsAllowed, setPetsAllowed] = useState(0);
-    const [depositForRent, setDepositForRent] = useState(0);
-    const [taxes, setTaxes] = useState(0);
-    const [mortgages, setMortgages] = useState(0);
-    const [insurance, setInsurance] = useState(0);
+    const [deposit, setDeposit] = useState(propertyData.property_deposit);
+    const [listedRent, setListedRent] = useState(propertyData.property_listed_rent);
+    const [petsAllowed, setPetsAllowed] = useState(propertyData.property_pets_allowed === 1 ? true : false);
+    const [depositForRent, setDepositForRent] = useState(propertyData.property_deposit_for_rent === 1 ? true : false);
+    const [taxes, setTaxes] = useState(propertyData.property_taxes);
+    const [mortgages, setMortgages] = useState(propertyData.property_mortgages);
+    const [insurance, setInsurance] = useState(propertyData.property_insurance);
+    const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
+    const [unitAmenities, setUnitAmenities] = useState(propertyData.property_amenities_unit);
+    const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
     const [page, setPage] = useState("Edit");
 
     const handleNext = () => {
@@ -83,8 +87,12 @@ export default function EditProperty({}){
     };
 
     useEffect(() => {
-        console.log("useEffect")
-        setCoverImage(selectedImageList[0]?.data_url || coverImage);
+        //property_utilities
+    }, [utilities])
+
+    useEffect(() => {
+        console.log("Size of selectedImageList:", selectedImageList.length)
+        console.log("Contents of selectedImageList:", selectedImageList)
     }, [selectedImageList])
 
     const handleUnitChange = (event) => {
@@ -119,36 +127,43 @@ export default function EditProperty({}){
         formData.append('property_num_beds', bedrooms); // Double
         formData.append('property_num_baths', bathrooms); // Double
         formData.append('property_area', squareFootage);
-        formData.append('property_listed_rent', 0); // Int
+        formData.append('property_listed_rent', listedRent); // Int
         formData.append('property_deposit', deposit); // Int
-        formData.append('property_pets_allowed', petsAllowed);
-        formData.append('property_deposit_for_rent', depositForRent); // Int
+        formData.append('property_pets_allowed', petsAllowed ? 1 : 0);
+        formData.append('property_deposit_for_rent', depositForRent ? 1 : 0); // Int
         formData.append('property_taxes', taxes);
         formData.append('property_mortgages', mortgages);
         formData.append('property_insurance', insurance);
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
-        formData.append('property_available_to_rent', isListed?1:0);
+        formData.append('property_available_to_rent', isListed ? 1 : 0);
         formData.append('property_value', propertyValue);
+        formData.append('property_active_date', activeDate);
+        formData.append('property_utilities', utilities);
+        formData.append('property_amenities_community', communityAmenities);
+        formData.append('property_amenities_unit', unitAmenities);
+        formData.append('property_amenities_nearby', nearbyAmenities);
 
+        console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length)
+        
         for (let i = 0; i < selectedImageList.length; i++) {
-            try{
-                console.log("selectedImageList[i].file", selectedImageList[i].data_url)
-                const imageBlob = dataURItoBlob(selectedImageList[i].data_url);
-                console.log(imageBlob)
-                if(i === 0){
-                    formData.append("img_cover", imageBlob);
-                } else{
-                    formData.append("img_" + (i-1), imageBlob);
+            try {
+                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+
+                if(selectedImageList[i].startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                    formData.append(key, imageBlob)
+                } else {
+                    formData.append(key, selectedImageList[i])
                 }
-            } catch (error){ 
-                continue
+            } catch (error) {
+                console.log("Error uploading images", error)
             }
         }
 
         for (let [key, value] of formData.entries()) {
-            console.log(key, value);    
+            console.log(key, value);            
         }
 
         const putData = async () => {
@@ -160,14 +175,16 @@ export default function EditProperty({}){
                 })
                 const data = await response.json();
                 console.log("data", data)
+                
                 const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
                 const updatedJson = await updateResponse.json();
-                const updatedProperty = updatedJson.result[0];
+                const updatedProperty = updatedJson.result[0];  
                 propertyList = propertyList.map(property => {
-                    if(property.property_uid===updatedProperty.property_uid)
+                    if(property.property_uid === updatedProperty.property_uid)
                         return { ...property, ...updatedProperty};
                     return property;
                 });
+
             } catch(error){
                 console.log("Error posting data:", error)
             }
@@ -577,69 +594,88 @@ export default function EditProperty({}){
                             justifyContent="center"
                             alignItems="center"
                             padding="25px"
-                            sx={{
-                                display: 'flex',
-                            }}
                         >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                }}
-                            >
-                                <Grid container columnSpacing={12} rowSpacing={6}>
-
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                            Active Date
-                                        </Typography>
-                                        <Typography
-                                            sx={{color: theme.typography.common.blue, fontWeight: 500, fontSize:theme.typography.mediumFont}}
-                                        >
-                                            10/10/2021
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                            Deposit
-                                        </Typography>
-                                        <Typography
-                                            sx={{color: theme.typography.common.blue, fontWeight: 500, fontSize:theme.typography.mediumFont}}
-                                        >
-                                            $2500
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                            Rent
-                                        </Typography>
-                                        <Typography
-                                            sx={{color: theme.typography.common.blue, fontWeight: 500, fontSize:theme.typography.mediumFont}}
-                                        >
-                                            $2500
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                        Deposit can be used for last month’s rent
-                                        </Typography>
-                                        <Typography
-                                            sx={{color: theme.typography.common.blue, fontWeight: 500, fontSize:theme.typography.mediumFont}}
-                                        >
-                                            No
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                            Pets Allowed
-                                        </Typography>
-                                        <Typography
-                                            sx={{color: theme.typography.common.blue, fontWeight: 500, fontSize:theme.typography.mediumFont}}
-                                        >
-                                            Yes
-                                        </Typography>
-                                    </Grid>
+                            <Grid container columnSpacing={12} rowSpacing={6}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Active Date
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderColor: 'black',
+                                            borderRadius: '7px',
+                                        }}
+                                        size="small"
+                                        placeholder={activeDate}
+                                        onChange={(e) => setActiveDate(e.target.value)}
+                                        value={activeDate}
+                                    />
                                 </Grid>
-                            </Box>
+                                <Grid item xs={6}>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Deposit
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderColor: 'black',
+                                            borderRadius: '7px',
+                                        }}
+                                        size="small"
+                                        placeholder={deposit}
+                                        onChange={(e) => setDeposit(e.target.value)}
+                                        value={deposit}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">$</InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Rent
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderColor: 'black',
+                                            borderRadius: '7px',
+                                        }}
+                                        size="small"
+                                        placeholder={listedRent}
+                                        onChange={(e) => setListedRent(e.target.value)}
+                                        value={listedRent}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">$</InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Deposit for Last Month's Rent
+                                    </Typography>
+                                    <Checkbox
+                                            checked={depositForRent}
+                                            onChange={(e) => setDepositForRent(e.target.checked)}
+                                        />
+                                </Grid>
+                                <Grid item xs={6}>
+                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Pets Allowed
+                                    </Typography>
+                                    <Checkbox
+                                        checked={petsAllowed}
+                                        onChange={(e) => setPetsAllowed(e.target.checked)}
+                                    />
+                                </Grid>
+                            </Grid>
                         </Stack>
                     </Paper>
                                     
@@ -686,9 +722,16 @@ export default function EditProperty({}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Owner
-                                        </Typography>
+                                        <Select
+                                            value={"owner"}
+                                            label="Electricity"
+                                            onChange={(e) => console.log(e.target.value)}
+                                            sx={{backgroundColor: "#FFFFFF"}}
+                                            size="small"
+                                        >
+                                            <MenuItem value={"owner"}>Owner</MenuItem>
+                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
+                                        </Select>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
@@ -696,9 +739,16 @@ export default function EditProperty({}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Tenant
-                                        </Typography>
+                                        <Select
+                                            value={"tenant"}
+                                            label="Trash"
+                                            onChange={(e) => console.log(e.target.value)}
+                                            sx={{backgroundColor: "#FFFFFF"}}
+                                            size="small"
+                                        >
+                                            <MenuItem value={"owner"}>Owner</MenuItem>
+                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
+                                        </Select>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
@@ -706,9 +756,16 @@ export default function EditProperty({}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Tenant
-                                        </Typography>
+                                        <Select
+                                            value={"tenant"}
+                                            label="Water"
+                                            onChange={(e) => console.log(e.target.value)}
+                                            sx={{backgroundColor: "#FFFFFF"}}
+                                            size="small"
+                                        >
+                                            <MenuItem value={"owner"}>Owner</MenuItem>
+                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
+                                        </Select>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
@@ -716,9 +773,16 @@ export default function EditProperty({}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Tenant
-                                        </Typography>
+                                        <Select
+                                            value={"tenant"}
+                                            label="Wifi"
+                                            onChange={(e) => console.log(e.target.value)}
+                                            sx={{backgroundColor: "#FFFFFF"}}
+                                            size="small"
+                                        >
+                                            <MenuItem value={"owner"}>Owner</MenuItem>
+                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
+                                        </Select>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
@@ -726,9 +790,16 @@ export default function EditProperty({}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Tenant
-                                        </Typography>
+                                        <Select
+                                            value={"tenant"}
+                                            label="Gas"
+                                            onChange={(e) => console.log(e.target.value)}
+                                            sx={{backgroundColor: "#FFFFFF"}}
+                                            size="small"
+                                        >
+                                            <MenuItem value={"owner"}>Owner</MenuItem>
+                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
+                                        </Select>
                                     </Grid>
                                 </Grid>
                             </Box>
@@ -774,9 +845,79 @@ export default function EditProperty({}){
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Sun-kissed, beige condo for a family.
+                                        <TextField
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            multiline={true}
+                                            placeholder={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            value={description}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                            Property Amenities
                                         </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            multiline={true}
+                                            placeholder={unitAmenities}
+                                            onChange={(e) => setUnitAmenities(e.target.value)}
+                                            value={unitAmenities}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                            Community Amenities
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            multiline={true}
+                                            placeholder={communityAmenities}
+                                            onChange={(e) => setCommunityAmenities(e.target.value)}
+                                            value={communityAmenities}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                            Nearby Amenities
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            multiline={true}
+                                            placeholder={nearbyAmenities}
+                                            onChange={(e) => setNearbyAmenities(e.target.value)}
+                                            value={nearbyAmenities}
+                                        />
                                     </Grid>
                                 </Grid>
                             </Box>
