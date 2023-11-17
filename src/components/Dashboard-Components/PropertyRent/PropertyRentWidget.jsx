@@ -29,22 +29,17 @@ export default function PropertyRentWidget(props) {
 
     return (
         <Box 
-            onClick={() => navigate("/ownerRent")}
             style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                justifyContent: 'center',
                 backgroundColor: "#F5F5F5",
                 marginTop: "30px",
                 width: "42.75%",
-                height: "400px",
+                height: "392px",
                 borderRadius: "10px",
                 cursor: "pointer",
-                // position: "relative",
+                position: "relative",
             }}
         >
-            <h2> Property Rent</h2> 
+            <h2 className="mt-widget-title"> Property Rent</h2> 
             <Box 
                 style={{ 
                     display: 'flex', 
@@ -52,7 +47,7 @@ export default function PropertyRentWidget(props) {
                     justifyContent: 'center',
                 }}
             >
-                <PieChart width={200} height={200} >
+                <PieChart width={200} height={200}>
                     <Legend
                         height={36}
                         iconType="circle"
@@ -61,8 +56,9 @@ export default function PropertyRentWidget(props) {
                         iconSize={15}
                         padding={5}
                         formatter={renderColorfulLegendText}
+                        onClick={() => navigate("/pmRent")}
                     />
-                    <Pie
+                    <Pie 
                         data={data}
                         cx={100}
                         cy={80}
@@ -70,6 +66,7 @@ export default function PropertyRentWidget(props) {
                         outerRadius={60}
                         paddingAngle={0}
                         dataKey="number"
+                        onClick={() => {navigate('/properties') }}
                     >
 
                         {data.map((entry, index) => (
@@ -79,7 +76,7 @@ export default function PropertyRentWidget(props) {
                     </Pie>
                     <text
                         x={100}
-                        y={85}
+                        y={78}
                         textAnchor="middle"
                         dominantBaseline="middle"
                         cursor="pointer"
@@ -89,10 +86,10 @@ export default function PropertyRentWidget(props) {
                             fill: '#160449',
                             fontWeight: '600',
                         }}
-                        onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
+                        onClick={() => {navigate('/properties') }}
                     >
-                        View All {props.totalPropertiesCount}
-                        <tspan x={105} y={90}>properties</tspan>
+                        View all {props.totalPropertiesCount}
+                        <tspan x={105} y={98}>properties</tspan>
                     </text>
                 </PieChart>
             </Box>
