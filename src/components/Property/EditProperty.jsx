@@ -32,6 +32,7 @@ import { useUser } from "../../contexts/UserContext";
 import IconButton from '@mui/material/IconButton';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { Assessment } from '@mui/icons-material';
 
 export default function EditProperty({}){
     const { state } = useLocation();
@@ -66,6 +67,7 @@ export default function EditProperty({}){
     const [notes, setNotes] = useState(propertyData.property_notes);
     const [unit, setUnit] = useState(propertyData.property_unit);
     const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
+    const [assessmentYear, setAssessmentYear] = useState(propertyData.property_value_year);
     const [deposit, setDeposit] = useState(propertyData.property_deposit);
     const [listedRent, setListedRent] = useState(propertyData.property_listed_rent);
     const [petsAllowed, setPetsAllowed] = useState(propertyData.property_pets_allowed === 1 ? true : false);
@@ -139,6 +141,7 @@ export default function EditProperty({}){
         formData.append('property_notes', notes);
         formData.append('property_available_to_rent', isListed ? 1 : 0);
         formData.append('property_value', propertyValue);
+        formData.append('property_value_year', assessmentYear);
         formData.append('property_active_date', activeDate);
         formData.append('property_utilities', utilities);
         formData.append('property_amenities_community', communityAmenities);
@@ -549,6 +552,27 @@ export default function EditProperty({}){
                                             }}
                                             onChange={(e) => setPropertyValue(e.target.value)}
                                             value={propertyValue}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                            Assessment Year
+                                        </Typography>
+                                        <TextField
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            // InputProps={{
+                                            //     startAdornment: (
+                                            //         <InputAdornment position="start">$</InputAdornment>
+                                            //     ),
+                                            // }}
+                                            onChange={(e) => setAssessmentYear(e.target.value)}
+                                            value={assessmentYear}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>

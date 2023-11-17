@@ -58,6 +58,13 @@ export default function AddListing({}){
     const { user, selectedRole, selectRole, Name } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [ownerId, setOwnerId] = useState(getProfileId());
+    const statesList = [
+        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+      ];
 
     const [address, setAddress] = useState(propertyData.property_address);
     const [city, setCity] = useState(propertyData.property_city);
@@ -94,7 +101,6 @@ export default function AddListing({}){
     const [isListed, setListed] = useState(true);
 
     const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
-
     useEffect(()=> {
         console.log("AddListing - utilitiesPaidBy");
         console.log("   ", utilitiesPaidBy);
@@ -105,6 +111,15 @@ export default function AddListing({}){
         // console.log("AddListing - Mapped Utilities and entities - ");
         // console.log("   ", JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy)));
     },[utilitiesPaidBy]);
+
+
+    const [utilityToBeAdded, setUtilityToBeAdded] = useState(null);
+
+    const onClickAddUtility = () => {
+        if(utilityToBeAdded){
+            setUtilitiesPaidBy()
+        }
+    }
 
     //rohit - replace with actual data from props - item.
     const utilitiesFromProps = {
@@ -119,6 +134,52 @@ export default function AddListing({}){
         setUtilitiesPaidBy(utilitiesFromProps);
     }, []); // rohit - delete this. get utilities from props
     
+
+    const listOfUtilities =[
+        "Electricity",
+        "Water", 
+        "Gas", 
+        "Trash",
+        "Sewer", 
+        "Internet", 
+        "Cable", 
+        "HOA Dues", 
+        "Security system",
+        "Pest control",
+        "Gardener", 
+        "Maintenance",
+    ]
+
+    const utilitiesValueToNameMap = {
+        "electricity" : "Electricity",
+        "water" : "Water", 
+        "gas" : "Gas", 
+        "trash" : "Trash",
+        "sewer" : "Sewer", 
+        "internet" : "Internet", 
+        "cable" : "Cable", 
+        "hoa_dues" : "HOA Dues", 
+        "security_system" : "Security system",
+        "pest_control" : "Pest control",
+        "gardener" : "Gardener", 
+        "maintenance" : "Maintenance",
+    }
+
+    const utilitiesNameToValueMap = {
+        "Electricity": "electricity",
+        "Water": "water",
+        "Gas": "gas",
+        "Trash": "trash",
+        "Sewer": "sewer",
+        "Internet": "internet",
+        "Cable": "cable",
+        "HOA Dues": "hoa_dues",
+        "Security system": "security_system",
+        "Pest control": "pest_control",
+        "Gardener": "gardener",
+        "Maintenance": "maintenance",
+      };
+
     const utilitiesMap = {
         electricity     : '050-000001',
         water           : '050-000002', 
@@ -150,6 +211,7 @@ export default function AddListing({}){
         }
         return mappedResults;
     };
+    
     
     const test = {
         "050-000001":"050-000041",
@@ -447,7 +509,7 @@ export default function AddListing({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Edit"} />
                                     </Grid>
 
                                     {/* Text Field for Title */}
@@ -520,8 +582,16 @@ export default function AddListing({}){
                                                 fullWidth
                                                 onChange={(e) => setPropertyState(e.target.value)}
                                                 value={propertyState}
+                                                renderValue={(value) => (value ? `${value}` : '')}
                                             >
-                                                <StateMenuItems />
+                                                {/* <StateMenuItems /> */}
+                                                {statesList.map(item => {
+                                                    return (
+                                                        <MenuItem value={item}>
+                                                            <li>{item}</li>
+                                                        </MenuItem>
+                                                    );
+                                                })}
                                             </Select>
                                     </Grid>
 
@@ -798,12 +868,39 @@ export default function AddListing({}){
                             <Box
                                 sx={{
                                     display: 'flex',
+                                    paddingBottom: "20px"
                                 }}
                                 noValidate
                                 autoComplete="off"
                             >
                                 <UtilitySelection existingSelection={utilitiesPaidBy} onChangeUtilities={handleUtilityChange}/>
                             </Box>
+                            <Grid item xs={12} xl={3}>
+                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                    Add Utility
+                                </Typography>
+                                    <Select 
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderColor: 'black',
+                                            borderRadius: '7px',
+                                        }}
+                                        size="small"
+                                        // fullWidth
+                                        onChange={(e) => setUtilityToBeAdded(e.target.value)}
+                                        value={""}
+                                        renderValue={(value) => (value ? `${value}` : '')}
+                                    >
+                                        {/* <StateMenuItems /> */}
+                                        {listOfUtilities.map(item => {
+                                            return (
+                                                <MenuItem value={item}>
+                                                    <li>{item}</li>
+                                                </MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                            </Grid>
                         </Stack>
                     </Paper>
 
