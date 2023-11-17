@@ -43,14 +43,13 @@ function TenantDashboard(props) {
   const [propertyAddr, setPropertyAddr] = useState();
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
 
-  const{user}=useUser();
+  const { user } = useUser();
   console.log(`User ID: ${getProfileId()} `+" "+{tenantId})
   useEffect(() => {
 
     const getTenantData = async () => {
       setShowSpinner(true);
       const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
-      // const tenantRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/350-000040')
       const tenantRequestsData = await tenantRequests.json()  
       
       console.log(tenantRequestsData)
