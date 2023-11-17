@@ -470,17 +470,18 @@ function DocumentCard(props) {
 
     const [fees, setFees] = useState([]);
 
-    // let navigate = useNavigate();
+    let navigate = useNavigate();
 
-    // const getContractDocumentLink = () => {
-    //     const documents = JSON.parse(obj.documents);
-    //     if(documents === null || documents === undefined) return null;
-    //     const contractDocument = documents.find(doc => doc.type === "contract");
-    //     console.log("contractDocument link: ", contractDocument.link);
-    //     return contractDocument.link;
-    // }
+    const getContractDocumentLink = () => {
+        // const documents = JSON.parse(obj.documents);
+        const documents = JSON.parse(data.contract_documents);
+        if(documents === null || documents === undefined) return null;
+        const contractDocument = documents.find(doc => doc.type === "contract");
+        console.log("contractDocument link: ", contractDocument.link);
+        return contractDocument.link;
+    }
 
-    // const contractDocumentLink = getContractDocumentLink();
+    const contractDocumentLink = getContractDocumentLink();
 
 
     useEffect(() => {
@@ -602,8 +603,8 @@ function DocumentCard(props) {
                 </Typography>
             )} */}
             <Box onClick={()=>{
-                // window.open(contractDocumentLink, "_blank");
-                console.log("we should show a document here")
+                window.open(contractDocumentLink, "_blank");
+                // console.log("we should show a document here")
             }}>
                 <Typography sx={textStyle}>
                     View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingLeft: "15px"}}/>
