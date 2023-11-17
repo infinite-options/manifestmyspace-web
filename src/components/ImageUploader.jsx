@@ -124,7 +124,7 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                             >
                                 <Grid item xs={2} key={index}>
                                     <img
-                                        src={page=="Edit"?
+                                        src={page==="Edit"?
                                          (image.data_url===undefined||image.data_url===null?image:image.data_url)
                                         :image.data_url}
                                         alt="new"

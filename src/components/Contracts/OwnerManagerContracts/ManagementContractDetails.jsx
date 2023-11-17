@@ -909,7 +909,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            {'$'}{propertyData.property_value? propertyData.property_value : '<$$$>' } {'(<YEAR>)'}
+                            {'$'}{propertyData.property_value? propertyData.property_value : '<$$$>' } {propertyData.property_value_year? `(${propertyData.property_value_year})` : '(<YEAR>)'}
                     </Box>
                 </Box>
                 <Box sx={{
@@ -1024,7 +1024,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            {propertyData.property_num_beds? propertyData.property_num_beds : '<BEDS>' }
+                            {propertyData.property_num_beds >= 0? Number(propertyData.property_num_beds) : '<BEDS>' }
                     </Box>
                 </Box>
                 <Box sx={{
@@ -1051,7 +1051,7 @@ function PropertyCard(props) {
                         }}
                     >
                         
-                            {propertyData.property_num_baths? propertyData.property_num_baths : '<BATHS>' }
+                            {propertyData.property_num_baths >= 0? propertyData.property_num_baths : '<BATHS>' }
                     </Box>
                 </Box>
             </Box>
