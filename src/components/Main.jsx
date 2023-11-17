@@ -29,6 +29,7 @@ import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
 import OwnerRent from "./Rent/OwnerRent/OwnerRent";
 
 import PMProfile from "./Profile/PMProfile/PMProfile";
+import PMProfileEdit from "./Profile/PMProfile/PMProfileEdit";
 import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
 import ManagementContractDetails from "./Contracts/OwnerManagerContracts/ManagementContractDetails";
@@ -215,6 +216,7 @@ function Main() {
             <Route path="tenantDashboard" element={<TenantDashboard />} />
 
             <Route path="pmProfile" element={<PMProfile />} />
+            <Route path="pmProfileEdit" element={<PMProfileEdit />} />
             <Route path="pmLeases" element={<PMLeases />} />
             <Route path="pmContracts" element={<PMContracts />} />
             <Route path="managementContractDetails" element={<ManagementContractDetails />} />
