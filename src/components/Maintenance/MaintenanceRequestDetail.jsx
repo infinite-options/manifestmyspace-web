@@ -328,9 +328,9 @@ export function MaintenanceRequestDetail(){
                                                 paddingBottom: "0px"
 
                                         }}>
-                                            {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
+                                            {/* {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
                                             {console.log(allData[item.mapping])}
-                                            {console.log(allData[item.mapping][maintenanceRequestIndex])}
+                                            {console.log(allData[item.mapping][maintenanceRequestIndex])} */}
 
                                             {/* TODO: Pass the data filter all the way here */}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (

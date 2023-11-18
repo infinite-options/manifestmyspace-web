@@ -43,12 +43,9 @@ export default function MaintenanceOwner(){
     const [showSpinner, setShowSpinner] = useState(false);
     const [filterPropertyList, setFilterPropertyList] = useState([]);
 
-    console.log(user)
-
     const businessId = user.businesses.MAINTENANCE.business_uid;
-    console.log(businessId)
 
-    console.log(getProfileId(), "===", businessId)
+    const propertyIdFromPropertyDetail = location.state?.propertyId || null;
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
@@ -62,14 +59,23 @@ export default function MaintenanceOwner(){
             const addedAddresses = [];
             for (const key in maintenanceData){
                 for (const item of maintenanceData[key]){
-                    if (!addedAddresses.includes(item.property_address)){
-                        addedAddresses.push(item.property_address);
+                    if (!addedAddresses.includes(item.property_id)){
+                        addedAddresses.push(item.property_id);
                         if (!propertyList.includes(item.property_address)){
                             propertyList.push({
-                                "address": item.property_address,
+                                "property_uid": item.property_id,
+                                "address": item.property_address + " " + item.property_unit,
                                 "checked": true
                             });
                         }
+                    }
+                }
+            }
+
+            if(propertyIdFromPropertyDetail){
+                for (const property of propertyList){
+                    if(property.property_uid !== propertyIdFromPropertyDetail){
+                        property.checked = false;
                     }
                 }
             }
@@ -118,7 +124,7 @@ export default function MaintenanceOwner(){
             //filteredArray = filteredArray.filter(item => filterPropertyList.includes(item.property_address));
             filteredArray = filteredArray.filter(item => {
                 for (const filterItem of filterPropertyList){
-                    if (filterItem.address === item.property_address && filterItem.checked){
+                    if (filterItem.property_uid === item.property_id && filterItem.checked){
                         return true;
                     }
                 }

@@ -45,10 +45,10 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({index, propertyData, contracts, props}){
+export default function PropertyNavigator({currentIndex, setCurrentIndex, propertyData, contracts, props}){
     const navigate = useNavigate();
     const { getProfileId, isManager } = useUser();
-    const [currentIndex, setCurrentIndex] = useState(index);
+    console.log(currentIndex)
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [activeStep, setActiveStep] = useState(0);
@@ -57,32 +57,12 @@ export default function PropertyNavigator({index, propertyData, contracts, props
     const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
+    const [contractsNewSent, setContractsNewSent] = useState(0)
+    const [maintenanceReqData, setMaintenanceReqData] = useState([{}])
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
-
-    useEffect(() => {
-        // console.log("--debug--", contractsData)
-        if (contractsData.length === 0){
-            const getContractsForOwner = async () => {
-                try {
-                    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-                    if(!response.ok){
-                        console.log("Error fetching contracts data")
-                    }
-                    const contractsResponse = await response.json();
-                    // console.log("contractsResponse", contractsResponse.result)
-                    const contracts = contractsResponse.result.filter(contract => contract.property_id === propertyId)
-                    // console.log(contracts)
-                    setContractsData(contracts)
-                }
-                catch (error){
-                    console.log(error);
-                }
-            }
-            getContractsForOwner();
-        }
-    }, [])
+    console.log(propertyId)
 
     useEffect(() => {
         console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
@@ -103,8 +83,32 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                 console.log(error);
             }
         }
+
+        const getContractsForOwner = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+                if(!response.ok){
+                    console.log("Error fetching contracts data")
+                }
+                const contractsResponse = await response.json();
+                var count = 0;
+                const contracts = contractsResponse.result.filter(contract => contract.property_id === propertyId)
+                console.log("--debug Contracts for owner--", contracts)
+                contracts.forEach(contract => {
+                    if(contract.contract_status === "SENT" || contract.contract_status === "NEW"){
+                        count++;
+                    }
+                })
+                setContractsNewSent(count)
+                setContractsData(contracts)
+            }
+            catch (error){
+                console.log(error);
+            }
+        }
+        getContractsForOwner();
         refreshPropertyData();
-    }, [propertyId])
+    }, [currentIndex, propertyId])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
     const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
@@ -129,9 +133,27 @@ export default function PropertyNavigator({index, propertyData, contracts, props
             setShowSpinner(false);
         }
         getMaintenanceForProperty();
-    }, []);
+    }, [currentIndex, propertyId]);
+
+    useEffect(() => {
+        const getMaintenanceReqForProperty = async () => {
+            try{
+                const maintenanceReqForProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${propertyId}`)
+                const maintenanceReqForPropertyData = await maintenanceReqForProperty.json();
+                const data = maintenanceReqForPropertyData.result
+                setMaintenanceReqData(data);
+                console.log("--debug-- maintenanceReqForPropertyData", data)
+            } catch (error){
+                console.log(error);
+            }
+        }
+        getMaintenanceReqForProperty();
+    }, [])
+
 
     function displayTopMaintenanceItem(){
+
+        console.log("maintenanceReqData in displayTopMaintenanceItem", maintenanceReqData)
         if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
             return (
                 <DataGrid
@@ -147,7 +169,21 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                     getRowId={(row) => row.maintenance_request_uid}
                     pageSizeOptions={[5]}
                     disableRowSelectionOnClick
-                    onRowClick={()=>{navigate("/ownerMaintenance")}}
+                    // onRowClick={(row) => {
+                    //     console.log(row)
+                    //     let index = maintenanceReqData[row.row.maintenance_request_status].maintenance_items.findIndex(item => item.maintenance_item_uid === row.row.maintenance_item_uid);
+                    //     console.log(index);
+                        
+                    // }}
+                    onRowClick={(row) => (
+                        console.log(row.row, maintenanceReqData[row.row.maintenance_request_status]),
+                        navigate('/maintenance/detail', {state: { 
+                            maintenance_request_index: maintenanceReqData[row.row.maintenance_request_status].maintenance_items.findIndex(item => item.maintenance_item_uid === row.row.maintenance_item_uid),
+                            status: row.row.maintenance_request_status,
+                            maintenanceItemsForStatus: maintenanceReqData[row.row.maintenance_request_status],
+                            allMaintenanceData: maintenanceData,
+                        }})
+                    )}
                 />
             )
         } else {
@@ -156,7 +192,6 @@ export default function PropertyNavigator({index, propertyData, contracts, props
     }
 
     function numberOfMaintenanceItems(maintenanceItems){
-//        console.log("maintenanceItems "+JSON.stringify(maintenanceItems))
         if(maintenanceItems && maintenanceItems.length > 0){
             return maintenanceItems.filter(mi => !!mi.maintenance_request_uid).length
         } else {
@@ -215,16 +250,6 @@ export default function PropertyNavigator({index, propertyData, contracts, props
     const handleAppClick = (index) => {
         navigate("/tenantApplicationNav", { state:{ index: index, property: item } });
     };
-
-    function getNoOfSentQuotes(){
-        let count = 0;
-        contractsData.forEach(contract => {
-            if(contract.contract_status === "SENT"){
-                count++;
-            }
-        })
-        return count;
-    }
 
     return(
         <Paper 
@@ -690,7 +715,7 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                             >
                                                 Open Maintenance Tickets
                                             </Typography>
-                                            <Box onClick={()=>(navigate('/ownerMaintenance'))}>
+                                            <Box onClick={()=>(navigate('/ownerMaintenance', {state: {propertyId: propertyId,}}))}>
                                                 <Badge 
                                                     badgeContent={numberOfMaintenanceItems(maintenanceData)} 
                                                     color="error"
@@ -702,7 +727,7 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                         </div>
                                     </Grid>
                                     <Grid item xs={1}>
-                                        <Box onClick={()=>(navigate('/ownerMaintenance'))}>
+                                        <Box onClick={()=>(navigate('/ownerMaintenance', {state: {propertyId: propertyId,}}))}>
                                             {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid &&
                                             <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }}/>}
                                         </Box>
@@ -744,7 +769,8 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                                 {tenant_detail}
                                         </Typography>
                                     </Grid>
-                                    {/* {console.log("--debug-- this is contractsData", contractsData)} */}
+                                    {console.log("--debug-- this is contractsData", contractsData)}
+                                    {console.log("--debug-- contractsNewSent", contractsNewSent)}
                                     {contractsData && contractsData.length > 0 ? (
                                         <>
                                             <Grid item xs={11}>
@@ -779,8 +805,8 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                                     <Badge
                                                         overlap="circular"
                                                         color="success"
-                                                        badgeContent={getNoOfSentQuotes()}
-                                                        invisible={!getNoOfSentQuotes()}
+                                                        badgeContent={contractsNewSent}
+                                                        // invisible={!contractsNewSent}
                                                         anchorOrigin={{
                                                             vertical: "top",
                                                             horizontal: "right",
@@ -794,7 +820,7 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                             </Grid>
                                             <Grid item xs={1}>
                                                 <KeyboardArrowRightIcon sx={{ color: arrowButton1_color, cursor: "pointer" }} onClick={
-                                                    ()=> {navigate("/pmQuotesRequested",
+                                                    () => {navigate("/pmQuotesRequested",
                                                     {
                                                         state :{
                                                             index: currentIndex,

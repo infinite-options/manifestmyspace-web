@@ -579,28 +579,6 @@ function DocumentCard(props) {
                     </Typography>
                 )
             }
-
-            {/* {data !== null && data.contract_fees !== null && data.contract_status !== "NEW" ? (
-                JSON.parse(data.contract_fees).map((fee, index) => {
-                    <FeesTextCard key={index} fee={fee}/>
-                })
-            ) : (
-                <Typography sx={textStyle}>
-                    No fees
-                </Typography>
-            )} 
-
-            {data.contract_status === "NEW" ? (
-                // console.log(JSON.parse(fees), typeof(JSON.parse(fees)))
-                // console.log(fees)
-                fees.map((fee, index) => {
-                    <FeesTextCard key={index} fee={fee}/>
-                })
-            ) : (
-                <Typography sx={textStyle}>
-                    No fees test test
-                </Typography>
-            )} */}
             <Box onClick={()=>{
                 // window.open(contractDocumentLink, "_blank");
                 console.log("we should show a document here")
@@ -624,8 +602,6 @@ function FeesTextCard(props) {
     };
 
     let fee = props.fee;
-    
-    console.log(fee.fee_type)
 
     function displayFee(){
         if (fee.fee_type=="%"){
@@ -647,6 +623,12 @@ function FeesTextCard(props) {
             return (
                 <Typography sx={textStyle}>
                     {fee.fee_name}: {type}{fee.charge} <b>{fee.frequency}</b>
+                </Typography>
+            )
+        } else {
+            return (
+                <Typography sx={textStyle}>
+                    {fee.fee_name}: {fee.charge} of {fee.of} <b>{fee.frequency}</b>
                 </Typography>
             )
         }
