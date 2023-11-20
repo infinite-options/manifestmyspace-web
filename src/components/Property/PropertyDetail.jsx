@@ -26,9 +26,9 @@ export default function PropertyDetail({}){
     const location = useLocation();
     let navigate = useNavigate(); 
     const [contractsForProperty, setContractsForProperty] = useState([]);
-    const index = location.state.index; // need to pass to property navigator
     const propertyList = location.state.propertyList; // need to pass to property navigator
-    const contracts = location.state.contracts;
+    const contracts = location.state.contracts; 
+    const [index, setIndex] = useState(location.state.index);
 
     // console.log("--debug-- all contracts PropertyDetail", contracts)
 
@@ -40,7 +40,7 @@ export default function PropertyDetail({}){
         } else{
             console.log(propertyList[index])
             let contractsForThisProperty = contracts.filter(contract => contract.property_id === propertyList[index].property_uid);
-            console.log("--debug-- contracts for this property", contractsForThisProperty)
+            // console.log("--debug-- contracts for this property", contractsForThisProperty)
             setContractsForProperty(contractsForThisProperty);
         }
     }, [])
@@ -131,7 +131,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator index={index} propertyData={propertyList} contracts={contractsForProperty}/>
+                            <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyData={propertyList} contracts={contractsForProperty}/>
                         </Box>
                     </Stack>
                 </Paper>

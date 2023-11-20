@@ -162,7 +162,7 @@
     const [activeContracts, setActiveContracts] = useState([]);
     const profileId = getProfileId();
 
-    console.log("getProfileId information", getProfileId());
+    // console.log("getProfileId information", getProfileId());
 
     function numberOfMaintenanceItems(maintenanceItems){
         console.log(maintenanceItems)
@@ -174,8 +174,8 @@
     }
 
     useEffect(() => {
-        console.log("PropertyList useEffect");
-        console.log(propertyList);
+        // console.log("PropertyList useEffect");
+        // console.log(propertyList);
         const fetchData = async () => {
         setShowSpinner(true);
         // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
@@ -197,7 +197,7 @@
                     console.log("Error fetching contracts data")
                 }
                 const contractsResponse = await response.json();
-                console.log("contractsResponse", contractsResponse.result)
+                // console.log("contractsResponse", contractsResponse.result)
                 setContracts(contractsResponse.result)
             }
             catch (error){
@@ -209,8 +209,8 @@
 
     function handlePropertyDetailNavigation(property, index, propertyList) {
 
-        console.log("theoretically property", property)
-        console.log("handlePropertyDetailNavigation");
+        // console.log("theoretically property", property)
+        // console.log("handlePropertyDetailNavigation");
         navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
     }
 

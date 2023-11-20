@@ -354,9 +354,9 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {console.log("---DEBUG---")}
+                  {/* {console.log("---DEBUG---")}
                   {console.log(data)}
-                  {console.log(data.maintenance_request_status)}
+                  {console.log(data.maintenance_request_status)} */}
                   {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
                 </Typography>
                 <Typography

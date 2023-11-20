@@ -103,8 +103,8 @@ export default function OwnerDashboard() {
     useEffect(() => {
         const dataObject = {};
         const fetchData = async () => {
-            console.log("in useEffect")
-            console.log("PROFILE ID: ", getProfileId())
+            // console.log("in useEffect")
+            // console.log("PROFILE ID: ", getProfileId())
             
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
@@ -112,7 +112,7 @@ export default function OwnerDashboard() {
             const jsonData = await response.json()
             setRentStatus(jsonData.RentStatus.result);
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
-            console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
+            // console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
             // setLoading(false);
             let rentStatus = jsonData.RentStatus.result;
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
@@ -177,7 +177,7 @@ export default function OwnerDashboard() {
             });
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
-            console.log("leaseStatusDictionary ", leaseStatusDictionary)
+            // console.log("leaseStatusDictionary ", leaseStatusDictionary)
 
             // let date = new Date();
             // setCurrentMonth(date.getMonth()+1);

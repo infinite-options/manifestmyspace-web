@@ -74,6 +74,8 @@ export function MaintenanceRequestDetail(){
     const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
     let navigate = useNavigate();
 
+    const [fromProperty, setFromProperty] = useState(location.state.fromProperty || false);
+
     function navigateToAddMaintenanceItem(){
         console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
@@ -81,7 +83,11 @@ export function MaintenanceRequestDetail(){
 
     function handleBackButton(){
         console.log("handleBackButton")
-        navigate(maintenanceRoutingBasedOnSelectedRole());
+        if(fromProperty){
+            navigate(-1)
+        } else{
+            navigate(maintenanceRoutingBasedOnSelectedRole());
+        }
     }
 
     function deactivateTab(key, maintenanceData){
@@ -149,10 +155,10 @@ export function MaintenanceRequestDetail(){
     
     const allData = location.state.allMaintenanceData;
 
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
-    console.log("--DEBUG-- should be filtered", maintenanceItemsForStatus)
+    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    // console.log("--DEBUG-- should be filtered", maintenanceItemsForStatus)
 
-    console.log("above useEffect MaintenanceRequestDetail")
+    // console.log("above useEffect MaintenanceRequestDetail")
     useEffect(() => {
         console.log("useEffect")
         console.log("status value", status)
@@ -163,8 +169,8 @@ export function MaintenanceRequestDetail(){
             }
         })
     }, [status])
-    console.log("below useEffect MaintenanceRequestDetail")
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    // console.log("below useEffect MaintenanceRequestDetail")
+    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)
@@ -173,22 +179,22 @@ export function MaintenanceRequestDetail(){
         setMaintenanceRequestIndex(0);
         setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
     };
-    console.log(" 1 below useEffect MaintenanceRequestDetail")
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    // console.log(" 1 below useEffect MaintenanceRequestDetail")
+    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleMaintenaceRequestIndexChange = (index) => {
         setMaintenanceRequestIndex(index);  
     }
-    console.log("2 below useEffect MaintenanceRequestDetail")
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    // console.log("2 below useEffect MaintenanceRequestDetail")
+    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
 
     useEffect(() => {
         console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
     }, [maintenanceRequestIndex])
 
-    console.log("3 below useEffect MaintenanceRequestDetail")
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    // console.log("3 below useEffect MaintenanceRequestDetail")
+    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
@@ -328,9 +334,9 @@ export function MaintenanceRequestDetail(){
                                                 paddingBottom: "0px"
 
                                         }}>
-                                            {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
+                                            {/* {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
                                             {console.log(allData[item.mapping])}
-                                            {console.log(allData[item.mapping][maintenanceRequestIndex])}
+                                            {console.log(allData[item.mapping][maintenanceRequestIndex])} */}
 
                                             {/* TODO: Pass the data filter all the way here */}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (

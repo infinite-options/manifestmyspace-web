@@ -19,7 +19,7 @@ const CashflowData = (props) => {
     // }
     setShowSpinner(true);
     const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${getProfileId()}/TTM`);
-    console.log("props cashflowResponse", cashflow);
+    // console.log("props cashflowResponse", cashflow);
     if (props.setTotalRevenueByMonth) { props.setTotalRevenueByMonth(0); getRevenueByMonth(cashflow.data.response_revenue_by_month.result); }
     if (props.setTotalExpenseByMonth) { props.setTotalExpenseByMonth(0); getExpenseByMonth(cashflow.data.response_expense_by_month.result); }
     props.setTotalRevenueByType && getRevenueByType(cashflow.data.response_revenue_by_month_by_type.result);
@@ -417,7 +417,7 @@ const CashflowData = (props) => {
   };
 
   useEffect(() => {
-    console.log("props useEffect", role);
+    // console.log("props useEffect", role);
     if (role === "Owner") {
       fetchCashflow();
     } else if (role === "Property Manager") {
