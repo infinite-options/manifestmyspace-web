@@ -25,7 +25,7 @@ function CashflowWidget() {
   let date = new Date();
   let currentMonth = date.toLocaleString("default", { month: "long" });
   let currentYear = date.getFullYear().toString();
-  console.log("currentMonth ",currentMonth, currentYear)
+  // console.log("currentMonth ",currentMonth, currentYear)
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
 
