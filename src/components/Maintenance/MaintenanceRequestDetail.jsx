@@ -132,20 +132,12 @@ export function MaintenanceRequestDetail(){
 
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    // const status = location.state.status;
     const [status, setStatus] = useState(location.state.status);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
-
-    // useEffect(() => {
-    //     console.log("fromProperty useEffect")
-    //     let activeTab = colorStatus.indexOf({status: status})
-    //     console.log("activeTab", activeTab)
-    //     setValue(activeTab)
-    // }, [fromProperty])
 
     useEffect(() => {
         console.log("useEffect")
@@ -162,10 +154,6 @@ export function MaintenanceRequestDetail(){
     
     const allData = location.state.allMaintenanceData;
 
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
-    // console.log("--DEBUG-- should be filtered", maintenanceItemsForStatus)
-
-    // console.log("above useEffect MaintenanceRequestDetail")
     useEffect(() => {
         console.log("useEffect")
         console.log("status value", status)
@@ -176,8 +164,6 @@ export function MaintenanceRequestDetail(){
             }
         })
     }, [status, fromProperty])
-    // console.log("below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)
@@ -186,24 +172,16 @@ export function MaintenanceRequestDetail(){
         setMaintenanceRequestIndex(0);
         setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
     };
-    // console.log(" 1 below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleMaintenaceRequestIndexChange = (index) => {
         setMaintenanceRequestIndex(index);  
     }
-    // console.log("2 below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
 
     useEffect(() => {
         console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
     }, [maintenanceRequestIndex])
 
-    // console.log("3 below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
-
-    // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
     function a11yProps(index) {
         return {
