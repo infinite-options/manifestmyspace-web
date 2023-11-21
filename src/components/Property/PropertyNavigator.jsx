@@ -847,7 +847,9 @@ export default function PropertyNavigator({index, propertyData, contracts, props
                                                 textTransform: "none",
                                             }}
                                             size="small"
-                                            onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
+                                            onClick={() => {
+                                                item.property_available_to_rent !== 1 ? navigate('/addListing', {state:{ currentId, item, page:"create_listing" }}) : navigate('/addListing', {state:{ currentId, item, page:"edit_listing" }})
+                                            }}
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                             <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>

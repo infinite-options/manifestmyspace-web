@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { 
     Typography, 
@@ -14,7 +14,8 @@ import {
     Checkbox,
     FormControlLabel,
     CardMedia,
-    InputAdornment
+    InputAdornment,
+    Radio,
 } from "@mui/material";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -80,6 +81,113 @@ export default function EditProperty({}){
     const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
     const [page, setPage] = useState("Edit");
 
+    const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
+
+    const utilitiesMap = new Map([
+        ['050-000001', 'electricity'],
+        ['050-000002', 'water'],
+        ['050-000003', 'gas'],
+        ['050-000004', 'trash'],
+        ['050-000005', 'sewer'],
+        ['050-000006', 'internet'],
+        ['050-000007', 'cable'],
+        ['050-000008', 'hoa_dues'],
+        ['050-000009', 'security_system'],
+        ['050-000010', 'pest_control'],
+        ['050-000011', 'gardener'],
+        ['050-000012', 'maintenance'],
+    ]);
+
+    const entitiesMap = new Map([
+        ['050-000041', 'owner'],
+        ['050-000042', 'property manager'],
+        ['050-000043', 'tenant'],
+        ['050-000049', 'user'],
+    ]);
+
+    const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
+    const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
+
+
+    const mapUIDsToUtilities = (propertyUtilities) => {
+        // let propertyUtilities = JSON.parse(utilities)
+        if(!propertyUtilities){
+            return {}
+        }
+        console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+        const mappedUtilities = {};
+        for (const key of Object.keys(propertyUtilities)) {
+            const utilityName = utilitiesMap.get(key);
+            const entityName = entitiesMap.get(propertyUtilities[key]);
+        
+            if (utilityName && entityName) {
+              mappedUtilities[utilityName] = entityName;
+            }
+        }
+        
+        console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+        return mappedUtilities;
+    };
+
+    const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
+        const mappedResults = {};
+      
+        for (const [key, value] of Object.entries(utilitiesObject)) {
+          const utilityUID = reverseUtilitiesMap.get(key);
+          const entityUID = reverseEntitiesMap.get(value);
+      
+          if (utilityUID && entityUID) {
+            mappedResults[utilityUID] = entityUID;
+          }
+        }
+      
+        return mappedResults;
+      };
+    
+
+    const utilitiesObject = JSON.parse(propertyData.property_utilities);
+    console.log("UTILITIES OBJECT", utilitiesObject);
+    let utilitiesInUIDForm = {};
+    let mappedUtilities2 = {};
+    useEffect(() => {
+        if (utilitiesObject){
+            console.log("***********************************EditProperty useEffect*************************************************")
+            for (const utility of utilitiesObject) {
+                console.log( utility.utility_type_id, utility.utility_payer_id );
+                utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+                
+            }
+            console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+            
+            // setUtilitiesPaidBy(utilitiesInUIDForm)
+            mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm)
+            console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+            console.log("   ", mappedUtilities2);
+            // setMappedUtilitiesPaidBy(mappedUtilities2);
+        }
+        console.log("****************************************EditProperty useEffect********************************************");
+    
+        setMappedUtilitiesPaidBy(mappedUtilities2);
+    }, []);
+
+    useEffect(() => {
+        console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    }, [mappedUtilitiesPaidBy]);
+
+    const handleUtilityChange = (utility, entity) => {
+        
+        const utilityObject = {[utility]: `${entity}`}
+        console.log("----- handleUtilityChange called - ", utilityObject);
+        // setMappedUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
+
+        setMappedUtilitiesPaidBy(prevState => ({
+            ...prevState,
+            [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+        }));
+        // setUtilitiesPaidBy(utilities);
+        // setMappedUtilitiesPaidBy(utilities);
+    };
+
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       };
@@ -116,6 +224,7 @@ export default function EditProperty({}){
         event.preventDefault();
         console.log("handleSubmit")
         const formData = new FormData();
+        const utilitiesFormData = new FormData();
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
@@ -147,6 +256,15 @@ export default function EditProperty({}){
         formData.append('property_amenities_community', communityAmenities);
         formData.append('property_amenities_unit', unitAmenities);
         formData.append('property_amenities_nearby', nearbyAmenities);
+
+        //utilities form data
+        const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+        console.log("----- Submitted uitilitiesPaidBy JSON string");
+        console.log(utilitiesJSONString);
+
+        utilitiesFormData.append('property_uid', propertyData.property_uid);
+        utilitiesFormData.append('property_utility', utilitiesJSONString);
+        
 
         console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length)
         
@@ -194,7 +312,35 @@ export default function EditProperty({}){
             setShowSpinner(false);
             navigate("/propertyDetail", { state: { index, propertyList }});
         }
+        const putUtilitiesData = async () => {
+            // setShowSpinner(true);
+            try{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                    method: "PUT",
+                    body: utilitiesFormData
+                })
+                // const response = await fetch("http://localhost:4000/utilities",{
+                //     method: "PUT",
+                //     body: utilitiesFormData
+                // })
+                const data = await response.json();
+                console.log("data", data)
+                if (data.code === 200){
+                    navigate(-1);
+                    // should navigate to the listing page
+                }
+            } catch(error){
+                console.log("Error posting data:", error)
+            }
+            setShowSpinner(false);
+        }
         putData();
+        putUtilitiesData();
+    }
+
+
+    const capitalizeFirstChar = (utility) => {
+        return utility.charAt(0).toUpperCase() + utility.slice(1);
     }
 
 
@@ -740,91 +886,37 @@ export default function EditProperty({}){
                                             Utilities Paid by
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Electricity
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Select
-                                            value={"owner"}
-                                            label="Electricity"
-                                            onChange={(e) => console.log(e.target.value)}
-                                            sx={{backgroundColor: "#FFFFFF"}}
-                                            size="small"
-                                        >
-                                            <MenuItem value={"owner"}>Owner</MenuItem>
-                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
-                                        </Select>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Trash
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Select
-                                            value={"tenant"}
-                                            label="Trash"
-                                            onChange={(e) => console.log(e.target.value)}
-                                            sx={{backgroundColor: "#FFFFFF"}}
-                                            size="small"
-                                        >
-                                            <MenuItem value={"owner"}>Owner</MenuItem>
-                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
-                                        </Select>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Water
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Select
-                                            value={"tenant"}
-                                            label="Water"
-                                            onChange={(e) => console.log(e.target.value)}
-                                            sx={{backgroundColor: "#FFFFFF"}}
-                                            size="small"
-                                        >
-                                            <MenuItem value={"owner"}>Owner</MenuItem>
-                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
-                                        </Select>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Wifi
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Select
-                                            value={"tenant"}
-                                            label="Wifi"
-                                            onChange={(e) => console.log(e.target.value)}
-                                            sx={{backgroundColor: "#FFFFFF"}}
-                                            size="small"
-                                        >
-                                            <MenuItem value={"owner"}>Owner</MenuItem>
-                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
-                                        </Select>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Gas
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Select
-                                            value={"tenant"}
-                                            label="Gas"
-                                            onChange={(e) => console.log(e.target.value)}
-                                            sx={{backgroundColor: "#FFFFFF"}}
-                                            size="small"
-                                        >
-                                            <MenuItem value={"owner"}>Owner</MenuItem>
-                                            <MenuItem value={"tenant"}>Tenant</MenuItem>
-                                        </Select>
-                                    </Grid>
+                                    {Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                                        <Fragment key={utility}>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                {capitalizeFirstChar(utility)}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControlLabel
+                                                value="owner"
+                                                control={
+                                                    <Radio
+                                                    checked={selectedValue === 'owner'}
+                                                    onChange={() => handleUtilityChange(utility, 'owner')}
+                                                    />
+                                                }
+                                                label="Owner"
+                                                />
+                                                <FormControlLabel
+                                                value="tenant"
+                                                control={
+                                                    <Radio
+                                                    checked={selectedValue === 'tenant'}
+                                                    onChange={() => handleUtilityChange(utility, 'tenant')}
+                                                    />
+                                                }
+                                                label="Tenant"
+                                                />
+                                            </Grid>
+                                        </Fragment>
+                                    ))}
                                 </Grid>
                             </Box>
                         </Stack>

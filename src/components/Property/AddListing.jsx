@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { 
     Typography, 
@@ -52,7 +52,8 @@ export default function AddListing({}){
     const location = useLocation();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
-    const propertyData = location.state.item
+    const propertyData = location.state.item;
+    const page = location.state.page;
     console.log("This is the property you are creating a listing for", propertyData)
     const propertyId = location.state.propertyId;
     const { user, selectedRole, selectRole, Name } = useUser();
@@ -100,39 +101,139 @@ export default function AddListing({}){
     // const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
     const [isListed, setListed] = useState(true);
 
-    const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
-    useEffect(()=> {
-        console.log("AddListing - utilitiesPaidBy");
-        console.log("   ", utilitiesPaidBy);
-        console.log("AddListing - utilitiesPaidBy JSON string");
-        console.log("   ", JSON.stringify(utilitiesPaidBy));
+    //const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
+    const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
 
-        //mapped utilities
-        // console.log("AddListing - Mapped Utilities and entities - ");
-        // console.log("   ", JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy)));
-    },[utilitiesPaidBy]);
+    useEffect(() => {
+        console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    }, [mappedUtilitiesPaidBy]);
+
+    const utilitiesMap = new Map([
+        ['050-000001', 'electricity'],
+        ['050-000002', 'water'],
+        ['050-000003', 'gas'],
+        ['050-000004', 'trash'],
+        ['050-000005', 'sewer'],
+        ['050-000006', 'internet'],
+        ['050-000007', 'cable'],
+        ['050-000008', 'hoa_dues'],
+        ['050-000009', 'security_system'],
+        ['050-000010', 'pest_control'],
+        ['050-000011', 'gardener'],
+        ['050-000012', 'maintenance'],
+    ]);
+
+    const entitiesMap = new Map([
+        ['050-000041', 'owner'],
+        ['050-000042', 'property manager'],
+        ['050-000043', 'tenant'],
+        ['050-000049', 'user'],
+    ]);
+
+    const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
+    const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
+
+
+    const mapUIDsToUtilities = (propertyUtilities) => {
+        // let propertyUtilities = JSON.parse(utilities)
+        if(!propertyUtilities){
+            return {}
+        }
+        console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+        const mappedUtilities = {};
+        for (const key of Object.keys(propertyUtilities)) {
+            const utilityName = utilitiesMap.get(key);
+            const entityName = entitiesMap.get(propertyUtilities[key]);
+        
+            if (utilityName && entityName) {
+              mappedUtilities[utilityName] = entityName;
+            }
+        }
+        
+        console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+        return mappedUtilities;
+    };
+    
+
+    const utilitiesObject = JSON.parse(propertyData.property_utilities);
+    console.log("UTILITIES OBJECT", utilitiesObject);
+    let utilitiesInUIDForm = {};
+    let mappedUtilities2 = {};
+    useEffect(() => {
+        if (utilitiesObject){
+            console.log("*****************************************AddListing useEffect*******************************************");
+            for (const utility of utilitiesObject) {
+                console.log( utility.utility_type_id, utility.utility_payer_id );
+                utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+                
+            }
+            console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+            
+            // setUtilitiesPaidBy(utilitiesInUIDForm)
+            mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm)
+            console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+            console.log("   ", mappedUtilities2);
+            // setMappedUtilitiesPaidBy(mappedUtilities2);
+        }
+        console.log("************************************************AddListing useEffect***********************************");
+    
+        setMappedUtilitiesPaidBy(mappedUtilities2);
+    }, []);
+    
+    // useEffect(() => {
+    //     let utilitiesInUIDForm = {};
+        
+    //     if (utilitiesObject){
+    //         console.log("*******HERE*******")
+    //         for (const utility of utilitiesObject) {
+    //             console.log( utility.utility_type_id, utility.utility_payer_id );
+    //             utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+                
+    //         }
+    //         console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+    //         setUtilitiesPaidBy(utilitiesInUIDForm) 
+    //     }
+        
+    // }, []);
+
+    
+    
+    
+    // useEffect(()=> {
+    //     console.log("AddListing - utilitiesPaidBy");
+    //     console.log("   ", utilitiesPaidBy);
+    //     console.log("AddListing - utilitiesPaidBy JSON string");
+    //     console.log("   ", JSON.stringify(utilitiesPaidBy));
+
+    //     //mapped utilities
+    //     // console.log("AddListing - Mapped Utilities and entities - ");
+    //     // console.log("   ", JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy)));
+
+    //     //mapped utilities
+    //     // const mappedUtilities2 = mapUIDsToUtilities(utilitiesPaidBy)
+    //     // console.log(" - utilitiesPaidBy useEffect - Mapped UIDs to Utilities");
+    //     // console.log("   ", mappedUtilities2);
+    //     // setMappedUtilitiesPaidBy(mappedUtilities2);
+
+    //     // setMappedUtilitiesPaidBy(mapUIDsToUtilities(utilitiesPaidBy));
+        
+    // },[utilitiesPaidBy]);
+
+    // useEffect(()=> {
+    //     console.log("AddListing - mappedUtilitiesPaidBy useEffect");
+    //     console.log("   ", mappedUtilitiesPaidBy);
+        
+    // },[mappedUtilitiesPaidBy]);
 
 
     const [utilityToBeAdded, setUtilityToBeAdded] = useState(null);
 
     const onClickAddUtility = () => {
-        if(utilityToBeAdded){
-            setUtilitiesPaidBy()
-        }
+        // if(utilityToBeAdded){
+        //     setUtilitiesPaidBy()
+        // }
+        // rohit
     }
-
-    //rohit - replace with actual data from props - item.
-    const utilitiesFromProps = {
-        electricity: 'owner',
-        trash: 'tenant',
-        water: 'tenant',
-        internet: 'tenant',
-        gas: 'tenant',
-    }
-    
-    useEffect(() => {
-        setUtilitiesPaidBy(utilitiesFromProps);
-    }, []); // rohit - delete this. get utilities from props
     
 
     const listOfUtilities =[
@@ -150,80 +251,79 @@ export default function AddListing({}){
         "Maintenance",
     ]
 
-    const utilitiesValueToNameMap = {
-        "electricity" : "Electricity",
-        "water" : "Water", 
-        "gas" : "Gas", 
-        "trash" : "Trash",
-        "sewer" : "Sewer", 
-        "internet" : "Internet", 
-        "cable" : "Cable", 
-        "hoa_dues" : "HOA Dues", 
-        "security_system" : "Security system",
-        "pest_control" : "Pest control",
-        "gardener" : "Gardener", 
-        "maintenance" : "Maintenance",
-    }
+    // const utilitiesValueToNameMap = {
+    //     "electricity" : "Electricity",
+    //     "water" : "Water", 
+    //     "gas" : "Gas", 
+    //     "trash" : "Trash",
+    //     "sewer" : "Sewer", 
+    //     "internet" : "Internet", 
+    //     "cable" : "Cable", 
+    //     "hoa_dues" : "HOA Dues", 
+    //     "security_system" : "Security system",
+    //     "pest_control" : "Pest control",
+    //     "gardener" : "Gardener", 
+    //     "maintenance" : "Maintenance",
+    // }
 
-    const utilitiesNameToValueMap = {
-        "Electricity": "electricity",
-        "Water": "water",
-        "Gas": "gas",
-        "Trash": "trash",
-        "Sewer": "sewer",
-        "Internet": "internet",
-        "Cable": "cable",
-        "HOA Dues": "hoa_dues",
-        "Security system": "security_system",
-        "Pest control": "pest_control",
-        "Gardener": "gardener",
-        "Maintenance": "maintenance",
-      };
+    // const utilitiesNameToValueMap = {
+    //     "Electricity": "electricity",
+    //     "Water": "water",
+    //     "Gas": "gas",
+    //     "Trash": "trash",
+    //     "Sewer": "sewer",
+    //     "Internet": "internet",
+    //     "Cable": "cable",
+    //     "HOA Dues": "hoa_dues",
+    //     "Security system": "security_system",
+    //     "Pest control": "pest_control",
+    //     "Gardener": "gardener",
+    //     "Maintenance": "maintenance",
+    //   };
 
-    const utilitiesMap = {
-        electricity     : '050-000001',
-        water           : '050-000002', 
-        gas             : '050-000003', 
-        trash           : '050-000004',
-        sewer           : '050-000005', 
-        internet        : '050-000006', 
-        cable           : '050-000007', 
-        hoa_dues        : '050-000008', 
-        security_system : '050-000009',
-        pest_control    : '050-000010',
-        gardener        : '050-000011', 
-        maintenance     : '050-000012',
-    }
-
-    const entitiesMap = {
-        'owner'             : '050-000041',
-        'property manager'  : '050-000042',
-        'tenant'            : '050-000043',
-        'user'              : '050-000049',
-    }
-
-    const mapUtilitiesAndEntities = (utilitiesObject) => {
+    const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
         const mappedResults = {};
+      
         for (const [key, value] of Object.entries(utilitiesObject)) {
-          if (utilitiesMap[key] && entitiesMap[value]) {
-            mappedResults[utilitiesMap[key]] = entitiesMap[value];
+          const utilityUID = reverseUtilitiesMap.get(key);
+          const entityUID = reverseEntitiesMap.get(value);
+      
+          if (utilityUID && entityUID) {
+            mappedResults[utilityUID] = entityUID;
           }
         }
+      
         return mappedResults;
-    };
-    
-    
-    const test = {
-        "050-000001":"050-000041",
-        "050-000004":"050-000043",
-        "050-000002":"050-000043",
-        "050-000006":"050-000043",
-        "050-000003":"050-000043",
-    }
+      };
 
-    const handleUtilityChange = (utilities) => {
-        // setUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
-        setUtilitiesPaidBy(utilities);
+    
+
+    
+
+    // const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState(mapUIDsToUtilities(utilitiesPaidBy));
+    // const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState(mapUIDsToUtilities(utilitiesInUIDForm));
+    
+    
+    // const test = {
+    //     "050-000001":"050-000041",
+    //     "050-000004":"050-000043",
+    //     "050-000002":"050-000043",
+    //     "050-000006":"050-000043",
+    //     "050-000003":"050-000043",
+    // }
+
+    const handleUtilityChange = (utility, entity) => {
+        
+        const utilityObject = {[utility]: `${entity}`}
+        console.log("----- handleUtilityChange called - ", utilityObject);
+        // setMappedUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
+
+        setMappedUtilitiesPaidBy(prevState => ({
+            ...prevState,
+            [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+        }));
+        // setUtilitiesPaidBy(utilities);
+        // setMappedUtilitiesPaidBy(utilities);
     };
    
     const handleListedChange = (event) => {
@@ -285,9 +385,9 @@ export default function AddListing({}){
         formData.append('property_deposit', deposit);
         formData.append('property_pets_allowed', petsAllowed ? 1 : 0);
         formData.append('property_deposit_for_rent', depositForRent ? 1 : 0);
-        formData.append('property_taxes', taxes);
-        formData.append('property_mortgages', mortgages);
-        formData.append('property_insurance', insurance);
+        formData.append('property_taxes', taxes? taxes : "null");
+        formData.append('property_mortgages', mortgages? mortgages : "null");
+        formData.append('property_insurance', insurance? insurance : "null");
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
@@ -296,10 +396,11 @@ export default function AddListing({}){
         formData.append('property_amenities_unit', apartmentAmenities);
         
         //utilities data
-        const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy));
-        console.log("uitilitiesPaidBy JSON string");
+        // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
+        const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+        console.log("----- Submitted uitilitiesPaidBy JSON string");
         console.log(utilitiesJSONString);
-        formData.append('property_utilities', utilitiesJSONString)
+        // formData.append('property_utilities', utilitiesJSONString)
 
         for (let i = 0; i < selectedImageList.length; i++) {
             try {
@@ -393,8 +494,16 @@ export default function AddListing({}){
         }
 
         putData();
-        // postUtilitiesData();
-        putUtilitiesData();
+        if (page === "create_listing"){
+            postUtilitiesData();
+        } else if (page === "edit_listing"){
+            putUtilitiesData();
+        }            
+    }
+
+
+    const capitalizeFirstChar = (utility) => {
+        return utility.charAt(0).toUpperCase() + utility.slice(1);
     }
 
 
@@ -873,8 +982,71 @@ export default function AddListing({}){
                                 noValidate
                                 autoComplete="off"
                             >
-                                <UtilitySelection existingSelection={utilitiesPaidBy} onChangeUtilities={handleUtilityChange}/>
+                                {/* {console.log("MAPPED UTILITIES PAID BY", mappedUtilitiesPaidBy)} */}
+                                {/* <UtilitySelection existingSelection={mappedUtilitiesPaidBy} onChangeUtilities={handleUtilityChange}/> */}
+
+                                <Grid container columnSpacing={2} rowSpacing={3}>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                            Utilities Paid by
+                                        </Typography>
+                                    </Grid>
+                                    {Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                                        <Fragment key={utility}>
+                                            <Grid item xs={6}>
+                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                {capitalizeFirstChar(utility)}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControlLabel
+                                                value="owner"
+                                                control={
+                                                    <Radio
+                                                    checked={selectedValue === 'owner'}
+                                                    onChange={() => handleUtilityChange(utility, 'owner')}
+                                                    />
+                                                }
+                                                label="Owner"
+                                                />
+                                                <FormControlLabel
+                                                value="tenant"
+                                                control={
+                                                    <Radio
+                                                    checked={selectedValue === 'tenant'}
+                                                    onChange={() => handleUtilityChange(utility, 'tenant')}
+                                                    />
+                                                }
+                                                label="Tenant"
+                                                />
+                                            </Grid>
+                                        </Fragment>
+                                    ))}
+                                </Grid>
+
+
+
+
+
+
+
+
+                                
                             </Box>
+
+                            {/* Default utilities
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    paddingBottom: "20px"
+                                }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                                
+                                <UtilitySelection existingSelection={null} onChangeUtilities={() => console.log("utility changed")}/>
+                                
+                            </Box> */}
                             <Grid item xs={12} xl={3}>
                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                     Add Utility
