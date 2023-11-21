@@ -112,23 +112,23 @@ export function MaintenanceRequestDetail(){
     function getColorStatusBasedOnSelectedRole(){
         const role = roleName()
         console.log("role", role)   
- 
+
         if (role === "Property Manager"){
             return theme.colorStatusPMO
-          } else if (role === "Property Owner"){
+        } else if (role === "Property Owner"){
             return theme.colorStatusO
-         } else if (role === "Maintenance"){
-             return theme.colorStatusMM
-         } else if (role === "PM Employee"){
+        } else if (role === "Maintenance"){
+            return theme.colorStatusMM
+        } else if (role === "PM Employee"){
             return theme.colorStatusPMO
-         } else if (role === "Maintenance Employee"){
-             return theme.colorStatusMM
-         } else if (role === "Tenant"){
-             return theme.colorStatusTenant
-         }     
-     }
+        } else if (role === "Maintenance Employee"){
+            return theme.colorStatusMM
+        } else if (role === "Tenant"){
+            return theme.colorStatusTenant
+        }     
+    }
 
-     const colorStatus = getColorStatusBasedOnSelectedRole()
+    const colorStatus = getColorStatusBasedOnSelectedRole()
 
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
@@ -139,6 +139,13 @@ export function MaintenanceRequestDetail(){
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
+
+    // useEffect(() => {
+    //     console.log("fromProperty useEffect")
+    //     let activeTab = colorStatus.indexOf({status: status})
+    //     console.log("activeTab", activeTab)
+    //     setValue(activeTab)
+    // }, [fromProperty])
 
     useEffect(() => {
         console.log("useEffect")
@@ -163,12 +170,12 @@ export function MaintenanceRequestDetail(){
         console.log("useEffect")
         console.log("status value", status)
         colorStatus.find((item, index) => {
-            if(item.status === status){
-                console.log("status", item.status, "===", status)
+            if(item.mapping === status){
+                console.log("status", item.status, "at", index, "===", status)
                 setValue(index);
             }
         })
-    }, [status])
+    }, [status, fromProperty])
     // console.log("below useEffect MaintenanceRequestDetail")
     // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
@@ -339,8 +346,11 @@ export function MaintenanceRequestDetail(){
                                             {console.log(allData[item.mapping][maintenanceRequestIndex])} */}
 
                                             {/* TODO: Pass the data filter all the way here */}
+                                            {/* {console.log("-- debug allData -->", allData)}
+                                            {console.log("-- debug item.mapping -->", item.mapping)}
+                                            {console.log("-- debug maintenanceRequestIndex -->", maintenanceRequestIndex)} */}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                console.log("Option 1 (True state)"),
+                                                // console.log("Option 1 (True state)"),
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
                                             )
                                             //     : (

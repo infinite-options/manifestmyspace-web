@@ -67,7 +67,7 @@ import PMProperties from "./Property/PMProperties";
 import POProperties from "./Property/POProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
-import MaintenanceOwner from "./Maintenance/MaintenanceOwner";
+import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
 import { MaintenanceRequestDetail } from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
