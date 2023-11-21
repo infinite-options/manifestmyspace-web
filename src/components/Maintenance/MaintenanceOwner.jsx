@@ -27,12 +27,71 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function MaintenanceOwner(){
+export async function maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId){
+    const dataObject = {};
+    const getMaintenanceData = async () => {
+        setShowSpinner(true);
+        const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${profileId}`) // Change back to ${getProfileId()}
+        const maintenanceRequestsData = await maintenanceRequests.json()
+        console.log("maintenanceRequestsData", maintenanceRequestsData)
+
+        let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
+        let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items
+        let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items
+        let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
+        let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
+        let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items
+
+        dataObject["NEW REQUEST"] = [];
+        dataObject["INFO REQUESTED"] = [];
+        dataObject["PROCESSING"] = [];
+        dataObject["SCHEDULED"] = [];
+        dataObject["COMPLETED"] = [];
+        dataObject["CANCELLED"] = [];
+
+        for (const item of array1) {
+            // console.log(item.maintenance_request_uid)
+            dataObject["NEW REQUEST"].push(item);
+        }
+        for (const item of array2) {
+            dataObject["INFO REQUESTED"].push(item);
+        }
+        for (const item of array3) {
+            dataObject["PROCESSING"].push(item);
+        }
+        for (const item of array4) {
+            dataObject["SCHEDULED"].push(item);
+        }
+        for (const item of array5) {
+            dataObject["COMPLETED"].push(item);
+        }
+        for (const item of array6) {
+            dataObject["CANCELLED"].push(item);
+        }
+
+        // delete dataObject["0"]
+
+        // console.log("dataObject", dataObject)
+
+        setMaintenanceData(prevData => ({
+            ...prevData, 
+            ...dataObject
+        }));
+        // setDisplayMaintenanceData(prevData => ({
+        //     ...prevData,
+        //     ...dataObject
+        // }));
+        setShowSpinner(false);
+    }
+    getMaintenanceData();
+}
+
+export function MaintenanceOwner(){
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
-    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+    // const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusO
 
@@ -166,64 +225,66 @@ export default function MaintenanceOwner(){
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
-        const dataObject = {};
-        const getMaintenanceData = async () => {
-            setShowSpinner(true);
-            // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-            // const propertyData = await propertiesByOwnerResponse.json()
+        // const dataObject = {};
+        const profileId = getProfileId()
+        maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+        // const getMaintenanceData = async () => {
+        //     setShowSpinner(true);
+        //     // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
+        //     // const propertyData = await propertiesByOwnerResponse.json()
 
-            // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-            // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
-            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${getProfileId()}`) // Change back to ${getProfileId()}
-            const maintenanceRequestsData = await maintenanceRequests.json()
-            console.log("maintenanceRequestsData", maintenanceRequestsData)
+        //     // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
+        //     // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
+        //     const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${getProfileId()}`) // Change back to ${getProfileId()}
+        //     const maintenanceRequestsData = await maintenanceRequests.json()
+        //     console.log("maintenanceRequestsData", maintenanceRequestsData)
 
-            let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
-            let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items
-            let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items
-            let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
-            let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
-            let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items
+        //     let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
+        //     let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items
+        //     let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items
+        //     let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
+        //     let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
+        //     let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items
 
-            dataObject["NEW REQUEST"] = [];
-            dataObject["INFO REQUESTED"] = [];
-            dataObject["PROCESSING"] = [];
-            dataObject["SCHEDULED"] = [];
-            dataObject["COMPLETED"] = [];
-            dataObject["CANCELLED"] = [];
+        //     dataObject["NEW REQUEST"] = [];
+        //     dataObject["INFO REQUESTED"] = [];
+        //     dataObject["PROCESSING"] = [];
+        //     dataObject["SCHEDULED"] = [];
+        //     dataObject["COMPLETED"] = [];
+        //     dataObject["CANCELLED"] = [];
 
-            for (const item of array1) {
-                // console.log(item.maintenance_request_uid)
-                dataObject["NEW REQUEST"].push(item);
-            }
-            for (const item of array2) {
-                dataObject["INFO REQUESTED"].push(item);
-            }
-            for (const item of array3) {
-                dataObject["PROCESSING"].push(item);
-            }
-            for (const item of array4) {
-                dataObject["SCHEDULED"].push(item);
-            }
-            for (const item of array5) {
-                dataObject["COMPLETED"].push(item);
-            }
-            for (const item of array6) {
-                dataObject["CANCELLED"].push(item);
-            }
+        //     for (const item of array1) {
+        //         // console.log(item.maintenance_request_uid)
+        //         dataObject["NEW REQUEST"].push(item);
+        //     }
+        //     for (const item of array2) {
+        //         dataObject["INFO REQUESTED"].push(item);
+        //     }
+        //     for (const item of array3) {
+        //         dataObject["PROCESSING"].push(item);
+        //     }
+        //     for (const item of array4) {
+        //         dataObject["SCHEDULED"].push(item);
+        //     }
+        //     for (const item of array5) {
+        //         dataObject["COMPLETED"].push(item);
+        //     }
+        //     for (const item of array6) {
+        //         dataObject["CANCELLED"].push(item);
+        //     }
 
 
-            setMaintenanceData(prevData => ({
-                ...prevData, 
-                ...dataObject
-            }));
-            setDisplayMaintenanceData(prevData => ({
-                ...prevData,
-                ...dataObject
-            }));
-            setShowSpinner(false);
-        }
-        getMaintenanceData();
+        //     setMaintenanceData(prevData => ({
+        //         ...prevData, 
+        //         ...dataObject
+        //     }));
+        //     setDisplayMaintenanceData(prevData => ({
+        //         ...prevData,
+        //         ...dataObject
+        //     }));
+        //     setShowSpinner(false);
+        // }
+        // getMaintenanceData();
     }, [])
 
 

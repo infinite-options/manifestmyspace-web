@@ -80,6 +80,34 @@ export default function AddProperty({}){
 
     useEffect(() => {
         console.log("OWNER ID", ownerId);
+        const getOwnerContacts = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`);
+                // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000035`);
+
+                if(!response.ok){
+                    console.log("Error fetching owner data")
+                }
+                const ownerdata = await response.json();
+                console.log(ownerdata)
+                console.log("Owner Data", ownerdata.owner_contacts.managers)
+
+                let contactArray = ownerdata.owner_contacts.managers;
+                let ownerObjList = [];
+                contactArray.forEach((contact)=>{
+                    let obj ={
+                        owner_id : contact.contact_uid,
+                        owner_name : contact.contact_first_name+" "+contact.contact_last_name,
+                    }
+                    ownerObjList.push(obj)
+                });
+                setOwnerList(ownerObjList);
+    
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getOwnerContacts();
     }, [ownerId]);
 
     useEffect(() => {
@@ -88,36 +116,7 @@ export default function AddProperty({}){
 
     useEffect(() => {
         console.log("useEffect")
-        setCoverImage(selectedImageList[0]?.data_url || coverImage);
-
-        const getOwnerContacts = async () => {
-                try {
-                    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`);
-                    // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000035`);
-    
-                    if(!response.ok){
-                        console.log("Error fetching owner data")
-                    }
-                    const ownerdata = await response.json();
-                    console.log("Owner Data", ownerdata.management_contacts.owners)
-
-                    let contactArray = ownerdata.management_contacts.owners;
-                    let ownerObjList = [];
-                    contactArray.forEach((contact)=>{
-                        let obj ={
-                            owner_id : contact.contact_uid,
-                            owner_name : contact.contact_first_name+" "+contact.contact_last_name,
-                        }
-                        ownerObjList.push(obj)
-                    });
-                    setOwnerList(ownerObjList);
-        
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-            getOwnerContacts();
-    
+        setCoverImage(selectedImageList[0] || coverImage);
     }, [selectedImageList])
 
     const handleNext = () => {
@@ -450,8 +449,8 @@ export default function AddProperty({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            // image={selectedImageList[activeStep]}
-                                            image={coverImage}
+                                            image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep]}
+                                            // image={coverImage}
                                             sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
@@ -466,14 +465,14 @@ export default function AddProperty({}){
                                                 justifyContent: "center",
                                             }}
                                             />
-                                                                                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                                            <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
                                             {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                                         </Button>
                                         </div>
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Add"}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}

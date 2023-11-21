@@ -20,6 +20,8 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import { DataGrid } from '@mui/x-data-grid';
 import { useUser } from "../../contexts/UserContext";
 
+import { maintenanceDataCollectAndProcess } from '../Maintenance/MaintenanceOwner.jsx';
+
 const maintenanceColumns = [
     { 
       field: 'maintenance_request_uid', 
@@ -136,18 +138,19 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     }, [currentIndex, propertyId]);
 
     useEffect(() => {
-        const getMaintenanceReqForProperty = async () => {
-            try{
-                const maintenanceReqForProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${propertyId}`)
-                const maintenanceReqForPropertyData = await maintenanceReqForProperty.json();
-                const data = maintenanceReqForPropertyData.result
-                setMaintenanceReqData(data);
-                // console.log("--debug-- maintenanceReqForPropertyData", data)
-            } catch (error){
-                console.log(error);
-            }
-        }
-        getMaintenanceReqForProperty();
+        // const getMaintenanceReqForProperty = async () => {
+        //     try{
+        //         const maintenanceReqForProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${propertyId}`)
+        //         const maintenanceReqForPropertyData = await maintenanceReqForProperty.json();
+        //         const data = maintenanceReqForPropertyData.result
+        //         setMaintenanceReqData(data);
+        //         // console.log("--debug-- maintenanceReqForPropertyData", data)
+        //     } catch (error){
+        //         console.log(error);
+        //     }
+        // }
+        // getMaintenanceReqForProperty();
+        maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
     }, [currentIndex, propertyId])
 
     function getColorStatusBasedOnSelectedRole(){
@@ -178,12 +181,16 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         } else if (row.row.maintenance_request_status === "NEW"){
             status = "NEW REQUEST"
         }
+        console.log("status", status)
+        console.log("maintenanceReqData[status]", maintenanceReqData[status])
+        console.log("maintenanceReqData[status].maintenance_items", maintenanceReqData[status].maintenance_items)
+        //let maintenanceIndex = maintenanceReqData[status].maintenance_items.findIndex(item => item.maintenance_request_uid === row.id)
         try {
             navigate('/maintenance/detail', {state: { 
-                maintenance_request_index: maintenanceReqData[status].maintenance_items.findIndex(item => item.maintenance_item_uid === row.row.maintenance_item_uid),
+                maintenance_request_index: maintenanceReqData[status].findIndex(item => item.maintenance_request_uid === row.id),
                 status: status,
-                maintenanceItemsForStatus: maintenanceReqData[status],
-                allMaintenanceData: maintenanceData,
+                maintenanceItemsForStatus: maintenanceReqData[status], 
+                allMaintenanceData: maintenanceReqData,
                 fromProperty: true,
             }})
         } catch(error) {

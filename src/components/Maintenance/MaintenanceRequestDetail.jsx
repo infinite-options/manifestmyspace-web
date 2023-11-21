@@ -112,27 +112,26 @@ export function MaintenanceRequestDetail(){
     function getColorStatusBasedOnSelectedRole(){
         const role = roleName()
         console.log("role", role)   
- 
+
         if (role === "Property Manager"){
             return theme.colorStatusPMO
-          } else if (role === "Property Owner"){
+        } else if (role === "Property Owner"){
             return theme.colorStatusO
-         } else if (role === "Maintenance"){
-             return theme.colorStatusMM
-         } else if (role === "PM Employee"){
+        } else if (role === "Maintenance"){
+            return theme.colorStatusMM
+        } else if (role === "PM Employee"){
             return theme.colorStatusPMO
-         } else if (role === "Maintenance Employee"){
-             return theme.colorStatusMM
-         } else if (role === "Tenant"){
-             return theme.colorStatusTenant
-         }     
-     }
+        } else if (role === "Maintenance Employee"){
+            return theme.colorStatusMM
+        } else if (role === "Tenant"){
+            return theme.colorStatusTenant
+        }     
+    }
 
-     const colorStatus = getColorStatusBasedOnSelectedRole()
+    const colorStatus = getColorStatusBasedOnSelectedRole()
 
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    // const status = location.state.status;
     const [status, setStatus] = useState(location.state.status);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
@@ -155,22 +154,16 @@ export function MaintenanceRequestDetail(){
     
     const allData = location.state.allMaintenanceData;
 
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
-    // console.log("--DEBUG-- should be filtered", maintenanceItemsForStatus)
-
-    // console.log("above useEffect MaintenanceRequestDetail")
     useEffect(() => {
         console.log("useEffect")
         console.log("status value", status)
         colorStatus.find((item, index) => {
-            if(item.status === status){
-                console.log("status", item.status, "===", status)
+            if(item.mapping === status){
+                console.log("status", item.status, "at", index, "===", status)
                 setValue(index);
             }
         })
-    }, [status])
-    // console.log("below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    }, [status, fromProperty])
 
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)
@@ -179,24 +172,16 @@ export function MaintenanceRequestDetail(){
         setMaintenanceRequestIndex(0);
         setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
     };
-    // console.log(" 1 below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
     const handleMaintenaceRequestIndexChange = (index) => {
         setMaintenanceRequestIndex(index);  
     }
-    // console.log("2 below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
 
     useEffect(() => {
         console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
     }, [maintenanceRequestIndex])
 
-    // console.log("3 below useEffect MaintenanceRequestDetail")
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
-
-    // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
     function a11yProps(index) {
         return {
@@ -339,8 +324,11 @@ export function MaintenanceRequestDetail(){
                                             {console.log(allData[item.mapping][maintenanceRequestIndex])} */}
 
                                             {/* TODO: Pass the data filter all the way here */}
+                                            {/* {console.log("-- debug allData -->", allData)}
+                                            {console.log("-- debug item.mapping -->", item.mapping)}
+                                            {console.log("-- debug maintenanceRequestIndex -->", maintenanceRequestIndex)} */}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                console.log("Option 1 (True state)"),
+                                                // console.log("Option 1 (True state)"),
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
                                             )
                                             //     : (
