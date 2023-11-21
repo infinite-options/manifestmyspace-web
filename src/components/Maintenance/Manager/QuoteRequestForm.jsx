@@ -463,7 +463,7 @@ export default function QuoteRequestForm(){
                             />
                         </Grid>
                         <Grid item xs={12} sx={{width: '90%'}}>
-                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                         </Grid>
                         <Grid item xs={12} sx={{width: '90%'}}>
                             <Button

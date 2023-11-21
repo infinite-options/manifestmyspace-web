@@ -398,7 +398,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
                         {/* File Upload Field */}
                         <Grid item xs={12}>
-                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                         </Grid>
 
                         {/* Submit Button */}
