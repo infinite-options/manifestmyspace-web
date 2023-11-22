@@ -43,11 +43,11 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         // Example: "NEW"
         // We need to pass all the data to it, by status
 
-        console.log("handleRequestDetailPage")
-        console.log("maintenance_request_index", maintenance_request_index)
-        console.log("status", status)
-        console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        console.log("allMaintenanceData", allMaintenanceData)
+        // console.log("handleRequestDetailPage")
+        // console.log("maintenance_request_index", maintenance_request_index)
+        // console.log("status", status)
+        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+        // console.log("allMaintenanceData", allMaintenanceData)
 
         navigate(`/maintenance/detail`, {
             state: {
