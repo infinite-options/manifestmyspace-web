@@ -111,7 +111,7 @@ export function MaintenanceRequestDetail(){
 
     function getColorStatusBasedOnSelectedRole(){
         const role = roleName()
-        console.log("role", role)   
+        // console.log("role", role)   
 
         if (role === "Property Manager"){
             return theme.colorStatusPMO
@@ -134,15 +134,16 @@ export function MaintenanceRequestDetail(){
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
     const [status, setStatus] = useState(location.state.status);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
+    // const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
+    const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === status));
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
 
     useEffect(() => {
-        console.log("useEffect")
-        console.log("status value", status)
-        console.log("maintenanceRequestIndex", maintenanceRequestIndex)
+        // console.log("useEffect")
+        // console.log("status value", status)
+        // console.log("maintenanceRequestIndex", maintenanceRequestIndex)
 
         setNavParams({
             maintenanceRequestIndex,
@@ -164,6 +165,16 @@ export function MaintenanceRequestDetail(){
             }
         })
     }, [status, fromProperty])
+
+    useEffect(() => {
+        console.log("running 2nd use effect")
+        colorStatus.find((item, index) => {
+            if(item.mapping === status){
+                // console.log("2nd status", item.status, "at", index, "===", status)
+                setValue(index);
+            }
+        })
+    }, [status])
 
     const handleChange = (event, newValue) => {
         console.log("tab is changing to ", newValue)

@@ -33,7 +33,7 @@ export async function maintenanceDataCollectAndProcess(setMaintenanceData, setSh
         setShowSpinner(true);
         const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${profileId}`) // Change back to ${getProfileId()}
         const maintenanceRequestsData = await maintenanceRequests.json()
-        console.log("maintenanceRequestsData", maintenanceRequestsData)
+        // console.log("maintenanceRequestsData", maintenanceRequestsData)
 
         let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
         let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items
@@ -95,6 +95,8 @@ export function MaintenanceOwner(){
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusO
 
+    // console.log(getProfileId())
+
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
     const [month, setMonth] = useState(null);
@@ -113,7 +115,7 @@ export function MaintenanceOwner(){
 
     useEffect(() => {
         if (maintenanceData){
-            console.log("maintenanceData", maintenanceData)
+            // console.log("maintenanceData", maintenanceData)
             const propertyList = [];
             const addedAddresses = [];
             for (const key in maintenanceData){
@@ -139,7 +141,7 @@ export function MaintenanceOwner(){
                 }
             }
             
-            console.log("filterPropertyList", propertyList)
+            // console.log("filterPropertyList", propertyList)
             setFilterPropertyList(propertyList);
         }
     }, [maintenanceData])
@@ -207,7 +209,6 @@ export function MaintenanceOwner(){
         var count = 0;
         var displayList = []
         for (const item of filterPropertyList){
-            console.log(item)
             if(item.checked){
                 count++;
                 displayList.push(item.address)
