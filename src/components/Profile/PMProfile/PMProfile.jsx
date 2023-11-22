@@ -113,7 +113,7 @@ function PMProfile() {
                         position: 'absolute',
                         left: 0
                     }}
-                    onClick={(e) => {navigate('/settingsOwner') }}
+                    onClick={(e) => {navigate('/PMProfileEdit' ,{state: {manager_data: profileData}})}}
                     ></img>
                 </Box>
                 

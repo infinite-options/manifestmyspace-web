@@ -66,7 +66,14 @@ export default function PropertyRentWidget(props) {
                         outerRadius={60}
                         paddingAngle={0}
                         dataKey="number"
-                        onClick={() => {navigate('/properties') }}
+                        onClick={() => {
+                            if(props.profile === "manager"){
+                                navigate('/PMProperties')     
+                            }else{
+                                navigate('/properties') 
+                            } 
+                            
+                        }}
                     >
 
                         {data.map((entry, index) => (
@@ -86,7 +93,13 @@ export default function PropertyRentWidget(props) {
                             fill: '#160449',
                             fontWeight: '600',
                         }}
-                        onClick={() => {navigate('/properties') }}
+                        onClick={() => {
+                            if(props.profile === "manager"){
+                                navigate('/PMProperties')     
+                            }else{
+                                navigate('/properties') 
+                            }
+                        }}
                     >
                         View all {props.totalPropertiesCount}
                         <tspan x={105} y={98}>properties</tspan>
