@@ -103,6 +103,7 @@ export default function AddListing({}){
 
     //const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
+    const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
 
     useEffect(() => {
         console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
@@ -174,10 +175,14 @@ export default function AddListing({}){
             console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
             console.log("   ", mappedUtilities2);
             // setMappedUtilitiesPaidBy(mappedUtilities2);
+            setMappedUtilitiesPaidBy(mappedUtilities2);
+        } else{
+            setMappedUtilitiesPaidBy(defaultUtilities);
+            setIsDefaultUtilities(true);
         }
         console.log("************************************************AddListing useEffect***********************************");
     
-        setMappedUtilitiesPaidBy(mappedUtilities2);
+        
     }, []);
     
     // useEffect(() => {
@@ -506,6 +511,13 @@ export default function AddListing({}){
         return utility.charAt(0).toUpperCase() + utility.slice(1);
     }
 
+    const defaultUtilities = {
+        electricity: 'owner',
+        trash: 'owner',
+        water: 'owner',
+        internet: 'owner',
+        gas: 'owner',
+    };
 
 
     return (
@@ -991,37 +1003,83 @@ export default function AddListing({}){
                                             Utilities Paid by
                                         </Typography>
                                     </Grid>
-                                    {Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
-                                        <Fragment key={utility}>
-                                            <Grid item xs={6}>
-                                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                {capitalizeFirstChar(utility)}
+                                    {
+                                        isDefaultUtilities && (
+                                            <Grid item xs={12}>
+                                                <Typography sx={{fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                    {`<--Displaying Default Utilities-->`}
                                                 </Typography>
                                             </Grid>
-                                            <Grid item xs={6}>
-                                                <FormControlLabel
-                                                value="owner"
-                                                control={
-                                                    <Radio
-                                                    checked={selectedValue === 'owner'}
-                                                    onChange={() => handleUtilityChange(utility, 'owner')}
-                                                    />
-                                                }
-                                                label="Owner"
-                                                />
-                                                <FormControlLabel
-                                                value="tenant"
-                                                control={
-                                                    <Radio
-                                                    checked={selectedValue === 'tenant'}
-                                                    onChange={() => handleUtilityChange(utility, 'tenant')}
-                                                    />
-                                                }
-                                                label="Tenant"
-                                                />
-                                            </Grid>
-                                        </Fragment>
-                                    ))}
+                                        )
+                                    }
+                                    {
+                                        Object.entries(mappedUtilitiesPaidBy).length > 0 ? (
+                                            Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                                                <Fragment key={utility}>
+                                                    <Grid item xs={6}>
+                                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                        {capitalizeFirstChar(utility)}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <FormControlLabel
+                                                        value="owner"
+                                                        control={
+                                                            <Radio
+                                                            checked={selectedValue === 'owner'}
+                                                            onChange={() => handleUtilityChange(utility, 'owner')}
+                                                            />
+                                                        }
+                                                        label="Owner"
+                                                        />
+                                                        <FormControlLabel
+                                                        value="tenant"
+                                                        control={
+                                                            <Radio
+                                                            checked={selectedValue === 'tenant'}
+                                                            onChange={() => handleUtilityChange(utility, 'tenant')}
+                                                            />
+                                                        }
+                                                        label="Tenant"
+                                                        />
+                                                    </Grid>
+                                                </Fragment>
+                                            ))
+                                        ) : (
+                                            
+                                            Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
+                                                <Fragment key={utility}>
+                                                    <Grid item xs={6}>
+                                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                        {capitalizeFirstChar(utility)}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <FormControlLabel
+                                                        value="owner"
+                                                        control={
+                                                            <Radio
+                                                            checked={selectedValue === 'owner'}
+                                                            onChange={() => handleUtilityChange(utility, 'owner')}
+                                                            />
+                                                        }
+                                                        label="Owner"
+                                                        />
+                                                        <FormControlLabel
+                                                        value="tenant"
+                                                        control={
+                                                            <Radio
+                                                            checked={selectedValue === 'tenant'}
+                                                            onChange={() => handleUtilityChange(utility, 'tenant')}
+                                                            />
+                                                        }
+                                                        label="Tenant"
+                                                        />
+                                                    </Grid>
+                                                </Fragment>
+                                            ))
+                                        )
+                                    }
                                 </Grid>
 
 
