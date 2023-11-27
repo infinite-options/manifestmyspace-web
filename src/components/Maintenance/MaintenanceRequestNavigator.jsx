@@ -27,6 +27,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
 
+
+  console.log("--debug-- In MaintenanceRequestNavigator now")
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
     setImages(initialImages);
@@ -322,7 +324,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-     { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+     { data !== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
             
                 </Typography>
                 <Typography

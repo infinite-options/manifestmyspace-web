@@ -27,14 +27,75 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function MaintenanceOwner(){
+export async function maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId){
+    const dataObject = {};
+    const getMaintenanceData = async () => {
+        setShowSpinner(true);
+        const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${profileId}`) // Change back to ${getProfileId()}
+        const maintenanceRequestsData = await maintenanceRequests.json()
+        // console.log("maintenanceRequestsData", maintenanceRequestsData)
+
+        let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
+        let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items
+        let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items
+        let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
+        let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
+        let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items
+
+        dataObject["NEW REQUEST"] = [];
+        dataObject["INFO REQUESTED"] = [];
+        dataObject["PROCESSING"] = [];
+        dataObject["SCHEDULED"] = [];
+        dataObject["COMPLETED"] = [];
+        dataObject["CANCELLED"] = [];
+
+        for (const item of array1) {
+            // console.log(item.maintenance_request_uid)
+            dataObject["NEW REQUEST"].push(item);
+        }
+        for (const item of array2) {
+            dataObject["INFO REQUESTED"].push(item);
+        }
+        for (const item of array3) {
+            dataObject["PROCESSING"].push(item);
+        }
+        for (const item of array4) {
+            dataObject["SCHEDULED"].push(item);
+        }
+        for (const item of array5) {
+            dataObject["COMPLETED"].push(item);
+        }
+        for (const item of array6) {
+            dataObject["CANCELLED"].push(item);
+        }
+
+        // delete dataObject["0"]
+
+        // console.log("dataObject", dataObject)
+
+        setMaintenanceData(prevData => ({
+            ...prevData, 
+            ...dataObject
+        }));
+        // setDisplayMaintenanceData(prevData => ({
+        //     ...prevData,
+        //     ...dataObject
+        // }));
+        setShowSpinner(false);
+    }
+    getMaintenanceData();
+}
+
+export function MaintenanceOwner(){
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
-    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+    // const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusO
+
+    // console.log(getProfileId())
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -54,7 +115,7 @@ export default function MaintenanceOwner(){
 
     useEffect(() => {
         if (maintenanceData){
-            console.log("maintenanceData", maintenanceData)
+            // console.log("maintenanceData", maintenanceData)
             const propertyList = [];
             const addedAddresses = [];
             for (const key in maintenanceData){
@@ -80,7 +141,7 @@ export default function MaintenanceOwner(){
                 }
             }
             
-            console.log("filterPropertyList", propertyList)
+            // console.log("filterPropertyList", propertyList)
             setFilterPropertyList(propertyList);
         }
     }, [maintenanceData])
@@ -146,14 +207,19 @@ export default function MaintenanceOwner(){
 
     function displayPropertyFilterTitle(filterPropertyList){
         var count = 0;
+        var displayList = []
         for (const item of filterPropertyList){
             if(item.checked){
                 count++;
+                displayList.push(item.address)
             }
         }
         if(count === filterPropertyList.length){
             return "All Properties"
-        } else{
+        } else if(count < 3){
+            return displayList.join(", ")
+        }    
+        else{
             return "Selected " + count + " Properties"
         }
     }
@@ -165,68 +231,9 @@ export default function MaintenanceOwner(){
     }
 
     useEffect(() => {
-        // console.log("Maintenance useEffect")
-        const dataObject = {};
-        const getMaintenanceData = async () => {
-            setShowSpinner(true);
-            // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-            // const propertyData = await propertiesByOwnerResponse.json()
-
-            // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-            // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
-            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${getProfileId()}`) // Change back to ${getProfileId()}
-            const maintenanceRequestsData = await maintenanceRequests.json()
-            console.log("maintenanceRequestsData", maintenanceRequestsData)
-
-            let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
-            let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items
-            let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items
-            let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
-            let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
-            let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items
-
-            dataObject["NEW REQUEST"] = [];
-            dataObject["INFO REQUESTED"] = [];
-            dataObject["PROCESSING"] = [];
-            dataObject["SCHEDULED"] = [];
-            dataObject["COMPLETED"] = [];
-            dataObject["CANCELLED"] = [];
-
-            for (const item of array1) {
-                // console.log(item.maintenance_request_uid)
-                dataObject["NEW REQUEST"].push(item);
-            }
-            for (const item of array2) {
-                dataObject["INFO REQUESTED"].push(item);
-            }
-            for (const item of array3) {
-                dataObject["PROCESSING"].push(item);
-            }
-            for (const item of array4) {
-                dataObject["SCHEDULED"].push(item);
-            }
-            for (const item of array5) {
-                dataObject["COMPLETED"].push(item);
-            }
-            for (const item of array6) {
-                dataObject["CANCELLED"].push(item);
-            }
-
-
-            setMaintenanceData(prevData => ({
-                ...prevData, 
-                ...dataObject
-            }));
-            setDisplayMaintenanceData(prevData => ({
-                ...prevData,
-                ...dataObject
-            }));
-            setShowSpinner(false);
-        }
-        getMaintenanceData();
+        const profileId = getProfileId()
+        maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
     }, [])
-
-
 
     return(
         <ThemeProvider theme={theme}>
@@ -307,6 +314,22 @@ export default function MaintenanceOwner(){
                             <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
                             <SelectPropertyFilter showPropertyFilter={showPropertyFilter} setShowPropertyFilter={setShowPropertyFilter} filterList={filterPropertyList} setFilterList={setFilterPropertyList}/>
                         </Box>
+                        {/* <Box
+                            component="span"
+                            m={2}
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            position="relative"                        
+                        >
+                            <Typography
+                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                            >
+                                {filterPropertyList.length > 0 ? ( filterPropertyList.length === filterPropertyList.length ? null :
+                                    displayPropertyName(filterPropertyList)
+                                ): null}
+                            </Typography>
+                        </Box> */}
                         <Box
                             component="span"
                             m={2}
@@ -319,7 +342,7 @@ export default function MaintenanceOwner(){
                                 sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
                             >
                                 {displayFilterString(month, year)}
-                                {displayFilterString(month, year) === "Last 30 Days" ? null :(
+                                {displayFilterString(month, year) === "Last 30 Days" ? null : (
                                 <Button onClick={() => clearFilters()} sx={{
                                     padding: "0px",
                                     position: "absolute", 
@@ -337,15 +360,6 @@ export default function MaintenanceOwner(){
                         margin: "20px",
                     }}>
                         {colorStatus.map((item, index) => {
-                            // construct mapping key if it doesn't exist
-                            // var mappingKey = ""
-                            // if (item.mapping === "SCHEDULED") { // a known key with color mapping
-                            //     mappingKey = "SCHEDULED" // a mapped key to the maintenanceData object
-                            // } else if (item.mapping == "PAID"){
-                            //     mappingKey = "PAID"
-                            // } else{
-                            //     mappingKey = item.mapping
-                            // }
 
                             let mappingKey = item.mapping
 
