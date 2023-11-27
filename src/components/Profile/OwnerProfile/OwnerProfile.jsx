@@ -98,7 +98,8 @@ function OwnerProfile() {
                         position: 'absolute',
                         left: 0
                     }}
-                    onClick={(e) => {navigate('/settingsOwner') }}
+                    // onClick={(e) => {navigate('/settingsOwner') }}
+                    onClick={(e) => {navigate('/settingsOwner' ,{state: {owner_data: profileData}})}}
                     ></img>
                 </Box>
                 <Box sx={{

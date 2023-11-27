@@ -46,6 +46,8 @@ import CardDetails from "./Payments/CardDetails";
 import CashflowManager from "./Cashflow/CashflowManager";
 import ManagerDashboardHappinessMatrix from "./ManagerDashboard/ManagerDashboardHappinessMatrix";
 import Settings from "./Settings/SettingsOwner";
+import SettingsManager from "./Settings/SettingsManager";
+
 
 import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -83,6 +85,8 @@ import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDeta
 import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 
 import EditProfileSettings from "./Settings/EditProfileSettings";
+import EditProfileSettingsManager from "./Settings/EditProfileSettingsManager";
+
 import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import AddCard from "./Settings/AddCard";
 import AddPayment from "./Settings/AddPayment";
@@ -236,11 +240,12 @@ function Main() {
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
             <Route path="settingsOwner" element={<Settings />} />
             <Route path="settingsTenant" element={<Settings />} />
-            <Route path="settingsManager" element={<Settings />} />
+            <Route path="settingsManager" element={<SettingsManager />} />
             <Route path="settingsPM_Employee" element={<Settings />} />
             <Route path="settingsMaintenance" element={<Settings />} />
             <Route path="settingsMaint_Employee" element={<Settings />} />
             <Route path="editProfileSettings" element={<EditProfileSettings />} />
+            <Route path="editProfileSettingsManager" element={<EditProfileSettingsManager />} />
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
             <Route path="addCardSettings" element={<AddCard />} />
             <Route path="cardDetailsSettings" element={<CardDetailsSettings />} />
