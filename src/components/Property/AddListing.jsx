@@ -299,7 +299,7 @@ export default function AddListing({}){
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntities(utilitiesPaidBy));
         console.log("uitilitiesPaidBy JSON string");
         console.log(utilitiesJSONString);
-        formData.append('property_utilities', utilitiesJSONString)
+       // formData.append('property_utilities', utilitiesJSONString)
 
         for (let i = 0; i < selectedImageList.length; i++) {
             try {
@@ -393,8 +393,8 @@ export default function AddListing({}){
         }
 
         putData();
-        // postUtilitiesData();
-        putUtilitiesData();
+        postUtilitiesData();
+        //putUtilitiesData();
     }
 
 

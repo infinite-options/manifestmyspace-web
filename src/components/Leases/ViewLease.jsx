@@ -11,19 +11,32 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    TextField,
+    InputAdornment,
 } from '@mui/material';
+import { CalendarToday, Close, Description } from '@mui/icons-material';
 import { ArrowBack, Chat, Visibility } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { useLocation, useNavigate } from 'react-router-dom';
+import dayjs from "dayjs";
 
 const ViewLease = (props) => {
     const navigate = useNavigate();
+    const location = useLocation();
+    
+    const [moveOut, setMoveOut] = useState("")
+
     const [showSpinner, setShowSpinner] = useState(false);
     const { getProfileId } = useUser();
     const handleBackButton = () => {};
+
+    const handleMoveOutChange = (event) => {
+        setMoveOut(event.target.value);
+    }
+
 
     const handleViewButton = (leaseData) => {
         console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
@@ -38,17 +51,39 @@ const ViewLease = (props) => {
         window.open(link,'_blank', 'rel=noopener noreferrer')
     };
 
-    const handleRenewLease = () => {
-        navigate('/editLease');
+
+    const handleEndLease = () => {
+        
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
+
+        const leaseApplicationFormData = new FormData();
+        leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
+        leaseApplicationFormData.append("lease_move_out_date", moveOut.format('MM-DD-YYYY'));
+        leaseApplicationFormData.append("lease_status", "ENDED");
+    
+        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+        .then((response) => {
+            console.log('Data updated successfully');
+        })
+        .catch((error) => {
+            if(error.response){
+                console.log(error.response.data);
+            }
+        });
+        
     };
-    const leaseID = '300-000005';
+    const leaseID = location.state.lease_id; //'300-000005';
 
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
     useEffect(()=>{
-//      axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         setShowSpinner(true);
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/350-000040`)
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         .then((res)=>{
             const data = res.data['Lease_Details'].result;
             // console.log(data);
@@ -56,6 +91,7 @@ const ViewLease = (props) => {
             data.forEach((lease) => {
                 if(lease.lease_uid === leaseID) {
                     setLeaseData(lease);
+                    console.log("Lease data "+JSON.stringify(lease))
                 }
             });
             setShowSpinner(false);
@@ -74,6 +110,15 @@ const ViewLease = (props) => {
                 return day + 'th';
         }
     }
+
+    const handleRenewLease = (leaseData) => {
+        navigate('/editLease',{
+            state: {
+                leaseData: leaseData
+            }
+        });
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <Backdrop
@@ -211,7 +256,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Tenant: {`${leaseData.tenant_first_name} ${leaseData.tenant_last_name}`}
+                                        Tenant:  {getTenantName(leaseData)}
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
@@ -317,7 +362,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {'?'}
+                                        {leaseData.lease_effective_date}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -338,8 +383,44 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {'?'}
+                                        {countNoOfOccupents(leaseData)}
                                     </Typography>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell colSpan={1}>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Move Out Date
+                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        label="mm/dd/yyyy"
+                                        value={moveOut} onChange={handleMoveOutChange}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: theme.typography
+                                                            .common.blue,
+                                                        fontSize:
+                                                            theme.typography
+                                                                .smallFont,
+                                                    }}
+                                                >
+                                                    
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
                                 </TableCell>
                             </TableRow>
                             <TableRow>
@@ -361,7 +442,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        ${leaseData.charge}
+                                        ${leaseData.property_listed_rent}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -405,7 +486,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                    {leaseData.late_fee} days
+                                    {leaseData.lease_rent_late_by} days
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -426,7 +507,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        ${leaseData.perDay_late_fee}
+                                        ${leaseData.lease_rent_late_fee}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -449,7 +530,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {getDayText(leaseData.due_by)} of month
+                                        {getDayText(leaseData.lease_rent_due_by)} of month
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -470,7 +551,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {leaseData.available_topay} days before
+                                        {leaseData.lease_rent_available_topay} days before
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -492,6 +573,7 @@ const ViewLease = (props) => {
                                 backgroundColor: theme.palette.custom.pink,
                                 margin: '10px',
                             }}
+                            onClick={handleEndLease}
                         >
                             End Lease
                         </Button>
@@ -504,7 +586,7 @@ const ViewLease = (props) => {
                                 backgroundColor: theme.palette.custom.blue,
                                 margin: '10px',
                             }}
-                            onClick={handleRenewLease}
+                            onClick={()=>{handleRenewLease(leaseData)}}
                         >
                             Renew Lease
                         </Button>
@@ -515,4 +597,36 @@ const ViewLease = (props) => {
     );
 };
 
+function countNoOfOccupents(leaseData){
+
+    let adultNo = leaseData.lease_adults?JSON.parse(leaseData.lease_adults):[];
+    let ChildNo = leaseData.lease_children?JSON.parse(leaseData.lease_children):[];
+
+    let no_of_occupants=0;
+    if(adultNo){
+        no_of_occupants += adultNo.length;
+    }
+    if(ChildNo){
+        no_of_occupants += ChildNo.length;
+    }
+    return no_of_occupants;
+}
+
+
+function getTenantName(leaseData){
+
+    let name = "";
+
+    let tenants = leaseData.tenants ? JSON.parse(leaseData.tenants): [];
+
+    console.log(tenants)
+    name += tenants && tenants[0] ? tenants[0].tenant_first_name : "";
+    if(name.length>0){
+        name+=" "
+    }
+    name += tenants && tenants[0] ? tenants[0].tenant_last_name : "";
+    
+    return name;
+
+}
 export default ViewLease;

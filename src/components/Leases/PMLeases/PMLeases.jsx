@@ -6,10 +6,12 @@ import AllOwnerIcon from './AllOwnerIcon.png';
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function PMLeases(props) {
     const { getProfileId } = useUser();
     // Select Property Tab
+ 
     const [open, setOpen] = useState(false);
     const [showSpinner, setShowSpinner] = useState(false);
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
@@ -340,7 +342,8 @@ function LeaseMonth(props) {
 }
 function LeaseComponent(props) {
     const leaseData = props.data;
-
+    const navigate = useNavigate();
+   
     function getLeaseStatusText(status) {
         switch (status) {
             case 'MOVING':
@@ -388,7 +391,12 @@ function LeaseComponent(props) {
             <Box sx={{
                 marginLeft: '0px',
                 marginRight: 'auto',
-            }}>
+            }} onClick={()=>{navigate('/viewLease',{
+                    state:{
+                        lease_id : leaseData.lease_uid
+                    } 
+                }
+            )}}>
                 <Box sx={{
                     fontWeight: 'bold',
                     borderBottomStyle: 'solid',

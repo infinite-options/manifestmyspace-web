@@ -498,7 +498,12 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                             sx={{
                                                 padding: "0px"
                                             }}
-                                            onClick={() => navigate('/viewLease')}
+                                            onClick={() => navigate('/viewLease',
+                                            {
+                                                state:{
+                                                    lease_id : item.lease_uid
+                                                } 
+                                            })}
                                         >
                                             <Typography
                                                 sx={{

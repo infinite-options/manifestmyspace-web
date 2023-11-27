@@ -16,7 +16,11 @@ const LeasePDF = (props) => {
     const location = useLocation();
 
     const handleBackButton = () => {
-        navigate('/viewLease');
+        navigate('/viewLease',{
+            state:{
+                lease_id : location.state.lease_uid
+            } 
+        });
     };
 
     const documentLink  = location.state.document; 
