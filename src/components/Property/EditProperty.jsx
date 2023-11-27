@@ -257,7 +257,7 @@ export default function EditProperty({}){
         formData.append('property_value', propertyValue);
         formData.append('property_value_year', assessmentYear);
         formData.append('property_active_date', activeDate);
-        formData.append('property_utilities', utilities);
+       // formData.append('property_utilities', utilities);
         formData.append('property_amenities_community', communityAmenities);
         formData.append('property_amenities_unit', unitAmenities);
         formData.append('property_amenities_nearby', nearbyAmenities);

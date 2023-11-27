@@ -405,7 +405,7 @@ export default function AddListing({}){
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
         console.log("----- Submitted uitilitiesPaidBy JSON string");
         console.log(utilitiesJSONString);
-        // formData.append('property_utilities', utilitiesJSONString)
+       // formData.append('property_utilities', utilitiesJSONString)
 
         for (let i = 0; i < selectedImageList.length; i++) {
             try {

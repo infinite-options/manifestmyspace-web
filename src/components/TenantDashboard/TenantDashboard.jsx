@@ -565,7 +565,6 @@ function TenantDashboard(props) {
             sx={{
               paddingRight: "10px",
             }}
-            onClick={()=>navigate('/viewLease')}
           >
             View Lease
           </Box>

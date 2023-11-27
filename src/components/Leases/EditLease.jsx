@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import theme from '../../theme/theme';
+import axios from "axios";
 import {
     Paper,
     ThemeProvider,
@@ -15,14 +16,135 @@ import {
     InputAdornment,
 } from '@mui/material';
 import { CalendarToday, Chat, Close, Description } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
+import { useUser } from "../../contexts/UserContext";
 
 const EditLease = (props) => {
+    const { user, getProfileId } = useUser();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const leaseData = location.state.leaseData;
+    console.log("leaseData : "+JSON.stringify(leaseData))
+
+    const [contractName, setContractName] = useState(leaseData.contractName)
+    const [startDate, setStartDate] = useState(leaseData.startDate)
+    const [endDate, setEndDate] = useState(leaseData.endDate)
+    const [moveIn, setMoveIn] = useState("")
+    const [noOfOcc, setNoOfOcc] = useState("")
+    const [rent, setRent] = useState("")
+    const [rentFreq, setRentFreq] = useState("")
+    const [lateFeeAfter, setLateFeeAfter] = useState("")
+    const [lateFeePerDay, setLateFeePerDay] = useState("")
+    const [rentDue, setRentDue] = useState("")
+    const [availablePay, setAvailablePay] = useState("")
+
+    const handleContractNameChange = (event) => {
+        setContractName(event.target.value);
+    }
+
+    const handleStartDateChange = (event) => {
+        setStartDate(event.target.value);
+    }
+
+    const handleEndDateChange = (event) => {
+        setEndDate(event.target.value);
+    }
+
+    const handleMoveInChange = (event) => {
+        setMoveIn(event.target.value);
+    }
+
+    const handleNoOfOccChange = (event) => {
+        setNoOfOcc(event.target.value);
+    }
+
+    const handleRentChange = (event) => {
+        setRent(event.target.value);
+    }
+    const handleRentFreqChange = (event) => {
+        setRentFreq(event.target.value);
+    }
+
+    const handleLateFeeAfterChange = (event) => {
+        setLateFeeAfter(event.target.value);
+    }
+
+    const handleLateFeePerDayChange = (event) => {
+        setLateFeePerDay(event.target.value);
+    }
+
+    const handleRentDueChange = (event) => {
+        setRentDue(event.target.value);
+    }
+
+    const handleAvailablePayChange = (event) => {
+        setAvailablePay(event.target.value);
+    }
 
     const handleCloseButton = () => {
-        navigate('/viewLease');
+        navigate('/viewLease',{
+            state:{
+                lease_id : leaseData.lease_uid
+            } 
+        });
     };
+
+    const handleNewLease = () => {
+
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
+
+        const leaseApplicationFormData = new FormData();
+        leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
+        leaseApplicationFormData.append("lease_status", "PROCESSING");
+        leaseApplicationFormData.append("lease_start", startDate.format('MM-DD-YYYY'));
+        leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
+        // leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+        // leaseApplicationFormData.append("lease_move_in_date", moveInDate.format('MM-DD-YYYY'));
+        // leaseApplicationFormData.append("documents", documents);
+            
+        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+        .then((response) => {
+            console.log('Data updated successfully');
+        })
+        .catch((error) => {
+            if(error.response){
+                console.log(error.response.data);
+            }
+        });
+
+    }
+
+    const handleRenewLease = () => {
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
+
+        const leaseApplicationFormData = new FormData();
+        leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
+        leaseApplicationFormData.append("lease_status", "PROCESSING");
+        // leaseApplicationFormData.append("lease_start", startDate.format('MM-DD-YYYY'));
+        // leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
+        // leaseApplicationFormData.append("lease_move_in_date", moveIn.format('MM-DD-YYYY'));
+        
+        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+        .then((response) => {
+            console.log('Data updated successfully');
+        })
+        .catch((error) => {
+            if(error.response){
+                console.log(error.response.data);
+            }
+        });
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -100,7 +222,7 @@ const EditLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        789 Maple Lane, San Diego, CA 92101, USA
+                                        {`${leaseData.property_address}, ${leaseData.property_city}, ${leaseData.property_state} ${leaseData.property_zip}`}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -116,7 +238,7 @@ const EditLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Owner: Steve Albini
+                                        Owner: {`${leaseData.owner_first_name} ${leaseData.owner_last_name}`}
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
@@ -144,8 +266,7 @@ const EditLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        Tenant: Lou Reed
-                                    </Typography>
+                                        Tenant:  {getTenantName(leaseData)}                                    </Typography>
                                 </TableCell>
                                 <TableCell align="right">
                                     <Button>
@@ -182,6 +303,7 @@ const EditLease = (props) => {
                                         type="text"
                                         label="Enter contract name"
                                         fullWidth
+                                        value={contractName} onChange={handleContractNameChange}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -201,6 +323,7 @@ const EditLease = (props) => {
                                     <TextField
                                         variant="filled"
                                         label="mm/dd/yyyy"
+                                        value={startDate} onChange={handleStartDateChange}
                                         InputProps={{
                                             endAdornment: (
                                                 <InputAdornment
@@ -234,6 +357,7 @@ const EditLease = (props) => {
                                     <TextField
                                         variant="filled"
                                         label="mm/dd/yyyy"
+                                        value={endDate} onChange={handleEndDateChange}
                                         InputProps={{
                                             endAdornment: (
                                                 <InputAdornment
@@ -269,6 +393,7 @@ const EditLease = (props) => {
                                     <TextField
                                         variant="filled"
                                         label="mm/dd/yyyy"
+                                        value={moveIn} onChange={handleMoveInChange}
                                         InputProps={{
                                             endAdornment: (
                                                 <InputAdornment
@@ -303,6 +428,8 @@ const EditLease = (props) => {
                                         variant="filled"
                                         label="Number"
                                         type="number"
+                                        value={noOfOcc} onChange={handleNoOfOccChange}
+
                                     />
                                 </TableCell>
                             </TableRow>
@@ -321,6 +448,8 @@ const EditLease = (props) => {
                                     </Typography>
                                     <TextField
                                         variant="filled"
+                                        value={rent} onChange={handleRentChange}
+
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment
@@ -354,6 +483,8 @@ const EditLease = (props) => {
                                         variant="filled"
                                         label="Monthly"
                                         type="text"
+                                        value={rentFreq} onChange={handleRentFreqChange}
+
                                     />
                                 </TableCell>
                             </TableRow>
@@ -374,6 +505,8 @@ const EditLease = (props) => {
                                         variant="filled"
                                         label="days"
                                         type="text"
+                                        value={lateFeeAfter} onChange={handleLateFeeAfterChange}
+
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -390,6 +523,7 @@ const EditLease = (props) => {
                                     </Typography>
                                     <TextField
                                         variant="filled"
+                                        value={lateFeePerDay} onChange={handleLateFeePerDayChange}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment
@@ -437,6 +571,8 @@ const EditLease = (props) => {
                                                     .fontWeight,
                                             fontSize: '16px',
                                         }}
+                                        value={rentDue} onChange={handleRentDueChange}
+
                                     >
                                         Available to Pay
                                     </Typography>
@@ -483,7 +619,7 @@ const EditLease = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                                 backgroundColor: theme.palette.custom.blue,
                                 margin: '10px',
-                            }}
+                            }}  onClick={handleRenewLease}
                         >
                             Renew Lease
                         </Button>
@@ -495,7 +631,7 @@ const EditLease = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                                 backgroundColor: theme.palette.custom.blue,
                                 margin: '10px',
-                            }}
+                            }} onClick={handleNewLease}
                         >
                             New Lease
                         </Button>
@@ -505,5 +641,23 @@ const EditLease = (props) => {
         </ThemeProvider>
     );
 };
+
+function getTenantName(leaseData){
+
+    let name = "";
+
+    let tenants = leaseData.tenants ? JSON.parse(leaseData.tenants): [];
+
+    console.log(tenants)
+    name += tenants && tenants[0] ? tenants[0].tenant_first_name : "";
+    if(name.length>0){
+        name+=" "
+    }
+    name += tenants && tenants[0] ? tenants[0].tenant_last_name : "";
+    
+    return name;
+
+}
+
 
 export default EditLease;
