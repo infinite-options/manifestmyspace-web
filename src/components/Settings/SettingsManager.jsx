@@ -291,7 +291,7 @@ export default function SettingsManager() {
     )
 }
 
-const IOSSwitch = styled((props: SwitchProps) => (
+const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
   ))(({ theme }) => ({
     width: 42,

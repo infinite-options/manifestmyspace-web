@@ -3,7 +3,7 @@ import { Paper, Box, Stack, ThemeProvider,Switch, Button, Typography, Accordion,
 import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
 import { useUser } from "../../contexts/UserContext";
@@ -13,6 +13,8 @@ export default function Settings() {
     const { logout } = useUser();
     let [isOn1, switchState1]=useState(true)
     let [isOn2, switchState2]=useState(true)
+    const location = useLocation();
+    let owner_data = location.state.owner_data;
     return (
         <ThemeProvider theme={theme}>
           <Box
@@ -135,7 +137,8 @@ export default function Settings() {
                     </Typography>
                     <ArrowForwardIosIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    onClick={()=>{navigate('/editProfileSettings')}}/>
+                    // onClick={()=>{navigate('/editProfileSettings')}}/>
+                    onClick={()=>{navigate('/editProfileSettings' ,{state: {owner_data: owner_data}})}}/>
                     </Box>
                     <Box
                     component="span"
@@ -149,7 +152,8 @@ export default function Settings() {
                     </Typography>
                     <ArrowForwardIosIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    onClick={()=>{navigate('/changePasswordSettings')}}/>
+                    // onClick={()=>{navigate('/changePasswordSettings')}}/>
+                    onClick={()=>{navigate('/changePasswordSettings' ,{state: {owner_data: owner_data}})}}/>
                     </Box>                    
                     <Box
                     component="span"
@@ -163,7 +167,8 @@ export default function Settings() {
                     </Typography>
                     <AddIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    onClick={()=>{navigate('/cardDetailsSettings')}}/>
+                    // onClick={()=>{navigate('/cardDetailsSettings')}}/>
+                    onClick={()=>{navigate('/cardDetailsSettings' ,{state: {owner_data: owner_data}})}}/>
                     </Box>                    
                     <Box
                     component="span"

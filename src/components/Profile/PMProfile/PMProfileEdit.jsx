@@ -50,7 +50,7 @@ function PMProfileEdit() {
         business_services_fees, business_address, business_unit, business_city, business_state, business_zip,
 
     } = manager_data;
-    console.log("ROHIT, MANAGER DATA - ", manager_data);
+    
     const [modifiedData, setModifiedData] = useState({business_uid: business_uid,});
 
 
@@ -97,11 +97,11 @@ function PMProfileEdit() {
 
 
     useEffect(() => {
-        console.log("ROHIT - managerFees updated - ", managerFees)
+        console.log("managerFees updated - ", managerFees)
     }, [managerFees]);
 
     useEffect(() => {
-        console.log("ROHIT - modifiedData updated - ", modifiedData)
+        console.log("modifiedData updated - ", modifiedData)
     }, [modifiedData]);
 
 

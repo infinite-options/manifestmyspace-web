@@ -58,7 +58,7 @@ export default function EditProfileSettingsManager() {
 
 
     useEffect(() => {
-        console.log("ROHIT - managerFees updated - ", managementFees)
+        console.log("managerFees updated - ", managementFees)
     }, [managementFees]);
 
     const getFormattedFeeFrequency = (frequency) => {
@@ -359,7 +359,6 @@ export default function EditProfileSettingsManager() {
 
                 <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 
-                    {/* rohit - management fees component */}
                     <Grid item xs={12} 
                         sx={{
                             display: 'flex',

@@ -50,7 +50,7 @@ function PropertyContract(props) {
 
     // useEffect(() => {
     //     // setContractPropertyID(filteredPropertiesData["property_uid"]);
-    // }, [filteredPropertiesData]); // rohit
+    // }, [filteredPropertiesData]);
     const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
    
     const [timeDiff, setTimeDiff] = useState(null);
