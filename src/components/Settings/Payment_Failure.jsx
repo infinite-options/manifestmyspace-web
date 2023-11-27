@@ -1,10 +1,10 @@
 import React from "react";
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import { Fade } from "@mui/material";
-import { DialogActions } from "@material-ui/core";
+import { DialogActions } from "@mui/material";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";

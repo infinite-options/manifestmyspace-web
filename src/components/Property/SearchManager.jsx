@@ -6,7 +6,7 @@ import ArrowDown from "../../images/ArrowDown.png";
 import theme from "../../theme/theme";
 import axios from "axios";
 import { Typography, Button, TextField, InputAdornment, Grid } from "@mui/material";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import { ReactComponent as SearchIcon } from "../../images/search.svg";
 import { objToQueryString } from "../utils/helper";
 import Accordion from '@mui/material/Accordion';

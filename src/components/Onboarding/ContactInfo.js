@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import { TextField } from "@mui/material";
 import { formatPhoneNumber } from "./helper";
 

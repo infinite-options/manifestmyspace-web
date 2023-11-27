@@ -5,7 +5,7 @@ import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWi
 import "../../css/maintenance.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import theme from "../../theme/theme";
 import Dollar from '../../images/Dollar.png'
 import File_dock_fill from '../../images/File_dock_fill.png'

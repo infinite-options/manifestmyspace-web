@@ -23,7 +23,7 @@ import theme from "../../theme/theme";
 import File_dock_add from "../../images/File_dock_add.png";
 import { useNavigate } from "react-router-dom";
 import { post, put } from "../utils/api";
-import { alpha, makeStyles } from "@material-ui/core/styles";
+import { alpha, makeStyles } from "@mui/styles";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 

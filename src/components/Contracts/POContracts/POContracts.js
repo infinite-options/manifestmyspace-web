@@ -1,7 +1,7 @@
 import { Box, ThemeProvider, createTheme } from '@mui/system';
 import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@mui/styles'
 import ReturnArrow from '../../../images/refund_back.png'
 import ArrowDown from '../../../images/ArrowDown.png'
 import theme from '../../../theme/theme';

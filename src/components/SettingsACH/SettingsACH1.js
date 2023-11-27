@@ -4,7 +4,7 @@ import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { useNavigate } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import { TextField } from '@mui/material';
 import { Select} from "@mui/material";
 import { Grid } from '@mui/material';

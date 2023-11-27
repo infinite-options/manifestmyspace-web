@@ -1,7 +1,6 @@
 import React, { Component, useState } from 'react';
 import { ThemeProvider, Box, Accordion, AccordionSummary, AccordionDetails, Typography, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { makeStyles } from '@mui/styles';
 import theme from '../../theme/theme';
 
 const ExpenseTable = (props) => {

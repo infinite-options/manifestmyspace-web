@@ -28,7 +28,7 @@ import {
   } from "../utils/helper";
   import { useNavigate } from "react-router-dom";
   import theme from "../../theme/theme";
-  import { makeStyles } from "@material-ui/core/styles";
+  import { makeStyles } from "@mui/styles";
   import TransactionsOwnerData from "./TransactionsOwnerData";
 import ViewTransactionOwner from "./ViewTransactionOwner";
 import SelectProperty from "../Leases/SelectProperty";

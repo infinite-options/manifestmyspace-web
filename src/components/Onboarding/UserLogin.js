@@ -3,7 +3,7 @@ import axios from "axios";
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Backdrop, CircularProgress } from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import { TextField } from '@mui/material';
 import { useUser } from "../../contexts/UserContext";
 import PasswordModal from './PasswordModal';

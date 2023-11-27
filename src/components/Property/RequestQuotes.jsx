@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import axios from "axios";
 import { Typography, Button, Checkbox, Grid, TextField } from "@mui/material";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import { useUser } from "../../contexts/UserContext";
 import ReturnArrow from "../../images/refund_back.png";
 

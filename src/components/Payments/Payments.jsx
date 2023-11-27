@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
-import { alpha, makeStyles } from "@material-ui/core/styles";
+import { alpha, makeStyles } from "@mui/styles";
 import axios, { all } from 'axios';
 import { useUser } from "../../contexts/UserContext";
 import StripePayment from '../Settings/StripePayment';

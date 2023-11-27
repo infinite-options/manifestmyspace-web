@@ -30,7 +30,7 @@ import refundIcon from './../../Property/refundIcon.png';
 import documentIcon from './Subtract.png'
 import maintenanceRequestImage from "./../maintenanceRequest.png";
 import xIcon from './Close_round.png'
-import { Select } from "@material-ui/core";
+import { Select } from "@mui/material";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";

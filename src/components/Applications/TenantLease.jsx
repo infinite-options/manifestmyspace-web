@@ -19,7 +19,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import { calculateAge } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
 import DescriptionIcon from "@mui/icons-material/Description";
 

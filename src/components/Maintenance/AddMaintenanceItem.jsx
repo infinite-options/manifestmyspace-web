@@ -133,7 +133,7 @@ export default function AddMaintenanceItem(){
         const formData = new FormData();
         
         const currentDate = new Date();
-        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
 
         console.log("toggleAlignment", toggleAlignment)
 

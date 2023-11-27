@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import { useUser } from "../../contexts/UserContext";
 import Status24 from "../../images/status_2_4.svg"; 

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Button from "@material-ui/core/Button";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
 import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { ReactComponent as Logo } from "../images/logo.svg";

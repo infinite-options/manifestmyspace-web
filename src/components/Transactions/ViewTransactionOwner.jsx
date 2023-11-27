@@ -14,8 +14,6 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import SwipeableViews from 'react-swipeable-views';
-import { autoPlay } from 'react-swipeable-views-utils';
 import theme from "../../theme/theme";
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import PayPal from '../../images/PayPal.png'
@@ -25,7 +23,7 @@ import Chase from '../../images/Chase.png'
 import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
 import moment from 'moment';
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+import SwipeableViews from 'react-swipeable-views';
 
 const images = [
     {

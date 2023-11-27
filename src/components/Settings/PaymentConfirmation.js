@@ -20,7 +20,7 @@ import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AddIcon from "@mui/icons-material/Add";
-import { alpha, makeStyles } from "@material-ui/core/styles";
+import { alpha, makeStyles } from "@mui/styles";
 import PayPal from "../../images/PayPal.png";
 import Zelle from "../../images/Zelle.png";
 import Venmo from "../../images/Venmo.png";

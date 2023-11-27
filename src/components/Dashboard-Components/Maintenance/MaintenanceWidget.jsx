@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import Status from "../../Templates/Status";
 import theme from "../../../theme/theme";
+import { Box, Button, Grid } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 
 export default function MaintenanceWidget({selectedRole, maintenanceData}){
     const navigate = useNavigate();
@@ -31,6 +33,14 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
         }
     }
 
+    function navigateToAddMaintenanceItem(){
+        // console.log("navigateToAddMaintenanceItem")
+        const month = ""
+        const year = ""
+        const propertyId = ""
+        navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
+    }
+
     function selectColorStatus(){
         // console.log("selectColorStatus selectedRole", selectedRole)
         if (selectedRole == "MANAGER"){
@@ -41,9 +51,20 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
     }
 
     return(
-        <div className="mt-widget-requests-container" onClick={() => navigate(routingWithSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}>  
-            <h2 className="mt-widget-title">Maintenance</h2>
-            <Status colorStatus={colorStatus} maintenanceRequestCounts={maintenanceRequestCounts} selectedRole={selectedRole}/>
+        <div className="mt-widget-requests-container">  
+            <Grid container alignItems="center">
+                <Grid item xs={2} onClick={() => navigate(routingWithSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}>
+                </Grid>
+                <Grid item xs={8} onClick={() => navigate(routingWithSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}>
+                    <h2 className="mt-widget-title">Maintenance</h2>
+                </Grid>
+                <Grid item xs={2} alignItems="center">
+                    <AddIcon onClick={() => navigateToAddMaintenanceItem()} sx={{color: theme.typography.common.blue, fontSize: "25px", margin: "0px", padding: "0px"}}/>
+                </Grid>
+                <Grid item xs={12} onClick={() => navigate(routingWithSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}>
+                    <Status colorStatus={colorStatus} maintenanceRequestCounts={maintenanceRequestCounts} selectedRole={selectedRole}/>
+                </Grid>
+            </Grid>
         </div>
     )
 }
