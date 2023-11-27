@@ -83,6 +83,8 @@ export default function EditProperty({}){
 
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
 
+    const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
+
     const utilitiesMap = new Map([
         ['050-000001', 'electricity'],
         ['050-000002', 'water'],
@@ -163,11 +165,14 @@ export default function EditProperty({}){
             mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm)
             console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
             console.log("   ", mappedUtilities2);
-            // setMappedUtilitiesPaidBy(mappedUtilities2);
+            setMappedUtilitiesPaidBy(mappedUtilities2);
+        }else{
+            setMappedUtilitiesPaidBy(defaultUtilities);
+            setIsDefaultUtilities(true);
         }
         console.log("****************************************EditProperty useEffect********************************************");
     
-        setMappedUtilitiesPaidBy(mappedUtilities2);
+        
     }, []);
 
     useEffect(() => {
@@ -342,6 +347,14 @@ export default function EditProperty({}){
     const capitalizeFirstChar = (utility) => {
         return utility.charAt(0).toUpperCase() + utility.slice(1);
     }
+
+    const defaultUtilities = {
+        electricity: 'owner',
+        trash: 'owner',
+        water: 'owner',
+        internet: 'owner',
+        gas: 'owner',
+    };
 
 
 
@@ -886,6 +899,15 @@ export default function EditProperty({}){
                                             Utilities Paid by
                                         </Typography>
                                     </Grid>
+                                    {
+                                        isDefaultUtilities && (
+                                            <Grid item xs={12}>
+                                                <Typography sx={{fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                    {`<--Displaying Default Utilities-->`}
+                                                </Typography>
+                                            </Grid>
+                                        )
+                                    }
                                     {Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
                                         <Fragment key={utility}>
                                             <Grid item xs={6}>

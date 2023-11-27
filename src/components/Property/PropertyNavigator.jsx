@@ -909,9 +909,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 textTransform: "none",
                                             }}
                                             size="small"
-                                            onClick={() => {
-                                                item.property_available_to_rent !== 1 ? navigate('/addListing', {state:{ currentId, item, page:"create_listing" }}) : navigate('/addListing', {state:{ currentId, item, page:"edit_listing" }})
-                                            }}
+                                            onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                             <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>

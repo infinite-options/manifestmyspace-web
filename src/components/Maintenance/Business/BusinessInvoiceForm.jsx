@@ -744,7 +744,7 @@ export default function BusinessInvoiceForm(){
                                 <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                     Add Photos
                                 </Typography>
-                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button sx={{

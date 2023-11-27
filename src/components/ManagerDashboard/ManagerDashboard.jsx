@@ -79,6 +79,7 @@ function ManagerDashboard() {
     let propsForPropertyRentWidget = {
         rentData: data,
         unpaidRentStatusCount: totalPropertiesCount,
+        profile: "manager",
     }
 
     const renderColorfulLegendText = (value, entry) => {
