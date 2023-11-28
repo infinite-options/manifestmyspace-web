@@ -62,6 +62,51 @@ export default function MaintenanceManager(){
         // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
     }
+    
+    function dedupeQuotes(array){
+        // we want to find all the quotes that have the same maintenance_request_uid
+
+        const mapping = {}
+        const dedupeArray = []
+
+        for (const item of array){
+            if (!mapping[item.maintenance_request_uid]){
+                mapping[item.maintenance_request_uid] = [];
+            }
+            mapping[item.maintenance_request_uid].push(item);
+        }
+
+        for (const key in mapping){
+            if (mapping[key].length > 0){
+                const quotes = []
+                for (const item of mapping[key]){
+                    const keys = Object.keys(item).filter(key => key.startsWith("quote_"))
+                    const quoteObject = {}
+                    for (const key of keys){
+                        quoteObject[key] = item[key]
+                    }
+                    quotes.push(quoteObject)
+                }
+                console.log("quotes", quotes)
+
+                mapping[key][0].quotes = quotes
+                // delete all keys that start with quote_
+                const keysToDelete = Object.keys(mapping[key][0]).filter(key => key.startsWith("quote_"))
+                console.log(keysToDelete)
+                keysToDelete.forEach(e => delete mapping[key][0][e]);
+                for (const keyToDelete in keysToDelete){
+                    delete mapping[key][0][keyToDelete]
+                }
+                dedupeArray.push(mapping[key][0])
+            }
+            // else {
+            //     dedupeArray.push(mapping[key][0])
+            // }
+        }
+
+        console.log("dedupeArray", dedupeArray)
+        return dedupeArray
+    }
 
     useEffect(() => {
         if (maintenanceData){
@@ -181,7 +226,7 @@ export default function MaintenanceManager(){
             console.log("maintenanceRequestsData", maintenanceRequestsData)
 
             let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
-            let array2 = maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items
+            let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
             let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
             let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
             let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items

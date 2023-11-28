@@ -191,7 +191,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - Steve Albini
+                            Owner - {maintenanceItem.owner_first_name} {maintenanceItem.owner_last_name}
                         </Typography>
                     </Button>
                 </Grid>

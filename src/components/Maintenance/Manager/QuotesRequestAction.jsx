@@ -114,7 +114,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - Kim Gordon
+                            Tenant - {maintenanceItem.tenant_adult_occupants != null ? maintenanceItem.tenant_adult_occupants[0] : "No Tenant Assigned"}
                         </Typography>
                     </Button>
                 </Grid>
@@ -135,7 +135,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - Steve Albini
+                            Owner - {maintenanceItem.owner_first_name} {maintenanceItem.owner_last_name}
                         </Typography>
                     </Button>
                 </Grid>
