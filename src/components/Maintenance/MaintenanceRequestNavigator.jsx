@@ -324,7 +324,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     paddingBottom: "10px",
                   }}
                 >
-     { data !== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+                  { data !== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
             
                 </Typography>
                 <Typography
@@ -356,9 +356,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {/* {console.log("---DEBUG---")}
-                  {console.log(data)}
-                  {console.log(data.maintenance_request_status)} */}
                   {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
                 </Typography>
                 <Typography
@@ -371,6 +368,18 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                 >
                   Issue Description: {data?.maintenance_desc}
                 </Typography>
+                {data.maintenance_request_status === "PROCESSING" ? (
+                    <Typography
+                        sx={{
+                        color: theme.typography.secondary.white,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        paddingBottom: "10px",
+                        }}
+                    >
+                        {data?.maintenance_vendor_name} is processing this request.
+                    </Typography>
+                ) : null}
               </div>
             </CardContent>
           </Card>

@@ -330,22 +330,9 @@ export function MaintenanceRequestDetail(){
                                                 paddingBottom: "0px"
 
                                         }}>
-                                            {/* {console.log("--DEBUG right before MaintenanceRequestNavigator--")}
-                                            {console.log(allData[item.mapping])}
-                                            {console.log(allData[item.mapping][maintenanceRequestIndex])} */}
-
-                                            {/* TODO: Pass the data filter all the way here */}
-                                            {/* {console.log("-- debug allData -->", allData)}
-                                            {console.log("-- debug item.mapping -->", item.mapping)}
-                                            {console.log("-- debug maintenanceRequestIndex -->", maintenanceRequestIndex)} */}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                // console.log("Option 1 (True state)"),
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
                                             )
-                                            //     : (
-                                            //     console.log("Option 2 (False state)"),
-                                            //     <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
-                                            // )
                                             : null
                                             }
                                         </Grid>

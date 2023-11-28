@@ -42,6 +42,8 @@ export async function maintenanceDataCollectAndProcess(setMaintenanceData, setSh
         let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
         let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items
 
+        // console.log("Processing --> ", array3)
+
         dataObject["NEW REQUEST"] = [];
         dataObject["INFO REQUESTED"] = [];
         dataObject["PROCESSING"] = [];
