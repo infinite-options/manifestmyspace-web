@@ -300,13 +300,13 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {/* {"***-**-" +
+                            {"***-**-" +
                               AES.decrypt(
                                 application.tenant_ssn,
                                 process.env.REACT_APP_ENKEY
                               )
                                 .toString()
-                                .slice(-4)} */}
+                                .slice(-4)}
                           </Typography>
                           <Typography
                             sx={{
