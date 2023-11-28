@@ -88,9 +88,11 @@ import EditProfileSettings from "./Settings/EditProfileSettings";
 import EditProfileSettingsManager from "./Settings/EditProfileSettingsManager";
 
 import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
+import ChangePasswordSettingsManager from "./Settings/ChangePasswordSettingsManager";
 import AddCard from "./Settings/AddCard";
 import AddPayment from "./Settings/AddPayment";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
+import CardDetailsSettingsManager from "./Settings/CardDetailsSettingsManager";
 import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Footer";
@@ -247,8 +249,10 @@ function Main() {
             <Route path="editProfileSettings" element={<EditProfileSettings />} />
             <Route path="editProfileSettingsManager" element={<EditProfileSettingsManager />} />
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
+            <Route path="changePasswordSettingsManager" element={<ChangePasswordSettingsManager />} />
             <Route path="addCardSettings" element={<AddCard />} />
             <Route path="cardDetailsSettings" element={<CardDetailsSettings />} />
+            <Route path="cardDetailsSettingsManager" element={<CardDetailsSettingsManager />} />            
 
             <Route path="propertyInfo" element={<PropertyInfo />} />
             <Route path="contacts" element={<Contacts />} />

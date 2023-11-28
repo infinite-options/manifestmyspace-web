@@ -5,6 +5,7 @@ import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import PhotoIcon from '@mui/icons-material/Photo';
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 import { 
     Paper, 
@@ -43,6 +44,9 @@ export default function EditProfileSettingsManager() {
     const navigate = useNavigate();
     const location = useLocation();
     let manager_data = location.state.manager_data;
+    const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
+    const [isEdited, setIsEdited] = useState(false);
+
     const [emailAddress, setEmailAddress] = useState(manager_data.business_email? manager_data.business_email : '');
     const [phoneNumber, setPhoneNumber] = useState(manager_data.business_phone_number? manager_data.business_phone_number : '');
     const [address, setAddress] = useState(manager_data.business_address? manager_data.business_address : '');
@@ -51,6 +55,7 @@ export default function EditProfileSettingsManager() {
     const [state, setState] = useState(manager_data.business_state? manager_data.business_state : '');
     const [zipCode, setZipCode] = useState(manager_data.business_zip? manager_data.business_zip : '');
     const [managementFees, setManagementFees] = useState(manager_data.business_services_fees? JSON.parse(manager_data.business_services_fees) : []);
+    const [EIN, setEIN] = useState(manager_data.business_ein_number? manager_data.business_ein_number : '');
 
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
@@ -59,13 +64,18 @@ export default function EditProfileSettingsManager() {
 
     useEffect(() => {
         console.log("managerFees updated - ", managementFees)
+        setModifiedData((prevData) => ({
+            ...prevData,
+            'business_services_fees': JSON.stringify(managementFees)
+        }));
+        setIsEdited(true);
     }, [managementFees]);
 
     const getFormattedFeeFrequency = (frequency) => {
         // console.log("getFormattedFeeFrequency(), frequency", frequency);
         let freq = ""
         switch(frequency){
-            case "one_time":
+            case "one-time":
                 freq =  "One Time";
                 break;
             case "hourly":
@@ -77,7 +87,7 @@ export default function EditProfileSettingsManager() {
             case "weekly":
                 freq =  "Weekly";
                 break;
-            case "bi_weekly":
+            case "bi-weekly":
                 freq =  "Biweekly";
                 break;
             case "monthly":
@@ -150,20 +160,59 @@ export default function EditProfileSettingsManager() {
         // console.log(name)
         // console.log(value)
 
-        if (name === 'email_address') {
+        if (name === 'business_email') {
             setEmailAddress(value);
-        } else if (name === 'phone_number') {
+        } else if (name === 'business_phone_number') {
             setPhoneNumber(value);
-        } else if (name === 'address') {
+        } else if (name === 'business_address') {
             setAddress(value);
-        } else if (name === 'unit') {
+        } else if (name === 'business_unit') {
             setUnit(value);
-        } else if (name === 'city') {
+        } else if (name === 'business_city') {
             setCity(value);
-        } else if (name === 'state') {
+        } else if (name === 'business_state') {
             setState(value);
-        } else if (name === 'zip_code') {
+        } else if (name === 'business_zip') {
             setZipCode(value);
+        } else if (name === 'business_ein_number') {
+            setEIN(value);
+        }
+        
+
+        setModifiedData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+
+        setIsEdited(true);
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("FORM SUBMITTED");
+        console.log(modifiedData);
+
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
+
+        if(isEdited){
+            console.log("EDITED")
+            // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+            .then((response) => {
+                console.log('Data updated successfully');
+                setIsEdited(false); // Reset the edit status
+                navigate(-1)
+            })
+            .catch((error) => {
+                if(error.response){
+                    console.log(error.response.data);
+                }
+            });
         }
     }
 
@@ -175,14 +224,15 @@ export default function EditProfileSettingsManager() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 width: '100%', // Take up full screen width
-                height: '100vh', // Set the Box height to full view height
+                minHeight: '100vh',
                 justifyContent: 'flex-start', // Align items at the top
+                overflowY: 'auto',
             }}
           >
             <Box
             style={{
                 width: '100%',
-                backgroundColor: theme.palette.custom.bgBlue,
+                // backgroundColor: theme.palette.custom.bgBlue,
                 height: '25%', // 25% of the container's height
             }}>
                 <Box
@@ -193,20 +243,20 @@ export default function EditProfileSettingsManager() {
                 alignItems= 'center'
                 position= 'relative'>
                     <UTurnLeftIcon 
-                    sx={{
-                        transform: "rotate(90deg)", 
-                        color: theme.typography.secondary.white, 
-                        fontWeight: theme.typography.primary.fontWeight, 
-                        fontSize:theme.typography.largeFont, 
-                        padding: 5,
-                        position: 'absolute',
-                        left: 0
+                        sx={{
+                            transform: "rotate(90deg)", 
+                            color: '#3D5CAC', 
+                            fontWeight: 'bold', 
+                            fontSize:theme.typography.largeFont, 
+                            padding: 5,
+                            position: 'absolute',
+                            left: 0
                         }}
                     onClick={()=>{navigate(-1)}}/>
                     <Typography 
                     sx={{
                         justifySelf: 'center',
-                        color: theme.typography.secondary.white, 
+                        color: '#3D5CAC', 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
                     Settings
@@ -305,175 +355,202 @@ export default function EditProfileSettingsManager() {
                 </Typography>
                 </Paper>
                 <hr/>
+                <Box
+                    component="form"
+                    onSubmit={handleSubmit}
+                    noValidate
+                    autoComplete="off"
+                    id="editProfileForm"
+                >
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Email Address</Typography>
+                    <TextField name="business_email" value={emailAddress} onChange={handleInputChange} variant="filled" fullWidth placeholder="email address" className={classes.root}></TextField>
+                    </Stack>
 
-                <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Email Address</Typography>
-                <TextField name="email_address" value={emailAddress} onChange={handleInputChange} variant="filled" fullWidth placeholder="email address" className={classes.root}></TextField>
-                </Stack>
-
-                <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Phone Number</Typography>
-                <TextField name="phone_number" value={phoneNumber} onChange={handleInputChange} variant="filled" fullWidth placeholder="(408)555-4823" className={classes.root}></TextField>
-                </Stack>
-                <hr/>
-                
-                <Stack spacing={-2} m={5}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Address</Typography>
-                <TextField name="address" value={address} onChange={handleInputChange} variant="filled" fullWidth placeholder="1065 Melancholy Lane" className={classes.root}></TextField>
-                </Stack>
-                
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                    <Stack spacing={-2} m={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Unit #</Typography>
-                    <TextField name="unit" value={unit} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Phone Number</Typography>
+                    <TextField name="business_phone_number" value={phoneNumber} onChange={handleInputChange} variant="filled" fullWidth placeholder="(408)555-4823" className={classes.root}></TextField>
                     </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                    <Stack spacing={-2} m={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>City</Typography>
-                    <TextField name="city" value={city} onChange={handleInputChange} variant="filled" fullWidth placeholder="San Jose" className={classes.root}></TextField>
+                    <hr/>
+                    
+                    <Stack spacing={-2} m={5}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Address</Typography>
+                    <TextField name="business_address" value={address} onChange={handleInputChange} variant="filled" fullWidth placeholder="1065 Melancholy Lane" className={classes.root}></TextField>
                     </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                    <Stack spacing={-2} m={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>State</Typography>
-                    <TextField name="state" value={state} onChange={handleInputChange} variant="filled" fullWidth placeholder="CA" className={classes.root}></TextField>
-                    </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                    <Stack spacing={-2} m={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Zip code</Typography>
-                    <TextField name="zip_code" value={zipCode} onChange={handleInputChange} variant="filled" fullWidth placeholder="92034" className={classes.root}></TextField>
-                    </Stack>
-                </Grid>
-                </Grid>
-                <hr/>
-                <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={12}>
-                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, textAlign:'center', }}>
-                            Management Fees
-                        </Typography>
+                    
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs={6}>
+                        <Stack spacing={-2} m={2}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Unit #</Typography>
+                        <TextField name="business_unit" value={unit} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                        </Stack>
                     </Grid>
-                </Grid>
+                    <Grid item xs={6}>
+                        <Stack spacing={-2} m={2}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>City</Typography>
+                        <TextField name="business_city" value={city} onChange={handleInputChange} variant="filled" fullWidth placeholder="San Jose" className={classes.root}></TextField>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Stack spacing={-2} m={2}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>State</Typography>
+                        <TextField name="business_state" value={state} onChange={handleInputChange} variant="filled" fullWidth placeholder="CA" className={classes.root}></TextField>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Stack spacing={-2} m={2}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Zip code</Typography>
+                        <TextField name="business_zip" value={zipCode} onChange={handleInputChange} variant="filled" fullWidth placeholder="92034" className={classes.root}></TextField>
+                        </Stack>
+                    </Grid>
+                    </Grid>
+                    <hr/>
+                    <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={12}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, textAlign:'center', }}>
+                                Management Fees
+                            </Typography>
+                        </Grid>
+                    </Grid>
 
-                <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 
-                    <Grid item xs={12} 
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            fontSize: '15px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            color: '#3D5CAC',
-                        }}
-                    >
-                        <Box>
-
-                        </Box>
-                        <Box
-                            onClick={handleOpenAddFee}
+                        <Grid item xs={12} 
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                fontSize: '15px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
                         >
-                            {/* <EditIcon  sx={{ fontSize: 16, color: '#3D5CAC'}} /> */}
-                            Add a Fee
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} 
-                        sx={{
-                            background: "#FFFFFF",
-                            fontSize: '13px',
-                            padding: '5px',
-                            color: '#3D5CAC',
-                            borderRadius: '5px',
+                            <Box>
 
-                        }}
-                    >   
-                        {managementFees.length === 0 ? (
-                            // <p>No fees to display</p>
-                            <Box
-                                sx={{
-                                    height: "13px",
-                                }}
-                            >
-                                No fees to display
                             </Box>
-                        ) : (
-                            managementFees.map((fee, index) => (
-                                <Box 
-                                    key={index}
-                                    // FeeIndex={index}
-                                    sx = {{
-                                        display: 'flex',
-                                        flexDirection: 'column',
+                            <Box
+                                onClick={handleOpenAddFee}
+                            >
+                                {/* <EditIcon  sx={{ fontSize: 16, color: '#3D5CAC'}} /> */}
+                                Add a Fee
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} 
+                            sx={{
+                                background: "#FFFFFF",
+                                fontSize: '13px',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                                borderRadius: '5px',
 
+                            }}
+                        >   
+                            {managementFees.length === 0 ? (
+                                // <p>No fees to display</p>
+                                <Box
+                                    sx={{
+                                        height: "13px",
                                     }}
-                                    onClick={() => handleOpenEditFee(index)}
                                 >
-                                    <Box sx={{
+                                    No fees to display
+                                </Box>
+                            ) : (
+                                managementFees.map((fee, index) => (
+                                    <Box 
+                                        key={index}
+                                        // FeeIndex={index}
+                                        sx = {{
                                             display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
+                                            flexDirection: 'column',
+
                                         }}
-
+                                        onClick={() => handleOpenEditFee(index)}
                                     >
-                                        <Box>{getFormattedFeeFrequency(fee.frequency)} {fee.fee_name}: {fee.fee_type === "PERCENT" ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
-
-                                        <Button 
-                                            variant="text"
-                                            onClick={(event) => {
-                                                handleDeleteFee(index, event);
-                                            }}
-                                            sx={{
-                                                width: '10%', 
-                                                cursor: 'pointer',
-                                                fontSize: '14px',
-                                                fontWeight: 'bold', 
-                                                color: '#3D5CAC',
-                                                '&:hover': {
-                                                    backgroundColor: 'transparent', // Set to the same color as the default state
-                                                },
+                                        <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between',
                                             }}
 
                                         >
-                                            <DeleteIcon  sx={{ fontSize: 14, color: '#3D5CAC'}} />
-                                        </Button>
+                                            <Box>{getFormattedFeeFrequency(fee.frequency)} {fee.fee_name}: {fee.fee_type === "PERCENT" ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}</Box>
+
+                                            <Button 
+                                                variant="text"
+                                                onClick={(event) => {
+                                                    handleDeleteFee(index, event);
+                                                }}
+                                                sx={{
+                                                    width: '10%', 
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold', 
+                                                    color: '#3D5CAC',
+                                                    '&:hover': {
+                                                        backgroundColor: 'transparent', // Set to the same color as the default state
+                                                    },
+                                                }}
+
+                                            >
+                                                <DeleteIcon  sx={{ fontSize: 14, color: '#3D5CAC'}} />
+                                            </Button>
+                                        </Box>
                                     </Box>
-                                </Box>
 
-                            ))
+                                ))
+                            )}
+
+                        </Grid>
+                        {showAddFeeDialog && (
+                            <Box>
+                                <AddFeeDialog open={showAddFeeDialog} handleClose={handleCloseAddFee} onAddFee={handleAddFee} />
+                            </Box>
                         )}
-
+                        {showEditFeeDialog && (
+                            <Box>
+                                <EditFeeDialog open={showEditFeeDialog} handleClose={handleCloseEditFee} onEditFee={handleEditFee} feeIndex={indexForEditFeeDialog} fees={managementFees} />
+                            </Box>
+                        )}
                     </Grid>
-                    {showAddFeeDialog && (
-                        <Box>
-                            <AddFeeDialog open={showAddFeeDialog} handleClose={handleCloseAddFee} onAddFee={handleAddFee} />
-                        </Box>
-                    )}
-                    {showEditFeeDialog && (
-                        <Box>
-                            <EditFeeDialog open={showEditFeeDialog} handleClose={handleCloseEditFee} onEditFee={handleEditFee} feeIndex={indexForEditFeeDialog} fees={managementFees} />
-                        </Box>
-                    )}
-                </Grid>
 
-                <hr/>
+                    <hr/>
 
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                    <Stack spacing={-2} m={5}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>SSN</Typography>
-                    <TextField variant="filled" fullWidth placeholder="Enter SSN" className={classes.root}></TextField>
-                    </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                    <Stack spacing={-2} m={5}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>EIN</Typography>
-                    <TextField variant="filled" fullWidth placeholder="Enter EIN" className={classes.root}></TextField>
-                    </Stack>
-                </Grid>
-                </Grid>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs={6}>
+                        <Stack spacing={-2} m={5}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>SSN</Typography>
+                        <TextField variant="filled" fullWidth placeholder="Enter SSN" className={classes.root}></TextField>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Stack spacing={-2} m={5}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>EIN</Typography>
+                        <TextField name="business_ein_number" value={EIN} onChange={handleInputChange} variant="filled" fullWidth placeholder="Enter EIN" className={classes.root}></TextField>
+                        </Stack>
+                    </Grid>
+                    </Grid>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{padding: '10px',}}>
+                            <Button 
+                                variant="contained"
+                                type="submit"
+                                form="editProfileForm"  
+                                sx=
+                                    {{ 
+                                        width: '100%',
+                                        backgroundColor: '#3D5CAC',
+                                        '&:hover': {
+                                            backgroundColor: '#3D5CAC',
+                                        },
+                                        borderRadius: '10px',
+                                    }}
+                            >
+                                <Typography sx={{ textTransform: 'none', color: "white", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                    Save And Submit
+                                </Typography>
+                            </Button>
+                    </Grid>
+                </Box>
             </Paper>
             </Box>
             </Box>
@@ -698,11 +775,11 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                         padding: '8px', // Adjust the padding as needed
                                     }}
                                 >
-                                    <MenuItem value={"one_time"}>One Time</MenuItem>
+                                    <MenuItem value={"one-time"}>One Time</MenuItem>
                                     <MenuItem value={"hourly"}>hourly</MenuItem>
                                     <MenuItem value={"daily"}>daily</MenuItem>
                                     <MenuItem value={"weekly"}>weekly</MenuItem>
-                                    <MenuItem value={"biweekly"}>biweekly</MenuItem>
+                                    <MenuItem value={"bi-weekly"}>biweekly</MenuItem>
                                     <MenuItem value={"monthly"}>monthly</MenuItem>
                                     <MenuItem value={"annually"}>annually</MenuItem>
                                 </Select>
@@ -1100,11 +1177,11 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                         padding: '8px', // Adjust the padding as needed
                                     }}
                                 >
-                                    <MenuItem value={"one_time"}>One Time</MenuItem>
+                                    <MenuItem value={"one-time"}>One Time</MenuItem>
                                     <MenuItem value={"hourly"}>Hourly</MenuItem>
                                     <MenuItem value={"daily"}>Daily</MenuItem>
                                     <MenuItem value={"weekly"}>Weekly</MenuItem>
-                                    <MenuItem value={"bi_weekly"}>Biweekly</MenuItem>
+                                    <MenuItem value={"bi-weekly"}>Biweekly</MenuItem>
                                     <MenuItem value={"monthly"}>Monthly</MenuItem>
                                     <MenuItem value={"annually"}>Annually</MenuItem>
                                 </Select>
