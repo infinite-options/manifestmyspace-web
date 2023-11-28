@@ -1729,7 +1729,7 @@ function PropertyCard(props) {
                         },
                     }}
                     onClick={handleSendQuoteClick}
-                    disabled={!contractName || !contractStartDate || !contractEndDate  || !contractFees}
+                    disabled={!contractName || !contractStartDate || !contractEndDate  || !contractFees || !contractDocument}
                     >
                     <Typography sx={{
                         fontWeight: theme.typography.primary.fontWeight, 
