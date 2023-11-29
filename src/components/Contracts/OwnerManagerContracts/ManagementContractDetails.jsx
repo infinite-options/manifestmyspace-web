@@ -43,8 +43,6 @@ function ManagementContractDetails(props) {
     const navigate = useNavigate();
 
     const {state} = useLocation();
-    // const { announcementData } = state;
-    // const { contract_uid, contract_business_id, contract_property_id, property_owner_id  } = state;
     const { contract_uid, contract_business_id, contract_property_id } = state;
     
     const [contractUID, setContractUID] = useState(null);
@@ -1214,7 +1212,7 @@ function PropertyCard(props) {
                     </Box>
                     <TextInputField 
                         name="end_date"
-                        placeholder="mm-dd-yyyy"
+                        placeholder="yyyy-mm-dd"
                         value={contractEndDate}
                         onChange={handleEndDateChange}
                         required

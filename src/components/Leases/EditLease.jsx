@@ -25,19 +25,18 @@ const EditLease = (props) => {
     const location = useLocation();
 
     const leaseData = location.state.leaseData;
-    console.log("leaseData : "+JSON.stringify(leaseData))
 
-    const [contractName, setContractName] = useState(leaseData.contractName)
-    const [startDate, setStartDate] = useState(leaseData.startDate)
-    const [endDate, setEndDate] = useState(leaseData.endDate)
-    const [moveIn, setMoveIn] = useState("")
+    const [contractName, setContractName] = useState(leaseData.contract_name)
+    const [startDate, setStartDate] = useState(leaseData.lease_start)
+    const [endDate, setEndDate] = useState(leaseData.lease_end)
+    const [moveIn, setMoveIn] = useState(leaseData.lease_move_in_date)
     const [noOfOcc, setNoOfOcc] = useState("")
-    const [rent, setRent] = useState("")
-    const [rentFreq, setRentFreq] = useState("")
-    const [lateFeeAfter, setLateFeeAfter] = useState("")
-    const [lateFeePerDay, setLateFeePerDay] = useState("")
-    const [rentDue, setRentDue] = useState("")
-    const [availablePay, setAvailablePay] = useState("")
+    const [rent, setRent] = useState(leaseData.property_listed_rent)
+    const [rentFreq, setRentFreq] = useState(leaseData.frequency)
+    const [lateFeeAfter, setLateFeeAfter] = useState(leaseData.lease_rent_late_by)
+    const [lateFeePerDay, setLateFeePerDay] = useState(leaseData.lease_rent_late_fee)
+    const [rentDue, setRentDue] = useState(leaseData.lease_rent_due_by)
+    const [availablePay, setAvailablePay] = useState(leaseData.lease_rent_available_topay)
 
     const handleContractNameChange = (event) => {
         setContractName(event.target.value);
@@ -99,16 +98,33 @@ const EditLease = (props) => {
             "Access-Control-Allow-Credentials":"*"
         };
 
+        let date = new Date()
+
         const leaseApplicationFormData = new FormData();
-        leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
-        leaseApplicationFormData.append("lease_status", "PROCESSING");
-        leaseApplicationFormData.append("lease_start", startDate.format('MM-DD-YYYY'));
-        leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
-        // leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
-        // leaseApplicationFormData.append("lease_move_in_date", moveInDate.format('MM-DD-YYYY'));
-        // leaseApplicationFormData.append("documents", documents);
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+      
+        leaseApplicationFormData.append('lease_property_id', leaseData.property_uid)
+        leaseApplicationFormData.append('lease_status', "NEW")
+        leaseApplicationFormData.append('lease_assigned_contacts', leaseData.lease_assigned_contacts)
+        leaseApplicationFormData.append('lease_documents', leaseData.lease_documents)
+        leaseApplicationFormData.append('lease_adults', leaseData?.tenant_adult_occupants)
+        leaseApplicationFormData.append('lease_children', leaseData?.tenant_children_occupants)
+        leaseApplicationFormData.append('lease_pets', leaseData?.tenant_pet_occupants)
+        leaseApplicationFormData.append('lease_vehicles', leaseData?.tenant_vehicle_info)
+        leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString())
+        leaseApplicationFormData.append('tenant_uid', leaseData.tenant_uid)
+
+        leaseApplicationFormData.append("contract_name",leaseData.contract_name)
+        leaseApplicationFormData.append("lease_start",leaseData.lease_start)
+        leaseApplicationFormData.append("lease_end",leaseData.lease_end)
+        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)                                     
+        leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
+        leaseApplicationFormData.append("frequency",leaseData.frequency)
+        leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
+        leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
+        leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
+        leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+
+        axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
             console.log('Data updated successfully');
         })
@@ -130,11 +146,17 @@ const EditLease = (props) => {
 
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
-        leaseApplicationFormData.append("lease_status", "PROCESSING");
-        // leaseApplicationFormData.append("lease_start", startDate.format('MM-DD-YYYY'));
-        // leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
-        // leaseApplicationFormData.append("lease_move_in_date", moveIn.format('MM-DD-YYYY'));
-        
+        leaseApplicationFormData.append("contract_name",leaseData.contract_name)
+        leaseApplicationFormData.append("lease_start",leaseData.lease_start)
+        leaseApplicationFormData.append("lease_end",leaseData.lease_end)
+        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)                                     
+        leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
+        leaseApplicationFormData.append("frequency",leaseData.frequency)
+        leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
+        leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
+        leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
+        leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
             console.log('Data updated successfully');
@@ -322,7 +344,7 @@ const EditLease = (props) => {
                                     </Typography>
                                     <TextField
                                         variant="filled"
-                                        label="mm/dd/yyyy"
+                                        label="mm-dd-yyyy"
                                         value={startDate} onChange={handleStartDateChange}
                                         InputProps={{
                                             endAdornment: (
@@ -356,7 +378,7 @@ const EditLease = (props) => {
                                     </Typography>
                                     <TextField
                                         variant="filled"
-                                        label="mm/dd/yyyy"
+                                        label="mm-dd-yyyy"
                                         value={endDate} onChange={handleEndDateChange}
                                         InputProps={{
                                             endAdornment: (
@@ -392,7 +414,7 @@ const EditLease = (props) => {
                                     </Typography>
                                     <TextField
                                         variant="filled"
-                                        label="mm/dd/yyyy"
+                                        label="mm-dd-yyyy"
                                         value={moveIn} onChange={handleMoveInChange}
                                         InputProps={{
                                             endAdornment: (
@@ -560,6 +582,7 @@ const EditLease = (props) => {
                                         variant="filled"
                                         label="of month"
                                         type="text"
+                                        value={rentDue} onChange={handleRentDueChange}
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -571,8 +594,6 @@ const EditLease = (props) => {
                                                     .fontWeight,
                                             fontSize: '16px',
                                         }}
-                                        value={rentDue} onChange={handleRentDueChange}
-
                                     >
                                         Available to Pay
                                     </Typography>
@@ -580,6 +601,8 @@ const EditLease = (props) => {
                                         variant="filled"
                                         label="days before"
                                         type="text"
+                                        value={availablePay} onChange={handleAvailablePayChange}
+
                                     />
                                 </TableCell>
                             </TableRow>

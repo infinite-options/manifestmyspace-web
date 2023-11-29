@@ -63,8 +63,8 @@ const ViewLease = (props) => {
 
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
-        leaseApplicationFormData.append("lease_move_out_date", moveOut.format('MM-DD-YYYY'));
-        leaseApplicationFormData.append("lease_status", "ENDED");
+        leaseApplicationFormData.append("move_out_date", moveOut);
+       // leaseApplicationFormData.append("lease_status", "ENDED");
     
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
@@ -81,6 +81,8 @@ const ViewLease = (props) => {
 
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
+    const [document, setDocument] = useState([]);
+    
     useEffect(()=>{
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
@@ -92,6 +94,7 @@ const ViewLease = (props) => {
                 if(lease.lease_uid === leaseID) {
                     setLeaseData(lease);
                     console.log("Lease data "+JSON.stringify(lease))
+                    setDocument(lease.lease_documents)
                 }
             });
             setShowSpinner(false);
@@ -118,6 +121,8 @@ const ViewLease = (props) => {
             }
         });
     };
+
+    console.log("document ",document)
 
     return (
         <ThemeProvider theme={theme}>
@@ -186,7 +191,7 @@ const ViewLease = (props) => {
                                 Viewing Lease
                             </Typography>
                         </Box>
-                        <Box position="absolute" right={0}
+                        {document>0 ?<Box position="absolute" right={0}
                         onClick={()=>{handleViewButton(leaseData)}}
                         >
                             <Visibility
@@ -196,7 +201,7 @@ const ViewLease = (props) => {
                                     margin: '5px',
                                 }}
                             />
-                        </Box>
+                        </Box>:<div></div>}
                     </Stack>
                     <Table>
                         <TableBody>
@@ -362,7 +367,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {leaseData.lease_effective_date}
+                                        {leaseData.lease_move_in_date}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -402,7 +407,7 @@ const ViewLease = (props) => {
                                     </Typography>
                                     <TextField
                                         variant="filled"
-                                        label="mm/dd/yyyy"
+                                        label="mm-dd-yyyy"
                                         value={moveOut} onChange={handleMoveOutChange}
                                         InputProps={{
                                             endAdornment: (
