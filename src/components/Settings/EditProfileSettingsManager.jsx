@@ -56,6 +56,7 @@ export default function EditProfileSettingsManager() {
     const [zipCode, setZipCode] = useState(manager_data.business_zip? manager_data.business_zip : '');
     const [managementFees, setManagementFees] = useState(manager_data.business_services_fees? JSON.parse(manager_data.business_services_fees) : []);
     const [EIN, setEIN] = useState(manager_data.business_ein_number? manager_data.business_ein_number : '');
+    const [uploadedImage, setUploadedImage] = useState(null);
 
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
@@ -187,10 +188,34 @@ export default function EditProfileSettingsManager() {
         setIsEdited(true);
     }
 
+    const handleProfileImageUpload = (file) => {
+        setUploadedImage(file);
+        setIsEdited(true);
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("FORM SUBMITTED");
         console.log(modifiedData);
+
+        const formData = new FormData();
+        for (const key in modifiedData) {
+            if (Object.hasOwnProperty.call(modifiedData, key)) {
+                const value = modifiedData[key];
+                
+                // Check if the value is a non-null object (excluding arrays)
+                const serializedValue = (value !== null && typeof value === 'object')
+                    ? JSON.stringify(value)
+                    : String(value);
+    
+                formData.append(key, serializedValue);
+            }
+        }
+        if(uploadedImage){
+            formData.append("business_photo", uploadedImage);
+        }
+
+
 
         const headers = { 
             "Access-Control-Allow-Origin": "*",
@@ -202,7 +227,7 @@ export default function EditProfileSettingsManager() {
         if(isEdited){
             console.log("EDITED")
             // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -283,15 +308,30 @@ export default function EditProfileSettingsManager() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    <AccountCircleIcon
-                    sx={{
-                        color: theme.typography.common.blue,
-                        width: 45,
-                        height:45,
-                        position: 'absolute',
-                        left: 0
-                    }}
-                    ></AccountCircleIcon>
+                    {manager_data.business_photo_url !== null ? (
+                        <img
+                            src={manager_data.business_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    ) : (
+                        <AccountCircleIcon
+                            sx={{
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    )}
                     <>
                     <Stack
                     direction="row"
@@ -324,36 +364,44 @@ export default function EditProfileSettingsManager() {
                     </>
                 </Box>
                 <hr/>
-
-                <Paper
-                elevation={0}
-                variant="outlined"
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderStyle: 'dashed',
-                    borderWidth: '2px',
-                    borderColor: theme.typography.common.blue, // Border color changed to blue
-                    padding: '10px',
-                    width: '200px',
-                    margin: '20px auto',
-                    backgroundColor: theme.palette.primary.main, // Background color changed to light blue
-                }}
-                >
-                <Box>
-                    <PhotoIcon sx={{ fontSize: theme.typography.largeFont, color: theme.typography.common.blue }} />
-                </Box>
-                <Typography
-                    component="div"
+                <label htmlFor="file-upload">
+                    <Paper
+                    elevation={0}
+                    variant="outlined"
                     style={{
-                    textAlign: 'center',
-                    flex: 1,
-                    color: theme.typography.common.blue, // Text color changed to blue
+                        display: 'flex',
+                        alignItems: 'center',
+                        borderStyle: 'dashed',
+                        borderWidth: '2px',
+                        borderColor: theme.typography.common.blue, // Border color changed to blue
+                        padding: '10px',
+                        width: '200px',
+                        margin: '20px auto',
+                        backgroundColor: theme.palette.primary.main, // Background color changed to light blue
                     }}
-                >
-                    New Profile Picture
-                </Typography>
-                </Paper>
+                    >
+                    <Box>
+                        <PhotoIcon sx={{ fontSize: theme.typography.largeFont, color: theme.typography.common.blue }} />
+                    </Box>
+                    <Typography
+                        component="div"
+                        style={{
+                        textAlign: 'center',
+                        flex: 1,
+                        color: theme.typography.common.blue, // Text color changed to blue
+                        }}
+                    >
+                        New Profile Picture
+                    </Typography>
+                    </Paper>
+                </label>
+                <input
+                        id="file-upload"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => handleProfileImageUpload(e.target.files[0])}
+                />
                 <hr/>
                 <Box
                     component="form"

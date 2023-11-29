@@ -102,16 +102,46 @@ function OwnerProfile() {
                     onClick={(e) => {navigate('/settingsOwner' ,{state: {owner_data: profileData}})}}
                     ></img>
                 </Box>
-                <Box sx={{
-                    justifySelf: 'center',
-                    height: '121px',
-                    width: '121px',
-                    backgroundColor: '#bbb',
-                    borderRadius: '50%',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    boxShadow: '0px 4px 4px #00000032'
-                }}></Box>
+                {profileData.owner_photo_url !== null ? (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '121px',
+                            width: '121px',
+                            backgroundColor: '#bbb',
+                            borderRadius: '50%',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            boxShadow: '0px 4px 4px #00000032'
+                        }}
+                    >
+                        <img
+                            src={profileData.owner_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                            }}
+                        />
+                    </Box>
+                ) : (
+                    <Box sx={{
+                        justifySelf: 'center',
+                        height: '121px',
+                        width: '121px',
+                        backgroundColor: '#bbb',
+                        borderRadius: '50%',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        boxShadow: '0px 4px 4px #00000032'
+                    }}>
+                        
+                    </Box>
+                )}
                 
                 <Stack
                 direction="row"

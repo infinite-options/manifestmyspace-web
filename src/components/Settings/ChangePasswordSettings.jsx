@@ -193,15 +193,30 @@ export default function ChangePasswordSettings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    <AccountCircleIcon
-                    sx={{
-                        color: theme.typography.common.blue,
-                        width: 45,
-                        height:45,
-                        position: 'absolute',
-                        left: 0
-                    }}
-                    ></AccountCircleIcon>
+                    {owner_data.owner_photo_url !== null ? (
+                        <img
+                            src={owner_data.owner_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    ) : (
+                        <AccountCircleIcon
+                            sx={{
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    )}
                     <>
                     <Stack
                     direction="row"

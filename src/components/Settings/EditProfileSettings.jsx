@@ -37,6 +37,7 @@ export default function EditProfileSettings() {
     const [zipCode, setZipCode] = useState(owner_data.owner_zip? owner_data.owner_zip : '');
     const [EIN, setEIN] = useState(owner_data.owner_ein_number? owner_data.owner_ein_number : '');
     const [SSN, setSSN] = useState(owner_data.owner_ssn? owner_data.owner_ssn : '');
+    const [uploadedImage, setUploadedImage] = useState(null);
 
     const handleInputChange = (event) => {
         console.log("Input changed")
@@ -72,10 +73,32 @@ export default function EditProfileSettings() {
         setIsEdited(true);
     }
 
+    const handleProfileImageUpload = (file) => {
+        setUploadedImage(file);
+        setIsEdited(true);
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("FORM SUBMITTED");
         console.log(modifiedData);
+
+        const formData = new FormData();
+        for (const key in modifiedData) {
+            if (Object.hasOwnProperty.call(modifiedData, key)) {
+                const value = modifiedData[key];
+                
+                // Check if the value is a non-null object (excluding arrays)
+                const serializedValue = (value !== null && typeof value === 'object')
+                    ? JSON.stringify(value)
+                    : String(value);
+    
+                formData.append(key, serializedValue);
+            }
+        }
+        if(uploadedImage){
+            formData.append("owner_photo", uploadedImage);
+        }
 
         const headers = { 
             "Access-Control-Allow-Origin": "*",
@@ -87,7 +110,7 @@ export default function EditProfileSettings() {
         if(isEdited){
             console.log("EDITED")
             // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -167,15 +190,30 @@ export default function EditProfileSettings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    <AccountCircleIcon
-                    sx={{
-                        color: theme.typography.common.blue,
-                        width: 45,
-                        height:45,
-                        position: 'absolute',
-                        left: 0
-                    }}
-                    ></AccountCircleIcon>
+                    {owner_data.owner_photo_url !== null ? (
+                        <img
+                            src={owner_data.owner_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    ) : (
+                        <AccountCircleIcon
+                            sx={{
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    )}
                     <>
                     <Stack
                     direction="row"
@@ -213,36 +251,44 @@ export default function EditProfileSettings() {
                     autoComplete="off"
                     id="editProfileForm"
                 >
-                    
-                    <Paper
-                    elevation={0}
-                    variant="outlined"
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        borderStyle: 'dashed',
-                        borderWidth: '2px',
-                        borderColor: theme.typography.common.blue, // Border color changed to blue
-                        padding: '10px',
-                        width: '200px',
-                        margin: '20px auto',
-                        backgroundColor: theme.palette.primary.main, // Background color changed to light blue
-                    }}
-                    >
-                    <Box>
-                        <PhotoIcon sx={{ fontSize: theme.typography.largeFont, color: theme.typography.common.blue }} />
-                    </Box>
-                    <Typography
-                        component="div"
+                    <label htmlFor="file-upload">
+                        <Paper
+                        elevation={0}
+                        variant="outlined"
                         style={{
-                        textAlign: 'center',
-                        flex: 1,
-                        color: theme.typography.common.blue, // Text color changed to blue
+                            display: 'flex',
+                            alignItems: 'center',
+                            borderStyle: 'dashed',
+                            borderWidth: '2px',
+                            borderColor: theme.typography.common.blue, // Border color changed to blue
+                            padding: '10px',
+                            width: '200px',
+                            margin: '20px auto',
+                            backgroundColor: theme.palette.primary.main, // Background color changed to light blue
                         }}
-                    >
-                        New Profile Picture
-                    </Typography>
-                    </Paper>
+                        >
+                        <Box>
+                            <PhotoIcon sx={{ fontSize: theme.typography.largeFont, color: theme.typography.common.blue }} />
+                        </Box>
+                        <Typography
+                            component="div"
+                            style={{
+                            textAlign: 'center',
+                            flex: 1,
+                            color: theme.typography.common.blue, // Text color changed to blue
+                            }}
+                        >
+                            New Profile Picture
+                        </Typography>
+                        </Paper>
+                    </label>
+                    <input
+                        id="file-upload"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => handleProfileImageUpload(e.target.files[0])}
+                    />
                     <hr/>
 
                     <Stack spacing={-2} m={5}>

@@ -79,6 +79,20 @@ export default function CardDetailsSettings() {
         console.log("FORM SUBMITTED");
         console.log(modifiedData);
 
+        const formData = new FormData();
+        for (const key in modifiedData) {
+            if (Object.hasOwnProperty.call(modifiedData, key)) {
+                const value = modifiedData[key];
+                
+                // Check if the value is a non-null object (excluding arrays)
+                const serializedValue = (value !== null && typeof value === 'object')
+                    ? JSON.stringify(value)
+                    : String(value);
+    
+                formData.append(key, serializedValue);
+            }
+        }
+
         const headers = { 
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "*",
@@ -89,7 +103,7 @@ export default function CardDetailsSettings() {
         if(isEdited){
             console.log("EDITED")
             // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -173,15 +187,30 @@ export default function CardDetailsSettings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    <AccountCircleIcon
-                    sx={{
-                        color: theme.typography.common.blue,
-                        width: 45,
-                        height:45,
-                        position: 'absolute',
-                        left: 0
-                    }}
-                    ></AccountCircleIcon>
+                    {owner_data.owner_photo_url !== null ? (
+                        <img
+                            src={owner_data.owner_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    ) : (
+                        <AccountCircleIcon
+                            sx={{
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    )}
                     <>
                     <Stack
                     direction="row"
