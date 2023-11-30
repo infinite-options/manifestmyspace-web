@@ -50,18 +50,18 @@ export default function QuoteAcceptForm(){
     const [earliestAvailability, setEarliestAvailability] = useState("");
 
     useEffect(() => {        
-        // const getMaintenanceItemQuotes = async () => {
-        //     setShowSpinner(true);
-        //     const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${maintenanceItem.maintenance_quote_uid}`)
-        //     const data = await response.json()
-        //     console.log(data);
-        //     const quotes = data.result
-        //     console.log("quotes",  quotes)
-        //     setMaintenanceQuotes(quotes)
-        //     setShowSpinner(false);
-        // }
-        // getMaintenanceItemQuotes()  
-        setMaintenanceQuotes(maintenanceItem?.quotes)
+        const getMaintenanceItemQuotes = async () => {
+            setShowSpinner(true);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${maintenanceItem.business_uid}`)
+            const data = await response.json()
+            console.log(data.maintenanceQuotes);
+            const quotes = data.maintenanceQuotes.result
+            console.log("quotes from maintenanceQuotes",  quotes)
+            setMaintenanceQuotes(quotes)
+            setShowSpinner(false);
+        }
+        getMaintenanceItemQuotes()  
+        // setMaintenanceQuotes(maintenanceItem?.quotes)
     }, [maintenanceItem])
 
     const handleNextQuote = () => {
@@ -163,11 +163,7 @@ export default function QuoteAcceptForm(){
             setShowSpinner(false);
         }
 
-        // changeMaintenanceRequestStatus()
-        // PUT /maintenanceQuotes/{maintenance_quote_uid}
         changeMaintenanceQuoteStatus()
-
-
     }
 
     function displayQuoteDetails(quote_expenses){
@@ -392,6 +388,7 @@ export default function QuoteAcceptForm(){
                             
                             <Grid item xs={12}>
                                 {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
+                                {/* {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business name: " + maintenanceQuotes[currentQuoteIndex]?.quote_business_name : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id} */}
                                 {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business id: " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                             </Grid>
                             <Grid item xs={12}>

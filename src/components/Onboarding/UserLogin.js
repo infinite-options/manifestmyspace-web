@@ -238,7 +238,7 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                    <TextField type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" fullWidth className={classes.root}></TextField>
+                    <TextField type="email" id="email-field" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" fullWidth className={classes.root}></TextField>
                 </Box></Stack>
 
                 <Stack spacing={-2} m={5}>
@@ -246,23 +246,24 @@ function UserLogin() {
                     backgroundColor: '#D9D9D9',
                     boxShadow: '0px 1px 4px #00000019',
                     }}>
-                <TextField type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" fullWidth className={classes.root}></TextField>
+                <TextField type="password" id="password-field" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" fullWidth className={classes.root}></TextField>
                 </Box>
                 </Stack>
 
                 <Button 
-                            sx={{
-                                paddingLeft:'2%',
-                                paddingRight:'2%',
-                                background: '#3D5CAC',
-                                color: theme.palette.background.default,
-                                width: `100%`,
-                                height: `15%`,
-                                borderRadius: '15px',
-                                fontSize:theme.typography.smallFont,
-                                fontWeight: theme.typography.primary.fontWeight, 
-                                textTransform: 'none'
-                            }} onClick={submitForm} >Log In</Button>                      
+                    id="login-button"
+                    sx={{
+                        paddingLeft:'2%',
+                        paddingRight:'2%',
+                        background: '#3D5CAC',
+                        color: theme.palette.background.default,
+                        width: `100%`,
+                        height: `15%`,
+                        borderRadius: '15px',
+                        fontSize:theme.typography.smallFont,
+                        fontWeight: theme.typography.primary.fontWeight, 
+                        textTransform: 'none'
+                    }} onClick={submitForm} >Log In</Button>                   
                 <Stack spacing={-20} m={12}>
                 <Typography 
                     sx={{

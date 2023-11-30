@@ -477,8 +477,11 @@ function DocumentCard(props) {
         const documents = JSON.parse(data.contract_documents);
         if(documents === null || documents === undefined) return null;
         const contractDocument = documents.find(doc => doc.type === "contract");
-        console.log("contractDocument link: ", contractDocument.link);
-        return contractDocument.link;
+        if (contractDocument === null || contractDocument === undefined) {
+            return "";
+        } else {
+            return contractDocument?.link;
+        }
     }
 
     const contractDocumentLink = getContractDocumentLink();

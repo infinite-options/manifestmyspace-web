@@ -29,6 +29,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 export async function maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId){
     const dataObject = {};
+
     const getMaintenanceData = async () => {
         setShowSpinner(true);
         const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${profileId}`) // Change back to ${getProfileId()}
@@ -52,7 +53,6 @@ export async function maintenanceDataCollectAndProcess(setMaintenanceData, setSh
         dataObject["CANCELLED"] = [];
 
         for (const item of array1) {
-            // console.log(item.maintenance_request_uid)
             dataObject["NEW REQUEST"].push(item);
         }
         for (const item of array2) {
@@ -71,21 +71,15 @@ export async function maintenanceDataCollectAndProcess(setMaintenanceData, setSh
             dataObject["CANCELLED"].push(item);
         }
 
-        // delete dataObject["0"]
-
-        // console.log("dataObject", dataObject)
 
         setMaintenanceData(prevData => ({
             ...prevData, 
             ...dataObject
         }));
-        // setDisplayMaintenanceData(prevData => ({
-        //     ...prevData,
-        //     ...dataObject
-        // }));
+
         setShowSpinner(false);
     }
-    getMaintenanceData();
+    getMaintenanceData();   
 }
 
 export function MaintenanceOwner(){
@@ -97,7 +91,7 @@ export function MaintenanceOwner(){
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusO
 
-    // console.log(getProfileId())
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -235,6 +229,17 @@ export function MaintenanceOwner(){
     useEffect(() => {
         const profileId = getProfileId()
         maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+        const getMaintenanceItemQuotes = async () => {
+            setShowSpinner(true);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
+            const data = await response.json()
+            console.log(data.maintenanceQuotes);
+            const quotes = data.maintenanceQuotes.result
+            console.log("quotes from maintenanceQuotes",  quotes)
+            setMaintenanceItemQuotes(quotes)
+            setShowSpinner(false);
+        }
+        getMaintenanceItemQuotes()  
     }, [])
 
     return(
@@ -284,7 +289,7 @@ export function MaintenanceOwner(){
                             </Typography>
                         </Box>
                         <Box position="absolute" right={0}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                            <Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
                                 <AddIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/>
                             </Button>
                         </Box>
@@ -316,22 +321,6 @@ export function MaintenanceOwner(){
                             <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
                             <SelectPropertyFilter showPropertyFilter={showPropertyFilter} setShowPropertyFilter={setShowPropertyFilter} filterList={filterPropertyList} setFilterList={setFilterPropertyList}/>
                         </Box>
-                        {/* <Box
-                            component="span"
-                            m={2}
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            position="relative"                        
-                        >
-                            <Typography
-                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
-                            >
-                                {filterPropertyList.length > 0 ? ( filterPropertyList.length === filterPropertyList.length ? null :
-                                    displayPropertyName(filterPropertyList)
-                                ): null}
-                            </Typography>
-                        </Box> */}
                         <Box
                             component="span"
                             m={2}
@@ -377,6 +366,7 @@ export function MaintenanceOwner(){
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={maintenanceData}
                                     maintenanceRequestsCount={maintenanceArray}
+                                    maintenanceItemQuotes={maintenanceItemQuotes}
                                 />
                             );
                         })}

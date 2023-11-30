@@ -50,6 +50,7 @@ export default function MaintenanceManager(){
     const [year, setYear] = useState(null);
     const [showSpinner, setShowSpinner] = useState(false);
     const [filterPropertyList, setFilterPropertyList] = useState([]);
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
     console.log(user)
 
@@ -212,15 +213,26 @@ export default function MaintenanceManager(){
     }
 
     useEffect(() => {
+        const profileId = getProfileId()
+        // maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+        const getMaintenanceItemQuotes = async () => {
+            setShowSpinner(true);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
+            const data = await response.json()
+            console.log(data.maintenanceQuotes);
+            const quotes = data.maintenanceQuotes.result
+            console.log("quotes from maintenanceQuotes",  quotes)
+            setMaintenanceItemQuotes(quotes)
+            setShowSpinner(false);
+        }
+        getMaintenanceItemQuotes()  
+    }, [])
+
+    useEffect(() => {
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
-            // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-            // const propertyData = await propertiesByOwnerResponse.json()
-
-            // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-            // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
             console.log("maintenanceRequestsData", maintenanceRequestsData)
@@ -258,22 +270,6 @@ export default function MaintenanceManager(){
             for (const item of array6) {
                 dataObject["PAID"].push(item);
             }
-            // console.log("maintenanceRequestsData", maintenanceRequestsData)
-
-            // for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
-            // console.log("dataObject from new api call", dataObject)
-
-            // maintenanceRequestsData.MaintenanceProjects.result.forEach(item => {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
 
             setMaintenanceData(prevData => ({
                 ...prevData, 
@@ -427,6 +423,7 @@ export default function MaintenanceManager(){
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={newDataObject}
                                     maintenanceRequestsCount={filteredArray}
+                                    maintenanceItemQuotes={maintenanceItemQuotes}
                                 />
                             );
                         })}

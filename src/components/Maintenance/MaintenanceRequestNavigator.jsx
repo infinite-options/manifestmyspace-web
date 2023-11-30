@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardMedia, Typography, Button, Box, Stack } from "@mui/material";
+import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid } from "@mui/material";
 import theme from "../../theme/theme";
 import maintenanceRequestImage from "./maintenanceRequest.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -18,7 +18,7 @@ function getInitialImages(requestData, currentIndex) {
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator({ requestIndex, updateRequestIndex, requestData, color, item, allData }) {
+export default function MaintenanceRequestNavigator({ requestIndex, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -28,20 +28,20 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   const navigate = useNavigate();
 
 
-  console.log("--debug-- In MaintenanceRequestNavigator now")
+//   console.log("--debug-- In MaintenanceRequestNavigator now")
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
     setImages(initialImages);
     setActiveStep(0);
   }, [currentIndex]);
 
-  console.log("-- DEBUG -- RequestNavigator");
-  console.log("requestIndex", requestIndex);
-  console.log("requestData", requestData);
-  console.log("currentIndex", currentIndex);
-  console.log("color", color);
-  console.log("item", item);
-  console.log("allData", allData);
+//   console.log("-- DEBUG -- RequestNavigator");
+//   console.log("requestIndex", requestIndex);
+//   console.log("requestData", requestData);
+//   console.log("currentIndex", currentIndex);
+//   console.log("color", color);
+//   console.log("item", item);
+//   console.log("allData", allData);
 
   const maxSteps = images.length;
 
@@ -300,7 +300,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -310,7 +310,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }} underline="always"
                 >
@@ -320,7 +320,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -331,7 +331,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -341,7 +341,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -353,7 +353,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                     overflowWrap: "break-word",
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                   }}
                 >
                   {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
@@ -362,7 +362,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -373,13 +373,60 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                         sx={{
                         color: theme.typography.secondary.white,
                         fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
+                        fontSize: theme.typography.mediumFont,
                         paddingBottom: "10px",
                         }}
                     >
-                        {data?.maintenance_vendor_name} is processing this request.
+                        {data?.business_name} is processing this request.
                     </Typography>
                 ) : null}
+                {console.log(maintenanceQuotes)}
+                <Grid container>
+                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
+                            {maintenanceQuotes.length > 0 ? (
+                                <Typography
+                                    sx={{
+                                    color: theme.typography.secondary.white,
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.mediumFont,
+                                    paddingBottom: "10px",
+                                    }}
+                                >
+                                    {maintenanceQuotes.length} quote(s) for this request.
+                                </Typography>
+                            ) : null}
+                    </Grid>
+                    {maintenanceQuotes.map((quote, index) => 
+                        <Grid item xs={12} sx={{paddingTop: "10px"}}>
+                            <div key={index}>
+                                <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px"}}>
+                                    {quote.quote_status === "SENT" ? (
+                                        <Typography
+                                            sx={{
+                                            color: "#000000",
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.largeFont,
+                                            }}
+                                        >
+                                            <u>{quote.quote_business_id}</u> quoted ${quote.quote_total_estimate} for this request.
+                                        </Typography>  
+                                    ) : null}
+                                    {quote.quote_status === "REQUESTED" ? (
+                                        <Typography
+                                            sx={{
+                                            color: "#000000",
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.largeFont,
+                                            }}
+                                        >
+                                            A quote from <u>{quote.quote_business_id}</u> has been requested.
+                                        </Typography>  
+                                    ) : null}
+                                </Paper>
+                            </div>
+                        </Grid>
+                    )}
+                </Grid>
               </div>
             </CardContent>
           </Card>

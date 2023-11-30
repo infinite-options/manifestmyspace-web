@@ -64,7 +64,7 @@ export default function OwnerDashboard() {
         return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
     };
 
-    const viewProperty= <text
+    const viewProperty = <text
         x={85}
         y={100}
         textAnchor="middle"
