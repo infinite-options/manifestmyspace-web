@@ -28,7 +28,7 @@ function PMProfile() {
     useEffect( () => {
       setShowSpinner(true);
       axios
-        .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${getProfileId()}`)
+        .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
         .then((res) => {
           setProfileData(res.data.result[0]);
           setShowSpinner(false);
@@ -116,19 +116,49 @@ function PMProfile() {
                     onClick={(e) => {navigate('/settingsManager' ,{state: {manager_data: profileData}})}}
                     ></img>
                 </Box>
+
+                {profileData.business_photo_url !== null ? (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '121px',
+                            width: '121px',
+                            backgroundColor: '#bbb',
+                            borderRadius: '50%',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            boxShadow: '0px 4px 4px #00000032'
+                        }}
+                    >
+                        <img
+                            src={profileData.business_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                            }}
+                        />
+                    </Box>
+                ) : (
+                    <Box sx={{
+                        justifySelf: 'center',
+                        height: '121px',
+                        width: '121px',
+                        backgroundColor: '#bbb',
+                        borderRadius: '50%',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        boxShadow: '0px 4px 4px #00000032'
+                    }}>
+                        
+                    </Box>
+                )}
                 
-                <Box sx={{
-                    justifySelf: 'center',
-                    height: '121px',
-                    width: '121px',
-                    backgroundColor: '#bbb',
-                    borderRadius: '50%',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    boxShadow: '0px 4px 4px #00000032'
-                }}>
-                    
-                </Box>
+                
                 
                 <Stack
                 direction="row"

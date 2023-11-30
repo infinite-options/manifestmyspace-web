@@ -78,15 +78,30 @@ export default function SettingsManager() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    <AccountCircleIcon
-                    sx={{
-                        color: theme.typography.common.blue,
-                        width: 45,
-                        height:45,
-                        position: 'absolute',
-                        left: 0
-                    }}
-                    ></AccountCircleIcon>
+                    {manager_data.business_photo_url !== null ? (
+                        <img
+                            src={manager_data.business_photo_url}
+                            alt="Profile"
+                            style={{
+                                borderRadius: '50%',
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    ) : (
+                        <AccountCircleIcon
+                            sx={{
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />
+                    )}
                     <>
                     <Stack
                     direction="row"
@@ -98,7 +113,8 @@ export default function SettingsManager() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {user.first_name} {user.last_name}
+                    {/* {user.first_name} {user.last_name} */}
+                    {manager_data.business_name? manager_data.business_name : '<BUSINESS_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -157,7 +173,7 @@ export default function SettingsManager() {
                     </Typography>
                     <ArrowForwardIosIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    onClick={()=>{navigate('/changePasswordSettings')}}/>
+                    onClick={()=>{navigate('/changePasswordSettingsManager' ,{state: {manager_data: manager_data}})}}/>
                     </Box>                    
                     <Box
                     component="span"
@@ -171,7 +187,8 @@ export default function SettingsManager() {
                     </Typography>
                     <AddIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    onClick={()=>{navigate('/cardDetailsSettings')}}/>
+                    // onClick={()=>{navigate('/cardDetailsSettings')}}/>
+                    onClick={()=>{navigate('/cardDetailsSettingsManager' ,{state: {manager_data: manager_data}})}}/>
                     </Box>                    
                     
                     <Box
