@@ -1212,7 +1212,7 @@ function PropertyCard(props) {
                     </Box>
                     <TextInputField 
                         name="end_date"
-                        placeholder="yyyy-mm-dd"
+                        placeholder="mm-dd-yyyy"
                         value={contractEndDate}
                         onChange={handleEndDateChange}
                         required
@@ -1637,7 +1637,7 @@ function PropertyCard(props) {
                     
                 </Box>
                 <Box>
-                    {/* <Box sx={{
+                    <Box sx={{
                             fontSize: '15px',
                             fontWeight: 'bold',
                             padding: '5px',
@@ -1645,9 +1645,7 @@ function PropertyCard(props) {
                         }}
                     >
                     
-                        Add Document
-                        <input type="file" hidden onChange={handleFileUpload} />
-                    </Box> */}
+                    </Box>
                     <Box
                         sx={{
                             display: 'flex',

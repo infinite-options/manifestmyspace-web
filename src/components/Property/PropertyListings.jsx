@@ -358,7 +358,7 @@ const PropertyListings = (props) => {
 
     async function fetchData(){
         const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-        const propertyResponse = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings")
+        const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`)
 
         if (!leaseResponse.ok || !propertyResponse.ok) {
             // Handle the error as needed (maybe set an error state or log the error)
