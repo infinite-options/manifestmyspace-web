@@ -45,67 +45,68 @@ export default function PayMaintenanceForm(){
 
     const handleSubmit = () => {
         console.log("handleSubmit")
-        const changeMaintenanceRequestStatus = async () => {
-            setShowSpinner(true);
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "PAID"
-                    })
-                });
+        // const changeMaintenanceRequestStatus = async () => {
+        //     setShowSpinner(true);
+        //     try {
+        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+        //             method: 'PUT',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({
+        //                 "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+        //                 "maintenance_request_status": "PAID"
+        //             })
+        //         });
 
-                const responseData = await response.json();
-                console.log(responseData);
-                if (response.status === 200) {
-                    console.log("success")
-                } else{
-                    console.log("error setting status")
-                }
-            } catch (error){
-                console.log("error", error)
-            }
-            setShowSpinner(false);
-        }
-        const changeMaintenanceQuoteStatus = async () => {
-            setShowSpinner(true);
-            const formData = new FormData();
-            //formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
-            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-            formData.append("quote_status", "COMPLETED")
+        //         const responseData = await response.json();
+        //         console.log(responseData);
+        //         if (response.status === 200) {
+        //             console.log("success")
+        //         } else{
+        //             console.log("error setting status")
+        //         }
+        //     } catch (error){
+        //         console.log("error", error)
+        //     }
+        //     setShowSpinner(false);
+        // }
+        // const changeMaintenanceQuoteStatus = async () => {
+        //     setShowSpinner(true);
+        //     const formData = new FormData();
+        //     //formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
+        //     formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+        //     formData.append("quote_status", "COMPLETED")
             
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
-                    method: 'PUT',
-                    body: formData
-                });
+        //     try {
+        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+        //             method: 'PUT',
+        //             body: formData
+        //         });
 
-                const responseData = await response.json();
-                console.log(responseData);
-                if (response.status === 200) {
-                    console.log("success")
-                    changeMaintenanceRequestStatus()
-                    navigate("/maintenance/detail", {
-                        state: {
-                            maintenance_request_index,
-                            status,
-                            maintenanceItemsForStatus,
-                            allMaintenanceData,
-                        }
-                    }); 
-                } else{
-                    console.log("error setting status")
-                }
-            } catch (error){
-                console.log("error", error)
-            }
-            setShowSpinner(false);
-        }
-        changeMaintenanceQuoteStatus()
+        //         const responseData = await response.json();
+        //         console.log(responseData);
+        //         if (response.status === 200) {
+        //             console.log("success")
+        //             changeMaintenanceRequestStatus()
+        //             navigate("/maintenance/detail", {
+        //                 state: {
+        //                     maintenance_request_index,
+        //                     status,
+        //                     maintenanceItemsForStatus,
+        //                     allMaintenanceData,
+        //                 }
+        //             }); 
+        //         } else{
+        //             console.log("error setting status")
+        //         }
+        //     } catch (error){
+        //         console.log("error", error)
+        //     }
+        //     setShowSpinner(false);
+        // }
+        // changeMaintenanceQuoteStatus()
+        navigate("/payments")
     }
 
     useEffect(() => {
@@ -323,57 +324,61 @@ export default function PayMaintenanceForm(){
                                 </Typography>
                             </Container>       
                         </Grid>
-                        <Grid item xs={12}>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Notes
-                            </Typography>
-                            <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                <TextField
-                                    multiline
-                                    rows={10}
-                                    defaultValue={maintenanceItem.bill_notes}
-                                    variant="outlined"
-                                    fullWidth
-                                    InputProps={{
-                                        readOnly: true,
-                                        style: { backgroundColor: 'white' }
-                                    }}
-                                    sx={{
-                                        width: '90%',
-                                    }}
-                                />
-                            </Container>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Paypal: bossanova43@gmail.com
-                            </Typography>
-                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                Venmo: bossanova43@gmail.com
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    backgroundColor: "#9EAED6",
-                                    textTransform: "none",
-                                    borderRadius: "10px",
-                                    display: 'flex',
-                                    width: "100%",
-                                }}
-                                onClick={() => handleSubmit()}
-                                >
-                                <Typography sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize: "14px"
-                                }}>
-                                    Pay Maintenance
-                                </Typography>
-                            </Button>
-                        </Grid>
+                        {maintenanceItem.bill_amount !== null ? (
+                            <>
+                                <Grid item xs={12}>
+                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                        Notes
+                                    </Typography>
+                                    <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
+                                        <TextField
+                                            multiline
+                                            rows={10}
+                                            defaultValue={maintenanceItem.bill_notes}
+                                            variant="outlined"
+                                            fullWidth
+                                            InputProps={{
+                                                readOnly: true,
+                                                style: { backgroundColor: 'white' }
+                                            }}
+                                            sx={{
+                                                width: '90%',
+                                            }}
+                                        />
+                                    </Container>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                        Paypal: bossanova43@gmail.com
+                                    </Typography>
+                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                        Venmo: bossanova43@gmail.com
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            backgroundColor: "#9EAED6",
+                                            textTransform: "none",
+                                            borderRadius: "10px",
+                                            display: 'flex',
+                                            width: "100%",
+                                        }}
+                                        onClick={() => handleSubmit()}
+                                        >
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px"
+                                        }}>
+                                            Pay Maintenance
+                                        </Typography>
+                                    </Button>
+                                </Grid> 
+                            </>
+                            ) : null}
                     </Grid>
                 </Stack>
             </Paper>

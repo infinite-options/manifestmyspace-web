@@ -60,6 +60,9 @@ export default function Payments(props) {
     })
 
     function formatDate(date) {
+        if (date === null || date === undefined) {
+            return ""
+        }
         var splitDate = date.split("-")
         var month = splitDate[1]
         var day = splitDate[2]
@@ -126,6 +129,9 @@ export default function Payments(props) {
 
             setPaymentDueResult(paymentStatusData);
             setPaidItems(paidStatusData)
+
+            console.log("--> paymentStatusData", paymentStatusData)
+            console.log("--> paidStatusData", paidStatusData)
             
             // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
             const initialSelectedItems = paymentStatusData.map((item) => ({
@@ -137,6 +143,8 @@ export default function Payments(props) {
 
             totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
             totalPaidUpdate(paidStatusData);
+
+            console.log("--> initialSelectedItems", initialSelectedItems)
 
         } catch (error) {
             console.error("Error fetching payment data:", error);
@@ -425,7 +433,7 @@ export default function Payments(props) {
                             </Grid>
                             <Divider light />
 
-                            {paymentDueResult.map((item, index) => (
+                            {paymentDueResult.length > 0 && paymentDueResult.map((item, index) => (
                                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index}>
                                 <Grid item xs={1} alignItems="center">
                                     <Checkbox
@@ -560,7 +568,7 @@ export default function Payments(props) {
                             </Grid>
                             <Divider light />
                             
-                            {paidItems.map((item, index) => (
+                            {paidItems.length > 0 && paidItems.map((item, index) => (
                                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index} sx={{paddingTop: "15px", paddingBottom: "15px"}}>
                                     <Grid item xs={2} alignItems="center">
                                         <Typography

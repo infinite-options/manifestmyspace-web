@@ -152,6 +152,7 @@ export function MaintenanceRequestDetail(){
             status,
             maintenanceItemsForStatus,
             allData,
+            filteredQuotes,
         })
 
         // console.log("maintenance Quotes", maintenanceQuotes)
@@ -161,21 +162,23 @@ export function MaintenanceRequestDetail(){
     useEffect(() => {
         console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex])
         console.log("maintenanceQuotes", maintenanceQuotes)
-        const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
+        if (maintenanceQuotes && maintenanceItemsForStatus[maintenanceRequestIndex]){
+            const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
 
-        //sort quotesFilteredBy status so that the SENT quote status is at the top
-        quotesFilteredById.sort((a, b) => {
-            if(a.quote_status === "SENT"){
-                return -1
-            } else if (b.quote_status === "SENT"){
-                return 1
-            } else {
-                return 0
-            }
-        })
+            //sort quotesFilteredBy status so that the SENT quote status is at the top
+            quotesFilteredById.sort((a, b) => {
+                if(a.quote_status === "SENT"){
+                    return -1
+                } else if (b.quote_status === "SENT"){
+                    return 1
+                } else {
+                    return 0
+                }
+            })
 
-        console.log("*****quotesFilteredById", quotesFilteredById)
-        setFilteredQuotes(quotesFilteredById)
+            console.log("*****quotesFilteredById", quotesFilteredById)
+            setFilteredQuotes(quotesFilteredById)
+        }
     }, [maintenanceRequestIndex, maintenanceQuotes])
     
     const allData = location.state.allMaintenanceData;
@@ -358,8 +361,7 @@ export function MaintenanceRequestDetail(){
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
                                                 <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData} maintenanceQuotes={filteredQuotes}/>
                                             )
-                                            : null
-                                            }
+                                            : null}
                                         </Grid>
                                     </CustomTabPanel>
                                 </div>
@@ -375,7 +377,7 @@ export function MaintenanceRequestDetail(){
                                     : null 
                                 }
                                 {colorStatus[value].status === "Quotes Requested" ?
-                                    <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
                                 {colorStatus[value].status === "Quotes Accepted" ?

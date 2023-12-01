@@ -26,7 +26,7 @@ import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 
 
-export default function QuotesRequestAction({maintenanceItem, navigateParams}){
+export default function QuotesRequestAction({maintenanceItem, navigateParams, quotes}){
     
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -38,7 +38,8 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams}){
         navigate("/quoteAccept", {
             state:{
                 maintenanceItem,
-                navigateParams
+                navigateParams,
+                quotes
             }
         });
     }

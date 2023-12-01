@@ -39,6 +39,7 @@ import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -323,6 +324,11 @@ export default function SelectPayment(props) {
         />
 
         <Stack direction="row" justifyContent="center">
+            <Box position="absolute" left={30}>
+                <Button onClick={() => navigate(-1)}>
+                    <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                </Button>
+            </Box>
             <Typography
             sx={{
                 justifySelf: "center",
@@ -334,7 +340,7 @@ export default function SelectPayment(props) {
             Select Payment Method
             </Typography>
         </Stack>
-        <Paper
+        <Paper  
             style={{
                 margin: '25px',
                 padding: '10px',
