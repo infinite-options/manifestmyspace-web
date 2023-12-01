@@ -68,5 +68,8 @@
   "peerDependencies": {
     "@types/react": "^17.0.0",
     "react": "^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0"
   }
 }

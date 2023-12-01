@@ -22,11 +22,9 @@ import theme from '../../theme/theme';
 
 
 
-export default function MaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
+export default function MaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount, maintenanceItemQuotes}){
     const location = useLocation();
     let navigate = useNavigate();
-
-    // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
 
     const tableTextStyle = {
         backgroundColor: color, 
@@ -37,17 +35,6 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
     }
 
     function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
-        // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
-        // There is some work that needs to be done here.
-        // The maintenanceDataForStatus object is just an array of maintenance requests for a particular status.
-        // Example: "NEW"
-        // We need to pass all the data to it, by status
-
-        // console.log("handleRequestDetailPage")
-        // console.log("maintenance_request_index", maintenance_request_index)
-        // console.log("status", status)
-        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        // console.log("allMaintenanceData", allMaintenanceData)
 
         navigate(`/maintenance/detail`, {
             state: {
@@ -55,6 +42,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                 status,
                 maintenanceItemsForStatus,
                 allMaintenanceData,
+                maintenanceItemQuotes,
             }
         })
     }

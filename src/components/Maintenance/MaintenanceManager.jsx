@@ -50,6 +50,7 @@ export default function MaintenanceManager(){
     const [year, setYear] = useState(null);
     const [showSpinner, setShowSpinner] = useState(false);
     const [filterPropertyList, setFilterPropertyList] = useState([]);
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
     console.log(user)
 
@@ -61,6 +62,51 @@ export default function MaintenanceManager(){
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
+    }
+    
+    function dedupeQuotes(array){
+        // we want to find all the quotes that have the same maintenance_request_uid
+
+        const mapping = {}
+        const dedupeArray = []
+
+        for (const item of array){
+            if (!mapping[item.maintenance_request_uid]){
+                mapping[item.maintenance_request_uid] = [];
+            }
+            mapping[item.maintenance_request_uid].push(item);
+        }
+
+        for (const key in mapping){
+            if (mapping[key].length > 0){
+                const quotes = []
+                for (const item of mapping[key]){
+                    const keys = Object.keys(item).filter(key => key.startsWith("quote_"))
+                    const quoteObject = {}
+                    for (const key of keys){
+                        quoteObject[key] = item[key]
+                    }
+                    quotes.push(quoteObject)
+                }
+                console.log("quotes", quotes)
+
+                mapping[key][0].quotes = quotes
+                // delete all keys that start with quote_
+                const keysToDelete = Object.keys(mapping[key][0]).filter(key => key.startsWith("quote_"))
+                console.log(keysToDelete)
+                keysToDelete.forEach(e => delete mapping[key][0][e]);
+                for (const keyToDelete in keysToDelete){
+                    delete mapping[key][0][keyToDelete]
+                }
+                dedupeArray.push(mapping[key][0])
+            }
+            // else {
+            //     dedupeArray.push(mapping[key][0])
+            // }
+        }
+
+        console.log("dedupeArray", dedupeArray)
+        return dedupeArray
     }
 
     useEffect(() => {
@@ -167,21 +213,32 @@ export default function MaintenanceManager(){
     }
 
     useEffect(() => {
+        const profileId = getProfileId()
+        // maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+        const getMaintenanceItemQuotes = async () => {
+            setShowSpinner(true);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
+            const data = await response.json()
+            console.log(data.maintenanceQuotes);
+            const quotes = data.maintenanceQuotes.result
+            console.log("quotes from maintenanceQuotes",  quotes)
+            setMaintenanceItemQuotes(quotes)
+            setShowSpinner(false);
+        }
+        getMaintenanceItemQuotes()  
+    }, [])
+
+    useEffect(() => {
         // console.log("Maintenance useEffect")
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
-            // const propertiesByOwnerResponse = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/110-000003')
-            // const propertyData = await propertiesByOwnerResponse.json()
-
-            // const maintenanceRequests = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequestsByOwner/110-000003')
-            // const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/600-000003`)
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
             console.log("maintenanceRequestsData", maintenanceRequestsData)
 
             let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
-            let array2 = maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items
+            let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
             let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
             let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
             let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
@@ -213,22 +270,6 @@ export default function MaintenanceManager(){
             for (const item of array6) {
                 dataObject["PAID"].push(item);
             }
-            // console.log("maintenanceRequestsData", maintenanceRequestsData)
-
-            // for (const item of maintenanceRequestsData.MaintenanceProjects.result) {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
-            // console.log("dataObject from new api call", dataObject)
-
-            // maintenanceRequestsData.MaintenanceProjects.result.forEach(item => {
-            //     if (!dataObject[item.maintenance_request_status]){
-            //         dataObject[item.maintenance_request_status] = [];
-            //     }
-            //     dataObject[item.maintenance_request_status].push(item);
-            // }
 
             setMaintenanceData(prevData => ({
                 ...prevData, 
@@ -382,6 +423,7 @@ export default function MaintenanceManager(){
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={newDataObject}
                                     maintenanceRequestsCount={filteredArray}
+                                    maintenanceItemQuotes={maintenanceItemQuotes}
                                 />
                             );
                         })}

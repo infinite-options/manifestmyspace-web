@@ -36,33 +36,19 @@ export default function QuoteAcceptForm(){
     
     const maintenanceItem = location.state.maintenanceItem;
     const navigationParams = location.state.navigateParams
+    // const quotes = location.state.quotes
     console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-    const [maintenanceQuotes, setMaintenanceQuotes] = useState([])
+    const [maintenanceQuotes, setMaintenanceQuotes] = useState(location.state.quotes)
     const [showSpinner, setShowSpinner] = useState(false);
     const [estimatedTotalCost, setEstimatedTotalCost] = useState(0);
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
     const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState("");
     const [earliestAvailability, setEarliestAvailability] = useState("");
-
-    useEffect(() => {
-        
-        const getMaintenanceItemQuotes = async () => {
-            setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${maintenanceItem.maintenance_quote_uid}`)
-            const data = await response.json()
-            console.log(data);
-            const quotes = data.result
-            console.log("quotes",  quotes)
-            setMaintenanceQuotes(quotes)
-            setShowSpinner(false);
-        }
-        getMaintenanceItemQuotes()  
-    }, [maintenanceItem])
 
     const handleNextQuote = () => {
         setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % maintenanceQuotes.length);
@@ -117,6 +103,8 @@ export default function QuoteAcceptForm(){
         let status = navigationParams.status
         let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
         let allMaintenanceData = navigationParams.allData
+        let maintenanceQuotes = navigationParams.maintenanceQuotes
+
         console.log("-----navigationParams-----")
         console.log("maintenance_request_index", maintenance_request_index)
         console.log("status", status)
@@ -130,6 +118,7 @@ export default function QuoteAcceptForm(){
                 status,
                 maintenanceItemsForStatus,
                 allMaintenanceData,
+                maintenanceQuotes
             }
         }); 
     }
@@ -163,11 +152,7 @@ export default function QuoteAcceptForm(){
             setShowSpinner(false);
         }
 
-        // changeMaintenanceRequestStatus()
-        // PUT /maintenanceQuotes/{maintenance_quote_uid}
         changeMaintenanceQuoteStatus()
-
-
     }
 
     function displayQuoteDetails(quote_expenses){
@@ -347,7 +332,7 @@ export default function QuoteAcceptForm(){
                     > 
                         <Grid item xs={12}>
                             <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                <b>Viewing Quotes {currentQuoteIndex + 1} of {maintenanceQuotes.length}</b>
+                                <b>Viewing Quotes {currentQuoteIndex + 1} of {maintenanceQuotes?.length}</b>
                             </Typography>
                         </Grid>
                     </Grid>
@@ -370,7 +355,7 @@ export default function QuoteAcceptForm(){
                         <Grid item xs={2}>
                             <Button 
                                 onClick={handleNextQuote} 
-                                disabled={currentQuoteIndex == maintenanceQuotes.length}
+                                disabled={currentQuoteIndex == maintenanceQuotes?.length}
                                 style={{
                                     color: 'grey',            // change text/icon color if desired
                                     width: '100%',             // to make the button fill the Grid item's width
@@ -392,7 +377,8 @@ export default function QuoteAcceptForm(){
                             
                             <Grid item xs={12}>
                                 {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
-                                {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business id:" + maintenanceQuotes[currentQuoteIndex]?.quote_business_id : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
+                                {/* {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business name: " + maintenanceQuotes[currentQuoteIndex]?.quote_business_name : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id} */}
+                                {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business id: " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
@@ -543,7 +529,7 @@ export default function QuoteAcceptForm(){
                         </Grid>
 
                     ) : (
-                        null
+                        <p> {maintenanceQuotes[currentQuoteIndex]?.quote_business_id} {maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid} {maintenanceQuotes[currentQuoteIndex]?.quote_status}</p>
                     )
                 }
                 </Stack>

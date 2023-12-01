@@ -49,6 +49,7 @@ function Header() {
                   margin: "0 18px",
                   textTransform: "none",
                 }}
+                id={role}
                 onClick={() => {
                   handleButtonClick(role);
                 }}

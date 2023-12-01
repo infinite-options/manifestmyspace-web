@@ -479,7 +479,6 @@ function DocumentCard(props) {
         const contractDocument = documents.find(doc => doc.type === "contract");
         //console.log("contractDocument link: ", contractDocument.link);
 
-        
         return contractDocument ? contractDocument.link :"";
     }
 

@@ -215,7 +215,7 @@ export default function BusinessQuoteForm({acceptBool}){
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
       
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        return `${month}-${day}-${year} ${hours}:${minutes}:${seconds}`;
       }
     
 
@@ -283,7 +283,7 @@ export default function BusinessQuoteForm({acceptBool}){
         var minute = timeArray[1]
         var second = timeArray[2]
 
-        var dateTimeString = `${year}-${month}-${day} ${hour}:${minute}:${second}`
+        var dateTimeString = `${month}-${day}-${year} ${hour}:${minute}:${second}`
         return dateTimeString
 
     }
@@ -608,7 +608,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     label="Date"
                                                     size="small"
                                                     onChange={handleDateChange}
-                                                    placeholder="MM/DD/YYYY"
+                                                    placeholder="MM-DD-YYYY"
                                                 />
                                             </Grid>
                                             <Grid item xs={6} sx={{paddingTop: "10px"}}>
