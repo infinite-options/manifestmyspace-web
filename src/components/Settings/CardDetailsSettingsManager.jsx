@@ -33,20 +33,20 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
     }
   }));
-export default function CardDetailsSettings() {
+export default function CardDetailsSettingsManager() {
     const classes = useStyles();
     const navigate = useNavigate();
     const location = useLocation();
-    let   owner_data = location.state.owner_data;
+    let   manager_data = location.state.manager_data;
 
-    const [modifiedData, setModifiedData] = useState({ 'owner_uid': owner_data?.owner_uid, });
+    const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
     const [isEdited, setIsEdited] = useState(false);
 
-    const [paypal, setPaypal] = useState(owner_data.owner_paypal? owner_data.owner_paypal : '');
-    const [applePay, setApplePay] = useState(owner_data.owner_apple_pay? owner_data.owner_apple_pay : '');
-    const [stripe, setStripe] = useState(owner_data.owner_stripe? owner_data.owner_stripe : '');
-    const [zelle, setZelle] = useState(owner_data.owner_zelle? owner_data.owner_zelle : '');
-    const [venmo, setVenmo] = useState(owner_data.owner_venmo? owner_data.owner_venmo : '');
+    const [paypal, setPaypal] = useState(manager_data.business_paypal? manager_data.business_paypal : '');
+    const [applePay, setApplePay] = useState(manager_data.business_apple_pay? manager_data.business_apple_pay : '');
+    const [stripe, setStripe] = useState(manager_data.business_stripe? manager_data.business_stripe : '');
+    const [zelle, setZelle] = useState(manager_data.business_zelle? manager_data.business_zelle : '');
+    const [venmo, setVenmo] = useState(manager_data.business_venmo? manager_data.business_venmo : '');
 
     const handleInputChange = (event) => {
         console.log("Input changed")
@@ -54,15 +54,15 @@ export default function CardDetailsSettings() {
         // console.log(name)
         // console.log(value)
 
-        if (name === 'owner_paypal') {
+        if (name === 'business_paypal') {
             setPaypal(value);
-        } else if (name === 'owner_apple_pay') {
+        } else if (name === 'business_apple_pay') {
             setApplePay(value);
-        } else if (name === 'owner_stripe') {
+        } else if (name === 'business_stripe') {
             setStripe(value);
-        } else if (name === 'owner_zelle') {
+        } else if (name === 'business_zelle') {
             setZelle(value);
-        } else if (name === 'owner_venmo') {
+        } else if (name === 'business_venmo') {
             setVenmo(value);
         }
 
@@ -79,6 +79,7 @@ export default function CardDetailsSettings() {
         console.log("FORM SUBMITTED");
         console.log(modifiedData);
 
+
         const formData = new FormData();
         for (const key in modifiedData) {
             if (Object.hasOwnProperty.call(modifiedData, key)) {
@@ -92,6 +93,7 @@ export default function CardDetailsSettings() {
                 formData.append(key, serializedValue);
             }
         }
+        
 
         const headers = { 
             "Access-Control-Allow-Origin": "*",
@@ -102,7 +104,7 @@ export default function CardDetailsSettings() {
 
         if(isEdited){
             console.log("EDITED")
-            // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
+            // axios.put('http://localhost:4000/businessProfile', modifiedData, headers)
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
@@ -187,9 +189,9 @@ export default function CardDetailsSettings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {owner_data.owner_photo_url !== null ? (
+                    {manager_data.business_photo_url !== null ? (
                         <img
-                            src={owner_data.owner_photo_url}
+                            src={manager_data.business_photo_url}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -222,7 +224,7 @@ export default function CardDetailsSettings() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {owner_data.owner_first_name? owner_data.owner_first_name : '<FIRST_NAME>'} {owner_data.owner_last_name? owner_data.owner_last_name : '<LAST_NAME>'}
+                    {manager_data.business_name? manager_data.business_name : '<BUSINESS_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -235,7 +237,7 @@ export default function CardDetailsSettings() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.light.fontWeight, 
                         fontSize:theme.typography.primary.smallFont}}>
-                    Owner Profile
+                    Manager Profile
                     </Typography>
                     </Stack>
                     </>
@@ -265,7 +267,7 @@ export default function CardDetailsSettings() {
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField name="owner_paypal" value={paypal} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                        <TextField name="business_paypal" value={paypal} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
                     </Grid>
                     </Grid>
                     
@@ -285,7 +287,7 @@ export default function CardDetailsSettings() {
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField name="owner_apple_pay" value={applePay} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                        <TextField name="business_apple_pay" value={applePay} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
                     </Grid>
                     </Grid>
                     
@@ -325,7 +327,7 @@ export default function CardDetailsSettings() {
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField name="owner_zelle" value={zelle} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                        <TextField name="business_zelle" value={zelle} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
                     </Grid>
                     </Grid>
                     
@@ -345,7 +347,7 @@ export default function CardDetailsSettings() {
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField name="owner_venmo" value={venmo} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                        <TextField name="business_venmo" value={venmo} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
                     </Grid>
                     </Grid>
                     
@@ -381,7 +383,8 @@ export default function CardDetailsSettings() {
                             <ArrowForwardIosIcon 
                             sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                             // onClick={()=>{navigate('/addCardSettings')}}/>
-                            onClick={()=>{navigate('/addCardSettings' ,{state: {owner_data: owner_data}})}}/>
+                            // onClick={()=>{navigate('/addCardSettings' ,{state: {manager_data: manager_data}})}}
+                            />
                     </Box>
                     <Box
                         component="span"

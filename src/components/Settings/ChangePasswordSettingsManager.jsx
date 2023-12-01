@@ -20,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function ChangePasswordSettings() {
+export default function ChangePasswordSettingsManager() {
     const classes = useStyles();
     const navigate = useNavigate();
     const { user } = useUser();
     // console.log("USER - ", user);
     const location = useLocation();
-    let   owner_data = location.state.owner_data;
+    let   manager_data = location.state.manager_data;
     
 
     const [modifiedData, setModifiedData] = useState({'user_uid' : user?.user_uid});
@@ -122,7 +122,7 @@ export default function ChangePasswordSettings() {
                     }
                 });
             }
-            
+                
         }
     }
 
@@ -193,9 +193,9 @@ export default function ChangePasswordSettings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {owner_data.owner_photo_url !== null ? (
+                    {manager_data.business_photo_url !== null ? (
                         <img
-                            src={owner_data.owner_photo_url}
+                            src={manager_data.business_photo_url}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -228,7 +228,7 @@ export default function ChangePasswordSettings() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {owner_data.owner_first_name? owner_data.owner_first_name : '<FIRST_NAME>'} {owner_data.owner_last_name? owner_data.owner_last_name : '<LAST_NAME>'}
+                    {manager_data.business_name? manager_data.business_name : '<BUSINESS_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack

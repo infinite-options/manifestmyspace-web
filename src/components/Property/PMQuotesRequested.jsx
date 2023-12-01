@@ -477,11 +477,9 @@ function DocumentCard(props) {
         const documents = JSON.parse(data.contract_documents);
         if(documents === null || documents === undefined) return null;
         const contractDocument = documents.find(doc => doc.type === "contract");
-        if (contractDocument === null || contractDocument === undefined) {
-            return "";
-        } else {
-            return contractDocument?.link;
-        }
+        //console.log("contractDocument link: ", contractDocument.link);
+
+        return contractDocument ? contractDocument.link :"";
     }
 
     const contractDocumentLink = getContractDocumentLink();
@@ -583,14 +581,14 @@ function DocumentCard(props) {
                     </Typography>
                 )
             }
-            <Box onClick={()=>{
+            {/* {contractDocumentLink!=="" ? <Box onClick={()=>{
                 window.open(contractDocumentLink, "_blank");
                 // console.log("we should show a document here")
             }}>
                 <Typography sx={textStyle}>
                     View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingLeft: "15px"}}/>
                 </Typography>
-            </Box>
+            </Box>:<div></div>} */}
         </Box>
     );
 }

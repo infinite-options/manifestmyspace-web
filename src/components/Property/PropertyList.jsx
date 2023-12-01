@@ -60,7 +60,7 @@
         } else{
         const terms = query.split(" ").map(term => term.toLowerCase());  // Split the search term into individual terms
         const filtered = propertyList.filter(item => 
-            terms.some(term => item.property_address.toLowerCase().includes(term))
+            terms.every(term => (item.property_address + item.property_unit + item.property_city + item.property_state + item.property_zip ).toLowerCase().includes(term))
         );
         setFilteredItems(filtered);  // Updating the state with filtered items
         }

@@ -43,8 +43,6 @@ function ManagementContractDetails(props) {
     const navigate = useNavigate();
 
     const {state} = useLocation();
-    // const { announcementData } = state;
-    // const { contract_uid, contract_business_id, contract_property_id, property_owner_id  } = state;
     const { contract_uid, contract_business_id, contract_property_id } = state;
     
     const [contractUID, setContractUID] = useState(null);
@@ -1639,7 +1637,7 @@ function PropertyCard(props) {
                     
                 </Box>
                 <Box>
-                    {/* <Box sx={{
+                    <Box sx={{
                             fontSize: '15px',
                             fontWeight: 'bold',
                             padding: '5px',
@@ -1647,9 +1645,7 @@ function PropertyCard(props) {
                         }}
                     >
                     
-                        Add Document
-                        <input type="file" hidden onChange={handleFileUpload} />
-                    </Box> */}
+                    </Box>
                     <Box
                         sx={{
                             display: 'flex',
