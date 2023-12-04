@@ -38,17 +38,24 @@ const ViewLease = (props) => {
     }
 
 
+    let linkStr = leaseData.lease_documents;
+    let link = linkStr ? JSON.parse(linkStr) : [];
+     
+    const [document, setDocument] = useState(link);
+
     const handleViewButton = (leaseData) => {
-        console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
-        let link = JSON.parse(leaseData.lease_documents)[0]?.link
-        
-        // navigate('/leaseDocument',{
-        //     state:{
-        //         document: leaseData.ld_link
-        //     }
-        // }
-        // );
-        window.open(link,'_blank', 'rel=noopener noreferrer')
+        let linkArray = [];
+        link.map(l => {
+            linkArray.push(l.link)
+        })
+
+        navigate('/leaseDocument',{
+            state:{
+                document: linkArray
+            }
+        }
+        );
+        //window.open(,'_blank', 'rel=noopener noreferrer')
     };
 
 
@@ -64,7 +71,7 @@ const ViewLease = (props) => {
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
         leaseApplicationFormData.append("move_out_date", moveOut);
-       // leaseApplicationFormData.append("lease_status", "ENDED");
+        leaseApplicationFormData.append("lease_status", "ENDED");
     
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
@@ -81,7 +88,6 @@ const ViewLease = (props) => {
 
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
-    const [document, setDocument] = useState([]);
     
     useEffect(()=>{
         setShowSpinner(true);

@@ -590,7 +590,8 @@ const PropertyListings = (props) => {
 function PropertyCard(props) {
     const navigate = useNavigate();
 
-    const [status, setStatus] = useState(props.status);
+    let stat = props.data ? props.data.lease_status :"Not Found"
+    const [status, setStatus] = useState(stat);
 
     const [lease, setLease] = useState(props.leaseData || {})
 
@@ -714,7 +715,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Applied {lease.lease_application_date}
+                        {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "PROCESSING" ? (
@@ -732,7 +733,7 @@ function PropertyCard(props) {
                         alignSelf: 'flex-start',
                         textTransform: 'none'
                     }}
-                    onClick={() => navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})}
+                    onClick={() => navigate("/tenantLeases", {state: { property: property, status: status, lease: lease, lease_uid:property.lease_uid }})}
                 >
                     <Typography
                         sx={{
@@ -741,7 +742,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Approved {lease.lease_application_date}
+                        {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "REJECTED" ? (
@@ -768,7 +769,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Not Approved {lease.lease_application_date}
+                       {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "REFUSED" ? (
@@ -795,7 +796,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Declined {lease.lease_application_date}
+                        {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "TENANT APPROVED" ? (
@@ -822,7 +823,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Tenant Approved {lease.lease_application_date}
+                        {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
                 {status === "ACTIVE" ? (
@@ -849,7 +850,7 @@ function PropertyCard(props) {
                             fontWeight: '800px'
                         }}
                     >
-                        Active {lease.lease_application_date}
+                        {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
             </Stack>
