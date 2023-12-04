@@ -56,10 +56,10 @@ const CashflowOwner = () => {
     const [revenueSummary, setRevenueSummary] = useState(null);
     const [expense, setExpense] = useState(null);
     const [expenseSummary, setExpenseSummary] = useState(null);
-    console.log("cashflow revenue ", revenue);
-    console.log("cashflow expense ", expense);
-    console.log("cashflow revenueSummary ", revenueSummary, month);
-    console.log("cashflow expenseSummary ", expenseSummary);
+    // console.log("cashflow revenue ", revenue);
+    // console.log("cashflow expense ", expense);
+    // console.log("cashflow revenueSummary ", revenueSummary, month);
+    // console.log("cashflow expenseSummary ", expenseSummary);
     const [showSpinner, setShowSpinner] = useState(false);
 
     const [openSelectProperty, setOpenSelectProperty] = useState(false);

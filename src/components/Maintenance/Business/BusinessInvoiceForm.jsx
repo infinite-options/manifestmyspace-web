@@ -514,24 +514,40 @@ export default function BusinessInvoiceForm(){
         const createBill = async () => {
             setShowSpinner(true);
             try {
+                var formData = new FormData();
+                formData.append("bill_description", "Invoice from " + maintenanceItem.business_name);
+                formData.append("bill_created_by", maintenanceItem.quote_business_id);
+                formData.append("bill_utility_type", "maintenance");
+                formData.append("bill_amount", total);
+                formData.append("bill_split", "Uniform");
+                formData.append("bill_property_id", JSON.stringify([{
+                    "property_uid": maintenanceItem.property_id,
+                }]));
+                formData.append("bill_docs", JSON.stringify(selectedImageList));
+                formData.append("bill_notes", notes);
+                formData.append("bill_maintenance_quote_id", maintenanceItem.maintenance_quote_uid);
+                
+
+                // TODO: Change this to form data
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills", {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "bill_description": "Invoice from " + maintenanceItem.business_name,
-                        "bill_created_by": maintenanceItem.quote_business_id,
-                        "bill_utility_type": "maintenance",
-                        "bill_amount": total,
-                        "bill_split": "Uniform",
-                        "bill_property_id": [{
-                            "property_uid": maintenanceItem.property_id,
-                        }],
-                        "bill_docs": [],
-                        "bill_notes": notes,
-                        "bill_maintenance_quote_id": maintenanceItem.maintenance_quote_uid
-                    })
+                    body: formData,
+                    // headers: {
+                    //     'Content-Type': 'application/json'
+                    // },
+                    // body: JSON.stringify({
+                    //     "bill_description": "Invoice from " + maintenanceItem.business_name,
+                    //     "bill_created_by": maintenanceItem.quote_business_id,
+                    //     "bill_utility_type": "maintenance",
+                    //     "bill_amount": total,
+                    //     "bill_split": "Uniform",
+                    //     "bill_property_id": [{
+                    //         "property_uid": maintenanceItem.property_id,
+                    //     }],
+                    //     "bill_docs": [],
+                    //     "bill_notes": notes,
+                    //     "bill_maintenance_quote_id": maintenanceItem.maintenance_quote_uid
+                    // })
                 });
 
                 const responseData = await response.json();

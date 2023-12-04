@@ -106,7 +106,8 @@ export default function PayMaintenanceForm(){
         //     setShowSpinner(false);
         // }
         // changeMaintenanceQuoteStatus()
-        navigate("/payments")
+
+        navigate("/payments", {state: {maintenanceItem}})
     }
 
     useEffect(() => {

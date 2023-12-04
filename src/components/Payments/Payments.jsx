@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Box,
     ThemeProvider,
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Payments(props) {
     const classes = useStyles();
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, getProfileId, roleName } = useUser();
     const [paymentDueResult, setPaymentDueResult] = useState([]);
     const [paidItems, setPaidItems] = useState([]);
@@ -41,6 +42,7 @@ export default function Payments(props) {
     const [total, setTotal] = useState(0);
     const [totalPaid, setTotalPaid] = useState(0);
     const [isHeaderChecked, setIsHeaderChecked] = useState(true);
+    const [maintenanceItemNav, setMaintenaceItemNav] = useState(null);
 
     const [paymentData, setPaymentData] = useState({
         currency: "usd",
@@ -120,37 +122,49 @@ export default function Payments(props) {
     };
       
 
-    const fetchPaymentsData = async () => {
-        setShowSpinner(true);
-        try{
-            const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
-            const paymentStatusData = res.data.PaymentStatus.result;
-            const paidStatusData = res.data.PaidStatus.result;
+    // const fetchPaymentsData = async () => {
+    //     setShowSpinner(true);
+    //     try{
+    //         const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
+    //         const paymentStatusData = res.data.PaymentStatus.result;
+    //         const paidStatusData = res.data.PaidStatus.result;
 
-            setPaymentDueResult(paymentStatusData);
-            setPaidItems(paidStatusData)
+    //         setPaymentDueResult(paymentStatusData);
+    //         setPaidItems(paidStatusData)
 
-            console.log("--> paymentStatusData", paymentStatusData)
-            console.log("--> paidStatusData", paidStatusData)
+    //         console.log("--> paymentStatusData", paymentStatusData)
+    //         console.log("--> paidStatusData", paidStatusData)
             
-            // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
-            const initialSelectedItems = paymentStatusData.map((item) => ({
-                id: item.purchase_uid,
-                selected: true,
-            }))
+    //         // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
+    //         var initialSelectedItems = []
+    //         if (maintenanceItemNav){
+    //             console.log("--> maintenanceItemNav", maintenanceItemNav)
+    //            //make the purchase_uid of the maintenance item selected 
+    //            initialSelectedItems = paymentStatusData.map(item => ({
+    //                 id: item.purchase_uid,
+    //                 selected: item.purchase_uid === maintenanceItemNav.purchase_uid ? true : false,
+    //             }));
 
-            setSelectedItems(initialSelectedItems);
+    //         } else{
+    //             console.log("--> maintenanceItemNav is undefined")
+    //             initialSelectedItems = paymentStatusData.map((item) => ({
+    //                 id: item.purchase_uid,
+    //                 selected: true,
+    //             }))
+    //         }
 
-            totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
-            totalPaidUpdate(paidStatusData);
+    //         setSelectedItems(initialSelectedItems);
 
-            console.log("--> initialSelectedItems", initialSelectedItems)
+    //         totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
+    //         totalPaidUpdate(paidStatusData);
 
-        } catch (error) {
-            console.error("Error fetching payment data:", error);
-        }
-        setShowSpinner(false);
-    };
+    //         console.log("--> initialSelectedItems", initialSelectedItems)
+
+    //     } catch (error) {
+    //         console.error("Error fetching payment data:", error);
+    //     }
+    //     setShowSpinner(false);
+    // };
 
     // Update total and selectedItems when a checkbox is clicked
     const handleCheckboxChange = (index) => {
@@ -174,6 +188,51 @@ export default function Payments(props) {
 
             return newSelectedItems;
         });
+    };
+
+    const fetchPaymentsData = async () => {
+        setShowSpinner(true);
+        try{
+            const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
+            const paymentStatusData = res.data.PaymentStatus.result;
+            const paidStatusData = res.data.PaidStatus.result;
+
+            setPaymentDueResult(paymentStatusData);
+            setPaidItems(paidStatusData)
+
+            console.log("--> paymentStatusData", paymentStatusData)
+            console.log("--> paidStatusData", paidStatusData)
+            
+            // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
+            var initialSelectedItems = []
+            if (location.state && location.state.maintenanceItem){
+                const maintenanceItemNav = location.state.maintenanceItem
+                console.log("--> maintenanceItemNav", maintenanceItemNav)
+                //make the purchase_uid of the maintenance item selected 
+                initialSelectedItems = paymentStatusData.map(item => ({
+                    id: item.purchase_uid,
+                    selected: item.purchase_uid === maintenanceItemNav.purchase_uid,
+                }));
+
+            } else{
+                console.log("--> maintenanceItemNav is undefined")
+                initialSelectedItems = paymentStatusData.map((item) => ({
+                    id: item.purchase_uid,
+                    selected: true,
+                }))
+            }
+
+            setSelectedItems(initialSelectedItems);
+
+            totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
+            totalPaidUpdate(paidStatusData);
+
+            console.log("--> initialSelectedItems", initialSelectedItems)
+
+        } catch (error) {
+            console.error("Error fetching payment data:", error);
+        }
+        setShowSpinner(false);
     };
 
     useEffect(() => {
