@@ -18,6 +18,7 @@ export default function SettingsManager() {
     let [isOn2, switchState2]=useState(true)
     const location = useLocation();
     let manager_data = location.state.manager_data;
+    let payments_data = location.state.payments_data;
     return (
         <ThemeProvider theme={theme}>
           <Box
@@ -188,7 +189,7 @@ export default function SettingsManager() {
                     <AddIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                     // onClick={()=>{navigate('/cardDetailsSettings')}}/>
-                    onClick={()=>{navigate('/cardDetailsSettingsManager' ,{state: {manager_data: manager_data}})}}/>
+                    onClick={()=>{navigate('/cardDetailsSettingsManager' ,{state: {manager_data: manager_data, payments_data: payments_data}})}}/>
                     </Box>                    
                     
                     <Box

@@ -16,14 +16,15 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-function PMProfile() {
+function MaintenanceProfile() {
     const navigate = useNavigate();
     const { getProfileId } = useUser();
   
     const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState([]);
     const [business_service_fees, set_business_service_fees] = useState([]); // State for business_services_fees
-    const [payment_accounts, set_payment_accounts] = useState([]);
+    const [business_locations, set_business_locations] = useState([]); 
+    const [payment_accounts, set_payment_accounts] = useState([]); // State for business_services_fees
   
     useEffect( () => {
       setShowSpinner(true);
@@ -33,10 +34,13 @@ function PMProfile() {
           setProfileData(res.data.result[0]);
           setShowSpinner(false);
           try {
-             const  parsedFees = JSON.parse(res.data.result[0]?.business_services_fees);
-            set_business_service_fees(parsedFees);
+                const  parsedFees = JSON.parse(res.data.result[0]?.business_services_fees);
+                const  parsedLocations = JSON.parse(res.data.result[0]?.business_locations);
+                set_business_service_fees(parsedFees);
+                set_business_locations(parsedLocations);
           } catch (e) {
             set_business_service_fees([]);
+            set_business_locations([]);
           }
         });
 
@@ -113,7 +117,7 @@ function PMProfile() {
                         position: 'absolute',
                         left: 0
                     }}
-                    onClick={(e) => {navigate('/settingsManager' ,{state: {manager_data: profileData, payments_data: payment_accounts}})}}
+                    onClick={(e) => {navigate('/settingsMaintenance' ,{state: {maintenance_data: profileData}})}}
                     ></img>
                 </Box>
 
@@ -181,7 +185,7 @@ function PMProfile() {
                     color: theme.typography.common.blue, 
                     fontWeight: theme.typography.light.fontWeight, 
                     fontSize:theme.typography.smallFont}}>
-                    Manager Profile
+                    Maintenance Profile
                 </Typography>
                 </Stack>
                 
@@ -409,7 +413,7 @@ function PMProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        Fee Details
+                        Service Details
                     </Typography>
                     </Stack>
                     
@@ -417,20 +421,132 @@ function PMProfile() {
                     {
                         business_service_fees.map( f=>
                     
+                            <Stack
+                                direction="row"
+                                justifyContent="left"
+                                marginLeft={10}
+                            >
+                            <Box
+                                sx={{
+                                    color: theme.typography.common.blue, 
+                                    fontWeight: theme.typography.light.fontWeight, 
+                                    fontSize:theme.typography.smallFont,
+                                    paddingBottom: '10px'
+                                }}
+                            >
+                                
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.common.blue, 
+                                        fontWeight: 'bold', 
+                                        fontSize:theme.typography.smallFont
+                                    }}
+                                >
+                                    { `${f.service_name}` }
+                                </Typography>
+                                
+                                
+                                <FlexBox direction="row">
+                                    <Box sx={{ paddingRight: '10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>No. of hours</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${f.hours ? f.hours : '<NUM_HOURS>'}`}</Box>
+                                    </Box>
+                                    <Box sx={{ padding: '0 10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>Charge per hour</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${f.charge ? f.charge : '<CHARGE>'}`}</Box>
+                                    </Box>
+                                    <Box sx={{ paddingLeft: '10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>Total Cost</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${f.total_cost ? f.total_cost : '<TOTAL_COST>'}`}</Box>
+                                    </Box>
+                                </FlexBox>
+                            </Box>
+                            </Stack> 
+                            )
+                    }
+                    
+                    
+                    
+                </Paper>
+
+                <Paper
+                style={{
+                    margin: '30px', // Margin around the paper
+                    marginLeft:'auto', 
+                    marginRight:'auto', 
+                    padding: theme.spacing(2),
+                    backgroundColor: theme.palette.primary.main,
+                    width: '85%', // Occupy full width with 25px margins on each side
+                    [theme.breakpoints.down('sm')]: {
+                        width: '80%',
+                    },
+                    [theme.breakpoints.up('sm')]: {
+                        width: '50%',
+                    },
+                }}
+                >
                     <Stack
                     direction="row"
-                    justifyContent="left"
-                    marginLeft={10}>
+                    justifyContent="center"
+                    margin={5}>
                     <Typography
                     sx={{
                         color: theme.typography.common.blue, 
-                        fontWeight: theme.typography.light.fontWeight, 
+                        fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-
-                        { `${f.frequency} ${ f.fee_name  }: ${f.charge}% Of ${f.of}` }
+                        Locations
                     </Typography>
-                    </Stack> 
-                    )
+                    </Stack>
+                    
+                    
+                    {
+                        business_locations.map( l=>
+                    
+                            <Stack
+                                direction="row"
+                                justifyContent="left"
+                                marginLeft={10}
+                            >
+                            <Box
+                                sx={{
+                                    color: theme.typography.common.blue, 
+                                    fontWeight: theme.typography.light.fontWeight, 
+                                    fontSize:theme.typography.smallFont,
+                                    paddingBottom: '10px'
+                                }}
+                            >
+                                
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.common.blue, 
+                                        fontWeight: 'bold', 
+                                        fontSize:theme.typography.smallFont
+                                    }}
+                                >
+                                    { `${l.location}` }
+                                </Typography>
+                                
+                                <FlexBox direction="row">
+                                    <Box sx={{ paddingRight: '10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>Location</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${l.address ? l.address : '<ADDRESS>'}`}</Box>
+                                    </Box>
+                                    <Box sx={{ paddingRight: '10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>City</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${l.city ? l.city : '<CITY>'}`}</Box>
+                                    </Box>
+                                    <Box sx={{ padding: '0 10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>State</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${l.state ? l.state : '<STATE>'}`}</Box>
+                                    </Box>
+                                    <Box sx={{ paddingLeft: '10px' }}>
+                                        <Box sx={{ fontSize: '13px' }}>Miles</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${l.miles ? l.miles : '<MILES>'}`}</Box>
+                                    </Box>
+                                </FlexBox>
+                            </Box>
+                            </Stack> 
+                            )
                     }
                     
                     
@@ -482,36 +598,37 @@ function PMProfile() {
                     </Box>
                 </Paper>
                     
-                <Paper onClick={() => { navigate('/PMProfileEdit' ,{state: {manager_data: profileData}}) }}
-        style={{
-            margin: '30px', // Margin around the paper
-            marginLeft:'auto', 
-            marginRight:'auto', 
-            marginBottom:'30px',
-            padding: theme.spacing(2),
-            backgroundColor: theme.palette.primary.main,
-            width: '85%', // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down('sm')]: {
-                width: '80%',
-            },
-            [theme.breakpoints.up('sm')]: {
-                width: '50%',
-            },
-        }}
-    >
-        <FlexBox direction="row" >
-            <Box >
-            <Typography
-                            sx={{
-                                // width: '200px',
-                                color: theme.typography.common.blue, 
-                                fontSize: '15px',
-                                fontWeight:'bald'}}>
-                                Edit Profile
-                            </Typography>
-            </Box>
-        </FlexBox>
-    </Paper> 
+                {/* <Paper onClick={() => { navigate('/PMProfileEdit' ,{state: {manager_data: profileData}}) }} */}
+                <Paper
+                    style={{
+                        margin: '30px', // Margin around the paper
+                        marginLeft:'auto', 
+                        marginRight:'auto', 
+                        marginBottom:'30px',
+                        padding: theme.spacing(2),
+                        backgroundColor: theme.palette.primary.main,
+                        width: '85%', // Occupy full width with 25px margins on each side
+                        [theme.breakpoints.down('sm')]: {
+                            width: '80%',
+                        },
+                        [theme.breakpoints.up('sm')]: {
+                            width: '50%',
+                        },
+                    }}
+                >
+                    <FlexBox direction="row" >
+                        <Box >
+                        <Typography
+                                        sx={{
+                                            // width: '200px',
+                                            color: theme.typography.common.blue, 
+                                            fontSize: '15px',
+                                            fontWeight:'bald'}}>
+                                            Edit Profile
+                                        </Typography>
+                        </Box>
+                    </FlexBox>
+                </Paper> 
                     {/* <Box sx={{
                         borderRadius: "10px",
                         boxShadow: '0px 4px 4px #00000032'
@@ -567,4 +684,4 @@ function TextBox(props) {
         </Box>
     );
 }
-export default PMProfile;
+export default MaintenanceProfile;

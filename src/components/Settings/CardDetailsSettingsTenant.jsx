@@ -4,6 +4,7 @@ import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { useNavigate, useLocation } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
@@ -14,6 +15,7 @@ import Venmo from '../../images/Venmo.png'
 import Chase from '../../images/Chase.png'
 import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,43 +35,58 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
     }
   }));
-export default function CardDetailsSettingsManager() {
+export default function CardDetailsSettingsTenant() {
     const classes = useStyles();
     const navigate = useNavigate();
+    const { getProfileId } = useUser();
     const location = useLocation();
-    let   manager_data = location.state.manager_data;
-    let   payments_data = location.state.payments_data;
+    let   tenant_data = location.state.tenant_data;
 
-    useEffect(() => {
-        console.log("CardDetailsSettingsManager useEffect");
-        console.log("Payments Data", payments_data);
-    }, []);
-    
+    const [showSpinner, setShowSpinner] = useState(false);
 
-    // const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
-    const [modifiedData, setModifiedData] = useState(payments_data);
-    useEffect(()=>{
-        console.log("modifiedData - ");
-        console.log("   ", modifiedData);
-    }, [modifiedData]);
-    const [newData, setNewData] = useState([]);
-    useEffect(()=>{
-        console.log("newData - ");
-        console.log("   ", newData);
-    }, [newData]);
-
+    const [modifiedData, setModifiedData] = useState({ 'tenant_uid': tenant_data?.tenant_uid, });
     const [isEdited, setIsEdited] = useState(false);
     const [isNewMethodAdded, setIsNewMethodAdded] = useState(false);
 
-    const [paypal, setPaypal] = useState(payments_data.find(method => method.paymentMethod_type === "paypal"));
-    const [applePay, setApplePay] = useState(payments_data.find(method => method.paymentMethod_type === "apple_pay"));
-    const [stripe, setStripe] = useState(payments_data.find(method => method.paymentMethod_type === "stripe"));
-    const [zelle, setZelle] = useState(payments_data.find(method => method.paymentMethod_type === "zelle"));
-    const [venmo, setVenmo] = useState(payments_data.find(method => method.paymentMethod_type === "venmo"));
+    const [paymentsData, setPaymentsData] = useState([]);
+    useEffect(() => {
+        console.log("CardDetailsSettingsManager useEffect");
+        console.log("Payments Data", paymentsData);
 
+        setModifiedPaymentsData(paymentsData);
+
+        setPaypal(paymentsData.find(method => method.paymentMethod_type === "paypal"));
+        setApplePay(paymentsData.find(method => method.paymentMethod_type === "apple_pay"));
+        setStripe(paymentsData.find(method => method.paymentMethod_type === "stripe"));
+        setZelle(paymentsData.find(method => method.paymentMethod_type === "zelle"));
+        setVenmo(paymentsData.find(method => method.paymentMethod_type === "venmo"));
+
+        setPaypalActiveStatus(getActiveStatus("paypal"));
+        setApplePayActiveStatus(getActiveStatus("apple_pay"));
+        setStripeActiveStatus(getActiveStatus("stripe"));
+        setZelleActiveStatus(getActiveStatus("zelle"));
+        setVenmoActiveStatus(getActiveStatus("venmo"));
+    }, [paymentsData]);
+
+    const [modifiedPaymentsData, setModifiedPaymentsData] = useState([]);
+    useEffect(()=>{
+        console.log("modifiedPaymentsData - ");
+        console.log("   ", modifiedPaymentsData);
+    }, [modifiedPaymentsData]);
+    const [newPaymentsData, setNewPaymentsData] = useState([]);
+    useEffect(()=>{
+        console.log("newPaymentsData - ");
+        console.log("   ", newPaymentsData);
+    }, [newPaymentsData]);
+    
+    const [paypal, setPaypal] = useState('');
+    const [applePay, setApplePay] = useState('');
+    const [stripe, setStripe] = useState('');
+    const [zelle, setZelle] = useState('');
+    const [venmo, setVenmo] = useState('');
 
     const getActiveStatus = (name) => {
-        const foundMethod = payments_data.find(method => method.paymentMethod_type === name);
+        const foundMethod = paymentsData.find(method => method.paymentMethod_type === name);
         if(foundMethod){
             if(foundMethod.paymentMethod_status === "Active"){
                 return true;
@@ -77,7 +94,9 @@ export default function CardDetailsSettingsManager() {
                 return false;
             }
         }
-    }   
+        return false;
+    }
+
 
     const [paypalActiveStatus, setPaypalActiveStatus] = useState(getActiveStatus("paypal"));
     useEffect(()=>{
@@ -122,24 +141,27 @@ export default function CardDetailsSettingsManager() {
         return status;
     }
 
-    // const hasPaypalPayment      = (payments_data.find(method => method.paymentMethod_type === "paypal")) ? true: false;
-    // const hasApplePayPayment    = (payments_data.find(method => method.paymentMethod_type === "apple_pay")) ? true: false;
-    // const hasStripePayment      = (payments_data.find(method => method.paymentMethod_type === "stripe")) ? true: false;
-    // const hasZellePayment       = (payments_data.find(method => method.paymentMethod_type === "zelle")) ? true: false;
-    // const hasVenmoPayment       = (payments_data.find(method => method.paymentMethod_type === "venmo")) ? true: false;
+    
 
-    // console.log("Has Payment Method")
-    // console.log("   paypal - ",hasPaypalPayment);
-    // console.log("   apple_pay - ",hasApplePayPayment);
-    // console.log("   stripe - ",hasStripePayment)   
-    // console.log("   zelle - ",hasZellePayment);
-    // console.log("   venmo - ",hasVenmoPayment);    
-
-
-
-
-
-    // console.log("apple pay - ", payments_data.find(method => method.paymentMethod_type === "apple_pay"));
+    useEffect( () => {
+        setShowSpinner(true);
+        const fetchPaymentData = async () => {
+            try {
+            const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+            setPaymentsData(response.data.result);
+            
+            
+            } catch (error) {
+            setPaymentsData([]);
+            console.error('Error fetching payment accounts:', error);
+            }
+        };
+    
+        fetchPaymentData();
+  
+  
+  
+    }, []); // Include getProfileId in the dependencies array to avoid eslint warnings
 
     const handleInputChange = (event) => {
         console.log("Input changed")
@@ -159,13 +181,13 @@ export default function CardDetailsSettingsManager() {
             setVenmo(value);
         }
 
-        if(payments_data.find(method => method.paymentMethod_type === name)){
+        if(paymentsData.find(method => method.paymentMethod_type === name)){
             // setModifiedData((prevData) => ({
             //     ...prevData,
             //     [name]: value
             // }));
             setIsEdited(true);
-            setModifiedData((prevData) => {
+            setModifiedPaymentsData((prevData) => {
                 const index = prevData.findIndex(item => item.paymentMethod_type === name);
                 if (index !== -1) {
                     const updatedData = [...prevData];
@@ -182,46 +204,38 @@ export default function CardDetailsSettingsManager() {
             //     { paymentMethod_name: value, paymentMethod_type: name }
             // ]);
             if (value === "") {
-                const filteredData = newData.filter(item => item.paymentMethod_type !== name);
-                setNewData(filteredData);
+                const filteredData = newPaymentsData.filter(item => item.paymentMethod_type !== name);
+                setNewPaymentsData(filteredData);
                 setIsNewMethodAdded(false); // Assuming you want to set this to false when removing the item
             }else {                
-                setNewData((prevData) => {
+                setNewPaymentsData((prevData) => {
                     const index = prevData.findIndex(item => item.paymentMethod_type === name);
                     if (index !== -1) {
                         const updatedData = [...prevData];
-                        updatedData[index] = { paymentMethod_profile_id : manager_data?.business_uid, paymentMethod_name: value, paymentMethod_type: name };
+                        updatedData[index] = { paymentMethod_profile_id : tenant_data?.tenant_uid, paymentMethod_name: value, paymentMethod_type: name };
                         return updatedData;
                     }else {
-                        return [...prevData, { paymentMethod_profile_id : manager_data?.business_uid, paymentMethod_name: value, paymentMethod_type: name }];
+                        return [...prevData, { paymentMethod_profile_id : tenant_data?.tenant_uid, paymentMethod_name: value, paymentMethod_type: name }];
                     }
                 });
                 setIsNewMethodAdded(true);
             }
-            
-            
-
         }
-        
-        
-
-        
     }
-
 
     const changePaymentMethodStatus = (type, value) => {
         let status = getPaymentMethodStatus(type);
         console.log("changePaymentMethodStatus - ")
         console.log("   type - ", type)
         console.log("   value - ", value)
-        if(modifiedData.find(method => method.paymentMethod_type === type)){
+        if(modifiedPaymentsData.find(method => method.paymentMethod_type === type)){
             // setModifiedData((prevData) => ({
             //     ...prevData,
             //     [name]: value
             // }));
             setIsEdited(true);
             // let status = getPaymentMethodStatus(type);
-            setModifiedData((prevData) => {
+            setModifiedPaymentsData((prevData) => {
                 const index = prevData.findIndex(item => item.paymentMethod_type === type);
                 if (index !== -1) {
                     const updatedData = [...prevData];
@@ -231,9 +245,9 @@ export default function CardDetailsSettingsManager() {
                 return prevData;
             });
 
-        } else if(newData.find(method => method.paymentMethod_type === type)) {
+        } else if(newPaymentsData.find(method => method.paymentMethod_type === type)) {
             setIsNewMethodAdded(true);
-            setNewData((prevData) => {
+            setNewPaymentsData((prevData) => {
                 const index = prevData.findIndex(item => item.paymentMethod_type === type);
                 if (index !== -1) {
                     const updatedData = [...prevData];
@@ -253,7 +267,7 @@ export default function CardDetailsSettingsManager() {
         console.log(checked)
         console.log(method_type)
 
-        let foundMethod = modifiedData.find(method => method.paymentMethod_type === method_type) || newData.find(method => method.paymentMethod_type === method_type);
+        let foundMethod = modifiedPaymentsData.find(method => method.paymentMethod_type === method_type) || newPaymentsData.find(method => method.paymentMethod_type === method_type);
         
         console.log("handleStatusChange - foundMethod - ", foundMethod)
 
@@ -292,12 +306,12 @@ export default function CardDetailsSettingsManager() {
 
         console.log("FORM SUBMITTED");
         console.log("PUT DATA - ");
-        console.log("   ", modifiedData);
+        console.log("   ", modifiedPaymentsData);
         console.log("POST DATA - ");
-        console.log("   ", newData);
+        console.log("   ", newPaymentsData);
 
         if(isEdited){
-            modifiedData.forEach((item, index) => {
+            modifiedPaymentsData.forEach((item, index) => {
                 // console.log(`Element at index ${index}: `, item);
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
@@ -317,7 +331,7 @@ export default function CardDetailsSettingsManager() {
         }
 
         if(isNewMethodAdded){
-            newData.forEach((item, index) => {
+            newPaymentsData.forEach((item, index) => {
                 // console.log(`Element at index ${index}: `, item);
 
                 axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
@@ -336,41 +350,7 @@ export default function CardDetailsSettingsManager() {
             });
 
         }
-
-        const formData = new FormData();
-        for (const key in modifiedData) {
-            if (Object.hasOwnProperty.call(modifiedData, key)) {
-                const value = modifiedData[key];
-                
-                // Check if the value is a non-null object (excluding arrays)
-                const serializedValue = (value !== null && typeof value === 'object')
-                    ? JSON.stringify(value)
-                    : String(value);
-    
-                formData.append(key, serializedValue);
-            }
-        }
-        
-
-        
-
-        // if(isEdited){
-        //     console.log("EDITED")
-        //     // axios.put('http://localhost:4000/businessProfile', modifiedData, headers)
-        //     axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
-        //     .then((response) => {
-        //         console.log('Data updated successfully');
-        //         setIsEdited(false); // Reset the edit status
-        //         navigate(-1)
-        //     })
-        //     .catch((error) => {
-        //         if(error.response){
-        //             console.log(error.response.data);
-        //         }
-        //     });
-        // }
     }
-
 
 
 
@@ -441,9 +421,9 @@ export default function CardDetailsSettingsManager() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {manager_data.business_photo_url !== null ? (
+                    {tenant_data.tenant_photo_url !== null ? (
                         <img
-                            src={manager_data.business_photo_url}
+                            src={tenant_data.tenant_photo_url}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -476,7 +456,7 @@ export default function CardDetailsSettingsManager() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {manager_data.business_name? manager_data.business_name : '<BUSINESS_NAME>'}
+                    {tenant_data.tenant_first_name? tenant_data.tenant_first_name : '<FIRST_NAME>'} {tenant_data.tenant_last_name? tenant_data.tenant_last_name : '<LAST_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -489,7 +469,7 @@ export default function CardDetailsSettingsManager() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.light.fontWeight, 
                         fontSize:theme.typography.primary.smallFont}}>
-                    Manager Profile
+                    Tenant Profile
                     </Typography>
                     </Stack>
                     </>
@@ -607,7 +587,7 @@ export default function CardDetailsSettingsManager() {
                     <Grid item xs={6}>
                         <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={4}>
-                            <Checkbox disabled={!chase} sx={{ color: theme.typography.common.blue }} />
+                            <Checkbox sx={{ color: theme.typography.common.blue }} />
                         </Grid>
                         <Grid item xs={4}>
                             <img src={Chase}/>
@@ -634,8 +614,7 @@ export default function CardDetailsSettingsManager() {
                             <ArrowForwardIosIcon 
                             sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                             // onClick={()=>{navigate('/addCardSettings')}}/>
-                            // onClick={()=>{navigate('/addCardSettings' ,{state: {manager_data: manager_data}})}}
-                            />
+                            onClick={()=>{navigate('/addCardSettings' ,{state: {tenant_data: tenant_data}})}}/>
                     </Box>
                     <Box
                         component="span"

@@ -8,14 +8,13 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
 import { useUser } from "../../contexts/UserContext";
 
-export default function Settings() {
+export default function SettingsTenant() {
     const navigate = useNavigate();
     const { logout } = useUser();
     let [isOn1, switchState1]=useState(true)
     let [isOn2, switchState2]=useState(true)
     const location = useLocation();
-    let owner_data = location.state.owner_data;
-    let payments_data = location.state.payments_data;
+    let tenant_data = location.state.tenant_data;
     return (
         <ThemeProvider theme={theme}>
           <Box
@@ -76,9 +75,9 @@ export default function Settings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {owner_data.owner_photo_url !== null ? (
+                    {tenant_data.tenant_photo_url !== null ? (
                         <img
-                            src={owner_data.owner_photo_url}
+                            src={tenant_data.tenant_photo_url}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -111,7 +110,7 @@ export default function Settings() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {owner_data.owner_first_name? owner_data.owner_first_name : '<FIRST_NAME>'} {owner_data.owner_last_name? owner_data.owner_last_name : '<LAST_NAME>'}
+                    {tenant_data.tenant_first_name? tenant_data.tenant_first_name : '<FIRST_NAME>'} {tenant_data.tenant_last_name? tenant_data.tenant_last_name : '<LAST_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -124,7 +123,7 @@ export default function Settings() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.light.fontWeight, 
                         fontSize:theme.typography.primary.smallFont}}>
-                    Owner Profile
+                    Tenant Profile
                     </Typography>
                     </Stack>
                     </>
@@ -152,9 +151,8 @@ export default function Settings() {
                     Edit profile
                     </Typography>
                     <ArrowForwardIosIcon 
-                    sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    // onClick={()=>{navigate('/editProfileSettings')}}/>
-                    onClick={()=>{navigate('/editProfileSettings' ,{state: {owner_data: owner_data}})}}/>
+                    sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}                    
+                    onClick={()=>{navigate('/editProfileSettingsTenant' ,{state: {tenant_data: tenant_data}})}}/>
                     </Box>
                     <Box
                     component="span"
@@ -169,7 +167,7 @@ export default function Settings() {
                     <ArrowForwardIosIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                     // onClick={()=>{navigate('/changePasswordSettings')}}/>
-                    onClick={()=>{navigate('/changePasswordSettings' ,{state: {owner_data: owner_data}})}}/>
+                    onClick={()=>{navigate('/changePasswordSettingsTenant' ,{state: {tenant_data: tenant_data}})}}/>
                     </Box>                    
                     <Box
                     component="span"
@@ -184,7 +182,7 @@ export default function Settings() {
                     <AddIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                     // onClick={()=>{navigate('/cardDetailsSettings')}}/>
-                    onClick={()=>{navigate('/cardDetailsSettings' ,{state: {owner_data: owner_data, payments_data: payments_data}})}}/>
+                    onClick={()=>{navigate('/cardDetailsSettingsTenant' ,{state: {tenant_data: tenant_data}})}}/>
                     </Box>                    
                     <Box
                     component="span"
