@@ -37,11 +37,7 @@ const ViewLease = (props) => {
         setMoveOut(event.target.value);
     }
 
-
-    let linkStr = leaseData.lease_documents;
-    let link = linkStr ? JSON.parse(linkStr) : [];
-     
-    const [document, setDocument] = useState(link);
+   
 
     const handleViewButton = (leaseData) => {
         let linkArray = [];
@@ -85,10 +81,11 @@ const ViewLease = (props) => {
         
     };
     const leaseID = location.state.lease_id; //'300-000005';
-
+    const [document, setDocument] = useState([]);
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
-    
+    let link ;
+    let linkStr ;
     useEffect(()=>{
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
@@ -100,7 +97,11 @@ const ViewLease = (props) => {
                 if(lease.lease_uid === leaseID) {
                     setLeaseData(lease);
                     console.log("Lease data "+JSON.stringify(lease))
-                    setDocument(lease.lease_documents)
+                   // setDocument(lease.lease_documents)
+                     linkStr = lease.lease_documents? lease.lease_documents:"[]";
+                     link = linkStr ? JSON.parse(linkStr) : [];
+                    
+                    setDocument(link)
                 }
             });
             setShowSpinner(false);

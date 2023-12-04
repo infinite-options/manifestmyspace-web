@@ -143,7 +143,7 @@ function TenantLeases(props) {
         }
     }
 
-    let linkStr = leaseData.lease_documents;
+    let linkStr = location.state.property ? location.state.property.lease_documents: null;
     let link = linkStr ? JSON.parse(linkStr) : [];
      
     const [document, setDocument] = useState(link);
@@ -250,7 +250,7 @@ function TenantLeases(props) {
                                 Viewing Lease
                             </Typography>
                         </Box>
-                        {document.length>0 ?<Box position="absolute" right={0}
+                        {document>0 ?<Box position="absolute" right={0}
                         onClick={()=>{handleViewButton(leaseData)}}
                         >
                             <Visibility
@@ -629,7 +629,7 @@ function TenantLeases(props) {
                                 </TableCell>
                                 <TableCell>
                                     
-                                <Button sx={{padding: "0px"}}
+                                {document.length>0 && <Button sx={{padding: "0px"}}
                                 onClick={()=>{handleViewButton(property)}}                >
                                 <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />{" "}
                                     <Typography
@@ -642,7 +642,7 @@ function TenantLeases(props) {
                                             fontSize: '16px',
                                         }}
                                     >
-                                   View Document</Typography></Button>
+                                   View Document</Typography></Button>}
                                 </TableCell>
                             </TableRow>
                         </TableBody>
