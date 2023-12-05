@@ -42,7 +42,6 @@ export default function Payments(props) {
     const [total, setTotal] = useState(0);
     const [totalPaid, setTotalPaid] = useState(0);
     const [isHeaderChecked, setIsHeaderChecked] = useState(true);
-    const [maintenanceItemNav, setMaintenaceItemNav] = useState(null);
 
     const [paymentData, setPaymentData] = useState({
         currency: "usd",
@@ -120,51 +119,6 @@ export default function Payments(props) {
 
         totalBillUpdateLogic(newSelectedItems, paymentDueResult)
     };
-      
-
-    // const fetchPaymentsData = async () => {
-    //     setShowSpinner(true);
-    //     try{
-    //         const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
-    //         const paymentStatusData = res.data.PaymentStatus.result;
-    //         const paidStatusData = res.data.PaidStatus.result;
-
-    //         setPaymentDueResult(paymentStatusData);
-    //         setPaidItems(paidStatusData)
-
-    //         console.log("--> paymentStatusData", paymentStatusData)
-    //         console.log("--> paidStatusData", paidStatusData)
-            
-    //         // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
-    //         var initialSelectedItems = []
-    //         if (maintenanceItemNav){
-    //             console.log("--> maintenanceItemNav", maintenanceItemNav)
-    //            //make the purchase_uid of the maintenance item selected 
-    //            initialSelectedItems = paymentStatusData.map(item => ({
-    //                 id: item.purchase_uid,
-    //                 selected: item.purchase_uid === maintenanceItemNav.purchase_uid ? true : false,
-    //             }));
-
-    //         } else{
-    //             console.log("--> maintenanceItemNav is undefined")
-    //             initialSelectedItems = paymentStatusData.map((item) => ({
-    //                 id: item.purchase_uid,
-    //                 selected: true,
-    //             }))
-    //         }
-
-    //         setSelectedItems(initialSelectedItems);
-
-    //         totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
-    //         totalPaidUpdate(paidStatusData);
-
-    //         console.log("--> initialSelectedItems", initialSelectedItems)
-
-    //     } catch (error) {
-    //         console.error("Error fetching payment data:", error);
-    //     }
-    //     setShowSpinner(false);
-    // };
 
     // Update total and selectedItems when a checkbox is clicked
     const handleCheckboxChange = (index) => {
@@ -211,6 +165,7 @@ export default function Payments(props) {
                 //make the purchase_uid of the maintenance item selected 
                 initialSelectedItems = paymentStatusData.map(item => ({
                     id: item.purchase_uid,
+                    details: item,
                     selected: item.purchase_uid === maintenanceItemNav.purchase_uid,
                 }));
 
@@ -218,6 +173,7 @@ export default function Payments(props) {
                 console.log("--> maintenanceItemNav is undefined")
                 initialSelectedItems = paymentStatusData.map((item) => ({
                     id: item.purchase_uid,
+                    details: item,
                     selected: true,
                 }))
             }
@@ -252,7 +208,7 @@ export default function Payments(props) {
             // Update paymentData with the latest total value
             const updatedPaymentData = {
                 ...paymentData,
-                business_code:paymentNotes,
+                business_code: paymentNotes,
                 payment_summary: {
                 total: total.toFixed(2), // Format the total as a string with 2 decimal places
                 },
@@ -398,7 +354,7 @@ export default function Payments(props) {
                                         onClick={() => {
                                             paymentData.business_code = paymentNotes;
                                             navigate("/selectPayment", {
-                                                state: { paymentData, total },
+                                                state: { paymentData, total , maintenanceItem: location.state.maintenanceItem},
                                             });
                                         }}
                                     >

@@ -88,6 +88,14 @@ export default function CompleteMaintenance01({maintenanceItem}){
         });
     }
 
+    const handleNavigateToEditInvoice = () => {
+        navigate("/businessInvoiceForm", {
+            state:{
+                maintenanceItem
+            }
+        });
+    }
+
     function computeTotalCost(estimate){
         let costObject = JSON.parse(estimate)
         console.log(costObject)

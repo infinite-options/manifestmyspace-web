@@ -62,10 +62,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
           //     }
           // });
 
-          console.log("currentIndex", newIndex);
-          console.log("allData", allData);
-          console.log("requestData", requestData);
-          console.log("requestData[newIndex]", requestData[newIndex]);
+          // console.log("currentIndex", newIndex);
+          // console.log("allData", allData);
+          // console.log("requestData", requestData);
+          // console.log("requestData[newIndex]", requestData[newIndex]);
           updateRequestIndex(newIndex)
           return newIndex;
       });
@@ -86,10 +86,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
 
           // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
 
-          console.log("currentIndex", newIndex);
-          console.log("allData", allData);
-          console.log("requestData", requestData);
-          console.log("requestData[newIndex]", requestData[newIndex]);
+          // console.log("currentIndex", newIndex);
+          // console.log("allData", allData);
+          // console.log("requestData", requestData);
+          // console.log("requestData[newIndex]", requestData[newIndex]);
           updateRequestIndex(newIndex)
           return newIndex;
       });
@@ -148,10 +148,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
   }
 
   const data = requestData[currentIndex];
-  console.log("--DEBUG requestData--")
-  console.log("requestData", requestData)
-  console.log("currentIndex", currentIndex)
-  console.log("data", data)
+  // console.log("--DEBUG requestData--")
+  // console.log("requestData", requestData)
+  // console.log("currentIndex", currentIndex)
+  // console.log("data", data)
 
   useEffect(() => {
     formatDate(data.maintenance_request_created_date);
@@ -380,7 +380,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, updateReques
                         {data?.business_name} is processing this request.
                     </Typography>
                 ) : null}
-                {console.log(maintenanceQuotes)}
+                {/* {console.log(maintenanceQuotes)} */}
                 <Grid container>
                     <Grid item xs={12} sx={{paddingTop: "10px"}}>
                             {maintenanceQuotes.length > 0 ? (

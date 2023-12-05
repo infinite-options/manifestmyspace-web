@@ -515,7 +515,7 @@ export default function BusinessInvoiceForm(){
             setShowSpinner(true);
             try {
                 var formData = new FormData();
-                formData.append("bill_description", "Invoice from " + maintenanceItem.business_name);
+                formData.append("bill_description", "Invoice from " + maintenanceItem.business_name + " for " + maintenanceItem.maintenance_title);
                 formData.append("bill_created_by", maintenanceItem.quote_business_id);
                 formData.append("bill_utility_type", "maintenance");
                 formData.append("bill_amount", total);

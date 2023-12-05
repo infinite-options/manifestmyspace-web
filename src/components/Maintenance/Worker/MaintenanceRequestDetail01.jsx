@@ -81,6 +81,8 @@ export default function MaintenanceRequestDetail01(){
     }
 
     function deactivateTab(key, maintenanceData){
+
+        console.log("deactivateTab", maintenanceData[key].length)
         if(maintenanceData[key]){
             return maintenanceData[key].length > 0 ? false : true;
         }
@@ -262,11 +264,11 @@ export default function MaintenanceRequestDetail01(){
                             >
                                 {colorStatus.map((item, index) => {
 
-                                        //let color = greyOutTab(item.mapping, allData, item.color)
-                                        let color = item.color
+                                        let color = greyOutTab(item.mapping, allData, item.color)
+                                        // let color = item.color
                                         return (
                                             <Tab key={index}
-                                                // disabled={deactivateTab(item.mapping, allData)}
+                                                disabled={deactivateTab(item.mapping, allData)}
                                                 {...a11yProps(index)} 
                                                 sx={{
                                                     backgroundColor: color,
@@ -297,8 +299,7 @@ export default function MaintenanceRequestDetail01(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ?
-                                                <MaintenanceRequestNavigator01 requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/>
-                                                : <MaintenanceRequestNavigator01 requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={[]} status={status} color={item.color} item={item} allData={allData}/>
+                                                <MaintenanceRequestNavigator01 requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}/> : null
                                             }
                                         </Grid>
                                     </CustomTabPanel>

@@ -11,10 +11,10 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 
 async function getInitialImages(requestData, currentIndex) {
-  // if (requestData[currentIndex].maintenance_images != "[]") {
-  //   // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
-  //   return JSON.parse(requestData[currentIndex].maintenance_images);
-  // }
+  if (requestData[currentIndex]?.maintenance_images != "[]") {
+    // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
+    return JSON.parse(requestData[currentIndex]?.maintenance_images);
+  }
 
   // call api to get images
 

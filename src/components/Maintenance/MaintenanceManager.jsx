@@ -52,12 +52,12 @@ export default function MaintenanceManager(){
     const [filterPropertyList, setFilterPropertyList] = useState([]);
     const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
-    console.log(user)
+    // console.log(user)
 
     const businessId = user.businesses.MAINTENANCE.business_uid;
-    console.log(businessId)
+    // console.log(businessId)
 
-    console.log(getProfileId(), "===", businessId)
+    // console.log(getProfileId(), "===", businessId)
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
@@ -88,12 +88,12 @@ export default function MaintenanceManager(){
                     }
                     quotes.push(quoteObject)
                 }
-                console.log("quotes", quotes)
+                // console.log("quotes", quotes)
 
                 mapping[key][0].quotes = quotes
                 // delete all keys that start with quote_
                 const keysToDelete = Object.keys(mapping[key][0]).filter(key => key.startsWith("quote_"))
-                console.log(keysToDelete)
+                // console.log(keysToDelete)
                 keysToDelete.forEach(e => delete mapping[key][0][e]);
                 for (const keyToDelete in keysToDelete){
                     delete mapping[key][0][keyToDelete]
@@ -105,13 +105,13 @@ export default function MaintenanceManager(){
             // }
         }
 
-        console.log("dedupeArray", dedupeArray)
+        // console.log("dedupeArray", dedupeArray)
         return dedupeArray
     }
 
     useEffect(() => {
         if (maintenanceData){
-            console.log("maintenanceData", maintenanceData)
+            // console.log("maintenanceData", maintenanceData)
             const propertyList = [];
             const addedAddresses = [];
             for (const key in maintenanceData){
@@ -128,7 +128,7 @@ export default function MaintenanceManager(){
                 }
             }
             
-            console.log("filterPropertyList", propertyList)
+            // console.log("filterPropertyList", propertyList)
             setFilterPropertyList(propertyList);
         }
     }, [maintenanceData])
@@ -219,9 +219,9 @@ export default function MaintenanceManager(){
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
             const data = await response.json()
-            console.log(data.maintenanceQuotes);
+            // console.log(data.maintenanceQuotes);
             const quotes = data.maintenanceQuotes.result
-            console.log("quotes from maintenanceQuotes",  quotes)
+            // console.log("quotes from maintenanceQuotes",  quotes)
             setMaintenanceItemQuotes(quotes)
             setShowSpinner(false);
         }
@@ -235,7 +235,7 @@ export default function MaintenanceManager(){
             setShowSpinner(true);
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
-            console.log("maintenanceRequestsData", maintenanceRequestsData)
+            // console.log("maintenanceRequestsData", maintenanceRequestsData)
 
             let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
             let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
