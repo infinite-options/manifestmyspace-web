@@ -406,7 +406,7 @@ const PropertyListings = (props) => {
                 // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
                 if (appliedPropertyIndex > -1) { // Make sure the property was found
                     const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
-                    if(appliedProperty.lease_status === "ACTIVE"){
+                    if(appliedProperty.lease_status !== "NEW"){
                         activePropertyArray.push(appliedProperty);
                     } else{
                         sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
@@ -594,17 +594,14 @@ function PropertyCard(props) {
     const [status, setStatus] = useState(stat);
 
     const [lease, setLease] = useState(props.leaseData || {})
-
+    const { getProfileId } = useUser();
+    const profileId = getProfileId();
     const property = props.data;
 
     const propertyImages = property.property_images || "";
     const ppt_images = propertyImages.split(',');
 
-    // useEffect(() => {
-    //     if(status !== "" || status !== null){
-    //         console.log(property.property_address, "has status", status)
-    //     }
-    // }, []);
+    console.log(status+" "+profileId+" "+property.lt_tenant_id+" "+formatAddress())
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -718,7 +715,7 @@ function PropertyCard(props) {
                         {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
-                {status === "PROCESSING" ? (
+                {(status === "PROCESSING" && profileId=== property.lt_tenant_id) ? (
                 <Box
                     sx={{
                         backgroundColor: "#7AD15B",
@@ -745,7 +742,7 @@ function PropertyCard(props) {
                         {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
-                {status === "REJECTED" ? (
+                {(status === "REJECTED" && profileId=== property.lt_tenant_id)? (
                 <Box
                     sx={{
                         backgroundColor: "#490404",
@@ -772,7 +769,7 @@ function PropertyCard(props) {
                        {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
-                {status === "REFUSED" ? (
+                {(status === "REFUSED" && profileId=== property.lt_tenant_id)? (
                 <Box
                     sx={{
                         backgroundColor: "#CB8E8E",
@@ -799,7 +796,7 @@ function PropertyCard(props) {
                         {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
-                {status === "TENANT APPROVED" ? (
+                {(status === "TENANT APPROVED" && profileId=== property.lt_tenant_id)? (
                 <Box
                     sx={{
                         backgroundColor: "#CB8E8E",
@@ -826,7 +823,7 @@ function PropertyCard(props) {
                         {status} {lease.lease_application_date}
                     </Typography>
                 </Box>): (null)}
-                {status === "ACTIVE" ? (
+                {/* {status === "ACTIVE" ? (
                 <Box
                     sx={{
                         backgroundColor: "#412591",
@@ -852,7 +849,7 @@ function PropertyCard(props) {
                     >
                         {status} {lease.lease_application_date}
                     </Typography>
-                </Box>): (null)}
+                </Box>): (null)} */}
             </Stack>
             <CardContent>
                 <Stack
