@@ -523,14 +523,14 @@ function MaintenanceProfile() {
                                         fontSize:theme.typography.smallFont
                                     }}
                                 >
-                                    { `${l.location}` }
+                                    { `${l.address}` }
                                 </Typography>
                                 
                                 <FlexBox direction="row">
-                                    <Box sx={{ paddingRight: '10px' }}>
+                                    {/* <Box sx={{ paddingRight: '10px' }}>
                                         <Box sx={{ fontSize: '13px' }}>Location</Box>
                                         <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${l.address ? l.address : '<ADDRESS>'}`}</Box>
-                                    </Box>
+                                    </Box> */}
                                     <Box sx={{ paddingRight: '10px' }}>
                                         <Box sx={{ fontSize: '13px' }}>City</Box>
                                         <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${l.city ? l.city : '<CITY>'}`}</Box>

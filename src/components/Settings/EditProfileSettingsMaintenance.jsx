@@ -55,16 +55,17 @@ export default function EditProfileSettingsMaintenance() {
     const [state, setState] = useState(maintenance_data.business_state? maintenance_data.business_state : '');
     const [zipCode, setZipCode] = useState(maintenance_data.business_zip? maintenance_data.business_zip : '');
     const [maintenanceFees, setMaintenanceFees] = useState(maintenance_data.business_services_fees? JSON.parse(maintenance_data.business_services_fees) : []);
+    const [businessLocations, setBusinessLocations] = useState(maintenance_data.business_locations? JSON.parse(maintenance_data.business_locations) : []);
     const [EIN, setEIN] = useState(maintenance_data.business_ein_number? maintenance_data.business_ein_number : '');
     const [uploadedImage, setUploadedImage] = useState(null);
-
-    const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
-    const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
-    const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
 
     const [showAddServiceDialog, setShowAddServiceDialog] = useState(false);
     const [showEditServiceDialog, setShowEditServiceDialog] = useState(false);
     const [indexForEditServiceDialog, setIndexForEditServiceDialog] = useState(false);
+
+    const [showAddLocationDialog, setShowAddLocationDialog] = useState(false);
+    const [showEditLocationDialog, setShowEditLocationDialog] = useState(false);
+    const [indexForEditLocationDialog, setIndexForEditLocationDialog] = useState(false);
 
 
     useEffect(() => {
@@ -76,36 +77,14 @@ export default function EditProfileSettingsMaintenance() {
         setIsEdited(true);
     }, [maintenanceFees]);
 
-    const getFormattedFeeFrequency = (frequency) => {
-        // console.log("getFormattedFeeFrequency(), frequency", frequency);
-        let freq = ""
-        switch(frequency){
-            case "one-time":
-                freq =  "One Time";
-                break;
-            case "hourly":
-                freq =  "Hourly";
-                break;
-            case "daily":
-                freq =  "Daily";
-                break;
-            case "weekly":
-                freq =  "Weekly";
-                break;
-            case "bi-weekly":
-                freq =  "Biweekly";
-                break;
-            case "monthly":
-                freq =  "Monthly";
-                break;
-            case "annually":
-                freq =  "Annual";
-                break;
-            default:
-                freq =  "<FREQUENCY>";
-        }
-        return freq;       
-    }
+    useEffect(() => {
+        console.log("businessLocations updated - ", businessLocations)
+        setModifiedData((prevData) => ({
+            ...prevData,
+            'business_locations': JSON.stringify(businessLocations)
+        }));
+        setIsEdited(true);
+    }, [businessLocations]);
 
     const handleOpenAddService = () => {
         setShowAddServiceDialog(true);
@@ -127,6 +106,7 @@ export default function EditProfileSettingsMaintenance() {
 
     const handleAddService = (newService) => {
         setMaintenanceFees((prevServices) => [...prevServices, newService]);
+        setIsEdited(true);
     }
 
     const handleEditService = (newService, index) => {
@@ -141,6 +121,7 @@ export default function EditProfileSettingsMaintenance() {
             });
             return updatedServices;
         });
+        setIsEdited(true);
     }
 
     const handleDeleteService = (index, event) => {
@@ -150,8 +131,79 @@ export default function EditProfileSettingsMaintenance() {
             servicesArray.splice(index, 1);
             return servicesArray;
         });
+        setIsEdited(true);
         event.stopPropagation();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    const handleOpenAddLocation = () => {
+        setShowAddLocationDialog(true);
+    };
+
+    const handleCloseAddLocation = () => {
+        setShowAddLocationDialog(false);
+    };
+
+    const handleOpenEditLocation = (locationIndex) => {
+        setShowEditLocationDialog(true);
+        console.log("EDITING Location, Index", locationIndex);
+        setIndexForEditLocationDialog(locationIndex);
+    };
+
+    const handleCloseEditLocation = () => {
+        setShowEditLocationDialog(false);
+    };
+
+    const handleAddLocation = (newLocation) => {
+        setBusinessLocations((prevLocations) => [...prevLocations, newLocation]);
+        setIsEdited(true);
+    }
+
+    const handleEditLocation = (newLocation, index) => {
+        console.log("IN handleEditLocation");
+        console.log(newLocation, index);
+        setBusinessLocations((prevLocations) => {
+            const updatedLocations = prevLocations.map((location, i) => {
+                if (i === index) {
+                    return newLocation;
+                }
+                return location;
+            });
+            return updatedLocations;
+        });
+        setIsEdited(true);
+    }
+
+    const handleDeleteLocation = (index, event) => {
+        setBusinessLocations(prevLocations => {
+            const locationsArray = Array.from(prevLocations);
+            locationsArray.splice(index, 1);
+            return locationsArray;
+        });
+        setIsEdited(true);
+        event.stopPropagation();
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     // Main use Effect
     useEffect(()=>{
@@ -362,7 +414,7 @@ export default function EditProfileSettingsMaintenance() {
                             fontSize:theme.typography.primary.smallFont
                         }}
                     >
-                        Manager Profile
+                        Maintenance Business Profile
                     </Typography>
                     </Stack>
                     </>
@@ -525,7 +577,24 @@ export default function EditProfileSettingsMaintenance() {
                                             }}
 
                                         >
-                                            <Box>{service.service_name}, Hours: {service.hours}, Charge:{service.charge}, Total Cost: {service.total_cost}</Box>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'space-between',
+                                            }}
+
+                                            >
+                                                <Box sx={{fontWeight: 'bold',}}>{service.service_name}</Box>
+                                                {
+                                                    service.hours? (
+                                                        <Box>Hours: {service.hours}, Charge:{service.charge}, Total Cost: {service.total_cost}</Box>
+                                                    ): (
+                                                        <Box>Charge: {service.charge}</Box>
+                                                    )
+                                                }
+                                                
+                                                
+                                            </Box>
 
                                             <Button 
                                                 variant="text"
@@ -561,6 +630,117 @@ export default function EditProfileSettingsMaintenance() {
                         {showEditServiceDialog && (
                             <Box>
                                 <EditServiceDialog open={showEditServiceDialog} handleClose={handleCloseEditService} onEditService={handleEditService} serviceIndex={indexForEditServiceDialog} services={maintenanceFees} />
+                            </Box>
+                        )}
+                    </Grid>
+
+                    <hr/>
+
+                    <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={12}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, textAlign:'center', }}>
+                                Business Locations
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent="center" alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+
+                        <Grid item xs={12} 
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                fontSize: '15px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            <Box>
+
+                            </Box>
+                            <Box
+                                onClick={handleOpenAddLocation}
+                            >
+                                {/* <EditIcon  sx={{ fontSize: 16, color: '#3D5CAC'}} /> */}
+                                Add a Location
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} 
+                            sx={{
+                                background: "#FFFFFF",
+                                fontSize: '13px',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                                borderRadius: '5px',
+
+                            }}
+                        >   
+                            {businessLocations.length === 0 ? (
+                                // <p>No fees to display</p>
+                                <Box
+                                    sx={{
+                                        height: "13px",
+                                    }}
+                                >
+                                    No locations to display
+                                </Box>
+                            ) : (
+                                businessLocations.map((location, index) => (
+                                    <Box 
+                                        key={index}
+                                        sx = {{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+
+                                        }}
+                                        onClick={() => handleOpenEditLocation(index)}
+                                    >
+                                        <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between',
+                                            }}
+
+                                        >
+                                            <Box>Address: {location.address}, City: {location.city}, State:{location.state}, Miles: {location.miles}</Box>
+
+                                            <Button 
+                                                variant="text"
+                                                onClick={(event) => {
+                                                    handleDeleteLocation(index, event);
+                                                }}
+                                                sx={{
+                                                    width: '10%', 
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold', 
+                                                    color: '#3D5CAC',
+                                                    '&:hover': {
+                                                        backgroundColor: 'transparent', // Set to the same color as the default state
+                                                    },
+                                                }}
+
+                                            >
+                                                <DeleteIcon  sx={{ fontSize: 14, color: '#3D5CAC'}} />
+                                            </Button>
+                                        </Box>
+                                    </Box>
+
+                                ))
+                            )}
+
+                        </Grid>
+                        
+                        {showAddLocationDialog && (
+                            <Box>
+                                <AddLocationDialog open={showAddLocationDialog} handleClose={handleCloseAddLocation} onAddLocation={handleAddLocation} />
+                            </Box>
+                        )}
+                        {showEditLocationDialog && (
+                            <Box>
+                                <EditLocationDialog open={showEditLocationDialog} handleClose={handleCloseEditLocation} onEditLocation={handleEditLocation} locationIndex={indexForEditLocationDialog} locations={businessLocations} />
                             </Box>
                         )}
                     </Grid>
@@ -669,12 +849,12 @@ function AddServiceDialog({ open, handleClose, onAddService }) {
         console.log('totalCost:', totalCost);
 
         const newService = {
-            service_name: serviceName,
-            hours: numHours,
+            service_name: serviceName,            
             charge: charge,
             ...(feeType === "Fixed Bid" && { charge: charge }),
-            ...(feeType === "Hourly" && { hours: numHours }), // rohit - fix
+            ...(feeType === "Hourly" && { hours: numHours }),
             ...(feeType === "Hourly" && { charge: charge }),
+            ...(feeType === "Hourly" && { total_cost: totalCost }),
         }
 
 
@@ -998,11 +1178,11 @@ function EditServiceDialog({ open, handleClose, onEditService, serviceIndex, ser
 
         const newService = {
             service_name: serviceName,
-            hours: numHours,
             charge: charge,
             ...(feeType === "Fixed Bid" && { charge: charge }),
-            ...(feeType === "Hourly" && { hours: numHours }), // rohit - fix
+            ...(feeType === "Hourly" && { hours: numHours }),
             ...(feeType === "Hourly" && { charge: charge }),
+            ...(feeType === "Hourly" && { total_cost: totalCost }),
         }
 
         onEditService(newService, serviceIndex);
@@ -1245,6 +1425,591 @@ function EditServiceDialog({ open, handleClose, onEditService, serviceIndex, ser
                 <DialogActions>
                     <Button onClick={handleClose}>Close</Button>
                     <Button type="submit" onClick={handleEditService}>Save Fee</Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function AddLocationDialog({ open, handleClose, onAddLocation }) {
+
+    const [address, setAddress] = useState('');
+    useEffect(() => {
+        console.log('address: ', address);
+    }, [address]);
+
+    const [city, setCity] = useState('');
+    useEffect(() => {
+        console.log('city: ', city);
+    }, [city]);
+
+    const [state, setState] = useState('');
+    useEffect(() => {
+        console.log('state: ', state);
+    }, [state]);
+
+    const [miles, setMiles] = useState(0);
+    useEffect(() => {
+        console.log('miles: ', miles);
+    }, [miles]);
+
+    // const handleFeeTypeChange = (event) => {
+    //     setFeeType(event.target.value);
+    // };
+
+    // const handleFrequencyChange = (event) => {
+    //     setFeeFrequency(event.target.value)
+    // }
+
+    // const handleAppliedToChange = (event) => {
+    //     setFeeAppliedTo(event.target.value)
+    // }
+
+
+    const handleAddLocation = (event) => {
+        event.preventDefault();
+
+        console.log("ADD LOCATION FORM SUBMITTED ");
+        console.log('address:', address);
+        console.log('city:', city);
+        console.log('state:', state);
+        console.log('miles:', miles);
+
+        const newLocation = {
+            address: address,
+            city: city,
+            state: state,
+            miles: miles,
+        }
+
+
+        onAddLocation(newLocation);
+        handleClose();
+    }
+
+    return (
+        <form onSubmit={handleAddLocation}>
+            <Dialog 
+                open={open}
+                onClose={handleClose}
+                // sx = {{
+                //     width: '100%',
+                //     maxWidth: 'none',
+                // }}
+                maxWidth="xl"
+                sx={{
+                    '& .MuiDialog-paper': {
+                    width: '60%',
+                    maxWidth: 'none',
+                    },
+                }}
+            >
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        Business locations
+                </Box>
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent:'space-between',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>Address</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="address"
+                                    placeholder=""
+                                    value={address}
+                                    onChange={(event) => {
+                                        setAddress(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>City</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="city"
+                                    placeholder=""
+                                    value={city}
+                                    onChange={(event) => {
+                                        setCity(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+
+                        
+
+                </Box>
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent:'space-between',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>State</Box>
+                                    <TextField
+                                        name="state"
+                                        placeholder=""
+                                        value={state}
+                                        onChange={(event) => {
+                                            setState(event.target.value);
+                                        }}
+                                        InputProps={{
+                                            sx: {
+                                                backgroundColor: '#D6D5DA',
+                                                height: '16px',
+                                            },
+                                        }}
+                                    />
+                            </Box>
+                        
+                            
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>Miles</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="miles"
+                                    placeholder=""
+                                    value={miles}
+                                    onChange={(event) => {
+                                        setMiles(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+                            
+                        </Box>
+
+                        
+
+                </Box>
+                {/* <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent:'space-between',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            {
+                                feeType === "Hourly" && (
+                                    <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            marginRight: '50px',                                    
+                                        }}
+                                    >
+                                        <Box>Total Cost</Box>
+                                            <TextField
+                                                name="total_cost"
+                                                placeholder=""
+                                                value={totalCost}                                                
+                                                InputProps={{
+                                                    sx: {
+                                                        backgroundColor: '#D6D5DA',
+                                                        height: '16px',
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+                                )
+
+                            }
+                            
+                        </Box>
+
+                        
+
+                </Box> */}
+                
+                <DialogActions>
+                    <Button 
+                        onClick={handleClose}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#fff",
+                            },
+                            color: '#160449',
+                        }}
+                    >
+                        Close
+                    </Button>
+                    <Button 
+                        type="submit"
+                        onClick={handleAddLocation}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: "#fff",
+                            },
+                            color: '#160449',
+                        }}
+                    >
+                        Add Location
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+
+}
+
+
+
+
+
+
+
+function EditLocationDialog({ open, handleClose, onEditLocation, locationIndex, locations }) {
+
+    const [address, setAddress] = useState(locations[locationIndex].address);
+    useEffect(() => {
+        console.log('Address: ', address);
+    }, [address]);
+
+    const [city, setCity] = useState(locations[locationIndex].city);
+    useEffect(() => {
+        console.log('city: ', city);
+    }, [city]);
+
+    const [state, setState] = useState(locations[locationIndex].state);
+    useEffect(() => {
+        console.log('state: ', state);
+    }, [state]);
+
+    const [miles, setMiles] = useState(locations[locationIndex].miles);
+    useEffect(() => {
+        console.log('miles: ', miles);
+    }, [miles]);
+    
+    
+
+
+    // const handleFeeTypeChange = (event) => {
+    //     setFeeType(event.target.value);
+    // };
+
+    const handleEditLocation = (event) => {
+        event.preventDefault();
+
+        console.log("EDIT LOCATION FORM SUBMITTED ");
+        console.log('address:', address);
+        console.log('city:', city);
+        console.log('state:', state);
+        console.log('miles:', miles);
+
+        const newLocation = {
+            address: address,
+            city: city,
+            state: state,
+            miles: miles,
+        }
+
+        onEditLocation(newLocation, locationIndex);
+        handleClose();
+    }
+
+    return (
+        <form onSubmit={handleEditLocation}>
+            <Dialog 
+                open={open}
+                onClose={handleClose}
+                // sx = {{
+                //     width: '100%',
+                //     maxWidth: 'none',
+                // }}
+                maxWidth="xl"
+                sx={{
+                    '& .MuiDialog-paper': {
+                    width: '60%',
+                    maxWidth: 'none',
+                    },
+                }}
+            >
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        Business Locations
+                </Box>
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent:'space-between',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>Address</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="address"
+                                    placeholder=""
+                                    value={address}
+                                    onChange={(event) => {
+                                        setAddress(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>City</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="city"
+                                    placeholder=""
+                                    value={city}
+                                    onChange={(event) => {
+                                        setCity(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+                            
+                        </Box>
+
+                </Box>
+                <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            padding: '5px',
+                            color: '#3D5CAC',
+                    }}
+                >
+
+                        <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent:'space-between',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                padding: '5px',
+                                color: '#3D5CAC',
+                            }}
+                        >
+                            
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>State</Box>
+                                    <TextField
+                                        name="state"
+                                        placeholder=""
+                                        value={state}
+                                        onChange={(event) => {
+                                            setState(event.target.value);
+                                        }}
+                                        InputProps={{
+                                            sx: {
+                                                backgroundColor: '#D6D5DA',
+                                                height: '16px',
+                                            },
+                                        }}
+                                    />
+                            </Box>
+                                
+                            
+                            <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginRight: '50px',                                    
+                                }}
+                            >
+                                <Box>Miles</Box>
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                <TextField
+                                    name="miles"
+                                    placeholder=""
+                                    value={miles}
+                                    onChange={(event) => {
+                                        setMiles(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor: '#D6D5DA',
+                                            height: '16px',
+                                        },
+                                    }}
+                                />
+                            </Box>
+                            
+                        </Box>
+
+                        
+
+                </Box>
+                
+
+
+                <DialogActions>
+                    <Button onClick={handleClose}>Close</Button>
+                    <Button type="submit" onClick={handleEditLocation}>Save Location</Button>
                 </DialogActions>
             </Dialog>
         </form>

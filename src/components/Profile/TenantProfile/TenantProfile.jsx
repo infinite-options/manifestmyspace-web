@@ -56,11 +56,11 @@ function TenantProfile() {
                 "font-family": 'Source Sans Pro',
                 color: 'text.primary',
             }}>
-            <Box sx={{marginTop:'5px'}}>
-            <img src={settingsIcon } alt="settings"   onClick={(e) => {navigate('/settingsTenant' ,{state: {tenant_data: profileData}})}}/>
-            
-            </Box>
-                <Box sx={{
+                <Box sx={{marginTop:'5px',}}>
+                    <img src={settingsIcon } alt="settings"   onClick={(e) => {navigate('/settingsTenant' ,{state: {tenant_data: profileData}})}}/>
+                
+                </Box>
+                {/* <Box sx={{
                     display: 'flex',
                     justifyContent: 'center',
                     backgroundColor: 'background.blue',
@@ -82,18 +82,44 @@ function TenantProfile() {
                         width: 24,
                         height: 24,
                     }}></Box>
-                </Box>
+                </Box> */}
+
+
                 <Box sx={{
                     position: 'relative',
                     bottom: '90px',
                     padding: '25px',
+                    marginTop: '70px',
                 }}>
                     {profileData.tenant_photo_url !== null ? (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: '121px',
+                                width: '121px',
+                                backgroundColor: '#bbb',
+                                borderRadius: '50%',
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                boxShadow: '0px 4px 4px #00000032'
+                            }}
+                        >
+                            <img
+                                src={profileData.tenant_photo_url}
+                                alt="Profile"
+                                style={{
+                                    borderRadius: '50%',
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                }}
+                            />
+                        </Box>
+                    ) : (
+                        <Box sx={{
+                            justifySelf: 'center',
                             height: '121px',
                             width: '121px',
                             backgroundColor: '#bbb',
@@ -101,34 +127,16 @@ function TenantProfile() {
                             marginLeft: 'auto',
                             marginRight: 'auto',
                             boxShadow: '0px 4px 4px #00000032'
-                        }}
-                    >
-                        <img
-                            src={profileData.tenant_photo_url}
-                            alt="Profile"
-                            style={{
-                                borderRadius: '50%',
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover'
-                            }}
-                        />
-                    </Box>
-                ) : (
-                    <Box sx={{
-                        justifySelf: 'center',
-                        height: '121px',
-                        width: '121px',
-                        backgroundColor: '#bbb',
-                        borderRadius: '50%',
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        boxShadow: '0px 4px 4px #00000032'
-                    }}>
-                        
-                    </Box>
-                )}
-
+                        }}>
+                            
+                        </Box>
+                    )}
+            </Box>
+            <Box sx={{
+                    position: 'relative',
+                    bottom: '90px',
+                    padding: '25px',
+            }}>
                 <Box sx={{
                     position: 'relative',
                     bottom: '90px',
