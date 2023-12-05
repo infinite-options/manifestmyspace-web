@@ -181,7 +181,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - {maintenanceItem.tenant_adult_occupants != null ? maintenanceItem.tenant_adult_occupants[0] : "No Tenant Assigned"}
+                            Tenant - {maintenanceItem?.tenant_adult_occupants  ? maintenanceItem.tenant_adult_occupants[0] : "No Tenant Assigned"}
                         </Typography>
                     </Button>
                 </Grid>
