@@ -37,18 +37,21 @@ const ViewLease = (props) => {
         setMoveOut(event.target.value);
     }
 
+   
 
     const handleViewButton = (leaseData) => {
-        console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
-        let link = JSON.parse(leaseData.lease_documents)[0]?.link
-        
-        // navigate('/leaseDocument',{
-        //     state:{
-        //         document: leaseData.ld_link
-        //     }
-        // }
-        // );
-        window.open(link,'_blank', 'rel=noopener noreferrer')
+        let linkArray = [];
+        link.map(l => {
+            linkArray.push(l.link)
+        })
+
+        navigate('/leaseDocument',{
+            state:{
+                document: linkArray
+            }
+        }
+        );
+        //window.open(,'_blank', 'rel=noopener noreferrer')
     };
 
 
@@ -64,7 +67,7 @@ const ViewLease = (props) => {
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
         leaseApplicationFormData.append("move_out_date", moveOut);
-       // leaseApplicationFormData.append("lease_status", "ENDED");
+        leaseApplicationFormData.append("lease_status", "ENDED");
     
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
@@ -78,11 +81,11 @@ const ViewLease = (props) => {
         
     };
     const leaseID = location.state.lease_id; //'300-000005';
-
+    const [document, setDocument] = useState([]);
     const [fetchData, setFetchData] = useState([]);
     const [leaseData, setLeaseData] = useState([]);
-    const [document, setDocument] = useState([]);
-    
+    let link ;
+    let linkStr ;
     useEffect(()=>{
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
@@ -94,7 +97,11 @@ const ViewLease = (props) => {
                 if(lease.lease_uid === leaseID) {
                     setLeaseData(lease);
                     console.log("Lease data "+JSON.stringify(lease))
-                    setDocument(lease.lease_documents)
+                   // setDocument(lease.lease_documents)
+                     linkStr = lease.lease_documents? lease.lease_documents:"[]";
+                     link = linkStr ? JSON.parse(linkStr) : [];
+                    
+                    setDocument(link)
                 }
             });
             setShowSpinner(false);

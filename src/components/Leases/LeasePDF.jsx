@@ -10,20 +10,21 @@ import {
 } from '@mui/material';
 import { ArrowBack, Download } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState, Fragment } from 'react';
 
 const LeasePDF = (props) => {
     const navigate = useNavigate();
     const location = useLocation();
-
+    const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
     const handleBackButton = () => {
-        navigate('/viewLease',{
-            state:{
-                lease_id : location.state.lease_uid
-            } 
-        });
+        navigate(-1);
     };
 
-    const documentLink  = location.state.document; 
+    const handleChangeDocument = (index) => {
+        setCurrentDocumentIndex(index);
+      };
+
+    const documentLink  = location.state.document ? location.state.document : []; 
     return (
         <ThemeProvider theme={theme}>
             <Box
@@ -87,7 +88,22 @@ const LeasePDF = (props) => {
                             </Typography>
                         </Box>
                     </Stack>
-                    <iframe src={documentLink} width="100%" height="500px"/>
+                    {/* {
+                        documentLink.map(link => {
+                            <iframe src={link} width="100%" height="500px"/>
+                        })
+                    } */}
+                    {documentLink && documentLink.map((link, index) => (
+          <button key={index} onClick={() => handleChangeDocument(index)}>
+            Document {index + 1}
+          </button>
+        ))}
+         <iframe
+        title="PDF Viewer"
+        src={documentLink[currentDocumentIndex]}
+        width="100%"
+        height="500px"
+      />
                 </Paper>
             </Box>
         </ThemeProvider>
