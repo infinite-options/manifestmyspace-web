@@ -50,6 +50,8 @@ function OwnerProfile() {
     }
     const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState([]);
+    const [payment_accounts, set_payment_accounts] = useState([]);
+
     useEffect(()=>{
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
@@ -58,6 +60,20 @@ function OwnerProfile() {
             setProfileData(res.data.result[0]);
             setShowSpinner(false);
         });
+
+        const fetchPaymentData = async () => {
+            try {
+              const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+              set_payment_accounts(response.data.result);
+              
+              
+            } catch (error) {
+              set_payment_accounts([]);
+              console.error('Error fetching payment accounts:', error);
+            }
+          };
+      
+          fetchPaymentData();
     }, []);
     return (
         <ThemeProvider theme={theme}>
@@ -99,7 +115,7 @@ function OwnerProfile() {
                         left: 0
                     }}
                     // onClick={(e) => {navigate('/settingsOwner') }}
-                    onClick={(e) => {navigate('/settingsOwner' ,{state: {owner_data: profileData}})}}
+                    onClick={(e) => {navigate('/settingsOwner' ,{state: {owner_data: profileData, payments_data: payment_accounts}})}}
                     ></img>
                 </Box>
                 {profileData.owner_photo_url !== null ? (

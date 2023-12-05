@@ -39,6 +39,8 @@ import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 
+import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
+
 import ViewTransactionOwner from "./Transactions/ViewTransactionOwner";
 import PaymentsTenant from "./Payments/PaymentsTenant";
 import TransactionHistory from "./Transactions/TransactionHistory";
@@ -47,6 +49,10 @@ import CashflowManager from "./Cashflow/CashflowManager";
 import ManagerDashboardHappinessMatrix from "./ManagerDashboard/ManagerDashboardHappinessMatrix";
 import Settings from "./Settings/SettingsOwner";
 import SettingsManager from "./Settings/SettingsManager";
+import SettingsTenant from "./Settings/SettingsTenant";
+import SettingsMaintenance from "./Settings/SettingsMaintenance";
+
+
 
 
 import PropertyInfo from "./Property/PropertyInfo";
@@ -86,13 +92,19 @@ import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
 
 import EditProfileSettings from "./Settings/EditProfileSettings";
 import EditProfileSettingsManager from "./Settings/EditProfileSettingsManager";
+import EditProfileSettingsTenant from "./Settings/EditProfileSettingsTenant";
+import EditProfileSettingsMaintenance from "./Settings/EditProfileSettingsMaintenance";
 
 import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import ChangePasswordSettingsManager from "./Settings/ChangePasswordSettingsManager";
+import ChangePasswordSettingsTenant from "./Settings/ChangePasswordSettingsTenant";
+import ChangePasswordSettingsMaintenance from "./Settings/ChangePasswordSettingsMaintenance";
 import AddCard from "./Settings/AddCard";
 import AddPayment from "./Settings/AddPayment";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import CardDetailsSettingsManager from "./Settings/CardDetailsSettingsManager";
+import CardDetailsSettingsTenant from "./Settings/CardDetailsSettingsTenant";
+import CardDetailsSettingsMaintenance from "./Settings/CardDetailsSettingsMaintenance";
 import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Footer";
@@ -203,7 +215,7 @@ function Main() {
             <Route path="PrivateonboardingRouter" element={<OnboardingRouter />} />
 
 
-
+            <Route path="maintenanceProfile" element={<MaintenanceProfile />} />
 
             <Route path="announcements" element={<Announcements />} />
             <Route path="ownerProfile" element={<OwnerProfile />} />
@@ -241,18 +253,25 @@ function Main() {
             <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
             <Route path="settingsOwner" element={<Settings />} />
-            <Route path="settingsTenant" element={<Settings />} />
+            <Route path="settingsTenant" element={<SettingsTenant />} />
             <Route path="settingsManager" element={<SettingsManager />} />
+            <Route path="settingsMaintenance" element={<SettingsMaintenance />} />
             <Route path="settingsPM_Employee" element={<Settings />} />
             <Route path="settingsMaintenance" element={<Settings />} />
             <Route path="settingsMaint_Employee" element={<Settings />} />
             <Route path="editProfileSettings" element={<EditProfileSettings />} />
             <Route path="editProfileSettingsManager" element={<EditProfileSettingsManager />} />
+            <Route path="editProfileSettingsTenant" element={<EditProfileSettingsTenant />} />
+            <Route path="editProfileSettingsMaintenance" element={<EditProfileSettingsMaintenance />} />
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
             <Route path="changePasswordSettingsManager" element={<ChangePasswordSettingsManager />} />
+            <Route path="changePasswordSettingsTenant" element={<ChangePasswordSettingsTenant />} />
+            <Route path="changePasswordSettingsMaintenance" element={<ChangePasswordSettingsMaintenance />} />            
             <Route path="addCardSettings" element={<AddCard />} />
             <Route path="cardDetailsSettings" element={<CardDetailsSettings />} />
             <Route path="cardDetailsSettingsManager" element={<CardDetailsSettingsManager />} />            
+            <Route path="cardDetailsSettingsTenant" element={<CardDetailsSettingsTenant />} />
+            <Route path="cardDetailsSettingsMaintenance" element={<CardDetailsSettingsMaintenance />} />            
 
             <Route path="propertyInfo" element={<PropertyInfo />} />
             <Route path="contacts" element={<Contacts />} />
