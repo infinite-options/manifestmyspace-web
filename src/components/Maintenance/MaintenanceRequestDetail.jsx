@@ -98,7 +98,18 @@ export function MaintenanceRequestDetail(){
             return true;
         }
     }
-
+    let [areTabsGrey, setAreTabsGrey]= useState([0,0,0,0,0,0]);
+    /*
+        let [areTabsGrey, setAreTabsGrey]= useState([
+        allData['NEW REQUEST'].length,
+        allData['QUOTES REQUESTED'].length,
+        allData['QUOTES ACCEPTED'].length,
+        allData['QUOTES SCHEDULED'].length,
+        allData['COMPLETED'].length,
+        allData['PAID'].length,
+    ].map(i=> i>0? 1: 0));
+    */
+    let [tabs, setTabs]=useState({})
     function greyOutTab(key, maintenanceData, color){
         let greyColor = "#D9D9D9"
         if(maintenanceData[key]){
@@ -130,6 +141,7 @@ export function MaintenanceRequestDetail(){
 
     const colorStatus = getColorStatusBasedOnSelectedRole()
 
+   
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
     const [status, setStatus] = useState(location.state.status);
@@ -154,7 +166,17 @@ export function MaintenanceRequestDetail(){
             allData,
             filteredQuotes,
         })
-
+        let j=colorStatus.map((item, index) => {
+            let key= item.mapping
+            let isGrey= allData[key].length > 0 ? 0 : 1;  
+            let temp= areTabsGrey;
+            setAreTabsGrey(prev =>{ 
+                temp[index]= isGrey;
+            return temp;});
+            let firstTab = areTabsGrey.indexOf(0)
+            let lastTab = areTabsGrey.lastIndexOf(0);
+            setTabs({firstTab, lastTab});
+        })
         // console.log("maintenance Quotes", maintenanceQuotes)
         // console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
     }, [maintenanceRequestIndex, status])
@@ -212,8 +234,46 @@ export function MaintenanceRequestDetail(){
         setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
     };
 
-    const handleMaintenaceRequestIndexChange = (index) => {
+    const handleMaintenaceRequestIndexChange = (index, direction, prevTabLastIndex) => {
         setMaintenanceRequestIndex(index);  
+        // let x=true;
+        // if (x){
+
+
+        if (direction.changeTab==='forward'){
+        let i= value+1;
+          
+        while(areTabsGrey[i]===1 ){
+        i++;
+        if (i>5)
+        break;}
+
+        if(i<=5)
+        {setValue(i);
+        setMaintenanceRequestIndex(0);}
+     }
+    
+     if (direction.changeTab==='backward'){
+        let i= value-1;
+        
+        while(areTabsGrey[i]===1 ){
+        i--;
+        if (i<0)
+        break;}
+
+        if(i>=0)
+        {setValue(i);
+            console.log('Mousivand')
+            let requestType= colorStatus[i].status.toUpperCase();
+            console.log(allData)
+            console.log(requestType)
+            let j= allData[requestType].length-1
+            console.log('Mousivand')
+            
+        setMaintenanceRequestIndex(j)}
+     }  
+    
+    
     }
 
 
@@ -283,7 +343,7 @@ export function MaintenanceRequestDetail(){
                             alignItems="center"
                         >
                             <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                Maintenance
+                                Maintenance 
                             </Typography>
                         </Box>
                         <Box position="absolute" right={30}>
@@ -325,8 +385,13 @@ export function MaintenanceRequestDetail(){
                                 }}
                             >
                                 {colorStatus.map((item, index) => {
+                                        console.log('Ramin', index, ' ',item )
+                                        console.log('Mousivand', ' ', allData )
 
                                         let color = greyOutTab(item.mapping, allData, item.color)
+                                        
+                                        
+                                        
                                         return (
                                             <Tab key={index}
                                                 disabled={deactivateTab(item.mapping, allData)}
@@ -359,7 +424,9 @@ export function MaintenanceRequestDetail(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex} updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData} maintenanceQuotes={filteredQuotes}/>
+                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData} maintenanceQuotes={filteredQuotes} currentTabValue={value}
+                                                    tabs={tabs}
+                                                />
                                             )
                                             : null}
                                         </Grid>
@@ -372,27 +439,27 @@ export function MaintenanceRequestDetail(){
                                     paddingTop: "20px",
                                 }}
                             >
-                                {colorStatus[value].status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
                                     <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null 
                                 }
-                                {colorStatus[value].status === "Quotes Requested" ?
+                                {colorStatus[value]?.status === "Quotes Requested" ?
                                     <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Quotes Accepted" ?
+                                {colorStatus[value]?.status === "Quotes Accepted" ?
                                     <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Scheduled" ?    
+                                {colorStatus[value]?.status === "Scheduled" ?    
                                     <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Completed" ?
+                                {colorStatus[value]?.status === "Completed" ?
                                     <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
                                     : null
                                 }
-                                {colorStatus[value].status === "Paid" ?
+                                {colorStatus[value]?.status === "Paid" ?
                                     <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/> 
                                     : null
                                 }
