@@ -77,12 +77,12 @@ export function MaintenanceRequestDetail(){
     const [fromProperty, setFromProperty] = useState(location.state.fromProperty || false);
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
+        // console.log("handleBackButton")
         if(fromProperty){
             navigate(-1)
         } else{
@@ -182,8 +182,8 @@ export function MaintenanceRequestDetail(){
     }, [maintenanceRequestIndex, status])
 
     useEffect(() => {
-        console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex])
-        console.log("maintenanceQuotes", maintenanceQuotes)
+        // console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex])
+        // console.log("maintenanceQuotes", maintenanceQuotes)
         if (maintenanceQuotes && maintenanceItemsForStatus[maintenanceRequestIndex]){
             const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
 
@@ -198,7 +198,7 @@ export function MaintenanceRequestDetail(){
                 }
             })
 
-            console.log("*****quotesFilteredById", quotesFilteredById)
+            // console.log("*****quotesFilteredById", quotesFilteredById)
             setFilteredQuotes(quotesFilteredById)
         }
     }, [maintenanceRequestIndex, maintenanceQuotes])
@@ -206,8 +206,8 @@ export function MaintenanceRequestDetail(){
     const allData = location.state.allMaintenanceData;
 
     useEffect(() => {
-        console.log("useEffect")
-        console.log("status value", status)
+        // console.log("useEffect")
+        // console.log("status value", status)
         colorStatus.find((item, index) => {
             if(item.mapping === status){
                 console.log("status", item.status, "at", index, "===", status)
@@ -217,7 +217,7 @@ export function MaintenanceRequestDetail(){
     }, [status, fromProperty])
 
     useEffect(() => {
-        console.log("running 2nd use effect")
+        // console.log("running 2nd use effect")
         colorStatus.find((item, index) => {
             if(item.mapping === status){
                 // console.log("2nd status", item.status, "at", index, "===", status)
@@ -227,7 +227,7 @@ export function MaintenanceRequestDetail(){
     }, [status])
 
     const handleChange = (event, newValue) => {
-        console.log("tab is changing to ", newValue)
+        // console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
@@ -275,11 +275,6 @@ export function MaintenanceRequestDetail(){
     
     
     }
-
-
-    useEffect(() => {
-        console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
-    }, [maintenanceRequestIndex])
 
 
     function a11yProps(index) {

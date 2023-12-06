@@ -69,9 +69,13 @@ export default function SelectPayment(props) {
     const [paymentData, setPaymentData] = useState(location.state.paymentData);
     const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0].purchase_uid);
     const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
-
+    // const [maintenanceItem, setMaintenanceItem] = useState(location.state.paymentData.maintenanceItem);
+    const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
     console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData)
-    console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData.purchase_uid)
+    console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids)
+    console.log("--debug-- location.state", location.state)
+    // console.log("--debug-- maintenanceItem", maintenanceItem)
+    console.log("---debug--- selectedItems", selectedItems)
     const [convenience_fee, setFee] = useState(0);
     const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
     const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
@@ -84,6 +88,7 @@ export default function SelectPayment(props) {
 
 
     const [stripePayment, setStripePayment] = useState(false);
+    const [applePay, setApplePay] = useState(false);
     const [paymentConfirm, setPaymentConfirm] = useState(false);
 
     const [stripeResponse, setStripeResponse] = useState(null);
@@ -211,9 +216,26 @@ export default function SelectPayment(props) {
             const promises = []
             for (const item of purchaseUIDs) {
                 promises.push(makePayment(item.purchase_uid))
+                // console.log("--debug-- maintenanceItem.purchase_uid", maintenanceItem.purchase_uid, "item.purchase_uid", item.purchase_uid)
             }
             try {
                 await Promise.all(promises)
+                console.log("All payments made successfully", promises)
+                for (const item of selectedItems) {
+                    // PUT to update maintenance request status to "COMPLETED"
+                    console.log("--DEBUG-- maintenanceItem.purchase_uid === item.purchase_uid", item.purchase_uid)
+                    const updateMaintenanceRequestStatus = (quote_id) => {
+                        const formData = new FormData();
+                        formData.append("maintenance_quote_uid", quote_id);
+                        formData.append("quote_status", "COMPLETED");
+                        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes",{
+                            method: 'PUT',
+                            body: formData,
+                        })
+                    }
+
+                    updateMaintenanceRequestStatus(item.quote_id)
+                }
                 let routingString = paymentRoutingBasedOnSelectedRole();
                 navigate(routingString);
             } catch (error) {
@@ -268,6 +290,7 @@ export default function SelectPayment(props) {
 
   const handleChange = (event) => {
     setSelectedMethod(event.target.value);
+    console.log("--debug selectedMethod -->", selectedMethod)
     update_fee(event);
   };
 
@@ -549,14 +572,14 @@ export default function SelectPayment(props) {
                         }
                     />
                     <FormControlLabel
-                    value="Apple Pay"
-                    control={<Radio />}
-                    label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                        <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
-                        Apple Pay
-                        </div>
-                    }
+                        value="Apple Pay"
+                        control={<Radio />}
+                        label={
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                            <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
+                                Apple Pay
+                            </div>
+                        }
                     />
                     <FormControlLabel
                     value="Stripe"

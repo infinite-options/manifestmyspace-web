@@ -80,7 +80,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams}){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate("/maintenance")
+                    navigate(maintenanceRoutingBasedOnSelectedRole())
                 } else{
                     console.log("error setting status")
                 }

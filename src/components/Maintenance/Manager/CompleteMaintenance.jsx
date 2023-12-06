@@ -29,6 +29,8 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
+    console.log("--debug-- complete maintenance", maintenanceItem)
+
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
 
@@ -154,7 +156,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         onClick={() => handleNavigate()}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Pay Maintenance - Kim Deal
+                            Pay Maintenance - {maintenanceItem.business_name}
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>

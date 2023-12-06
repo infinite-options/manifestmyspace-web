@@ -346,25 +346,6 @@ export default function PaymentsTenant(props) {
                                 + Add Account
                             </Typography>
                         </Stack>
-                        {/* <Stack
-                        direction="row"
-                        justifyContent="center"
-                        >
-                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1 }}>
-                            <Grid item xs={3}>
-                                Apple
-                            </Grid>
-                            <Grid item xs={3}>
-                                Visa
-                            </Grid>
-                            <Grid item xs={3}>
-                                Paytm
-                            </Grid>
-                            <Grid item xs={3}>
-                                MasterCard
-                            </Grid>
-                        </Grid>
-                    </Stack> */}
                     </Paper>
 
                     <Paper
