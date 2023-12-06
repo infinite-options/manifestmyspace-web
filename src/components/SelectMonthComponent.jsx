@@ -41,6 +41,9 @@ const SelectMonthComponent = (props) => {
         <div className="vector-parent">
           <Button variant="outlined" id="button" className="group-item" onClick={() => { handleYearChange('2023') }}> 2023 </Button>
         </div>
+        <div className="vector-parent">
+          <Button variant="outlined" id="button" className="group-item" onClick={() => { handleYearChange('2024') }}> 2024 </Button>
+        </div>
         <div className="vector-group">
           <Button variant="outlined" id="button" className="group-inner"> Past 12 Months </Button>
         </div>

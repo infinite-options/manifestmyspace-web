@@ -183,7 +183,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Manager -  Steve Albini
+                            Manager - {maintenanceItem?.business_name}
                         </Typography>
                     </Button>
                 </Grid>

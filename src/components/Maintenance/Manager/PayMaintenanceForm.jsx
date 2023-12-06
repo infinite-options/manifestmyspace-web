@@ -44,75 +44,11 @@ export default function PayMaintenanceForm(){
     console.log(maintenanceItem)
 
     const handleSubmit = () => {
-        console.log("handleSubmit")
-        // const changeMaintenanceRequestStatus = async () => {
-        //     setShowSpinner(true);
-        //     try {
-        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-        //                 "maintenance_request_status": "PAID"
-        //             })
-        //         });
-
-        //         const responseData = await response.json();
-        //         console.log(responseData);
-        //         if (response.status === 200) {
-        //             console.log("success")
-        //         } else{
-        //             console.log("error setting status")
-        //         }
-        //     } catch (error){
-        //         console.log("error", error)
-        //     }
-        //     setShowSpinner(false);
-        // }
-        // const changeMaintenanceQuoteStatus = async () => {
-        //     setShowSpinner(true);
-        //     const formData = new FormData();
-        //     //formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_quote_uid)
-        //     formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-        //     formData.append("quote_status", "COMPLETED")
-            
-        //     try {
-        //         const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
-        //             method: 'PUT',
-        //             body: formData
-        //         });
-
-        //         const responseData = await response.json();
-        //         console.log(responseData);
-        //         if (response.status === 200) {
-        //             console.log("success")
-        //             changeMaintenanceRequestStatus()
-        //             navigate("/maintenance/detail", {
-        //                 state: {
-        //                     maintenance_request_index,
-        //                     status,
-        //                     maintenanceItemsForStatus,
-        //                     allMaintenanceData,
-        //                 }
-        //             }); 
-        //         } else{
-        //             console.log("error setting status")
-        //         }
-        //     } catch (error){
-        //         console.log("error", error)
-        //     }
-        //     setShowSpinner(false);
-        // }
-        // changeMaintenanceQuoteStatus()
-
         navigate("/payments", {state: {maintenanceItem}})
     }
 
     useEffect(() => {
         let imageArray = JSON.parse(maintenanceItem.maintenance_images)
-
         setDisplayImages(imageArray)
     }, [])
 

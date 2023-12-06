@@ -71,18 +71,16 @@ export default function MaintenanceRequestDetail01(){
     let navigate = useNavigate();
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
+        // console.log("handleBackButton")
         navigate(-1); 
     }
 
     function deactivateTab(key, maintenanceData){
-
-        console.log("deactivateTab", maintenanceData[key].length)
         if(maintenanceData[key]){
             return maintenanceData[key].length > 0 ? false : true;
         }
@@ -129,12 +127,12 @@ export default function MaintenanceRequestDetail01(){
     const maintenanceItemsForStatus = location.state.maintenanceItemsForStatus;
     const allData = location.state.allMaintenanceData;
 
-    console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
+    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
 
     useEffect(() => {
-        console.log("useEffect")
-        console.log("status value", status)
+        // console.log("useEffect")
+        // console.log("status value", status)
         colorStatus.find((item, index) => {
             if(item.status === status){
                 console.log("status", item.status, "===", status)
@@ -144,7 +142,7 @@ export default function MaintenanceRequestDetail01(){
     }, [status])
 
     const handleChange = (event, newValue) => {
-        console.log("tab is changing to ", newValue)
+        // console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
@@ -154,9 +152,9 @@ export default function MaintenanceRequestDetail01(){
         setMaintenanceRequestIndex(index);  
     }
 
-    useEffect(() => {
-        console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
-    }, [maintenanceRequestIndex])
+    // useEffect(() => {
+    //     console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
+    // }, [maintenanceRequestIndex])
 
     // console.log("all data MaintenanceRequestDetail", location.state.allData);
 
@@ -269,6 +267,7 @@ export default function MaintenanceRequestDetail01(){
                                         return (
                                             <Tab key={index}
                                                 disabled={deactivateTab(item.mapping, allData)}
+                                                // disabled={true}
                                                 {...a11yProps(index)} 
                                                 sx={{
                                                     backgroundColor: color,

@@ -166,6 +166,7 @@ export default function Payments(props) {
                 initialSelectedItems = paymentStatusData.map(item => ({
                     id: item.purchase_uid,
                     details: item,
+                    quote_id: item.bill_maintenance_quote_id,
                     selected: item.purchase_uid === maintenanceItemNav.purchase_uid,
                 }));
 
@@ -174,6 +175,7 @@ export default function Payments(props) {
                 initialSelectedItems = paymentStatusData.map((item) => ({
                     id: item.purchase_uid,
                     details: item,
+                    quote_id: item.bill_maintenance_quote_id,
                     selected: true,
                 }))
             }
@@ -354,7 +356,7 @@ export default function Payments(props) {
                                         onClick={() => {
                                             paymentData.business_code = paymentNotes;
                                             navigate("/selectPayment", {
-                                                state: { paymentData, total , maintenanceItem: location.state.maintenanceItem},
+                                                state: { paymentData, total, selectedItems: selectedItems},
                                             });
                                         }}
                                     >

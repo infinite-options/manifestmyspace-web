@@ -27,15 +27,15 @@ export default function MaintenanceWorkerDashboardWidget(props){
     useEffect(() => {
         const dataObject = {};
         const fetchMaintenanceDashboardData = async () => {
-            console.log("in useEffect")
+            // console.log("in useEffect")
             setShowSpinner(true);
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
             
             // const jsonData = await response.json()
             const jsonData = props.dashboard_data
             
-            console.log("CurrentActivities", jsonData.CurrentActivities.result)
-            console.log("WorkOrders", jsonData.WorkOrders.result)
+            // console.log("CurrentActivities", jsonData.CurrentActivities.result)
+            // console.log("WorkOrders", jsonData.WorkOrders.result)
             setWorkOrders(jsonData.WorkOrders.result)
             setCurrentActivities(jsonData.CurrentActivities.result)
             setShowSpinner(false);
@@ -45,7 +45,7 @@ export default function MaintenanceWorkerDashboardWidget(props){
             setShowSpinner(true);
             const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
-            console.log("maintenanceRequestsData1", maintenanceRequestsData1)
+            // console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
             let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ??[];
             let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
@@ -61,7 +61,7 @@ export default function MaintenanceWorkerDashboardWidget(props){
             dataObject["FINISHED"] = [...array5];
             dataObject["PAID"] = [...array6];
             
-            console.log("dataObject from new api call", dataObject)
+            // console.log("dataObject from new api call", dataObject)
             setMaintenanceRequests(prevData => ({
                 ...prevData, 
                 ...dataObject
@@ -74,8 +74,8 @@ export default function MaintenanceWorkerDashboardWidget(props){
     }, []);
     
     function handleFilter(filterString, searchArray){
-        console.log("filterString", filterString)
-        console.log("searchArray", searchArray)
+        // console.log("filterString", filterString)
+        // console.log("searchArray", searchArray)
         let filteredArray = []
         if(filterString === "All" || filterString === ""){
             filteredArray = searchArray
