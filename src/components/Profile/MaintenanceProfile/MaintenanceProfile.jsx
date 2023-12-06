@@ -72,7 +72,7 @@ function MaintenanceProfile() {
   
     let paymentElements = {
       'zelle': { icon: <img src={ZelleIcon} alt="Zelle Icon" width="25" height="25" />} ,
-      'applePay': {icon: <img src={ApplePayIcon} alt="ApplePay Icon" width="25" height="25" />},
+      'apple_pay': {icon: <img src={ApplePayIcon} alt="ApplePay Icon" width="25" height="25" />},
       'stripe':{icon: <img src={StripeIcon} alt="Stripe Icon" width="25" height="25" />},
       'paypal':{icon: <img src={PaypalIcon} alt="Paypal Icon" width="25" height="25" />},
       'venmo':{ icon: <img src={VenmoIcon} alt="Venmo Icon" width="25" height="25" /> },
@@ -324,7 +324,7 @@ function MaintenanceProfile() {
                             height: '25px',
                         }}>
                             
-                        {/* { paymentElements[payment_account.paymentMethod_type].icon} */}
+                        { paymentElements[payment_account.paymentMethod_type].icon}
 
 
                         </Box>
