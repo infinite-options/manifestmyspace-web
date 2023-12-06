@@ -4,6 +4,7 @@ import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { useNavigate, useLocation } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,6 +16,8 @@ import Chase from '../../images/Chase.png'
 import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
 import DeleteIcon from '@mui/icons-material/Delete';
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,23 +37,40 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
     }
   }));
-export default function CardDetailsSettings() {
+export default function CardDetailsSettingsMaintenance() {
     const classes = useStyles();
     const navigate = useNavigate();
+    const { getProfileId } = useUser();
     const location = useLocation();
-    let   owner_data = location.state.owner_data;
-    let   payments_data = location.state.payments_data;
+    let   maintenance_data = location.state.maintenance_data;
 
+    const [showSpinner, setShowSpinner] = useState(false);
+
+    const [modifiedData, setModifiedData] = useState({ 'business_uid': maintenance_data?.business_uid, });
+    const [isEdited, setIsEdited] = useState(false);
+    const [isNewMethodAdded, setIsNewMethodAdded] = useState(false);
+
+    const [paymentsData, setPaymentsData] = useState([]);
     useEffect(() => {
-        console.log("CardDetailsSettingsManager useEffect");
-        console.log("Payments Data", payments_data);
-    }, []);
+        console.log("CardDetailsSettingsMaintenance useEffect");
+        console.log("Payments Data", paymentsData);
 
-    
-    
+        setModifiedPaymentsData(paymentsData);
 
-    // const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
-    const [modifiedPaymentsData, setModifiedPaymentsData] = useState(payments_data);
+        setPaypal(paymentsData.find(method => method.paymentMethod_type === "paypal"));
+        setApplePay(paymentsData.find(method => method.paymentMethod_type === "apple_pay"));
+        setStripe(paymentsData.find(method => method.paymentMethod_type === "stripe"));
+        setZelle(paymentsData.find(method => method.paymentMethod_type === "zelle"));
+        setVenmo(paymentsData.find(method => method.paymentMethod_type === "venmo"));
+
+        setPaypalActiveStatus(getActiveStatus("paypal"));
+        setApplePayActiveStatus(getActiveStatus("apple_pay"));
+        setStripeActiveStatus(getActiveStatus("stripe"));
+        setZelleActiveStatus(getActiveStatus("zelle"));
+        setVenmoActiveStatus(getActiveStatus("venmo"));
+    }, [paymentsData]);
+
+    const [modifiedPaymentsData, setModifiedPaymentsData] = useState([]);
     useEffect(()=>{
         console.log("modifiedPaymentsData - ");
         console.log("   ", modifiedPaymentsData);
@@ -66,16 +86,12 @@ export default function CardDetailsSettings() {
         console.log("   ", deletedPaymentsData);
     }, [deletedPaymentsData]);
 
-
-    const [modifiedData, setModifiedData] = useState({ 'owner_uid': owner_data?.owner_uid, });
-    const [isEdited, setIsEdited] = useState(false);
-    const [isNewMethodAdded, setIsNewMethodAdded] = useState(false);
-
-    const [paypal, setPaypal] = useState(payments_data.find(method => method.paymentMethod_type === "paypal"));
-    const [applePay, setApplePay] = useState(payments_data.find(method => method.paymentMethod_type === "apple_pay"));
-    const [stripe, setStripe] = useState(payments_data.find(method => method.paymentMethod_type === "stripe"));
-    const [zelle, setZelle] = useState(payments_data.find(method => method.paymentMethod_type === "zelle"));
-    const [venmo, setVenmo] = useState(payments_data.find(method => method.paymentMethod_type === "venmo"));
+    
+    const [paypal, setPaypal] = useState('');
+    const [applePay, setApplePay] = useState('');
+    const [stripe, setStripe] = useState('');
+    const [zelle, setZelle] = useState('');
+    const [venmo, setVenmo] = useState('');
 
     const [showPaypal, setShowPaypal] = useState(true);
     const [showApplePay, setShowApplePay] = useState(true);
@@ -83,9 +99,8 @@ export default function CardDetailsSettings() {
     const [showZelle, setShowZelle] = useState(true);
     const [showVenmo, setShowVenmo] = useState(true);
 
-
     const getActiveStatus = (name) => {
-        const foundMethod = payments_data.find(method => method.paymentMethod_type === name);
+        const foundMethod = paymentsData.find(method => method.paymentMethod_type === name);
         if(foundMethod){
             if(foundMethod.paymentMethod_status === "Active"){
                 return true;
@@ -93,7 +108,9 @@ export default function CardDetailsSettings() {
                 return false;
             }
         }
-    }   
+        return false;
+    }
+
 
     const [paypalActiveStatus, setPaypalActiveStatus] = useState(getActiveStatus("paypal"));
     useEffect(()=>{
@@ -138,25 +155,27 @@ export default function CardDetailsSettings() {
         return status;
     }
 
-    // const hasPaypalPayment      = (payments_data.find(method => method.paymentMethod_type === "paypal")) ? true: false;
-    // const hasApplePayPayment    = (payments_data.find(method => method.paymentMethod_type === "apple_pay")) ? true: false;
-    // const hasStripePayment      = (payments_data.find(method => method.paymentMethod_type === "stripe")) ? true: false;
-    // const hasZellePayment       = (payments_data.find(method => method.paymentMethod_type === "zelle")) ? true: false;
-    // const hasVenmoPayment       = (payments_data.find(method => method.paymentMethod_type === "venmo")) ? true: false;
+    
 
-    // console.log("Has Payment Method")
-    // console.log("   paypal - ",hasPaypalPayment);
-    // console.log("   apple_pay - ",hasApplePayPayment);
-    // console.log("   stripe - ",hasStripePayment)   
-    // console.log("   zelle - ",hasZellePayment);
-    // console.log("   venmo - ",hasVenmoPayment);    
-
-
-
-
-
-    // console.log("apple pay - ", payments_data.find(method => method.paymentMethod_type === "apple_pay"));
-
+    useEffect( () => {
+        setShowSpinner(true);
+        const fetchPaymentData = async () => {
+            try {
+            const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+            setPaymentsData(response.data.result);
+            
+            
+            } catch (error) {
+            setPaymentsData([]);
+            console.error('Error fetching payment accounts:', error);
+            }
+        };
+    
+        fetchPaymentData();
+  
+  
+  
+    }, []); // Include getProfileId in the dependencies array to avoid eslint warnings
 
     const handleInputChange = (event) => {
         console.log("Input changed")
@@ -176,7 +195,7 @@ export default function CardDetailsSettings() {
             setVenmo(value);
         }
 
-        if(payments_data.find(method => method.paymentMethod_type === name)){
+        if(paymentsData.find(method => method.paymentMethod_type === name)){
             // setModifiedData((prevData) => ({
             //     ...prevData,
             //     [name]: value
@@ -207,19 +226,15 @@ export default function CardDetailsSettings() {
                     const index = prevData.findIndex(item => item.paymentMethod_type === name);
                     if (index !== -1) {
                         const updatedData = [...prevData];
-                        updatedData[index] = { paymentMethod_profile_id : owner_data?.owner_uid, paymentMethod_name: value, paymentMethod_type: name };
+                        updatedData[index] = { paymentMethod_profile_id : maintenance_data?.business_uid, paymentMethod_name: value, paymentMethod_type: name };
                         return updatedData;
                     }else {
-                        return [...prevData, { paymentMethod_profile_id : owner_data?.owner_uid, paymentMethod_name: value, paymentMethod_type: name }];
+                        return [...prevData, { paymentMethod_profile_id : maintenance_data?.business_uid, paymentMethod_name: value, paymentMethod_type: name }];
                     }
                 });
                 setIsNewMethodAdded(true);
             }
-            
-            
-
         }
-
     }
 
     const changePaymentMethodStatus = (type, value) => {
@@ -312,15 +327,12 @@ export default function CardDetailsSettings() {
             setShowZelle(false);
         } else if(type === "venmo"){
             setShowVenmo(false);
-        }
-
-        
+        }  
     }
- 
-    //rohit - delete if other one works
+
+
     // const handleSubmit = (event) => {
     //     event.preventDefault();
-    //     // let response_success = false
 
     //     const headers = { 
     //         "Access-Control-Allow-Origin": "*",
@@ -344,8 +356,7 @@ export default function CardDetailsSettings() {
     //                 console.log('Payment method updated successfully');
     //                 setIsEdited(false); // Reset the edit status
     //                 // setModifiedData(payments_data);
-    //                 // navigate(-1)
-    //                 // response_success = true;
+    //                 navigate(-1)
     //             })
     //             .catch((error) => {
     //                 if(error.response){
@@ -354,28 +365,6 @@ export default function CardDetailsSettings() {
     //             });
                 
     //         });
-    //         // deletedPaymentsData.forEach((item, index) => {
-    //         //     // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
-
-    //         //     axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
-    //         //     .then((response) => {
-    //         //         console.log('Payment method deleted successfully');
-    //         //         setIsEdited(false); // Reset the edit status
-    //         //         // setModifiedData(payments_data);
-    //         //         // navigate(-1)
-    //         //        // response_success = true;
-    //         //     })
-    //         //     .catch((error) => {
-    //         //         if(error.response){
-    //         //             console.log(error.response.data);
-    //         //         }
-    //         //     });
-                
-    //         // });
-
-
-
-            
     //     }
 
     //     if(isNewMethodAdded){
@@ -387,8 +376,7 @@ export default function CardDetailsSettings() {
     //                 console.log('Payment method added successfully');
     //                 setIsNewMethodAdded(false); // Reset the edit status
     //                 // setNewData([])
-    //                 // navigate(-1)
-    //                 // response_success = true;
+    //                 navigate(-1)
     //             })
     //             .catch((error) => {
     //                 if(error.response){
@@ -399,11 +387,8 @@ export default function CardDetailsSettings() {
     //         });
 
     //     }
-    //     // console.log("ROHIT - response_success - ", response_success);
-    //     // if(response_success){
-    //     //     navigate(-1);
-    //     // }
     // }
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -528,9 +513,9 @@ export default function CardDetailsSettings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {owner_data.owner_photo_url !== null ? (
+                    {maintenance_data.business_photo_url !== null ? (
                         <img
-                            src={owner_data.owner_photo_url}
+                            src={maintenance_data.business_photo_url}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -563,7 +548,7 @@ export default function CardDetailsSettings() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {owner_data.owner_first_name? owner_data.owner_first_name : '<FIRST_NAME>'} {owner_data.owner_last_name? owner_data.owner_last_name : '<LAST_NAME>'}
+                    {maintenance_data.business_name? maintenance_data.business_name : '<BUSINESS_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -576,7 +561,7 @@ export default function CardDetailsSettings() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.light.fontWeight, 
                         fontSize:theme.typography.primary.smallFont}}>
-                    Owner Profile
+                    Tenant Profile
                     </Typography>
                     </Stack>
                     </>
@@ -852,7 +837,7 @@ export default function CardDetailsSettings() {
                     <Grid item xs={6}>
                         <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={4}>
-                            <Checkbox disabled={!chase} sx={{ color: theme.typography.common.blue }} />
+                            <Checkbox sx={{ color: theme.typography.common.blue }} />
                         </Grid>
                         <Grid item xs={4}>
                             <img src={Chase}/>
@@ -879,7 +864,7 @@ export default function CardDetailsSettings() {
                             <ArrowForwardIosIcon 
                             sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                             // onClick={()=>{navigate('/addCardSettings')}}/>
-                            onClick={()=>{navigate('/addCardSettings' ,{state: {owner_data: owner_data}})}}/>
+                            onClick={()=>{navigate('/addCardSettings')}}/>
                     </Box>
                     <Box
                         component="span"

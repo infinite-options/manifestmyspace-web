@@ -116,7 +116,7 @@ const PropertyInfo = (props) => {
     }
 
     function renderCorrectButtonText() {
-        if (status === "") { 
+        if (status === "" || status === null) { 
             return 'Apply Now';
         } else if (status === "NEW") {
             return 'View Application';            

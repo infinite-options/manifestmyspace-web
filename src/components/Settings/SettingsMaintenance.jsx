@@ -1,5 +1,5 @@
 import React, { Component , useState} from 'react';
-import { Paper, Box, Stack, ThemeProvider,Switch, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import theme from '../../theme/theme';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
@@ -7,15 +7,17 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
 import { useUser } from "../../contexts/UserContext";
+import { styled } from '@mui/material/styles';
+import Switch, { SwitchProps } from '@mui/material/Switch';
 
-export default function Settings() {
+
+export default function SettingsMaintenance() {
     const navigate = useNavigate();
-    const { logout } = useUser();
+    const { logout, user } = useUser();
     let [isOn1, switchState1]=useState(true)
     let [isOn2, switchState2]=useState(true)
     const location = useLocation();
-    let owner_data = location.state.owner_data;
-    let payments_data = location.state.payments_data;
+    let maintenance_data = location.state.maintenance_data;
     return (
         <ThemeProvider theme={theme}>
           <Box
@@ -76,9 +78,9 @@ export default function Settings() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {owner_data.owner_photo_url !== null ? (
+                    {maintenance_data.business_photo_url !== null ? (
                         <img
-                            src={owner_data.owner_photo_url}
+                            src={maintenance_data.business_photo_url}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -111,7 +113,8 @@ export default function Settings() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {owner_data.owner_first_name? owner_data.owner_first_name : '<FIRST_NAME>'} {owner_data.owner_last_name? owner_data.owner_last_name : '<LAST_NAME>'}
+                    {/* {user.first_name} {user.last_name} */}
+                    {maintenance_data.business_name? maintenance_data.business_name : '<BUSINESS_NAME>'}
                     </Typography>
                     </Stack>
                     <Stack
@@ -124,7 +127,7 @@ export default function Settings() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.light.fontWeight, 
                         fontSize:theme.typography.primary.smallFont}}>
-                    Owner Profile
+                    Maintenance Profile
                     </Typography>
                     </Stack>
                     </>
@@ -154,7 +157,9 @@ export default function Settings() {
                     <ArrowForwardIosIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                     // onClick={()=>{navigate('/editProfileSettings')}}/>
-                    onClick={()=>{navigate('/editProfileSettings' ,{state: {owner_data: owner_data}})}}/>
+                    // onClick={()=>{navigate('/pmProfileEdit' ,{state: {maintenance_data: maintenance_data}})}}/>
+                    onClick={()=>{navigate('/editProfileSettingsMaintenance' ,{state: {maintenance_data: maintenance_data}})}}/>
+                    
                     </Box>
                     <Box
                     component="span"
@@ -168,8 +173,7 @@ export default function Settings() {
                     </Typography>
                     <ArrowForwardIosIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
-                    // onClick={()=>{navigate('/changePasswordSettings')}}/>
-                    onClick={()=>{navigate('/changePasswordSettings' ,{state: {owner_data: owner_data}})}}/>
+                    onClick={()=>{navigate('/changePasswordSettingsMaintenance' ,{state: {maintenance_data: maintenance_data}})}}/>
                     </Box>                    
                     <Box
                     component="span"
@@ -184,21 +188,19 @@ export default function Settings() {
                     <AddIcon 
                     sx={{color: theme.typography.common.blue, fontSize: theme.typography.smallFont}}
                     // onClick={()=>{navigate('/cardDetailsSettings')}}/>
-                    onClick={()=>{navigate('/cardDetailsSettings' ,{state: {owner_data: owner_data, payments_data: payments_data}})}}/>
+                    onClick={()=>{navigate('/cardDetailsSettingsMaintenance' ,{state: {maintenance_data: maintenance_data}})}}/>
                     </Box>                    
+                    
                     <Box
-                    component="span"
-                    m={5}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                
-                <Typography>Allow Notification</Typography> 
-                <Switch sx={{backgroundColor:"#3D5CAC"}} checked={isOn1} onChange={()=>{switchState1(!isOn1)}}/>
-                
-
-                    </Box>                    
+                        component="span"
+                        m={5}
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <Typography>Allow Notification</Typography> 
+                        <IOSSwitch checked={isOn1} onChange={()=>{switchState1(!isOn1)}} />
+                    </Box>                     
                     <Box
                     component="span"
                     m={5}
@@ -210,7 +212,7 @@ export default function Settings() {
               
                 
                 <Typography>Dark Mode</Typography> 
-                <Switch sx={{backgroundColor:"#3D5CAC"}}  checked={isOn2} onChange={()=>{switchState2(!isOn2)}} />
+                <IOSSwitch  checked={isOn2} onChange={()=>{switchState2(!isOn2)}} />
                 
 
 
@@ -305,3 +307,54 @@ export default function Settings() {
         </ThemeProvider>
     )
 }
+
+const IOSSwitch = styled((props) => (
+    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+  ))(({ theme }) => ({
+    width: 42,
+    height: 26,
+    padding: 0,
+    '& .MuiSwitch-switchBase': {
+      padding: 0,
+      margin: 2,
+      transitionDuration: '300ms',
+      '&.Mui-checked': {
+        transform: 'translateX(16px)',
+        color: '#fff',
+        '& + .MuiSwitch-track': {
+          backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#3D5CAC',
+          opacity: 1,
+          border: 0,
+        },
+        '&.Mui-disabled + .MuiSwitch-track': {
+          opacity: 0.5,
+        },
+      },
+      '&.Mui-focusVisible .MuiSwitch-thumb': {
+        color: '#33cf4d',
+        border: '6px solid #fff',
+      },
+      '&.Mui-disabled .MuiSwitch-thumb': {
+        color:
+          theme.palette.mode === 'light'
+            ? theme.palette.grey[100]
+            : theme.palette.grey[600],
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+      },
+    },
+    '& .MuiSwitch-thumb': {
+      boxSizing: 'border-box',
+      width: 22,
+      height: 22,
+    },
+    '& .MuiSwitch-track': {
+      borderRadius: 26 / 2,
+      backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+      opacity: 1,
+      transition: theme.transitions.create(['background-color'], {
+        duration: 500,
+      }),
+    },
+  }));

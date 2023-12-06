@@ -50,10 +50,23 @@ const ManagerDetails = () => {
         business_email: "",
         },
     ]);
+    function sortProperties(properties){
+        properties.sort((a, b) => {
+            if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
+            return -1;
+            }
+            if (a.contract_status !== "NEW" && b.contract_status === "NEW") {
+            return 1;
+            }
+            return a.contract_status > b.contract_status;
+        })
+    }
+
     const fetchManagerProperties = async () => {
         setShowSpinner(true);
         const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByManager/${ownerId}/${managerBusinessId}`;
         const response = await axios.get(url);
+        sortProperties(response.data.result);
         setProperties(response.data.result);
         setShowSpinner(false);
     };
@@ -147,7 +160,7 @@ const ManagerDetails = () => {
                         flexDirection: "row",
                         alignItems: "center",
                     }}
-                    onClick={() => navigate("/propertyDetail", {state: {index: index, propertyList: propertyData}})} // need to pass in the index and the propertyData
+                    onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})} // need to pass in the index and the propertyData
                 >
                 <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
                 <Box>
@@ -300,41 +313,36 @@ const ManagerDetails = () => {
                         >
                             {`Manages ${properties.length} of your properties`}
                         </Typography>
-                        {properties.sort((a, b) => {
-                                if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
-                                return -1;
-                                }
-                                if (a.contract_status !== "NEW" && b.contract_status === "NEW") {
-                                return 1;
-                                }
-                                return a.contract_status > b.contract_status;
-                            }).map((p) => (
-                                <>
-                                    <Grid container direction="row">
-                                        <Typography
-                                            sx={{
-                                            paddingLeft: "15px",
-                                            fontFamily: "Source Sans Pro, sans-serif",
-                                            fontWeight: 600,
-                                            color: "#160449",
-                                            textDecoration: "underline",
-                                            }}
-                                        >
-                                            {`${p.property_address}, ${p.property_unit && p.property_unit+ ' ,' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                            fontWeight: 800,
-                                            paddingLeft: "10px",
-                                            fontFamily: "Source Sans Pro, sans-serif",
-                                            color: "#160449",
-                                            }}
-                                        >
-                                            {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
-                                        </Typography>
-                                    </Grid>
-                                </>
-                            )
+                        {properties.map((p) => { 
+                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid)
+                                
+                                return (
+                                        < >
+                                            <Grid container direction="row" onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}>
+                                                <Typography
+                                                    sx={{
+                                                    paddingLeft: "15px",
+                                                    fontFamily: "Source Sans Pro, sans-serif",
+                                                    fontWeight: 600,
+                                                    color: "#160449",
+                                                    textDecoration: "underline",
+                                                    }}
+                                                >
+                                                    {`${p.property_address}, ${p.property_unit && p.property_unit+ ', ' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                    fontWeight: 800,
+                                                    paddingLeft: "10px",
+                                                    fontFamily: "Source Sans Pro, sans-serif",
+                                                    color: "#160449",
+                                                    }}
+                                                >
+                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
+                                                </Typography>
+                                            </Grid>
+                                        </>
+                                    )}
                         )}
                         {managerData.contract_status === "ACTIVE" ? (
                             <Button

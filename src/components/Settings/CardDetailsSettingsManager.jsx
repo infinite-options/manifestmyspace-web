@@ -14,6 +14,8 @@ import Venmo from '../../images/Venmo.png'
 import Chase from '../../images/Chase.png'
 import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,15 +40,120 @@ export default function CardDetailsSettingsManager() {
     const navigate = useNavigate();
     const location = useLocation();
     let   manager_data = location.state.manager_data;
+    let   payments_data = location.state.payments_data;
 
-    const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
+    useEffect(() => {
+        console.log("CardDetailsSettingsManager useEffect");
+        console.log("Payments Data", payments_data);
+    }, []);
+    
+
+    // const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
+    const [modifiedData, setModifiedData] = useState(payments_data);
+    useEffect(()=>{
+        console.log("modifiedData - ");
+        console.log("   ", modifiedData);
+    }, [modifiedData]);
+    const [newData, setNewData] = useState([]);
+    useEffect(()=>{
+        console.log("newData - ");
+        console.log("   ", newData);
+    }, [newData]);
+    const [deletedPaymentsData, setDeletedPaymentsData] = useState([]);
+    useEffect(()=>{
+        console.log("deletedPaymentsData - ");
+        console.log("   ", deletedPaymentsData);
+    }, [deletedPaymentsData]);
+
+
     const [isEdited, setIsEdited] = useState(false);
+    const [isNewMethodAdded, setIsNewMethodAdded] = useState(false);
 
-    const [paypal, setPaypal] = useState(manager_data.business_paypal? manager_data.business_paypal : '');
-    const [applePay, setApplePay] = useState(manager_data.business_apple_pay? manager_data.business_apple_pay : '');
-    const [stripe, setStripe] = useState(manager_data.business_stripe? manager_data.business_stripe : '');
-    const [zelle, setZelle] = useState(manager_data.business_zelle? manager_data.business_zelle : '');
-    const [venmo, setVenmo] = useState(manager_data.business_venmo? manager_data.business_venmo : '');
+    const [paypal, setPaypal] = useState(payments_data.find(method => method.paymentMethod_type === "paypal"));
+    const [applePay, setApplePay] = useState(payments_data.find(method => method.paymentMethod_type === "apple_pay"));
+    const [stripe, setStripe] = useState(payments_data.find(method => method.paymentMethod_type === "stripe"));
+    const [zelle, setZelle] = useState(payments_data.find(method => method.paymentMethod_type === "zelle"));
+    const [venmo, setVenmo] = useState(payments_data.find(method => method.paymentMethod_type === "venmo"));
+
+    const [showPaypal, setShowPaypal] = useState(true);
+    const [showApplePay, setShowApplePay] = useState(true);
+    const [showStripe, setShowStripe] = useState(true);
+    const [showZelle, setShowZelle] = useState(true);
+    const [showVenmo, setShowVenmo] = useState(true);
+
+
+    const getActiveStatus = (name) => {
+        const foundMethod = payments_data.find(method => method.paymentMethod_type === name);
+        if(foundMethod){
+            if(foundMethod.paymentMethod_status === "Active"){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }   
+
+    const [paypalActiveStatus, setPaypalActiveStatus] = useState(getActiveStatus("paypal"));
+    useEffect(()=>{
+        changePaymentMethodStatus("paypal", paypalActiveStatus);
+    }, [paypalActiveStatus]);
+
+    const [applePayActiveStatus, setApplePayActiveStatus] = useState(getActiveStatus("apple_pay"));
+    useEffect(()=>{
+        changePaymentMethodStatus("apple_pay", applePayActiveStatus);
+    }, [applePayActiveStatus]);
+
+    const [stripeActiveStatus, setStripeActiveStatus] = useState(getActiveStatus("stripe"));
+    useEffect(()=>{
+        changePaymentMethodStatus("stripe", stripeActiveStatus);
+    }, [stripeActiveStatus]);
+
+    const [zelleActiveStatus, setZelleActiveStatus] = useState(getActiveStatus("zelle"));
+    useEffect(()=>{
+        changePaymentMethodStatus("zelle", zelleActiveStatus);
+    }, [zelleActiveStatus]);
+
+    const [venmoActiveStatus, setVenmoActiveStatus] = useState(getActiveStatus("venmo"));
+    useEffect(()=>{
+        changePaymentMethodStatus("venmo", venmoActiveStatus);
+    }, [venmoActiveStatus]);
+
+
+    const getPaymentMethodStatus = (name) => {  
+        let status = null;
+        if (name === 'paypal') {
+            paypalActiveStatus? status = "Active" : status =  "Inactive";
+        } else if (name === 'apple_pay') {
+            applePayActiveStatus? status = "Active" : status =  "Inactive";
+        } else if (name === 'stripe') {
+            stripeActiveStatus? status = "Active" : status =  "Inactive";
+        } else if (name === 'zelle') {
+            zelleActiveStatus? status = "Active" : status =  "Inactive";
+        } else if (name === 'venmo') {
+            venmoActiveStatus? status = "Active" : status =  "Inactive";
+        }
+
+        return status;
+    }
+
+    // const hasPaypalPayment      = (payments_data.find(method => method.paymentMethod_type === "paypal")) ? true: false;
+    // const hasApplePayPayment    = (payments_data.find(method => method.paymentMethod_type === "apple_pay")) ? true: false;
+    // const hasStripePayment      = (payments_data.find(method => method.paymentMethod_type === "stripe")) ? true: false;
+    // const hasZellePayment       = (payments_data.find(method => method.paymentMethod_type === "zelle")) ? true: false;
+    // const hasVenmoPayment       = (payments_data.find(method => method.paymentMethod_type === "venmo")) ? true: false;
+
+    // console.log("Has Payment Method")
+    // console.log("   paypal - ",hasPaypalPayment);
+    // console.log("   apple_pay - ",hasApplePayPayment);
+    // console.log("   stripe - ",hasStripePayment)   
+    // console.log("   zelle - ",hasZellePayment);
+    // console.log("   venmo - ",hasVenmoPayment);    
+
+
+
+
+
+    // console.log("apple pay - ", payments_data.find(method => method.paymentMethod_type === "apple_pay"));
 
     const handleInputChange = (event) => {
         console.log("Input changed")
@@ -54,46 +161,259 @@ export default function CardDetailsSettingsManager() {
         // console.log(name)
         // console.log(value)
 
-        if (name === 'business_paypal') {
+        if (name === 'paypal') {
             setPaypal(value);
-        } else if (name === 'business_apple_pay') {
+        } else if (name === 'apple_pay') {
             setApplePay(value);
-        } else if (name === 'business_stripe') {
+        } else if (name === 'stripe') {
             setStripe(value);
-        } else if (name === 'business_zelle') {
+        } else if (name === 'zelle') {
             setZelle(value);
-        } else if (name === 'business_venmo') {
+        } else if (name === 'venmo') {
             setVenmo(value);
         }
 
-        setModifiedData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
+        if(payments_data.find(method => method.paymentMethod_type === name)){
+            // setModifiedData((prevData) => ({
+            //     ...prevData,
+            //     [name]: value
+            // }));
+            setIsEdited(true);
+            setModifiedData((prevData) => {
+                const index = prevData.findIndex(item => item.paymentMethod_type === name);
+                if (index !== -1) {
+                    const updatedData = [...prevData];
+                    updatedData[index] = { ...updatedData[index], paymentMethod_name: value };
+                    return updatedData;
+                } else {
+                    return [...prevData, { paymentMethod_name: value, paymentMethod_type: name }];
+                }
+            });
 
-        setIsEdited(true);
+        }else{
+            // setNewData((prevData) => [
+            //     ...prevData,
+            //     { paymentMethod_name: value, paymentMethod_type: name }
+            // ]);
+            if (value === "") {
+                const filteredData = newData.filter(item => item.paymentMethod_type !== name);
+                setNewData(filteredData);
+                setIsNewMethodAdded(false); // Assuming you want to set this to false when removing the item
+            }else {                
+                setNewData((prevData) => {
+                    const index = prevData.findIndex(item => item.paymentMethod_type === name);
+                    if (index !== -1) {
+                        const updatedData = [...prevData];
+                        updatedData[index] = { paymentMethod_profile_id : manager_data?.business_uid, paymentMethod_name: value, paymentMethod_type: name };
+                        return updatedData;
+                    }else {
+                        return [...prevData, { paymentMethod_profile_id : manager_data?.business_uid, paymentMethod_name: value, paymentMethod_type: name }];
+                    }
+                });
+                setIsNewMethodAdded(true);
+            }
+            
+            
+
+        }
+        
+        
+
+        
     }
+
+
+    const changePaymentMethodStatus = (type, value) => {
+        let status = getPaymentMethodStatus(type);
+        console.log("changePaymentMethodStatus - ")
+        console.log("   type - ", type)
+        console.log("   value - ", value)
+        if(modifiedData.find(method => method.paymentMethod_type === type)){
+            // setModifiedData((prevData) => ({
+            //     ...prevData,
+            //     [name]: value
+            // }));
+            setIsEdited(true);
+            // let status = getPaymentMethodStatus(type);
+            setModifiedData((prevData) => {
+                const index = prevData.findIndex(item => item.paymentMethod_type === type);
+                if (index !== -1) {
+                    const updatedData = [...prevData];
+                    updatedData[index] = { ...updatedData[index], paymentMethod_status: status };
+                    return updatedData;
+                }
+                return prevData;
+            });
+
+        } else if(newData.find(method => method.paymentMethod_type === type)) {
+            setIsNewMethodAdded(true);
+            setNewData((prevData) => {
+                const index = prevData.findIndex(item => item.paymentMethod_type === type);
+                if (index !== -1) {
+                    const updatedData = [...prevData];
+                    updatedData[index] = { ...updatedData[index], paymentMethod_status: status };
+                    return updatedData;
+                }
+                return prevData;
+            });
+        }
+    }
+
+    const handleStatusChange = (event, method_type) => {
+        console.log("Status changed")
+        const { name, checked } = event.target;
+        let paymentMethodtype = null;
+        console.log(name)
+        console.log(checked)
+        console.log(method_type)
+
+        let foundMethod = modifiedData.find(method => method.paymentMethod_type === method_type) || newData.find(method => method.paymentMethod_type === method_type);
+        
+        console.log("handleStatusChange - foundMethod - ", foundMethod)
+
+        if (name === 'paypal_status' && foundMethod) {
+            setPaypalActiveStatus(checked);
+            paymentMethodtype = "paypal";
+        } else if (name === 'apple_pay_status' && foundMethod) {
+            setApplePayActiveStatus(checked);
+            paymentMethodtype = "apple_pay";
+        } else if (name === 'stripe_status' && foundMethod) {
+            setStripeActiveStatus(checked);
+            paymentMethodtype = "stripe";
+        } else if (name === 'zelle_status' && foundMethod) {
+            setZelleActiveStatus(checked);
+            paymentMethodtype = "zelle";
+        } else if (name === 'venmo_status' && foundMethod) {
+            setVenmoActiveStatus(checked);
+            paymentMethodtype = "venmo";
+        }
+
+        console.log("NAME - ", name);
+        console.log("CHECKED - ", checked);
+        console.log("TYPE - ", paymentMethodtype );
+
+    }
+
+
+    const handleDeletePaymentMethod = (type) => {
+        console.log("handleDeletePaymentMethod, deleting - ", type);
+        setIsEdited(true);
+        const foundMethod = modifiedData.find(method => method.paymentMethod_type === type);
+        if(foundMethod){
+            setDeletedPaymentsData([...deletedPaymentsData, foundMethod]);
+        }
+        setModifiedData(modifiedData.filter(method => method.paymentMethod_type !== type));
+
+        if(type === "paypal"){
+            setShowPaypal(false);
+        } else if(type === "apple_pay"){
+            setShowApplePay(false);
+        } else if(type === "stripe"){
+            setShowStripe(false);
+        } else if(type === "zelle"){
+            setShowZelle(false);
+        } else if(type === "venmo"){
+            setShowVenmo(false);
+        }
+
+        
+    }
+
+
+    // const handleSubmit = (event) => {
+    //     event.preventDefault();
+
+    //     const headers = { 
+    //         "Access-Control-Allow-Origin": "*",
+    //         "Access-Control-Allow-Methods": "*",
+    //         "Access-Control-Allow-Headers": "*",
+    //         "Access-Control-Allow-Credentials":"*"
+    //     };
+
+    //     console.log("FORM SUBMITTED");
+    //     console.log("PUT DATA - ");
+    //     console.log("   ", modifiedData);
+    //     console.log("POST DATA - ");
+    //     console.log("   ", newData);
+
+    //     if(isEdited){
+    //         modifiedData.forEach((item, index) => {
+    //             // console.log(`Element at index ${index}: `, item);
+
+    //             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
+    //             .then((response) => {
+    //                 console.log('Payment method updated successfully');
+    //                 setIsEdited(false); // Reset the edit status
+    //                 // setModifiedData(payments_data);
+    //                 navigate(-1)
+    //             })
+    //             .catch((error) => {
+    //                 if(error.response){
+    //                     console.log(error.response.data);
+    //                 }
+    //             });
+                
+    //         });
+    //     }
+
+    //     if(isNewMethodAdded){
+    //         newData.forEach((item, index) => {
+    //             // console.log(`Element at index ${index}: `, item);
+
+    //             axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
+    //             .then((response) => {
+    //                 console.log('Payment method added successfully');
+    //                 setIsNewMethodAdded(false); // Reset the edit status
+    //                 // setNewData([])
+    //                 navigate(-1)
+    //             })
+    //             .catch((error) => {
+    //                 if(error.response){
+    //                     console.log(error.response.data);
+    //                 }
+    //             });
+                
+    //         });
+
+    //     }
+
+    //     const formData = new FormData();
+    //     for (const key in modifiedData) {
+    //         if (Object.hasOwnProperty.call(modifiedData, key)) {
+    //             const value = modifiedData[key];
+                
+    //             // Check if the value is a non-null object (excluding arrays)
+    //             const serializedValue = (value !== null && typeof value === 'object')
+    //                 ? JSON.stringify(value)
+    //                 : String(value);
+    
+    //             formData.append(key, serializedValue);
+    //         }
+    //     }
+        
+
+        
+
+    //     // if(isEdited){
+    //     //     console.log("EDITED")
+    //     //     // axios.put('http://localhost:4000/businessProfile', modifiedData, headers)
+    //     //     axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
+    //     //     .then((response) => {
+    //     //         console.log('Data updated successfully');
+    //     //         setIsEdited(false); // Reset the edit status
+    //     //         navigate(-1)
+    //     //     })
+    //     //     .catch((error) => {
+    //     //         if(error.response){
+    //     //             console.log(error.response.data);
+    //     //         }
+    //     //     });
+    //     // }
+    // }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("FORM SUBMITTED");
-        console.log(modifiedData);
-
-
-        const formData = new FormData();
-        for (const key in modifiedData) {
-            if (Object.hasOwnProperty.call(modifiedData, key)) {
-                const value = modifiedData[key];
-                
-                // Check if the value is a non-null object (excluding arrays)
-                const serializedValue = (value !== null && typeof value === 'object')
-                    ? JSON.stringify(value)
-                    : String(value);
-    
-                formData.append(key, serializedValue);
-            }
-        }
-        
+        const requests = [];
 
         const headers = { 
             "Access-Control-Allow-Origin": "*",
@@ -102,21 +422,46 @@ export default function CardDetailsSettingsManager() {
             "Access-Control-Allow-Credentials":"*"
         };
 
-        if(isEdited){
-            console.log("EDITED")
-            // axios.put('http://localhost:4000/businessProfile', modifiedData, headers)
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
-            .then((response) => {
-                console.log('Data updated successfully');
-                setIsEdited(false); // Reset the edit status
-                navigate(-1)
-            })
-            .catch((error) => {
-                if(error.response){
-                    console.log(error.response.data);
-                }
+        console.log("FORM SUBMITTED");
+        console.log("PUT DATA - ");
+        console.log("   ", modifiedData);
+        console.log("POST DATA - ");
+        console.log("   ", newData);
+        console.log("DELETE DATA - ");
+        console.log("   ", deletedPaymentsData);
+
+        if (isEdited) {
+            modifiedData.forEach((item) => {
+                const request = axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                requests.push(request);
+            });
+            deletedPaymentsData.forEach((item, index) => {
+                // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
+                const request = axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
+                requests.push(request);
+            });
+
+        }
+
+        if (isNewMethodAdded) {
+            newData.forEach((item) => {
+                const request = axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                requests.push(request);
             });
         }
+
+        Promise.all(requests)
+        .then(() => {
+            console.log('All requests completed successfully');
+            setIsEdited(false);
+            setIsNewMethodAdded(false);
+            navigate(-1);
+        })
+        .catch((error) => {
+            console.log('Error in requests:', error);
+        });
+        
+        
     }
 
 
@@ -251,114 +596,271 @@ export default function CardDetailsSettingsManager() {
                     autoComplete="off"
                     id="editProfileForm"
                 >
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={PayPal}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Paypal</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="business_paypal" value={paypal} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showPaypal && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="paypal_status" checked={paypalActiveStatus} disabled={!paypal} onChange={(e) => handleStatusChange(e, "paypal")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={PayPal}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Paypal</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="paypal" value={paypal?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("paypal");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={ApplePay}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Apple Pay</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="business_apple_pay" value={applePay} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showApplePay && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="apple_pay_status" checked={applePayActiveStatus} disabled={!applePay} onChange={(e) => handleStatusChange(e, "apple_pay")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={ApplePay}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Apple Pay</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="apple_pay" value={applePay?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button                                        
+                                        variant="text"                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("apple_pay");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={Stripe}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Stripe</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showStripe && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="stripe_status" checked={stripeActiveStatus} disabled={!stripe} onChange={(e) => handleStatusChange(e, "stripe")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={Stripe}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Stripe</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="stripe" value={stripe?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("stripe");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={Zelle}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Zelle</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="business_zelle" value={zelle} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showZelle && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="zelle_status" checked={zelleActiveStatus} disabled={!zelle} onChange={(e) => handleStatusChange(e, "zelle")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={Zelle}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Zelle</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="zelle" value={zelle?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("zelle");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={Venmo}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Venmo</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="business_venmo" value={venmo} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showVenmo && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="venmo_status" checked={venmoActiveStatus} disabled={!venmo} onChange={(e) => handleStatusChange(e, "venmo")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={Venmo}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Venmo</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="venmo" value={venmo?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("venmo");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={6}>
                         <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={4}>
-                            <Checkbox sx={{ color: theme.typography.common.blue }} />
+                            <Checkbox disabled={!chase} sx={{ color: theme.typography.common.blue }} />
                         </Grid>
                         <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
                             <img src={Chase}/>
                         </Grid>
                         <Grid item xs={4}>
@@ -369,7 +871,7 @@ export default function CardDetailsSettingsManager() {
                     <Grid item xs={6}>
                         <TextField variant="filled" fullWidth placeholder="" className={classes.root} />
                     </Grid>
-                    </Grid>
+                    </Grid> */}
                     
                     <Box
                         component="span"
