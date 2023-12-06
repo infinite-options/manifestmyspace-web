@@ -14,6 +14,7 @@ import Venmo from '../../images/Venmo.png'
 import Chase from '../../images/Chase.png'
 import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -59,6 +60,11 @@ export default function CardDetailsSettings() {
         console.log("newPaymentsData - ");
         console.log("   ", newPaymentsData);
     }, [newPaymentsData]);
+    const [deletedPaymentsData, setDeletedPaymentsData] = useState([]);
+    useEffect(()=>{
+        console.log("deletedPaymentsData - ");
+        console.log("   ", deletedPaymentsData);
+    }, [deletedPaymentsData]);
 
 
     const [modifiedData, setModifiedData] = useState({ 'owner_uid': owner_data?.owner_uid, });
@@ -70,6 +76,12 @@ export default function CardDetailsSettings() {
     const [stripe, setStripe] = useState(payments_data.find(method => method.paymentMethod_type === "stripe"));
     const [zelle, setZelle] = useState(payments_data.find(method => method.paymentMethod_type === "zelle"));
     const [venmo, setVenmo] = useState(payments_data.find(method => method.paymentMethod_type === "venmo"));
+
+    const [showPaypal, setShowPaypal] = useState(true);
+    const [showApplePay, setShowApplePay] = useState(true);
+    const [showStripe, setShowStripe] = useState(true);
+    const [showZelle, setShowZelle] = useState(true);
+    const [showVenmo, setShowVenmo] = useState(true);
 
 
     const getActiveStatus = (name) => {
@@ -281,8 +293,121 @@ export default function CardDetailsSettings() {
 
     }
 
+    const handleDeletePaymentMethod = (type) => {
+        console.log("handleDeletePaymentMethod, deleting - ", type);
+        setIsEdited(true);
+        const foundMethod = modifiedPaymentsData.find(method => method.paymentMethod_type === type);
+        if(foundMethod){
+            setDeletedPaymentsData([...deletedPaymentsData, foundMethod]);
+        }
+        setModifiedPaymentsData(modifiedPaymentsData.filter(method => method.paymentMethod_type !== type));
+
+        if(type === "paypal"){
+            setShowPaypal(false);
+        } else if(type === "apple_pay"){
+            setShowApplePay(false);
+        } else if(type === "stripe"){
+            setShowStripe(false);
+        } else if(type === "zelle"){
+            setShowZelle(false);
+        } else if(type === "venmo"){
+            setShowVenmo(false);
+        }
+
+        
+    }
+ 
+    //rohit - delete if other one works
+    // const handleSubmit = (event) => {
+    //     event.preventDefault();
+    //     // let response_success = false
+
+    //     const headers = { 
+    //         "Access-Control-Allow-Origin": "*",
+    //         "Access-Control-Allow-Methods": "*",
+    //         "Access-Control-Allow-Headers": "*",
+    //         "Access-Control-Allow-Credentials":"*"
+    //     };
+
+    //     console.log("FORM SUBMITTED");
+    //     console.log("PUT DATA - ");
+    //     console.log("   ", modifiedPaymentsData);
+    //     console.log("POST DATA - ");
+    //     console.log("   ", newPaymentsData);
+
+    //     if(isEdited){
+    //         modifiedPaymentsData.forEach((item, index) => {
+    //             // console.log(`Element at index ${index}: `, item);
+
+    //             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
+    //             .then((response) => {
+    //                 console.log('Payment method updated successfully');
+    //                 setIsEdited(false); // Reset the edit status
+    //                 // setModifiedData(payments_data);
+    //                 // navigate(-1)
+    //                 // response_success = true;
+    //             })
+    //             .catch((error) => {
+    //                 if(error.response){
+    //                     console.log(error.response.data);
+    //                 }
+    //             });
+                
+    //         });
+    //         // deletedPaymentsData.forEach((item, index) => {
+    //         //     // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
+
+    //         //     axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
+    //         //     .then((response) => {
+    //         //         console.log('Payment method deleted successfully');
+    //         //         setIsEdited(false); // Reset the edit status
+    //         //         // setModifiedData(payments_data);
+    //         //         // navigate(-1)
+    //         //        // response_success = true;
+    //         //     })
+    //         //     .catch((error) => {
+    //         //         if(error.response){
+    //         //             console.log(error.response.data);
+    //         //         }
+    //         //     });
+                
+    //         // });
+
+
+
+            
+    //     }
+
+    //     if(isNewMethodAdded){
+    //         newPaymentsData.forEach((item, index) => {
+    //             // console.log(`Element at index ${index}: `, item);
+
+    //             axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
+    //             .then((response) => {
+    //                 console.log('Payment method added successfully');
+    //                 setIsNewMethodAdded(false); // Reset the edit status
+    //                 // setNewData([])
+    //                 // navigate(-1)
+    //                 // response_success = true;
+    //             })
+    //             .catch((error) => {
+    //                 if(error.response){
+    //                     console.log(error.response.data);
+    //                 }
+    //             });
+                
+    //         });
+
+    //     }
+    //     // console.log("ROHIT - response_success - ", response_success);
+    //     // if(response_success){
+    //     //     navigate(-1);
+    //     // }
+    // }
+
     const handleSubmit = (event) => {
         event.preventDefault();
+        const requests = [];
 
         const headers = { 
             "Access-Control-Allow-Origin": "*",
@@ -296,47 +421,41 @@ export default function CardDetailsSettings() {
         console.log("   ", modifiedPaymentsData);
         console.log("POST DATA - ");
         console.log("   ", newPaymentsData);
+        console.log("DELETE DATA - ");
+        console.log("   ", deletedPaymentsData);
 
-        if(isEdited){
-            modifiedPaymentsData.forEach((item, index) => {
-                // console.log(`Element at index ${index}: `, item);
-
-                axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
-                .then((response) => {
-                    console.log('Payment method updated successfully');
-                    setIsEdited(false); // Reset the edit status
-                    // setModifiedData(payments_data);
-                    navigate(-1)
-                })
-                .catch((error) => {
-                    if(error.response){
-                        console.log(error.response.data);
-                    }
-                });
-                
+        if (isEdited) {
+            modifiedPaymentsData.forEach((item) => {
+                const request = axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                requests.push(request);
             });
-        }
-
-        if(isNewMethodAdded){
-            newPaymentsData.forEach((item, index) => {
-                // console.log(`Element at index ${index}: `, item);
-
-                axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
-                .then((response) => {
-                    console.log('Payment method added successfully');
-                    setIsNewMethodAdded(false); // Reset the edit status
-                    // setNewData([])
-                    navigate(-1)
-                })
-                .catch((error) => {
-                    if(error.response){
-                        console.log(error.response.data);
-                    }
-                });
-                
+            deletedPaymentsData.forEach((item, index) => {
+                // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
+                const request = axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
+                requests.push(request);
             });
 
         }
+
+        if (isNewMethodAdded) {
+            newPaymentsData.forEach((item) => {
+                const request = axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                requests.push(request);
+            });
+        }
+
+        Promise.all(requests)
+        .then(() => {
+            console.log('All requests completed successfully');
+            setIsEdited(false);
+            setIsNewMethodAdded(false);
+            navigate(-1);
+        })
+        .catch((error) => {
+            console.log('Error in requests:', error);
+        });
+        
+        
     }
 
 
@@ -471,105 +590,263 @@ export default function CardDetailsSettings() {
                     autoComplete="off"
                     id="editProfileForm"
                 >
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox name="paypal_status" checked={paypalActiveStatus} disabled={!paypal} onChange={(e) => handleStatusChange(e, "paypal")} sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={PayPal}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Paypal</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="paypal" value={paypal?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showPaypal && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="paypal_status" checked={paypalActiveStatus} disabled={!paypal} onChange={(e) => handleStatusChange(e, "paypal")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={PayPal}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Paypal</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="paypal" value={paypal?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("paypal");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox name="apple_pay_status" checked={applePayActiveStatus} disabled={!applePay} onChange={(e) => handleStatusChange(e, "apple_pay")} sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={ApplePay}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Apple Pay</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="apple_pay" value={applePay?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showApplePay && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="apple_pay_status" checked={applePayActiveStatus} disabled={!applePay} onChange={(e) => handleStatusChange(e, "apple_pay")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={ApplePay}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Apple Pay</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="apple_pay" value={applePay?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button                                        
+                                        variant="text"                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("apple_pay");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox name="stripe_status" checked={stripeActiveStatus} disabled={!stripe} onChange={(e) => handleStatusChange(e, "stripe")} sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={Stripe}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Stripe</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="stripe" value={stripe?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showStripe && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="stripe_status" checked={stripeActiveStatus} disabled={!stripe} onChange={(e) => handleStatusChange(e, "stripe")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={Stripe}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Stripe</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="stripe" value={stripe?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("stripe");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox name="zelle_status" checked={zelleActiveStatus} disabled={!zelle} onChange={(e) => handleStatusChange(e, "zelle")} sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={Zelle}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Zelle</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="zelle" value={zelle?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showZelle && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="zelle_status" checked={zelleActiveStatus} disabled={!zelle} onChange={(e) => handleStatusChange(e, "zelle")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={Zelle}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Zelle</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="zelle" value={zelle?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("zelle");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={4}>
-                            <Checkbox name="venmo_status" checked={venmoActiveStatus} disabled={!venmo} onChange={(e) => handleStatusChange(e, "venmo")} sx={{ color: theme.typography.common.blue }} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
-                            <img src={Venmo}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography sx={{ color: theme.typography.common.blue }}>Venmo</Typography>
-                        </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField name="venmo" value={venmo?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
-                    </Grid>
-                    </Grid>
+                    {
+                        showVenmo && (
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={6}>
+                                    <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <Checkbox name="venmo_status" checked={venmoActiveStatus} disabled={!venmo} onChange={(e) => handleStatusChange(e, "venmo")} sx={{ color: theme.typography.common.blue }} />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {/* <Checkbox sx={{ color: theme.typography.common.blue }} /> */}
+                                        <img src={Venmo}/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography sx={{ color: theme.typography.common.blue }}>Venmo</Typography>
+                                    </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField name="venmo" value={venmo?.paymentMethod_name} onChange={handleInputChange} variant="filled" fullWidth placeholder="" className={classes.root} />
+                                </Grid>
+                                <Grid item xs={1} sx={{margin: 'auto',}}>
+                                    <Button
+                                        
+                                        variant="text"
+                                        
+                                        sx={{
+                                            width: '100%', 
+                                            cursor: 'default',
+                                            fontSize: '20px',
+                                            fontWeight: 'bold', 
+                                            color: '#3D5CAC',
+                                            '&:hover, &:active, &:focus': {
+                                                backgroundColor: 'transparent', // Set to the same color as the default state
+                                            },
+                                        }}
+
+                                    >
+                                        <DeleteIcon 
+                                            sx={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                handleDeletePaymentMethod("venmo");
+                                            }}  
+                                        />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
                     
                     {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={6}>

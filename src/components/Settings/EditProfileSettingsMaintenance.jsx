@@ -47,6 +47,7 @@ export default function EditProfileSettingsMaintenance() {
     const [modifiedData, setModifiedData] = useState({ 'business_uid': maintenance_data?.business_uid, });
     const [isEdited, setIsEdited] = useState(false);
 
+    const [businessName, setBusinessName] = useState(maintenance_data.business_name? maintenance_data.business_name : '');
     const [emailAddress, setEmailAddress] = useState(maintenance_data.business_email? maintenance_data.business_email : '');
     const [phoneNumber, setPhoneNumber] = useState(maintenance_data.business_phone_number? maintenance_data.business_phone_number : '');
     const [address, setAddress] = useState(maintenance_data.business_address? maintenance_data.business_address : '');
@@ -217,7 +218,9 @@ export default function EditProfileSettingsMaintenance() {
         // console.log(name)
         // console.log(value)
 
-        if (name === 'business_email') {
+        if (name === 'business_name') {
+            setBusinessName(value);
+        } else if (name === 'business_email') {
             setEmailAddress(value);
         } else if (name === 'business_phone_number') {
             setPhoneNumber(value);
@@ -466,6 +469,16 @@ export default function EditProfileSettingsMaintenance() {
                     autoComplete="off"
                     id="editProfileForm"
                 >
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs={12}>
+                        <Stack spacing={-2} m={2}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Business Name</Typography>
+                        <TextField name="business_name" value={businessName} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                        </Stack>
+                    </Grid>
+                    
+                    
+                    </Grid>
                     <Stack spacing={-2} m={5}>
                     <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Email Address</Typography>
                     <TextField name="business_email" value={emailAddress} onChange={handleInputChange} variant="filled" fullWidth placeholder="email address" className={classes.root}></TextField>

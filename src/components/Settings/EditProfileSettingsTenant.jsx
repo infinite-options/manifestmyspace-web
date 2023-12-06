@@ -47,6 +47,8 @@ export default function EditProfileSettingsTenant() {
     const [modifiedData, setModifiedData] = useState({ 'tenant_uid': tenant_data?.tenant_uid, });
     const [isEdited, setIsEdited] = useState(false);
 
+    const [firstName, setFirstName] = useState(tenant_data.tenant_first_name? tenant_data.tenant_first_name : '');
+    const [lastName, setLastName] = useState(tenant_data.tenant_last_name? tenant_data.tenant_last_name : '');
     const [emailAddress, setEmailAddress] = useState(tenant_data.tenant_email? tenant_data.tenant_email : '');
     const [phoneNumber, setPhoneNumber] = useState(tenant_data.tenant_phone_number? tenant_data.tenant_phone_number : '');
     const [address, setAddress] = useState(tenant_data.tenant_address? tenant_data.tenant_address : '');
@@ -69,7 +71,11 @@ export default function EditProfileSettingsTenant() {
         // console.log(name)
         // console.log(value)
 
-        if (name === 'tenant_email') {
+        if (name === 'tenant_first_name') {
+            setFirstName(value);
+        } else if (name === 'tenant_last_name') {
+            setLastName(value);
+        } else if (name === 'tenant_email') {
             setEmailAddress(value);
         } else if (name === 'tenant_phone_number') {
             setPhoneNumber(value);
@@ -318,6 +324,20 @@ export default function EditProfileSettingsTenant() {
                     autoComplete="off"
                     id="editProfileForm"
                 >
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={6}>
+                            <Stack spacing={-2} m={2}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>First Name</Typography>
+                            <TextField name="tenant_first_name" value={firstName} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Stack spacing={-2} m={2}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Last Name</Typography>
+                            <TextField name="tenant_last_name" value={lastName} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                            </Stack>
+                        </Grid>
+                    </Grid>
                     <Stack spacing={-2} m={5}>
                     <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Email Address</Typography>
                     <TextField name="tenant_email" value={emailAddress} onChange={handleInputChange} variant="filled" fullWidth placeholder="email address" className={classes.root}></TextField>
