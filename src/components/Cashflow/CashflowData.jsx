@@ -333,6 +333,7 @@ const CashflowData = (props) => {
     let totalInsurance = 0;
     let totalUtilities = 0;
     let totalManagement = 0;
+    let totalBillPosting = 0;
     let totalManagementRent = 0;
     let totalManagementExtraCharges = 0;
     let totalManagementLateFee = 0;
@@ -344,6 +345,7 @@ const CashflowData = (props) => {
     let expectedInsurance = 0;
     let expectedUtilities = 0;
     let expectedManagement = 0;
+    let expectedBillPosting = 0;
     let expectedManagementRent = 0;
     let expectedManagementExtraCharges = 0;
     let expectedManagementLateFee = 0;
@@ -368,9 +370,10 @@ const CashflowData = (props) => {
               totalInsurance = totalInsurance + Number(expense["sum(total_paid)"]);
             } else if (expense.purchase_type === "UTILITY") {
               totalUtilities = totalUtilities + Number(expense["sum(total_paid)"]);
-            }
-            else if (expense.purchase_type.includes("OWNER PAYMENT")) {
+            } else if (expense.purchase_type.includes("OWNER PAYMENT")) {
               totalManagement = totalManagement + Number(expense["sum(total_paid)"]);
+            } else if (expense.purchase_type.includes("BILL POSTING")) {
+              totalBillPosting = totalBillPosting + Number(expense["sum(total_paid)"]);
             }
           }
           if (expense["sum(pur_amount_due)"] !== null) {
@@ -388,29 +391,33 @@ const CashflowData = (props) => {
               expectedUtilities = expectedUtilities + Number(expense["sum(pur_amount_due)"]);
             } else if (expense.purchase_type.includes("OWNER PAYMENT")) {
               expectedManagement = expectedManagement + Number(expense["sum(pur_amount_due)"]);
+            } else if (expense.purchase_type.includes("BILL POSTING")) {
+              expectedBillPosting = expectedBillPosting + Number(expense["sum(pur_amount_due)"]);
             }
           }
       }
       }
     });
     paidExpenseByType = {
-      totalMaintenance: totalMaintenance,
-      totalRepairs: totalRepairs,
-      totalMortgage: totalMortgage,
-      totalTaxes: totalTaxes,
-      totalInsurance: totalInsurance,
-      totalUtilities: totalUtilities,
-      totalManagement: totalManagement,
+      'MAINTENANCE': totalMaintenance,
+      'REPAIRS': totalRepairs,
+      'MORTGAGE': totalMortgage,
+      'TAXES': totalTaxes,
+      'INSURANCE': totalInsurance,
+      'UTILITIES': totalUtilities,
+      'MANAGEMENT': totalManagement,
+      'BILL POSTING': totalBillPosting,
     };
 
     expectedExpenseByType = {
-      expectedMaintenance: expectedMaintenance,
-      expectedRepairs: expectedRepairs,
-      expectedMortgage: expectedMortgage,
-      expectedTaxes: expectedTaxes,
-      expectedInsurance: expectedInsurance,
-      expectedUtilities: expectedUtilities,
-      expectedManagement: expectedManagement,
+      'MAINTENANCE': expectedMaintenance,
+      'REPAIRS': expectedRepairs,
+      'MORTGAGE': expectedMortgage,
+      'TAXES': expectedTaxes,
+      'INSURANCE': expectedInsurance,
+      'UTILITIES': expectedUtilities,
+      'MANAGEMENT': expectedManagement,
+      'BILL POSTING': expectedBillPosting,
     };
     paidExpenseByType && props.setTotalExpenseByType(paidExpenseByType);
     expectedExpenseByType && props.setExpectedExpenseByType(expectedExpenseByType);
