@@ -13,50 +13,45 @@ const ExpenseTable = (props) => {
   const totalExpenseByType = props.totalExpenseByType;
   const expenseList = props.expenseList;
 
-  // const [expenseTypeList, setExpenseTypeList] = useState([
-  //   { type: "MAINTENANCE", total: 0.0 },
-  //   { type: "REPAIRS", total: 0.0 },
-  //   { type: "MORTGAGE", total: 0.0 },
-  //   { type: "TAXES", total: 0.0 },
-  //   { type: "INSURANCE", total: 0.0 },
-  //   { type: "UTILITY", total: 0.0 },
-  //   { type: "MANAGEMENT", total: 0.0 },
-  //   { type: "BILL POSTING", total: 0.0 },
-  // ]);
-
-  // const [expenseTypeObject, setExpenseTypeObject] = useState({
-  //   "MAINTENANCE": 0.0,
-  //   "REPAIRS": 0.0,
-  //   "MORTGAGE": 0.0,
-  //   "TAXES": 0.0,
-  //   "INSURANCE": 0.0,
-  //   "UTILITY": 0.0,
-  //   "MANAGEMENT": 0.0,
-  //   "BILL POSTING": 0.0,
-  // });
-  
-
   const handleAccordionChange = () => {
     setExpanded(!expanded);
   };
 
-  // useEffect(() => {
-  //   if (expenseList) {
-  //     const updateExpenseTypes = { ...expenseTypeObject };
-  //     for (const expenseType in updateExpenseTypes) {
-  //       if (expenseList.hasOwnProperty(expenseType.toUpperCase())) {
-  //         const matchingItem = expenseList[expenseType.toUpperCase()];
-  //         console.log("matchingItem", matchingItem)
-  //         if (matchingItem) {
-  //           updateExpenseTypes[expenseType] += parseFloat(matchingItem.pur_amount_due);
-  //         }
-  //       }
-  //     }
-  
-  //     setExpenseTypeObject(updateExpenseTypes);
-  //   }
-  //   console.log("expenseTypeObject", expenseTypeObject);
-  // }, [expenseList]);
+  function getExpenseTypeItems(expenseType){
+    // console.log("searching through", expenseList)
+    let items = expenseList.filter((item) => item.purchase_type.toUpperCase() === expenseType[0]);
+    // console.log(expenseType[0], items)
+    if (items.length > 0) {
+        // console.log("items.length > 0")
+        return items.map((item) => (
+            <TableRow>
+                <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
+                </TableCell>
+                <TableCell align="right">
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                    ${item.total_paid}
+                </Typography>
+                </TableCell>
+            </TableRow>
+            )
+        )
+    } else {
+        // console.log("items.length <= 0")
+        return (
+            <TableRow>
+                <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> no items </Typography>
+                </TableCell>
+                <TableCell align="right">
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                    $0
+                </Typography>
+                </TableCell>
+            </TableRow>
+        )
+    }
+  }
 
   return (
     <>
@@ -68,6 +63,7 @@ const ExpenseTable = (props) => {
                 backgroundColor: theme.palette.custom.pink,
                 boxShadow: "none",
               }}
+              key={expenseType[0]}
             >
               <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
                 <Table>
@@ -88,7 +84,7 @@ const ExpenseTable = (props) => {
               <AccordionDetails>
                 <Table>
                   <TableBody>
-
+                    {getExpenseTypeItems(expenseType)} 
                   </TableBody>
                 </Table>
               </AccordionDetails>
