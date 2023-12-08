@@ -114,6 +114,8 @@ const ProfileInfo = () => {
   const [locations, setLocations] = useState([
     { id: 1, address: "", city: "", state: "", miles: "" },
   ]);
+  const [cookie, setCookie] = useCookies(["default_form_vals"]);
+  const cookiesData = cookie["default_form_vals"];
 
   const addFeeRow = () => {
     setFees((prev) => [
@@ -177,6 +179,13 @@ const ProfileInfo = () => {
     const data = await createProfile(form, selectedRole);
     setShowSpinner(false);
     handleUpdateProfileUid(data);
+    setCookie("default_form_vals", {...cookiesData, phoneNumber, email, address, unit, city, state, zip, ein, locations });
+    
+    
+    
+
+
+
     const profilePaymentPage= isLoggedIn ? "/privateProfilePayment" : "/profilePayment"
     navigate(profilePaymentPage, {
       state: {
@@ -347,7 +356,20 @@ const ProfileInfo = () => {
   };
 
   useEffect(() => {
+    setEmail(cookiesData?.email ?? '');
+    setPhoneNumber(cookiesData?.phoneNumber ?? '');
+    setLocations(prev=>([... prev, {city: cookiesData?.city ?? '', state: cookiesData?.state ?? ''}]) );
+    setAddress(cookiesData?.address ?? '');
+    setUnit(cookiesData?.unit ?? '');
+    setCity(cookiesData?.city ?? '');
+    setState(cookiesData?.state ?? '');
+    setZip(cookiesData?.zip ?? '');
+    setEin(cookiesData?.Ein ?? '');
+
     handleRoleSpecifics();
+    
+    
+    
   }, []);
 
   return (

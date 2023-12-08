@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
 import { formatPhoneNumber } from "./helper";
+import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +34,8 @@ function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [cookie, setCookie] = useCookies(["default_form_vals"]);
+  const cookiesData = cookie["default_form_vals"];
 
   const handleCreateUser = async () => {
     if (firstName === "" || lastName === "" || phoneNumber === "") {
@@ -48,6 +51,7 @@ function Register() {
       role: "",
       isEmailSignup: true,
     };
+    setCookie("default_form_vals", {...cookiesData, firstName, lastName, phoneNumber, email });
     navigate("/selectRole", { state: { user } });
   };
 

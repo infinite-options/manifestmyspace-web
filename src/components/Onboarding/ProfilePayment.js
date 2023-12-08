@@ -48,7 +48,8 @@ function ProfilePayment() {
   const { user, isBusiness, roleName, isLoggedIn } =
     useUser();
   
-
+  const [cookie, setCookie] = useCookies(["default_form_vals"]);
+  const cookiesData = cookie["default_form_vals"];
 
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false },
@@ -57,6 +58,8 @@ function ProfilePayment() {
     zelle: { value: "", checked: false },
     venmo: { value: "", checked: false },
   });
+
+ 
   const [checkedCreditCard, setCheckedCreditCard] = useState(false);
   const [checkedBankAccount, setCheckedBankAccount] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -97,6 +100,9 @@ function ProfilePayment() {
     );
     console.log("POST response: " + response);
     setShowSpinner(false);
+    setCookie("default_form_vals", {...cookiesData, paymentMethods });
+
+
     if (checkedCreditCard) navigate("");
     if (isBusiness())
       navigate(personalInfoPage, { state: { businessId: profileId } });
@@ -110,6 +116,9 @@ function ProfilePayment() {
   };
 
   useEffect(() => {
+    if (cookiesData?.paymentMethods)
+    setPaymentMethods(cookiesData.paymentMethods)
+  
     handleRoleSpecifics();
   }, []);
 
