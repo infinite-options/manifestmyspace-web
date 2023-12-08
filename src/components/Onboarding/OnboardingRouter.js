@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { useEffect } from "react";
 import { roleMap } from "./helper";
-import { useCookies } from "react-cookie";
+
 
 const OnboardingRouter = () => {
   const { onboardingState, setOnboardingState, selectRole, setLoggedIn, isLoggedIn } =
@@ -13,10 +13,16 @@ const OnboardingRouter = () => {
   const pageToNavigate = isLoggedIn ? "/privateProfileName" : "/profileName";
   useEffect(() => {
     if (roles.length === 0) {
-      selectRole(openingRole);
-      setLoggedIn(true);
-      const { dashboardUrl } = roleMap[openingRole] ?? "/";
-      navigate(dashboardUrl);
+      if (openingRole) {
+        selectRole(openingRole);
+        setLoggedIn(true);
+        const { dashboardUrl } = roleMap[openingRole];
+        navigate(dashboardUrl);
+      } else {
+        // Handle the case where openingRole is undefined
+        // You may want to redirect the user to a default page or show an error message
+        console.error("Opening role is undefined. Handle this case appropriately.");
+      }
     } else {
       const nextRole = roles.shift();
       if (!openingRole) {
@@ -28,7 +34,7 @@ const OnboardingRouter = () => {
       selectRole(nextRole);
       navigate(pageToNavigate);
     }
-  }, []);
+  }, [openingRole, roles, selectRole, setLoggedIn, setOnboardingState, onboardingState, navigate, pageToNavigate]);
 
   return null;
 };
