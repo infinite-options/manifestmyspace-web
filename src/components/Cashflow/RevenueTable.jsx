@@ -8,414 +8,171 @@ const RevenueTable = (props) => {
     const [expanded, setExpanded] = useState(false);
     const revenueSummary = props.revenueSummary;
     const revenue = props.revenue;
-    console.log("props resummary", props.revenueSummary)
-    
+  
     const totalRevenueByType = props.totalRevenueByType;
     const revenueList = props.revenueList;
+    const expectedRevenueByType = props.expectedRevenueByType
+    const activeView = props.activeView;
     const handleAccordionChange = () => {
         setExpanded(!expanded);
     };
-    return (<>
-        <ThemeProvider theme={theme}>
-        <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        // expanded={expanded}
-        // onChange={handleAccordionChange}
-        >
-          <AccordionSummary sx={{ flexDirection: 'row-reverse' }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Rent </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "RENT")
-              ? (revenueSummary
-                .find((reS) => reS.purchase_type === "RENT")
-                .total_paid.toFixed(2)) : '0.00'} */}
-                {totalRevenueByType && totalRevenueByType.totalRent ? totalRevenueByType.totalRent : '0.00'}
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "RENT" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                      <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                      </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
     
-    {/* extra charges */}
-    <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        >
-        <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Extra Charges </Typography>
-              </TableCell>
-              <TableCell align="right">
-              <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "EXTRA CHARGES")
-              ? (revenueSummary
-                .find((reS) => reS.purchase_type === "EXTRA CHARGES")
-                .total_paid.toFixed(2)) : '0.00'} */}
-              {totalRevenueByType && totalRevenueByType.totalExtraCharges ? totalRevenueByType.totalExtraCharges : '0.00'}
-              </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "EXTRA CHARGES" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                    <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                    </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                    <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                    </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
+
+    console.log("revenueList", revenueList)
+    console.log("totalRevenueByType", totalRevenueByType)
+
+    console.log("revenueSummary", revenueSummary)
+    console.log("revenue", revenue)
+
+    function getRevenueTypeItems(revenueType){
+      // console.log("searching through", expenseList)
+      let items = revenueList.filter((item) => item.purchase_type.toUpperCase() === revenueType[0]);
+      // console.log(expenseType[0], items)
+      if (items.length > 0) {
+          // console.log("items.length > 0")
+          return items.map((item) => (
+              <TableRow>
+                  <TableCell>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                      ${item.total_paid ? item.total_paid : 0}
+                  </Typography>
+                  </TableCell>
+              </TableRow>
+              )
+          )
+      } else {
+          // console.log("items.length <= 0")
+          return (
+              <TableRow>
+                  <TableCell>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> no items </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                      $0
+                  </Typography>
+                  </TableCell>
+              </TableRow>
+          )
+      }
+    }
+
+
+
+    return (
     
-    {/* deposits */}
-    <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        >
-        <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Deposits </Typography>
-              </TableCell>
-              <TableCell align="right">
-              <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $0.00
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "DEPOSIT") ?
-              (revenueSummary
-                .find((reS) => reS.purchase_type === "DEPOSIT")
-                .total_paid.toFixed(2)) : '0.00'} */}
-              </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "DEPOSIT" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                    <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                    <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                    </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
-    
-    {/* ulitilies */}
-    <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        >
-        <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Utilities </Typography>
-              </TableCell>
-              <TableCell align="right">
-              <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "UTILITY") ?
-              (revenueSummary
-                .find((reS) => reS.purchase_type === "UTILITY")
-                .total_paid.toFixed(2)) : '0.00'} */}
-              {totalRevenueByType && totalRevenueByType.totalUtilities ? totalRevenueByType.totalUtilities : '0.00'}
-              </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "UTILITY" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                    <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                    </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                    <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                    </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
-    
-    {/* late fee */}
-    <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        >
-        <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Late Fee </Typography>
-              </TableCell>
-              <TableCell align="right">
-              <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "LATE FEE") ?
-              (revenueSummary
-                .find((reS) => reS.purchase_type === "LATE FEE")
-                          .total_paid.toFixed(2)) : '0.00'} */}
-              {totalRevenueByType && totalRevenueByType.totalLateFee ? totalRevenueByType.totalLateFee : '0.00'}
-              </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "LATE FEE" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                    <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                    </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                    <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                    </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
-    
-    {/* maintenance */}
-    <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        >
-        <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Maintenance </Typography>
-              </TableCell>
-              <TableCell align="right">
-              <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "MAINTENANCE") ?
-              (revenueSummary
-                .find((reS) => reS.purchase_type === "MAINTENANCE")
-                .total_paid.toFixed(2)) : '0.00'} */}
-              {totalRevenueByType && totalRevenueByType.totalMaintenance ? totalRevenueByType.totalMaintenance : '0.00'}
-              </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "MAINTENANCE" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                    <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                    </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                    <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                    </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
-    
-    {/* repairs */}
-    <Accordion 
-        sx={{
-            backgroundColor: theme.palette.custom.yellow,
-            boxShadow: 'none',
-        }}
-        >
-        <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> Repairs </Typography>
-              </TableCell>
-              <TableCell align="right">
-              <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
-                $
-              {/* {revenueSummary && revenueSummary.find((reS) => reS.purchase_type === "REPAIRS") ?
-              (revenueSummary
-                .find((reS) => reS.purchase_type === "REPAIRS")
-                .total_paid.toFixed(2)) : '0.00'} */}
-              {totalRevenueByType && totalRevenueByType.totalRepairs ? totalRevenueByType.totalRepairs : '0.00'}
-              </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Table>
-          <TableBody>
-            {revenueList ? 
-            (revenueList.map((rev, i) => {
-                return rev.purchase_type === "REPAIRS" && rev.payment_status !== "UNPAID" ? (
-                    <TableRow>
-                    <TableCell align="left">
-                    <Typography sx={{fontSize: '12px'}}>
-                        {rev.property_address} {rev.property_unit}
-                        {/* {rev.city}, {rev.state},{rev.zip} */}
-                    </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                    <Typography sx={{fontSize: '12px'}}>
-                        $ {rev && rev.total_paid ? rev.total_paid : '0.00'}
-                    </Typography>
-                    </TableCell>
-                    </TableRow>
-                ) : (
-                    ""
-                );
-            })
-            ) : ''}
-        </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
-        </ThemeProvider>
-    </>)
+      <ThemeProvider theme={theme}>
+        {activeView === "Cashflow" ? (
+            <>
+                {Object.entries(totalRevenueByType).map((revenueType) => {
+                return (
+                    <Accordion
+                    sx={{
+                        backgroundColor: theme.palette.custom.pink,
+                        boxShadow: "none",
+                    }}
+                    key={revenueType[0]}
+                    >
+                    <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+                        <Table>
+                        <TableHead>
+                            <TableRow>
+                            <TableCell>
+                                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {revenueType[0]} </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                                ${revenueType[1] ? revenueType[1] : 0}
+                                </Typography>
+                            </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        </Table>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Table>
+                        <TableBody>
+                            {getRevenueTypeItems(revenueType)} 
+                        </TableBody>
+                        </Table>
+                    </AccordionDetails>
+                    </Accordion>
+                )})}
+            </>
+        ) : (
+            <>
+                {Object.entries(expectedRevenueByType).map((revenueType) => {
+                    return (
+                            <Accordion 
+                                sx={{
+                                    backgroundColor: theme.palette.custom.pink,
+                                    boxShadow: 'none',
+                                }}
+                            >
+                            <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                        <TableCell>
+                                            <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}> {revenueType[0]} </Typography>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                        <Typography sx={{fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
+                                            $
+                                            {revenueType[1] ? revenueType[1] : 0.00}
+                                        </Typography>
+                                        </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                </Table>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Table>
+                                    <TableBody>
+                                        {revenueList && revenueList.length > 0 ? (
+                                            (revenueList.map((rev, i) => {
+                                                return rev.purchase_type.toUpperCase() === revenueType[0] ? (
+                                                    <TableRow>
+                                                    <TableCell align="left">
+                                                    <Typography sx={{fontSize: '12px'}}>
+                                                        {rev.property_address} {rev.property_unit}
+                                                    {/* {rev.city}, {rev.state},{rev.zip} */}
+                                                    </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                    <Typography sx={{fontSize: '12px'}}>
+                                                        $ {rev.pur_amount_due}
+                                                    </Typography>
+                                                    </TableCell>
+                                                    </TableRow>
+                                                ) : null}
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell align="left">
+                                                    <Typography sx={{fontSize: '12px'}}>
+                                                        No items
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    <Typography sx={{fontSize: '12px'}}>
+                                                        $ 0.00
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </AccordionDetails>
+                        </Accordion>
+                    )}
+                )}
+            </>
+        )}
+    </ThemeProvider>
+  );
 }
 export default RevenueTable;
