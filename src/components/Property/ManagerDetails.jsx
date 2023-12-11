@@ -363,7 +363,7 @@ const ManagerDetails = () => {
                                                                 color: "#160449",
                                                             }}
                                                         >
-                                                            , contract_document: <img src={documentIcon} alt="document-icon" style={{width: '15px', height: '20px', margin:'0px', paddingLeft: "15px"}}/>
+                                                            , contract_document: <img src={documentIcon} alt="document-icon" style={{width: '12px', height: '15px', margin:'0px', paddingLeft: "15px"}}/>
                                                         </Typography>
                                                     </Box>:<div></div>
                                                 }
