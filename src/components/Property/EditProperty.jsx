@@ -339,8 +339,35 @@ export default function EditProperty({}){
             }
             setShowSpinner(false);
         }
+        const postUtilitiesData = async () => {
+            // setShowSpinner(true);
+            try{
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                    method: "POST",
+                    body: utilitiesFormData
+                })
+                // const response = await fetch("http://localhost:4000/utilities",{
+                //     method: "POST",
+                //     body: utilitiesFormData
+                // })
+                const data = await response.json();
+                console.log("data", data)
+                if (data.code === 200){
+                    navigate(-1);
+                    // should navigate to the listing page
+                }
+            } catch(error){
+                console.log("Error posting data:", error)
+            }
+            setShowSpinner(false);
+        }
         putData();
-        putUtilitiesData();
+        if(isDefaultUtilities){
+            postUtilitiesData();
+        } else{
+            putUtilitiesData();
+        }
+        
     }
 
 

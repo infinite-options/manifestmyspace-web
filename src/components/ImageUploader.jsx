@@ -54,13 +54,34 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
     };
 
     const handleImageFavorite = (event) => {
-        console.log("handleImageFavorite event", event)
-        const index = event
-        const file = selectedImageList[index]
-        if (file.favorite === undefined) file.favorite = true
-        else (file.favorite = !file.favorite)
-        console.log(file.favorite)
-        setSelectedImageList([...selectedImageList]);
+        // console.log("handleImageFavorite event", event)
+        // const index = event
+        // const file = selectedImageList[index]
+        // if (file.favorite === undefined) file.favorite = true
+        // else (file.favorite = !file.favorite)
+        // console.log(file.favorite)
+        // setSelectedImageList([...selectedImageList]);
+
+        const index = event;
+        let file = selectedImageList[index];
+
+        if (typeof file === 'string') {
+            
+            file = { url: file, favorite: true }; 
+
+            
+            setSelectedImageList([
+                ...selectedImageList.slice(0, index), 
+                file, 
+                ...selectedImageList.slice(index + 1),
+            ]);
+        } else if (typeof file === 'object') {
+            file.favorite = !file.favorite;
+            setSelectedImageList([...selectedImageList]);
+        } else {
+            
+            console.error("The selected item is neither a string nor an object.");
+        }
     };
 
     const handleImageTrash = (event) => {
