@@ -48,8 +48,6 @@ const PropertyInfo = (props) => {
     const status = location.state.status;
     const lease = location.state.lease;
     const ppt_images = property.property_images.split(',');
-    // const amenities_apartment = property.property_amenities_unit.split(",");
-    // const amenities_community = property.property_amenities_community.split(",");
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
     const [buttonColor, setButtonColor] = useState('#3D5CAC');
@@ -118,7 +116,7 @@ const PropertyInfo = (props) => {
     }
 
     function renderCorrectButtonText() {
-        if (status === "" || status === null) { 
+        if (status === "") { 
             return 'Apply Now';
         } else if (status === "NEW") {
             return 'View Application';            
@@ -129,29 +127,18 @@ const PropertyInfo = (props) => {
         } else if (status === "REJECTED"){
             return 'Not Approved'
         } else if (status === "ACTIVE"){
-            return 'Apply Now'
+            return 'Active'
         }
     }
 
-    // function navigateToCorrectPage(){
-    //     if (status === "" || status === "NEW") {
-    //         navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
-    //     } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
-    //         navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
-    //     } else {
-    //         return null
-    //     }
-    // }
-
     function navigateToCorrectPage(){
-        if (["", "NEW", "ACTIVE"].includes(status)) 
-            return {url: '/tenantApplication', params: { property: property, status: status, lease: lease } }
-        
-        if (status === "TENANT APPROVED" || status === "PROCESSING")
-            return {url: '/tenantLeases', params: { property: property, status: status, lease: lease }}
-        
-        else 
+        if (status === "" || status === "NEW") {
+            navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
+        } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
+            navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
+        } else {
             return null
+        }
     }
 
     return (
@@ -354,10 +341,7 @@ const PropertyInfo = (props) => {
                                  color: theme.palette.background.default,
                                  textTransform: 'none',
                              }}
-                            //  onClick={() => navigateToCorrectPage()}
-                            onClick={() => {
-                                const {url, params}=navigateToCorrectPage() 
-                                navigate(url,  {state: params}) } }
+                             onClick={() => navigateToCorrectPage()}
                          >
                            {renderCorrectButtonText()}
                          </Button>
@@ -611,26 +595,7 @@ const PropertyInfo = (props) => {
                         >
                             Apartment Amenities
                         </Typography>
-                        
-                        <Box
-                            component="span"
-                            display= 'flex'
-                            justifyContent= 'flex-start'
-                            paddingBottom="20px"
-                            position= 'relative'
-                            flexDirection="column"
-                            sx={{
-                                color: '#3D5CAC',
-                                fontsize: theme.typography.smallFont,
-                            }}
-                        >
-                            {/* {
-                                amenities_apartment.map(amenity => (
-                                    <Box>{amenity}</Box>                                    
-                                ))
-                            }                             */}
-                            {property.property_amenities_unit}
-                        </Box>
+                        <Box height={'150px'}></Box>
                         <Typography
                             sx={{
                                 color: theme.typography.primary.black,
@@ -639,25 +604,7 @@ const PropertyInfo = (props) => {
                         >
                             Community Amenities
                         </Typography>
-                        <Box
-                            component="span"
-                            display= 'flex'
-                            justifyContent= 'flex-start'
-                            paddingBottom="20px"
-                            position= 'relative'
-                            flexDirection="column"
-                            sx={{
-                                color: '#3D5CAC',
-                                fontsize: theme.typography.smallFont,
-                            }}
-                        >
-                            {/* {
-                                amenities_community.map(amenity => (
-                                    <Box>{amenity}</Box>                                    
-                                ))
-                            }                             */}
-                            {property.property_amenities_community}
-                        </Box>
+                        <Box height={'150px'}></Box>
                         <Typography
                             sx={{
                                 color: theme.typography.primary.black,

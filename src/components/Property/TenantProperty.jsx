@@ -39,14 +39,10 @@ import EmailIcon from './emailIcon.png';
 import PhoneIcon from './phoneIcon.png';
 
 
-import { useUser } from "../../contexts/UserContext";
-import axios from 'axios';
 
 export default function TenantProperty({ }) {
     const navigate = useNavigate()
     const [activeStep, setActiveStep] = useState(0);
-    const [lease, setLease] = useState([]);
-    const { getProfileId } = useUser();
 
     const paymentStatusMap = {
         "Paid On Time": theme.palette.priority.clear,
@@ -60,25 +56,28 @@ export default function TenantProperty({ }) {
 
     const color = theme.palette.form.main
 
-    useEffect(()=>{
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-        .then((res)=>{
-            const data = res.data['Lease_Details'].result;
-           
-            console.log("In TP: "+data)
-            data.forEach((lease) => {
-                location.state.propertyData.forEach((property) => {
-                    if(lease.lease_uid === property.lease_uid) {
-                        setLease(lease);
-                    }    
-                })
-            });
-            
-        });
-    },[]);
+    // const images = [
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //     {
+    //       label: 'maintenanceRequest',
+    //       imgPath: propertyImage,
+    //     },
+    //   ];
+      let images = JSON.parse(propertyData.property_images);
 
-    let images = JSON.parse(propertyData.property_images);
-    const maxSteps = images.length;
+    
+      const maxSteps = images.length;
     
       const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -366,14 +365,7 @@ export default function TenantProperty({ }) {
                                                                 sx={{
                                                                     padding: "0px"
                                                                 }}
-                                                                onClick={() => { 
-                                                                    navigate('/tenantLeases',{
-                                                                    state :{
-                                                                        property : propertyData,
-                                                                        status : propertyData.lease_status,
-                                                                        lease: lease
-                                                                    }
-                                                                })}}
+                                                                onClick={() => { console.log("View Lease"); navigate('/tenantLeases')}}
                                                             >
                                                                 <Typography
                                                                     sx={{
