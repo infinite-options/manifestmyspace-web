@@ -48,8 +48,8 @@ const PropertyInfo = (props) => {
     const status = location.state.status;
     const lease = location.state.lease;
     const ppt_images = property.property_images.split(',');
-    const amenities_apartment = property.property_amenities_unit.split(",");
-    const amenities_community = property.property_amenities_community.split(",");
+    // const amenities_apartment = property.property_amenities_unit.split(",");
+    // const amenities_community = property.property_amenities_community.split(",");
     const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
     const [buttonColor, setButtonColor] = useState('#3D5CAC');
@@ -624,11 +624,12 @@ const PropertyInfo = (props) => {
                                 fontsize: theme.typography.smallFont,
                             }}
                         >
-                            {
+                            {/* {
                                 amenities_apartment.map(amenity => (
                                     <Box>{amenity}</Box>                                    
                                 ))
-                            }                            
+                            }                             */}
+                            {property.property_amenities_unit}
                         </Box>
                         <Typography
                             sx={{
@@ -650,11 +651,12 @@ const PropertyInfo = (props) => {
                                 fontsize: theme.typography.smallFont,
                             }}
                         >
-                            {
+                            {/* {
                                 amenities_community.map(amenity => (
                                     <Box>{amenity}</Box>                                    
                                 ))
-                            }                            
+                            }                             */}
+                            {property.property_amenities_community}
                         </Box>
                         <Typography
                             sx={{
