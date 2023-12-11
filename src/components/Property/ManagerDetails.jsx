@@ -12,6 +12,7 @@ import AddressIcon from "./addressIconDark.png";
 import MapIcon from "./mapIcon.png";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import documentIcon from "../../images/Subtract.png"
 
 const ManagerDetails = () => {
     const navigate = useNavigate();
@@ -283,7 +284,7 @@ const ManagerDetails = () => {
                                 color: "#160449",
                                 }}
                             >
-                                {"TBD"}
+                                {`${propertyData[index].contract_start_date}`}
                             </Typography>
                         </Grid>
                         <Grid item xs={1}>
@@ -311,11 +312,19 @@ const ManagerDetails = () => {
                             color: "#160449",
                             }}
                         >
-                            {`Manages ${properties.length} of your properties`}
+                            {/* {`Manages ${properties.length} of your properties`} */}
+                            
+                            {`Manages ${propertyData.filter(property => property.business_uid === managerData.business_uid).length} of your properties`}
+
+                            
                         </Typography>
-                        {properties.map((p) => { 
-                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid)
-                                
+                        {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
+                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
+                                let docList = JSON.parse(p.contract_documents);
+                                const doc = docList.find(
+                                    (document) => document.type === "contract"
+                                );
+                                const contractDocumentLink = doc ? doc.link : '';
                                 return (
                                         < >
                                             <Grid container direction="row" onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}>
@@ -338,8 +347,26 @@ const ManagerDetails = () => {
                                                     color: "#160449",
                                                     }}
                                                 >
-                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
+                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"} {`, contract_uid: ${p.contract_uid}`} {`, contract_name: ${p.contract_name}`}
+                                                    
                                                 </Typography>
+                                                {
+                                                    contractDocumentLink!=="" ? <Box onClick={()=>{
+                                                        window.open(contractDocumentLink, "_blank");
+                                                        // console.log("we should show a document here")
+                                                    }}>
+                                                        <Typography
+                                                            sx={{
+                                                                fontWeight: 800,
+                                                                paddingLeft: "10px",
+                                                                fontFamily: "Source Sans Pro, sans-serif",
+                                                                color: "#160449",
+                                                            }}
+                                                        >
+                                                            , contract_document: <img src={documentIcon} alt="document-icon" style={{width: '15px', height: '20px', margin:'0px', paddingLeft: "15px"}}/>
+                                                        </Typography>
+                                                    </Box>:<div></div>
+                                                }
                                             </Grid>
                                         </>
                                     )}
