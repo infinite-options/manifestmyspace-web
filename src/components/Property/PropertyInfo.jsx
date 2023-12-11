@@ -116,7 +116,7 @@ const PropertyInfo = (props) => {
     }
 
     function renderCorrectButtonText() {
-        if (status === "" || status === null) { 
+        if (status === "") { 
             return 'Apply Now';
         } else if (status === "NEW") {
             return 'View Application';            
@@ -127,29 +127,18 @@ const PropertyInfo = (props) => {
         } else if (status === "REJECTED"){
             return 'Not Approved'
         } else if (status === "ACTIVE"){
-            return 'Apply Now'
+            return 'Active'
         }
     }
 
-    // function navigateToCorrectPage(){
-    //     if (status === "" || status === "NEW") {
-    //         navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
-    //     } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
-    //         navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
-    //     } else {
-    //         return null
-    //     }
-    // }
-
     function navigateToCorrectPage(){
-        if (["", "NEW", "ACTIVE"].includes(status)) 
-            return {url: '/tenantApplication', params: { property: property, status: status, lease: lease } }
-        
-        if (status === "TENANT APPROVED" || status === "PROCESSING")
-            return {url: '/tenantLeases', params: { property: property, status: status, lease: lease }}
-        
-        else 
+        if (status === "" || status === "NEW") {
+            navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
+        } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
+            navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
+        } else {
             return null
+        }
     }
 
     return (
@@ -352,10 +341,7 @@ const PropertyInfo = (props) => {
                                  color: theme.palette.background.default,
                                  textTransform: 'none',
                              }}
-                            //  onClick={() => navigateToCorrectPage()}
-                            onClick={() => {
-                                const {url, params}=navigateToCorrectPage() 
-                                navigate(url,  {state: params}) } }
+                             onClick={() => navigateToCorrectPage()}
                          >
                            {renderCorrectButtonText()}
                          </Button>
