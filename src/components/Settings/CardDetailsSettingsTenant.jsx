@@ -318,15 +318,20 @@ export default function CardDetailsSettingsTenant() {
         setModifiedPaymentsData(modifiedPaymentsData.filter(method => method.paymentMethod_type !== type));
 
         if(type === "paypal"){
-            setShowPaypal(false);
+            // setShowPaypal(false);
+            setPaypal({...paypal, paymentMethod_name: ''});
         } else if(type === "apple_pay"){
-            setShowApplePay(false);
+            // setShowApplePay(false);
+            setApplePay({...applePay, paymentMethod_name: ''});
         } else if(type === "stripe"){
-            setShowStripe(false);
+            // setShowStripe(false);
+            setStripe({...stripe, paymentMethod_name: ''});
         } else if(type === "zelle"){
-            setShowZelle(false);
+            // setShowZelle(false);
+            setZelle({...zelle, paymentMethod_name: ''});
         } else if(type === "venmo"){
-            setShowVenmo(false);
+            // setShowVenmo(false);
+            setVenmo({...venmo, paymentMethod_name: ''});
         }
     }
 
