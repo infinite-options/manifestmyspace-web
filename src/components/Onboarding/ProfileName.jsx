@@ -57,6 +57,9 @@ const ProfileName = () => {
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState();
   const [selectedBizRole, setSelectedBizRole] = useState();
+  const [cookie, setCookie] = useCookies(["default_form_vals"]);
+  const cookiesData = cookie["default_form_vals"];
+
   const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee } =
     useUser();
   const {
@@ -73,6 +76,7 @@ const ProfileName = () => {
   const profileInfoPage= isLoggedIn ? "/privateProfileInfo" : "/profileInfo"
 
   const handleNextStep = () => {
+    setCookie("default_form_vals", {...cookiesData, firstName, lastName, businessName });
     if (isBusiness() && businessName === "") {
       alert("Please enter a name");
       return;
@@ -163,6 +167,11 @@ const ProfileName = () => {
   };
 
   useEffect(() => {
+    
+    
+    setFirstName(cookiesData?.firstName ?? '');
+    setLastName(cookiesData?.lastName ?? '');
+    setBusinessName(cookiesData?.businessName ?? '');
     handleRoleSpecifics();
     handleFetchBusinesses();
   }, []);

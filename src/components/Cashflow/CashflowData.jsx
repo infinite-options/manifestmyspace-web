@@ -267,32 +267,32 @@ const CashflowData = (props) => {
                 revenue.property_unit === selectedProperty.property_unit)
         ) {
           if (revenue["sum(total_paid)"] !== null) {
-            if (revenue.purchase_type === "RENT") {
+            if (revenue.purchase_type.toUpperCase() === "RENT") {
               totalRent = totalRent + Number(revenue["sum(total_paid)"]);
-            } else if (revenue.purchase_type === "EXTRA CHARGES") {
+            } else if (revenue.purchase_type.toUpperCase() === "EXTRA CHARGES") {
               totalExtraCharges = totalExtraCharges + Number(revenue["sum(total_paid)"]);
-            } else if (revenue.purchase_type === "UTILITY") {
+            } else if (revenue.purchase_type.toUpperCase() === "UTILITY") {
               totalUtilities = totalUtilities + Number(revenue["sum(total_paid)"]);
-            } else if (revenue.purchase_type === "LATE FEE") {
+            } else if (revenue.purchase_type.toUpperCase() === "LATE FEE") {
               totalLateFee = totalLateFee + Number(revenue["sum(total_paid)"]);
-            } else if (revenue.purchase_type === "MAINTENANCE") {
+            } else if (revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
               totalMaintenance = totalMaintenance + Number(revenue["sum(total_paid)"]);
-            } else if (revenue.purchase_type === "REPAIRS") {
+            } else if (revenue.purchase_type.toUpperCase() === "REPAIRS") {
               totalRepairs = totalRepairs + Number(revenue["sum(total_paid)"]);
             }
           }
           if (revenue["sum(pur_amount_due)"] !== null) {
-            if (revenue.purchase_type === "RENT") {
+            if (revenue.purchase_type.toUpperCase() === "RENT") {
               expectedRent = expectedRent + Number(revenue["sum(pur_amount_due)"]);
-            } else if (revenue.purchase_type === "EXTRA CHARGES") {
+            } else if (revenue.purchase_type.toUpperCase() === "EXTRA CHARGES") {
               expectedExtraCharges = expectedExtraCharges + Number(revenue["sum(pur_amount_due)"]);
-            } else if (revenue.purchase_type === "UTILITY") {
+            } else if (revenue.purchase_type.toUpperCase() === "UTILITY") {
               expectedUtilities = expectedUtilities + Number(revenue["sum(pur_amount_due)"]);
-            } else if (revenue.purchase_type === "LATE FEE") {
+            } else if (revenue.purchase_type.toUpperCase() === "LATE FEE") {
               expectedLateFee = expectedLateFee + Number(revenue["sum(pur_amount_due)"]);
-            } else if (revenue.purchase_type === "MAINTENANCE") {
+            } else if (revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
               expectedMaintenance = expectedMaintenance + Number(revenue["sum(pur_amount_due)"]);
-            } else if (revenue.purchase_type === "REPAIRS") {
+            } else if (revenue.purchase_type.toUpperCase() === "REPAIRS") {
               expectedRepairs = expectedRepairs + Number(revenue["sum(pur_amount_due)"]);
             }
         }
@@ -300,23 +300,23 @@ const CashflowData = (props) => {
       }
     });
     paidRevenueByType = {
-      totalRent: totalRent,
-      totalDeposits: totalDeposits,
-      totalExtraCharges: totalExtraCharges,
-      totalUtilities: totalUtilities,
-      totalLateFee: totalLateFee,
-      totalMaintenance: totalMaintenance,
-      totalRepairs: totalRepairs,
+      "RENT": totalRent,
+      "DEPOSITS": totalDeposits,
+      "EXTRA CHARGES": totalExtraCharges,
+      "UTILITY": totalUtilities,
+      "LATE FEE": totalLateFee,
+      "MAINTENANCE": totalMaintenance,
+      "REPAIRS": totalRepairs,
     };
 
     expectedRevenueByType = {
-      expectedRent: expectedRent,
-      expectedDeposits: expectedDeposits,
-      expectedExtraCharges: expectedExtraCharges,
-      expectedUtilities: expectedUtilities,
-      expectedLateFee: expectedLateFee,
-      expectedMaintenance: expectedMaintenance,
-      expectedRepairs: expectedRepairs,
+      "RENT": expectedRent,
+      "DEPOSITS": expectedDeposits,
+      "EXTRA CHARGES": expectedExtraCharges,
+      "UTILITY": expectedUtilities,
+      "LATE FEE": expectedLateFee,
+      "MAINTENANCE": expectedMaintenance,
+      "REPAIRS": expectedRepairs,
     };
     paidRevenueByType && props.setTotalRevenueByType(paidRevenueByType);
     expectedRevenueByType && props.setExpectedRevenueByType(expectedRevenueByType);
@@ -333,6 +333,7 @@ const CashflowData = (props) => {
     let totalInsurance = 0;
     let totalUtilities = 0;
     let totalManagement = 0;
+    let totalBillPosting = 0;
     let totalManagementRent = 0;
     let totalManagementExtraCharges = 0;
     let totalManagementLateFee = 0;
@@ -344,9 +345,11 @@ const CashflowData = (props) => {
     let expectedInsurance = 0;
     let expectedUtilities = 0;
     let expectedManagement = 0;
+    let expectedBillPosting = 0;
     let expectedManagementRent = 0;
     let expectedManagementExtraCharges = 0;
     let expectedManagementLateFee = 0;
+    console.log("expense from Cashflow Data", expenseByType)
     expenseByType.forEach((expense) => {
       if (expense.cf_month === props.month && expense.cf_year === props.year) {
         if (
@@ -356,61 +359,66 @@ const CashflowData = (props) => {
                 expense.property_unit === selectedProperty.property_unit)
         ) {
           if (expense["sum(total_paid)"] !== null) {
-            if (expense.purchase_type === "MAINTENANCE") {
+            if (expense.purchase_type.toUpperCase() === "MAINTENANCE") {
               totalMaintenance = totalMaintenance + Number(expense["sum(total_paid)"]);
-            } else if (expense.purchase_type === "REPAIRS") {
+            } else if (expense.purchase_type.toUpperCase() === "REPAIRS") {
               totalRepairs = totalRepairs + Number(expense["sum(total_paid)"]);
-            } else if (expense.purchase_type === "MORTGAGE") {
+            } else if (expense.purchase_type.toUpperCase() === "MORTGAGE") {
               totalMortgage = totalMortgage + Number(expense["sum(total_paid)"]);
-            } else if (expense.purchase_type === "TAXES") {
+            } else if (expense.purchase_type.toUpperCase() === "TAXES") {
               totalTaxes = totalTaxes + Number(expense["sum(total_paid)"]);
-            } else if (expense.purchase_type === "INSURANCE") {
+            } else if (expense.purchase_type.toUpperCase() === "INSURANCE") {
               totalInsurance = totalInsurance + Number(expense["sum(total_paid)"]);
-            } else if (expense.purchase_type === "UTILITY") {
+            } else if (expense.purchase_type.toUpperCase() === "UTILITY") {
               totalUtilities = totalUtilities + Number(expense["sum(total_paid)"]);
-            }
-            else if (expense.purchase_type.includes("OWNER PAYMENT")) {
+            } else if (expense.purchase_type.includes("OWNER PAYMENT")) {
               totalManagement = totalManagement + Number(expense["sum(total_paid)"]);
+            } else if (expense.purchase_type.includes("BILL POSTING")) {
+              totalBillPosting = totalBillPosting + Number(expense["sum(total_paid)"]);
             }
           }
           if (expense["sum(pur_amount_due)"] !== null) {
-            if (expense.purchase_type === "MAINTENANCE") {
+            if (expense.purchase_type.toUpperCase() === "MAINTENANCE") {
               expectedMaintenance = expectedMaintenance + Number(expense["sum(pur_amount_due)"]);
-            } else if (expense.purchase_type === "REPAIRS") {
+            } else if (expense.purchase_type.toUpperCase() === "REPAIRS") {
               expectedRepairs = expectedRepairs + Number(expense["sum(pur_amount_due)"]);
-            } else if (expense.purchase_type === "MORTGAGE") {
+            } else if (expense.purchase_type.toUpperCase() === "MORTGAGE") {
               expectedMortgage = expectedMortgage + Number(expense["sum(pur_amount_due)"]);
-            } else if (expense.purchase_type === "TAXES") {
+            } else if (expense.purchase_type.toUpperCase() === "TAXES") {
               expectedTaxes = expectedTaxes + Number(expense["sum(pur_amount_due)"]);
-            } else if (expense.purchase_type === "INSURANCE") {
+            } else if (expense.purchase_type.toUpperCase() === "INSURANCE") {
               expectedInsurance = expectedInsurance + Number(expense["sum(pur_amount_due)"]);
-            } else if (expense.purchase_type === "UTILITY") {
+            } else if (expense.purchase_type.toUpperCase() === "UTILITY") {
               expectedUtilities = expectedUtilities + Number(expense["sum(pur_amount_due)"]);
             } else if (expense.purchase_type.includes("OWNER PAYMENT")) {
               expectedManagement = expectedManagement + Number(expense["sum(pur_amount_due)"]);
+            } else if (expense.purchase_type.includes("BILL POSTING")) {
+              expectedBillPosting = expectedBillPosting + Number(expense["sum(pur_amount_due)"]);
             }
           }
       }
       }
     });
     paidExpenseByType = {
-      totalMaintenance: totalMaintenance,
-      totalRepairs: totalRepairs,
-      totalMortgage: totalMortgage,
-      totalTaxes: totalTaxes,
-      totalInsurance: totalInsurance,
-      totalUtilities: totalUtilities,
-      totalManagement: totalManagement,
+      'MAINTENANCE': totalMaintenance,
+      'REPAIRS': totalRepairs,
+      'MORTGAGE': totalMortgage,
+      'TAXES': totalTaxes,
+      'INSURANCE': totalInsurance,
+      'UTILITIES': totalUtilities,
+      'MANAGEMENT': totalManagement,
+      'BILL POSTING': totalBillPosting,
     };
 
     expectedExpenseByType = {
-      expectedMaintenance: expectedMaintenance,
-      expectedRepairs: expectedRepairs,
-      expectedMortgage: expectedMortgage,
-      expectedTaxes: expectedTaxes,
-      expectedInsurance: expectedInsurance,
-      expectedUtilities: expectedUtilities,
-      expectedManagement: expectedManagement,
+      'MAINTENANCE': expectedMaintenance,
+      'REPAIRS': expectedRepairs,
+      'MORTGAGE': expectedMortgage,
+      'TAXES': expectedTaxes,
+      'INSURANCE': expectedInsurance,
+      'UTILITIES': expectedUtilities,
+      'MANAGEMENT': expectedManagement,
+      'BILL POSTING': expectedBillPosting,
     };
     paidExpenseByType && props.setTotalExpenseByType(paidExpenseByType);
     expectedExpenseByType && props.setExpectedExpenseByType(expectedExpenseByType);

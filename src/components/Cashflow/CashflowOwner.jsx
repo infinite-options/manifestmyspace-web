@@ -236,12 +236,7 @@ const CashflowOwner = () => {
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                {activeButton === 'Cashflow' ?
-                    (
-                        <RevenueTable revenue={revenue} revenueSummary={revenueSummary} totalRevenueByType={totalRevenueByType} revenueList={revenueList}></RevenueTable>
-                    ):(
-                        <ExpectedRevenueTable revenue={revenue} revenueSummary={revenueSummary} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList}></ExpectedRevenueTable>
-                    )}
+                    <RevenueTable revenue={revenue} revenueSummary={revenueSummary} totalRevenueByType={totalRevenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>            
                 </AccordionDetails>
                 </Accordion>
                 <Accordion 
@@ -272,14 +267,8 @@ const CashflowOwner = () => {
                         )}
                     </Typography>
                 </Box>
-                <AccordionDetails>
-                {activeButton === 'Cashflow' ?
-                    (
-                        <ExpenseTable expense={expense} expenseSummary={expenseSummary} totalExpenseByType={totalExpenseByType} expenseList={expenseList}></ExpenseTable>
-                    )
-                    :(
-                        <ExpectedExpenseTable expense={expense} expenseSummary={expenseSummary} expectedExpenseByType={expectedExpenseByType} expenseList={expenseList}></ExpectedExpenseTable>
-                    )}
+                <AccordionDetails>    
+                    <ExpenseTable expense={expense} expenseSummary={expenseSummary} totalExpenseByType={totalExpenseByType} expectedExpenseByType={expectedExpenseByType} expenseList={expenseList} activeView={activeButton}/>
                 </AccordionDetails>
                 </Accordion>
                 <Stack

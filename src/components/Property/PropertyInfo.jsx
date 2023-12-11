@@ -127,18 +127,29 @@ const PropertyInfo = (props) => {
         } else if (status === "REJECTED"){
             return 'Not Approved'
         } else if (status === "ACTIVE"){
-            return 'Active'
+            return 'Apply Now'
         }
     }
 
+    // function navigateToCorrectPage(){
+    //     if (status === "" || status === "NEW") {
+    //         navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
+    //     } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
+    //         navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
+    //     } else {
+    //         return null
+    //     }
+    // }
+
     function navigateToCorrectPage(){
-        if (status === "" || status === "NEW") {
-            navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
-        } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
-            navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
-        } else {
+        if (["", "NEW", "ACTIVE"].includes(status)) 
+            return {url: '/tenantApplication', params: { property: property, status: status, lease: lease } }
+        
+        if (status === "TENANT APPROVED" || status === "PROCESSING")
+            return {url: '/tenantLeases', params: { property: property, status: status, lease: lease }}
+        
+        else 
             return null
-        }
     }
 
     return (
@@ -341,7 +352,10 @@ const PropertyInfo = (props) => {
                                  color: theme.palette.background.default,
                                  textTransform: 'none',
                              }}
-                             onClick={() => navigateToCorrectPage()}
+                            //  onClick={() => navigateToCorrectPage()}
+                            onClick={() => {
+                                const {url, params}=navigateToCorrectPage() 
+                                navigate(url,  {state: params}) } }
                          >
                            {renderCorrectButtonText()}
                          </Button>
