@@ -362,7 +362,6 @@ export default function EditProperty({}){
             setShowSpinner(false);
         }
         putData();
-        console.log("ROHIT HERE - isDefaultUtilities", isDefaultUtilities);
         if(isDefaultUtilities){
             postUtilitiesData();
         } else{

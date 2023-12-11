@@ -381,17 +381,17 @@ const PropertyListings = (props) => {
                 setPropertyData(propertyData.Property_Dashboard.result);
             }
         } else{
-            if (!leaseData.Lease_Details.result || !propertyData.Property_Dashboard.result) {
-                console.error("Data is missing from the API response");
+            if (!leaseData.Lease_Details?.result || !propertyData["Available Listings"].result) {
+                console.error("Property Data is missing from the API response");
                 setShowSpinner(false);
                 return;
             } else{
                 setTenantLeaseDetails(leaseData.Lease_Details.result);
-                setPropertyData(propertyData.Property_Dashboard.result);
+                setPropertyData(propertyData["Available Listings"].result);
             }
         }
 
-        sortProperties(leaseData, propertyData.Property_Dashboard.result)
+        sortProperties(leaseData, propertyData["Available Listings"].result)
 
         setShowSpinner(false);
     }
