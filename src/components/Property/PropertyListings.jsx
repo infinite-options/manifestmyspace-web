@@ -371,28 +371,28 @@ const PropertyListings = (props) => {
         const leaseData = await leaseResponse.json();
         console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result)
         const propertyData = await propertyResponse.json();
-        setUserLeases(propertyData['Tenant Leases'].result)
+        setUserLeases(propertyData.Tenant_Leases.result)
         if(JSON.stringify(leaseData) === "{}"){
             console.log("No Lease Data")
-            if(!propertyData['Available Listings'].result){
+            if(!propertyData.Available_Listings.result){
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
             } else {
-                setPropertyData(propertyData['Available Listings'].result);
+                setPropertyData(propertyData.Available_Listings.result);
             }
         } else{
-            if (!leaseData.Lease_Details.result || !propertyData['Available Listings'].result) {
+            if (!leaseData.Lease_Details.result || !propertyData.Available_Listings.result) {
                 console.error("Data is missing from the API response");
                 setShowSpinner(false);
                 return;
             } else{
                 setTenantLeaseDetails(leaseData.Lease_Details.result);
-                setPropertyData(propertyData['Available Listings'].result);
+                setPropertyData(propertyData.Available_Listings.result);
             }
         }
 
-        sortProperties(leaseData, propertyData['Available Listings'].result)
+        sortProperties(leaseData, propertyData.Available_Listings.result)
 
         setShowSpinner(false);
     }
