@@ -341,6 +341,7 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
 
 const PropertyListings = (props) => {
     const [propertyData, setPropertyData] = useState([]);
+    const [userLeases, setUserLeases] = useState([]);
     const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
     const [sortedProperties, setSortedProperties] = useState([]);
     const [displayProperties, setDisplayProperties] = useState([]);
@@ -370,7 +371,7 @@ const PropertyListings = (props) => {
         const leaseData = await leaseResponse.json();
         console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result)
         const propertyData = await propertyResponse.json();
-
+        setUserLeases(propertyData['Tenant Leases'].result)
         if(JSON.stringify(leaseData) === "{}"){
             console.log("No Lease Data")
             if(!propertyData['Available Listings'].result){
@@ -570,7 +571,8 @@ const PropertyListings = (props) => {
                     {console.log("sorted properties", displayProperties)}
                     {displayProperties.length > 0 && displayProperties.map((property, index) => {
                         var status = ""
-                        const appliedData = tenantLeaseDetails.find((lease) => lease.lease_property_id === property.property_uid);
+                        
+                        const appliedData = userLeases.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
                             console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status)
                             status = appliedData.lease_status;

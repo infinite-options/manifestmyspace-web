@@ -123,7 +123,7 @@ const PropertyInfo = (props) => {
         } else if (status === "PROCESSING"){
             return 'Approved'
         } else if (status === "TENANT APPROVED"){
-            return 'Approved'
+            return 'Approved WFD'
         } else if (status === "REJECTED"){
             return 'Not Approved'
         } else if (status === "ACTIVE"){
