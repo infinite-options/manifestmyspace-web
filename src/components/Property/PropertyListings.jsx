@@ -182,6 +182,10 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
         setFilteredItems(propertyList);
     }
 
+
+
+ 
+
     return (
         <>
             <Stack
@@ -349,6 +353,10 @@ const PropertyListings = (props) => {
     const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
     const [searchText, setSearchText] = useState("");
+
+
+
+
 
     const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
@@ -654,6 +662,172 @@ function PropertyCard(props) {
         }
         return property.property_address;
     }
+    
+    const new_label= <Box  sx={{
+                        backgroundColor: theme.typography.common.blue,
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => navigate("/tenantApplication", {state: { property: property, status: status, lease: lease }})}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Applied {lease.lease_application_date}
+                    </Typography>
+                </Box>
+    const processing_label= <Box sx={{
+                        backgroundColor: "#7AD15B",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => {
+                        // navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})
+                        console.log('Soooooltan')
+                        console.log(lease)
+                        console.log('lease')
+                        console.log('property')
+                        console.log(property)
+                        console.log('status')
+                        console.log(status)
+                        navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})
+                        
+                        
+                        }}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Approved {lease.lease_application_date}
+                    </Typography>
+                </Box>
+    const rejected_label= <Box sx={{
+                        backgroundColor: "#490404",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Not Approved {lease.lease_application_date}
+                    </Typography>
+                </Box>
+    const refused_label= <Box sx={{
+                        backgroundColor: "#CB8E8E",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Declined {lease.lease_application_date}
+                    </Typography>
+                </Box>
+                        
+    const tenant_approved_label= <Box sx={{
+                        backgroundColor: "#CB8E8E",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Tenant Approved {lease.lease_application_date}
+                    </Typography>
+                </Box>
+    const active_label= <Box sx={{
+                        backgroundColor: "#412591",
+                        color: theme.typography.secondary.white,
+                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
+                        zIndex: 5,
+                        width: 'fit-content',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        margin: '-20px 15px 5px',
+                        padding: '3px 5px',
+                        alignSelf: 'flex-start',
+                        textTransform: 'none'
+                    }}
+                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+                >
+                    <Typography
+                        sx={{
+                            padding: '5px',
+                            fontSize: '18px',
+                            fontWeight: '800px'
+                        }}
+                    >
+                        Active {lease.lease_application_date}
+                    </Typography>
+                </Box>
+
+    let status_label={'NEW': new_label , 'ACTIVE': active_label, 'REFUSED': refused_label, 'REJECTED': rejected_label, "TENANT APPROVED": tenant_approved_label, "PROCESSING": processing_label}
 
     return (
         <Card sx={{ margin: 5 }}>
@@ -692,168 +866,7 @@ function PropertyCard(props) {
                         <span style={{ opacity: '60%' }}> / Month</span>
                     </Typography>
                 </Box>
-                {status === "NEW" ? (
-                <Box
-                    sx={{
-                        backgroundColor: theme.typography.common.blue,
-                        color: theme.typography.secondary.white,
-                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
-                        zIndex: 5,
-                        width: 'fit-content',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        margin: '-20px 15px 5px',
-                        padding: '3px 5px',
-                        alignSelf: 'flex-start',
-                        textTransform: 'none'
-                    }}
-                    onClick={() => navigate("/tenantApplication", {state: { property: property, status: status, lease: lease }})}
-                >
-                    <Typography
-                        sx={{
-                            padding: '5px',
-                            fontSize: '18px',
-                            fontWeight: '800px'
-                        }}
-                    >
-                        Applied {lease.lease_application_date}
-                    </Typography>
-                </Box>): (null)}
-                {status === "PROCESSING" ? (
-                <Box
-                    sx={{
-                        backgroundColor: "#7AD15B",
-                        color: theme.typography.secondary.white,
-                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
-                        zIndex: 5,
-                        width: 'fit-content',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        margin: '-20px 15px 5px',
-                        padding: '3px 5px',
-                        alignSelf: 'flex-start',
-                        textTransform: 'none'
-                    }}
-                    onClick={() => navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})}
-                >
-                    <Typography
-                        sx={{
-                            padding: '5px',
-                            fontSize: '18px',
-                            fontWeight: '800px'
-                        }}
-                    >
-                        Approved {lease.lease_application_date}
-                    </Typography>
-                </Box>): (null)}
-                {status === "REJECTED" ? (
-                <Box
-                    sx={{
-                        backgroundColor: "#490404",
-                        color: theme.typography.secondary.white,
-                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
-                        zIndex: 5,
-                        width: 'fit-content',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        margin: '-20px 15px 5px',
-                        padding: '3px 5px',
-                        alignSelf: 'flex-start',
-                        textTransform: 'none'
-                    }}
-                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
-                >
-                    <Typography
-                        sx={{
-                            padding: '5px',
-                            fontSize: '18px',
-                            fontWeight: '800px'
-                        }}
-                    >
-                        Not Approved {lease.lease_application_date}
-                    </Typography>
-                </Box>): (null)}
-                {status === "REFUSED" ? (
-                <Box
-                    sx={{
-                        backgroundColor: "#CB8E8E",
-                        color: theme.typography.secondary.white,
-                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
-                        zIndex: 5,
-                        width: 'fit-content',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        margin: '-20px 15px 5px',
-                        padding: '3px 5px',
-                        alignSelf: 'flex-start',
-                        textTransform: 'none'
-                    }}
-                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
-                >
-                    <Typography
-                        sx={{
-                            padding: '5px',
-                            fontSize: '18px',
-                            fontWeight: '800px'
-                        }}
-                    >
-                        Declined {lease.lease_application_date}
-                    </Typography>
-                </Box>): (null)}
-                {status === "TENANT APPROVED" ? (
-                <Box
-                    sx={{
-                        backgroundColor: "#CB8E8E",
-                        color: theme.typography.secondary.white,
-                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
-                        zIndex: 5,
-                        width: 'fit-content',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        margin: '-20px 15px 5px',
-                        padding: '3px 5px',
-                        alignSelf: 'flex-start',
-                        textTransform: 'none'
-                    }}
-                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
-                >
-                    <Typography
-                        sx={{
-                            padding: '5px',
-                            fontSize: '18px',
-                            fontWeight: '800px'
-                        }}
-                    >
-                        Tenant Approved {lease.lease_application_date}
-                    </Typography>
-                </Box>): (null)}
-                {status === "ACTIVE" ? (
-                <Box
-                    sx={{
-                        backgroundColor: "#412591",
-                        color: theme.typography.secondary.white,
-                        boxShadow: '0 8px 8px 0 rgba(0, 0, 0, 0.4)',
-                        zIndex: 5,
-                        width: 'fit-content',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        margin: '-20px 15px 5px',
-                        padding: '3px 5px',
-                        alignSelf: 'flex-start',
-                        textTransform: 'none'
-                    }}
-                    onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
-                >
-                    <Typography
-                        sx={{
-                            padding: '5px',
-                            fontSize: '18px',
-                            fontWeight: '800px'
-                        }}
-                    >
-                        Active {lease.lease_application_date}
-                    </Typography>
-                </Box>): (null)}
+                {status_label[status]}
             </Stack>
             <CardContent>
                 <Stack

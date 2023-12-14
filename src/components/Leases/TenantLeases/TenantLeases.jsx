@@ -334,7 +334,7 @@ function TenantLeases(props) {
                             </CenteringBox>
                         </Grid>
                     </Grid>
-                    {Object.keys(lease.fees).map((key, index) => (
+                    {lease.fees && Object.keys(lease.fees).map((key, index) => (
                         <Grid container key={index}>
                             <Divider sx={{width: '100%', borderWidth: "1px", borderColor: "#D6D5DA" }}/>
                             <Grid item xs={1}>
