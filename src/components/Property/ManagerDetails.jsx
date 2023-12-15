@@ -25,18 +25,19 @@ const ManagerDetails = () => {
     console.log("propertyData", propertyData);
     console.log("index", index);
 
+    let business_locations = "";
+    let city = "";
+    let distance = "";
+    let feesArray = [];
+
     if (managerData !== undefined) {
-        let businessLocations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");
-        let city = businessLocations[0]!==undefined ? businessLocations[0].location : "";
-        let distance = businessLocations[0]!==undefined ? businessLocations[0].distance : "";
-        let feesArray = JSON.parse(managerData.business_services_fees);
-    
-    } else{
-        let business_locations = ""
-        let city = "";
-        let distance = "";
-        let feesArray = [];
+        business_locations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");
+        city = business_locations[0] !== undefined ? business_locations[0].location : "";
+        distance = business_locations[0] !== undefined ? business_locations[0].distance : "";
+        feesArray = JSON.parse(managerData.business_services_fees);
     }
+
+
 
     const [showSpinner, setShowSpinner] = useState(false);
     const [properties, setProperties] = useState([
@@ -319,9 +320,9 @@ const ManagerDetails = () => {
                             
                         </Typography>
                         {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
-                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
+                                let index=propertyData.gitIndex((property)=>property.property_uid===p.property_uid);
                                 let docList = JSON.parse(p.contract_documents);
-                                const doc = docList.find(
+                                const doc = docList && docList.find(
                                     (document) => document.type === "contract"
                                 );
                                 const contractDocumentLink = doc ? doc.link : '';
