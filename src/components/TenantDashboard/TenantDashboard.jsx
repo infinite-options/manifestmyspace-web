@@ -71,7 +71,7 @@ function TenantDashboard(props) {
       setMaintenanceRequestsData(maintenanceRequestsData || []);
       setAnnouncementsData(announcementsData || []);
 
-      let propertyAddress= propertyData[0]!==undefined? propertyData[0].property_address:"No Data"
+      let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit :"No Data"
       setPropertyAddr(propertyAddress);
       setFirstName(user.first_name)
       setShowSpinner(false);
