@@ -28,6 +28,7 @@ export default function TenantApplication(){
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
+    console.log("status", status)
     console.log(property)
 
     const [tenantProfile, setTenantProfile] = useState(null);
