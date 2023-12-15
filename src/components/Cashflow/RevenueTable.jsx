@@ -12,21 +12,24 @@ const RevenueTable = (props) => {
     const totalRevenueByType = props.totalRevenueByType;
     const revenueList = props.revenueList;
     const expectedRevenueByType = props.expectedRevenueByType
+
+    console.log("--debug--", expectedRevenueByType)
     const activeView = props.activeView;
     const handleAccordionChange = () => {
         setExpanded(!expanded);
     };
     
 
-    console.log("revenueList", revenueList)
-    console.log("totalRevenueByType", totalRevenueByType)
+    // console.log("revenueList", revenueList)
+    // console.log("totalRevenueByType", totalRevenueByType)
 
-    console.log("revenueSummary", revenueSummary)
-    console.log("revenue", revenue)
+    // console.log("revenueSummary", revenueSummary)
+    // console.log("revenue", revenue)
 
     function getRevenueTypeItems(revenueType){
       // console.log("searching through", expenseList)
       let items = revenueList.filter((item) => item.purchase_type.toUpperCase() === revenueType[0]);
+    //   console.log("items", items)
       // console.log(expenseType[0], items)
       if (items.length > 0) {
           // console.log("items.length > 0")

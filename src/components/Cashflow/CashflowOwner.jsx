@@ -32,7 +32,6 @@ const CashflowOwner = () => {
     let date = new Date();
     let currentMonth = date.toLocaleString("default", { month: "long" });
     let currentYear = date.getFullYear().toString();
-    console.log("currentMonth ",currentMonth, currentYear)
     const [month, setMonth] = useState(currentMonth);
     const [year, setYear] = useState(currentYear);
 
@@ -131,7 +130,7 @@ const CashflowOwner = () => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Button sx={{ textTransform: 'capitalize' }} onClick={()=>setShowSelectMonth(true)}>
+                    <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
                         <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/>
                         <Typography 
                         sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}
@@ -302,13 +301,13 @@ const CashflowOwner = () => {
                       }}
                 >
                 <Box
-                component="span"
-                m={2}
-                marginTop={15}
-                marginBottom={30}
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+                    component="span"
+                    m={2}
+                    marginTop={15}
+                    marginBottom={30}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
                 >
                     <Button 
                         sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
