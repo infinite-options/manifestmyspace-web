@@ -224,7 +224,7 @@ export default function SelectPayment(props) {
                 for (const item of selectedItems) {
                     // PUT to update maintenance request status to "COMPLETED"
                     console.log("--DEBUG-- maintenanceItem.purchase_uid === item.purchase_uid", item.purchase_uid)
-                    if(quote_id !== null){
+                    if(item.quote_id !== null){
                         const updateMaintenanceRequestStatus = (quote_id) => {
                             const formData = new FormData();
                             formData.append("maintenance_quote_uid", quote_id);
