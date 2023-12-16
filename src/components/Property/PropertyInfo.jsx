@@ -141,6 +141,13 @@ const PropertyInfo = (props) => {
         }
     }
 
+    function formatAddress(){
+        if(property.property_unit !== ""){
+            return property.property_address + " Unit " + property.property_unit;
+        }
+        return property.property_address;
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <Scheduler 
@@ -220,7 +227,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '25px',
                                 }}
                             >
-                                {property.property_address}
+                                {formatAddress()}
                             </Typography>
                             <Box>
                                 <LocationOn /> <TurnedInNot />
@@ -232,9 +239,7 @@ const PropertyInfo = (props) => {
                                 fontSize: '18px',
                             }}
                         >
-                            {property.property_address +
-                                ', ' +
-                                property.property_city +
+                            {property.property_city +
                                 ', ' +
                                 property.property_state +
                                 ' ' +
@@ -595,6 +600,13 @@ const PropertyInfo = (props) => {
                         >
                             Apartment Amenities
                         </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_unit}
+                        </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
                             sx={{
@@ -604,6 +616,13 @@ const PropertyInfo = (props) => {
                         >
                             Community Amenities
                         </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_community}
+                        </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
                             sx={{
@@ -611,6 +630,7 @@ const PropertyInfo = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
+                            
                             Location
                         </Typography>
                         <Typography
@@ -618,7 +638,7 @@ const PropertyInfo = (props) => {
                                 color: theme.typography.primary.black,
                             }}
                         >
-                            {property.property_address +
+                            {formatAddress() +
                                 ', ' +
                                 property.property_city +
                                 ', ' +
@@ -634,6 +654,13 @@ const PropertyInfo = (props) => {
                             }}
                         >
                             Places Nearby
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_nearby}
                         </Typography>
                         <Box height={'150px'}></Box>
                     </Stack>
