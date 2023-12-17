@@ -917,9 +917,7 @@ function PropertyCard(props) {
                             fontSize: '16px',
                         }}
                     >
-                        {property.property_address +
-                            ', ' +
-                            property.property_city +
+                        {property.property_city +
                             ', ' +
                             property.property_state +
                             ' ' +
