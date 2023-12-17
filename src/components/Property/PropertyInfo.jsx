@@ -103,15 +103,22 @@ const PropertyInfo = (props) => {
     });
 
     function displayListingDate(date) {
-        const d = dayjs(date);
-
-        const daysAgo = dayjs().diff(d, 'day');
-        if (daysAgo === 0) {
-            return 'Listed today';
-        } else if (daysAgo === 1) {
-            return 'Listed yesterday';
+        if (date === null) {
+            return 'No Listing Date';
         } else {
-            return 'Listed ' + daysAgo + ' days ago';
+
+            const d = dayjs(date);
+
+            const daysAgo = dayjs().diff(d, 'day');
+            if (daysAgo === 0) {
+                return 'Listed today';
+            } else if (daysAgo === 0) {
+                return 'Listed today';
+            } else if (daysAgo === 1) {
+                return 'Listed yesterday';
+            } else {
+                return 'Listed ' + daysAgo + ' days ago';
+            }
         }
     }
 
