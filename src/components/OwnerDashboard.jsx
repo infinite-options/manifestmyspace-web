@@ -12,6 +12,7 @@ import File_dock_fill from '../images/File_dock_fill.png'
 import User_fill_dark from '../images/User_fill_dark.png'
 import { useUser } from "../contexts/UserContext";
 import PropertyRentWidget from "./Dashboard-Components/PropertyRent/PropertyRentWidget";
+import LeaseWidget from "./Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -20,7 +21,7 @@ export default function OwnerDashboard() {
     const navigate = useNavigate();
     let date = new Date();
     // const [loading, setLoading] = useState(true);
-    const [rentStatus, setRentStatus] = useState([]);
+    // const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
@@ -57,49 +58,53 @@ export default function OwnerDashboard() {
         unpaidRentStatusCount: totalPropertiesCount,
     }
 
-    const renderColorfulLegendText = (value, entry) => {
-        const { color } = entry;
-        const status = data.find(item => item.fill === color)?.rent_status;
-        const num = data.find(item => item.fill === color)?.number;
-        return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
-    };
+    // Is renderColorfulLegendText used?
+    // const renderColorfulLegendText = (value, entry) => {
+    //     const { color } = entry;
+    //     const status = data.find(item => item.fill === color)?.rent_status;
+    //     const num = data.find(item => item.fill === color)?.number;
+    //     return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
+    // };
 
-    const viewProperty = <text
-        x={85}
-        y={100}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        cursor="pointer"
-        style={{
-            fontFamily: 'Source Sans Pro',
-            fontSize: '9px',
-            fill: '#160449',
-            fontWeight: '600',
-        }}
-        onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
-    >
-        View All {totalPropertiesCount}
-        <tspan x={85} y={110}>properties</tspan>
-    </text>
+    // Are viewProperty and createProperty used?
+    // const viewProperty = <text
+    //     x={85}
+    //     y={100}
+    //     textAnchor="middle"
+    //     dominantBaseline="middle"
+    //     cursor="pointer"
+    //     style={{
+    //         fontFamily: 'Source Sans Pro',
+    //         fontSize: '9px',
+    //         fill: '#160449',
+    //         fontWeight: '600',
+    //     }}
+    //     onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
+    // >
+    //     View All {totalPropertiesCount}
+    //     <tspan x={85} y={110}>properties</tspan>
+    // </text>
     
-    const createProperty= <text
-    x={85}
-    y={100}
-    textAnchor="middle"
-    dominantBaseline="middle"
-    cursor="pointer"
-    style={{
-        fontFamily: 'Source Sans Pro',
-        fontSize: '9px',
-        fill: '#160449',
-        fontWeight: '600',
-    }}
-    onClick={(e) => { e.stopPropagation(); navigate('/addProperty') }}
->
-    Create a new property
+    // const createProperty= <text
+    //     x={85}
+    //     y={100}
+    //     textAnchor="middle"
+    //     dominantBaseline="middle"
+    //     cursor="pointer"
+    //     style={{
+    //         fontFamily: 'Source Sans Pro',
+    //         fontSize: '9px',
+    //         fill: '#160449',
+    //         fontWeight: '600',
+    //     }}
+    //     onClick={(e) => { e.stopPropagation(); navigate('/addProperty') }}
+    // >
+    //     Create a new property
+        
+    // </text>
+
     
-</text>
-    
+    // USE EFFECT gets all the data
     useEffect(() => {
         const dataObject = {};
         const fetchData = async () => {
@@ -110,29 +115,44 @@ export default function OwnerDashboard() {
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/110-000003`)
             const jsonData = await response.json()
-            setRentStatus(jsonData.RentStatus.result);
+            
+
+            // MAINTENANCE Status
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
             // console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
             // setLoading(false);
+
+
+            // RENT Status
+            // setRentStatus(jsonData.RentStatus.result);
             let rentStatus = jsonData.RentStatus.result;
+
             let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
             unpaidCount = unpaidCount ? unpaidCount.num : 0;
             setUnpaidRentStatusCount(unpaidCount);
+
             let partialPaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID PARTIALLY') : 0;
             partialPaidCount = partialPaidCount ? partialPaidCount.num : 0;
             setPartialPaidRentStatusCount(partialPaidCount);
+
             let paidLateCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID LATE') : 0;
             paidLateCount = paidLateCount ? paidLateCount.num : 0;
             setPaidLateRentStatusCount(paidLateCount);
+
             let vacantCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'VACANT') : 0;
             vacantCount = vacantCount ? vacantCount.num : 0;
             setVacantRentStatusCount(vacantCount);
+
             let paidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID') : 0;
             paidCount = paidCount ? paidCount.num : 0;
             setPaidRentStatusCount(paidCount);
+
+            // no check if rentSatus does not exist so this could result in a failure
             let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount;
             setTotalPropertiesCount(totalPropertiesCount);
 
+
+            // LEASE Status
             let leaseStatus = jsonData.LeaseStatus.result;
             const currentYear = new Date().getFullYear();
             const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
@@ -188,6 +208,8 @@ export default function OwnerDashboard() {
         fetchData();
     }, []);
 
+
+    // RETURN statement has HTML, CSS and uses all the DATA
     return (
         <ThemeProvider theme={theme}>
             <Backdrop
@@ -207,7 +229,11 @@ export default function OwnerDashboard() {
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData}/>
                         <PropertyRentWidget {...propsForPropertyRentWidget}/>
+                        <LeaseWidget selectedRole={"OWNER"}/>
                     </div>
+
+
+                    {/* RENT WIDGET */}
                     <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
                         {/* <div className="mt-expiry-container"> */}
                         <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
@@ -350,6 +376,8 @@ export default function OwnerDashboard() {
                         </div>
                     </div>
                     <br />
+
+
                     <div className="bottom-buttons">
                         <Button
                             variant="outlined"
