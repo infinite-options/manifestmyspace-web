@@ -103,15 +103,22 @@ const PropertyInfo = (props) => {
     });
 
     function displayListingDate(date) {
-        const d = dayjs(date);
-
-        const daysAgo = dayjs().diff(d, 'day');
-        if (daysAgo === 0) {
-            return 'Listed today';
-        } else if (daysAgo === 1) {
-            return 'Listed yesterday';
+        if (date === null) {
+            return 'No Listing Date';
         } else {
-            return 'Listed ' + daysAgo + ' days ago';
+
+            const d = dayjs(date);
+
+            const daysAgo = dayjs().diff(d, 'day');
+            if (daysAgo === 0) {
+                return 'Listed today';
+            } else if (daysAgo === 0) {
+                return 'Listed today';
+            } else if (daysAgo === 1) {
+                return 'Listed yesterday';
+            } else {
+                return 'Listed ' + daysAgo + ' days ago';
+            }
         }
     }
 
@@ -139,6 +146,13 @@ const PropertyInfo = (props) => {
         } else {
             return null
         }
+    }
+
+    function formatAddress(){
+        if(property.property_unit !== ""){
+            return property.property_address + " Unit " + property.property_unit;
+        }
+        return property.property_address;
     }
 
     return (
@@ -220,7 +234,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '25px',
                                 }}
                             >
-                                {property.property_address}
+                                {formatAddress()}
                             </Typography>
                             <Box>
                                 <LocationOn /> <TurnedInNot />
@@ -232,9 +246,7 @@ const PropertyInfo = (props) => {
                                 fontSize: '18px',
                             }}
                         >
-                            {property.property_address +
-                                ', ' +
-                                property.property_city +
+                            {property.property_city +
                                 ', ' +
                                 property.property_state +
                                 ' ' +
@@ -595,6 +607,13 @@ const PropertyInfo = (props) => {
                         >
                             Apartment Amenities
                         </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_unit}
+                        </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
                             sx={{
@@ -604,6 +623,13 @@ const PropertyInfo = (props) => {
                         >
                             Community Amenities
                         </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_community}
+                        </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
                             sx={{
@@ -611,6 +637,7 @@ const PropertyInfo = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
+                            
                             Location
                         </Typography>
                         <Typography
@@ -618,7 +645,7 @@ const PropertyInfo = (props) => {
                                 color: theme.typography.primary.black,
                             }}
                         >
-                            {property.property_address +
+                            {formatAddress() +
                                 ', ' +
                                 property.property_city +
                                 ', ' +
@@ -634,6 +661,13 @@ const PropertyInfo = (props) => {
                             }}
                         >
                             Places Nearby
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_nearby}
                         </Typography>
                         <Box height={'150px'}></Box>
                     </Stack>
