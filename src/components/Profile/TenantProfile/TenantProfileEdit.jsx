@@ -59,6 +59,7 @@ function TenantProfileEdit(props) {
     const [occupantsDataComplete, setOccupantsDataComplete] = useState(true);
 
     const parseJSONFields = (obj) => {
+        console.log('In parseJSONFields')
         if (!obj || typeof obj !== 'object') {
             return;
         }
@@ -79,13 +80,16 @@ function TenantProfileEdit(props) {
     };
 
     const maskSSN = (ssn) => {
+        console.log('maskSSN')
         let maskedSSN = '***-**-' + ssn.slice(-4);
         return maskedSSN;
     };
 
 
     useEffect(() => {
+        console.log('In useEffect 89')
         setShowSpinner(true);
+        console.log('Execute axios get')
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
         .then((res)=>{
             let responseData = res.data.Profile.result[0];
@@ -140,6 +144,7 @@ function TenantProfileEdit(props) {
     }, []);
 
     useEffect(() => {
+        console.log('In useEffect 146')
         setModifiedData((prevData) => ({
             ...prevData,
             'tenant_adult_occupants': tenantAdultOccupants,
@@ -206,15 +211,43 @@ function TenantProfileEdit(props) {
         "Access-Control-Allow-Credentials":"*"
     };
 
-    // Handle form submission
+
+    // Data comes in
+    // Data gets mapped to variables
+    // Data gets passed to endpoint
+    // Endpoint runs
+
+
+    // RANJIT Modificatoins
+    const profileFormData = new FormData();
+    console.log("modifiedData", modifiedData, typeof(modifiedData))
+    // profileFormData.append("tenant_uid", useUser());
+    // profileFormData.append("tenant_uid", '350-000017');
+    // profileFormData.append("tenant_uid", getProfileId());
+    // profileFormData.append("tenant_uid", getProfileId);  
+    // profileFormData.append("tenant_first_name", "PM5");
+    // profileFormData.append('tenant_adult_occupants', "[]");
+    // profileFormData.append("tenant_children_occupants", [{"dob": "2006-01-04", "name": "Arman", "relationship": "Cousin"}]);
+    // leaseApplicationFormData.append("lease_status", "ENDED");
+
+    profileFormData.append("tenant_adult_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
+
+    profileFormData.append("tenant_uid", getProfileId())
+    for (const item of profileFormData){
+        console.log(item[0], item[1])
+    }
+
+    // Handle form submission n- RANJIT
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("FORM SUBMITTED")
         console.log(modifiedData)
+        
         // Make a PUT request with formData to update data on the backend
         if(isEdited){
             console.log("EDITED")
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+            // axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -391,6 +424,7 @@ function TenantProfileEdit(props) {
                                             )}
                                         </Box>
                                     </ProfileAccordionSummary>
+                                    {/* Ranjit  This is where the inputs are received and onChange handleInputChange is invoked*/}
                                     <ProfileAccordionDetail>
                                         <ProfileTextInputField name="tenant_first_name" value={tenantFirstName} onChange={handleInputChange}>First Name</ProfileTextInputField>
                                         <ProfileTextInputField name="tenant_last_name" value={tenantLastName} onChange={handleInputChange}>Last Name</ProfileTextInputField>
@@ -624,6 +658,7 @@ function TenantProfileEdit(props) {
                                             alignItems: 'center',
                                         }}>
                                             <Box>
+                                                {/* this is the data input section */}
                                                 Who plans to live in the unit
                                             </Box>
                                             {!(occupantsDataComplete) && (
@@ -647,8 +682,9 @@ function TenantProfileEdit(props) {
                                     </ProfileAccordionSummary>
                                     <ProfileAccordionDetail>
                                         <Box>
-                                            <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={tenantAdultOccupants} setData={setTenantAdultOccupants} field={'tenant_adult_occupants'} />
-                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (YY/MM/DD)"]} data={tenantChildrenOccupants} setData={setTenantChildrenOccupants} field={'tenant_children_occupants'} />
+                                            {/* These are the actual data input fields */}
+                                            <ProfileTenantTable title={"Adults"} headers={["Name", "Last Name", "Relation", "DOB (MM-DD-YYYY)"]} data={tenantAdultOccupants} setData={setTenantAdultOccupants} field={'tenant_adult_occupants'} />
+                                            <ProfileTenantTable title={"Children"} headers={["Name", "Last Name", "Relation", "DOB (MM-DD-YYYY)"]} data={tenantChildrenOccupants} setData={setTenantChildrenOccupants} field={'tenant_children_occupants'} />
                                             <ProfileTenantTable title={"Pets"} headers={["Name", "Breed", "Type", "Weight"]} data={tenantPetOccupants} setData={setTenantPetOccupants} field={'tenant_pet_occupants'} />
                                             <ProfileTenantTable title={"Vehicles"} headers={["Make", "Model", "Year", "License", "State"]} data={tenantVehicleInfo} setData={setTenantVehicleInfo} field={'tenant_vehicle_info'} />
                                         </Box>
@@ -909,9 +945,10 @@ function ProfileTenantTable(props) {
     const data = props.data;
     const setData = props.setData;
 
-    // useEffect(() => {
-    //     console.log(`${field} --> ${data}`);
-    // }, [data])
+    useEffect(() => {
+        //console.log(`${field} --> ${data}`);
+        console.log(field, " --> ", data)
+    }, [data])
 
     const addRow = () => {
         const newRow = headers.reduce((acc, header) => {
@@ -938,6 +975,9 @@ function ProfileTenantTable(props) {
         });
     };
     
+
+
+    // Ranjit THIS IS THE DATA MAP
     const headerToDataKeyMap = {
         'Name': 'name',
         'Last Name': 'last_name',
@@ -979,8 +1019,16 @@ function ProfileTenantTable(props) {
                     </Grid>
                 ))}
             </Grid>
+            
 
+
+
+
+
+
+        
             <Grid container columnSpacing={2} rowSpacing={2}>
+                {console.log("debug", data[0])}
                 {data && data.length > 0 ? (
                     data.map((rowData, index) => (
                         <>
@@ -1025,6 +1073,8 @@ function ProfileTableCell(props) {
     const setData = props.setData;
     const index = props.index
 
+    console.log("In ProfileTableCell: ",props)
+
     if ((!props.value) && occupantsDataComplete){
         setOccupantsDataComplete(false)
     }
@@ -1037,7 +1087,9 @@ function ProfileTableCell(props) {
       
         const fieldName = props.field;
 
-        // console.log(fieldName, value)
+        console.log("In Debug Function")
+        console.log(fieldName, value)
+        // console.log("prevData: ",prevData)
 
         setData((prevData) => {
             const newData = [...prevData];
@@ -1045,7 +1097,7 @@ function ProfileTableCell(props) {
               ...newData[index],
               [props.subField]: value,
             };
-            // console.log("Updated ", fieldName, " with ", newData)
+            console.log("Updated ", fieldName, " with ", newData)
             return newData;
         });
     };
