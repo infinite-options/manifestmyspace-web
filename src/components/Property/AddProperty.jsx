@@ -40,6 +40,8 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
+
+// Variable Declaration
 export default function AddProperty({}){
     const location = useLocation();
     let navigate = useNavigate();
@@ -78,6 +80,8 @@ export default function AddProperty({}){
 
     const maxSteps = selectedImageList.length;
 
+
+    // React hooks that runs every time a dependancy variable changes  
     useEffect(() => {
         console.log("OWNER ID", ownerId);
         const getOwnerContacts = async () => {
@@ -108,7 +112,9 @@ export default function AddProperty({}){
             }
         }
         getOwnerContacts();
-    }, [ownerId]);
+
+    //  Dependancy array that triggers function calls
+    }, [ownerId]);  
 
     useEffect(() => {
         console.log("SELECTED OWNER", selectedOwner);
@@ -119,6 +125,8 @@ export default function AddProperty({}){
         setCoverImage(selectedImageList[0] || coverImage);
     }, [selectedImageList])
 
+
+    // Functions that run only when called
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       };
@@ -260,6 +268,7 @@ export default function AddProperty({}){
         }
 
         for (let [key, value] of formData.entries()) {
+            console.log("Property Data entered")
             console.log(key, value);    
         }
 
@@ -444,14 +453,13 @@ export default function AddProperty({}){
                                             width: "100%",
                                             }}
                                         >
-                                                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                                            <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
                                             {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                        </Button>
-                                            <CardMedia
-                                            component="img"
+                                            </Button>
+                                            <CardMedia component="img"
                                             image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep]}
                                             // image={coverImage}
-                                            sx={{
+                                                sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
                                                 maxWidth: "150px",
@@ -463,11 +471,11 @@ export default function AddProperty({}){
                                                 center: "true",
                                                 alignContent: "center",
                                                 justifyContent: "center",
-                                            }}
+                                                }}
                                             />
                                             <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
                                             {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                        </Button>
+                                            </Button>
                                         </div>
                                     </Grid>
 
