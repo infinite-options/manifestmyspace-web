@@ -153,10 +153,12 @@ export default function OwnerDashboard() {
 
 
             // LEASE Status
-            let leaseStatus = jsonData.LeaseStatus.result;
+            setLeaseStatus(jsonData.LeaseStatus.result);
+            let leaseStatusData = jsonData.LeaseStatus.result;
             const currentYear = new Date().getFullYear();
             const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
             const leaseStatusDictionary = {};
+
 
             // Date object for today
             const today = new Date();
@@ -164,37 +166,93 @@ export default function OwnerDashboard() {
             const sixWeeksLater = new Date();
             sixWeeksLater.setDate(today.getDate() + 6 * 7); // Adding 6 weeks worth of days
             let moveoutsInSixWeeks = 0;
+            let diffDate = (sixWeeksLater - today)/ (1000 * 60 * 60 * 24);
 
-            leaseStatus.forEach(item => {
-            if (item.lease_end) {
+            // Print statements
+            console.log("Current Year: ", currentYear)
+            console.log("Current Month: ", currentMonth)
+            console.log("today ", today)
+            console.log("sixWeeksLater ", sixWeeksLater)
+            console.log("Date Difference ", diffDate)
+            console.log("Lease Status: ", leaseStatus)
+            console.log("Lease Status Data: ", leaseStatusData)
+            console.log("Lease Dictionary: ", leaseStatusDictionary)
+            
+
+            leaseStatusData.forEach(item => {
+                console.log("Lease item: ", item);
+                console.log("Lease end date ", item.lease_end);
                 const leaseEndDate = new Date(item.lease_end);
-                if (leaseEndDate.getFullYear() === currentYear) {
-                    const cy_month = leaseEndDate.getMonth() + 1; //current year month
-                    if (cy_month >= currentMonth) {
-                        if (!leaseStatusDictionary[cy_month]) {
-                            leaseStatusDictionary[cy_month] = 0;
-                        }
-                        leaseStatusDictionary[cy_month] += item.num;
-                    }
-                }
-                else if (leaseEndDate.getFullYear() === currentYear + 1) {
-                    const ny_month = leaseEndDate.getMonth() + 1; //next year month
-                    if (ny_month < currentMonth) {
-                        if (!leaseStatusDictionary[ny_month]) {
-                            leaseStatusDictionary[ny_month] = 0;
-                        }
-                        leaseStatusDictionary[ny_month] += item.num;
-                    }
-                }
+                console.log("leaseEndDate ", leaseEndDate)
+                diffDate = Math.floor((leaseEndDate - today)/ (1000 * 60 * 60 * 24));
+                // console.log("Calculated Date Difference ", Math.floor(diffDate))
+                console.log("Calculated Date Difference ", diffDate)
 
-                if (leaseEndDate >= today && leaseEndDate <= sixWeeksLater) {
+                const cy_month = leaseEndDate.getMonth() + 1; //current year month
+                console.log("Lease Month: ", cy_month)
+                // leaseStatusDictionary[cy_month] = 0;
+                leaseStatusDictionary[cy_month] = item.num;
+                // leaseStatusDictionary[cy_month] += 5;
+                console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month])
+                
+
+                if (diffDate <= 56) {
                     moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
                     console.log('The date is within the next six weeks.');
-                  } else {
+                } 
+                else {
                     console.log('The date is not within the next six weeks.');
-                  }
-            }
-            });
+                }
+                console.log("Move Out ", moveoutsInSixWeeks)});
+            
+            
+            console.log("Lease Status in Owner Dashboard ", leaseStatusData)
+            console.log("leaseStatusDictionary ", leaseStatusDictionary)
+            // setLeaseStatus(leaseStatusDictionary);
+            setMoveoutsInSixWeeks(moveoutsInSixWeeks);
+
+                
+            
+
+
+            // leaseStatus.forEach(item => {
+            //     console.log("Lease item: ", item)
+            //     if (item.lease_end) {
+            //         const leaseEndDate = new Date(item.lease_end);
+            //         console.log("leaseEndDate ", leaseEndDate)
+            //         console.log("leaseEndDate Year ", leaseEndDate.getFullYear())
+            //         if (leaseEndDate.getFullYear() === currentYear) {
+            //             console.log("Lease Year = Current Year")
+            //             const cy_month = leaseEndDate.getMonth() + 1; //current year month
+            //             console.log("Lease Month: ", cy_month)
+            //             if (cy_month >= currentMonth) {
+            //                 if (!leaseStatusDictionary[cy_month]) {
+            //                     leaseStatusDictionary[cy_month] = 0;
+            //                 }
+            //                 leaseStatusDictionary[cy_month] += item.num;
+            //             }
+            //         }
+            //         else if (leaseEndDate.getFullYear() === currentYear + 1) {
+            //             console.log("Lease Year = Next Year")
+            //             const ny_month = leaseEndDate.getMonth() + 1; //next year month
+            //             console.log("Lease Month: ", ny_month)
+            //             if (ny_month < currentMonth) {
+            //                 if (!leaseStatusDictionary[ny_month]) {
+            //                     leaseStatusDictionary[ny_month] = 0;
+            //                 }
+            //                 leaseStatusDictionary[ny_month] += item.num;
+            //             }
+            //         }
+
+            //         if (leaseEndDate >= today && leaseEndDate <= sixWeeksLater) {
+            //             moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
+            //             console.log('The date is within the next six weeks.');
+            //         } 
+            //         else {
+            //             console.log('The date is not within the next six weeks.');
+            //         }
+            //     }
+            // });
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
             // console.log("leaseStatusDictionary ", leaseStatusDictionary)
@@ -229,13 +287,19 @@ export default function OwnerDashboard() {
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData}/>
                         <PropertyRentWidget {...propsForPropertyRentWidget}/>
-                        <LeaseWidget selectedRole={"OWNER"}/>
+                    </div>
+
+                    
+                    <div className="mt-container">
+                        {/* <LeaseWidget selectedRole={"OWNER"}/> */}
+                        <LeaseWidget moveOut={moveoutsInSixWeeks} leaseData={leaseStatus}/>
                     </div>
 
 
-                    {/* RENT WIDGET */}
+                    {/* LEASES WIDGET */}
+                    
+                    {/* 
                     <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
-                        {/* <div className="mt-expiry-container"> */}
                         <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
                         <div className="months-and-moveouts">
                             <div className="months">
@@ -376,6 +440,7 @@ export default function OwnerDashboard() {
                         </div>
                     </div>
                     <br />
+                    */}
 
 
                     <div className="bottom-buttons">
