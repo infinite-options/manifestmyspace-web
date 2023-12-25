@@ -58,51 +58,6 @@ export default function OwnerDashboard() {
         unpaidRentStatusCount: totalPropertiesCount,
     }
 
-    // Is renderColorfulLegendText used?
-    // const renderColorfulLegendText = (value, entry) => {
-    //     const { color } = entry;
-    //     const status = data.find(item => item.fill === color)?.rent_status;
-    //     const num = data.find(item => item.fill === color)?.number;
-    //     return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
-    // };
-
-    // Are viewProperty and createProperty used?
-    // const viewProperty = <text
-    //     x={85}
-    //     y={100}
-    //     textAnchor="middle"
-    //     dominantBaseline="middle"
-    //     cursor="pointer"
-    //     style={{
-    //         fontFamily: 'Source Sans Pro',
-    //         fontSize: '9px',
-    //         fill: '#160449',
-    //         fontWeight: '600',
-    //     }}
-    //     onClick={(e) => { e.stopPropagation(); navigate('/properties') }}
-    // >
-    //     View All {totalPropertiesCount}
-    //     <tspan x={85} y={110}>properties</tspan>
-    // </text>
-    
-    // const createProperty= <text
-    //     x={85}
-    //     y={100}
-    //     textAnchor="middle"
-    //     dominantBaseline="middle"
-    //     cursor="pointer"
-    //     style={{
-    //         fontFamily: 'Source Sans Pro',
-    //         fontSize: '9px',
-    //         fill: '#160449',
-    //         fontWeight: '600',
-    //     }}
-    //     onClick={(e) => { e.stopPropagation(); navigate('/addProperty') }}
-    // >
-    //     Create a new property
-        
-    // </text>
-
     
     // USE EFFECT gets all the data
     useEffect(() => {
@@ -208,59 +163,10 @@ export default function OwnerDashboard() {
             
             console.log("Lease Status in Owner Dashboard ", leaseStatusData)
             console.log("leaseStatusDictionary ", leaseStatusDictionary)
-            // setLeaseStatus(leaseStatusDictionary);
-            setMoveoutsInSixWeeks(moveoutsInSixWeeks);
 
-                
-            
-
-
-            // leaseStatus.forEach(item => {
-            //     console.log("Lease item: ", item)
-            //     if (item.lease_end) {
-            //         const leaseEndDate = new Date(item.lease_end);
-            //         console.log("leaseEndDate ", leaseEndDate)
-            //         console.log("leaseEndDate Year ", leaseEndDate.getFullYear())
-            //         if (leaseEndDate.getFullYear() === currentYear) {
-            //             console.log("Lease Year = Current Year")
-            //             const cy_month = leaseEndDate.getMonth() + 1; //current year month
-            //             console.log("Lease Month: ", cy_month)
-            //             if (cy_month >= currentMonth) {
-            //                 if (!leaseStatusDictionary[cy_month]) {
-            //                     leaseStatusDictionary[cy_month] = 0;
-            //                 }
-            //                 leaseStatusDictionary[cy_month] += item.num;
-            //             }
-            //         }
-            //         else if (leaseEndDate.getFullYear() === currentYear + 1) {
-            //             console.log("Lease Year = Next Year")
-            //             const ny_month = leaseEndDate.getMonth() + 1; //next year month
-            //             console.log("Lease Month: ", ny_month)
-            //             if (ny_month < currentMonth) {
-            //                 if (!leaseStatusDictionary[ny_month]) {
-            //                     leaseStatusDictionary[ny_month] = 0;
-            //                 }
-            //                 leaseStatusDictionary[ny_month] += item.num;
-            //             }
-            //         }
-
-            //         if (leaseEndDate >= today && leaseEndDate <= sixWeeksLater) {
-            //             moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
-            //             console.log('The date is within the next six weeks.');
-            //         } 
-            //         else {
-            //             console.log('The date is not within the next six weeks.');
-            //         }
-            //     }
-            // });
             setLeaseStatus(leaseStatusDictionary);
             setMoveoutsInSixWeeks(moveoutsInSixWeeks);
-            // console.log("leaseStatusDictionary ", leaseStatusDictionary)
 
-            // let date = new Date();
-            // setCurrentMonth(date.getMonth()+1);
-            // let currentYear = date.getFullYear().toString();
-            // console.log("month, year", currentMonth)
             setShowSpinner(false);
         }
         fetchData();
@@ -276,12 +182,7 @@ export default function OwnerDashboard() {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        {/* {loading && 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            {loading && <CircularProgress color="inherit" />}
-            </div>    
-        }
-            {!loading && */}
+
                 <div className="mt-widget-main">
                     <CashflowWidget />
                     <div className="mt-container">
@@ -296,151 +197,6 @@ export default function OwnerDashboard() {
                     </div>
 
 
-                    {/* LEASES WIDGET */}
-                    
-                    {/* 
-                    <div className="mt-widget-expiry" onClick={() => navigate("/ownerLeases")}>
-                        <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
-                        <div className="months-and-moveouts">
-                            <div className="months">
-                                <div id="first-row">
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 1 && '#F87C7A') || (currentMonth + 1 === 1 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[1] ? leaseStatus[1] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div> JAN </div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 2 && '#F87C7A') || (currentMonth + 1 === 2 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[2] ? leaseStatus[2] : 0
-                                                }
-                                            </b></div>
-                                        <div>FEB</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 3 && '#F87C7A') || (currentMonth + 1 === 3 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[3] ? leaseStatus[3] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>MAR</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 4 && '#F87C7A') || (currentMonth + 1 === 4 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[4] ? leaseStatus[4] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>APR</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 5 && '#F87C7A') || (currentMonth + 1 === 5 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[5] ? leaseStatus[5] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>MAY</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 6 && '#F87C7A') || (currentMonth + 1 === 6 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[6] ? leaseStatus[6] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>JUN</div>
-                                    </div>
-                                </div>
-                                <br />
-                                <br />
-                                <div id="second-row">
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 7 && '#F87C7A') || (currentMonth + 1 === 7 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[7] ? leaseStatus[7] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>JUL</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: currentMonth === 8 && '#F87C7A' || currentMonth + 1 === 8 && '#FFC85C' }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[8] ? leaseStatus[8] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>AUG</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: currentMonth === 9 && '#F87C7A' || currentMonth + 1 === 9 && '#FFC85C' }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[9] ? leaseStatus[9] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>SEP</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 10 && '#F87C7A') || (currentMonth + 1 === 10 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[10] ? leaseStatus[10] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>OCT</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 11 && '#F87C7A') || (currentMonth + 1 === 11 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[11] ? leaseStatus[11] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>NOV</div>
-                                    </div>
-                                    <div className="box" style={{ backgroundColor: (currentMonth === 12 && '#F87C7A') || (currentMonth + 1 === 12 && '#FFC85C') }}>
-                                        <div style={{ fontSize: '14px' }}>
-                                            <b>
-                                                {
-                                                    leaseStatus && leaseStatus[12] ? leaseStatus[12] : 0
-                                                }
-                                            </b>
-                                        </div>
-                                        <div>DEC</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="moveouts">
-                                <h2 className="move-out-title"> Move-outs</h2>
-                                <div className="big-box">
-                                    <div> {moveoutsInSixWeeks} </div>
-                                    <div> IN NEXT </div>
-                                    <div> 6 WEEKS </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    */}
 
 
                     <div className="bottom-buttons">
