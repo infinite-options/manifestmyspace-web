@@ -7,6 +7,8 @@ import { Box } from '@mui/material';
 export default function PropertyRentWidget(props) {
     const navigate = useNavigate();
 
+    console.log('in Property Rent Widget');
+
     // console.log(props)
     let data = props.rentData
 
