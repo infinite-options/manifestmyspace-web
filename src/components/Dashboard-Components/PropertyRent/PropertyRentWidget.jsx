@@ -5,12 +5,43 @@ import { Box } from '@mui/material';
 
 
 export default function PropertyRentWidget(props) {
+    console.log('in Property Rent Widget');
+    
+    // console.log('props.rentData: ', props.rentData);
+    // console.log('props.profile: ', props.profile);
+    // console.log('props.propertyCount: ', props.totalPropertiesCount);
     const navigate = useNavigate();
 
-    console.log('in Property Rent Widget');
 
-    // console.log(props)
-    let data = props.rentData
+    let rentStatusData = props.rentData
+
+
+    let unpaidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'UNPAID') : 0;
+    unpaidCount = unpaidCount ? unpaidCount.num : 0;
+
+    let partialPaidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'PAID PARTIALLY') : 0;
+    partialPaidCount = partialPaidCount ? partialPaidCount.num : 0;
+
+    let paidLateCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'PAID LATE') : 0;
+    paidLateCount = paidLateCount ? paidLateCount.num : 0;
+
+    let vacantCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'VACANT') : 0;
+    vacantCount = vacantCount ? vacantCount.num : 0;
+
+    let paidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'PAID') : 0;
+    paidCount = paidCount ? paidCount.num : 0;
+
+    // no check if rentSatus does not exist so this could result in a failure
+    let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount;
+
+
+    let data = [
+        { rent_status: "not paid", number: unpaidCount, fill: "#A52A2A" },
+        { rent_status: "paid partially", number: partialPaidCount, fill: "#FF8A00" },
+        { rent_status: "paid late", number: paidLateCount, fill: "#FFC85C" },
+        { rent_status: "vacant", number: vacantCount, fill: "#160449" },
+        { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" }
+    ];
 
     const renderColorfulLegendText = (value, entry) => {
         const { color } = entry;
@@ -19,15 +50,7 @@ export default function PropertyRentWidget(props) {
         return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
     };
 
-    // background-color: var(--light-gray-bg);
-    // display: block;
-    // /* transform: translateX(5%); */
-    // position: relative;
-    // border-radius: 10px;
-    // margin-top: 30px;
-    // height: 392px;
-    // width: 42.75%;
-    // cursor: pointer;
+
 
     return (
         <Box 
@@ -103,7 +126,7 @@ export default function PropertyRentWidget(props) {
                             }
                         }}
                     >
-                        View all {props.totalPropertiesCount}
+                        View all {totalPropertiesCount}
                         <tspan x={105} y={98}>properties</tspan>
                     </text>
                 </PieChart>
