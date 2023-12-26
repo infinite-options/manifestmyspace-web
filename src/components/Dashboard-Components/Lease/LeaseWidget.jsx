@@ -11,30 +11,15 @@ import { Button, Box, ThemeProvider } from '@mui/material';
 
 // export default function LeaseWidget({moveOut, leaseData}) {
 export default function LeaseWidget(props) {
-    // leaseStatus = leaseData;
     console.log('in LeaseWidget');
-    console.log('leaseWidget lease Data:', props.leaseData);
-    // console.log('leaseWidget moveOut Data:', props.moveOut);
-    // console.log('leaseWidget lease Status:', leaseStatus);
-
-
+    // console.log('leaseWidget lease Data:', props.leaseData);
 
     const navigate = useNavigate();
     let date = new Date();
-    // const [leaseStatus, setLeaseStatus] = useState({});
-    // const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
-    // const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState();
-
     let moveoutsInSixWeeks = 0
     let leaseStatusData = props.leaseData
     console.log('After setting leaseStatus:', leaseStatusData);
     console.log('After setting moveoutsInSixWeeks:', moveoutsInSixWeeks);
-
-
-    
-
-
-    // let leaseStatusData = jsonData.LeaseStatus.result;
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     var leaseStatus = {};
@@ -71,9 +56,7 @@ export default function LeaseWidget(props) {
 
         const cy_month = leaseEndDate.getMonth() + 1; //current year month
         console.log("Lease Month: ", cy_month)
-        // leaseStatusDictionary[cy_month] = 0;
         leaseStatusDictionary[cy_month] = item.num;
-        // leaseStatusDictionary[cy_month] += 5;
         console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month])
     
 
@@ -91,7 +74,6 @@ export default function LeaseWidget(props) {
     console.log("leaseStatusDictionary ", leaseStatusDictionary)
 
     leaseStatus = leaseStatusDictionary;
-    // setMoveoutsInSixWeeks(moveoutsInSixWeeks);
 
 
     return (
