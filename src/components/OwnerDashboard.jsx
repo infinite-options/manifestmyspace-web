@@ -21,18 +21,18 @@ export default function OwnerDashboard() {
     const navigate = useNavigate();
     let date = new Date();
     // const [loading, setLoading] = useState(true);
-    // const [rentStatus, setRentStatus] = useState([]);
+    const [rentStatus, setRentStatus] = useState([]);
     const [leaseStatus, setLeaseStatus] = useState([]);
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
     
-    const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
-    const [partialPaidRentStatusCount, setPartialPaidRentStatusCount] = useState(0);
-    const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
-    const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
-    const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
-    const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
+    // const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
+    // const [partialPaidRentStatusCount, setPartialPaidRentStatusCount] = useState(0);
+    // const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
+    // const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
+    // const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
+    // const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
 
     const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
@@ -45,18 +45,18 @@ export default function OwnerDashboard() {
         ["paid on time", 36],
     ];
 
-    const data = [
-        { rent_status: "not paid", number: unpaidRentStatusCount, fill: "#A52A2A" },
-        { rent_status: "paid partially", number: partialPaidRentStatusCount, fill: "#FF8A00" },
-        { rent_status: "paid late", number: paidLateRentStatusCount, fill: "#FFC85C" },
-        { rent_status: "vacant", number: vacantRentStatusCount, fill: "#160449" },
-        { rent_status: "paid on time", number: paidRentStatusCount, fill: "#3D5CAC" }
-    ];
+    // const data = [
+    //     { rent_status: "not paid", number: unpaidRentStatusCount, fill: "#A52A2A" },
+    //     { rent_status: "paid partially", number: partialPaidRentStatusCount, fill: "#FF8A00" },
+    //     { rent_status: "paid late", number: paidLateRentStatusCount, fill: "#FFC85C" },
+    //     { rent_status: "vacant", number: vacantRentStatusCount, fill: "#160449" },
+    //     { rent_status: "paid on time", number: paidRentStatusCount, fill: "#3D5CAC" }
+    // ];
 
-    let propsForPropertyRentWidget = {
-        rentData: data,
-        unpaidRentStatusCount: totalPropertiesCount,
-    }
+    // let propsForPropertyRentWidget = {
+    //     rentData: data,
+    //     unpaidRentStatusCount: totalPropertiesCount,
+    // }
 
     
     // USE EFFECT gets all the data
@@ -79,32 +79,10 @@ export default function OwnerDashboard() {
 
 
             // RENT Status
-            // setRentStatus(jsonData.RentStatus.result);
-            let rentStatus = jsonData.RentStatus.result;
+            setRentStatus(jsonData.RentStatus.result);
+            // let rentStatus = jsonData.RentStatus.result;
 
-            let unpaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'UNPAID') : 0;
-            unpaidCount = unpaidCount ? unpaidCount.num : 0;
-            setUnpaidRentStatusCount(unpaidCount);
-
-            let partialPaidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID PARTIALLY') : 0;
-            partialPaidCount = partialPaidCount ? partialPaidCount.num : 0;
-            setPartialPaidRentStatusCount(partialPaidCount);
-
-            let paidLateCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID LATE') : 0;
-            paidLateCount = paidLateCount ? paidLateCount.num : 0;
-            setPaidLateRentStatusCount(paidLateCount);
-
-            let vacantCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'VACANT') : 0;
-            vacantCount = vacantCount ? vacantCount.num : 0;
-            setVacantRentStatusCount(vacantCount);
-
-            let paidCount = rentStatus ? rentStatus.find(rs => rs.rent_status === 'PAID') : 0;
-            paidCount = paidCount ? paidCount.num : 0;
-            setPaidRentStatusCount(paidCount);
-
-            // no check if rentSatus does not exist so this could result in a failure
-            let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount;
-            setTotalPropertiesCount(totalPropertiesCount);
+            
 
 
             // LEASE Status
@@ -131,7 +109,7 @@ export default function OwnerDashboard() {
                     <CashflowWidget />
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData}/>
-                        <PropertyRentWidget {...propsForPropertyRentWidget}/>
+                        <PropertyRentWidget rentData={rentStatus}/>
                     </div>
 
                     
