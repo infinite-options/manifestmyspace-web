@@ -7,49 +7,32 @@ import { Box } from '@mui/material';
 export default function PropertyRentWidget(props) {
     console.log('in Property Rent Widget');
     
-    console.log('props.rentData: ', props.rentData);
+    // console.log('props.rentData: ', props.rentData);
     // console.log('props.profile: ', props.profile);
     // console.log('props.propertyCount: ', props.totalPropertiesCount);
     const navigate = useNavigate();
 
-    // const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
-    // const [partialPaidRentStatusCount, setPartialPaidRentStatusCount] = useState(0);
-    // const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
-    // const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
-    // const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
-    // const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
 
     let rentStatusData = props.rentData
 
 
-    // let propsForPropertyRentWidget = {
-    //     rentData: data,
-    //     unpaidRentStatusCount: totalPropertiesCount,
-    // }
-
     let unpaidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'UNPAID') : 0;
     unpaidCount = unpaidCount ? unpaidCount.num : 0;
-    // setUnpaidRentStatusCount(unpaidCount);
 
     let partialPaidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'PAID PARTIALLY') : 0;
     partialPaidCount = partialPaidCount ? partialPaidCount.num : 0;
-    // setPartialPaidRentStatusCount(partialPaidCount);
 
     let paidLateCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'PAID LATE') : 0;
     paidLateCount = paidLateCount ? paidLateCount.num : 0;
-    // setPaidLateRentStatusCount(paidLateCount);
 
     let vacantCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'VACANT') : 0;
     vacantCount = vacantCount ? vacantCount.num : 0;
-    // setVacantRentStatusCount(vacantCount);
 
     let paidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'PAID') : 0;
     paidCount = paidCount ? paidCount.num : 0;
-    // setPaidRentStatusCount(paidCount);
 
     // no check if rentSatus does not exist so this could result in a failure
     let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount;
-    // setTotalPropertiesCount(totalPropertiesCount);
 
 
     let data = [
@@ -60,12 +43,6 @@ export default function PropertyRentWidget(props) {
         { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" }
     ];
 
-
-
-
-    // console.log(props)
-    // let data = props.rentData
-
     const renderColorfulLegendText = (value, entry) => {
         const { color } = entry;
         const status = data.find(item => item.fill === color)?.rent_status;
@@ -73,15 +50,7 @@ export default function PropertyRentWidget(props) {
         return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
     };
 
-    // background-color: var(--light-gray-bg);
-    // display: block;
-    // /* transform: translateX(5%); */
-    // position: relative;
-    // border-radius: 10px;
-    // margin-top: 30px;
-    // height: 392px;
-    // width: 42.75%;
-    // cursor: pointer;
+
 
     return (
         <Box 

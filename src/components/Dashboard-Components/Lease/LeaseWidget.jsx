@@ -18,8 +18,8 @@ export default function LeaseWidget(props) {
     let date = new Date();
     let moveoutsInSixWeeks = 0
     let leaseStatusData = props.leaseData
-    console.log('After setting leaseStatus:', leaseStatusData);
-    console.log('After setting moveoutsInSixWeeks:', moveoutsInSixWeeks);
+    // console.log('After setting leaseStatus:', leaseStatusData);
+    // console.log('After setting moveoutsInSixWeeks:', moveoutsInSixWeeks);
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     var leaseStatus = {};
@@ -35,42 +35,42 @@ export default function LeaseWidget(props) {
     let diffDate = (sixWeeksLater - today)/ (1000 * 60 * 60 * 24);
 
     // Print statements
-    console.log("Current Year: ", currentYear)
-    console.log("Current Month: ", currentMonth)
-    console.log("today ", today)
-    console.log("sixWeeksLater ", sixWeeksLater)
-    console.log("Date Difference ", diffDate)
-    console.log("Lease Status: ", leaseStatus)
-    console.log("Lease Status Data: ", leaseStatusData)
-    console.log("Lease Dictionary: ", leaseStatusDictionary)
+    // console.log("Current Year: ", currentYear)
+    // console.log("Current Month: ", currentMonth)
+    // console.log("today ", today)
+    // console.log("sixWeeksLater ", sixWeeksLater)
+    // console.log("Date Difference ", diffDate)
+    // console.log("Lease Status: ", leaseStatus)
+    // console.log("Lease Status Data: ", leaseStatusData)
+    // console.log("Lease Dictionary: ", leaseStatusDictionary)
     
 
     leaseStatusData.forEach(item => {
-        console.log("Lease item: ", item);
-        console.log("Lease end date ", item.lease_end);
+        // console.log("Lease item: ", item);
+        // console.log("Lease end date ", item.lease_end);
         const leaseEndDate = new Date(item.lease_end);
-        console.log("leaseEndDate ", leaseEndDate)
+        // console.log("leaseEndDate ", leaseEndDate)
         diffDate = Math.floor((leaseEndDate - today)/ (1000 * 60 * 60 * 24));
         // console.log("Calculated Date Difference ", Math.floor(diffDate))
-        console.log("Calculated Date Difference ", diffDate)
+        // console.log("Calculated Date Difference ", diffDate)
 
         const cy_month = leaseEndDate.getMonth() + 1; //current year month
-        console.log("Lease Month: ", cy_month)
+        // console.log("Lease Month: ", cy_month)
         leaseStatusDictionary[cy_month] = item.num;
-        console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month])
+        // console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month])
     
 
         if (diffDate <= 56) {
             moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
-            console.log('The date is within the next six weeks.');
+            // console.log('The date is within the next six weeks.');
         } 
         else {
-            console.log('The date is not within the next six weeks.');
+            // console.log('The date is not within the next six weeks.');
         }
         console.log("Move Out ", moveoutsInSixWeeks)});
     
     
-    console.log("Lease Status in Owner Dashboard ", leaseStatusData)
+    console.log("Lease Status ", leaseStatusData)
     console.log("leaseStatusDictionary ", leaseStatusDictionary)
 
     leaseStatus = leaseStatusDictionary;

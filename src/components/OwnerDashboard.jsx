@@ -26,13 +26,7 @@ export default function OwnerDashboard() {
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
-    
-    // const [unpaidRentStatusCount, setUnpaidRentStatusCount] = useState(0);
-    // const [partialPaidRentStatusCount, setPartialPaidRentStatusCount] = useState(0);
-    // const [paidLateRentStatusCount, setPaidLateRentStatusCount] = useState(0);
-    // const [vacantRentStatusCount, setVacantRentStatusCount] = useState(0);
-    // const [paidRentStatusCount, setPaidRentStatusCount] = useState(0);
-    // const [totalPropertiesCount, setTotalPropertiesCount] = useState(0);
+
 
     const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
@@ -44,19 +38,6 @@ export default function OwnerDashboard() {
         ["vacant", 3],
         ["paid on time", 36],
     ];
-
-    // const data = [
-    //     { rent_status: "not paid", number: unpaidRentStatusCount, fill: "#A52A2A" },
-    //     { rent_status: "paid partially", number: partialPaidRentStatusCount, fill: "#FF8A00" },
-    //     { rent_status: "paid late", number: paidLateRentStatusCount, fill: "#FFC85C" },
-    //     { rent_status: "vacant", number: vacantRentStatusCount, fill: "#160449" },
-    //     { rent_status: "paid on time", number: paidRentStatusCount, fill: "#3D5CAC" }
-    // ];
-
-    // let propsForPropertyRentWidget = {
-    //     rentData: data,
-    //     unpaidRentStatusCount: totalPropertiesCount,
-    // }
 
     
     // USE EFFECT gets all the data
@@ -83,8 +64,6 @@ export default function OwnerDashboard() {
             // let rentStatus = jsonData.RentStatus.result;
 
             
-
-
             // LEASE Status
             setLeaseStatus(jsonData.LeaseStatus.result);
             
