@@ -17,6 +17,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function OwnerDashboard() {
+
     const { user, getProfileId } = useUser();
     const navigate = useNavigate();
     let date = new Date();
@@ -55,14 +56,9 @@ export default function OwnerDashboard() {
 
             // MAINTENANCE Status
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
-            // console.log("DEBUG - OwnerDashboard - jsonData.MaintenanceStatus.result", jsonData.MaintenanceStatus.result)
-            // setLoading(false);
-
-
+   
             // RENT Status
             setRentStatus(jsonData.RentStatus.result);
-            // let rentStatus = jsonData.RentStatus.result;
-
             
             // LEASE Status
             setLeaseStatus(jsonData.LeaseStatus.result);
