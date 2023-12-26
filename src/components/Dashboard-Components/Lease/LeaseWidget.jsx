@@ -9,25 +9,90 @@ import theme from "../../../theme/theme";
 import { Button, Box, ThemeProvider } from '@mui/material';
 
 
-export default function LeaseWidget({moveOut, leaseData}) {
+// export default function LeaseWidget({moveOut, leaseData}) {
+export default function LeaseWidget(props) {
     // leaseStatus = leaseData;
     console.log('in LeaseWidget');
-    console.log('leaseWidget lease Data:', leaseData);
-    console.log('leaseWidget moveOut Data:', moveOut);
+    console.log('leaseWidget lease Data:', props.leaseData);
+    // console.log('leaseWidget moveOut Data:', props.moveOut);
     // console.log('leaseWidget lease Status:', leaseStatus);
 
 
 
     const navigate = useNavigate();
     let date = new Date();
-    // const [leaseStatus, setLeaseStatus] = useState(leaseData);
-    const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
-    // const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
+    // const [leaseStatus, setLeaseStatus] = useState({});
+    // const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
+    // const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState();
 
-    let moveoutsInSixWeeks = moveOut
-    let leaseStatus = leaseData
-    console.log('After setting leaseStatus:', leaseStatus);
+    let moveoutsInSixWeeks = 0
+    let leaseStatusData = props.leaseData
+    console.log('After setting leaseStatus:', leaseStatusData);
     console.log('After setting moveoutsInSixWeeks:', moveoutsInSixWeeks);
+
+
+    
+
+
+    // let leaseStatusData = jsonData.LeaseStatus.result;
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
+    var leaseStatus = {};
+    const leaseStatusDictionary = {};
+
+
+    // Date object for today
+    const today = new Date();
+    // Date object for six weeks from now
+    const sixWeeksLater = new Date();
+    sixWeeksLater.setDate(today.getDate() + 6 * 7); // Adding 6 weeks worth of days
+    // let moveoutsInSixWeeks = 0;
+    let diffDate = (sixWeeksLater - today)/ (1000 * 60 * 60 * 24);
+
+    // Print statements
+    console.log("Current Year: ", currentYear)
+    console.log("Current Month: ", currentMonth)
+    console.log("today ", today)
+    console.log("sixWeeksLater ", sixWeeksLater)
+    console.log("Date Difference ", diffDate)
+    console.log("Lease Status: ", leaseStatus)
+    console.log("Lease Status Data: ", leaseStatusData)
+    console.log("Lease Dictionary: ", leaseStatusDictionary)
+    
+
+    leaseStatusData.forEach(item => {
+        console.log("Lease item: ", item);
+        console.log("Lease end date ", item.lease_end);
+        const leaseEndDate = new Date(item.lease_end);
+        console.log("leaseEndDate ", leaseEndDate)
+        diffDate = Math.floor((leaseEndDate - today)/ (1000 * 60 * 60 * 24));
+        // console.log("Calculated Date Difference ", Math.floor(diffDate))
+        console.log("Calculated Date Difference ", diffDate)
+
+        const cy_month = leaseEndDate.getMonth() + 1; //current year month
+        console.log("Lease Month: ", cy_month)
+        // leaseStatusDictionary[cy_month] = 0;
+        leaseStatusDictionary[cy_month] = item.num;
+        // leaseStatusDictionary[cy_month] += 5;
+        console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month])
+    
+
+        if (diffDate <= 56) {
+            moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
+            console.log('The date is within the next six weeks.');
+        } 
+        else {
+            console.log('The date is not within the next six weeks.');
+        }
+        console.log("Move Out ", moveoutsInSixWeeks)});
+    
+    
+    console.log("Lease Status in Owner Dashboard ", leaseStatusData)
+    console.log("leaseStatusDictionary ", leaseStatusDictionary)
+
+    leaseStatus = leaseStatusDictionary;
+    // setMoveoutsInSixWeeks(moveoutsInSixWeeks);
+
 
     return (
 
