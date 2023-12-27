@@ -399,6 +399,7 @@ export default function AddListing({}){
         formData.append('property_available_to_rent', isListed ? 1 : 0);
         formData.append('property_amenities_community', communityAmenities);
         formData.append('property_amenities_unit', apartmentAmenities);
+        formData.append('property_amenities_nearby', nearbyAmenities);
         
         //utilities data
         // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
@@ -441,7 +442,7 @@ export default function AddListing({}){
                 //     body: formData
                 // })
                 const data = await response.json();
-                console.log("data", data)
+                console.log("properties put data", data)
                 if (data.code === 200){
                     navigate(-1);
                     // should navigate to the listing page
