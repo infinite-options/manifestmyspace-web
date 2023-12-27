@@ -16,6 +16,7 @@ import {
     CardMedia,
     InputAdornment,
     Radio,
+    Menu,
 } from "@mui/material";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -62,6 +63,7 @@ export default function EditProperty({}){
     const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
     const [description, setDescription] = useState(propertyData.property_description);
     const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
+    const [imageState, setImageState] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
@@ -82,6 +84,7 @@ export default function EditProperty({}){
     const [page, setPage] = useState("Edit");
 
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
+    const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
     const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
 
@@ -170,6 +173,7 @@ export default function EditProperty({}){
             setMappedUtilitiesPaidBy(defaultUtilities);
             setIsDefaultUtilities(true);
         }
+        loadImages();
         console.log("****************************************EditProperty useEffect********************************************");
     
         
@@ -178,6 +182,10 @@ export default function EditProperty({}){
     useEffect(() => {
         console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
     }, [mappedUtilitiesPaidBy]);
+
+    useEffect(() => {
+        console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+    }, [newUtilitiesPaidBy]);
 
     const handleUtilityChange = (utility, entity) => {
         
@@ -191,6 +199,48 @@ export default function EditProperty({}){
         }));
         // setUtilitiesPaidBy(utilities);
         // setMappedUtilitiesPaidBy(utilities);
+
+        setNewUtilitiesPaidBy(prevState => ({
+            ...prevState,
+            [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+        }));
+    };
+
+    //Add utility
+    // const getKeysNotInUtilitiesMap = () => {
+    //     const mappedKeys = Object.keys(mappedUtilitiesPaidBy);
+    //     const allKeys = Array.from(utilitiesMap.values());
+    //     return allKeys.filter(key => !mappedKeys.includes(key));
+    // };
+
+
+    const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
+    // const [keysNotInUtilitiesMap] = useState(getKeysNotInUtilitiesMap());
+    const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter(
+        utility => !(utility in mappedUtilitiesPaidBy)
+    );
+
+
+    const handleClick = (event) => {
+        setAddUtilityAnchorElement(event.currentTarget);
+    };
+
+    const handleAddUtilityClose = () => {
+        setAddUtilityAnchorElement(null);
+    };
+
+    const handleAddUtility = (utility) => {
+        const updatedMappedUtilities = { ...mappedUtilitiesPaidBy }; // Create a copy of mappedUtilitiesPaidBy
+        updatedMappedUtilities[utility] = 'owner';
+        setMappedUtilitiesPaidBy(updatedMappedUtilities);
+
+        const updatedNewUtilitiesMappedBy = { ...newUtilitiesPaidBy };
+        updatedNewUtilitiesMappedBy[utility] = 'owner';
+        setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
+
+
+        console.log(`Adding utility: ${utility}`);
+        handleAddUtilityClose();
     };
 
     const handleNext = () => {
@@ -230,6 +280,7 @@ export default function EditProperty({}){
         console.log("handleSubmit")
         const formData = new FormData();
         const utilitiesFormData = new FormData();
+        const addedUtilitiesFormData = new FormData();
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
@@ -269,24 +320,49 @@ export default function EditProperty({}){
 
         utilitiesFormData.append('property_uid', propertyData.property_uid);
         utilitiesFormData.append('property_utility', utilitiesJSONString);
+
+        
+        const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
+        console.log("----- addedUtilitiesJSONString");
+        console.log(addedUtilitiesJSONString);
+
+        addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
+        addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
         
 
         console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length)
         
-        for (let i = 0; i < selectedImageList.length; i++) {
-            try {
-                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+        //rohit - adding images to formData - delete if other one works
+        // for (let i = 0; i < selectedImageList.length; i++) {
+        //     try {
+        //         let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
-                    formData.append(key, imageBlob)
-                } else {
-                    formData.append(key, selectedImageList[i])
-                }
-            } catch (error) {
-                console.log("Error uploading images", error)
-            }
+        //         if(selectedImageList[i].startsWith("data:image")){
+        //             const imageBlob = dataURItoBlob(selectedImageList[i]);
+        //             formData.append(key, imageBlob)
+        //         } else {
+        //             formData.append(key, selectedImageList[i])
+        //         }
+        //     } catch (error) {
+        //         console.log("Error uploading images", error)
+        //     }
+        // }
+
+
+        const files = imageState;
+        let i = 0;
+        for (const file of imageState) {
+        let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+        if (file.file !== null) {
+            // newProperty[key] = file.file;
+            formData.append(key, file.file)
+        } else {
+            // newProperty[key] = file.image;
+            formData.append(key, file.image)
         }
+        }
+
+
 
         for (let [key, value] of formData.entries()) {
             console.log(key, value);            
@@ -296,6 +372,7 @@ export default function EditProperty({}){
             setShowSpinner(true);
             try{
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
+                // const response = await fetch("http://localhost:4000/properties", {
                     method: "PUT",
                     body: formData
                 })
@@ -317,14 +394,14 @@ export default function EditProperty({}){
             setShowSpinner(false);
             navigate("/propertyDetail", { state: { index, propertyList }});
         }
-        const putUtilitiesData = async () => {
+        const updateUtilitiesData = async () => {
             // setShowSpinner(true);
             try{
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
                     method: "PUT",
                     body: utilitiesFormData
                 })
-                // const response = await fetch("http://localhost:4000/utilities",{
+                // const response = await fetch("http://localhost:4000/utilities",{ // rohit
                 //     method: "PUT",
                 //     body: utilitiesFormData
                 // })
@@ -338,6 +415,29 @@ export default function EditProperty({}){
                 console.log("Error posting data:", error)
             }
             setShowSpinner(false);
+
+            const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
+            if(numberOfAddedUtilities > 0){
+                try{
+                    const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                        method: "POST",
+                        body: addedUtilitiesFormData
+                    })
+                    // const response = await fetch("http://localhost:4000/utilities",{
+                    //     method: "POST",
+                    //     body: addedUtilitiesFormData
+                    // })
+                    const data = await response.json();
+                    console.log("data", data)
+                    if (data.code === 200){
+                        navigate(-1);
+                        // should navigate to the listing page
+                    }
+                } catch(error){
+                    console.log("Error posting data:", error)
+                }
+                setShowSpinner(false);
+            }
         }
         const postUtilitiesData = async () => {
             // setShowSpinner(true);
@@ -365,15 +465,20 @@ export default function EditProperty({}){
         if(isDefaultUtilities){
             postUtilitiesData();
         } else{
-            putUtilitiesData();
+            updateUtilitiesData();
         }
         
     }
 
 
+    // const capitalizeFirstChar = (utility) => {
+    //     return utility.charAt(0).toUpperCase() + utility.slice(1);
+    // }
+
     const capitalizeFirstChar = (utility) => {
-        return utility.charAt(0).toUpperCase() + utility.slice(1);
-    }
+        const formattedUtility = utility.replace(/_/g, ' '); // Replace underscores with spaces
+        return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
+    };
 
     const defaultUtilities = {
         electricity: 'owner',
@@ -383,6 +488,19 @@ export default function EditProperty({}){
         gas: 'owner',
     };
 
+    const loadImages = async () => {
+        const files = [];
+        const images = JSON.parse(propertyData.property_images);
+        for (let i = 0; i < images.length; i++) {
+          files.push({
+            index: i,
+            image: images[i],
+            file: null,
+            coverPhoto: i === 0,
+          });
+        }
+        setImageState(files);
+      };
 
 
     return (
@@ -473,6 +591,7 @@ export default function EditProperty({}){
                                             <CardMedia
                                             component="img"
                                             image={selectedImageList[activeStep]}
+                                            // src={`${selectedImageList[activeStep]}?${Date.now()}`} //rohit
                                             // image={coverImage}
                                             sx={{
                                                 elevation: "0",
@@ -495,7 +614,7 @@ export default function EditProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={page}/>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={page} imageState={imageState} setImageState={setImageState} />
                                     </Grid>
 
                                     {/* Text Field for Title */}
@@ -966,6 +1085,24 @@ export default function EditProperty({}){
                                             </Grid>
                                         </Fragment>
                                     ))}
+                                    <Grid item xs={12}>
+                                        <Button variant="outlined" onClick={handleClick}>
+                                            Add Utility
+                                        </Button>
+                                        <Menu
+                                            anchorEl={addUtilityAnchorElement}
+                                            open={Boolean(addUtilityAnchorElement)}
+                                            onClose={handleAddUtilityClose}
+                                        >
+                                            {keysNotInUtilitiesMap.map((utility, index) => (
+                                                <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
+                                                    {capitalizeFirstChar(utility)}
+                                                </MenuItem>
+                                            ))}
+                                        </Menu>
+                                    </Grid>
+                                       
+                                
                                 </Grid>
                             </Box>
                         </Stack>
