@@ -331,22 +331,6 @@ export default function EditProperty({}){
         
 
         console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length)
-        
-        //rohit - adding images to formData - delete if other one works
-        // for (let i = 0; i < selectedImageList.length; i++) {
-        //     try {
-        //         let key = i === 0 ? "img_cover" : `img_${i-1}`;
-
-        //         if(selectedImageList[i].startsWith("data:image")){
-        //             const imageBlob = dataURItoBlob(selectedImageList[i]);
-        //             formData.append(key, imageBlob)
-        //         } else {
-        //             formData.append(key, selectedImageList[i])
-        //         }
-        //     } catch (error) {
-        //         console.log("Error uploading images", error)
-        //     }
-        // }
 
 
         const files = imageState;
@@ -401,7 +385,7 @@ export default function EditProperty({}){
                     method: "PUT",
                     body: utilitiesFormData
                 })
-                // const response = await fetch("http://localhost:4000/utilities",{ // rohit
+                // const response = await fetch("http://localhost:4000/utilities",{ 
                 //     method: "PUT",
                 //     body: utilitiesFormData
                 // })
@@ -591,7 +575,7 @@ export default function EditProperty({}){
                                             <CardMedia
                                             component="img"
                                             image={selectedImageList[activeStep]}
-                                            // src={`${selectedImageList[activeStep]}?${Date.now()}`} //rohit
+                                            // src={`${selectedImageList[activeStep]}?${Date.now()}`}
                                             // image={coverImage}
                                             sx={{
                                                 elevation: "0",

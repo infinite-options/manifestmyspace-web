@@ -39,62 +39,8 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 export default function ImageUploader({selectedImageList, setSelectedImageList, page, imageState, setImageState}){
 
     useEffect(() =>{
-        console.log("ROHIT - imageState - ", imageState);
+        console.log("imageState - ", imageState);
     }, [imageState]);
-
-    //rohit - delete
-    // const handleImageSelect = (event) => {
-    //     const files = Array.from(event.target.files);
-    //     files.forEach((file) => {
-    //         const reader = new FileReader();
-    //         reader.onloadend = () => {
-    //             // file.data_url = reader.result;
-    //             setSelectedImageList([...selectedImageList, reader.result]);
-    //         };
-    //         reader.onerror = (error) => {
-    //             console.log('Error: ', error);
-    //         };
-    //         reader.readAsDataURL(file);
-    //     });
-    // };
-
-    //rohit - delete
-    // const handleImageSelect = (event) => {
-    //     const files = Array.from(event.target.files);
-    //     const newImageState = [...imageState];
-
-    //      // files.forEach((file) => {
-    //     //     const reader = new FileReader();
-    //     //     reader.onloadend = () => {
-    //     //         // file.data_url = reader.result;
-    //     //         setSelectedImageList([...selectedImageList, reader.result]);
-    //     //     };
-    //     //     reader.onerror = (error) => {
-    //     //         console.log('Error: ', error);
-    //     //     };
-    //     //     reader.readAsDataURL(file);
-    //     // });
-    //     const readFile = (file) => {
-    //         const reader = new FileReader();
-    //         reader.onloadend = () => {
-    //           // file.data_url = reader.result;
-    //           newImageState.push(reader.result);
-        
-    //           if (newImageState.length === files.length) {
-    //             setImageState(newImageState);
-    //           }
-    //         };
-    //         reader.onerror = (error) => {
-    //           console.log('Error: ', error);
-    //         };
-    //         reader.readAsDataURL(file);
-    //     };
-
-    //     files.forEach((file) => {
-    //         readFile(file);
-    //     });
-       
-    // };
 
     const readImage = (file) => {
         const reader = new FileReader();
@@ -141,46 +87,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
         }
         setImageState(newImageState);
     };
-
-
-    //rohit - delete if other one works
-    // const handleImageFavorite = (event) => {
-    //     // console.log("handleImageFavorite event", event)
-    //     // const index = event
-    //     // const file = selectedImageList[index]
-    //     // if (file.favorite === undefined) file.favorite = true
-    //     // else (file.favorite = !file.favorite)
-    //     // console.log(file.favorite)
-    //     // setSelectedImageList([...selectedImageList]);
-
-    //     const index = event;
-    //     let file = selectedImageList[index];
-
-    //     if (typeof file === 'string') {
-            
-    //         file = { url: file, favorite: true }; 
-
-            
-    //         setSelectedImageList([
-    //             ...selectedImageList.slice(0, index), 
-    //             file, 
-    //             ...selectedImageList.slice(index + 1),
-    //         ]);
-    //     } else if (typeof file === 'object') {
-    //         file.favorite = !file.favorite;
-    //         setSelectedImageList([...selectedImageList]);
-    //     } else {
-            
-    //         console.error("The selected item is neither a string nor an object.");
-    //     }
-    // };
-
-    // const handleImageTrash = (event) => {
-    //     console.log("handleImageTrash", event)
-    //     const index = event
-    //     selectedImageList.splice(index, 1);
-    //     setSelectedImageList([...selectedImageList]);
-    // }
 
     return (
         <Container fixed sx={{
