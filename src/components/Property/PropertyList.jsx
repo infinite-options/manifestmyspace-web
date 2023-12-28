@@ -335,7 +335,8 @@
                         }}
                     >
                     <Avatar
-                        src={getCoverPhoto(property)}
+                        // src={getCoverPhoto(property)}
+                        src={`${getCoverPhoto(property)}?${Date.now()}`}
                         alt="property image"
                         sx={{
                         borderRadius: "0",

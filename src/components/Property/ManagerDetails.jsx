@@ -13,6 +13,11 @@ import MapIcon from "./mapIcon.png";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import documentIcon from "../../images/Subtract.png"
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const ManagerDetails = () => {
     const navigate = useNavigate();
@@ -102,7 +107,20 @@ const ManagerDetails = () => {
             console.log("error", error)
             return false;
         }
+
+        setCancelContractDialogOpen(false);
+
     }
+
+    const [cancelContractDialogOpen, setCancelContractDialogOpen] = useState(false);
+
+    const openCancelContractDialog = () => {
+        setCancelContractDialogOpen(true);
+    };
+
+    const closeCancelContractDialog = () => {
+        setCancelContractDialogOpen(false);
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -372,17 +390,40 @@ const ManagerDetails = () => {
                                     )}
                         )}
                         {managerData.contract_status === "ACTIVE" ? (
-                            <Button
-                                sx={{
-                                paddingLeft: "15px",
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                fontWeight: 800,
-                                backgroundColor: "#160449",
-                                }}
-                                onClick={() => handleCancel(managerData)}
-                            >
-                                Cancel Contract
-                            </Button>
+                            <>
+                                <Button
+                                    sx={{
+                                    paddingLeft: "15px",
+                                    fontFamily: "Source Sans Pro, sans-serif",
+                                    fontWeight: 800,
+                                    backgroundColor: "#160449",
+                                    }}
+                                    onClick={openCancelContractDialog}
+                                >
+                                    Cancel Contract
+                                </Button>
+                                <Dialog
+                                    open={cancelContractDialogOpen}
+                                    onClose={closeCancelContractDialog}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                                >
+                                    <DialogTitle id="alert-dialog-title">Confirm Cancellation</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+                                            Are you sure you want to cancel the contract?
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={closeCancelContractDialog} color="primary">
+                                            No
+                                        </Button>
+                                        <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus>
+                                            Yes
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </>
                         ) : (
                         null
                         )}
