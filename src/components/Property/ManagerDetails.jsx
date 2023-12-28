@@ -339,7 +339,7 @@ const ManagerDetails = () => {
                         {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
                                 let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
                                 let docList = JSON.parse(p.contract_documents);
-                                const doc = docList.find(
+                                const doc =docList && docList.find(
                                     (document) => document.type === "contract"
                                 );
                                 const contractDocumentLink = doc ? doc.link : '';

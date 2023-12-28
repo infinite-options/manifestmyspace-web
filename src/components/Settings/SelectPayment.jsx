@@ -67,7 +67,7 @@ export default function SelectPayment(props) {
     const [showSpinner, setShowSpinner] = useState(false);
     const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
     const [paymentData, setPaymentData] = useState(location.state.paymentData);
-    const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0].purchase_uid);
+    const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
     const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
     // const [maintenanceItem, setMaintenanceItem] = useState(location.state.paymentData.maintenanceItem);
     const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);

@@ -329,7 +329,10 @@
                             paddingLeft: "10px",
                             paddingRight: "10px",
                         }}
-                        onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                        onClick={() => {
+                            let i=propertyList.findIndex(p=>p.property_uid===property.property_uid)
+                            handlePropertyDetailNavigation(property, i, propertyList)
+                        }}
                     >
                     <Avatar
                         // src={getCoverPhoto(property)}
