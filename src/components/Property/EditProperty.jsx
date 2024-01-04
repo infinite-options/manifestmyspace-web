@@ -484,7 +484,7 @@ export default function EditProperty({}){
           });
         }
         setImageState(files);
-      };
+    };
 
 
     return (
