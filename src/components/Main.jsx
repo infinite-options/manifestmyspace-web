@@ -5,6 +5,7 @@ import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
 import CashflowOwner from "./Cashflow/CashflowOwner";
+import Cashflow from "./Cashflow/Cashflow";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -196,6 +197,7 @@ function Main() {
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<CashflowOwner />} />
+            <Route path="cashflow-test" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />

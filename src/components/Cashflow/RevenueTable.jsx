@@ -6,14 +6,14 @@ import theme from '../../theme/theme';
 
 const RevenueTable = (props) => {
     const [expanded, setExpanded] = useState(false);
-    const revenueSummary = props.revenueSummary;
-    const revenue = props.revenue;
+    // const revenueSummary = props.revenueSummary;
+    // const revenue = props.revenue;
   
     const totalRevenueByType = props.totalRevenueByType;
     const revenueList = props.revenueList;
     const expectedRevenueByType = props.expectedRevenueByType
 
-    console.log("--debug--", expectedRevenueByType)
+    // console.log("--debug--", expectedRevenueByType)
     const activeView = props.activeView;
     const handleAccordionChange = () => {
         setExpanded(!expanded);
@@ -33,8 +33,8 @@ const RevenueTable = (props) => {
       // console.log(expenseType[0], items)
       if (items.length > 0) {
           // console.log("items.length > 0")
-          return items.map((item) => (
-              <TableRow>
+          return items.map((item, index) => (
+              <TableRow key={index}>
                   <TableCell>
                   <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
                   </TableCell>
@@ -97,9 +97,9 @@ const RevenueTable = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Table>
-                        <TableBody>
-                            {getRevenueTypeItems(revenueType)} 
-                        </TableBody>
+                            <TableBody>
+                                {getRevenueTypeItems(revenueType)} 
+                            </TableBody>
                         </Table>
                     </AccordionDetails>
                     </Accordion>
@@ -114,6 +114,7 @@ const RevenueTable = (props) => {
                                     backgroundColor: theme.palette.custom.pink,
                                     boxShadow: 'none',
                                 }}
+                                key={revenueType[0]}
                             >
                             <AccordionSummary sx={{flexDirection: 'row-reverse'}} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
                                 <Table>
