@@ -119,6 +119,7 @@ const paymentStatusMap = {
   "PAID": "Paid On Time",
   "Partial": "Partially Paid",
   "VACANT": "Vacant",
+  "NO MANAGER": "No Manager",
 };
 
 function getPaymentStatusColor(paymentStatus) {
