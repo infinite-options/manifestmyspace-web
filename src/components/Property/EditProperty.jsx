@@ -64,6 +64,7 @@ export default function EditProperty({}){
     const [description, setDescription] = useState(propertyData.property_description);
     const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [imageState, setImageState] = useState([]);
+    const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
@@ -336,14 +337,18 @@ export default function EditProperty({}){
         const files = imageState;
         let i = 0;
         for (const file of imageState) {
-        let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-        if (file.file !== null) {
-            // newProperty[key] = file.file;
-            formData.append(key, file.file)
-        } else {
-            // newProperty[key] = file.image;
-            formData.append(key, file.image)
-        }
+            // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+            let key = `img_${i++}`;
+            if (file.file !== null) {
+                // newProperty[key] = file.file;
+                formData.append(key, file.file)
+            } else {
+                // newProperty[key] = file.image;
+                formData.append(key, file.image)
+            }
+            if(file.coverPhoto) {
+                formData.append('img_favorite', key)
+            }
         }
 
 
@@ -472,6 +477,14 @@ export default function EditProperty({}){
         gas: 'owner',
     };
 
+    const isCoverPhoto = (link) => {
+        if(link === favImage){
+            return true;
+        }
+        return false;
+        
+    };
+
     const loadImages = async () => {
         const files = [];
         const images = JSON.parse(propertyData.property_images);
@@ -480,10 +493,11 @@ export default function EditProperty({}){
             index: i,
             image: images[i],
             file: null,
-            coverPhoto: i === 0,
+            coverPhoto: isCoverPhoto(images[i]),
           });
         }
         setImageState(files);
+        setCoverImage(propertyData.property_favorite_image? propertyData.property_favorite_image : defaultHouseImage);
     };
 
 

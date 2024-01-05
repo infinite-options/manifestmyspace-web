@@ -226,7 +226,9 @@
 
     function getCoverPhoto(property) {
         const imageArray = JSON.parse(property.property_images);
-        if (imageArray.length !== 0) {
+        if (property.property_favorite_image) {
+            return property.property_favorite_image;
+        } else if (imageArray.length !== 0) {
             return imageArray[0];
         } else {
             return propertyImage;

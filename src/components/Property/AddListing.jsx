@@ -79,6 +79,7 @@ export default function AddListing({}){
     const [description, setDescription] = useState(propertyData.property_description);
     // const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [selectedImageList, setSelectedImageList] = useState([]);
+    const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
@@ -414,7 +415,8 @@ export default function AddListing({}){
         const files = selectedImageList;
         let i = 0;
         for (const file of selectedImageList) {
-        let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+        let key = `img_${i++}`;
         if (file.file !== null) {
             // newProperty[key] = file.file;
             formData.append(key, file.file)
@@ -521,6 +523,14 @@ export default function AddListing({}){
         gas: 'owner',
     };
 
+    const isCoverPhoto = (link) => {
+        if(link === favImage){
+            return true;
+        }
+        return false;
+        
+    };
+
     const loadImages = async () => {
         const files = [];
         const images = JSON.parse(propertyData.property_images);
@@ -529,7 +539,7 @@ export default function AddListing({}){
             index: i,
             image: images[i],
             file: null,
-            coverPhoto: i === 0,
+            coverPhoto: isCoverPhoto(images[i]),
           });
         }
         setSelectedImageList(files);
