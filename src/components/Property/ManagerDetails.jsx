@@ -12,6 +12,12 @@ import AddressIcon from "./addressIconDark.png";
 import MapIcon from "./mapIcon.png";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import documentIcon from "../../images/Subtract.png"
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const ManagerDetails = () => {
     const navigate = useNavigate();
@@ -101,7 +107,20 @@ const ManagerDetails = () => {
             console.log("error", error)
             return false;
         }
+
+        setCancelContractDialogOpen(false);
+
     }
+
+    const [cancelContractDialogOpen, setCancelContractDialogOpen] = useState(false);
+
+    const openCancelContractDialog = () => {
+        setCancelContractDialogOpen(true);
+    };
+
+    const closeCancelContractDialog = () => {
+        setCancelContractDialogOpen(false);
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -283,7 +302,7 @@ const ManagerDetails = () => {
                                 color: "#160449",
                                 }}
                             >
-                                {"TBD"}
+                                {`${propertyData[index].contract_start_date}`}
                             </Typography>
                         </Grid>
                         <Grid item xs={1}>
@@ -311,11 +330,19 @@ const ManagerDetails = () => {
                             color: "#160449",
                             }}
                         >
-                            {`Manages ${properties.length} of your properties`}
+                            {/* {`Manages ${properties.length} of your properties`} */}
+                            
+                            {`Manages ${propertyData.filter(property => property.business_uid === managerData.business_uid).length} of your properties`}
+
+                            
                         </Typography>
-                        {properties.map((p) => { 
-                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid)
-                                
+                        {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
+                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
+                                let docList = JSON.parse(p.contract_documents);
+                                const doc =docList && docList.find(
+                                    (document) => document.type === "contract"
+                                );
+                                const contractDocumentLink = doc ? doc.link : '';
                                 return (
                                         < >
                                             <Grid container direction="row" onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}>
@@ -338,24 +365,65 @@ const ManagerDetails = () => {
                                                     color: "#160449",
                                                     }}
                                                 >
-                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
+                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"} {`, contract_uid: ${p.contract_uid}`} {`, contract_name: ${p.contract_name}`}
+                                                    
                                                 </Typography>
+                                                {
+                                                    contractDocumentLink!=="" ? <Box onClick={()=>{
+                                                        window.open(contractDocumentLink, "_blank");
+                                                        // console.log("we should show a document here")
+                                                    }}>
+                                                        <Typography
+                                                            sx={{
+                                                                fontWeight: 800,
+                                                                paddingLeft: "10px",
+                                                                fontFamily: "Source Sans Pro, sans-serif",
+                                                                color: "#160449",
+                                                            }}
+                                                        >
+                                                            , contract_document: <img src={documentIcon} alt="document-icon" style={{width: '12px', height: '15px', margin:'0px', paddingLeft: "15px"}}/>
+                                                        </Typography>
+                                                    </Box>:<div></div>
+                                                }
                                             </Grid>
                                         </>
                                     )}
                         )}
                         {managerData.contract_status === "ACTIVE" ? (
-                            <Button
-                                sx={{
-                                paddingLeft: "15px",
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                fontWeight: 800,
-                                backgroundColor: "#160449",
-                                }}
-                                onClick={() => handleCancel(managerData)}
-                            >
-                                Cancel Contract
-                            </Button>
+                            <>
+                                <Button
+                                    sx={{
+                                    paddingLeft: "15px",
+                                    fontFamily: "Source Sans Pro, sans-serif",
+                                    fontWeight: 800,
+                                    backgroundColor: "#160449",
+                                    }}
+                                    onClick={openCancelContractDialog}
+                                >
+                                    Cancel Contract
+                                </Button>
+                                <Dialog
+                                    open={cancelContractDialogOpen}
+                                    onClose={closeCancelContractDialog}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                                >
+                                    <DialogTitle id="alert-dialog-title">Confirm Cancellation</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+                                            Are you sure you want to cancel the contract?
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={closeCancelContractDialog} color="primary">
+                                            No
+                                        </Button>
+                                        <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus>
+                                            Yes
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </>
                         ) : (
                         null
                         )}

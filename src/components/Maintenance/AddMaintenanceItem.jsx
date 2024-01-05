@@ -60,6 +60,17 @@ export default function AddMaintenanceItem() {
   const [showSpinner, setShowSpinner] = useState(false);
 
   const profileId = getProfileId();
+  const [selectedButton, setSelectedButton] = useState(null);
+
+  const handleButtonClick = (value) => {
+    if (selectedButton === value) {
+      // If the clicked button is already selected, unselect it
+      setSelectedButton(null);
+    } else {
+      // Otherwise, select the clicked button
+      setSelectedButton(value);
+    }
+  };
 
   const handlePropertyChange = (event) => {
     console.log("handlePropertyChange", event.target.value);
@@ -103,18 +114,6 @@ export default function AddMaintenanceItem() {
   const handleBackButton = () => {
     console.log("handleBackButton");
     navigate(-1);
-  };
-
-  const [selectedButton, setSelectedButton] = useState(null);
-
-  const handleButtonClick = (value) => {
-    if (selectedButton === value) {
-      // If the clicked button is already selected, unselect it
-      setSelectedButton(null);
-    } else {
-      // Otherwise, select the clicked button
-      setSelectedButton(value);
-    }
   };
 
   useEffect(() => {
@@ -431,7 +430,6 @@ export default function AddMaintenanceItem() {
                     Priority
                   </Typography>
                   <ToggleButtonGroup
-                    value={toggleGroupValue}
                     exclusive
                     fullWidth
                     onChange={handlePriorityChange}
@@ -498,27 +496,11 @@ export default function AddMaintenanceItem() {
                         "&.Mui-selected": {
                           borderColor: "white",
                           color: "white",
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            left: "-1px", // Adjust the left position as needed
-                            top: "3px", // Adjust the top position to reduce height
-                            bottom: "3px", // Adjust the bottom position to reduce height
-                            borderLeft: "3px solid white", // Adjust the border width as needed
-                          },
                           backgroundColor: theme.palette.priority.medium,
                           borderWidth: "3px", // Ensure consistent border width
                         },
                         "&:hover": {
                           borderColor: "white",
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            left: "-1px", // Adjust the left position as needed
-                            top: "3px", // Adjust the top position to reduce height
-                            bottom: "3px", // Adjust the bottom position to reduce height
-                            borderLeft: "3px solid white", // Adjust the border width as needed
-                          },
                           backgroundColor:
                             selectedButton === "Medium"
                               ? theme.palette.priority.medium
@@ -545,27 +527,11 @@ export default function AddMaintenanceItem() {
                         "&.Mui-selected": {
                           borderColor: "white",
                           color: "white",
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            left: "-1px", // Adjust the left position as needed
-                            top: "3px", // Adjust the top position to reduce height
-                            bottom: "3px", // Adjust the bottom position to reduce height
-                            borderLeft: "3px solid white", // Adjust the border width as needed
-                          },
                           backgroundColor: theme.palette.priority.high,
                           borderWidth: "3px", // Ensure consistent border width
                         },
                         "&:hover": {
                           borderColor: "white",
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            left: "-1px", // Adjust the left position as needed
-                            top: "3px", // Adjust the top position to reduce height
-                            bottom: "3px", // Adjust the bottom position to reduce height
-                            borderLeft: "3px solid white", // Adjust the border width as needed
-                          },
                           backgroundColor:
                             selectedButton === "High"
                               ? theme.palette.priority.high

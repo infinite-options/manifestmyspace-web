@@ -98,7 +98,7 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
-
+  
   console.log("DEBUG:", application)
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(dayjs());

@@ -103,53 +103,56 @@ const PropertyInfo = (props) => {
     });
 
     function displayListingDate(date) {
-        const d = dayjs(date);
-
-        const daysAgo = dayjs().diff(d, 'day');
-        if (daysAgo === 0) {
-            return 'Listed today';
-        } else if (daysAgo === 1) {
-            return 'Listed yesterday';
+        if (date === null) {
+            return 'No Listing Date';
         } else {
-            return 'Listed ' + daysAgo + ' days ago';
+
+            const d = dayjs(date);
+
+            const daysAgo = dayjs().diff(d, 'day');
+            if (daysAgo === 0) {
+                return 'Listed today';
+            } else if (daysAgo === 0) {
+                return 'Listed today';
+            } else if (daysAgo === 1) {
+                return 'Listed yesterday';
+            } else {
+                return 'Listed ' + daysAgo + ' days ago';
+            }
         }
     }
 
     function renderCorrectButtonText() {
-        if (status === "" || status === null) { 
+        if (status === "") { 
             return 'Apply Now';
         } else if (status === "NEW") {
             return 'View Application';            
         } else if (status === "PROCESSING"){
             return 'Approved'
         } else if (status === "TENANT APPROVED"){
-            return 'Approved'
+            return 'Approved WFD'
         } else if (status === "REJECTED"){
             return 'Not Approved'
         } else if (status === "ACTIVE"){
-            return 'Apply Now'
+            return 'Active'
         }
     }
 
-    // function navigateToCorrectPage(){
-    //     if (status === "" || status === "NEW") {
-    //         navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
-    //     } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
-    //         navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
-    //     } else {
-    //         return null
-    //     }
-    // }
-
     function navigateToCorrectPage(){
-        if (["", "NEW", "ACTIVE"].includes(status)) 
-            return {url: '/tenantApplication', params: { property: property, status: status, lease: lease } }
-        
-        if (status === "TENANT APPROVED" || status === "PROCESSING")
-            return {url: '/tenantLeases', params: { property: property, status: status, lease: lease }}
-        
-        else 
+        if (status === "" || status === "NEW") {
+            navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
+        } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
+            navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
+        } else {
             return null
+        }
+    }
+
+    function formatAddress(){
+        if(property.property_unit !== ""){
+            return property.property_address + " Unit " + property.property_unit;
+        }
+        return property.property_address;
     }
 
     return (
@@ -231,7 +234,7 @@ const PropertyInfo = (props) => {
                                     fontSize: '25px',
                                 }}
                             >
-                                {property.property_address}
+                                {formatAddress()}
                             </Typography>
                             <Box>
                                 <LocationOn /> <TurnedInNot />
@@ -243,9 +246,7 @@ const PropertyInfo = (props) => {
                                 fontSize: '18px',
                             }}
                         >
-                            {property.property_address +
-                                ', ' +
-                                property.property_city +
+                            {property.property_city +
                                 ', ' +
                                 property.property_state +
                                 ' ' +
@@ -352,10 +353,7 @@ const PropertyInfo = (props) => {
                                  color: theme.palette.background.default,
                                  textTransform: 'none',
                              }}
-                            //  onClick={() => navigateToCorrectPage()}
-                            onClick={() => {
-                                const {url, params}=navigateToCorrectPage() 
-                                navigate(url,  {state: params}) } }
+                             onClick={() => navigateToCorrectPage()}
                          >
                            {renderCorrectButtonText()}
                          </Button>
@@ -609,6 +607,13 @@ const PropertyInfo = (props) => {
                         >
                             Apartment Amenities
                         </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_unit}
+                        </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
                             sx={{
@@ -618,6 +623,13 @@ const PropertyInfo = (props) => {
                         >
                             Community Amenities
                         </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_community}
+                        </Typography>
                         <Box height={'150px'}></Box>
                         <Typography
                             sx={{
@@ -625,6 +637,7 @@ const PropertyInfo = (props) => {
                                 fontWeight: theme.typography.primary.fontWeight,
                             }}
                         >
+                            
                             Location
                         </Typography>
                         <Typography
@@ -632,7 +645,7 @@ const PropertyInfo = (props) => {
                                 color: theme.typography.primary.black,
                             }}
                         >
-                            {property.property_address +
+                            {formatAddress() +
                                 ', ' +
                                 property.property_city +
                                 ', ' +
@@ -648,6 +661,13 @@ const PropertyInfo = (props) => {
                             }}
                         >
                             Places Nearby
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.primary.black,
+                            }}
+                        >
+                            {property.property_amenities_nearby}
                         </Typography>
                         <Box height={'150px'}></Box>
                     </Stack>

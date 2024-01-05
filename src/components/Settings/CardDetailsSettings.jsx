@@ -176,7 +176,7 @@ export default function CardDetailsSettings() {
             setVenmo(value);
         }
 
-        if(payments_data.find(method => method.paymentMethod_type === name)){
+        if(modifiedPaymentsData.find(method => method.paymentMethod_type === name)){
             // setModifiedData((prevData) => ({
             //     ...prevData,
             //     [name]: value
@@ -303,107 +303,25 @@ export default function CardDetailsSettings() {
         setModifiedPaymentsData(modifiedPaymentsData.filter(method => method.paymentMethod_type !== type));
 
         if(type === "paypal"){
-            setShowPaypal(false);
+            // setShowPaypal(false);
+            setPaypal({...paypal, paymentMethod_name: ''});
         } else if(type === "apple_pay"){
-            setShowApplePay(false);
+            // setShowApplePay(false);
+            setApplePay({...applePay, paymentMethod_name: ''});
         } else if(type === "stripe"){
-            setShowStripe(false);
+            // setShowStripe(false);
+            setStripe({...stripe, paymentMethod_name: ''});
         } else if(type === "zelle"){
-            setShowZelle(false);
+            // setShowZelle(false);
+            setZelle({...zelle, paymentMethod_name: ''});
         } else if(type === "venmo"){
-            setShowVenmo(false);
+            // setShowVenmo(false);
+            setVenmo({...venmo, paymentMethod_name: ''});
         }
 
         
     }
  
-    //rohit - delete if other one works
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     // let response_success = false
-
-    //     const headers = { 
-    //         "Access-Control-Allow-Origin": "*",
-    //         "Access-Control-Allow-Methods": "*",
-    //         "Access-Control-Allow-Headers": "*",
-    //         "Access-Control-Allow-Credentials":"*"
-    //     };
-
-    //     console.log("FORM SUBMITTED");
-    //     console.log("PUT DATA - ");
-    //     console.log("   ", modifiedPaymentsData);
-    //     console.log("POST DATA - ");
-    //     console.log("   ", newPaymentsData);
-
-    //     if(isEdited){
-    //         modifiedPaymentsData.forEach((item, index) => {
-    //             // console.log(`Element at index ${index}: `, item);
-
-    //             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
-    //             .then((response) => {
-    //                 console.log('Payment method updated successfully');
-    //                 setIsEdited(false); // Reset the edit status
-    //                 // setModifiedData(payments_data);
-    //                 // navigate(-1)
-    //                 // response_success = true;
-    //             })
-    //             .catch((error) => {
-    //                 if(error.response){
-    //                     console.log(error.response.data);
-    //                 }
-    //             });
-                
-    //         });
-    //         // deletedPaymentsData.forEach((item, index) => {
-    //         //     // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
-
-    //         //     axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
-    //         //     .then((response) => {
-    //         //         console.log('Payment method deleted successfully');
-    //         //         setIsEdited(false); // Reset the edit status
-    //         //         // setModifiedData(payments_data);
-    //         //         // navigate(-1)
-    //         //        // response_success = true;
-    //         //     })
-    //         //     .catch((error) => {
-    //         //         if(error.response){
-    //         //             console.log(error.response.data);
-    //         //         }
-    //         //     });
-                
-    //         // });
-
-
-
-            
-    //     }
-
-    //     if(isNewMethodAdded){
-    //         newPaymentsData.forEach((item, index) => {
-    //             // console.log(`Element at index ${index}: `, item);
-
-    //             axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
-    //             .then((response) => {
-    //                 console.log('Payment method added successfully');
-    //                 setIsNewMethodAdded(false); // Reset the edit status
-    //                 // setNewData([])
-    //                 // navigate(-1)
-    //                 // response_success = true;
-    //             })
-    //             .catch((error) => {
-    //                 if(error.response){
-    //                     console.log(error.response.data);
-    //                 }
-    //             });
-                
-    //         });
-
-    //     }
-    //     // console.log("ROHIT - response_success - ", response_success);
-    //     // if(response_success){
-    //     //     navigate(-1);
-    //     // }
-    // }
 
     const handleSubmit = (event) => {
         event.preventDefault();

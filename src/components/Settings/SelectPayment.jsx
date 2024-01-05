@@ -67,7 +67,7 @@ export default function SelectPayment(props) {
     const [showSpinner, setShowSpinner] = useState(false);
     const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
     const [paymentData, setPaymentData] = useState(location.state.paymentData);
-    const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0].purchase_uid);
+    const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
     const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
     // const [maintenanceItem, setMaintenanceItem] = useState(location.state.paymentData.maintenanceItem);
     const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
@@ -224,17 +224,18 @@ export default function SelectPayment(props) {
                 for (const item of selectedItems) {
                     // PUT to update maintenance request status to "COMPLETED"
                     console.log("--DEBUG-- maintenanceItem.purchase_uid === item.purchase_uid", item.purchase_uid)
-                    const updateMaintenanceRequestStatus = (quote_id) => {
-                        const formData = new FormData();
-                        formData.append("maintenance_quote_uid", quote_id);
-                        formData.append("quote_status", "COMPLETED");
-                        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes",{
-                            method: 'PUT',
-                            body: formData,
-                        })
+                    if(item.quote_id !== null){
+                        const updateMaintenanceRequestStatus = (quote_id) => {
+                            const formData = new FormData();
+                            formData.append("maintenance_quote_uid", quote_id);
+                            formData.append("quote_status", "COMPLETED");
+                            fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes",{
+                                method: 'PUT',
+                                body: formData,
+                            })
+                        }
+                        updateMaintenanceRequestStatus(item.quote_id)
                     }
-
-                    updateMaintenanceRequestStatus(item.quote_id)
                 }
                 let routingString = paymentRoutingBasedOnSelectedRole();
                 navigate(routingString);

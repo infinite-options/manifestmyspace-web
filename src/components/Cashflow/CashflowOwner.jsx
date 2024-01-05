@@ -32,7 +32,6 @@ const CashflowOwner = () => {
     let date = new Date();
     let currentMonth = date.toLocaleString("default", { month: "long" });
     let currentYear = date.getFullYear().toString();
-    console.log("currentMonth ",currentMonth, currentYear)
     const [month, setMonth] = useState(currentMonth);
     const [year, setYear] = useState(currentYear);
 
@@ -131,7 +130,7 @@ const CashflowOwner = () => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Button sx={{ textTransform: 'capitalize' }} onClick={()=>setShowSelectMonth(true)}>
+                    <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
                         <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/>
                         <Typography 
                         sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}
@@ -236,12 +235,7 @@ const CashflowOwner = () => {
                     </Typography>
                 </Box>
                 <AccordionDetails>
-                {activeButton === 'Cashflow' ?
-                    (
-                        <RevenueTable revenue={revenue} revenueSummary={revenueSummary} totalRevenueByType={totalRevenueByType} revenueList={revenueList}></RevenueTable>
-                    ):(
-                        <ExpectedRevenueTable revenue={revenue} revenueSummary={revenueSummary} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList}></ExpectedRevenueTable>
-                    )}
+                    <RevenueTable revenue={revenue} revenueSummary={revenueSummary} totalRevenueByType={totalRevenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>            
                 </AccordionDetails>
                 </Accordion>
                 <Accordion 
@@ -272,14 +266,8 @@ const CashflowOwner = () => {
                         )}
                     </Typography>
                 </Box>
-                <AccordionDetails>
-                {activeButton === 'Cashflow' ?
-                    (
-                        <ExpenseTable expense={expense} expenseSummary={expenseSummary} totalExpenseByType={totalExpenseByType} expenseList={expenseList}></ExpenseTable>
-                    )
-                    :(
-                        <ExpectedExpenseTable expense={expense} expenseSummary={expenseSummary} expectedExpenseByType={expectedExpenseByType} expenseList={expenseList}></ExpectedExpenseTable>
-                    )}
+                <AccordionDetails>    
+                    <ExpenseTable expense={expense} expenseSummary={expenseSummary} totalExpenseByType={totalExpenseByType} expectedExpenseByType={expectedExpenseByType} expenseList={expenseList} activeView={activeButton}/>
                 </AccordionDetails>
                 </Accordion>
                 <Stack
@@ -313,13 +301,13 @@ const CashflowOwner = () => {
                       }}
                 >
                 <Box
-                component="span"
-                m={2}
-                marginTop={15}
-                marginBottom={30}
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+                    component="span"
+                    m={2}
+                    marginTop={15}
+                    marginBottom={30}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
                 >
                     <Button 
                         sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}

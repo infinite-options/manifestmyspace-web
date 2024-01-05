@@ -77,7 +77,8 @@ export default function AddListing({}){
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
     const [description, setDescription] = useState(propertyData.property_description);
-    const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
+    // const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
+    const [selectedImageList, setSelectedImageList] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
@@ -180,6 +181,7 @@ export default function AddListing({}){
             setMappedUtilitiesPaidBy(defaultUtilities);
             setIsDefaultUtilities(true);
         }
+        loadImages();
         console.log("************************************************AddListing useEffect***********************************");
     
         
@@ -399,6 +401,7 @@ export default function AddListing({}){
         formData.append('property_available_to_rent', isListed ? 1 : 0);
         formData.append('property_amenities_community', communityAmenities);
         formData.append('property_amenities_unit', apartmentAmenities);
+        formData.append('property_amenities_nearby', nearbyAmenities);
         
         //utilities data
         // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
@@ -407,19 +410,18 @@ export default function AddListing({}){
         console.log(utilitiesJSONString);
        // formData.append('property_utilities', utilitiesJSONString)
 
-        for (let i = 0; i < selectedImageList.length; i++) {
-            try {
-                let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
-                    formData.append(key, imageBlob)
-                } else {
-                    formData.append(key, selectedImageList[i])
-                }
-            } catch (error) {
-                console.log("Error uploading images", error)
-            }
+        const files = selectedImageList;
+        let i = 0;
+        for (const file of selectedImageList) {
+        let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+        if (file.file !== null) {
+            // newProperty[key] = file.file;
+            formData.append(key, file.file)
+        } else {
+            // newProperty[key] = file.image;
+            formData.append(key, file.image)
+        }
         }
 
         utilitiesFormData.append('property_uid', propertyData.property_uid);
@@ -441,7 +443,7 @@ export default function AddListing({}){
                 //     body: formData
                 // })
                 const data = await response.json();
-                console.log("data", data)
+                console.log("properties put data", data)
                 if (data.code === 200){
                     navigate(-1);
                     // should navigate to the listing page
@@ -517,6 +519,20 @@ export default function AddListing({}){
         water: 'owner',
         internet: 'owner',
         gas: 'owner',
+    };
+
+    const loadImages = async () => {
+        const files = [];
+        const images = JSON.parse(propertyData.property_images);
+        for (let i = 0; i < images.length; i++) {
+          files.push({
+            index: i,
+            image: images[i],
+            file: null,
+            coverPhoto: i === 0,
+          });
+        }
+        setSelectedImageList(files);
     };
 
 
@@ -630,7 +646,7 @@ export default function AddListing({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Edit"} />
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Edit"} imageState={selectedImageList} setImageState={setSelectedImageList} />
                                     </Grid>
 
                                     {/* Text Field for Title */}
