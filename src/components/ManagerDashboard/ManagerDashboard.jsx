@@ -78,7 +78,7 @@ function ManagerDashboard() {
 
     // USE EFFECT gets all the data
     useEffect(() => {
-        const dataObject = {};
+        // const dataObject = {};
         const fetchData = async () => {
             // console.log("in useEffect")
             // console.log("PROFILE ID: ", getProfileId())
