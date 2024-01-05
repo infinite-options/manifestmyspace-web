@@ -252,18 +252,35 @@ export default function AddProperty({}){
         
      //   formData.append('property_owner_id', selectedOwner);
 
-        for (let i = 0; i < selectedImageList.length; i++) {
-            try {
-                let key = i === 0 ? "img_cover" : `img_${i-1}`;
+        // for (let i = 0; i < selectedImageList.length; i++) {
+        //     try {
+        //         let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
-                    formData.append(key, imageBlob)
-                } else {
-                    formData.append(key, selectedImageList[i])
-                }
-            } catch (error) {
-                console.log("Error uploading images", error)
+        //         if(selectedImageList[i].startsWith("data:image")){
+        //             const imageBlob = dataURItoBlob(selectedImageList[i]);
+        //             formData.append(key, imageBlob)
+        //         } else {
+        //             formData.append(key, selectedImageList[i])
+        //         }
+        //     } catch (error) {
+        //         console.log("Error uploading images", error)
+        //     }
+        // }
+
+        const files = selectedImageList;
+        let i = 0;
+        for (const file of selectedImageList) {
+            // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+            let key = `img_${i++}`;
+            if (file.file !== null) {
+                // newProperty[key] = file.file;
+                formData.append(key, file.file)
+            } else {
+                // newProperty[key] = file.image;
+                formData.append(key, file.image)
+            }
+            if(file.coverPhoto) {
+                formData.append('img_favorite', key)
             }
         }
 
@@ -480,7 +497,7 @@ export default function AddProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Add"}/>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} imageState={selectedImageList} setImageState={setSelectedImageList} page={"Add"}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}

@@ -183,8 +183,8 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                     <img
                                         key={Date.now()}
                                         src={file.image}
-                                        alt="property_image"
                                         // src={`${file.image}?${Date.now()}`}
+                                        alt="property_image"
                                         style={{ 
                                             position: 'absolute',
                                             top: 0,
