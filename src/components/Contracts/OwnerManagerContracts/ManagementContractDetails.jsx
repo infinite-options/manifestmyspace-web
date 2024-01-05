@@ -2571,8 +2571,22 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                     </RadioGroup> 
                 </Box>
                 <DialogActions>
-                    <Button onClick={handleClose}>Close</Button>
-                    <Button type="submit" onClick={handleEditFee}>Save Fee</Button>
+                    <Button sx={{
+                            '&:hover': {
+                                backgroundColor: "#3D5CAC",
+                            },
+                            backgroundColor:'#9EAED6',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }} onClick={handleClose}>Close</Button>
+                    <Button sx={{
+                            '&:hover': {
+                                backgroundColor: "#3D5CAC",
+                            },
+                            backgroundColor:'#9EAED6',
+                            color: '#160449',
+                            textTransform: 'none',
+                        }} type="submit" onClick={handleEditFee}>Save Fee</Button>
                 </DialogActions>
             </Dialog>
         </form>
