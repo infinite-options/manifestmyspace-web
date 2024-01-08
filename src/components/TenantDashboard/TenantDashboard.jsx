@@ -68,23 +68,6 @@ function TenantDashboard() {
 
   const [total, setTotal] = useState("0.00");
 
-  useEffect(() => {
-    let paymentData = createPaymentdata(total);
-    setPaymentData(paymentData);
-  }, [total]);
-
-  // Hardcoded payment 
-  function createPaymentdata(total) {
-    return {
-      currency: "usd",
-      customer_uid: "100-000125",
-      business_code: "IOTEST",
-      item_uid: "320-000054",
-      payment_summary: {
-        total: total
-      },
-    }
-  }
 
   const thStyle = {
     color: "#160449",
