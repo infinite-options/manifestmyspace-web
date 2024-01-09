@@ -497,7 +497,7 @@ export default function AddProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} imageState={selectedImageList} setImageState={setSelectedImageList} page={"Add"}/>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Add"}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}

@@ -64,6 +64,7 @@ export default function EditProperty({}){
     const [description, setDescription] = useState(propertyData.property_description);
     const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [imageState, setImageState] = useState([]);
+    const [deletedImageList, setDeletedImageList] = useState([]);
     const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
@@ -84,6 +85,9 @@ export default function EditProperty({}){
     const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
     const [page, setPage] = useState("Edit");
 
+    useEffect(() => {
+        console.log("deletedImageList - ", deletedImageList);
+    }, [deletedImageList]);
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
     const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
@@ -351,6 +355,9 @@ export default function EditProperty({}){
             }
         }
 
+        if(deletedImageList.length > 0){
+            formData.append('deleted_images', JSON.stringify(deletedImageList))
+        }
 
 
         for (let [key, value] of formData.entries()) {
@@ -612,7 +619,7 @@ export default function EditProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={imageState} setSelectedImageList={setImageState} page={page}/>
+                                        <ImageUploader selectedImageList={imageState} setSelectedImageList={setImageState} setDeletedImageList={setDeletedImageList} page={page}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}

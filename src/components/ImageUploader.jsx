@@ -36,7 +36,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 
-export default function ImageUploader({selectedImageList, setSelectedImageList, page}){
+export default function ImageUploader({selectedImageList, setSelectedImageList, setDeletedImageList, page}){
 
     useEffect(() =>{
         console.log("selectedImageList - ", selectedImageList);
@@ -74,8 +74,12 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
         if (image.coverPhoto && newSelectedImageList.length > 0) {
             newSelectedImageList[0].coverPhoto = true;
         }
-        setSelectedImageList(newSelectedImageList);
-      };
+        setSelectedImageList(newSelectedImageList);        
+
+        if(image.file === null){
+            setDeletedImageList((prevDeletedImages) => [...prevDeletedImages, image.image]);
+        }
+    };
     
     const favoriteImage = (favoriteFile) => {
         const newSelectedImageList = [...selectedImageList];
