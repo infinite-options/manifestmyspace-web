@@ -36,7 +36,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 
-export default function ImageUploader({selectedImageList, setSelectedImageList, page, imageState}){
+export default function ImageUploader({selectedImageList, setSelectedImageList, page}){
 
     useEffect(() =>{
         console.log("selectedImageList - ", selectedImageList);
