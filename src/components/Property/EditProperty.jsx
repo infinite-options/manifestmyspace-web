@@ -612,7 +612,7 @@ export default function EditProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={page} imageState={imageState} setImageState={setImageState} />
+                                        <ImageUploader selectedImageList={imageState} setSelectedImageList={setImageState} page={page}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}
