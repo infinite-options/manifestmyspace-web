@@ -46,9 +46,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
         const reader = new FileReader();
         reader.onload = (e) => {
             file.image = e.target.result;
-        //   const newImageState = [...imageState];
-        //   newImageState.push(file);
-        //   setImageState(newImageState);
             setSelectedImageList((prevImageState) => [...prevImageState, file]);
         };
         reader.readAsDataURL(file.file);
@@ -97,8 +94,7 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
             borderColor: theme.typography.common.blue,
         }}>
             
-            {selectedImageList.length === 0 && (
-            // {imageState.length === 0 && (
+            {selectedImageList.length === 0 && (            
                 <Box
                     justifyContent="center"
                     alignItems="center"
@@ -114,7 +110,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                             accept="image/*" 
                             multiple
                             hidden 
-                            // onChange={handleImageSelect}
                             onChange={addFile}
                         />
                         <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
@@ -125,7 +120,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                 </Box>
             )} 
             {selectedImageList.length > 0 && (
-            // {imageState.length > 0 && (
                 <Box
                     justifyContent="center"
                     alignItems="center"
@@ -133,7 +127,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                     padding={10}
                 >
                     <Grid container>
-                        {/* {selectedImageList.map((image, index) => ( */}
                         {selectedImageList.map((file, index) => (
                             <Box
                                 key={index}
@@ -183,7 +176,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                     <img
                                         key={Date.now()}
                                         src={file.image}
-                                        // src={`${file.image}?${Date.now()}`}
                                         alt="property_image"
                                         style={{ 
                                             position: 'absolute',
@@ -208,7 +200,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                         }}
                                     >
                                         <IconButton 
-                                            // onClick={() => handleImageTrash(index)}
                                             onClick={() => deleteImage(file)}
                                         >
                                             <CloseIcon color="error" />
@@ -244,7 +235,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                     accept="image/*" 
                                     multiple
                                     hidden 
-                                    // onChange={handleImageSelect}
                                     onChange={addFile}
                                 />
                                 <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "75px", marginRight: "10px"}}/>
