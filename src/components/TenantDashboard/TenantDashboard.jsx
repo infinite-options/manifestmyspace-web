@@ -4,6 +4,8 @@ import {
   Typography,
   Stack,
   Grid,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
@@ -42,6 +44,18 @@ function TenantDashboard(props) {
   const [firstName, setFirstName] = useState("");
   const [propertyAddr, setPropertyAddr] = useState();
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
+  // const [balance, setBalance] = useState("0.00");
+  const [total, setTotal] = useState("0.00");
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const open = Boolean(anchorEl);
+  const handleOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const { user } = useUser();
   console.log(`User ID: ${getProfileId()} `+" "+{tenantId})
@@ -49,7 +63,8 @@ function TenantDashboard(props) {
 
     const getTenantData = async () => {
       setShowSpinner(true);
-      const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+      //const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+      const tenantRequests = await fetch(`http://127.0.0.1:4000/dashboard/${getProfileId()}`);
       const tenantRequestsData = await tenantRequests.json()  
       
       console.log(tenantRequestsData)
@@ -58,6 +73,8 @@ function TenantDashboard(props) {
       let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
       let announcementsData = tenantRequestsData?.announcements?.result;
       const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
+
+      console.log(allNonActiveLease)
 
       if(!propertyData || propertyData.length === 0){
         console.log("!propertyData || propertyData.length === 0")
@@ -75,12 +92,10 @@ function TenantDashboard(props) {
       setPropertyAddr(propertyAddress);
       setFirstName(user.first_name)
       setShowSpinner(false);
+      setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
     }
     getTenantData();
   }, [])
-
-
-  const [total, setTotal] = useState("0.00");
 
   useEffect(() => {
     console.log("TenantDashboard useEffect")
@@ -204,13 +219,45 @@ function TenantDashboard(props) {
                         fontWeight: "600",
                         color: "#3D5CAC",
                     }}
-                    onClick={ () => {navigate('/myProperty', {
-                            state: {propertyData, propertyData}
-                        })}
-                    }
                 >
-                    {propertyAddr}
-                    <KeyboardArrowDownIcon sx={{alignItem: "center"}}/>
+                    <Typography
+                      onClick={ () => {navigate('/myProperty', {
+                          state: {propertyData, propertyData}
+                        })}
+                      }
+                    >
+                      {propertyAddr}
+                    </Typography>
+
+                    <KeyboardArrowDownIcon 
+                      sx={{alignItem: "center"}}
+                      onClick={(event) => handleOpen(event)}
+                    />
+                    <Menu
+                      id="demo-customized-menu"
+                      MenuListProps={{
+                        'aria-labelledby': 'demo-customized-button',
+                      }}
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                    >
+                      {propertyData.map((item, index) => {
+                        return (
+                          <MenuItem 
+                            key={index}
+                            onClick={() => {
+                              setPropertyAddr(item.property_address + " " + item.property_unit)
+                              setTotal(item.balance)
+                              handleClose()
+                            }}
+                            disableRipple
+                          >
+                            {item.property_address + " " + item.property_unit}
+                          </MenuItem>
+                        )
+                      })}
+                    </Menu>
                 </Box>
                 
             </Box>
@@ -263,7 +310,8 @@ function TenantDashboard(props) {
                 margin: "10px",
               }}
             >
-          ${propertyData[0]!==undefined? propertyData[0].balance:"No Data"}
+              {/* ${propertyData[0]!==undefined ? propertyData[0].balance : "No Data"} */}
+              ${total}
             </Box>
             <Box
               sx={{
@@ -395,7 +443,7 @@ function TenantDashboard(props) {
                   item.maintenance_priority,
                   item.maintenance_scheduled_date, 
                   item.maintenance_scheduled_time,item]
-                  return ( <TableRow data={array} />)
+                  return ( <TableRow data={array} key={index}/>)
               })
             } 
       </table>

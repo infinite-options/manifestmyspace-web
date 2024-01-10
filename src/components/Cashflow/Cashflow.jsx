@@ -17,6 +17,7 @@ import AddRevenueIcon from '../../images/AddRevenueIcon.png'
 import AllOwnerIcon from '../Rent/RentComponents/AllOwnerIcon.png'
 import { useUser } from '../../contexts/UserContext'; // Import the UserContext
 import Backdrop from "@mui/material/Backdrop"; 
+import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
 import { getTotalRevenueByType, getTotalExpenseByType, fetchCashflow, getTotalExpenseByMonthYear, getTotalRevenueByMonthYear, getTotalExpectedRevenueByMonthYear, getTotalExpectedExpenseByMonthYear, getRevenueByMonth, getExpenseByMonth, getRevenueList, getExpenseList } from "../Cashflow/CashflowFetchData";
@@ -76,6 +77,8 @@ export default function Cashflow(){
             setExpectedExpenseByMonth(currentMonthYearExpectedExpense)
             setRevenueList(getRevenueList(cashflowData))
             setExpenseList(getExpenseList(cashflowData))
+            console.log("--debug-- expenseList", revenueList)
+            console.log("--debug-- expenseList", expenseList)
 
             let revenueMapping = getTotalRevenueByType(cashflowData, month, year, false)
             let expenseMapping = getTotalExpenseByType(cashflowData, month, year, false)
@@ -285,7 +288,6 @@ export default function Cashflow(){
                             </Typography>
                         </Box>
                         <AccordionDetails>
-                            {/* <ExpenseTable totalRevenueByType={totalRevenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
                             <StatementTable categoryTotalMapping={expenseByType} allItems={expenseList} activeView={activeButton} tableType="Expense" categoryExpectedTotalMapping={expectedExpenseByType} month={month} year={year}/>
                         </AccordionDetails>
                     </Accordion>
@@ -398,6 +400,7 @@ function SelectMonthComponentTest(props){
 }
 
 function StatementTable(props){
+    const navigate = useNavigate();
 
     const activeView = props.activeView;
     const tableType = props.tableType;
@@ -411,11 +414,18 @@ function StatementTable(props){
     const categoryExpectedTotalMapping = props.categoryExpectedTotalMapping
     const allExpectedItems = []
 
+    const navigateType = "/edit" + tableType
+
+    function handleNavigation(type, item){
+        console.log(item)
+        navigate(type, {state: {itemToEdit: item}})
+    }
+
     // console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
     // console.log("activeView", activeView)
     // console.log("statement table year/month", year, month)
     
-    function getCategoryItems(category){
+    function getCategoryItems(category, type){
         let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
         var key = "total_paid"
         if (activeView === "Cashflow"){
@@ -427,16 +437,32 @@ function StatementTable(props){
             <>
                 {items.map((item, index) => {
                     return (
-                        <TableRow key={index}>
+                        activeView === "Cashflow" ? (
+                        <TableRow key={index} onClick={() => handleNavigation(type, item)}>
                             <TableCell>
                                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell>
                                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                                     ${item[key] ? item[key] : 0}
                                 </Typography>
                             </TableCell>
+                            <TableCell align="right">
+                                <DeleteIcon/>
+                            </TableCell>
                         </TableRow>
+                        ) : (
+                            <TableRow key={index}>
+                                <TableCell>
+                                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                                        ${item[key] ? item[key] : 0}
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        )
                     )
                 })}
             </>
@@ -476,7 +502,7 @@ function StatementTable(props){
                                 <AccordionDetails>
                                     <Table>
                                         <TableBody>
-                                            {getCategoryItems(category)} 
+                                            {getCategoryItems(category, navigateType)} 
                                         </TableBody>
                                     </Table>
                                 </AccordionDetails>

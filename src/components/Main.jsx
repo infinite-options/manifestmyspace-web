@@ -202,6 +202,9 @@ function Main() {
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
+            <Route path="editExpense" element={<AddExpense edit={true} />} />
+            <Route path="editRevenue" element={<AddRevenue edit={true}/>} />
+            <Route path="editUtility" element={<AddUtility edit={true}/>} />
             <Route path="listings" element={<PropertyListings />} />
             <Route path="addListing" element={<AddListing />} />
 

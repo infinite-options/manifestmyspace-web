@@ -33,7 +33,7 @@ const AddExpense = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const [category, setCategory] = useState("Insurance");
-  const [frequency, setFrequency] = useState("Monthly");
+  const [frequency, setFrequency] = useState("Monthly"); // TODO: Monthly and Yearly fees need to be added to the lease in lease_fees
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +41,10 @@ const AddExpense = (props) => {
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
+
+  const [edit, setEdit] = useState(props.edit || false);
+
+  const [itemToEdit, setItemToEdit] = useState(props.itemToEdit || null);
 
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
@@ -64,9 +68,11 @@ const AddExpense = (props) => {
   const handlePayableChange = (event) => {
     setPayable(event.target.name);
   };
-  const handleAddExpense = async () => {
+  const handleExpenseChange = async () => {
     console.log("amount ", amount);
-
+    if (edit && itemToEdit){
+      console.log("itemToEdit", itemToEdit)
+    }
     let data = JSON.stringify({
       "pur_property_id": selectedProperty.property_uid,
       "purchase_type": category,
@@ -74,22 +80,23 @@ const AddExpense = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": "COMPLETED",
+      "purchase_status": "UNPAID", // TODO: default to UNPAID, unless then already completed button is checked
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
-      "pur_payer": null
+      "pur_payer": null,
+      "pur_frequency": "One-Time"
     });
     
     let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addExpense',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      data : data
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addExpense',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        data : data
     };
     setShowSpinner(true);
     axios.request(config)
@@ -152,7 +159,7 @@ const AddExpense = (props) => {
               <CloseIcon />
             </IconButton>
             <Stack direction="row" justifyContent="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Add Expense</Typography>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{edit ? "Edit" : "Add"} Expense</Typography>
             </Stack>
 
             <Stack spacing={-2}>
@@ -223,7 +230,8 @@ const AddExpense = (props) => {
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select defaultValue="Monthly" value={frequency} onChange={handleFrequencyChange}>
+                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>
+                  <MenuItem value="One Time">One Time</MenuItem>
                   <MenuItem value="Monthly">Monthly</MenuItem>
                   <MenuItem value="Yearly">Yearly</MenuItem>
                 </Select>
@@ -267,6 +275,11 @@ const AddExpense = (props) => {
                   label="By Tenant"
                   sx={{ color: theme.typography.common.blue }}
                 />
+                <FormControlLabel
+                    control={<Checkbox sx={{ color: theme.typography.common.blue }} name="Owner" checked={payable === "Owner"} onChange={handlePayableChange} />}
+                    label="Owner"
+                    sx={{ color: theme.typography.common.blue }}
+                />
               </Stack>
               <Stack>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Add Receipt</Typography>
@@ -284,9 +297,9 @@ const AddExpense = (props) => {
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.primary.fontWeight,
               }}
-              onClick={handleAddExpense}
+              onClick={handleExpenseChange}
             >
-              + Add Expense
+              {edit ? "Edit" : "+ Add"} Expense
             </Button>
           </Paper>
         </Box>

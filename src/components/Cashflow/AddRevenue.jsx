@@ -72,7 +72,7 @@ const AddRevenue = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": "COMPLETED",
+      "purchase_status": "UNPAID",
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
@@ -221,7 +221,8 @@ const AddRevenue = (props) => {
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select defaultValue="Monthly" value={frequency} onChange={handleFrequencyChange}>
+                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>
+                  <MenuItem value="One Time">One Time</MenuItem>
                   <MenuItem value="Monthly">Monthly</MenuItem>
                   <MenuItem value="Yearly">Yearly</MenuItem>
                 </Select>

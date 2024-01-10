@@ -361,6 +361,11 @@ const AddUtility = (props) => {
                     label="Tenant"
                     sx={{ color: theme.typography.common.blue }}
                   />
+                   <FormControlLabel
+                    control={<Checkbox sx={{ color: theme.typography.common.blue }} name="Owner" checked={payable === "Owner"} onChange={handlePayableChange} />}
+                    label="Owner"
+                    sx={{ color: theme.typography.common.blue }}
+                  />
                 </Stack>
               </FormControl>
               <FormControl>
