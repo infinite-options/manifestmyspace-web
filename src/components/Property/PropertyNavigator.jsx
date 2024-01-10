@@ -53,9 +53,9 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     // console.log(currentIndex)
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
-    const [activeStep, setActiveStep] = useState(0);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
+    const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
     const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
@@ -248,7 +248,8 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
       const nextId = propertyData[currentIndex+1].property_uid
       setCurrentId(nextId);
       setImages(JSON.parse(propertyData[currentIndex+1].property_images))
-      setActiveStep(0);
+    //   setActiveStep(0);
+      setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1].property_favorite_image));
     };
   
     const handlePreviousCard = () => {
@@ -256,7 +257,8 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         const previousId = propertyData[currentIndex-1].property_uid
         setCurrentId(previousId);
         setImages(JSON.parse(propertyData[currentIndex-1].property_images))
-        setActiveStep(0);
+        // setActiveStep(0);
+        setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
     };
   
     const handleNext = () => {

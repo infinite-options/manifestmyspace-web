@@ -68,7 +68,6 @@ export default function EditProperty({}){
     const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
-    const [coverImage, setCoverImage] = useState(defaultHouseImage);
     const [notes, setNotes] = useState(propertyData.property_notes);
     const [unit, setUnit] = useState(propertyData.property_unit);
     const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
@@ -503,8 +502,8 @@ export default function EditProperty({}){
             coverPhoto: isCoverPhoto(images[i]),
           });
         }
-        setImageState(files);
-        setCoverImage(propertyData.property_favorite_image? propertyData.property_favorite_image : defaultHouseImage);
+        setImageState(files);        
+        setActiveStep(files.findIndex(file => file.coverPhoto));
     };
 
 
@@ -595,9 +594,8 @@ export default function EditProperty({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            image={selectedImageList[activeStep]}
-                                            // src={`${selectedImageList[activeStep]}?${Date.now()}`}
-                                            // image={coverImage}
+                                            // image={selectedImageList[activeStep]}
+                                            image={`${selectedImageList[activeStep]}?${Date.now()}`}
                                             sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",

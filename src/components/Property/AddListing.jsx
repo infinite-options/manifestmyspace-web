@@ -77,8 +77,9 @@ export default function AddListing({}){
     const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
     const [description, setDescription] = useState(propertyData.property_description);
-    // const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
-    const [selectedImageList, setSelectedImageList] = useState([]);
+    const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
+    // const [selectedImageList, setSelectedImageList] = useState([]);
+    const [deletedImageList, setDeletedImageList] = useState([]);
     const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
@@ -102,6 +103,10 @@ export default function AddListing({}){
     const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
     // const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
     const [isListed, setListed] = useState(true);
+
+    useEffect(() => {
+        console.log("deletedImageList - ", deletedImageList);
+    }, [deletedImageList]);
 
     //const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
@@ -429,6 +434,10 @@ export default function AddListing({}){
             }
         }
 
+        if(deletedImageList.length > 0){
+            formData.append('deleted_images', JSON.stringify(deletedImageList))
+        }
+
         utilitiesFormData.append('property_uid', propertyData.property_uid);
         utilitiesFormData.append('property_utility', utilitiesJSONString);
 
@@ -546,6 +555,7 @@ export default function AddListing({}){
           });
         }
         setSelectedImageList(files);
+        setActiveStep(files.findIndex(file => file.coverPhoto));
     };
 
 
@@ -636,7 +646,7 @@ export default function AddListing({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            image={selectedImageList[activeStep]}
+                                            image={selectedImageList[activeStep].image}
                                             // image={coverImage}
                                             sx={{
                                                 elevation: "0",
@@ -659,7 +669,7 @@ export default function AddListing({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Edit"} imageState={selectedImageList} setImageState={setSelectedImageList} />
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} setDeletedImageList={setDeletedImageList}  page={"Edit"}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}

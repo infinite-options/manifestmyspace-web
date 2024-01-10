@@ -474,8 +474,7 @@ export default function AddProperty({}){
                                             {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                                             </Button>
                                             <CardMedia component="img"
-                                            image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep]}
-                                            // image={coverImage}
+                                            image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep].image}
                                                 sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
