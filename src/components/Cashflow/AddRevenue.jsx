@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PropertyListData from "../Property/PropertyListData";
@@ -42,6 +42,21 @@ const AddRevenue = (props) => {
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
 
+  const [purPayerId, setPurPayerId] = useState(null);
+
+  useEffect(() => {
+    if (payable === "Property Manager") {
+      console.log("Set purPayerId to", selectedProperty.business_uid)
+      setPurPayerId(selectedProperty.business_uid)
+    } else if (payable === "Tenant") {
+      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      setPurPayerId(selectedProperty.owner_uid)
+    } else if (payable === "Owner") {
+      console.log("Set purPayerId to", selectedProperty.tenant_uid)
+      setPurPayerId(selectedProperty.tenant_uid)
+    }
+  }, [payable, selectedProperty]);
+
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
   };
@@ -77,7 +92,7 @@ const AddRevenue = (props) => {
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
-      "pur_payer": null
+      "pur_payer": purPayerId
     });
     
     let config = {
@@ -99,8 +114,12 @@ const AddRevenue = (props) => {
       console.log(error);
       setShowSpinner(false);
     });
+
+    let currentDate = new Date();
+    let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    let currentYear = currentDate.getFullYear().toString();
     
-    navigate(-1);
+    navigate("/cashflow-test", {state: { month: currentMonth, year: currentYear }});
   };
   return (
     <>

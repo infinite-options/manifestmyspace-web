@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
@@ -41,10 +41,25 @@ const AddExpense = (props) => {
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
+  const [purPayerId, setPurPayerId] = useState(null); // this needs to be the tenant_id or the PM business_id
 
   const [edit, setEdit] = useState(props.edit || false);
+  // console.log("--debug--", selectedProperty)
 
   const [itemToEdit, setItemToEdit] = useState(props.itemToEdit || null);
+
+  useEffect(() => {
+    if (payable === "Property Manager") {
+      console.log("Set purPayerId to", selectedProperty.business_uid)
+      setPurPayerId(selectedProperty.business_uid)
+    } else if (payable === "Tenant") {
+      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      setPurPayerId(selectedProperty.owner_uid)
+    } else if (payable === "Owner") {
+      console.log("Set purPayerId to", selectedProperty.tenant_uid)
+      setPurPayerId(selectedProperty.tenant_uid)
+    }
+  }, [payable, selectedProperty]);
 
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
@@ -85,7 +100,7 @@ const AddExpense = (props) => {
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
-      "pur_payer": null,
+      "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
       "pur_frequency": "One-Time"
     });
     
@@ -108,8 +123,12 @@ const AddExpense = (props) => {
       console.log(error);
       setShowSpinner(false);
     });
+
+    let currentDate = new Date();
+    let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    let currentYear = currentDate.getFullYear().toString();
     
-    navigate(-1);
+    navigate("/cashflow-test", {state: { month: currentMonth, year: currentYear }});
   };
   return (
     <>

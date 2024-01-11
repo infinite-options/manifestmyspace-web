@@ -14,6 +14,7 @@ import { useUser } from "../../contexts/UserContext";
 import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import AddRevenueIcon from '../../images/AddRevenueIcon.png'
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -375,7 +376,7 @@ function ManagerDashboard() {
                             id="revenue"
                             className={classes.button}
                             onClick={() => {
-                            navigate('/transactionHistory');
+                                navigate('/cashflow-test', {state: {month: "January", year: "2024"}});
                             }}
                         >
                             <img src={Dollar} alt="Transactions" />
@@ -410,6 +411,23 @@ function ManagerDashboard() {
                         </Button>
                         </Grid>
                     </Grid>
+                    {/* <Grid container spacing={2} className={classes.row}>
+                        <Grid item xs={4}>
+                            <Button 
+                                sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
+                            onClick={()=>{navigate('/addRevenue')}}> <img src={AddRevenueIcon}></img> Revenue</Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button 
+                            sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
+                            onClick={()=>{navigate('/addExpense')}}> <img src={AddRevenueIcon}></img> Expense</Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button 
+                            sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
+                            onClick={()=>{navigate('/addUtility')}}> <img src={AddRevenueIcon}></img> Utility</Button>
+                        </Grid>
+                    </Grid> */}
                     </div>
                 <br />
                 <br />
