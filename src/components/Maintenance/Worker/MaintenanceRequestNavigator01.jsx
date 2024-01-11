@@ -34,12 +34,13 @@ async function getInitialImages(requestData, currentIndex) {
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator01({ requestIndex, updateRequestIndex, requestData, color, item, allData }) {
+export default function MaintenanceRequestNavigator01({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
   const [images, setImages] = useState([maintenanceRequestImage]);
+  let [currentTab, setCurrentTab]=useState(currentTabValue);
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
 
@@ -67,43 +68,57 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
   // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
-      setCurrentIndex((prevIndex) => {
-          const newIndex = (prevIndex + 1) % requestData.length;
-          let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-          
-          // navigate(`/maintenance/${nextMaintenanceId}`, { 
-          //     replace: true,   
-          //     state: {
-          //         requestIndex,
-          //         status,
-          //         maintenanceItemsForStatus,
-          //         allData,
-          //     }
-          // });
+    setCurrentIndex((prevIndex) => {
+      let newIndex = (prevIndex + 1);
+      if(prevIndex< requestData.length-1){
+        
+        let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
-          console.log("currentIndex", newIndex);
-          console.log("allData", allData);
-          console.log("requestData", requestData);
-          console.log("requestData[newIndex]", requestData[newIndex]);
-          updateRequestIndex(newIndex)
-          return newIndex;
-      });
+        
+        console.log("currentIndex", newIndex);
+        console.log("allData", allData);
+        console.log("requestData", requestData);
+        console.log("requestData[newIndex]", requestData[newIndex]);
+        updateRequestIndex(newIndex, {changeTab:'noChange'})
+        return newIndex;
+      }
+      else{
+        updateRequestIndex(newIndex, {changeTab:'forward'});
+        return newIndex;
+      }
+  });
   };
 
   const handlePreviousCard = () => {
-      setCurrentIndex((prevIndex) => {
-          const newIndex = (prevIndex - 1 + requestData.length) % requestData.length;
-          let previousMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
-          // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
 
-          console.log("currentIndex", newIndex);
-          console.log("allData", allData);
-          console.log("requestData", requestData);
-          console.log("requestData[newIndex]", requestData[newIndex]);
-          updateRequestIndex(newIndex)
-          return newIndex;
-      });
+    setCurrentIndex((prevIndex) => {
+      let newIndex = (prevIndex - 1);
+      if(prevIndex> 0){
+        let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+        
+        // navigate(`/maintenance/${nextMaintenanceId}`, { 
+        //     replace: true,   
+        //     state: {
+        //         requestIndex,
+        //         status,
+        //         maintenanceItemsForStatus,
+        //         allData,
+        //     }
+        // });
+
+        console.log("currentIndex", newIndex);
+        console.log("allData", allData);
+        console.log("requestData", requestData);
+        console.log("requestData[newIndex]", requestData[newIndex]);
+        updateRequestIndex(newIndex, {changeTab:'noChange'})
+        return newIndex;
+      }
+      else{
+        updateRequestIndex(newIndex, {changeTab:'backward'});
+        return newIndex;
+      }
+  });
   };
 
 
@@ -189,7 +204,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
           // width= "100%" // Take up full screen width
           spacing={2}
         >
-          <Button onClick={handlePreviousCard} disabled={requestData.length <= 1}>
+          <Button onClick={handlePreviousCard} disabled={backward_active_status}>
             <ArrowBackIcon />
           </Button>
           <Stack
@@ -206,7 +221,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, updateRequ
               {currentIndex + 1} of {requestData.length}
             </Typography>
           </Stack>
-          <Button onClick={handleNextCard} disabled={requestData.length <= 1}>
+          <Button onClick={handleNextCard} disabled={forward_active_status}>
             <ArrowForwardIcon />
           </Button>
         </Stack>
