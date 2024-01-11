@@ -474,8 +474,7 @@ export default function AddProperty({}){
                                             {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                                             </Button>
                                             <CardMedia component="img"
-                                            image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep]}
-                                            // image={coverImage}
+                                            image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep].image}
                                                 sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
@@ -497,7 +496,7 @@ export default function AddProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} imageState={selectedImageList} setImageState={setSelectedImageList} page={"Add"}/>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Add"}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}

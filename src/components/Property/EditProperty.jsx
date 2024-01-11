@@ -64,10 +64,10 @@ export default function EditProperty({}){
     const [description, setDescription] = useState(propertyData.property_description);
     const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
     const [imageState, setImageState] = useState([]);
+    const [deletedImageList, setDeletedImageList] = useState([]);
     const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
-    const [coverImage, setCoverImage] = useState(defaultHouseImage);
     const [notes, setNotes] = useState(propertyData.property_notes);
     const [unit, setUnit] = useState(propertyData.property_unit);
     const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
@@ -84,6 +84,9 @@ export default function EditProperty({}){
     const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
     const [page, setPage] = useState("Edit");
 
+    useEffect(() => {
+        console.log("deletedImageList - ", deletedImageList);
+    }, [deletedImageList]);
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
     const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
@@ -351,6 +354,9 @@ export default function EditProperty({}){
             }
         }
 
+        if(deletedImageList.length > 0){
+            formData.append('deleted_images', JSON.stringify(deletedImageList))
+        }
 
 
         for (let [key, value] of formData.entries()) {
@@ -496,8 +502,8 @@ export default function EditProperty({}){
             coverPhoto: isCoverPhoto(images[i]),
           });
         }
-        setImageState(files);
-        setCoverImage(propertyData.property_favorite_image? propertyData.property_favorite_image : defaultHouseImage);
+        setImageState(files);        
+        setActiveStep(files.findIndex(file => file.coverPhoto));
     };
 
 
@@ -588,9 +594,8 @@ export default function EditProperty({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            image={selectedImageList[activeStep]}
-                                            // src={`${selectedImageList[activeStep]}?${Date.now()}`}
-                                            // image={coverImage}
+                                            // image={selectedImageList[activeStep]}
+                                            image={`${selectedImageList[activeStep]}?${Date.now()}`}
                                             sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
@@ -612,7 +617,7 @@ export default function EditProperty({}){
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={page} imageState={imageState} setImageState={setImageState} />
+                                        <ImageUploader selectedImageList={imageState} setSelectedImageList={setImageState} setDeletedImageList={setDeletedImageList} page={page}/>
                                     </Grid>
 
                                     {/* Text Field for Title */}
