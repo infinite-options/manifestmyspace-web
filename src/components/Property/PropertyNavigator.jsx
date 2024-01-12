@@ -916,7 +916,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 textTransform: "none",
                                             }}
                                             size="small"
-                                            onClick={() => {navigate('/addListing', {state:{ currentId, item }})}}
+                                            onClick={() => {navigate('/addListing', {state:{ currentId, item, index: currentIndex, propertyList: propertyData}})}}
                                         >
                                             <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                             <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
