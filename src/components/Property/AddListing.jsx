@@ -52,7 +52,10 @@ export default function AddListing({}){
     const location = useLocation();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
-    const propertyData = location.state.item;
+    const { state } = useLocation();
+    let { index, propertyList } = state;
+    // const propertyData = location.state.item;
+    const propertyData = propertyList[index];
     const page = location.state.page;
     console.log("This is the property you are creating a listing for", propertyData)
     const propertyId = location.state.propertyId;
@@ -458,14 +461,22 @@ export default function AddListing({}){
                 // })
                 const data = await response.json();
                 console.log("properties put data", data)
-                if (data.code === 200){
-                    navigate(-1);
-                    // should navigate to the listing page
-                }
+                
+                const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+                const updatedJson = await updateResponse.json();
+                const updatedProperty = updatedJson.result[0];  
+                propertyList = propertyList.map(property => {
+                    if(property.property_uid === updatedProperty.property_uid)
+                        return { ...property, ...updatedProperty};
+                    return property;
+                });
+
+
             } catch(error){
                 console.log("Error posting data:", error)
             }
-            // setShowSpinner(false);
+            setShowSpinner(false);
+            navigate("/propertyDetail", { state: { index, propertyList }});
         }
         const postUtilitiesData = async () => {
             // setShowSpinner(true);
