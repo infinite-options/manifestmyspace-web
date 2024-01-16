@@ -566,7 +566,12 @@ export default function AddListing({}){
           });
         }
         setSelectedImageList(files);
-        setActiveStep(files.findIndex(file => file.coverPhoto));
+        // setActiveStep(files.findIndex(file => file.coverPhoto));
+        setActiveStep(() => {
+            const index = files.findIndex(file => file.coverPhoto);
+
+            return index !== -1 ? index : 0;
+          });
     };
 
 
@@ -657,7 +662,7 @@ export default function AddListing({}){
                                         </Button>
                                             <CardMedia
                                             component="img"
-                                            image={selectedImageList[activeStep].image}
+                                            image={selectedImageList[activeStep]? selectedImageList[activeStep].image : defaultHouseImage}
                                             // image={coverImage}
                                             sx={{
                                                 elevation: "0",
