@@ -104,16 +104,17 @@ const paymentStatusColorMap = {
   "Paid On Time": theme.palette.priority.clear,
   "Partially Paid": theme.palette.priority.medium,
   "Paid Late": theme.palette.priority.low,
-  "Not Paid": theme.palette.priority.high,
+  "Not Paid 1": theme.palette.priority.high,
   "Vacant": "#160449",
 };
 
 const paymentStatusMap = {
-  "UNPAID": "Not Paid",
+  "UNPAID": "Not Paid 2",
   "PAID LATE": "Paid Late",
   "PAID": "Paid On Time",
   "Partial": "Partially Paid",
   "VACANT": "Vacant",
+  // "NO MANAGER": "No Manager",
 };
 
 function getPaymentStatusColor(paymentStatus) {

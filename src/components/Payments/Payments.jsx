@@ -355,6 +355,7 @@ export default function Payments(props) {
                                         }}
                                         onClick={() => {
                                             paymentData.business_code = paymentNotes;
+                                            console.log(paymentData)
                                             navigate("/selectPayment", {
                                                 state: { paymentData, total, selectedItems: selectedItems},
                                             });

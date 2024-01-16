@@ -107,6 +107,7 @@
         "Paid Late": theme.palette.priority.low,
         "Not Paid": theme.palette.priority.high,
         "Vacant": "#160449",
+        "No Manager": theme.palette.priority.low,
     };
 
     const paymentStatusMap = {
@@ -115,6 +116,7 @@
         "PAID": "Paid On Time",
         "Partial": "Partially Paid",
         "VACANT": "Vacant",
+        "NO MANAGER": "No Manager",
     };
 
     function getPaymentStatusColor(paymentStatus) {
@@ -224,7 +226,9 @@
 
     function getCoverPhoto(property) {
         const imageArray = JSON.parse(property.property_images);
-        if (imageArray.length !== 0) {
+        if (property.property_favorite_image) {
+            return property.property_favorite_image;
+        } else if (imageArray.length !== 0) {
             return imageArray[0];
         } else {
             return propertyImage;
@@ -329,10 +333,14 @@
                             paddingLeft: "10px",
                             paddingRight: "10px",
                         }}
-                        onClick={() => handlePropertyDetailNavigation(property, index, propertyList)}
+                        onClick={() => {
+                            let i=propertyList.findIndex(p=>p.property_uid===property.property_uid)
+                            handlePropertyDetailNavigation(property, i, propertyList)
+                        }}
                     >
                     <Avatar
-                        src={getCoverPhoto(property)}
+                        // src={getCoverPhoto(property)}
+                        src={`${getCoverPhoto(property)}?${Date.now()}`}
                         alt="property image"
                         sx={{
                         borderRadius: "0",

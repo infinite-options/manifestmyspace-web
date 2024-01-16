@@ -18,12 +18,13 @@ import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
-
 import { useEffect, useState } from "react";
-import Backdrop from "@mui/material/Backdrop"; 
+import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import theme from '../../theme/theme';
+import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
+import SearchIcon from "@mui/icons-material/Search";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import SearchIcon from '@mui/icons-material/Search';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -40,14 +41,14 @@ function TenantDashboard(props) {
   const [showSpinner, setShowSpinner] = useState(false);
 
   const [paymentData, setPaymentData] = useState({
-        currency: "usd",
-        customer_uid: "100-000125",
-        business_code: "IOTEST",
-        item_uid: "320-000054",
-        payment_summary: {
-          total: "0.0"
-        },
-  })
+    // currency: "usd",
+    // customer_uid: "100-000125",
+    // business_code: "IOTEST",
+    // item_uid: "320-000054",
+    // payment_summary: {
+    //   total: "0.0",
+    // },
+  });
 
   const { getProfileId } = useUser();
 
@@ -72,9 +73,17 @@ function TenantDashboard(props) {
   };
 
   const { user } = useUser();
-  console.log(`User ID: ${getProfileId()} `+" "+{tenantId})
-  useEffect(() => {
+  console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
 
+  let automatic_navigation_handler =(propertyData)=>{
+    const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
+      if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
+        console.log("!propertyData || propertyData.length === 0");
+        navigate("/listings");
+      }
+  }
+
+  useEffect(() => {
     const getTenantData = async () => {
         setShowSpinner(true);
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
@@ -133,18 +142,6 @@ function TenantDashboard(props) {
 
   }, [total])
 
-  function createPaymentdata(total){
-    return {
-        currency: "usd",
-        customer_uid: "100-000125",
-        business_code: "IOTEST",
-        item_uid: "320-000054",
-        payment_summary: {
-          total: total
-        },
-    }
-  }
-  
   const thStyle = {
     color: "#160449",
     fontWeight: "600",
@@ -153,31 +150,31 @@ function TenantDashboard(props) {
 
   const location = useLocation();
 
-  function handleTenantMaintenanceNavigate(){
-    console.log("Tenant Maintenance Navigate")
-    navigate("/addTenantMaintenanceItem")
+  function handleTenantMaintenanceNavigate() {
+    console.log("Tenant Maintenance Navigate");
+    navigate("/addTenantMaintenanceItem");
   }
 
   const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
   const handleStripePayment = async (e) => {
     setShowSpinner(true);
-    console.log("Stripe Payment")
+    console.log("Stripe Payment");
     try {
-        //const stripe = await stripePromise;
-        const response = await fetch(API_CALL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(paymentData),
-        });
-        const checkoutURL = await response.text();
-        //console.log(response.text());
-        window.location.href = checkoutURL;
-      } catch (error) {
-        console.log(error);
-      }
+      //const stripe = await stripePromise;
+      const response = await fetch(API_CALL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentData),
+      });
+      const checkoutURL = await response.text();
+      //console.log(response.text());
+      window.location.href = checkoutURL;
+    } catch (error) {
+      console.log(error);
+    }
     setShowSpinner(false);
   }
 
@@ -189,16 +186,16 @@ function TenantDashboard(props) {
       }}
     >
       <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={showSpinner}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={showSpinner}
       >
-          <CircularProgress color="inherit" />
+        <CircularProgress color="inherit" />
       </Backdrop>
       <Grid container sx={{
-        paddingBottom: "10px",
-        // paddingLeft: "20px",
-        paddingRight: "20px"
-      }}>
+          paddingBottom: "10px",
+          // paddingLeft: "20px",
+          paddingRight: "20px",
+        }}>
         <Grid item xs={12}>
           <Box
             sx={{
@@ -220,14 +217,33 @@ function TenantDashboard(props) {
           </Box>
         </Grid>
         <Grid item xs={10}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "left",
+              alignItems: "center",
+              color: "#160449",
+            }}
+          >
             <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    color: "#160449",
-                }}
+              sx={{
+                height: "30px",
+                width: "30px",
+                backgroundColor: "#bbb",
+                borderRadius: "50%",
+                marginRight: "10px",
+              }}
+            ></Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                fontSize: "22px",
+                fontWeight: "600",
+                color: "#3D5CAC",
+              }}
+              onClick={() => {navigate("/myProperty", {state: { propertyData, propertyData }})}}
             >
                 <Box
                     sx={{
@@ -289,21 +305,22 @@ function TenantDashboard(props) {
                 </Box>
                 
             </Box>
+          </Box>
         </Grid>
         <Grid item xs={2}>
-            <Button
-                variant="contained"
-                sx={{
-                    backgroundColor: "#97A7CF",
-                    color: theme.typography.secondary.white,
-                    textTransform: 'none',
-                    whiteSpace: 'nowrap'
-                }}
-                onClick={() => navigate("/listings")}   
-            >
-                <SearchIcon/>
-                Search Property
-            </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#97A7CF",
+              color: theme.typography.secondary.white,
+              textTransform: "none",
+              whiteSpace: "nowrap",
+            }}
+            onClick={() => navigate("/listings")}
+          >
+            <SearchIcon />
+            Search Property
+          </Button>
         </Grid>
       </Grid>
 
@@ -663,13 +680,13 @@ function CustomTableRow(props) {
       case "PROCESSING":
         return "#D4736D";
       case "INFO":
-          return "#DEA19C";
+        return "#DEA19C";
       case "SCHEDULED":
-          return "#92A9CB";
+        return "#92A9CB";
       case "COMPLETED":
-          return "#6788B3";
+        return "#6788B3";
       case "CANCELLED":
-          return "#173C8D";
+        return "#173C8D";
       default:
         return "#000000";
     }

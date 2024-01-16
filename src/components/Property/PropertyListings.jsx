@@ -411,7 +411,7 @@ const PropertyListings = (props) => {
             const leases = leaseData.Lease_Details.result;
             var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
             leases.forEach((lease) => {
-                const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
+                const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id); 
                 // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
                 if (appliedPropertyIndex > -1) { // Make sure the property was found
                     const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
@@ -561,7 +561,7 @@ const PropertyListings = (props) => {
                     {console.log("sorted properties", displayProperties)}
                     {displayProperties.length > 0 && displayProperties.map((property, index) => {
                         var status = ""
-                        
+                        let i = sortedProperties.findIndex(p=>p.property_uid===property.property_uid) // This is to make sure the filtered property items don't confuse with sorted property items, and there's no wrong label or attribute
                         const appliedData = userLeases.find((lease) => lease.lease_property_id === property.property_uid);
                         if (appliedData) { 
                             console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status)
@@ -571,7 +571,7 @@ const PropertyListings = (props) => {
                         // else{
                         //     console.log("No Lease Data for Property", property.property_address)
                         // }
-                        return <PropertyCard data={property} key={index} status={status} leaseData={appliedData}/>;
+                        return <PropertyCard data={property} key={i} status={status} leaseData={appliedData}/>;
                     })}
                 </Paper>
             </Box>
