@@ -47,7 +47,7 @@ function CashflowWidget() {
         >
             <CircularProgress color="inherit" />
         </Backdrop>
-        <div className="cf-widget-main" onClick={() => navigate("/cashflow-test", {
+        <div className="cf-widget-main" onClick={() => navigate("/cashflow", {
                 state: {
                     month,
                     year,

@@ -3,7 +3,7 @@ import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormCo
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import File_dock_add from "../../images/File_dock_add.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { post, put } from "../utils/api";
 import PropertyListData from "../Property/PropertyListData";
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 const AddExpense = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getProfileId } = useUser();
   const [category, setCategory] = useState("Insurance");
   const [frequency, setFrequency] = useState("Monthly"); // TODO: Monthly and Yearly fees need to be added to the lease in lease_fees
@@ -42,29 +43,56 @@ const AddExpense = (props) => {
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const [purPayerId, setPurPayerId] = useState(null); // this needs to be the tenant_id or the PM business_id
+  const [isChecked, setIsChecked] = useState(false);
 
-  const [edit, setEdit] = useState(props.edit || false);
+  const [edit, setEdit] = useState(location?.state.edit || false);
   // console.log("--debug--", selectedProperty)
 
-  const [itemToEdit, setItemToEdit] = useState(props.itemToEdit || null);
+  const [itemToEdit, setItemToEdit] = useState(location?.state.itemToEdit || null);
 
   useEffect(() => {
+    if (edit && itemToEdit){
+      console.log("itemToEdit", itemToEdit)
+      // setSelectedProperty(itemToEdit.property_uid)
+      setCategory(itemToEdit.purchase_type)
+      if(!itemToEdit.pur_frequency){
+        setFrequency("One Time")
+      } else{
+        setFrequency(itemToEdit.pur_frequency)
+      }
+      setAmount(itemToEdit.pur_amount_due)
+      setPayable(itemToEdit.pur_payer)
+      // setDate(itemToEdit.purchase_date.replace("-", "/"))
+      propertyList.find((property) => {
+        console.log(property)
+        if (property.property_address === itemToEdit.property_address && property.property_unit === itemToEdit.property_unit){
+          setSelectedProperty(property)
+        }
+      })
+
+    }
+  }, [edit, itemToEdit]);
+
+  useEffect(() => {
+    console.log("this is changing the payer id")
     if (payable === "Property Manager") {
       console.log("Set purPayerId to", selectedProperty.business_uid)
       setPurPayerId(selectedProperty.business_uid)
     } else if (payable === "Tenant") {
-      console.log("Set purPayerId to", selectedProperty.owner_uid)
-      setPurPayerId(selectedProperty.owner_uid)
-    } else if (payable === "Owner") {
       console.log("Set purPayerId to", selectedProperty.tenant_uid)
       setPurPayerId(selectedProperty.tenant_uid)
+    } else if (payable === "Owner") {
+      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      setPurPayerId(selectedProperty.owner_uid)
     }
   }, [payable, selectedProperty]);
 
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
   };
-
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
@@ -128,10 +156,10 @@ const AddExpense = (props) => {
     let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     let currentYear = currentDate.getFullYear().toString();
     
-    navigate("/cashflow-test", {state: { month: currentMonth, year: currentYear }});
+    navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
   };
   return (
-    <>
+    
       <ThemeProvider theme={theme}>
         <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -139,7 +167,7 @@ const AddExpense = (props) => {
         >
             <CircularProgress color="inherit" />
         </Backdrop>
-        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}></PropertyListData>
+        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}/>
         <Box
           style={{
             display: "flex",
@@ -180,7 +208,7 @@ const AddExpense = (props) => {
             <Stack direction="row" justifyContent="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{edit ? "Edit" : "Add"} Expense</Typography>
             </Stack>
-
+            <form onSubmit={handleExpenseChange}>
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Property</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
@@ -212,6 +240,7 @@ const AddExpense = (props) => {
                   <MenuItem value="Repairs">Repairs</MenuItem>
                   <MenuItem value="Taxes">Taxes</MenuItem>
                   <MenuItem value="Utilities">Utilities</MenuItem>
+                  <MenuItem value="BILL POSTING">BILL POSTING</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -243,7 +272,7 @@ const AddExpense = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
             </Stack>
 
             <Stack spacing={-2}>
@@ -269,6 +298,7 @@ const AddExpense = (props) => {
                 placeholder="Add Description"
                 value={description}
                 onChange={handleDescriptionChange}
+                required
               >
               </TextField>
             </Stack>
@@ -316,14 +346,13 @@ const AddExpense = (props) => {
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.primary.fontWeight,
               }}
-              onClick={handleExpenseChange}
             >
               {edit ? "Edit" : "+ Add"} Expense
             </Button>
+            </form>
           </Paper>
         </Box>
       </ThemeProvider>
-    </>
   );
 };
 export default AddExpense;

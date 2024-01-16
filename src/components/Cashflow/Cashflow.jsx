@@ -32,8 +32,8 @@ export default function Cashflow(){
     const selectedRole = user.selectedRole; // Get the selected role from user object
 
     const [activeButton, setActiveButton] = useState('Cashflow');
-    const [month, setMonth] = useState(location.state.month);
-    const [year, setYear] = useState(location.state.year)
+    const [month, setMonth] = useState(location.state.month || "January");
+    const [year, setYear] = useState(location.state.year || "2024")
     
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [openSelectProperty, setOpenSelectProperty] = useState(false);
@@ -77,31 +77,31 @@ export default function Cashflow(){
             setExpectedExpenseByMonth(currentMonthYearExpectedExpense)
             setRevenueList(getRevenueList(cashflowData))
             setExpenseList(getExpenseList(cashflowData))
-            console.log("--debug-- expenseList", revenueList)
-            console.log("--debug-- expenseList", expenseList)
+            // console.log("--debug-- expenseList", revenueList)
+            // console.log("--debug-- expenseList", expenseList)
 
             let revenueMapping = getTotalRevenueByType(cashflowData, month, year, false)
             let expenseMapping = getTotalExpenseByType(cashflowData, month, year, false)
-            console.log("revenueMapping", revenueMapping)
-            console.log("expenseMapping", expenseMapping)
+            // console.log("revenueMapping", revenueMapping)
+            // console.log("expenseMapping", expenseMapping)
             setRevenueByType(revenueMapping)
             setExpenseByType(expenseMapping)
 
 
             let expectedRevenueByType = getTotalRevenueByType(cashflowData, month, year, true)
             let expectedExpenseByType = getTotalExpenseByType(cashflowData, month, year, true)
-            console.log("expectedRevenueByType", expectedRevenueByType)
-            console.log("expectedExpenseByType", expectedExpenseByType)
+            // console.log("expectedRevenueByType", expectedRevenueByType)
+            // console.log("expectedExpenseByType", expectedExpenseByType)
             setExpectedRevenueByType(expectedRevenueByType)
             setExpectedExpenseByType(expectedExpenseByType)
 
         }
     }, [month, year, cashflowData])
 
-    useEffect(() => {
-        console.log("revenueByType", revenueByType)
-        console.log("expenseByType", expenseByType)
-    }, [revenueByType, expenseByType])
+    // useEffect(() => {
+    //     console.log("revenueByType", revenueByType)
+    //     console.log("expenseByType", expenseByType)
+    // }, [revenueByType, expenseByType])
     
     return (
         <ThemeProvider theme={theme}>
@@ -317,13 +317,13 @@ export default function Cashflow(){
                     >
                         <Button 
                             sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
-                            onClick={()=>{navigate('/addRevenue')}}> <img src={AddRevenueIcon}></img> Revenue</Button>
+                            onClick={()=>{navigate('/addRevenue', {state: {edit: false, itemToEdit: null}})}}> <img src={AddRevenueIcon}></img> Revenue</Button>
                         <Button 
                             sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
-                            onClick={()=>{navigate('/addExpense')}}> <img src={AddRevenueIcon}></img> Expense</Button>
+                            onClick={()=>{navigate('/addExpense', {state: {edit: false, itemToEdit: null}})}}> <img src={AddRevenueIcon}></img> Expense</Button>
                         <Button 
                             sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont, backgroundColor: theme.palette.primary.main, borderRadius: 3, textTransform: 'none'}}
-                            onClick={()=>{navigate('/addUtility')}}> <img src={AddRevenueIcon}></img> Utility</Button>
+                            onClick={()=>{navigate('/addUtility', {state: {edit: false, itemToEdit: null}})}}> <img src={AddRevenueIcon}></img> Utility</Button>
                     </Box>
                 </Paper>
             </Box>
@@ -418,7 +418,7 @@ function StatementTable(props){
 
     function handleNavigation(type, item){
         console.log(item)
-        navigate(type, {state: {itemToEdit: item}})
+        navigate(type, {state: {itemToEdit: item, edit: true}})
     }
 
     // console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
@@ -427,6 +427,7 @@ function StatementTable(props){
     
     function getCategoryItems(category, type){
         let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+        // console.log("getCategoryItems", items)
         var key = "total_paid"
         if (activeView === "Cashflow"){
             key = "total_paid"
@@ -439,6 +440,7 @@ function StatementTable(props){
                     return (
                         activeView === "Cashflow" ? (
                         <TableRow key={index} onClick={() => handleNavigation(type, item)}>
+                            <TableCell></TableCell>
                             <TableCell>
                                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
                             </TableCell>
@@ -453,6 +455,7 @@ function StatementTable(props){
                         </TableRow>
                         ) : (
                             <TableRow key={index}>
+                                <TableCell></TableCell>
                                 <TableCell>
                                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {item.property_address} {item.property_unit} </Typography>
                                 </TableCell>
@@ -460,6 +463,9 @@ function StatementTable(props){
                                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                                         ${item[key] ? item[key] : 0}
                                     </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    {/* <DeleteIcon/> */}
                                 </TableCell>
                             </TableRow>
                         )

@@ -212,7 +212,7 @@ export default function Payments(props) {
                 ...paymentData,
                 business_code: paymentNotes,
                 payment_summary: {
-                total: total.toFixed(2), // Format the total as a string with 2 decimal places
+                    total: total.toFixed(2), // Format the total as a string with 2 decimal places
                 },
             };
 

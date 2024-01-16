@@ -49,11 +49,11 @@ const AddRevenue = (props) => {
       console.log("Set purPayerId to", selectedProperty.business_uid)
       setPurPayerId(selectedProperty.business_uid)
     } else if (payable === "Tenant") {
-      console.log("Set purPayerId to", selectedProperty.owner_uid)
-      setPurPayerId(selectedProperty.owner_uid)
-    } else if (payable === "Owner") {
       console.log("Set purPayerId to", selectedProperty.tenant_uid)
       setPurPayerId(selectedProperty.tenant_uid)
+    } else if (payable === "Owner") {
+      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      setPurPayerId(selectedProperty.owner_uid)
     }
   }, [payable, selectedProperty]);
 
@@ -119,7 +119,7 @@ const AddRevenue = (props) => {
     let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     let currentYear = currentDate.getFullYear().toString();
     
-    navigate("/cashflow-test", {state: { month: currentMonth, year: currentYear }});
+    navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
   };
   return (
     <>

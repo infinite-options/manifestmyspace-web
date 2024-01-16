@@ -46,7 +46,7 @@ function getExpectedRevenueByType(data, month, year){
 }
 
 function getTotalRevenueByType(data, month, year, expected){
-    console.log(data, month, year)
+    // console.log(data, month, year)
 
     var key = "sum(total_paid)";
 
@@ -59,8 +59,8 @@ function getTotalRevenueByType(data, month, year, expected){
     let revenueItems = data.response_revenue_by_month_by_type.result.filter((item) => item.cf_month === month && item.cf_year === year)
     let totalRent = revenueItems.reduce((acc, revenue) => {
         if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT"){
-            console.log("revenue", revenue[key])
-            console.log("acc", acc)
+            // console.log("revenue", revenue[key])
+            // console.log("acc", acc)
             return acc + parseFloat(revenue[key])
         }
         return acc
@@ -115,7 +115,7 @@ function getTotalRevenueByType(data, month, year, expected){
 
 
 function getTotalExpenseByType(data, month, year, expected){
-    console.log(data, month, year)
+    // console.log(data, month, year)
 
     var key = "sum(total_paid)";
 
@@ -221,7 +221,7 @@ function getTotalExpectedRevenueByMonthYear(data, month, year){
 }
 
 function getTotalExpectedExpenseByMonthYear(data, month, year){
-    console.log(data)
+    // console.log(data)
     let expenseItems = data.response_expense_by_month.result.filter((item) => item.cf_month === month && item.cf_year === year)
     let totalExpense = expenseItems.reduce((acc, item) => {
         return acc + parseFloat(item["sum(pur_amount_due)"] ? item["sum(pur_amount_due)"] : 0.0)

@@ -196,8 +196,8 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
-            <Route path="cashflow" element={<CashflowOwner />} />
-            <Route path="cashflow-test" element={<Cashflow />} />
+            <Route path="cashflow-owner" element={<CashflowOwner />} />
+            <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
