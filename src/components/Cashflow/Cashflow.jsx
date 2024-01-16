@@ -18,6 +18,7 @@ import AllOwnerIcon from '../Rent/RentComponents/AllOwnerIcon.png'
 import { useUser } from '../../contexts/UserContext'; // Import the UserContext
 import Backdrop from "@mui/material/Backdrop"; 
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
 import { getTotalRevenueByType, getTotalExpenseByType, fetchCashflow, getTotalExpenseByMonthYear, getTotalRevenueByMonthYear, getTotalExpectedRevenueByMonthYear, getTotalExpectedExpenseByMonthYear, getRevenueByMonth, getExpenseByMonth, getRevenueList, getExpenseList } from "../Cashflow/CashflowFetchData";
@@ -424,6 +425,11 @@ function StatementTable(props){
     // console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
     // console.log("activeView", activeView)
     // console.log("statement table year/month", year, month)
+
+    function getCategoryCount(category){
+        let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+        return "(" + items.length + ")"
+    }
     
     function getCategoryItems(category, type){
         let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
@@ -465,7 +471,7 @@ function StatementTable(props){
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
-                                    {/* <DeleteIcon/> */}
+                                    <EditIcon/>
                                 </TableCell>
                             </TableRow>
                         )
@@ -494,7 +500,7 @@ function StatementTable(props){
                                     <TableHead>
                                         <TableRow>
                                         <TableCell>
-                                            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {category} </Typography>
+                                            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {category} {getCategoryCount(category)} </Typography>
                                         </TableCell>
                                         <TableCell align="right">
                                             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
@@ -529,18 +535,18 @@ function StatementTable(props){
                             >
                                 <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
                                     <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                        <TableCell>
-                                            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {category} </Typography>
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                                                ${value ? value: 0}                                 
-                                            </Typography>
-                                        </TableCell>
-                                        </TableRow>
-                                    </TableHead>
+                                        <TableHead>
+                                            <TableRow>
+                                            <TableCell>
+                                                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {category} {getCategoryCount(category)} </Typography>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                                                    ${value ? value: 0}                                 
+                                                </Typography>
+                                            </TableCell>
+                                            </TableRow>
+                                        </TableHead>
                                     </Table>
                                 </AccordionSummary>
                                 <AccordionDetails>

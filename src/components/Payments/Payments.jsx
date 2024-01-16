@@ -298,16 +298,17 @@ export default function Payments(props) {
                                 width: "30px",
                                 backgroundColor: "#bbb",
                                 borderRadius: "50%",
-                                marginRight: "10px",
+                                // marginRight: "10px",
                             }}
+                            onClick={() => { console.log("Navigate to Property or Tenant Profile") }}
                         ></Box>
                         <Box
                             sx={{
                                 fontSize: "11px",
                                 fontWeight: "600",
                             }}
-                            onClick={() => { navigate('/myProperty') }}
-                        >   
+                        >
+                            
                         </Box>
                     </Box>
 

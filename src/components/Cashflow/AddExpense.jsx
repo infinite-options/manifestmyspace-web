@@ -90,7 +90,7 @@ const AddExpense = (props) => {
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
   };
-  const handleCheckboxChange = (event) => {
+  const handlePaidCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   };
   const handleCategoryChange = (event) => {
@@ -123,13 +123,13 @@ const AddExpense = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": "UNPAID", // TODO: default to UNPAID, unless then already completed button is checked
+      "purchase_status": isChecked ? "PAID" : "UNPAID", // TODO: default to UNPAID, unless then already completed button is checked
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
       "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
-      "pur_frequency": "One-Time"
+      "pur_frequency": frequency
     });
     
     let config = {
@@ -208,7 +208,7 @@ const AddExpense = (props) => {
             <Stack direction="row" justifyContent="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{edit ? "Edit" : "Add"} Expense</Typography>
             </Stack>
-            <form onSubmit={handleExpenseChange}>
+            {/* <form onSubmit={handleExpenseChange}> */}
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Property</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
@@ -272,7 +272,7 @@ const AddExpense = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
             </Stack>
 
             <Stack spacing={-2}>
@@ -311,7 +311,7 @@ const AddExpense = (props) => {
               // onClick={()=>{handleButtonClick('ExpectedCashflow')}}
             >
               <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Reimbursible?</Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Reimbursable?</Typography>
                 <FormControlLabel
                   control={
                     <Checkbox sx={{ color: theme.typography.common.blue }} name="Property Manager" checked={payable === "Property Manager"} onChange={handlePayableChange} />
@@ -346,10 +346,11 @@ const AddExpense = (props) => {
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.primary.fontWeight,
               }}
+              onClick={handleExpenseChange}
             >
               {edit ? "Edit" : "+ Add"} Expense
             </Button>
-            </form>
+            {/* </form> */}
           </Paper>
         </Box>
       </ThemeProvider>

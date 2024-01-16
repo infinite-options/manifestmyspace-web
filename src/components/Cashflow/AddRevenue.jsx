@@ -41,7 +41,7 @@ const AddRevenue = (props) => {
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
-
+  const [isChecked, setIsChecked] = useState(false);
   const [purPayerId, setPurPayerId] = useState(null);
 
   useEffect(() => {
@@ -59,6 +59,9 @@ const AddRevenue = (props) => {
 
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
+  };
+  const handlePaidCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
   };
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
@@ -87,7 +90,7 @@ const AddRevenue = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": "UNPAID",
+      "purchase_status": isChecked ? "PAID" : "UNPAID",
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
@@ -234,7 +237,7 @@ const AddRevenue = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} />
             </Stack>
 
             <Stack spacing={-2}>

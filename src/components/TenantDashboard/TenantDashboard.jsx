@@ -25,9 +25,6 @@ import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import SearchIcon from "@mui/icons-material/Search";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
-import SearchIcon from '@mui/icons-material/Search';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Dashboard } from "@mui/icons-material";
 import ArticleIcon from '@mui/icons-material/Article'; // For "Document"
 import PhoneIcon from '@mui/icons-material/Phone'; // For "Phone"
@@ -133,14 +130,14 @@ function TenantDashboard(props) {
     getTenantData();
   }, [])
 
-  useEffect(() => {
-    console.log("TenantDashboard useEffect")
+//   useEffect(() => {
+//     console.log("TenantDashboard useEffect")
 
-    let paymentData = createPaymentdata(total)
-    console.log(paymentData)
-    setPaymentData(paymentData)
+//     let paymentData = createPaymentdata(total)
+//     console.log(paymentData)
+//     setPaymentData(paymentData)
 
-  }, [total])
+//   }, [total])
 
   const thStyle = {
     color: "#160449",
@@ -153,6 +150,14 @@ function TenantDashboard(props) {
   function handleTenantMaintenanceNavigate() {
     console.log("Tenant Maintenance Navigate");
     navigate("/addTenantMaintenanceItem");
+  }
+
+  function handleViewLeaseNavigate(lease_uid){
+    navigate('/viewLease',{
+        state:{
+            lease_id : lease_uid
+        } 
+    });
   }
 
   const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
@@ -194,58 +199,44 @@ function TenantDashboard(props) {
       <Grid container sx={{
           paddingBottom: "10px",
           // paddingLeft: "20px",
-          paddingRight: "20px",
+        //   paddingRight: "20px",
+        //   backgroundColor: "#F2F2F2",
+        //   borderRadius: "10px",
+          marginTop: "7px",
+          marginBottom: "7px",
+        //   boxShadow: "0px 2px 4px #00000040",
         }}>
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              paddingLeft: "10px",
-              paddingRight: "10px",
-            }}
-          >
+            <Grid item xs={12}>
             <Box
-              sx={{
-                fontSize: "22px",
-                fontWeight: "600",
-              }}
-            >
-              Hello {firstName}!
-            </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={10}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "left",
-              alignItems: "center",
-              color: "#160449",
-            }}
-          >
-            <Box
-              sx={{
-                height: "30px",
-                width: "30px",
-                backgroundColor: "#bbb",
-                borderRadius: "50%",
-                marginRight: "10px",
-              }}
-            ></Box>
-            <Box
-              sx={{
+                sx={{
                 display: "flex",
-                alignItems: "center",
-                fontSize: "22px",
-                fontWeight: "600",
-                color: "#3D5CAC",
-              }}
-              onClick={() => {navigate("/myProperty", {state: { propertyData, propertyData }})}}
+                flexDirection: "row",
+                justifyContent: "center",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                }}
             >
                 <Box
+                sx={{
+                    fontSize: "22px",
+                    fontWeight: "600",
+                }}
+                >
+                Hello {firstName}!
+                </Box>
+            </Box>
+            </Grid>
+            <Grid item xs={9}>
+                <Box
+                    sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "left",
+                    alignItems: "center",
+                    color: "#160449",
+                    }}
+                >
+                    <Box
                     sx={{
                         height: "30px",
                         width: "30px",
@@ -253,8 +244,8 @@ function TenantDashboard(props) {
                         borderRadius: "50%",
                         marginRight: "10px",
                     }}
-                ></Box>
-                <Box
+                    ></Box>
+                    <Box
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -262,67 +253,86 @@ function TenantDashboard(props) {
                         fontWeight: "600",
                         color: "#3D5CAC",
                     }}
-                >
-                    <Typography
-                      onClick={ () => {navigate('/myProperty', {
-                          state: {propertyData, propertyData}
-                        })}
-                      }
                     >
-                      {propertyAddr}
-                    </Typography>
-
-                    <KeyboardArrowDownIcon 
-                      sx={{alignItem: "center"}}
-                      onClick={(event) => handleOpen(event)}
-                    />
-                    <Menu
-                      id="demo-customized-menu"
-                      MenuListProps={{
-                        'aria-labelledby': 'demo-customized-button',
-                      }}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                    >
-                      {propertyData.map((item, index) => {
-                        return (
-                          <MenuItem 
-                            key={index}
-                            onClick={() => {
-                              setPropertyAddr(item.property_address + " " + item.property_unit)
-                              setTotal(item.balance)
-                              setSelectedProperty(item)
-                              handleClose()
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                fontSize: "22px",
+                                fontWeight: "600",
+                                color: "#3D5CAC",
                             }}
-                            disableRipple
-                          >
-                            {item.property_address + " " + item.property_unit}
-                          </MenuItem>
-                        )
-                      })}
-                    </Menu>
+                        >
+                            <Typography
+                            onClick={ () => {navigate('/myProperty', {
+                                state: {propertyData, propertyData}
+                                })}
+                            }
+                            >
+                            {propertyAddr}
+                            </Typography>
+
+                            <KeyboardArrowDownIcon 
+                            sx={{alignItem: "center"}}
+                            onClick={(event) => handleOpen(event)}
+                            />
+                            <Menu
+                            id="demo-customized-menu"
+                            MenuListProps={{
+                                'aria-labelledby': 'demo-customized-button',
+                            }}
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            >
+                            {propertyData.map((item, index) => {
+                                return (
+                                <MenuItem 
+                                    key={index}
+                                    onClick={() => {
+                                    setPropertyAddr(item.property_address + " " + item.property_unit)
+                                    setTotal(item.balance)
+                                    setSelectedProperty(item)
+                                    handleClose()
+                                    }}
+                                    disableRipple
+                                >
+                                    {item.property_address + " " + item.property_unit}
+                                </MenuItem>
+                                )
+                            })}
+                            </Menu>
+                        </Box>
+                        
+                    </Box>
                 </Box>
-                
-            </Box>
-          </Box>
+            </Grid>
+            <Grid item xs={3}>
+                <Box
+                    sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "right",
+                    alignItems: "center",
+                    color: "#160449",
+                    }}
+                >
+                    <Button
+                        variant="contained"
+                        sx={{
+                        backgroundColor: "#97A7CF",
+                        color: theme.typography.secondary.white,
+                        textTransform: "none",
+                        whiteSpace: "nowrap",
+                        }}
+                        onClick={() => navigate("/listings")}
+                    >
+                        <SearchIcon />
+                        Search Property
+                    </Button>
+                </Box>
+            </Grid>
         </Grid>
-        <Grid item xs={2}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#97A7CF",
-              color: theme.typography.secondary.white,
-              textTransform: "none",
-              whiteSpace: "nowrap",
-            }}
-            onClick={() => navigate("/listings")}
-          >
-            <SearchIcon />
-            Search Property
-          </Button>
-        </Grid>
-      </Grid>
 
       {selectedProperty?.lease_status === "ACTIVE" ? (
         <>
@@ -333,8 +343,8 @@ function TenantDashboard(props) {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     padding: "10px",
+                    paddingRight: "0px",
                 }}
-                onClick={() => {navigate('/payments')}}
             >
                 <Box
                     sx={{
@@ -542,7 +552,7 @@ function TenantDashboard(props) {
                         <DashboardActionItem 
                             icon={<ArticleIcon/>}
                             text={"View Lease"}
-                            onClick={()=>{console.log("View lease")}} 
+                            onClick={()=>{handleViewLeaseNavigate(selectedProperty.lease_uid)}}
                         />
                     </Grid>
                     <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -558,41 +568,6 @@ function TenantDashboard(props) {
                     </Grid>
                 </Grid>
             </Box>
-
-            {/* <Box
-                sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "15px"
-                }}
-            >
-                <DashboardActionItem 
-                    icon={<PhoneIcon/>}
-                    text={"Call Manager"}
-                    onClick={() => {console.log("Call Manager")}} 
-                />
-                <DashboardActionItem 
-                    icon={<BuildIcon/>}
-                    text={"Urgent Maintenance"}
-                    onClick={() => {handleTenantMaintenanceNavigate()}} 
-                />
-                <DashboardActionItem 
-                    icon={<ArticleIcon/>}
-                    text={"View Lease"}
-                    onClick={()=>{console.log("View lease")}} 
-                />
-                <DashboardActionItem 
-                    icon={<ArticleIcon/>}
-                    text={"Documents"}
-                    onClick={()=>{navigate('/tenantDocuments',{
-                        state: 
-                            {propertyAddr: propertyAddr}
-                        }
-                    )}} 
-                />
-            </Box> */}
         </DashboardTab>
         </>
         ) : (
