@@ -177,7 +177,7 @@ function ManagerDashboard() {
                             id="revenue"
                             className={classes.button}
                             onClick={() => {
-                                navigate('/cashflow', {state: {month: "January", year: "2024"}});
+                                navigate('/transactionHistory', {state: {month: "January", year: "2024"}});
                             }}
                         >
                             <img src={Dollar} alt="Transactions" />

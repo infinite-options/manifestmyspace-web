@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useUser } from "../../contexts/UserContext";
 import {CircularProgress } from "@mui/material";
 // import * as ReactBootStrap from "react-bootstrap";
 import { get } from "../utils/api";
@@ -9,6 +10,7 @@ import TransactionHistory from "./TransactionHistory";
 export default function TransactionsOwnerData(props) {
   const selectedProperty = props.selectedProperty;
   const setShowSpinner = props.setShowSpinner;
+  const { user, getProfileId } = useUser();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [transactionsResult, setTransactionsResult] = useState([]);
@@ -18,10 +20,10 @@ export default function TransactionsOwnerData(props) {
     //   navigate("/");
     //   return;
     // }
-    const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions`);
+    const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/${getProfileId()}`);
     console.log("payments", res);
-    setTransactionsResult(res.data.Transactions.result);
-    props.setTransactionList(res.data.Transactions.result);
+    setTransactionsResult(res.data.result);
+    props.setTransactionList(res.data.result);
     props.setLoading(false);
     setShowSpinner(false);
   };

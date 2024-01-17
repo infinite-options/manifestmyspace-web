@@ -52,6 +52,7 @@ export default function TransactionHistory(props) {
     const [showSpinner, setShowSpinner] = useState(false);
     const [history, setTransactionList] = useState([]);
     console.log("history ", history);
+    // https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/110-000095
     // const [transactionList, setTransactionList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [order, setOrder] = useState("asc");
@@ -112,7 +113,7 @@ export default function TransactionHistory(props) {
               {paymentsOutgoingHeadCell.map((headCell) => (
                 <TableCell
                   key={headCell.id}
-                  sx={{ fontSize: 13 }}
+                  sx={{ fontSize: 18 }}
                   align="left"
                   size="small"
                   sortDirection={orderBy === headCell.id ? order : false}
@@ -197,17 +198,17 @@ export default function TransactionHistory(props) {
                         alignItems="center"
                     >
                         <Button sx={{ textTransform: 'capitalize' }}>
-                            <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/>
+                            <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}/>
                             <Typography 
-                            sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}
+                            sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}
                             >
                             Last 30 Days
                             </Typography>
                         </Button>
                             {/* <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent> */}
                         <Button sx={{ textTransform: 'capitalize' }} onClick={handleOpen}>
-                            <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}>
+                            <HomeWorkIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont, margin:'5px'}}/>
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}>
                             Property
                             </Typography>
                         </Button>
@@ -215,13 +216,13 @@ export default function TransactionHistory(props) {
                             type="text"
                             placeholder="Search"
                             onChange={(event) => {
-                            setSearchOutgoing(event.target.value);
+                                setSearchOutgoing(event.target.value);
                             }}
                             style={{
-                            width: "60px",
-                            border: "1px solid black",
-                            borderRadius: '40px',
-                            padding: "5px",
+                                width: "60px",
+                                border: "1px solid black",
+                                borderRadius: '40px',
+                                padding: "5px",
                             }}
                         />
                     </Box>
@@ -266,6 +267,7 @@ export default function TransactionHistory(props) {
                                     );
                                 })
                                 .map((row, index) => {
+                                    {console.log(row)}  
                                     return row.purchase_status === "COMPLETED" ? (
                                     <TableRow
                                         hover
@@ -278,13 +280,13 @@ export default function TransactionHistory(props) {
                                             navigate('/viewTransactionOwner', { state: { history, index } });
                                         }}
                                     >
-                                            <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 12 }}>
+                                            <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>
                                             {row.purchase_date !== null
                                                 ? moment(row.purchase_date.substring(0, 10)).format('MM/DD/YY')
                                                 : "Not Available"}
                                             </TableCell>
-                                            <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 12 }}>{row.purchase_type}</TableCell>
-                                        <TableCell align="left" className={classes.cell_long} sx={{ fontSize: 12}}>
+                                            <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>{row.purchase_type}</TableCell>
+                                        <TableCell align="left" className={classes.cell_long} sx={{ fontSize: 18}}>
                                             {/* <TableRow> */}
                                             {row.property_address +
                                             " " +
@@ -300,7 +302,7 @@ export default function TransactionHistory(props) {
                                             {/* </TableRow> */}
                                         </TableCell>
                                         <TableCell align="left" className={classes.cell_short}>
-                                            <Typography sx={{color: row.pur_cf_type === 'expense' ? theme.palette.custom.pinkText : theme.palette.custom.bgBlue, fontSize: 12}}>
+                                            <Typography sx={{color: row.pur_cf_type === 'expense' ? theme.palette.custom.pinkText : theme.palette.custom.bgBlue, fontSize: 18}}>
                                                 {row.pur_cf_type === 'expense' && '-'}${Math.abs(row.pur_amount_due).toFixed(2)}
                                             </Typography>
                                         </TableCell>
