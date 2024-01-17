@@ -6,28 +6,28 @@ import { Stack, Typography } from '@mui/material';
 
 const data1 = [
   { name: 'Jan', cashflow: 5000, revenue: 2000 },
-  { name: 'Feb', sales: 8000, profit: 4000 },
-  { name: 'Mar', sales: 10000, profit: 6000 },
-  { name: 'Apr', sales: 9000, profit: 6000 },
-  { name: 'May', sales: 8000, profit: 8000 },
-  { name: 'Jun', sales: 10000, profit: 4000 },
-  { name: 'Jul', sales: 5000, profit: 2000 },
-  { name: 'Aug', sales: 4000, profit: 3000 },
-  { name: 'Sep', sales: 8000, profit: 1000 },
-  { name: 'Oct', sales: 6000, profit: 5000 },
-  { name: 'Nov', sales: 10000, profit: 6000 },
-  { name: 'Dec', sales: 8000, profit: 3000 },
+  { name: 'Feb', cashflow: 8000, revenue: 4000 },
+  { name: 'Mar', cashflow: 10000, revenue: 6000 },
+  { name: 'Apr', cashflow: 9000, revenue: 6000 },
+  { name: 'May', cashflow: 8000, revenue: 8000 },
+  { name: 'Jun', cashflow: 10000, revenue: 4000 },
+  { name: 'Jul', cashflow: 5000, revenue: 2000 },
+  { name: 'Aug', cashflow: 4000, revenue: 3000 },
+  { name: 'Sep', cashflow: 8000, revenue: 1000 },
+  { name: 'Oct', cashflow: 6000, revenue: 5000 },
+  { name: 'Nov', cashflow: 10000, revenue: 6000 },
+  { name: 'Dec', cashflow: 8000, revenue: 3000 },
   // Add data for other months (up to 12)
 ];
 
 const MixedChart = (props) => {
-  const data = props.revenueCashflowByMonth;
+  const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
   const activeButton = props.activeButton;
   const selectedProperty = props.selectedProperty;
   return (
     <ThemeProvider theme={theme}>
     <ResponsiveContainer>
-      <ComposedChart data={data} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
+      <ComposedChart data={data1} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
         <CartesianGrid vertical={false} />
           <XAxis
             dataKey="monthYear" 

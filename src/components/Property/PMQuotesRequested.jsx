@@ -20,16 +20,20 @@ import refundIcon from './refundIcon.png';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
+import { useUser } from "../../contexts/UserContext";
+
 
 export default function PMQuotesRequested({}){
     const location = useLocation();
     let navigate = useNavigate(); 
-
+    const { getProfileId} = useUser();
     console.log("--debug location.state--", location.state)
 
-    const contracts = location.state.contracts;
-
+    const [contracts, setContracts] = useState(location.state.contracts);
+   
+    const [refresh, setRefresh]=useState(false)
     const property = location.state.propertyData;
+    const propertyId= property[location.state.index]?.property_uid
     const index = location.state.index;
 
     const statusList = ["New Quotes", "Contracts"];
@@ -76,9 +80,29 @@ export default function PMQuotesRequested({}){
     const [data, setData] = useState(property[index]);
 
     useEffect(() => {
-        console.log("propertyData", property);
-        console.log("contracts", contracts);
-    }, []);
+        
+        const getContractsForOwner = async () => {
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+                
+                const contractsResponse = await response.json();
+                
+                 const contractsData = contractsResponse.result.filter(contract => contract.property_id === propertyId)
+                // 
+                console.log('Contracts URL useEffect with Refresh var is running')
+                setContracts(contractsData)
+
+            }
+            catch (error){
+                console.log(error);
+            }
+        }
+        getContractsForOwner();
+
+
+
+
+    }, [refresh]);
 
     function displayPMQuotesRequested(){
         return (
@@ -157,10 +181,16 @@ export default function PMQuotesRequested({}){
                                                     borderRadius: '10px 10px 10px 10px',
                                                     fontSize: `10px`
                                                 }} 
-                                                onClick={()=>{handleStatusChange(contract, "CANCELLED")}}
+                                                onClick={async () => {
+                                                    await handleStatusChange(contract, "CANCELLED");
+                                                    setTimeout(() => {
+                                                        setRefresh(!refresh);
+                                                    }, 100); // Adjust the delay time as needed
+                                                }}
                                             >
                                                 Cancel
                                             </Button>
+
                                         </Stack>
                                     </div>  
                                 )
@@ -258,7 +288,7 @@ export default function PMQuotesRequested({}){
         }
     }
     
-    function handleStatusChange(obj, status){
+    const  handleStatusChange= async (obj, status) =>{
         try {
 
             const formData = new FormData();
@@ -469,7 +499,7 @@ function DocumentCard(props) {
     const data = props.data
 
     const [fees, setFees] = useState([]);
-
+    
     let navigate = useNavigate();
 
     const getContractDocumentLink = () => {
@@ -497,6 +527,10 @@ function DocumentCard(props) {
                 if(responseData.result.business_services_fees !== null && responseData.result[0].business_services_fees !== undefined){
                     setFees(JSON.parse(responseData.result[0].business_services_fees));
                 }
+
+        
+
+
             } catch (error){
                 console.log("error", error)
             }
@@ -504,7 +538,7 @@ function DocumentCard(props) {
         if(data.contract_status === "NEW"){
             getBusinessProfileFees(data);   
         }
-
+        
     }, []);
 
 
@@ -640,4 +674,3 @@ function FeesTextCard(props) {
         displayFee()
     )
   }
-  
