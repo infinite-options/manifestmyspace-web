@@ -5,6 +5,7 @@ import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
 import CashflowOwner from "./Cashflow/CashflowOwner";
+import Cashflow from "./Cashflow/Cashflow";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -195,11 +196,15 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
-            <Route path="cashflow" element={<CashflowOwner />} />
+            <Route path="cashflow-owner" element={<CashflowOwner />} />
+            <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
+            <Route path="editExpense" element={<AddExpense edit={true} />} />
+            <Route path="editRevenue" element={<AddRevenue edit={true}/>} />
+            <Route path="editUtility" element={<AddUtility edit={true}/>} />
             <Route path="listings" element={<PropertyListings />} />
             <Route path="addListing" element={<AddListing />} />
 

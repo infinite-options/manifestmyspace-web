@@ -125,10 +125,19 @@ export default function TenantProperty({ }) {
                                 My Property
                             </Typography>
                         </Box>
-                        <Box position="absolute" right={30}>
-                            {/* <Button onClick={() => navigateToAddProperty()}>
-                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
-                            </Button> */}
+                        <Box position="absolute" left={40}>
+                            <Button 
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: "#97A7CF",
+                                    color: theme.typography.secondary.white,
+                                    textTransform: 'none',
+                                    whiteSpace: 'nowrap'
+                                }}
+                                onClick={() => navigate(-1)}
+                            >
+                                Back
+                            </Button>
                         </Box>
                     </Stack>
                     {/* <Stack

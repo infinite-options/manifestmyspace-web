@@ -8,7 +8,7 @@ const ExpenseTable = (props) => {
   const [expanded, setExpanded] = useState(false);
   const expenseSummary = props.expenseSummary;
   const expense = props.expense;
-  console.log("props expenseSummary", props.expenseSummary);
+//   console.log("props expenseSummary", props.expenseSummary);
 
   const totalExpenseByType = props.totalExpenseByType;
   const expenseList = props.expenseList;
@@ -20,11 +20,11 @@ const ExpenseTable = (props) => {
     setExpanded(!expanded);
   };
 
-  console.log("expenseList", expenseList)
-  console.log("totalExpenseByType", totalExpenseByType)
+//   console.log("expenseList", expenseList)
+//   console.log("totalExpenseByType", totalExpenseByType)
 
-  console.log("expenseSummary", expenseSummary)
-  console.log("expense", expense)
+//   console.log("expenseSummary", expenseSummary)
+//   console.log("expense", expense)
 
   function getExpenseTypeItems(expenseType){
     let items = expenseList.filter((item) => item.purchase_type.toUpperCase() === expenseType[0]);
@@ -130,18 +130,18 @@ const ExpenseTable = (props) => {
                                         {expenseList && expenseList.length > 0 ? (
                                             (expenseList.map((rev, i) => {
                                                 return rev.purchase_type.toUpperCase() === expenseType[0] ? (
-                                                    <TableRow>
-                                                    <TableCell align="left">
-                                                    <Typography sx={{fontSize: '12px'}}>
-                                                        {rev.property_address} {rev.property_unit}
-                                                    {/* {rev.city}, {rev.state},{rev.zip} */}
-                                                    </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="right">
-                                                    <Typography sx={{fontSize: '12px'}}>
-                                                        $ {rev.pur_amount_due}
-                                                    </Typography>
-                                                    </TableCell>
+                                                    <TableRow key={i}>
+                                                        <TableCell align="left">
+                                                        <Typography sx={{fontSize: '12px'}}>
+                                                            {rev.property_address} {rev.property_unit}
+                                                        {/* {rev.city}, {rev.state},{rev.zip} */}
+                                                        </Typography>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                        <Typography sx={{fontSize: '12px'}}>
+                                                            $ {rev.pur_amount_due}
+                                                        </Typography>
+                                                        </TableCell>
                                                     </TableRow>
                                                 ) : null}
                                             ))

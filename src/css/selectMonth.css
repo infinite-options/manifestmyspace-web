@@ -192,4 +192,14 @@
     display: inline;
     border-radius: 4px;
     margin: 0px;
+    cursor: pointer;
+  }
+  .unselected {
+    /* background-color: #000000; */
+    color: black;
+    padding: 2px;
+    display: inline;
+    border-radius: 4px;
+    margin: 0px;
+    cursor: pointer;
   }
