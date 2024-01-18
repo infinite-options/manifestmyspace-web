@@ -43,6 +43,7 @@ const AddRevenue = (props) => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [purPayerId, setPurPayerId] = useState(null);
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (payable === "Property Manager") {
@@ -75,6 +76,9 @@ const AddRevenue = (props) => {
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
+  const handleNotesChange = (event) => {
+    setNotes(event.target.value);
+  };
   const handleDateChange = (event) => {
     setDate(event.target.value);
   };
@@ -95,7 +99,8 @@ const AddRevenue = (props) => {
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
-      "pur_payer": purPayerId
+      "pur_payer": purPayerId,
+      "pur_notes": notes,
     });
     
     let config = {
@@ -263,6 +268,21 @@ const AddRevenue = (props) => {
                 placeholder="Add Description"
                 value={description}
                 onChange={handleDescriptionChange}>
+              </TextField>
+            </Stack>
+
+            <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Notes</Typography>
+              <TextField
+                className={classes.root}
+                variant="filled"
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                fullWidth
+                placeholder="Add Notes"
+                value={notes}
+                onChange={handleNotesChange}>
               </TextField>
             </Stack>
 

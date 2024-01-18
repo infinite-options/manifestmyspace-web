@@ -20,7 +20,8 @@ export default function TransactionsOwnerData(props) {
     //   navigate("/");
     //   return;
     // }
-    const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/${getProfileId()}`);
+    // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/${getProfileId()}`);
+    const res = await axios.get(`http://127.0.0.1:4000/allTransactions/${getProfileId()}`);
     console.log("payments", res);
     setTransactionsResult(res.data.result);
     props.setTransactionList(res.data.result);

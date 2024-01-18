@@ -89,6 +89,11 @@ export default function TransactionHistory(props) {
             label: "Type"
         },
         {
+            id: "initiator_user_name",
+            numeric: false,
+            label: "Initiator"
+        },
+        {
             id: "address",
             numeric: false,
             label: "Address",
@@ -99,6 +104,15 @@ export default function TransactionHistory(props) {
             label: "Amount",
         },
     ]
+
+    const capitalizeCategoryType = (purchase_type) => {
+        let words = purchase_type.split(" ");
+        let capitalizedWords = words.map((word) => {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        });
+
+        return capitalizedWords.join(" ");
+    }
 
     function EnhancedTableHeadOutgoingPayments(props) {
         const { order, orderBy, onRequestSort } = props;
@@ -268,7 +282,7 @@ export default function TransactionHistory(props) {
                                 })
                                 .map((row, index) => {
                                     {console.log(row)}  
-                                    return row.purchase_status === "COMPLETED" ? (
+                                    return row.purchase_status === "COMPLETED" || row.purchase_status === "PAID" ? (
                                     <TableRow
                                         hover
                                         role="checkbox"
@@ -280,26 +294,19 @@ export default function TransactionHistory(props) {
                                             navigate('/viewTransactionOwner', { state: { history, index } });
                                         }}
                                     >
-                                            <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>
+                                        <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>
                                             {row.purchase_date !== null
                                                 ? moment(row.purchase_date.substring(0, 10)).format('MM/DD/YY')
                                                 : "Not Available"}
-                                            </TableCell>
-                                            <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>{row.purchase_type}</TableCell>
+                                        </TableCell>
+                                        <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>
+                                            {capitalizeCategoryType(row.purchase_type.toLowerCase())}
+                                        </TableCell>
                                         <TableCell align="left" className={classes.cell_long} sx={{ fontSize: 18}}>
-                                            {/* <TableRow> */}
-                                            {row.property_address +
-                                            " " +
-                                            row.property_unit +
-                                            "," +
-                                            row.property_city +
-                                            ", "}
-                                            {/* </TableRow>
-                                            <TableRow> */}
-                                            {row.property_state +
-                                            " " +
-                                            row.property_zip}
-                                            {/* </TableRow> */}
+                                            {row.initiator_user_name}
+                                        </TableCell>
+                                        <TableCell align="left" className={classes.cell_long} sx={{ fontSize: 18}}>
+                                            {row.property_address + " " + row.property_unit}
                                         </TableCell>
                                         <TableCell align="left" className={classes.cell_short}>
                                             <Typography sx={{color: row.pur_cf_type === 'expense' ? theme.palette.custom.pinkText : theme.palette.custom.bgBlue, fontSize: 18}}>
