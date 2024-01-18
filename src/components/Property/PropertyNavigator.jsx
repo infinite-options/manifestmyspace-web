@@ -55,7 +55,12 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
-    const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
+    // const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
+    const [activeStep, setActiveStep] = useState(() => {
+        const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
+        
+        return index !== -1 ? index : 0;
+    });
     const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
@@ -711,7 +716,8 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 {item.property_num_baths}
                                         </Typography>
                                     </Grid>
-                                    {isManager() && item.applications.length > 0 &&
+                                    {/* {isManager() && item.applications.length > 0 && */}
+                                    {item.applications.length > 0 &&
                                         <>
                                             <Grid item xs={12}>
                                                 <Typography

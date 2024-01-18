@@ -595,7 +595,7 @@ export default function EditProperty({}){
                                             <CardMedia
                                             component="img"
                                             // image={selectedImageList[activeStep]}
-                                            image={`${selectedImageList[activeStep]}?${Date.now()}`}
+                                            image={selectedImageList[activeStep]? `${selectedImageList[activeStep]}?${Date.now()}` : defaultHouseImage}
                                             sx={{
                                                 elevation: "0",
                                                 boxShadow: "none",
