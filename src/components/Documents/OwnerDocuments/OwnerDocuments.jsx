@@ -39,6 +39,7 @@ function OwnerDocuments() {
     useEffect(() => {
         setShowSpinner(true);
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/ownerDocuments/${getProfileId()}`)
+        // axios.get(`http://localhost:4000/documents/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);
