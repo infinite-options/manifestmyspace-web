@@ -74,8 +74,8 @@ export default function TransactionHistory(props) {
     useEffect(() => {
         const fetchOwnerTransactions = async () => {
             setShowSpinner(true);
-            const res = await axios.get(`http://127.0.0.1:4000/allTransactions/${getProfileId()}`);
-                // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/${getProfileId()}`);
+            // const res = await axios.get(`http://127.0.0.1:4000/allTransactions/${getProfileId()}`);
+            const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/${getProfileId()}`);
             // console.log("payments", res);
             // setTransactionsResult(res.data.result);
             const transactions = res.data.result;
@@ -86,7 +86,6 @@ export default function TransactionHistory(props) {
         const fetchOwnerProperties = async () => {
             setShowSpinner(true);
             const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
-            // console.log("properties", res.data.Property.result);
             const properties = res.data.Property.result;
             const propertyList = []
             const addedAddresses = [];
