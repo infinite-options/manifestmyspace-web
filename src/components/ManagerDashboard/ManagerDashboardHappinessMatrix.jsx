@@ -29,13 +29,14 @@ export default function ManagerDashboardHappinessMatrix(props) {
     let month = date.toLocaleString('default', { month: 'long' });
     let year = date.getFullYear().toString()
     let [p_owner, p_owner_setter] = useState({ name: 'Steve Albin', vacant_count: 1 })
-    const data = [
-        { x: -100, y: -200, z: 200, name: 'Roberto Baggio', photo: 'https://www.the-sun.com/wp-content/uploads/sites/6/2022/12/CUP54D-CUP_SOCCER_IT-O-2306-134-JS1200078.jpg?strip=all&quality=100&w=1080&h=1080&crop=1' },
-        { x: -100, y: 200, z: 200, name: 'Roberto Carlos',  photo: 'https://e0.365dm.com/12/02/2048x1152/Roberto-Carlos-2_2714252.jpg?20120206163955' },
-        { x: 120, y: 100, z: 260, name: 'Gianluca Pagliuca', photo:'https://alchetron.com/cdn/gianluca-pagliuca-92194515-2fc8-41fa-be88-275252f6616-resize-750.jpeg'},
-        { x: 120, y: -100, z: 260, name: 'Fabien Barthez', photo:'https://images.ladepeche.fr/api/v1/images/view/5c378b013e45460e75167457/full/image.jpg' },
+    let data = [
+        { x: -100, y: -200, name: 'Roberto Baggio', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCPRv_8LK6cRBMpksFuhzPuC1DSGlcPoUQdg&usqp=CAU',},
+        { x: -100, y: 200, name: 'Roberto Carlos',  photo: 'https://e0.365dm.com/12/02/2048x1152/Roberto-Carlos-2_2714252.jpg?20120206163955',},
+        { x: 120, y: 100, name: 'Gianluca Pagliuca', photo:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvUK7_R60mszrOUeShtB-qKEjseDuYMduo3g&usqp=CAU',},
+        { x: 120, y: -100, name: 'Fabien Barthez', photo:'https://img.a.transfermarkt.technology/portrait/big/3289-1414053325.jpg?lm=1',},
+        { x: 0, y: 0, name: 'Harry Maguire',},
     ];
-
+    data=data.map((c,i) => {return {...c, index:i}})
 
     useEffect(() => {
         
