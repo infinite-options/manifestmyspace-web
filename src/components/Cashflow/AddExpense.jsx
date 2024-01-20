@@ -44,6 +44,7 @@ const AddExpense = (props) => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [purPayerId, setPurPayerId] = useState(null); // this needs to be the tenant_id or the PM business_id
   const [isChecked, setIsChecked] = useState(false);
+  const [notes, setNotes] = useState("");
 
   const [edit, setEdit] = useState(location?.state.edit || false);
   // console.log("--debug--", selectedProperty)
@@ -105,6 +106,9 @@ const AddExpense = (props) => {
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
+  const handleNotesChange = (event) => {
+    setNotes(event.target.value);
+  };
   const handleDateChange = (event) => {
     setDate(event.target.value);
   };
@@ -129,7 +133,8 @@ const AddExpense = (props) => {
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
       "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
-      "pur_frequency": frequency
+      "pur_frequency": frequency,
+      "pur_notes": notes,
     });
     
     let config = {
@@ -300,6 +305,21 @@ const AddExpense = (props) => {
                 onChange={handleDescriptionChange}
                 required
               >
+              </TextField>
+            </Stack>
+            
+            <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Notes</Typography>
+              <TextField
+                className={classes.root}
+                variant="filled"
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                fullWidth
+                placeholder="Add Notes"
+                value={notes}
+                onChange={handleNotesChange}>
               </TextField>
             </Stack>
 
