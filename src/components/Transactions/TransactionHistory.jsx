@@ -64,6 +64,7 @@ export default function TransactionHistory(props) {
     const [searchOutgoing, setSearchOutgoing] = useState("");
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
     const [filterPropertyList, setFilterPropertyList] = useState([]);
+    const [reduceBy30Days, setReduceBy30Days] = useState(false);
     const { getProfileId } = useUser();
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
@@ -166,6 +167,11 @@ export default function TransactionHistory(props) {
         }
     }
 
+    function reduceItemsBy30Days(){
+        console.log("reduceBy30Days ", !reduceBy30Days)
+        setReduceBy30Days(!reduceBy30Days);
+    }
+
     function EnhancedTableHeadOutgoingPayments(props) {
         const { order, orderBy, onRequestSort } = props;
         const createSortHandler = (property) => (event) => {
@@ -265,12 +271,12 @@ export default function TransactionHistory(props) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <Button sx={{ textTransform: 'capitalize' }} onClick={() => console.log("should reduce items by 30 days")}>
+                        <Button sx={{ textTransform: 'capitalize' }} onClick={reduceItemsBy30Days}>
                             <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}/>
                             <Typography 
                             sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}
                             >
-                            Last 30 Days
+                            {reduceBy30Days ? "Last 30 Days" : "View All"}
                             </Typography>
                         </Button>
                         <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
@@ -335,6 +341,16 @@ export default function TransactionHistory(props) {
                                                 }
                                             }
                                             return false
+                                        }
+                                    }).filter((row) => {
+                                        if (reduceBy30Days){
+                                            console.log(row)
+                                            const today = new Date();
+                                            const date = new Date(row.purchase_date);
+                                            console.log(today, date)
+                                            const diffTime = Math.abs(today - date);
+                                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                                            return diffDays <= 30
                                         }
                                     })
                                     .map((row, index) => {
