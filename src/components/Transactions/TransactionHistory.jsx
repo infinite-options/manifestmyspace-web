@@ -240,6 +240,7 @@ export default function TransactionHistory(props) {
                     width: '100%', // Take up full screen width
                     minHeight: '100vh', // Set the Box height to full height
                     marginTop: theme.spacing(2), // Set the margin to 20px
+                    paddingBottom: "20px",
                 }}
             >
                 <Paper
@@ -328,8 +329,25 @@ export default function TransactionHistory(props) {
                                     {stableSort(history, getComparator(order, orderBy))
                                     .filter((val) => {
                                         const query = searchOutgoing.toLowerCase();
-                                        return Object.values(val).some(attribute => {
-                                            return String(attribute).toLowerCase().includes(query); // this should only look at specific attributes, because you don't want 
+                                        const allowedAttributes = [
+                                            "initiator_profile_uid",
+                                            "initiator_user_name",
+                                            "property_uid", 
+                                            "purchase_uid", 
+                                            "purchase_status", 
+                                            "purchase_type", 
+                                            "purchase_date",
+                                            "tenant_uid",
+                                            "pur_initiator",
+                                            "property_address",
+                                            "receiver_user_name",
+                                        ];
+                                        return Object.values(val).some((value, index) => {
+                                            const attribute = Object.keys(val)[index];
+                                            if (allowedAttributes.includes(attribute)) {
+                                                return String(value).toLowerCase().includes(query);
+                                            }
+                                            return false;
                                         });
                                     }).filter((row) => {
                                         if (filterPropertyList.length === 0){
@@ -351,6 +369,8 @@ export default function TransactionHistory(props) {
                                             const diffTime = Math.abs(today - date);
                                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
                                             return diffDays <= 30
+                                        } else {
+                                            return true
                                         }
                                     })
                                     .map((row, index) => {
@@ -388,10 +408,8 @@ export default function TransactionHistory(props) {
                                                     </Typography>
                                                 </TableCell>
                                             </TableRow>
-                                    ) : (
-                                        ""
-                                        );
-                                    })}
+                                    ) : null
+                                })}
                                 </TableBody>
                             )}
                             </Table>
