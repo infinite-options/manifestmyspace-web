@@ -41,23 +41,71 @@ import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function AddMaintenanceItem(){
+export default function EditMaintenanceItem(){
+    
     const location = useLocation();
+    let testIssue1 = location.state.testIssue
+    console.log("testIssue1>>>",testIssue1);
+    // setDescription(testIssue1);
+    // if(description == ""){
+        // console.log(description)
+        // console.log("description is empty......")
+        // setDescription(testIssue1);
+        // console.log(description)
+    // }
+
+    
+    let testProperty1 = location.state.testProperty
+    console.log("testProperty>>>",testProperty1);
+    // setProperty(testProperty1);
+    
+    
+    let testIssueItem1 = location.state.testIssueItem
+    console.log("testIssueItem1>>>",testIssueItem1);
+    // setIssue(testIssueItem1);
+    // issue = testIssueItem1;
+
+    let testCost1 = location.state.testCost
+    console.log("testCost1>>>",testCost1);
+    // setCost(testCost1);
+    // cost = testCost1;
+    
+    let testTitle1 = location.state.testTitle
+    console.log("testTitle1>>>",testTitle1);
+    // setTitle(location.state.testTitle);
+    // title = testTitle1;
+
+    let testPriority1 = location.state.testPriority
+    console.log("testPriority1>>>",testPriority1);
+    // setPriority(testPriority1);
+
+    
+    let completionStatus1 = location.state.completionStatus
+    console.log("completionStatus1>>>",completionStatus1);
+    // setCompleted(completionStatus1);
+    // console.log("completed>>>",completed);
+
+    let requestUid1 =  location.state.requestUid
+    let propID1 = location.state.propID
+
+
     let navigate = useNavigate();
     const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
-    const [propertyId, setPropertyId] = useState('')
+    const [propertyId, setPropertyId] = useState(propID1)
     const [properties, setProperties] = useState([])
-    const [property, setProperty] = useState('');
-    const [issue, setIssue] = useState('');
+    const [property, setProperty] = useState(testProperty1);
+    const [issue, setIssue] = useState(testIssueItem1);
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('low');
-    const [priority, setPriority] = useState('Low');
+    const [priority, setPriority] = useState(testPriority1);
     const [completed, setCompleted] = useState('');
-    const [cost, setCost] = useState('');
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+    const [cost, setCost] = useState(testCost1);
+    const [title, setTitle] = useState(testTitle1);
+    const [description, setDescription] = useState(testIssue1);
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+
+    
 
     const profileId = getProfileId(); 
 
@@ -91,6 +139,7 @@ export default function AddMaintenanceItem(){
         console.log("handlePriorityChange", event.target.value)
         // console.log("handleToggleGroupChange", newToggleGsroupValue)
         setPriority(event.target.value)
+        // setPriority(testPriority1)
         // setToggleGroupValue(newToggleGroupValue);
         // setToggleAlignment(newToggleGroupValue);
     };
@@ -98,6 +147,7 @@ export default function AddMaintenanceItem(){
     const handleCompletedChange = (event, newToggleGroupValue) => {
         console.log("handleToggleGroupChange", newToggleGroupValue)
         setCompleted(event.target.value)
+        console.log("completed>>>,>>",completed)
     };
 
     const handleBackButton = () => {
@@ -113,7 +163,7 @@ export default function AddMaintenanceItem(){
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
             const propertyData = await response.json();
-            // console.log("data", data)
+            console.log("inside edit property useEffect")
             // const propertyData = data.Property.result
             console.log("properties", propertyData)
             // setProperties(properties)
@@ -130,30 +180,33 @@ export default function AddMaintenanceItem(){
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const formData = new FormData();
+        const editFormData = new FormData();
         
         const currentDate = new Date();
         // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
 
         console.log("toggleAlignment", toggleAlignment)
-
-        formData.append("maintenance_property_id", propertyId);
-        formData.append("maintenance_title", title);
-        formData.append("maintenance_desc", description);
-        formData.append("maintenance_request_type", issue);
-        formData.append("maintenance_request_created_by", getProfileId());  // problem is here it was 600-000003, changed it 600-000012
-        formData.append("maintenance_priority", priority);
-        formData.append("maintenance_can_reschedule", 1);
-        formData.append("maintenance_assigned_business", null);
-        formData.append("maintenance_assigned_worker", null);
-        formData.append("maintenance_scheduled_date", null);
-        formData.append("maintenance_scheduled_time", null);
-        formData.append("maintenance_frequency", "One Time");
-        formData.append("maintenance_notes", null);
-        formData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
-        formData.append("maintenance_request_closed_date", null);
-        formData.append("maintenance_request_adjustment_date", null);
+        console.log("*************propertyId******************* ",propertyId)
+        console.log("*************description******************* ",description)
+        editFormData.append("maintenance_request_uid", requestUid1);
+        editFormData.append("maintenance_property_id", propertyId);
+        // editFormData.append("maintenance_property_id", propID1);
+        editFormData.append("maintenance_title", title);
+        editFormData.append("maintenance_desc", description);
+        editFormData.append("maintenance_request_type", issue);
+        editFormData.append("maintenance_request_created_by", getProfileId());  // problem is here it was 600-000003, changed it 600-000012
+        editFormData.append("maintenance_priority", priority);
+        editFormData.append("maintenance_can_reschedule", 1);
+        editFormData.append("maintenance_assigned_business", null);
+        editFormData.append("maintenance_assigned_worker", null);
+        editFormData.append("maintenance_scheduled_date", null);
+        editFormData.append("maintenance_scheduled_time", null);
+        editFormData.append("maintenance_frequency", "One Time");
+        editFormData.append("maintenance_notes", null);
+        editFormData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
+        editFormData.append("maintenance_request_closed_date", null);
+        editFormData.append("maintenance_request_adjustment_date", null);
 
         for (let i = 0; i < selectedImageList.length; i++) {
             try {
@@ -161,26 +214,48 @@ export default function AddMaintenanceItem(){
 
                 if(selectedImageList[i].startsWith("data:image")){
                     const imageBlob = dataURItoBlob(selectedImageList[i]);
-                    formData.append(key, imageBlob)
+                    editFormData.append(key, imageBlob)
                 } else {
-                    formData.append(key, selectedImageList[i])
+                    editFormData.append(key, selectedImageList[i])
                 }
             } catch (error) {
                 console.log("Error uploading images", error)
             }
         }
-
-        for (let [key, value] of formData.entries()) {
+        console.log("editFormData>>>>>>")
+        for (let [key, value] of editFormData.entries()) {
             console.log(key, value);    
         }
 
 
-        const postData = async () => {
+        const putData = async () => {
             setShowSpinner(true);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                    method: "POST",
-                    body: formData,
+                    method: "PUT",
+                    // headers: {
+                    //     'Content-Type': 'application/json',
+                    // },
+                    // body : JSON.stringify({
+                    //     "maintenance_property_id" : propertyId,
+                    //     "maintenance_title": title,
+                    //     "maintenance_desc": description,
+                    //     "maintenance_request_type": issue,
+                    //     "maintenance_request_created_by": getProfileId(),  // problem is here it was 600-000003, changed it 600-000012
+                    //     "maintenance_priority": priority,
+                    //     "maintenance_can_reschedule": 1,
+                    //     "maintenance_assigned_business": null,
+                    //     "maintenance_assigned_worker": null,
+                    //     "maintenance_scheduled_date": null,
+                    //     "maintenance_scheduled_time": null,
+                    //     "maintenance_frequency": "One Time",
+                    //     "maintenance_notes": null,
+                    //     "maintenance_request_created_date": formattedDate, // Convert to ISO string format
+                    //     "maintenance_request_closed_date": null,
+                    //     "maintenance_request_adjustment_date": null
+                    // })
+                    // body: JSON.stringify(editFormData)
+                    body: editFormData
                 })
                 const data = await response.json();
                 console.log("data response", data)
@@ -189,16 +264,16 @@ export default function AddMaintenanceItem(){
             }
             setShowSpinner(false);
         }
-        postData();
+        putData();
 
-        setSelectedImageList([])
-        setProperty('')
-        setIssue('')
-        setToggleGroupValue('')
-        setToggleAlignment('')
-        setCost('')
-        setTitle('')
-        setDescription('')
+        // setSelectedImageList([])
+        // setProperty('')
+        // setIssue('')
+        // setToggleGroupValue('')
+        // setToggleAlignment('')
+        // setCost('')
+        // setTitle('')
+        // setDescription('')
         navigate(maintenanceRoutingBasedOnSelectedRole())
     }
 
@@ -248,7 +323,7 @@ export default function AddMaintenanceItem(){
                             alignItems="center"
                         >
                             <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                Add Maintenance
+                                Edit Maintenance
                             </Typography>
                         </Box>
                         <Box position="absolute" left={0}>
@@ -274,6 +349,7 @@ export default function AddMaintenanceItem(){
                                 <Grid item xs={12}>
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                         Property
+
                                     </Typography>
                                     <FormControl 
                                         fullWidth
@@ -283,8 +359,9 @@ export default function AddMaintenanceItem(){
                                         }}
                                         size="small"
                                     >
-                                        {/* <InputLabel>Select Property</InputLabel> */}
-                                        <Select 
+                                           
+                                        <InputLabel>{testProperty1}</InputLabel>
+                                        <Select
                                             onChange={handlePropertyChange}
                                             MenuProps={{
                                                 PaperProps: {
@@ -295,6 +372,7 @@ export default function AddMaintenanceItem(){
                                                 },
                                             }}
                                         >
+                                            
                                             {properties.map((property) => (
                                                 <MenuItem key={property.property_uid} value={property.property_uid}>{property.property_address} {property?.property_unit}</MenuItem>
                                             ))}
@@ -315,8 +393,10 @@ export default function AddMaintenanceItem(){
                                             borderRadius: '7px',
                                         }}
                                         size="small" 
+                                        
                                     >
-                                        {/* <InputLabel>Select Issue Category</InputLabel> */}
+                                           
+                                        <InputLabel>{testIssueItem1}</InputLabel>
                                         <Select onChange={handleIssueChange}>
                                             <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
                                             <MenuItem value={"Electrical"}>Electrical</MenuItem>
@@ -331,6 +411,7 @@ export default function AddMaintenanceItem(){
                                         Estimated Cost
                                     </Typography>
                                     <TextField
+                                        placeholder= {testCost1}
                                         fullWidth
                                         sx={{
                                             backgroundColor: 'white',
@@ -343,6 +424,7 @@ export default function AddMaintenanceItem(){
                                                 <InputAdornment position="start">$</InputAdornment>
                                             ),
                                         }}
+                                        
                                         onChange={handleCostChange}
                                     />
                                 </Grid>
@@ -353,6 +435,7 @@ export default function AddMaintenanceItem(){
                                         Title
                                     </Typography>
                                     <TextField 
+                                        placeholder= {testTitle1}
                                         onChange={handleTitleChange} 
                                         sx={{
                                             backgroundColor: 'white',
@@ -362,6 +445,7 @@ export default function AddMaintenanceItem(){
                                         size="small"
                                         fullWidth
                                     />
+                                    
                                 </Grid>
 
                                 {/* Priority Toggle Field */}
@@ -372,6 +456,7 @@ export default function AddMaintenanceItem(){
                                     <ToggleButtonGroup
                                         exclusive
                                         fullWidth
+                                        value={testPriority1}
                                         onChange={handlePriorityChange}
                                         aria-label="Priority"
                                         size="small"
@@ -471,6 +556,7 @@ export default function AddMaintenanceItem(){
                                         // label="Description"
                                         size="small"
                                         multiline
+                                        placeholder= {testIssue1}
                                         onChange={handleDescriptionChange}
                                         sx={{ 
                                             width: '100%',
@@ -485,7 +571,7 @@ export default function AddMaintenanceItem(){
                                         Already Completed?
                                     </Typography>
                                     <FormControl component="fieldset">
-                                        <RadioGroup column onChange={handleCompletedChange}>
+                                        <RadioGroup column onChange={handleCompletedChange} value={completionStatus1}>
                                             <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                             <FormControlLabel value="no" control={<Radio />} label="No" />
                                         </RadioGroup>
@@ -501,7 +587,7 @@ export default function AddMaintenanceItem(){
                                 <Grid item xs={12}>
                                     <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#9EAED6"}}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                Add Maintenance
+                                                Save Maintenance
                                         </Typography>
                                         <input type="file" hidden/>
                                     </Button>

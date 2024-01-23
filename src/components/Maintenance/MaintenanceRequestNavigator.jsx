@@ -9,6 +9,8 @@ import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
+import CreateIcon from '@mui/icons-material/Create';
+
 
 function getInitialImages(requestData, currentIndex) {
   if (requestData[currentIndex].maintenance_images != "[]") {
@@ -19,6 +21,7 @@ function getInitialImages(requestData, currentIndex) {
 }
 
 export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs  }) {
+  console.log("Inside MaintenanceRequestNavigator()");
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   
   const [activeStep, setActiveStep] = useState(0);
@@ -27,8 +30,19 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   const [images, setImages] = useState([maintenanceRequestImage]);
   let [currentTab, setCurrentTab]=useState(currentTabValue);
   
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
+  // const [propertyId, setPropertyId] = useState("200-000029")
+  
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
+
+  function navigateToEditMaintenanceItem(testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID){
+    // console.log("navigateToAddMaintenanceItem")
+    console.log("testTitle>>",(testTitle))
+    console.log("testCost>>",(testCost))
+    navigate('/editMaintenanceItem', {state: {testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID, month, year}})
+  }
 
 
 //   console.log("--debug-- In MaintenanceRequestNavigator now")
@@ -180,7 +194,27 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   // console.log("--DEBUG requestData--")
   // console.log("requestData", requestData)
   // console.log("currentIndex", currentIndex)
-  // console.log("data", data)
+  console.log("data>>>>>", data)
+
+  let propertyAddress = " "
+  propertyAddress = propertyAddress.concat(" ", (data?.property_address), " ",  (data?.property_city)," ", (data?.property_state), " ", (data?.property_zip))
+  console.log("propertyAddress",typeof(propertyAddress))
+
+  let estimatedCost = " "
+  estimatedCost = estimatedCost.concat(" ", (data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : "Not reported"))
+  console.log("estimatedCost>>",typeof(estimatedCost))
+
+  let completionStatus = "no"
+  if (data?.maintenance_request_status == "Completed" || data?.maintenance_request_status == "Closed") {
+    console.log("inside ifffff", data?.maintenance_request_status)
+    completionStatus = "yes"
+  }
+  else {
+    console.log(data?.maintenance_request_status)
+    completionStatus = "no"
+    console.log(completionStatus)
+  }
+  
 
   useEffect(() => {
     formatDate(data.maintenance_request_created_date);
@@ -325,16 +359,74 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   alignItems: "left",
                 }}
               >
-                 <Typography
+                 {/* <Typography
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
                     fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
+                > */}
+              {/* {data?.maintenance_priority} Priority */}
+
+              <Stack alignItems="center" justifyContent="center" sx={{ paddingBottom: "0px" }}>
+                <Card
+                  sx={{
+                    backgroundColor: color,
+                    // backgroundColor: "blue",
+                    boxShadow: "none",
+                    elevation: "0",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0px"
+                  }}
                 >
-              {data?.maintenance_priority} Priority
-             </Typography>
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      paddingBottom: "0px",
+                    }}
+                  >
+                    {/* Priority Typography with Button */}
+                    <Typography
+                      sx={{
+                        color: theme.typography.secondary.white,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.mediumFont,
+                        paddingBottom: "0px",
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
+                      {data?.maintenance_priority} Priority
+                      
+                        <CreateIcon sx={{
+                            color: "#FFFFFF",
+                            // color: "red",
+                            // backgroundColor: "yellow",
+                            // margin:"5px",
+                            marginLeft: "auto",
+                            fontSize: "18px"
+                        }} 
+                         
+                        onClick={() => navigateToEditMaintenanceItem(data?.maintenance_desc, data?.property_address, data?.maintenance_request_type, estimatedCost, data.maintenance_title, data.maintenance_priority, completionStatus, data.maintenance_request_uid, data.maintenance_property_id )}/>  
+                      
+                    </Typography>
+
+                    {/*  */}
+                  </CardContent>
+                </Card>
+              </Stack>
+
+             {/* </Typography> */}
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
