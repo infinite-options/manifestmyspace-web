@@ -43,8 +43,8 @@ function PMDocuments() {
 
     useEffect(() => {
         setShowSpinner(true);
-        // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`)
-        axios.get(`http://localhost:4000/documents/${getProfileId()}`) //rohit
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`)
+        // axios.get(`http://localhost:4000/documents/${getProfileId()}`) 
         // axios.get(`http://localhost:4000/documents/600-000051`)
             .then((res) => {
                 // console.log(res.data);
