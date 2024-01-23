@@ -277,7 +277,7 @@ export default function TransactionHistory(props) {
                             <Typography 
                             sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}
                             >
-                            {reduceBy30Days ? "Last 30 Days" : "View All"}
+                            {reduceBy30Days ?  "View All" : "Last 30 Days"}
                             </Typography>
                         </Button>
                         <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
@@ -384,7 +384,7 @@ export default function TransactionHistory(props) {
                                                 sx={{borderBottom: '1px solid #000000'}}
                                                 onClick={()=>{
                                                     console.log("row.pur_amount_due ", row.pur_amount_due);
-                                                    navigate('/viewTransactionOwner', { state: { history, index } });
+                                                    navigate('/viewTransactionOwner', { state: { history: history, purchase_uid: row.purchase_uid } });
                                                 }}
                                             >
                                                 <TableCell align="left" className={classes.cell_short} sx={{ fontSize: 18 }}>
@@ -401,7 +401,7 @@ export default function TransactionHistory(props) {
                                                 <TableCell align="left" className={classes.cell_long} sx={{ fontSize: 18}}>
                                                     {row.property_address + " " + row.property_unit}
                                                 </TableCell>
-                                                <TableCell align="left" className={classes.cell_short}>
+                                                <TableCell align="right" className={classes.cell_short}>
                                                     <Typography sx={{color: row.pur_cf_type === 'expense' ? theme.palette.custom.pinkText : theme.palette.custom.bgBlue, fontSize: 18}}>
                                                         {/* {row.pur_cf_type === 'expense' && '-'}${Math.abs(row.pur_amount_due).toFixed(2)} */}
                                                         {row.pur_cf_type === 'expense' && '-'}${Math.abs(row.total_paid).toFixed(2)}
