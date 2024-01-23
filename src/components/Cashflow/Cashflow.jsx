@@ -33,6 +33,7 @@ export default function Cashflow(){
     const selectedRole = user.selectedRole; // Get the selected role from user object
 
     const [activeButton, setActiveButton] = useState('Cashflow');
+    
     const [month, setMonth] = useState(location.state.month || "January");
     const [year, setYear] = useState(location.state.year || "2024")
     
@@ -55,6 +56,8 @@ export default function Cashflow(){
     const [expenseByType, setExpenseByType] = useState({});
     const [expectedRevenueByType, setExpectedRevenueByType] = useState([]);
     const [expectedExpenseByType, setExpectedExpenseByType] = useState([]);
+
+    const displays = ["Cashflow", "ExpectedCashflow"]
 
     useEffect(() => {
         fetchCashflow(profileId).then((data) => {
@@ -184,9 +187,9 @@ export default function Cashflow(){
                         display="flex"
                         justifyContent="space-between"
                         alignItems="center"
-                        onClick={()=> setActiveButton('Cashflow')}
+                        // onClick={()=> setActiveButton('Cashflow')}
                         style={{
-                            backgroundColor: activeButton === 'Cashflow' ? theme.palette.custom.blue : theme.palette.custom.grey,
+                            backgroundColor: 'Cashflow' === 'Cashflow' ? theme.palette.custom.blue : theme.palette.custom.grey,
                             borderRadius: '5px'
                     }}
                     >
@@ -202,6 +205,72 @@ export default function Cashflow(){
                             }
                         </Typography>
                     </Box>
+                    <Accordion 
+                    sx={{
+                        backgroundColor: 'Cashflow' === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                        boxShadow: 'none'
+                    }}>
+                        <Box
+                            component="span"
+                            m={3}
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                                    {'Cashflow' === 'Cashflow' ? '' : 'Expected'} {month} Revenue
+                                </Typography>
+                            </AccordionSummary>
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                                $ {'Cashflow' === 'Cashflow' ?
+                                    (
+                                        totalRevenueByMonth?
+                                        totalRevenueByMonth.toFixed(2) : '0.00'
+                                    ):(
+                                        expectedRevenueByMonth?
+                                        expectedRevenueByMonth.toFixed(2) : '0.00'
+                                    )}
+                            </Typography>
+                        </Box>
+                        <AccordionDetails>
+                            {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                            <StatementTable categoryTotalMapping={revenueByType} allItems={revenueList} activeView={'Cashflow'} tableType="Revenue" categoryExpectedTotalMapping={expectedRevenueByType} month={month} year={year}/>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion 
+                        sx={{
+                            backgroundColor: "Cashflow" === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                            boxShadow: 'none'
+                        }}>
+                        <Box
+                            component="span"
+                            m={3}
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                                    {"Cashflow" === 'Cashflow' ? '' : 'Expected'} {month} Expense
+                                </Typography>
+                            </AccordionSummary>
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
+                                $ {"Cashflow" === 'Cashflow' ?
+                                    (
+                                        totalExpenseByMonth?
+                                        totalExpenseByMonth.toFixed(2) : '0.00'
+                                    ):(
+                                        expectedExpenseByMonth ?
+                                        expectedExpenseByMonth.toFixed(2) : '0.00'
+                                    )}
+                            </Typography>
+                        </Box>
+                        <AccordionDetails>
+                            <StatementTable categoryTotalMapping={expenseByType} allItems={expenseList} activeView={"Cashflow"} tableType="Expense" categoryExpectedTotalMapping={expectedExpenseByType} month={month} year={year}/>
+                        </AccordionDetails>
+                    </Accordion>
+                    
                     <Box
                         component="span"
                         m={3}
@@ -209,9 +278,9 @@ export default function Cashflow(){
                         display="flex"
                         justifyContent="space-between"
                         alignItems="center"
-                        onClick={() => setActiveButton('ExpectedCashflow')}
+                        // onClick={() => setActiveButton('ExpectedCashflow')}
                         style={{
-                            backgroundColor: activeButton === 'Cashflow' ? theme.palette.custom.grey : theme.palette.custom.yellowHighlight,
+                            backgroundColor: "ExpectedCashflow" === 'Cashflow' ? theme.palette.custom.grey : theme.palette.custom.yellowHighlight,
                             borderRadius: '5px',
                     }}
                     >
@@ -229,7 +298,7 @@ export default function Cashflow(){
                     </Box>
                     <Accordion 
                         sx={{
-                            backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                            backgroundColor: theme.palette.primary.main,
                             boxShadow: 'none'
                         }}>
                         <Box
@@ -241,11 +310,11 @@ export default function Cashflow(){
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
-                                    {activeButton === 'Cashflow' ? '' : 'Expected'} {month} Revenue
+                                    {"ExpectedCashflow" === 'Cashflow' ? '' : 'Expected'} {month} Revenue
                                 </Typography>
                             </AccordionSummary>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
-                                $ {activeButton === 'Cashflow' ?
+                                $ {"ExpectedCashflow" === 'Cashflow' ?
                                     (
                                         totalRevenueByMonth?
                                         totalRevenueByMonth.toFixed(2) : '0.00'
@@ -257,12 +326,12 @@ export default function Cashflow(){
                         </Box>
                         <AccordionDetails>
                             {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
-                            <StatementTable categoryTotalMapping={revenueByType} allItems={revenueList} activeView={activeButton} tableType="Revenue" categoryExpectedTotalMapping={expectedRevenueByType} month={month} year={year}/>
+                            <StatementTable categoryTotalMapping={revenueByType} allItems={revenueList} activeView={"ExpectedCashflow"} tableType="Revenue" categoryExpectedTotalMapping={expectedRevenueByType} month={month} year={year}/>
                         </AccordionDetails>
                     </Accordion>
                     <Accordion 
                         sx={{
-                            backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                            backgroundColor: theme.palette.primary.main,
                             boxShadow: 'none'
                         }}>
                         <Box
@@ -274,11 +343,11 @@ export default function Cashflow(){
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
-                                    {activeButton === 'Cashflow' ? '' : 'Expected'} {month} Expense
+                                    {"ExpectedCashflow" === 'Cashflow' ? '' : 'Expected'} {month} Expense
                                 </Typography>
                             </AccordionSummary>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight}}>
-                                $ {activeButton === 'Cashflow' ?
+                                $ {"ExpectedCashflow" === 'Cashflow' ?
                                     (
                                         totalExpenseByMonth?
                                         totalExpenseByMonth.toFixed(2) : '0.00'
@@ -289,7 +358,7 @@ export default function Cashflow(){
                             </Typography>
                         </Box>
                         <AccordionDetails>
-                            <StatementTable categoryTotalMapping={expenseByType} allItems={expenseList} activeView={activeButton} tableType="Expense" categoryExpectedTotalMapping={expectedExpenseByType} month={month} year={year}/>
+                            <StatementTable categoryTotalMapping={expenseByType} allItems={expenseList} activeView={"ExpectedCashflow"} tableType="Expense" categoryExpectedTotalMapping={expectedExpenseByType} month={month} year={year}/>
                         </AccordionDetails>
                     </Accordion>
                 </Paper>

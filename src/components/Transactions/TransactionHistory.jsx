@@ -323,7 +323,7 @@ export default function TransactionHistory(props) {
                                     .filter((val) => {
                                         const query = searchOutgoing.toLowerCase();
                                         return Object.values(val).some(attribute => {
-                                            return String(attribute).toLowerCase().includes(query);
+                                            return String(attribute).toLowerCase().includes(query); // this should only look at specific attributes, because you don't want 
                                         });
                                     }).filter((row) => {
                                         if (filterPropertyList.length === 0){
@@ -336,6 +336,8 @@ export default function TransactionHistory(props) {
                                             }
                                             return false
                                         }
+                                    }).filter((row) => {
+                                        if()
                                     })
                                     .map((row, index) => {
                                         // {console.log(row)}  
@@ -383,25 +385,7 @@ export default function TransactionHistory(props) {
                     }
                     </Paper>
                 </Box>
-                {/* <Modal sx={{
-                    overflowY: 'scroll',
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                    open={openSelectProperty}
-                    disableScrollLock={false}
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        width: '80%',
-                        height: '80%',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }}>
-                        <SelectProperty closeTab={handleClose} setSelectedProperty={setSelectedProperty}/>
-                    </Box>
-                </Modal> */}
-                </ThemeProvider>
+            </ThemeProvider>
         </>
     )
 }
