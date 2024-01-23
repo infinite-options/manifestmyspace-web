@@ -43,11 +43,27 @@ const AddExpense = (props) => {
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const [purPayerId, setPurPayerId] = useState(null); // this needs to be the tenant_id or the PM business_id
-  const [isChecked, setIsChecked] = useState(false);
+  const [isCheckedOne, setIsCheckedOne] = useState(false);
+  const [isCheckedTwo, setIsCheckedTwo] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [partialAmount, setPartialAmount] = useState(null);
+
+  const handleCheckboxChange = (option) => {
+    console.log(option)
+    if (option === "already_paid") {
+      setIsCheckedOne(!isCheckedOne);
+      setIsCheckedTwo(false);
+      setSelectedOption("already_paid");
+    } else if (option === "partially_paid") {
+      setIsCheckedTwo(!isCheckedTwo);
+      setIsCheckedOne(false);
+      setSelectedOption("partially_paid");
+    }
+  };
+
   const [notes, setNotes] = useState("");
 
   const [edit, setEdit] = useState(location?.state.edit || false);
-  // console.log("--debug--", selectedProperty)
 
   const [itemToEdit, setItemToEdit] = useState(location?.state.itemToEdit || null);
 
@@ -91,9 +107,6 @@ const AddExpense = (props) => {
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
   };
-  const handlePaidCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
-  };
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
@@ -103,6 +116,9 @@ const AddExpense = (props) => {
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
+  const handlePartialAmountChange = (event) => {
+    setPartialAmount(event.target.value);
+  }
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
@@ -115,6 +131,15 @@ const AddExpense = (props) => {
   const handlePayableChange = (event) => {
     setPayable(event.target.name);
   };
+  const determinePurchaseStatus = () => {
+    if (selectedOption === "already_paid") {
+      return "PAID";
+    } else if (selectedOption === "partially_paid") {
+      return "PARTIALLY PAID";
+    } else {
+      return "UNPAID";
+    }
+  }
   const handleExpenseChange = async () => {
     console.log("amount ", amount);
     if (edit && itemToEdit){
@@ -127,7 +152,7 @@ const AddExpense = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": isChecked ? "PAID" : "UNPAID", // TODO: default to UNPAID, unless then already completed button is checked
+      "purchase_status": determinePurchaseStatus(), // TODO: default to UNPAID, unless then already completed button is checked
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
@@ -277,8 +302,28 @@ const AddExpense = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
             </Stack>
+
+            <Stack direction="row" spacing={-2}>
+              <FormControlLabel control={<Checkbox checked={isCheckedOne} onChange={() => handleCheckboxChange("already_paid")} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isCheckedTwo} onChange={() => handleCheckboxChange("partially_paid")} sx={{ color: theme.typography.common.blue }} />} label="Partially Paid" sx={{ color: theme.typography.common.blue }} />
+            </Stack>
+
+            {isCheckedTwo ? <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Partial Payment Amount</Typography>
+              <TextField
+                variant="filled"
+                fullWidth
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                placeholder="$"
+                type="number"
+                value={partialAmount}
+                className={classes.root}
+                onChange={handlePartialAmountChange}>
+              </TextField>
+            </Stack> : null }
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>

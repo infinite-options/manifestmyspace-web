@@ -44,6 +44,23 @@ const AddRevenue = (props) => {
   const [isChecked, setIsChecked] = useState(false);
   const [purPayerId, setPurPayerId] = useState(null);
   const [notes, setNotes] = useState("");
+  const [isCheckedOne, setIsCheckedOne] = useState(false);
+  const [isCheckedTwo, setIsCheckedTwo] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [partialAmount, setPartialAmount] = useState(null);
+
+  const handleCheckboxChange = (option) => {
+    console.log(option)
+    if (option === "already_paid") {
+      setIsCheckedOne(!isCheckedOne);
+      setIsCheckedTwo(false);
+      setSelectedOption("already_paid");
+    } else if (option === "partially_paid") {
+      setIsCheckedTwo(!isCheckedTwo);
+      setIsCheckedOne(false);
+      setSelectedOption("partially_paid");
+    }
+  };
 
   useEffect(() => {
     if (payable === "Property Manager") {
@@ -73,6 +90,9 @@ const AddRevenue = (props) => {
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
+  const handlePartialAmountChange = (event) => {
+    setPartialAmount(event.target.value);
+  }
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
@@ -85,6 +105,15 @@ const AddRevenue = (props) => {
   const handlePayableChange = (event) => {
     setPayable(event.target.name);
   };
+  const determinePurchaseStatus = () => {
+    if (selectedOption === "already_paid") {
+      return "PAID";
+    } else if (selectedOption === "partially_paid") {
+      return "PARTIALLY PAID";
+    } else {
+      return "UNPAID";
+    }
+  }
   const handleAddRevenue = async () => {
     console.log("amount ", selectedProperty);
     let data = JSON.stringify({
@@ -94,7 +123,7 @@ const AddRevenue = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": isChecked ? "PAID" : "UNPAID",
+      "purchase_status": determinePurchaseStatus(),
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
@@ -242,8 +271,29 @@ const AddRevenue = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} />
+              {/* <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} /> */}
             </Stack>
+
+            <Stack direction="row" spacing={-2}>
+              <FormControlLabel control={<Checkbox checked={isCheckedOne} onChange={() => handleCheckboxChange("already_paid")} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isCheckedTwo} onChange={() => handleCheckboxChange("partially_paid")} sx={{ color: theme.typography.common.blue }} />} label="Partially Paid" sx={{ color: theme.typography.common.blue }} />
+            </Stack>
+
+            {isCheckedTwo ? <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Partial Payment Amount</Typography>
+              <TextField
+                variant="filled"
+                fullWidth
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                placeholder="$"
+                type="number"
+                value={partialAmount}
+                className={classes.root}
+                onChange={handlePartialAmountChange}>
+              </TextField>
+            </Stack> : null }
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>

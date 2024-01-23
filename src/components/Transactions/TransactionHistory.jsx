@@ -64,6 +64,7 @@ export default function TransactionHistory(props) {
     const [searchOutgoing, setSearchOutgoing] = useState("");
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
     const [filterPropertyList, setFilterPropertyList] = useState([]);
+    const [reduceBy30Days, setReduceBy30Days] = useState(false);
     const { getProfileId } = useUser();
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
@@ -166,6 +167,11 @@ export default function TransactionHistory(props) {
         }
     }
 
+    function reduceItemsBy30Days(){
+        console.log("reduceBy30Days ", !reduceBy30Days)
+        setReduceBy30Days(!reduceBy30Days);
+    }
+
     function EnhancedTableHeadOutgoingPayments(props) {
         const { order, orderBy, onRequestSort } = props;
         const createSortHandler = (property) => (event) => {
@@ -234,6 +240,7 @@ export default function TransactionHistory(props) {
                     width: '100%', // Take up full screen width
                     minHeight: '100vh', // Set the Box height to full height
                     marginTop: theme.spacing(2), // Set the margin to 20px
+                    paddingBottom: "20px",
                 }}
             >
                 <Paper
@@ -265,12 +272,12 @@ export default function TransactionHistory(props) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <Button sx={{ textTransform: 'capitalize' }} onClick={() => console.log("should reduce items by 30 days")}>
+                        <Button sx={{ textTransform: 'capitalize' }} onClick={reduceItemsBy30Days}>
                             <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}/>
                             <Typography 
                             sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.mediumFont}}
                             >
-                            Last 30 Days
+                            {reduceBy30Days ? "Last 30 Days" : "View All"}
                             </Typography>
                         </Button>
                         <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
@@ -322,8 +329,25 @@ export default function TransactionHistory(props) {
                                     {stableSort(history, getComparator(order, orderBy))
                                     .filter((val) => {
                                         const query = searchOutgoing.toLowerCase();
-                                        return Object.values(val).some(attribute => {
-                                            return String(attribute).toLowerCase().includes(query);
+                                        const allowedAttributes = [
+                                            "initiator_profile_uid",
+                                            "initiator_user_name",
+                                            "property_uid", 
+                                            "purchase_uid", 
+                                            "purchase_status", 
+                                            "purchase_type", 
+                                            "purchase_date",
+                                            "tenant_uid",
+                                            "pur_initiator",
+                                            "property_address",
+                                            "receiver_user_name",
+                                        ];
+                                        return Object.values(val).some((value, index) => {
+                                            const attribute = Object.keys(val)[index];
+                                            if (allowedAttributes.includes(attribute)) {
+                                                return String(value).toLowerCase().includes(query);
+                                            }
+                                            return false;
                                         });
                                     }).filter((row) => {
                                         if (filterPropertyList.length === 0){
@@ -335,6 +359,18 @@ export default function TransactionHistory(props) {
                                                 }
                                             }
                                             return false
+                                        }
+                                    }).filter((row) => {
+                                        if (reduceBy30Days){
+                                            console.log(row)
+                                            const today = new Date();
+                                            const date = new Date(row.purchase_date);
+                                            console.log(today, date)
+                                            const diffTime = Math.abs(today - date);
+                                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                                            return diffDays <= 30
+                                        } else {
+                                            return true
                                         }
                                     })
                                     .map((row, index) => {
@@ -372,10 +408,8 @@ export default function TransactionHistory(props) {
                                                     </Typography>
                                                 </TableCell>
                                             </TableRow>
-                                    ) : (
-                                        ""
-                                        );
-                                    })}
+                                    ) : null
+                                })}
                                 </TableBody>
                             )}
                             </Table>
@@ -383,25 +417,7 @@ export default function TransactionHistory(props) {
                     }
                     </Paper>
                 </Box>
-                {/* <Modal sx={{
-                    overflowY: 'scroll',
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                    open={openSelectProperty}
-                    disableScrollLock={false}
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        width: '80%',
-                        height: '80%',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }}>
-                        <SelectProperty closeTab={handleClose} setSelectedProperty={setSelectedProperty}/>
-                    </Box>
-                </Modal> */}
-                </ThemeProvider>
+            </ThemeProvider>
         </>
     )
 }
