@@ -31,7 +31,9 @@ const ViewLease = (props) => {
 
     const [showSpinner, setShowSpinner] = useState(false);
     const { getProfileId } = useUser();
-    const handleBackButton = () => {};
+    const handleBackButton = () => {
+        navigate(-1)
+    };
 
     const handleMoveOutChange = (event) => {
         setMoveOut(event.target.value);
@@ -164,7 +166,7 @@ const ViewLease = (props) => {
                         position="relative"
                         sx={{ paddingBottom: '25px', paddingTop: '15px' }}
                     >
-                        {/* <Box position="absolute" left={0}>
+                        <Box position="absolute" left={0}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBack
                                     sx={{
@@ -174,7 +176,7 @@ const ViewLease = (props) => {
                                     }}
                                 />
                             </Button>
-                        </Box> */}
+                        </Box>
                         <Box
                             direction="row"
                             justifyContent="center"

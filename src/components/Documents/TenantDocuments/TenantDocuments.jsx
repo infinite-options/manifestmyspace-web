@@ -1,5 +1,7 @@
-import { Box } from '@mui/system';
+import { Box, Button, Stack } from '@mui/material';
+import theme from '../../../theme/theme';
 import axios from 'axios';
+import { ArrowBack } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +13,7 @@ function TenantDoucments() {
     const [documentsData, setDocumentsData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
     const propertyAddress = location.state.propertyAddr;
    
     useEffect(() => {
@@ -23,6 +26,11 @@ function TenantDoucments() {
                 setShowSpinner(false);
             });
     }, []);
+
+    const handleBackButton = () => {
+        navigate(-1)
+    };
+
     return (
         <Box sx={{
             fontFamily: 'Source Sans Pro',
@@ -34,27 +42,45 @@ function TenantDoucments() {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                color: '#160449',
-            }}>
-                <Box>
-                    <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="#160449" />
-                    </svg>
+            <Stack 
+                // sx={{
+                //     display: 'flex',
+                //     flexDirection: 'row',
+                //     justifyContent: 'space-between',
+                //     color: '#160449',
+                // }}
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                position="relative"
+                sx={{ paddingBottom: '25px', paddingTop: '15px' }}
+            >
+                <Box position="absolute" left={0}>
+                    <Button onClick={() => handleBackButton()}>
+                        <ArrowBack
+                            sx={{
+                                color: theme.typography.primary.black,
+                                fontSize: '30px',
+                                margin: '5px',
+                            }}
+                        />
+                    </Button>
                 </Box>
-                <Box sx={{
-                    fontSize: '25px',
-                    fontWeight: 'bold',
-                }}>
+                <Box 
+                    sx={{
+                        fontSize: '25px',
+                        fontWeight: 'bold',
+                    }}
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
                     Documents
                 </Box>
                 <Box>
 
                 </Box>
-            </Box>
+            </Stack>
             <Box>
                 <Box sx={{
                     display: 'flex',
@@ -73,7 +99,7 @@ function TenantDoucments() {
 
                     </Box>
                     <Box sx={{
-                        fontSize: '11px',
+                        fontSize: '18px',
                         fontWeight: '600',
                     }}>
                         {propertyAddress}
@@ -104,7 +130,7 @@ function TenantDoucments() {
                         </Box>
                         <Box sx={{
                             color: '#3D5CAC',
-                            fontSize: '14px',
+                            fontSize: '18px',
                             fontWeight: '600',
                         }}>
                             Request to Renew Lease
@@ -130,10 +156,11 @@ function TenantDoucments() {
                         </Box>
                         <Box sx={{
                             color: '#FFFFFF',
-                            fontSize: '11px',
+                            fontSize: '18px',
                             fontWeight: 'bold',
                         }}>
-                            Upload Documents
+                            Upload
+                            Documents
                         </Box>
                     </Box>
                 </Box>
@@ -149,7 +176,7 @@ function TenantDoucments() {
                         color: '#00000032',
                         width: '50%',
                         fontWeight: '600',
-                        fontSize: '15px',
+                        fontSize: '18px',
                         textAlign: 'center',
                     }}>
                         Need Action
@@ -161,7 +188,7 @@ function TenantDoucments() {
                         color: '#160449',
                         width: '50%',
                         fontWeight: '700',
-                        fontSize: '15px',
+                        fontSize: '18px',
                         textAlign: 'center',
                     }}>
                         Documents

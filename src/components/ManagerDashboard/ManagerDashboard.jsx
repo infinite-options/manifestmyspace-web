@@ -14,6 +14,7 @@ import { useUser } from "../../contexts/UserContext";
 import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import AddRevenueIcon from '../../images/AddRevenueIcon.png'
 import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
@@ -176,7 +177,7 @@ function ManagerDashboard() {
                             id="revenue"
                             className={classes.button}
                             onClick={() => {
-                            navigate('/transactionHistory');
+                                navigate('/transactionHistory', {state: {month: "January", year: "2024"}});
                             }}
                         >
                             <img src={Dollar} alt="Transactions" />

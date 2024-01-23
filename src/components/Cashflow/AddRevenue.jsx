@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PropertyListData from "../Property/PropertyListData";
@@ -41,9 +41,28 @@ const AddRevenue = (props) => {
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [purPayerId, setPurPayerId] = useState(null);
+  const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    if (payable === "Property Manager") {
+      console.log("Set purPayerId to", selectedProperty.business_uid)
+      setPurPayerId(selectedProperty.business_uid)
+    } else if (payable === "Tenant") {
+      console.log("Set purPayerId to", selectedProperty.tenant_uid)
+      setPurPayerId(selectedProperty.tenant_uid)
+    } else if (payable === "Owner") {
+      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      setPurPayerId(selectedProperty.owner_uid)
+    }
+  }, [payable, selectedProperty]);
 
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
+  };
+  const handlePaidCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
   };
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
@@ -56,6 +75,9 @@ const AddRevenue = (props) => {
   };
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
+  };
+  const handleNotesChange = (event) => {
+    setNotes(event.target.value);
   };
   const handleDateChange = (event) => {
     setDate(event.target.value);
@@ -72,12 +94,13 @@ const AddRevenue = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": "COMPLETED",
+      "purchase_status": isChecked ? "PAID" : "UNPAID",
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
-      "pur_payer": null
+      "pur_payer": purPayerId,
+      "pur_notes": notes,
     });
     
     let config = {
@@ -99,8 +122,12 @@ const AddRevenue = (props) => {
       console.log(error);
       setShowSpinner(false);
     });
+
+    let currentDate = new Date();
+    let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    let currentYear = currentDate.getFullYear().toString();
     
-    navigate(-1);
+    navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
   };
   return (
     <>
@@ -215,13 +242,14 @@ const AddRevenue = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} />
             </Stack>
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select defaultValue="Monthly" value={frequency} onChange={handleFrequencyChange}>
+                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>
+                  <MenuItem value="One Time">One Time</MenuItem>
                   <MenuItem value="Monthly">Monthly</MenuItem>
                   <MenuItem value="Yearly">Yearly</MenuItem>
                 </Select>
@@ -240,6 +268,21 @@ const AddRevenue = (props) => {
                 placeholder="Add Description"
                 value={description}
                 onChange={handleDescriptionChange}>
+              </TextField>
+            </Stack>
+
+            <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Notes</Typography>
+              <TextField
+                className={classes.root}
+                variant="filled"
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                fullWidth
+                placeholder="Add Notes"
+                value={notes}
+                onChange={handleNotesChange}>
               </TextField>
             </Stack>
 

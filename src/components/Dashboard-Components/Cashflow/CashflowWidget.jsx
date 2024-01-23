@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Grid, Box, Stack, ThemeProvider } from "@mui/material";
 import "../../../css/cashflow.css";
 import CashflowData from "../../Cashflow/CashflowData";
@@ -9,99 +9,99 @@ import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { fetchCashflow, getTotalExpenseByMonthYear, getTotalRevenueByMonthYear } from "../../Cashflow/CashflowFetchData";
 
 function CashflowWidget() {
-  const navigate = useNavigate();
-  const { user } = useUser();
-  const [revenue, setRevenue] = useState(null);
-  const [revenueSummary, setRevenueSummary] = useState(null);
-  const [expense, setExpense] = useState(null);
-  const [expenseSummary, setExpenseSummary] = useState(null);
-  const [showSpinner, setShowSpinner] = useState(false);
-  const [totalRevenueByMonth, setTotalRevenueByMonth] = useState(0);
-  const [totalExpenseByMonth, setTotalExpenseByMonth] = useState(0);
-  const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
+    const navigate = useNavigate();
 
-  let date = new Date();
-  let currentMonth = date.toLocaleString("default", { month: "long" });
-  let currentYear = date.getFullYear().toString();
-  // console.log("currentMonth ",currentMonth, currentYear)
-  const [month, setMonth] = useState(currentMonth);
-  const [year, setYear] = useState(currentYear);
+    let date = new Date();
+    let currentMonth = date.toLocaleString("default", { month: "long" });
+    let currentYear = date.getFullYear().toString();
+    
+    const [month, setMonth] = useState(currentMonth);
+    const [year, setYear] = useState(currentYear);
+    const { user, getProfileId } = useUser();
+    const [showSpinner, setShowSpinner] = useState(false);
+    const [totalRevenueByMonth, setTotalRevenueByMonth] = useState(0);
+    const [totalExpenseByMonth, setTotalExpenseByMonth] = useState(0);
+    const profileId = getProfileId();
+    const [cashflowData, setCashflowData] = useState(null);
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={showSpinner}
-      >
-          <CircularProgress color="inherit" />
-      </Backdrop>
-      <div className="cf-widget-main" onClick={() => navigate("/cashflow")}>
-        <CashflowData
-          setShowSpinner={setShowSpinner}
-          year={year}
-          month={month}
-          filter={false}
-          role={"Owner"}
-          userID={user.user_uid}
-          setRevenueSummary={setRevenueSummary}
-          setExpenseSummary={setExpenseSummary}
-          setExpense={setExpense}
-          setRevenue={setRevenue}
-          setTotalRevenueByMonth={setTotalRevenueByMonth}
-          setTotalExpenseByMonth={setTotalExpenseByMonth}
-          setRevenueCashflowByMonth={setRevenueCashflowByMonth}
-        />
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <Stack direction="row" justifyContent="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                {month} {year}
-              </Typography>
-            </Stack>
-            <Box
-              component="span"
-              m={1}
-              padding={2}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              style={{
-                backgroundColor: theme.palette.custom.blue,
-                borderRadius: "5px",
-              }}
-            >
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Cashflow</Typography>
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                $
-                {
-                  totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"
+    useEffect(() => {
+        fetchCashflow(profileId).then((data) => {
+            setCashflowData(data)
+            let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear)
+            let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear)
+            setTotalRevenueByMonth(currentMonthYearRevenue) // currently useing sum(total_paid)
+            setTotalExpenseByMonth(currentMonthYearExpense) // currently using sum(total_paid)
+        }).catch((error) => {
+            console.error("Error fetching cashflow data:", error)
+        })
+    }, [])
+
+    return (
+        <ThemeProvider theme={theme}>
+        <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showSpinner}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <div className="cf-widget-main" onClick={() => navigate("/cashflow", {
+                state: {
+                    month,
+                    year,
                 }
-              </Typography>
-            </Box>
-            <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Revenue</Typography>
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                $
-                {totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
-              </Typography>
-            </Box>
-            <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Expenses</Typography>
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                $
-                {totalExpenseByMonth ? totalExpenseByMonth : "0.00"}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
-          </Grid>
-        </Grid>
-      </div>
-    </ThemeProvider>
-  );
-}
+            } )}>
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
+                <Stack direction="row" justifyContent="center">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    {month} {year}
+                </Typography>
+                </Stack>
+                <Box
+                component="span"
+                m={1}
+                padding={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                style={{
+                    backgroundColor: theme.palette.custom.blue,
+                    borderRadius: "5px",
+                }}
+                >
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Cashflow</Typography>
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
+                    $
+                    {
+                    totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"
+                    }
+                </Typography>
+                </Box>
+                <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Revenue</Typography>
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
+                    $
+                    {totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
+                </Typography>
+                </Box>
+                <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Expenses</Typography>
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
+                    $
+                    {totalExpenseByMonth ? totalExpenseByMonth : "0.00"}
+                </Typography>
+                </Box>
+            </Grid>
+            {/* <Grid item xs={6}>
+                <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
+            </Grid> */}
+            </Grid>
+        </div>
+        </ThemeProvider>
+    );
+    }
 
-export default CashflowWidget;
+    export default CashflowWidget;

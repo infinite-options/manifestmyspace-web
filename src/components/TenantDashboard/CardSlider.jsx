@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
-const cardWidth = 250;
-const cardHeight = 70;
+const cardWidth = 300;
+const cardHeight = 120;
 
 export default function CardSlider(props) {
     const buttonSize = 30;
@@ -83,8 +83,8 @@ export default function CardSlider(props) {
                                 boxShadow: '0px 4px 4px #00000019',
                             }}>
                                 <Box sx={{
-                                    fontSize: '10px',
-                                    fontWeight: '600',
+                                    fontSize: '16px',
+                                    fontWeight: '800',
                                 }}>
                                     Alert
                                 </Box>
@@ -92,15 +92,14 @@ export default function CardSlider(props) {
                                     marginLeft: '10px',
                                 }}>
                                     <Box sx={{
-                                        fontSize: '7px',
-                                        fontStyle: 'italic',
+                                        fontSize: '14px',
                                         marginTop: '5px',
                                         marginBottom: '5px',
                                     }}>
-                                        From
+                                        From Tenant at Property
                                     </Box>
                                     <Box sx={{
-                                        fontSize: '9px',
+                                        fontSize: '14px',
                                     }}>
                                         Get Notification Via Text Messages
                                     </Box>
@@ -109,16 +108,17 @@ export default function CardSlider(props) {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     marginTop: 'auto',
-                                    marginBottom: '10px',
+                                    marginBottom: '14px',
                                 }}>
                                     <Box sx={{
                                         textAlign: 'center',
-                                        fontSize: '6px',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
                                         borderRadius: '10px',
                                         borderWidth: '0.3px',
                                         borderStyle: 'solid',
-                                        backgroundColor: '#D9D9D943',
-                                        width: '60px',
+                                        backgroundColor: '#D9D9D9',
+                                        width: '120px',
                                     }}>
                                         Update settings 
                                     </Box>

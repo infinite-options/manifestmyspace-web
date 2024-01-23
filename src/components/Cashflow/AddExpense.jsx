@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import File_dock_add from "../../images/File_dock_add.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { post, put } from "../utils/api";
 import PropertyListData from "../Property/PropertyListData";
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -31,9 +31,10 @@ const useStyles = makeStyles((theme) => ({
 const AddExpense = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getProfileId } = useUser();
   const [category, setCategory] = useState("Insurance");
-  const [frequency, setFrequency] = useState("Monthly");
+  const [frequency, setFrequency] = useState("Monthly"); // TODO: Monthly and Yearly fees need to be added to the lease in lease_fees
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
@@ -41,11 +42,58 @@ const AddExpense = (props) => {
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
+  const [purPayerId, setPurPayerId] = useState(null); // this needs to be the tenant_id or the PM business_id
+  const [isChecked, setIsChecked] = useState(false);
+  const [notes, setNotes] = useState("");
+
+  const [edit, setEdit] = useState(location?.state.edit || false);
+  // console.log("--debug--", selectedProperty)
+
+  const [itemToEdit, setItemToEdit] = useState(location?.state.itemToEdit || null);
+
+  useEffect(() => {
+    if (edit && itemToEdit){
+      console.log("itemToEdit", itemToEdit)
+      // setSelectedProperty(itemToEdit.property_uid)
+      setCategory(itemToEdit.purchase_type)
+      if(!itemToEdit.pur_frequency){
+        setFrequency("One Time")
+      } else{
+        setFrequency(itemToEdit.pur_frequency)
+      }
+      setAmount(itemToEdit.pur_amount_due)
+      setPayable(itemToEdit.pur_payer)
+      // setDate(itemToEdit.purchase_date.replace("-", "/"))
+      propertyList.find((property) => {
+        console.log(property)
+        if (property.property_address === itemToEdit.property_address && property.property_unit === itemToEdit.property_unit){
+          setSelectedProperty(property)
+        }
+      })
+
+    }
+  }, [edit, itemToEdit]);
+
+  useEffect(() => {
+    console.log("this is changing the payer id")
+    if (payable === "Property Manager") {
+      console.log("Set purPayerId to", selectedProperty.business_uid)
+      setPurPayerId(selectedProperty.business_uid)
+    } else if (payable === "Tenant") {
+      console.log("Set purPayerId to", selectedProperty.tenant_uid)
+      setPurPayerId(selectedProperty.tenant_uid)
+    } else if (payable === "Owner") {
+      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      setPurPayerId(selectedProperty.owner_uid)
+    }
+  }, [payable, selectedProperty]);
 
   const handlePropertyChange = (event) => {
     setSelectedProperty(event.target.value);
   };
-
+  const handlePaidCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
@@ -58,15 +106,20 @@ const AddExpense = (props) => {
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
+  const handleNotesChange = (event) => {
+    setNotes(event.target.value);
+  };
   const handleDateChange = (event) => {
     setDate(event.target.value);
   };
   const handlePayableChange = (event) => {
     setPayable(event.target.name);
   };
-  const handleAddExpense = async () => {
+  const handleExpenseChange = async () => {
     console.log("amount ", amount);
-
+    if (edit && itemToEdit){
+      console.log("itemToEdit", itemToEdit)
+    }
     let data = JSON.stringify({
       "pur_property_id": selectedProperty.property_uid,
       "purchase_type": category,
@@ -74,22 +127,24 @@ const AddExpense = (props) => {
       "purchase_date": date,
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
-      "purchase_status": "COMPLETED",
+      "purchase_status": isChecked ? "PAID" : "UNPAID", // TODO: default to UNPAID, unless then already completed button is checked
       "pur_notes": "This is just a note",
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
-      "pur_payer": null
+      "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
+      "pur_frequency": frequency,
+      "pur_notes": notes,
     });
     
     let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addExpense',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      data : data
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addExpense',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        data : data
     };
     setShowSpinner(true);
     axios.request(config)
@@ -101,11 +156,15 @@ const AddExpense = (props) => {
       console.log(error);
       setShowSpinner(false);
     });
+
+    let currentDate = new Date();
+    let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    let currentYear = currentDate.getFullYear().toString();
     
-    navigate(-1);
+    navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
   };
   return (
-    <>
+    
       <ThemeProvider theme={theme}>
         <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -113,7 +172,7 @@ const AddExpense = (props) => {
         >
             <CircularProgress color="inherit" />
         </Backdrop>
-        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}></PropertyListData>
+        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}/>
         <Box
           style={{
             display: "flex",
@@ -152,9 +211,9 @@ const AddExpense = (props) => {
               <CloseIcon />
             </IconButton>
             <Stack direction="row" justifyContent="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Add Expense</Typography>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{edit ? "Edit" : "Add"} Expense</Typography>
             </Stack>
-
+            {/* <form onSubmit={handleExpenseChange}> */}
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Property</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
@@ -186,6 +245,7 @@ const AddExpense = (props) => {
                   <MenuItem value="Repairs">Repairs</MenuItem>
                   <MenuItem value="Taxes">Taxes</MenuItem>
                   <MenuItem value="Utilities">Utilities</MenuItem>
+                  <MenuItem value="BILL POSTING">BILL POSTING</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -217,13 +277,14 @@ const AddExpense = (props) => {
                 value={date}
                 onChange={handleDateChange}>
               </TextField>
-              <FormControlLabel control={<Checkbox sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
             </Stack>
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select defaultValue="Monthly" value={frequency} onChange={handleFrequencyChange}>
+                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>
+                  <MenuItem value="One Time">One Time</MenuItem>
                   <MenuItem value="Monthly">Monthly</MenuItem>
                   <MenuItem value="Yearly">Yearly</MenuItem>
                 </Select>
@@ -242,7 +303,23 @@ const AddExpense = (props) => {
                 placeholder="Add Description"
                 value={description}
                 onChange={handleDescriptionChange}
+                required
               >
+              </TextField>
+            </Stack>
+            
+            <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Notes</Typography>
+              <TextField
+                className={classes.root}
+                variant="filled"
+                inputProps={{ 
+                  autoComplete: 'off'
+                }}
+                fullWidth
+                placeholder="Add Notes"
+                value={notes}
+                onChange={handleNotesChange}>
               </TextField>
             </Stack>
 
@@ -254,7 +331,7 @@ const AddExpense = (props) => {
               // onClick={()=>{handleButtonClick('ExpectedCashflow')}}
             >
               <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Reimbursible?</Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Reimbursable?</Typography>
                 <FormControlLabel
                   control={
                     <Checkbox sx={{ color: theme.typography.common.blue }} name="Property Manager" checked={payable === "Property Manager"} onChange={handlePayableChange} />
@@ -266,6 +343,11 @@ const AddExpense = (props) => {
                   control={<Checkbox sx={{ color: theme.typography.common.blue }} name="Tenant" checked={payable === "Tenant"} onChange={handlePayableChange} />}
                   label="By Tenant"
                   sx={{ color: theme.typography.common.blue }}
+                />
+                <FormControlLabel
+                    control={<Checkbox sx={{ color: theme.typography.common.blue }} name="Owner" checked={payable === "Owner"} onChange={handlePayableChange} />}
+                    label="Owner"
+                    sx={{ color: theme.typography.common.blue }}
                 />
               </Stack>
               <Stack>
@@ -284,14 +366,14 @@ const AddExpense = (props) => {
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.primary.fontWeight,
               }}
-              onClick={handleAddExpense}
+              onClick={handleExpenseChange}
             >
-              + Add Expense
+              {edit ? "Edit" : "+ Add"} Expense
             </Button>
+            {/* </form> */}
           </Paper>
         </Box>
       </ThemeProvider>
-    </>
   );
 };
 export default AddExpense;

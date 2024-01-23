@@ -80,9 +80,9 @@ const CashflowOwner = () => {
         setExpenseDropdown(!expenseDropdown);
     }
     
-    // useEffect(() => {
-    //  console.log("selectedProperty selectedProperty", selectedProperty)   
-    // },[selectedProperty])
+    useEffect(() => {
+        
+    },[])
     return (
         <ThemeProvider theme={theme}>
             <Backdrop
@@ -91,7 +91,7 @@ const CashflowOwner = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <CashflowData setShowSpinner={setShowSpinner} year={year} month={month} filter={false} role={'Owner'} userID={user.user_uid} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty}></CashflowData>
+            <CashflowData setShowSpinner={setShowSpinner} year={year} month={month} filter={false} role={'Owner'} userID={user.user_uid} setTotalRevenueByMonth={setTotalRevenueByMonth} setExpectedRevenueByMonth={setExpectedRevenueByMonth} setTotalExpenseByMonth={setTotalExpenseByMonth} setExpectedExpenseByMonth={setExpectedExpenseByMonth} setTotalRevenueByType={setTotalRevenueByType} setExpectedRevenueByType={setExpectedRevenueByType} setTotalExpenseByType={setTotalExpenseByType} setExpectedExpenseByType={setExpectedExpenseByType} setRevenueList={setRevenueList} setExpenseList={setExpenseList} setRevenueCashflowByMonth={setRevenueCashflowByMonth} selectedProperty={selectedProperty}/>
           <Box
             style={{
                 display: 'flex',
@@ -120,7 +120,7 @@ const CashflowOwner = () => {
                 justifyContent="center"
                 >
                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                    {month} {year} Cashflow
+                        {month} {year} Cashflow
                     </Typography>
                 </Stack>
                 <Box
@@ -138,8 +138,14 @@ const CashflowOwner = () => {
                         Select Month / Year
                         </Typography>
                     </Button>
-                    <SelectMonthComponent month={month} showSelectMonth={showSelectMonth} setShowSelectMonth={setShowSelectMonth} setMonth={setMonth} setYear={setYear}></SelectMonthComponent>
-                    
+                    <SelectMonthComponent 
+                        month={month} 
+                        year={year} 
+                        showSelectMonth={showSelectMonth} 
+                        setShowSelectMonth={setShowSelectMonth} 
+                        setMonth={setMonth} 
+                        setYear={setYear}
+                    />
                     {selectedRole === 'MANAGER' && <Button sx={{ textTransform: 'capitalize' }} onClick={()=>{}}>
                         <img src={AllOwnerIcon} alt='All Owners' style={{ width: '10px', height: '10px' }}/>
                         <Typography 
@@ -208,9 +214,10 @@ const CashflowOwner = () => {
                     </Typography>
                 </Box>
                 <Accordion 
-                sx={{
-                    backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
-                    boxShadow: 'none'}}>
+                    sx={{
+                        backgroundColor: activeButton === 'Cashflow' ? theme.palette.primary.main : theme.palette.primary.secondary,
+                        boxShadow: 'none'
+                    }}>
                 <Box
                     component="span"
                     m={3}
