@@ -150,7 +150,7 @@ export default function Cashflow(){
                         <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
                             <CalendarTodayIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont}}/>
                             <Typography 
-                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}
+                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '14px'}}
                             >
                                 Select Month / Year
                             </Typography>
@@ -166,7 +166,7 @@ export default function Cashflow(){
                         {selectedRole === 'MANAGER' && <Button sx={{ textTransform: 'capitalize' }} onClick={()=>{}}>
                                 <img src={AllOwnerIcon} alt='All Owners' style={{ width: '10px', height: '10px' }}/>
                                 <Typography 
-                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '12px'}}
+                                    sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '14px'}}
                                 >
                                     All Owners
                                 </Typography>
