@@ -1,22 +1,22 @@
-// Import statements
-import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Box, ThemeProvider } from "@mui/system";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReturnArrow from "../../images/refund_back.png";
+import ArrowDown from "../../images/ArrowDown.png";
 import theme from "../../theme/theme";
+import axios from "axios";
 import { Typography, Button, TextField, InputAdornment, Grid } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { ReactComponent as SearchIcon } from "../../images/search.svg";
+import { objToQueryString } from "../utils/helper";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useUser } from "../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop";
+import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-// Styles
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -31,55 +31,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// SearchManager Component
 const SearchManager = () => {
-  // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
   const { index, propertyData } = location.state;
-  const [displayed_managers, set_displayed_managers] = useState([]);
-  const [all_managers, set_all_managers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const [managers, setManagers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState();
+
   const { getProfileId } = useUser();
   const [ownerId, setOwnerId] = useState(getProfileId());
-  const [showSpinner, setShowSpinner] = useState(false);
 
-  // Function to fetch manager information
-  const get_manager_info = async () => {
+  const [showSpinner, setShowSpinner] = useState(false);
+  const handleSearch = async () => {
     setShowSpinner(true);
-    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
+    const url =
+      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
     const args = {};
-    const response = await axios.get(url);
-    const managers = response.data.result;
-    set_all_managers(managers);
-    set_displayed_managers(managers);
+    if (searchTerm) args.business_name = searchTerm;
+    const response = await axios.get(url + objToQueryString(args));
+    setManagers(response.data.result);
     setShowSpinner(false);
   };
-
-  // useEffect to fetch manager information on component mount
   useEffect(() => {
-    get_manager_info();
+    handleSearch();
   }, []);
-
-  // Function to handle search
-  const handleSearch = (search_string) => {
-    const managers = all_managers.filter((manager) =>
-      manager.business_name.toLowerCase().includes(search_string.toLowerCase())
-    );
-    set_displayed_managers(managers);
-
-  };
-
-  // ... (Rest of the component code)
 
   return (
     <ThemeProvider theme={theme}>
       <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={showSpinner}
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={showSpinner}
       >
-        <CircularProgress color="inherit" />
+          <CircularProgress color="inherit" />
       </Backdrop>
       <Box
         sx={{
@@ -139,26 +124,27 @@ const SearchManager = () => {
                 }}
               >
                 <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center', // This ensures vertical alignment with the image
-                    paddingLeft: "5px",
-                  }}
-                  onClick={() => navigate(-1)}
-                >
-                  <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }} alt="back" />
-                  <Typography
                     sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      cursor: "pointer",
+                        display: 'flex',
+                        alignItems: 'center', // This ensures vertical alignment with the image
+                        paddingLeft: "5px",
                     }}
-                  >
-                    {"Return to viewing Property Manager"}
-                  </Typography>
+                    onClick={() => navigate(-1)}
+                >
+                    <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
+                    <Typography
+                        sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        cursor: "pointer",
+                        }}
+                    >
+                        {"Return to viewing Property Manager"}
+                    </Typography>
                 </Box>
               </Box>
             </Box>
+
             <Box
               sx={{
                 position: "relative",
@@ -176,10 +162,7 @@ const SearchManager = () => {
               >
                 <TextField
                   value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    handleSearch(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   variant="filled"
                   fullWidth
                   placeholder="Search for new Property Manager"
@@ -194,12 +177,12 @@ const SearchManager = () => {
                           cursor: "pointer",
                         }}
                       >
-                        <SearchIcon />
+                        <SearchIcon onClick={handleSearch} />
                       </InputAdornment>
                     ),
                   }}
                 />
-                {displayed_managers.map((m) => (
+                {managers.map((m) => (
                   <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} />
                 ))}
               </Box>
@@ -210,9 +193,6 @@ const SearchManager = () => {
     </ThemeProvider>
   );
 };
-
-// ... (Other components and exports)
-
 
 function DocumentCard(props) {
   const obj = props.data;
