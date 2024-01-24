@@ -10,6 +10,7 @@ import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
+import Cashflow from "./Cashflow/Cashflow";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
@@ -196,7 +197,7 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
-            <Route path="cashflow" element={<CashflowOwner />} />
+            <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
