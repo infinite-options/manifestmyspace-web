@@ -47,7 +47,8 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          "&:hover": {
+          // "&:hover, &:focus, &:active": {
+          "&:hover, &:active": {
             backgroundColor: "#160449",
           },
         },
@@ -210,9 +211,9 @@ const theme = createTheme({
     { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
   ],
   colorStatusMM: [
-    {'color': '#DB9687', 'status': 'Requested', 'mapping': 'REQUESTED'},
-    {'color': '#CEA892', 'status': 'Submitted', 'mapping': 'SUBMITTED'},
-    {'color': '#BAAC7A', 'status': 'Accepted', 'mapping': 'ACCEPTED'},
+    {'color': '#DB9687', 'status': 'Quotes Requested', 'mapping': 'REQUESTED'},
+    {'color': '#CEA892', 'status': 'Quotes Submitted', 'mapping': 'SUBMITTED'},
+    {'color': '#BAAC7A', 'status': 'Quotes Accepted', 'mapping': 'ACCEPTED'},
     {'color': '#959A76', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
     {'color': '#598A96', 'status': 'Finished', 'mapping': 'FINISHED'},
     {'color': '#6588AC', 'status': 'Paid', 'mapping': 'PAID'}, //COMPLETED
