@@ -5,12 +5,12 @@ import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
 import CashflowOwner from "./Cashflow/CashflowOwner";
-import Cashflow from "./Cashflow/Cashflow";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
+import Cashflow from "./Cashflow/Cashflow";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
@@ -78,6 +78,7 @@ import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
+import EditMaintenanceItem from "./Maintenance/EditMaintenanceItem";
 import { MaintenanceRequestDetail } from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
 import EditProperty from "./Property/EditProperty";
@@ -196,15 +197,11 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
-            <Route path="cashflow-owner" element={<CashflowOwner />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
             <Route path="addUtility" element={<AddUtility />} />
-            <Route path="editExpense" element={<AddExpense edit={true} />} />
-            <Route path="editRevenue" element={<AddRevenue edit={true}/>} />
-            <Route path="editUtility" element={<AddUtility edit={true}/>} />
             <Route path="listings" element={<PropertyListings />} />
             <Route path="addListing" element={<AddListing />} />
 
@@ -296,6 +293,7 @@ function Main() {
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />
+            <Route path="editMaintenanceItem" element={<EditMaintenanceItem />} />
             <Route path="maintenance/detail" element={<MaintenanceRequestDetail />} />
             <Route path="maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
             <Route path="addProperty" element={<AddProperty />} />

@@ -31,7 +31,7 @@ export default function PMQuotesRequested({}){
 
     const [contracts, setContracts] = useState(location.state.contracts);
    
-    const [refresh, setRefresh]=useState(false)
+    const [refresh, setRefresh] = useState(false)
     const property = location.state.propertyData;
     const propertyId= property[location.state.index]?.property_uid
     const index = location.state.index;
@@ -98,9 +98,6 @@ export default function PMQuotesRequested({}){
             }
         }
         getContractsForOwner();
-
-
-
 
     }, [refresh]);
 
@@ -262,7 +259,7 @@ export default function PMQuotesRequested({}){
             console.log("error", error)
             return false;
         }
-
+        setRefresh(!refresh)
         setTabStatus(1);
     }
     
