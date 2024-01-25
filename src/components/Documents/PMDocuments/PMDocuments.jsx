@@ -151,11 +151,12 @@ function PMDocuments() {
                             flexDirection: 'row',
                             color: '#F2F2F2',
                             fontWeight: 'bold',
-                            fontSize: '10px',
+                            fontSize: '12px',
                             textAlign: 'center',
+                            height: '70px',                            
                         }}>
-                            <NavTab color={statusColor[0]}>
-                                <Box onClick={() => setTabStatus(0)}>
+                            <NavTab color={statusColor[0]} >
+                                <Box onClick={() => setTabStatus(0)} sx={{margin:'auto',}}>
                                     {statusList[0]}
                                 </Box>
                             </NavTab>
@@ -229,7 +230,7 @@ function PMDocuments() {
                             })} */}
                             
 
-                                {contractsData.map((document) => {                                    
+                                {/* {contractsData.map((document) => {                                    
                                     const address = document.property_address;
                                     const unit = document.property_unit;
                                     const city = document.property_city;
@@ -260,6 +261,79 @@ function PMDocuments() {
                                             ))}
                                         </>
                                     )
+                                })} */}
+
+                                {/* {contractsData.map((contract) => {                                    
+                                    const address = contract.property_address;
+                                    const unit = contract.property_unit;
+                                    const city = contract.property_city;
+                                    const zip = contract.property_zip;
+                                    const state = contract.property_state;
+                                    const owner_name = contract.owner_first_name + " " + contract.owner_last_name;
+                                    const owner_contact = contract.owner_phone_number;
+                                    const owner_email = contract.owner_email;
+                                    let start_date = '';
+                                    let end_date = '';
+                                    let docs = [];
+                                    switch (statusList[tabStatus]) {                                        
+                                        case 'Contracts':
+                                            if (contract.contract_documents !== null) {
+                                            // if (contract.contract_documents !== null && contract.lease_documents === null) {
+                                                docs = JSON.parse(contract.contract_documents);
+                                                start_date = contract.contract_start_date;
+                                                end_date = contract.contract_end_date;
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    return (
+                                        <>
+                                            
+
+                                            {contractsData.map((contract, index) => {
+                                                const contract_name = contract.contract_name;
+                                                const address = contract.property_address;
+                                                const unit = contract.property_unit;
+                                                const city = contract.property_city;
+                                                const zip = contract.property_zip;
+                                                const state = contract.property_state;
+                                                const owner_name = contract.owner_first_name + " " + contract.owner_last_name;
+                                                const owner_contact = contract.owner_phone_number;
+                                                const owner_email = contract.owner_email;
+                                                const start_date = contract.contract_start_date; 
+                                                const end_date = contract.contract_end_date;
+                                                const docs = JSON.parse(contract.contract_documents);
+
+                                                return (                                                
+                                                    <DocumentCard key={index} document={docs} data={[contract_name, address, unit, city, zip, state, start_date, end_date, owner_name, owner_contact, owner_email, docs]} tab="Contracts"/>
+                                                )
+                                            })}
+                                        </>
+                                    )
+                                })} */}
+
+                                {statusList[tabStatus] === "Contracts" && contractsData.map((contract, index) => {
+                                    const address = contract.property_address;
+                                    const unit = contract.property_unit;
+                                    const city = contract.property_city;
+                                    const zip = contract.property_zip;
+                                    const state = contract.property_state;
+                                    const owner_name = contract.owner_first_name + " " + contract.owner_last_name;
+                                    const owner_contact = contract.owner_phone_number;
+                                    const owner_email = contract.owner_email;
+                                    const contract_name = contract.contract_name;
+                                    const start_date = contract.contract_start_date;
+                                    const end_date = contract.contract_end_date;
+                                    let docs = [];
+
+                                    if (contract.contract_documents !== null) {
+                                        docs = JSON.parse(contract.contract_documents);
+                                    }
+
+                                    return (
+                                        <DocumentCard key={index} document={docs} data={[contract_name, address, unit, city, state, zip, start_date, end_date, owner_name, owner_contact, owner_email, docs]} tab="Contracts" />                                        
+                                    );
                                 })}
 
                                 {/* {applicationsData.map((document) => {                                    
@@ -299,14 +373,20 @@ function PMDocuments() {
                                     const start_date = app.lease_start;
                                     const end_date = app.lease_end;
                                     const applicant = app.tenant_first_name + " " + app.tenant_last_name;
+                                    const application_date = app.lease_application_date;
                                     const num_adults = JSON.parse(app.lease_adults).length;                                     
-
+                                    const num_children = JSON.parse(app.lease_children).length;                                     
+                                    const num_pets = JSON.parse(app.lease_pets).length;                                     
+                                    let docs = [];
+                                    if(app.lease_documents !== null){
+                                        docs = JSON.parse(app.lease_documents);    
+                                    }
 
                                     
                                     switch (statusList[tabStatus]) {                                        
                                         case 'Applications':
                                             return (
-                                                <ApplicationCard data={[address, unit, city, state, zip, start_date, end_date, applicant, num_adults]} />
+                                                <ApplicationCard data={[address, unit, city, state, zip, start_date, end_date, applicant, application_date, num_adults, num_children, num_pets, docs]} />
                                             )                                                        
                                             
                                         default:
@@ -315,7 +395,7 @@ function PMDocuments() {
                                     
                                 })}
 
-                                {leasesData.map((document) => {                                    
+                                {/* {leasesData.map((document) => {                                    
                                     const address  = document.property_address;
                                     const unit     = document.property_unit;
                                     const city     = document.property_city;
@@ -343,7 +423,34 @@ function PMDocuments() {
                                             ))}
                                         </>
                                     )
-                                })}
+                                })} */}
+                                {statusList[tabStatus] === "Leases" && leasesData.map((lease, index) => {
+                                    const address  = lease.property_address;
+                                    const unit     = lease.property_unit;
+                                    const city     = lease.property_city;
+                                    const state    = lease.property_state;
+                                    const zip      = lease.property_zip;
+                                    const application_date = lease.lease_application_date;
+                                    const tenant_name = lease.tenant_first_name + " " +  lease.tenant_last_name;
+                                    const num_adults = JSON.parse(lease.lease_adults).length;                                     
+                                    const num_children = JSON.parse(lease.lease_children).length;                                     
+                                    const num_pets = JSON.parse(lease.lease_pets).length;                                     
+                                    let start_date = lease.lease_start;
+                                    let end_date   = lease.lease_end;
+                                    const rent = lease.lease_actual_rent;
+                                    const lease_status = lease.lease_status;
+                                    let docs = [];
+                                    if(lease.lease_documents !== null){
+                                        docs = JSON.parse(lease.lease_documents);    
+                                    }
+                                    
+
+                                    return (
+                                        <LeaseCard key={index} data={[address, unit, city, state, zip, start_date, end_date, application_date, tenant_name, num_adults, num_children, num_pets, rent, lease_status, docs]} tab="Leases"/>
+                                    )
+                                }
+
+                                )}
 
                             </Box>
                         </Box>
@@ -375,7 +482,7 @@ function NavTab(props) {
 
 function DocumentCard(props) {
     const document = props.document;
-    const [address, unit, city, state, zip, start_date, end_date, owner_name, owner_contact, owner_email] = props.data;
+    const [contract_name, address, unit, city, state, zip, start_date, end_date, owner_name, owner_contact, owner_email, docs] = props.data;
     const tab = props.tab;
     const navigate = useNavigate();
 
@@ -389,7 +496,7 @@ function DocumentCard(props) {
             }
         });
     }
-    if(tab === "Leases"){
+    if(tab === "Contracts"){
         return (
             <Box sx={{
                 backgroundColor: '#D6D5DA',
@@ -406,104 +513,9 @@ function DocumentCard(props) {
                     <Box sx={{
                         fontWeight: 'bold',
                     }}>
-                        {document.filename}
-                    </Box>
-                    <Box sx={{
-                        fontWeight: 'bold',
-                    }}>
-                        Document type: {document.type}
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}>
-                        <Box
-                            sx={{
-                                marginRight: '3px',
-                            }}
-                            onClick={() => { downloadDocument(document.link) }}
-                        >
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7 10.5L2.625 6.125L3.85 4.85625L6.125 7.13125V0H7.875V7.13125L10.15 4.85625L11.375 6.125L7 10.5ZM1.75 14C1.26875 14 0.856626 13.8285 0.513626 13.4855C0.170626 13.1425 -0.000581848 12.7307 1.48557e-06 12.25V9.625H1.75V12.25H12.25V9.625H14V12.25C14 12.7312 13.8285 13.1434 13.4855 13.4864C13.1425 13.8294 12.7307 14.0006 12.25 14H1.75Z" fill="#3D5CAC" />
-                            </svg>
-                        </Box>
-                        <Box>
-                        {/* <Box onClick={() => { navigateToDocument('/ownerDocumentsPDF', document.link) }}> */}
-                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.5 10.625C9.67361 10.625 10.625 9.67361 10.625 8.5C10.625 7.32639 9.67361 6.375 8.5 6.375C7.32639 6.375 6.375 7.32639 6.375 8.5C6.375 9.67361 7.32639 10.625 8.5 10.625Z" fill="#3D5CAC" />
-                                <path d="M16.4369 8.31938C15.812 6.70313 14.7273 5.30539 13.3167 4.29892C11.9062 3.29245 10.2316 2.72137 8.5 2.65625C6.7684 2.72137 5.09383 3.29245 3.68326 4.29892C2.2727 5.30539 1.18796 6.70313 0.563124 8.31938C0.520925 8.43609 0.520925 8.56391 0.563124 8.68062C1.18796 10.2969 2.2727 11.6946 3.68326 12.7011C5.09383 13.7075 6.7684 14.2786 8.5 14.3438C10.2316 14.2786 11.9062 13.7075 13.3167 12.7011C14.7273 11.6946 15.812 10.2969 16.4369 8.68062C16.4791 8.56391 16.4791 8.43609 16.4369 8.31938ZM8.5 11.9531C7.81704 11.9531 7.14941 11.7506 6.58155 11.3712C6.01368 10.9917 5.57109 10.4524 5.30973 9.82145C5.04837 9.19048 4.97999 8.49617 5.11322 7.82633C5.24646 7.15649 5.57534 6.5412 6.05827 6.05827C6.5412 5.57534 7.15649 5.24647 7.82633 5.11323C8.49617 4.97999 9.19048 5.04837 9.82145 5.30973C10.4524 5.57109 10.9917 6.01368 11.3712 6.58155C11.7506 7.14941 11.9531 7.81704 11.9531 8.5C11.9517 9.41539 11.5875 10.2929 10.9402 10.9402C10.2929 11.5875 9.41539 11.9517 8.5 11.9531Z" fill="#3D5CAC" />
-                            </svg>
-                        </Box>
-                    </Box>
-                </Box>
-                <Box>
-                    {`${address}, ${unit}`}
-                </Box>
-                <Box sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                }}>
-                    <Box>
-                        Created: {start_date}
-                    </Box>
-                    <Box>
-                        By: {"<Doolittle Managements>"}
-                    </Box>
-                    <Box>
-                        Expires: {end_date}
-                    </Box>
-                    <Box>
-                        For: {"<Kim Gordon>"}
-                    </Box>
-                </Box>
-            </Box>
-        );
-    } else if(tab === "Contracts"){
-        return (
-            <Box sx={{
-                backgroundColor: '#D6D5DA',
-                borderRadius: '10px',
-                padding: '5px',
-                marginBottom: '10px',
-                fontSize: '13px',
-            }}>
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}>
-                    <Box sx={{
-                        fontWeight: 'bold',
-                    }}>
-                        {document.filename}
-                    </Box>
-                    <Box sx={{
-                        fontWeight: 'bold',
-                    }}>
-                        Document type: {document.type}
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}>
-                        <Box
-                            sx={{
-                                marginRight: '3px',
-                            }}
-                            onClick={() => { downloadDocument(document.link) }}
-                        >
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7 10.5L2.625 6.125L3.85 4.85625L6.125 7.13125V0H7.875V7.13125L10.15 4.85625L11.375 6.125L7 10.5ZM1.75 14C1.26875 14 0.856626 13.8285 0.513626 13.4855C0.170626 13.1425 -0.000581848 12.7307 1.48557e-06 12.25V9.625H1.75V12.25H12.25V9.625H14V12.25C14 12.7312 13.8285 13.1434 13.4855 13.4864C13.1425 13.8294 12.7307 14.0006 12.25 14H1.75Z" fill="#3D5CAC" />
-                            </svg>
-                        </Box>
-                        <Box>
-                        {/* <Box onClick={() => { navigateToDocument('/ownerDocumentsPDF', document.link) }}> */}
-                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.5 10.625C9.67361 10.625 10.625 9.67361 10.625 8.5C10.625 7.32639 9.67361 6.375 8.5 6.375C7.32639 6.375 6.375 7.32639 6.375 8.5C6.375 9.67361 7.32639 10.625 8.5 10.625Z" fill="#3D5CAC" />
-                                <path d="M16.4369 8.31938C15.812 6.70313 14.7273 5.30539 13.3167 4.29892C11.9062 3.29245 10.2316 2.72137 8.5 2.65625C6.7684 2.72137 5.09383 3.29245 3.68326 4.29892C2.2727 5.30539 1.18796 6.70313 0.563124 8.31938C0.520925 8.43609 0.520925 8.56391 0.563124 8.68062C1.18796 10.2969 2.2727 11.6946 3.68326 12.7011C5.09383 13.7075 6.7684 14.2786 8.5 14.3438C10.2316 14.2786 11.9062 13.7075 13.3167 12.7011C14.7273 11.6946 15.812 10.2969 16.4369 8.68062C16.4791 8.56391 16.4791 8.43609 16.4369 8.31938ZM8.5 11.9531C7.81704 11.9531 7.14941 11.7506 6.58155 11.3712C6.01368 10.9917 5.57109 10.4524 5.30973 9.82145C5.04837 9.19048 4.97999 8.49617 5.11322 7.82633C5.24646 7.15649 5.57534 6.5412 6.05827 6.05827C6.5412 5.57534 7.15649 5.24647 7.82633 5.11323C8.49617 4.97999 9.19048 5.04837 9.82145 5.30973C10.4524 5.57109 10.9917 6.01368 11.3712 6.58155C11.7506 7.14941 11.9531 7.81704 11.9531 8.5C11.9517 9.41539 11.5875 10.2929 10.9402 10.9402C10.2929 11.5875 9.41539 11.9517 8.5 11.9531Z" fill="#3D5CAC" />
-                            </svg>
-                        </Box>
-                    </Box>
+                        
+                        {contract_name}
+                    </Box>                                        
                 </Box>
                 <Box>
                     {`${address}, ${city}, ${state}, ${zip}`}
@@ -528,7 +540,55 @@ function DocumentCard(props) {
                         Email Address: {owner_email}
                     </Box>
                     <Box>
-                        Properties Included: 
+                        Documents:
+                        {
+                            docs.map((document) =>
+                                (
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',                                        
+                                        // alignItems: 'flex-start'
+                                    }}>
+                                        <Box sx={{
+                                            fontWeight: 'bold',
+                                            width: '200px',
+                                        }}>
+                                            {document.filename}                                            
+                                        </Box>
+                                        <Box sx={{
+                                            fontWeight: 'bold',
+                                            width: '200px',
+                                        }}>
+                                            Document type: {document.type}
+                                        </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                        }}>
+                                            <Box
+                                                sx={{
+                                                    marginRight: '3px',
+                                                }}
+                                                onClick={() => { downloadDocument(document.link) }}
+                                            >
+                                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M7 10.5L2.625 6.125L3.85 4.85625L6.125 7.13125V0H7.875V7.13125L10.15 4.85625L11.375 6.125L7 10.5ZM1.75 14C1.26875 14 0.856626 13.8285 0.513626 13.4855C0.170626 13.1425 -0.000581848 12.7307 1.48557e-06 12.25V9.625H1.75V12.25H12.25V9.625H14V12.25C14 12.7312 13.8285 13.1434 13.4855 13.4864C13.1425 13.8294 12.7307 14.0006 12.25 14H1.75Z" fill="#3D5CAC" />
+                                                </svg>
+                                            </Box>
+                                            <Box>
+                                            {/* <Box onClick={() => { navigateToDocument('/ownerDocumentsPDF', document.link) }}> */}
+                                                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M8.5 10.625C9.67361 10.625 10.625 9.67361 10.625 8.5C10.625 7.32639 9.67361 6.375 8.5 6.375C7.32639 6.375 6.375 7.32639 6.375 8.5C6.375 9.67361 7.32639 10.625 8.5 10.625Z" fill="#3D5CAC" />
+                                                    <path d="M16.4369 8.31938C15.812 6.70313 14.7273 5.30539 13.3167 4.29892C11.9062 3.29245 10.2316 2.72137 8.5 2.65625C6.7684 2.72137 5.09383 3.29245 3.68326 4.29892C2.2727 5.30539 1.18796 6.70313 0.563124 8.31938C0.520925 8.43609 0.520925 8.56391 0.563124 8.68062C1.18796 10.2969 2.2727 11.6946 3.68326 12.7011C5.09383 13.7075 6.7684 14.2786 8.5 14.3438C10.2316 14.2786 11.9062 13.7075 13.3167 12.7011C14.7273 11.6946 15.812 10.2969 16.4369 8.68062C16.4791 8.56391 16.4791 8.43609 16.4369 8.31938ZM8.5 11.9531C7.81704 11.9531 7.14941 11.7506 6.58155 11.3712C6.01368 10.9917 5.57109 10.4524 5.30973 9.82145C5.04837 9.19048 4.97999 8.49617 5.11322 7.82633C5.24646 7.15649 5.57534 6.5412 6.05827 6.05827C6.5412 5.57534 7.15649 5.24647 7.82633 5.11323C8.49617 4.97999 9.19048 5.04837 9.82145 5.30973C10.4524 5.57109 10.9917 6.01368 11.3712 6.58155C11.7506 7.14941 11.9531 7.81704 11.9531 8.5C11.9517 9.41539 11.5875 10.2929 10.9402 10.9402C10.2929 11.5875 9.41539 11.9517 8.5 11.9531Z" fill="#3D5CAC" />
+                                                </svg>
+                                            </Box>
+                                        </Box>
+                                    </Box> 
+                                )
+                            )
+                        }
                     </Box>                    
                 </Box>
             </Box>
@@ -536,8 +596,161 @@ function DocumentCard(props) {
     }
 }
 
+function LeaseCard(props) {    
+    const [address, unit, city, state, zip, start_date, end_date, application_date, tenant_name, num_adults, num_children, num_pets, rent, lease_status, docs] = props.data;
+    const tab = props.tab;
+    const navigate = useNavigate();
+
+    // function downloadDocument(url, filename) {
+    //     const link = document.createElement('a');
+    //     link.href = url;
+    //     link.download = filename || 'downloaded-document'; // Specify a default filename if needed
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    // }
+
+    async function downloadDocument(url, filename) {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+    
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename || 'downloaded-document'; // Specify a default filename if needed
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error downloading document:', error);
+        }
+    }
+
+    function viewDocument(url) {
+        window.open(url, '_newtab');
+    }
+    function navigateToDocument(url, link) {
+        navigate(url, {
+            state: {
+                link: link,
+            }
+        });
+    }
+    
+    return (
+        <Box sx={{
+            backgroundColor: '#D6D5DA',
+            borderRadius: '10px',
+            padding: '5px',
+            marginBottom: '10px',
+            fontSize: '13px',
+        }}>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}>
+                <Box sx={{
+                    fontWeight: 'bold',
+                }}>
+                    {/* {document.filename} */}
+                    {/* {`${address}, Unit - ${unit}`} */}
+                    {`${address}, ${city}, ${state} ${zip} - Unit ${unit}`}
+                </Box>
+                <Box sx={{
+                    fontWeight: 'bold',
+                }}>
+                    {/* Document type: {document.type} */}
+                    {""}
+                </Box>
+                
+            </Box>
+            {/* <Box>
+                {`${address}, ${unit}`}
+            </Box> */}
+            <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(1, 1fr)',
+            }}>        
+                <Box>
+                    Tenant: {tenant_name}                    
+                </Box>        
+                <Box>
+                    Applied on: {application_date}                    
+                </Box>
+                <Box>
+                    Occupancy: {num_adults} {"Adult(s), "}{num_children} {"Children, "}{num_pets} {"Pet(s)"}
+                </Box>                 
+                <Box>
+                    Start Date: {start_date}                    
+                </Box>
+                <Box>
+                    End Date: {end_date}
+                </Box>                
+                <Box>
+                    Rent: {rent? rent : "<RENT>"}
+                </Box>                
+                <Box>
+                    Lease Status: {lease_status}
+                </Box> 
+                <Box>
+                    Documents:
+                    {
+                        docs.map((document) =>
+                            (
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',                                        
+                                    // alignItems: 'flex-start'
+                                }}>
+                                    <Box sx={{
+                                        fontWeight: 'bold',
+                                        width: '200px',
+                                    }}>
+                                        {document.filename}                                            
+                                    </Box>
+                                    <Box sx={{
+                                        fontWeight: 'bold',
+                                        width: '200px',
+                                    }}>
+                                        Document type: {document.type}
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                    }}>
+                                        <Box
+                                            sx={{
+                                                marginRight: '3px',
+                                            }}
+                                            onClick={() => { downloadDocument(document.link, document.filename) }}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 10.5L2.625 6.125L3.85 4.85625L6.125 7.13125V0H7.875V7.13125L10.15 4.85625L11.375 6.125L7 10.5ZM1.75 14C1.26875 14 0.856626 13.8285 0.513626 13.4855C0.170626 13.1425 -0.000581848 12.7307 1.48557e-06 12.25V9.625H1.75V12.25H12.25V9.625H14V12.25C14 12.7312 13.8285 13.1434 13.4855 13.4864C13.1425 13.8294 12.7307 14.0006 12.25 14H1.75Z" fill="#3D5CAC" />
+                                            </svg>
+                                        </Box>
+                                        <Box onClick={() => { viewDocument(document.link) }}>
+                                        {/* <Box onClick={() => { navigateToDocument('/ownerDocumentsPDF', document.link) }}> */}
+                                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.5 10.625C9.67361 10.625 10.625 9.67361 10.625 8.5C10.625 7.32639 9.67361 6.375 8.5 6.375C7.32639 6.375 6.375 7.32639 6.375 8.5C6.375 9.67361 7.32639 10.625 8.5 10.625Z" fill="#3D5CAC" />
+                                                <path d="M16.4369 8.31938C15.812 6.70313 14.7273 5.30539 13.3167 4.29892C11.9062 3.29245 10.2316 2.72137 8.5 2.65625C6.7684 2.72137 5.09383 3.29245 3.68326 4.29892C2.2727 5.30539 1.18796 6.70313 0.563124 8.31938C0.520925 8.43609 0.520925 8.56391 0.563124 8.68062C1.18796 10.2969 2.2727 11.6946 3.68326 12.7011C5.09383 13.7075 6.7684 14.2786 8.5 14.3438C10.2316 14.2786 11.9062 13.7075 13.3167 12.7011C14.7273 11.6946 15.812 10.2969 16.4369 8.68062C16.4791 8.56391 16.4791 8.43609 16.4369 8.31938ZM8.5 11.9531C7.81704 11.9531 7.14941 11.7506 6.58155 11.3712C6.01368 10.9917 5.57109 10.4524 5.30973 9.82145C5.04837 9.19048 4.97999 8.49617 5.11322 7.82633C5.24646 7.15649 5.57534 6.5412 6.05827 6.05827C6.5412 5.57534 7.15649 5.24647 7.82633 5.11323C8.49617 4.97999 9.19048 5.04837 9.82145 5.30973C10.4524 5.57109 10.9917 6.01368 11.3712 6.58155C11.7506 7.14941 11.9531 7.81704 11.9531 8.5C11.9517 9.41539 11.5875 10.2929 10.9402 10.9402C10.2929 11.5875 9.41539 11.9517 8.5 11.9531Z" fill="#3D5CAC" />
+                                            </svg>
+                                        </Box>
+                                    </Box>
+                                </Box> 
+                            )
+                        )
+                    }
+                </Box> 
+            </Box>
+        </Box>
+    );
+}
+
 function ApplicationCard(props) {
-    const [address, unit, city, state, zip, start_date, end_date, applicant, num_adults] = props.data;
+    const [address, unit, city, state, zip, start_date, end_date, applicant, application_date, num_adults, num_children, num_pets, docs] = props.data;
     const navigate = useNavigate();
 
     function downloadDocument(url) {
@@ -600,17 +813,69 @@ function ApplicationCard(props) {
                 {`${address}, ${city}, ${state} ${zip} - Unit ${unit}`}
             </Box>
             <Box>
-                    Created: {start_date? start_date : "<LEASE_START_DATE?>"}
+                    Created: {application_date? application_date : "<APPLICATION_DATE>"}
             </Box>
             <Box>
                     Applicant: {applicant}
             </Box>
             <Box>
-                    Occupancy: {num_adults} {"Adult(s)"}
+                    Occupancy: {num_adults} {"Adult(s), "}{num_children} {"Children, "}{num_pets} {"Pet(s)"}
             </Box>
             <Box>
                     Authorization Background check:
-            </Box>
+            </Box>            
+            <Box>
+                Documents:
+                {
+                    docs.map((document) =>
+                        (
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',                                        
+                                // alignItems: 'flex-start'
+                            }}>
+                                <Box sx={{
+                                    fontWeight: 'bold',
+                                    width: '200px',
+                                }}>
+                                    {document.filename}                                            
+                                </Box>
+                                <Box sx={{
+                                    fontWeight: 'bold',
+                                    width: '200px',
+                                }}>
+                                    Document type: {document.type}
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                }}>
+                                    <Box
+                                        sx={{
+                                            marginRight: '3px',
+                                        }}
+                                        onClick={() => { downloadDocument(document.link) }}
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M7 10.5L2.625 6.125L3.85 4.85625L6.125 7.13125V0H7.875V7.13125L10.15 4.85625L11.375 6.125L7 10.5ZM1.75 14C1.26875 14 0.856626 13.8285 0.513626 13.4855C0.170626 13.1425 -0.000581848 12.7307 1.48557e-06 12.25V9.625H1.75V12.25H12.25V9.625H14V12.25C14 12.7312 13.8285 13.1434 13.4855 13.4864C13.1425 13.8294 12.7307 14.0006 12.25 14H1.75Z" fill="#3D5CAC" />
+                                        </svg>
+                                    </Box>
+                                    <Box>
+                                    {/* <Box onClick={() => { navigateToDocument('/ownerDocumentsPDF', document.link) }}> */}
+                                        <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.5 10.625C9.67361 10.625 10.625 9.67361 10.625 8.5C10.625 7.32639 9.67361 6.375 8.5 6.375C7.32639 6.375 6.375 7.32639 6.375 8.5C6.375 9.67361 7.32639 10.625 8.5 10.625Z" fill="#3D5CAC" />
+                                            <path d="M16.4369 8.31938C15.812 6.70313 14.7273 5.30539 13.3167 4.29892C11.9062 3.29245 10.2316 2.72137 8.5 2.65625C6.7684 2.72137 5.09383 3.29245 3.68326 4.29892C2.2727 5.30539 1.18796 6.70313 0.563124 8.31938C0.520925 8.43609 0.520925 8.56391 0.563124 8.68062C1.18796 10.2969 2.2727 11.6946 3.68326 12.7011C5.09383 13.7075 6.7684 14.2786 8.5 14.3438C10.2316 14.2786 11.9062 13.7075 13.3167 12.7011C14.7273 11.6946 15.812 10.2969 16.4369 8.68062C16.4791 8.56391 16.4791 8.43609 16.4369 8.31938ZM8.5 11.9531C7.81704 11.9531 7.14941 11.7506 6.58155 11.3712C6.01368 10.9917 5.57109 10.4524 5.30973 9.82145C5.04837 9.19048 4.97999 8.49617 5.11322 7.82633C5.24646 7.15649 5.57534 6.5412 6.05827 6.05827C6.5412 5.57534 7.15649 5.24647 7.82633 5.11323C8.49617 4.97999 9.19048 5.04837 9.82145 5.30973C10.4524 5.57109 10.9917 6.01368 11.3712 6.58155C11.7506 7.14941 11.9531 7.81704 11.9531 8.5C11.9517 9.41539 11.5875 10.2929 10.9402 10.9402C10.2929 11.5875 9.41539 11.9517 8.5 11.9531Z" fill="#3D5CAC" />
+                                        </svg>
+                                    </Box>
+                                </Box>
+                            </Box> 
+                        )
+                    )
+                }
+            </Box> 
+            
             {/* <Box sx={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
