@@ -190,7 +190,7 @@ function ManagerDashboard() {
                             id="expense"
                             className={classes.button}
                             onClick={() => {
-                            navigate('/ownerDocuments');
+                            navigate('/pmDocuments');
                             }}
                             >
 

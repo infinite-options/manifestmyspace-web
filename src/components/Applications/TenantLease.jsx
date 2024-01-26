@@ -22,6 +22,7 @@ import { useUser } from "../../contexts/UserContext";
 import { makeStyles } from "@material-ui/core/styles";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
 import DescriptionIcon from "@mui/icons-material/Description";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -111,11 +112,16 @@ const TenantLease = () => {
     JSON.parse(application.lease_adults).length +
       JSON.parse(application.lease_children).length
   );
-  const [documents, setDocuments] = useState([]);
+  
 
   console.log("# of Occupants", noOfOccupants)
     
   const [fees, setFees] = useState(initialFees(property, application));
+
+  const [leaseFiles, setLeaseFiles] = useState([]);
+  const [leaseFileTypes, setLeaseFileTypes] = useState([]);
+
+  const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   
   const addFeeRow = () => {
     setFees((prev) => [
@@ -184,18 +190,35 @@ const TenantLease = () => {
   // const handleAvailableToPayChange = (e) => {
   //   setAvailableToPay(e.target.value);
   // };
+  
   const handleRemoveFile = (index) => {
-    setDocuments((prevFiles) => {
-      const filesArray = Array.from(prevFiles);
-      filesArray.splice(index, 1);
-      return filesArray;
+    setLeaseFiles(prevFiles => {
+        const filesArray = Array.from(prevFiles);
+        filesArray.splice(index, 1);
+        return filesArray;
     });
-    // setDocumentTypes(prevTypes => {
-    //     const typesArray = [...prevTypes];
-    //     typesArray.splice(index, 1);
-    //     return typesArray;
-    // });
+    setLeaseFileTypes(prevTypes => {
+        const typesArray = [...prevTypes];
+        typesArray.splice(index, 1);
+        return typesArray;
+    });
   };
+
+  const checkFileTypeSelected = () => {
+    for (let i = 0; i < leaseFiles.length; i++) {
+      if (i >= leaseFileTypes.length) {
+        return false; // Return false if the index is out of bounds
+      }
+      const fileType = leaseFileTypes[i];
+      console.log("FILE TYPE: ", fileType);
+      if (!fileType || fileType.trim() === "") {
+        return false;
+      }
+    }
+    setShowMissingFileTypePrompt(false);
+    return true;
+  };
+
   const handleCreateLease = async () => {
     setShowSpinner(true);
 
@@ -207,14 +230,39 @@ const TenantLease = () => {
     leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
     leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
     leaseApplicationFormData.append("lease_move_in_date", moveInDate.format('MM-DD-YYYY'));
-    leaseApplicationFormData.append("documents", documents);
+    // leaseApplicationFormData.append("documents", leaseFiles);
+
+    const hasMissingType = !checkFileTypeSelected();
+    console.log("HAS MISSING TYPE", hasMissingType);
+
+    if (hasMissingType) {
+        setShowMissingFileTypePrompt(true);
+        setShowSpinner(false);
+        return;
+    }
+
+    if(leaseFiles.length){
+      const documentsDetails = [];
+      [...leaseFiles].forEach((file, i) => {
+          leaseApplicationFormData.append(`file-${i}`, file, file.name);
+          const fileType = leaseFileTypes[i] || '';
+          const documentObject = {
+              // file: file,
+              fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+              fileName: file.name, //may not need filename
+              fileType: fileType,
+          };
+          documentsDetails.push(documentObject);
+      });
+      leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+  }
 
     // for (let [key, value] of leaseApplicationFormData.entries()) {
     //   console.log(key, value);
     // }
 
     await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
+      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
       {
         method: "PUT",
         body: leaseApplicationFormData
@@ -795,6 +843,106 @@ const TenantLease = () => {
                     </Button>
                 </Box>
             </Grid>
+            {
+                leaseFiles.length? (
+                    <Grid item xs={12}>
+                      <Box sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent:'space-between',
+                          alignItems: 'center',
+                          marginBottom: '7px',
+                          width: '100%',
+                      }}>
+                          
+                          <Box
+                              sx={{
+                                  fontSize: '15px',
+                                  fontWeight: 'bold',
+                                  padding: '5px',
+                                  color: '#3D5CAC',
+                                  width: '100%',
+                              }}
+                          >
+                              Added Documents:
+                              {[...leaseFiles].map((f, i) => (
+                                  <Box
+                                      key={i} 
+                                      sx={{
+                                          display:'flex',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                          justifyContent: 'space-between',
+                                      }}
+                                  >
+                                      <Box
+                                          sx={{
+                                              
+                                              // height: '16px',
+                                              width: '50%', // Adjust the width as needed
+                                              padding: '8px', // Adjust the padding as needed
+                                          }}
+                                      >
+                                      {f.name}
+                                      </Box>
+                                      <Select
+                                          value={leaseFileTypes[i]}
+                                          label="Document Type"
+                                          onChange={(e) => {
+                                                  const updatedTypes = [...leaseFileTypes];
+                                                  updatedTypes[i] = e.target.value;
+                                                  setLeaseFileTypes(updatedTypes);
+                                              }
+                                          }
+                                          required
+                                          sx={{
+                                              backgroundColor: '#D6D5DA',
+                                              height: '16px',
+                                              width: '40%', // Adjust the width as needed
+                                              padding: '8px', // Adjust the padding as needed
+                                          }}
+                                      >
+                                          <MenuItem value={"contract"}>Lease Agreement</MenuItem>
+                                          <MenuItem value={"other"}>Other</MenuItem>
+                                      </Select>
+                                      <Button 
+                                          variant="text"
+                                          onClick={() => {
+                                              // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
+                                              handleRemoveFile(i)
+                                          }}
+                                          sx={{
+                                              width: '10%', 
+                                              cursor: 'pointer',
+                                              fontSize: '14px',
+                                              fontWeight: 'bold', 
+                                              color: '#3D5CAC', 
+                                          }}
+                                          
+                                      >
+                                          <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                      </Button>
+                                  </Box>
+          
+                                  
+                              ))}
+                              
+                              {showMissingFileTypePrompt && (
+                                  <Box
+                                      sx={{
+                                          color: 'red',
+                                          fontSize: '13px',
+                                      }}
+                                  >
+                                      Please select document types for all documents before proceeding.
+                                  </Box>
+                              )}
+                          </Box>
+          
+                      </Box>
+                    </Grid>
+                ) : (<></>)
+            }
           <Grid item xs={12}>
             <Box>
               <Box
@@ -816,7 +964,7 @@ const TenantLease = () => {
                   type="file"
                   accept=".doc,.docx,.txt,.pdf"
                   hidden
-                  //onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+                  onChange={(e) => setLeaseFiles((prevFiles) => [...prevFiles, ...e.target.files])}
                   multiple
                 />
               </Box>
