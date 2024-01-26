@@ -290,7 +290,7 @@ const CashflowOwner = () => {
                 justifyContent="center"
                 height={300}
                 >
-               <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary} revenueCashflowByMonth={revenueCashflowByMonth} activeButton={activeButton} selectedProperty={selectedProperty}></MixedChart>
+               <MixedChart revenueSummary={revenueSummary} expenseSummary={expenseSummary} revenueCashflowByMonth={revenueCashflowByMonth} activeButton={activeButton}></MixedChart>
                 </Stack>
                 </Paper>
                 <Paper

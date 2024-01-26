@@ -9,7 +9,7 @@ import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-import { fetchCashflow, getTotalExpenseByMonthYear, getTotalRevenueByMonthYear } from "../../Cashflow/CashflowFetchData";
+import { fetchCashflow, getTotalExpenseByMonthYear, getPast12MonthsCashflow, getTotalRevenueByMonthYear } from "../../Cashflow/CashflowFetchData";
 
 function CashflowWidget() {
     const navigate = useNavigate();
@@ -24,6 +24,8 @@ function CashflowWidget() {
     const [showSpinner, setShowSpinner] = useState(false);
     const [totalRevenueByMonth, setTotalRevenueByMonth] = useState(0);
     const [totalExpenseByMonth, setTotalExpenseByMonth] = useState(0);
+    const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
+    const [last12Months, setLast12Months] = useState([]);
     const profileId = getProfileId();
     const [cashflowData, setCashflowData] = useState(null);
 
@@ -32,8 +34,11 @@ function CashflowWidget() {
             setCashflowData(data)
             let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear)
             let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear)
+            let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear)
             setTotalRevenueByMonth(currentMonthYearRevenue) // currently useing sum(total_paid)
             setTotalExpenseByMonth(currentMonthYearExpense) // currently using sum(total_paid)
+            setLast12Months(last12months)
+
         }).catch((error) => {
             console.error("Error fetching cashflow data:", error)
         })
@@ -95,9 +100,12 @@ function CashflowWidget() {
                 </Typography>
                 </Box>
             </Grid>
-            {/* <Grid item xs={6}>
-                <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
-            </Grid> */}
+            <Grid item xs={6}>
+                <MixedChart 
+                    revenueCashflowByMonth={last12Months}
+                    activeButton={"Cashflow"}
+                />
+            </Grid>
             </Grid>
         </div>
         </ThemeProvider>

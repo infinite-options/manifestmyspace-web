@@ -198,6 +198,7 @@ function Main() {
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
+            <Route path="cashflow-owner" element={<CashflowOwner/>} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />

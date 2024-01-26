@@ -21,7 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
-import { getTotalRevenueByType, getTotalExpenseByType, fetchCashflow, getTotalExpenseByMonthYear, getTotalRevenueByMonthYear, getTotalExpectedRevenueByMonthYear, getTotalExpectedExpenseByMonthYear, getRevenueByMonth, getExpenseByMonth, getRevenueList, getExpenseList } from "../Cashflow/CashflowFetchData";
+import { getTotalRevenueByType, getTotalExpenseByType, fetchCashflow, getTotalExpenseByMonthYear, getTotalRevenueByMonthYear, getTotalExpectedRevenueByMonthYear, getTotalExpectedExpenseByMonthYear, getPast12MonthsCashflow, getNext12MonthsCashflow, getRevenueList, getExpenseList } from "../Cashflow/CashflowFetchData";
 
 
 export default function Cashflow(){
@@ -33,6 +33,8 @@ export default function Cashflow(){
     const selectedRole = user.selectedRole; // Get the selected role from user object
 
     const [activeButton, setActiveButton] = useState('Cashflow');
+
+    const [showChart, setShowChart] = useState('Current');
     
     const [month, setMonth] = useState(location.state.month || "January");
     const [year, setYear] = useState(location.state.year || "2024")
@@ -56,6 +58,9 @@ export default function Cashflow(){
     const [expenseByType, setExpenseByType] = useState({});
     const [expectedRevenueByType, setExpectedRevenueByType] = useState([]);
     const [expectedExpenseByType, setExpectedExpenseByType] = useState([]);
+
+    const [last12Months, setLast12Months] = useState([]);
+    const [next12Months, setNext12Months] = useState([]);
 
     const displays = ["Cashflow", "ExpectedCashflow"]
 
@@ -98,6 +103,12 @@ export default function Cashflow(){
             // console.log("expectedExpenseByType", expectedExpenseByType)
             setExpectedRevenueByType(expectedRevenueByType)
             setExpectedExpenseByType(expectedExpenseByType)
+
+            let last12months = getPast12MonthsCashflow(cashflowData, month, year)
+            let next12Months = getNext12MonthsCashflow(cashflowData, month, year)
+
+            setLast12Months(last12months)
+            setNext12Months(next12Months)
 
         }
     }, [month, year, cashflowData])
@@ -361,6 +372,40 @@ export default function Cashflow(){
                             <StatementTable categoryTotalMapping={expenseByType} allItems={expenseList} activeView={"ExpectedCashflow"} tableType="Expense" categoryExpectedTotalMapping={expectedExpenseByType} month={month} year={year}/>
                         </AccordionDetails>
                     </Accordion>
+                    <Stack
+                        direction="row"
+                        justifyContent="center"
+                    >
+                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
+                            {showChart} Cashflow and Revenue
+                        </Typography>
+                    </Stack>
+                    <Stack
+                        direction="row"
+                        justifyContent="center"
+                        height={300}
+                    >
+                        {showChart === "Current" ? (
+                                <MixedChart revenueCashflowByMonth={last12Months} activeButton={activeButton}></MixedChart>
+                            ) : (
+                                <MixedChart revenueCashflowByMonth={next12Months} activeButton={activeButton}></MixedChart>
+                        )}
+                    </Stack>
+                    <Stack
+                        direction="row"
+                        justifyContent="center"
+                        textTransform={"none"}
+                    >
+                         <Button
+                            onClick={() => setShowChart(showChart === "Current" ? "Expected" : "Current")}
+                        >
+                             <Typography 
+                                sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '14px'}}
+                            >
+                                Change Chart
+                            </Typography>
+                        </Button>
+                    </Stack>
                 </Paper>
                 <Paper
                     style={{
