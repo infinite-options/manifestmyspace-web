@@ -149,7 +149,11 @@ function TenantDashboard(props) {
 
   function handleTenantMaintenanceNavigate() {
     console.log("Tenant Maintenance Navigate");
-    navigate("/addTenantMaintenanceItem");
+    let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address)
+    console.log(navPropertyData)
+    navigate("/addTenantMaintenanceItem", {
+        state: { propertyData: navPropertyData },
+    });
   }
 
   function handleViewLeaseNavigate(lease_uid){
@@ -265,7 +269,7 @@ function TenantDashboard(props) {
                         >
                             <Typography
                             onClick={ () => {navigate('/myProperty', {
-                                state: {propertyData, propertyData}
+                                state: {propertyData: propertyData}
                                 })}
                             }
                             >
