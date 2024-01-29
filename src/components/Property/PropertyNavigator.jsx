@@ -209,7 +209,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         // console.log(`maintenanceReqData in displayTopMaintenanceItem for ${propertyId}`, maintenanceReqData)
         // console.log(`maintenanceData before maintenance table ${JSON.stringify(maintenanceData)}`)
         // console.log(`colorStatus mapping ${JSON.stringify(colorStatus)}`)
-        console.log(maintenanceData)
+        // console.log(maintenanceData)
         if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
             return (
                 <DataGrid
