@@ -360,8 +360,12 @@ export default function EditMaintenanceItem(){
                                         size="small"
                                     >
                                            
-                                        <InputLabel>{testProperty1}</InputLabel>
+                                        {/* <Tooltip title={testProperty1} style={{ zIndex: '1' }}>   */}
+                                        <InputLabel hidden={true} shrink={false}>{testProperty1}</InputLabel>
                                         <Select
+                                            // value={testProperty1}
+                                            // display={" "}
+                                            // onFocus={true}
                                             onChange={handlePropertyChange}
                                             MenuProps={{
                                                 PaperProps: {
@@ -377,6 +381,8 @@ export default function EditMaintenanceItem(){
                                                 <MenuItem key={property.property_uid} value={property.property_uid}>{property.property_address} {property?.property_unit}</MenuItem>
                                             ))}
                                         </Select>
+                                        {/* </Tooltip> */}
+                                        
                                     </FormControl>
                                 </Grid>
 
@@ -397,7 +403,7 @@ export default function EditMaintenanceItem(){
                                     >
                                            
                                         <InputLabel>{testIssueItem1}</InputLabel>
-                                        <Select onChange={handleIssueChange}>
+                                        <Select onChange={handleIssueChange} defaultValue={testIssueItem1}>
                                             <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
                                             <MenuItem value={"Electrical"}>Electrical</MenuItem>
                                             <MenuItem value={"Appliance"}>Appliance</MenuItem>
@@ -412,6 +418,7 @@ export default function EditMaintenanceItem(){
                                     </Typography>
                                     <TextField
                                         placeholder= {testCost1}
+                                        defaultValue={testCost1}
                                         fullWidth
                                         sx={{
                                             backgroundColor: 'white',
@@ -436,6 +443,7 @@ export default function EditMaintenanceItem(){
                                     </Typography>
                                     <TextField 
                                         placeholder= {testTitle1}
+                                        defaultValue={testTitle1}
                                         onChange={handleTitleChange} 
                                         sx={{
                                             backgroundColor: 'white',
@@ -557,6 +565,7 @@ export default function EditMaintenanceItem(){
                                         size="small"
                                         multiline
                                         placeholder= {testIssue1}
+                                        defaultValue={testIssue1}
                                         onChange={handleDescriptionChange}
                                         sx={{ 
                                             width: '100%',
@@ -571,7 +580,7 @@ export default function EditMaintenanceItem(){
                                         Already Completed?
                                     </Typography>
                                     <FormControl component="fieldset">
-                                        <RadioGroup column onChange={handleCompletedChange} value={completionStatus1}>
+                                        <RadioGroup column onChange={handleCompletedChange} defaultValue={completionStatus1}>
                                             <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                             <FormControlLabel value="no" control={<Radio />} label="No" />
                                         </RadioGroup>
