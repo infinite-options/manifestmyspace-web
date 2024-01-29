@@ -18,17 +18,19 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
+import { SignalWifiStatusbarNullTwoTone } from "@mui/icons-material";
 
 const ManagerDetails = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { ownerId, managerBusinessId, managerData, propertyData, index } = location.state;
 
-    console.log("ownerId", ownerId);
-    console.log("managerBusinessId", managerBusinessId);
-    console.log("managerData", managerData);
-    console.log("propertyData", propertyData);
-    console.log("index", index);
+    // console.log("ownerId", ownerId);
+    // console.log("managerBusinessId", managerBusinessId);
+    // console.log("managerData", managerData);
+    // console.log("propertyData", propertyData);
+    // console.log("index", index);
 
     if (managerData) {
         
@@ -59,8 +61,12 @@ const ManagerDetails = () => {
         business_email: "",
         },
     ]);
+
     function sortProperties(properties){
-        properties.sort((a, b) => {
+        const uniqueProperties = properties.filter((property, index, self) => 
+            self.findIndex(p => p.contract_uid === property.contract_uid) === index
+        );
+        uniqueProperties.sort((a, b) => {
             if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
             return -1;
             }
@@ -69,16 +75,19 @@ const ManagerDetails = () => {
             }
             return a.contract_status > b.contract_status;
         })
+        return uniqueProperties;
     }
 
     const fetchManagerProperties = async () => {
         setShowSpinner(true);
         const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByManager/${ownerId}/${managerBusinessId}`;
         const response = await axios.get(url);
-        sortProperties(response.data.result);
-        setProperties(response.data.result);
+        let uniqueProperties = sortProperties(response.data.result);
+        console.log("uniqueProperties", uniqueProperties) 
+        setProperties(uniqueProperties);
         setShowSpinner(false);
     };
+
     useEffect(() => {
         fetchManagerProperties();
     }, []);
@@ -184,39 +193,40 @@ const ManagerDetails = () => {
                     }}
                     onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})} // need to pass in the index and the propertyData
                 >
-                <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
-                <Box>
-                    <Typography
-                    sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        cursor: "pointer",
-                    }}
-                    >
-                    {"Return to Property"}
-                    </Typography>
-                </Box>
+                    <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
+                    <Box>
+                        <Typography
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            cursor: "pointer",
+                        }}
+                        >
+                            {"Return to Property"}
+                        </Typography>
+                    </Box>
                 </Box>
             </Box>
 
             <Box
                 sx={{
-                position: "relative",
-                backgroundColor: "#FFFFFF",
-                borderRadius: "10px",
-                top: "10px",
-                display: "flex",
-                flexDirection: "column",
+                    position: "relative",
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: "10px",
+                    top: "10px",
+                    display: "flex",
+                    flexDirection: "column",
                 }}
             >
                 <Box
-                sx={{
-                    padding: "13px",
-                    backgroundColor: "#3D5CAC",
-                    flex: 1,
-                    position: "relative",
-                    borderRadius: "10px 10px 0 0",
-                }}
+                    sx={{
+                        padding: "13px",
+                        backgroundColor: "#3D5CAC",
+                        flex: 1,
+                        position: "relative",
+                        borderRadius: "10px 10px 0 0",
+                        padding: "15px"
+                    }}
                 >
                     <Typography
                         align="center"
@@ -235,23 +245,23 @@ const ManagerDetails = () => {
                     <Avatar
                         src={managerData?.business_photo_url}
                         sx={{
-                        width: "60px",
-                        height: "60px",
-                        position: "absolute",
-                        bottom: "-30px",
-                        left: "50%",
-                        transform: "translateX(-50%)",
+                            width: "60px",
+                            height: "60px",
+                            position: "absolute",
+                            bottom: "-30px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            background: "#FFFFFF",
                         }}
                     />
                 </Box>
                 <Box
-                sx={{
-                    backgroundColor: "#D6D5DA",
-                    flex: 3,
-                    border: "0 0 10px 10px",
-                    paddingTop: "35px",
-                    paddingBottom: "35px",
-                }}
+                    sx={{
+                        backgroundColor: "#D6D5DA",
+                        flex: 3,
+                        border: "0 0 10px 10px",
+                        padding: "40px 10px 40px 10px"
+                    }}
                 >
                     <Grid container>
                         <Grid item xs={1}>
@@ -305,7 +315,7 @@ const ManagerDetails = () => {
                                 color: "#160449",
                                 }}
                             >
-                                {`${propertyData[index].contract_start_date}`}
+                                {`${properties[index]?.contract_start_date}`}
                             </Typography>
                         </Grid>
                         <Grid item xs={1}>
@@ -335,102 +345,127 @@ const ManagerDetails = () => {
                         >
                             {/* {`Manages ${properties.length} of your properties`} */}
                             
-                            {`Manages ${propertyData.filter(property => property.business_uid === managerData.business_uid).length} of your properties`}
+                            {`Manages ${properties.filter(property => property.business_uid === managerData.business_uid).length} of your properties`}
 
                             
                         </Typography>
-                        {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
-                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
-                                console.log(p)
-                                let docList = p.contract_documents;
+                        {console.log(properties)}
+                        {(properties.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
+                                let index=properties.findIndex((property)=>property.property_uid===p.property_uid);
+                                let navIndex = propertyData.findIndex((property)=>property.property_uid===p.property_uid);
+                                // console.log(p)
+                                let docList = JSON.parse(p.contract_documents);
+                                // console.log(docList, typeof(docList))
                                 const doc =docList && docList.find(
                                     (document) => document.type === "contract"
                                 );
                                 const contractDocumentLink = doc ? doc.link : '';
                                 return (
                                         < >
-                                            <Grid container direction="row" onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}>
-                                                <Typography
-                                                    sx={{
-                                                    paddingLeft: "15px",
-                                                    fontFamily: "Source Sans Pro, sans-serif",
-                                                    fontWeight: 600,
-                                                    color: "#160449",
-                                                    textDecoration: "underline",
-                                                    }}
-                                                >
-                                                    {`${p.property_address}, ${p.property_unit && p.property_unit+ ', ' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
-                                                </Typography>
-                                                <Typography
-                                                    sx={{
-                                                    fontWeight: 800,
-                                                    paddingLeft: "10px",
-                                                    fontFamily: "Source Sans Pro, sans-serif",
-                                                    color: "#160449",
-                                                    }}
-                                                >
-                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"} {`, contract_uid: ${p.contract_uid}`} {`, contract_name: ${p.contract_name}`}
-                                                    
-                                                </Typography>
-                                                {
-                                                    contractDocumentLink!=="" ? <Box onClick={()=>{
-                                                        window.open(contractDocumentLink, "_blank");
-                                                        // console.log("we should show a document here")
-                                                    }}>
+                                            <Grid container direction="row">
+                                                <Grid item xs={8}>
+                                                    <Box display="flex" alignItems="left"> 
                                                         <Typography
                                                             sx={{
-                                                                fontWeight: 800,
-                                                                paddingLeft: "10px",
-                                                                fontFamily: "Source Sans Pro, sans-serif",
-                                                                color: "#160449",
+                                                            paddingLeft: "15px",
+                                                            fontFamily: "Source Sans Pro, sans-serif",
+                                                            fontWeight: 600,
+                                                            color: "#160449",
+                                                            textDecoration: "underline",
+                                                            cursor: "pointer"
+                                                            }}
+                                                            onClick={() => navigate("/propertyDetail", {state: {index: navIndex, propertyList: propertyData}})}
+                                                        >
+                                                            {`${p.property_address}, ${p.property_unit && p.property_unit+ ', ' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <Box display="flex" alignItems="right"> 
+                                                        <Typography
+                                                            sx={{
+                                                            fontWeight: 800,
+                                                            paddingLeft: "10px",
+                                                            fontFamily: "Source Sans Pro, sans-serif",
+                                                            color: "#160449",
                                                             }}
                                                         >
-                                                            , contract_document: <img src={documentIcon} alt="document-icon" style={{width: '12px', height: '15px', margin:'0px', paddingLeft: "15px"}}/>
+                                                            {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
+                                                            
                                                         </Typography>
-                                                    </Box>:<div></div>
-                                                }
+                                                    </Box>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <Box display="flex" alignItems="right" alignContent="right"> 
+                                                        {contractDocumentLink !== "" ? (
+                                                            <Box onClick={()=>{
+                                                                window.open(contractDocumentLink, "_blank");
+                                                                // console.log("we should show a document here")
+                                                            }}>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontWeight: 800,
+                                                                        paddingLeft: "10px",
+                                                                        fontFamily: "Source Sans Pro, sans-serif",
+                                                                        color: "#160449",
+                                                                        cursor: "pointer"
+                                                                    }}
+                                                                >
+                                                                    <img src={documentIcon} alt="document-icon" style={{width: '15px', height: '17px', margin:'0px', paddingLeft: "15px"}}/>
+                                                                </Typography>
+                                                            </Box>
+                                                        )
+                                                        : null
+                                                    }
+                                                    </Box>
+                                                </Grid>
                                             </Grid>
                                         </>
                                     )}
                         )}
-                        {managerData.contract_status === "ACTIVE" ? (
-                            <>
-                                <Button
-                                    sx={{
-                                    paddingLeft: "15px",
-                                    fontFamily: "Source Sans Pro, sans-serif",
-                                    fontWeight: 800,
-                                    backgroundColor: "#160449",
-                                    }}
-                                    onClick={openCancelContractDialog}
-                                >
-                                    Cancel Contract
-                                </Button>
-                                <Dialog
-                                    open={cancelContractDialogOpen}
-                                    onClose={closeCancelContractDialog}
-                                    aria-labelledby="alert-dialog-title"
-                                    aria-describedby="alert-dialog-description"
-                                >
-                                    <DialogTitle id="alert-dialog-title">Confirm Cancellation</DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id="alert-dialog-description">
-                                            Are you sure you want to cancel the contract?
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={closeCancelContractDialog} color="primary">
-                                            No
-                                        </Button>
-                                        <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus>
-                                            Yes
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
-                            </>
-                        ) : (
-                        null
-                        )}
+                        <Box sx={{
+                            paddingTop: "10px",
+                            display: "flex",
+                        }}>
+                            {managerData.contract_status === "ACTIVE" ? (
+                                <>
+                                    <Button
+                                        sx={{
+                                        paddingLeft: "15px",
+                                        fontFamily: "Source Sans Pro, sans-serif",
+                                        fontWeight: 800,
+                                        backgroundColor: "#160449",
+                                        }}
+                                        onClick={openCancelContractDialog}
+                                    >
+                                        Cancel Contracts
+                                    </Button>
+                                    <Dialog
+                                        open={cancelContractDialogOpen}
+                                        onClose={closeCancelContractDialog}
+                                        aria-labelledby="alert-dialog-title"
+                                        aria-describedby="alert-dialog-description"
+                                    >
+                                        <DialogTitle id="alert-dialog-title">Confirm Cancellation</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText id="alert-dialog-description">
+                                                Are you sure you want to cancel the contract?
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={closeCancelContractDialog} color="primary">
+                                                No
+                                            </Button>
+                                            <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus>
+                                                Yes
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                </>
+                            ) : (
+                            null
+                            )}
+                        </Box>
                     </Box>
                 </Box>
             </Box>

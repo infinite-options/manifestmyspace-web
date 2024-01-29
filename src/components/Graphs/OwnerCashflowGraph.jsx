@@ -21,7 +21,9 @@ import { Stack, Typography } from '@mui/material';
 // ];
 
 const MixedChart = (props) => {
-  const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
+  // I want props.revenueCashflowByMonth to be sorted in order of month and year
+
+  const data = props.revenueCashflowByMonth // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
   const activeButton = props.activeButton;
   console.log("MixedChart called here and printing data", data)
   // const selectedProperty = props.selectedProperty;
@@ -35,18 +37,18 @@ const MixedChart = (props) => {
       <ComposedChart data={data} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
         <CartesianGrid vertical={false} />
           <XAxis
-            dataKey="monthYear" 
-            axisLine={false}
+            dataKey="monthYear"
+            axisLine={true}
+            type="category"
+            tickCount={12}
             style={{
-            fontSize: '10px'
-            }} />
-          {/* type="number" domain={[0, 50000]} tickCount={11} interval={1000}  */}
+              fontSize: '10px'
+            }} 
+          />
           <YAxis
             yAxisId="left"
             axisLine={false}
             tickCount={8}
-            // domain={selectedProperty!=={} ? [-2000,7000] : [-5000, 30000]}
-            // domain={[-5000, 30000]}
             domain={[(min-1000)*1.1, max*2]}
             tickFormatter={(value) => `$${value}`}
             style={{

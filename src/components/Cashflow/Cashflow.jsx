@@ -398,6 +398,7 @@ export default function Cashflow(){
                     >
                          <Button
                             onClick={() => setShowChart(showChart === "Current" ? "Expected" : "Current")}
+                            variant="outlined"
                         >
                              <Typography 
                                 sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '14px'}}
