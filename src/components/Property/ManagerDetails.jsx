@@ -30,11 +30,14 @@ const ManagerDetails = () => {
     console.log("propertyData", propertyData);
     console.log("index", index);
 
-    if (managerData !== undefined) {
-        let businessLocations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");
-        let city = businessLocations[0]!==undefined ? businessLocations[0].location : "";
-        let distance = businessLocations[0]!==undefined ? businessLocations[0].distance : "";
-        let feesArray = JSON.parse(managerData.business_services_fees);
+    if (managerData) {
+        
+        let businessLocations = managerData.business_locations ? managerData.business_locations : ""
+        if (businessLocations !== ""){
+            let city = businessLocations[0]!==undefined ? businessLocations[0].location : "";
+            let distance = businessLocations[0]!==undefined ? businessLocations[0].distance : "";
+            let feesArray = JSON.parse(managerData.business_services_fees);
+        }
     
     } else{
         let business_locations = ""
@@ -338,7 +341,8 @@ const ManagerDetails = () => {
                         </Typography>
                         {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
                                 let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
-                                let docList = JSON.parse(p.contract_documents);
+                                console.log(p)
+                                let docList = p.contract_documents;
                                 const doc =docList && docList.find(
                                     (document) => document.type === "contract"
                                 );

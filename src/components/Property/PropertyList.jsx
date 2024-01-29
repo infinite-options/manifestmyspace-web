@@ -155,7 +155,7 @@
 
     export default function PropertyList({}) {
     let navigate = useNavigate();
-    const { getProfileId } = useUser();
+    const { getProfileId, isManagement, isOwner } = useUser();
     const [propertyList, setPropertyList] = useState([]);
     const [displayedItems, setDisplayedItems] = useState([]);
     // const [maintenanceData, setMaintenanceData] = useState([]);

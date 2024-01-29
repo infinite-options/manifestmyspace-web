@@ -275,15 +275,17 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     };
 
     const handleManagerChange = (index) => {
-        if(item.business_uid) navigate("/managerDetails", { 
-            state: { 
-                ownerId: item.owner_uid, 
-                managerBusinessId: item.business_uid,
-                managerData: item,
-                propertyData: propertyData,
-                index: currentIndex,
-            } 
-        });
+        if(item.business_uid) {
+            navigate("/managerDetails", { 
+                state: { 
+                    ownerId: item.owner_uid, 
+                    managerBusinessId: item.business_uid,
+                    managerData: item,
+                    propertyData: propertyData,
+                    index: currentIndex,
+                } 
+            });
+        }   
         else {
             // console.log("--debug--", index, propertyData)
             navigate("/searchManager", { state: { index: index, propertyData } });

@@ -45,8 +45,8 @@ function getPast12MonthsCashflow(data, month, year){
         let currentMonthRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear)
         let currentMonthExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear)
 
-        console.log("currentMonthRevenue", currentMonthRevenue)
-        console.log("currentMonthExpense", currentMonthExpense)
+        // console.log("currentMonthRevenue", currentMonthRevenue)
+        // console.log("currentMonthExpense", currentMonthExpense)
         // console.log("expectedMonthRevenue", expectedMonthRevenue)
         // console.log("expectedMonthExpense", expectedMonthExpense)
 
@@ -89,8 +89,8 @@ function getNext12MonthsCashflow(data, month, year){
         let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
         let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
 
-        console.log("expectedMonthRevenue", expectedMonthRevenue)
-        console.log("expectedMonthExpense", expectedMonthExpense)
+        // console.log("expectedMonthRevenue", expectedMonthRevenue)
+        // console.log("expectedMonthExpense", expectedMonthExpense)
 
         nextTwelveMonths.push({
             "month": currentMonth,

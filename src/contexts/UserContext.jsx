@@ -38,6 +38,10 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     return selectedRole === "MAINTENANCE" || selectedRole === "MAINT_EMPLOYEE";
   };
 
+  const isOwner = () => {
+    return selectedRole === "OWNER";
+  }
+
   const roleName = (role = selectedRole) => {
     switch (role) {
       case "MANAGER":
@@ -159,6 +163,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         isManager,
         isEmployee,
         isManagementEmployee,
+        isOwner,
         roleName,
         isLoggedIn,
         setLoggedIn,

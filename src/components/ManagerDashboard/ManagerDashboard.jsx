@@ -122,7 +122,7 @@ function ManagerDashboard() {
                 <div className="mt-widgest-main">
                     <div className="mt-container">
                         <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData}/>
-                        <PropertyRentWidget profile={"manager"} rentData={rentStatus}/>
+                        <PropertyRentWidget profile={"MANAGER"} rentData={rentStatus}/>
                     </div>
 
                     <div className="mt-container">

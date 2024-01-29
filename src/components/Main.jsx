@@ -73,7 +73,6 @@ import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
 import PMProperties from "./Property/PMProperties";
-import POProperties from "./Property/POProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
@@ -307,7 +306,6 @@ function Main() {
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
             <Route path="PMProperties" element={<PMProperties />} /> 
-            <Route path="POProperties" element={<POProperties />} /> 
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />

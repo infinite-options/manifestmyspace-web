@@ -152,7 +152,8 @@ export default function PMQuotesRequested({}){
                             } if (contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED"){
                                 return (
                                     <div>
-                                        <DocumentCard data={contract}/>
+                                        {/* <DocumentCard data={contract}/> */}
+                                        <p>this contract is withdraw/rejected</p>
                                     </div>
                                 )
                             } if (contract.contract_status === "NEW"){
