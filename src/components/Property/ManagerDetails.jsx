@@ -261,10 +261,6 @@ const ManagerDetails = () => {
                         flex: 3,
                         border: "0 0 10px 10px",
                         padding: "40px 10px 40px 10px"
-                        // paddingTop: "35px",
-                        // paddingBottom: "35px",
-                        // paddingLeft: "10px",
-                        // paddingRight: "10px",
                     }}
                 >
                     <Grid container>
@@ -356,6 +352,7 @@ const ManagerDetails = () => {
                         {console.log(properties)}
                         {(properties.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
                                 let index=properties.findIndex((property)=>property.property_uid===p.property_uid);
+                                let navIndex = propertyData.findIndex((property)=>property.property_uid===p.property_uid);
                                 // console.log(p)
                                 let docList = JSON.parse(p.contract_documents);
                                 // console.log(docList, typeof(docList))
@@ -377,7 +374,7 @@ const ManagerDetails = () => {
                                                             textDecoration: "underline",
                                                             cursor: "pointer"
                                                             }}
-                                                            onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}
+                                                            onClick={() => navigate("/propertyDetail", {state: {index: navIndex, propertyList: propertyData}})}
                                                         >
                                                             {`${p.property_address}, ${p.property_unit && p.property_unit+ ', ' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
                                                         </Typography>
