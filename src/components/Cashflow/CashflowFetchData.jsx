@@ -55,17 +55,21 @@ function getPast12MonthsCashflow(data, month, year){
             "year": currentYear,
             "revenue": currentMonthRevenue,
             "cashflow": currentMonthRevenue - currentMonthExpense,
+            "monthYear": currentMonth.slice(0,3) + " " + currentYear.slice(2,4),
             // "expected_revenue": expectedMonthRevenue,
             // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
         })
         if (currentMonth === "January"){
             currentMonth = "December"
             currentYear = (parseInt(currentYear) - 1).toString()
+            console.log(currentYear)
         } else{
             currentMonth = months[months.indexOf(currentMonth) - 1]
         }
     }
     console.log(pastTwelveMonths)
+
+    pastTwelveMonths.reverse()
 
     return pastTwelveMonths
 }
@@ -97,6 +101,7 @@ function getNext12MonthsCashflow(data, month, year){
             "year": currentYear,
             "revenue": expectedMonthRevenue,
             "cashflow": expectedMonthRevenue - expectedMonthExpense,
+            "monthYear": currentMonth.slice(0,3) + " " + currentYear.slice(2,4),
             // "expected_revenue": expectedMonthRevenue,
             // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
         })
@@ -108,6 +113,7 @@ function getNext12MonthsCashflow(data, month, year){
             currentMonth = months[months.indexOf(currentMonth) + 1]
         }
     }
+    console.log(nextTwelveMonths)
     return nextTwelveMonths
 }
 

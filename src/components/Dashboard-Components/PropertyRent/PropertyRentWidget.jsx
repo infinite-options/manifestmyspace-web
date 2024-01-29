@@ -94,7 +94,6 @@ export default function PropertyRentWidget(props) {
                         onClick={() => {
                             if(props.profile === "MANAGER"){
                                 navigate('/PMProperties')
-                                // navigate('/properties') 
                             }else{
                                 navigate('/properties') 
                             } 
