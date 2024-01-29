@@ -70,7 +70,7 @@ function TenantDashboard(props) {
   };
 
   const { user } = useUser();
-  console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
+//   console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
 
   let automatic_navigation_handler =(propertyData)=>{
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
@@ -87,7 +87,7 @@ function TenantDashboard(props) {
         // const tenantRequests = await fetch(`http://127.0.0.1:4000/dashboard/${getProfileId()}`);
         const tenantRequestsData = await tenantRequests.json()  
         
-        console.log(tenantRequestsData)
+        console.log("tenantRequestsData", tenantRequestsData)
 
         let propertyData = tenantRequestsData?.property?.result;
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
