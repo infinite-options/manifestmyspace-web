@@ -36,6 +36,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ImageCarousel from "../../ImageCarousel";
 import defaultHouseImage from "../../Property/defaultHouseImage.png"
 
+function isValidDate(dateString){
+    const dateParts = dateString.split("-");
+    const month = parseInt(dateParts[0]);
+    const day = parseInt(dateParts[1]);
+    const year = parseInt(dateParts[2]);
+
+    const date = new Date(year, month - 1, day);
+
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day && dateParts[0].length === 2 && dateParts[1].length === 2 && dateParts[2].length === 4;
+
+}
 
 
 function ManagementContractDetails(props) {
@@ -304,7 +315,9 @@ function PropertyCard(props) {
     const [showAddContactDialog, setShowAddContactDialog] = useState(false);
     const [showEditContactDialog, setShowEditContactDialog] = useState(false);    
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
-
+    const [showInvalidEndDatePrompt, setShowInvalidEndDatePrompt] = useState(false);
+    const [showInvalidStartDatePrompt, setShowInvalidStartDatePrompt] = useState(false);
+    
     const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
     const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
 
@@ -324,6 +337,23 @@ function PropertyCard(props) {
     const [propertyOwnerName, setPropertyOwnerName] = useState('');
 
     
+    useEffect(() => {        
+        if(isValidDate(contractStartDate)){
+            setShowInvalidStartDatePrompt(false);
+        }else{
+            setShowInvalidStartDatePrompt(true);
+        }
+    }, [contractStartDate]);
+    
+    useEffect(() => {        
+        if(isValidDate(contractEndDate)){
+            setShowInvalidEndDatePrompt(false);
+        }else{
+            setShowInvalidEndDatePrompt(true);
+        }
+    }, [contractEndDate]);
+
+
     useEffect(()=> {
         console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
         // let JSONstring = JSON.stringify(defaultContractFees);
@@ -588,6 +618,12 @@ function PropertyCard(props) {
         formData.append("contract_status", "SENT");
         formData.append("contract_assigned_contacts", contractContactsJSONString);
         formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+
+        const endDateIsValid = isValidDate(contractEndDate);
+        if(!endDateIsValid){
+            setShowInvalidEndDatePrompt(true);
+            return;
+        }
 
         const hasMissingType = !checkFileTypeSelected();
         console.log("HAS MISSING TYPE", hasMissingType);
@@ -1218,10 +1254,30 @@ function PropertyCard(props) {
                         required
                     >
                         End Date
-                    </TextInputField>
+                    </TextInputField>                    
                 </Box>
 
             </Box>
+            {showInvalidStartDatePrompt && (
+                        <Box
+                            sx={{
+                                color: 'red',
+                                fontSize: '13px',
+                            }}
+                        >
+                            Please enter a valid start date in "MM-DD-YYYY" format.
+                        </Box>
+            )}
+            {showInvalidEndDatePrompt && (
+                        <Box
+                            sx={{
+                                color: 'red',
+                                fontSize: '13px',
+                            }}
+                        >
+                            Please enter a valid end date in "MM-DD-YYYY" format.
+                        </Box>
+            )}
             <Box sx={{
                         display: 'flex',
                         flexDirection: 'row',
