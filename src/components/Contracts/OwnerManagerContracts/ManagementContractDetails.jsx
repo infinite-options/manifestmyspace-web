@@ -36,17 +36,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ImageCarousel from "../../ImageCarousel";
 import defaultHouseImage from "../../Property/defaultHouseImage.png"
 
-function isValidDate(dateString){
-    const dateParts = dateString.split("-");
-    const month = parseInt(dateParts[0]);
-    const day = parseInt(dateParts[1]);
-    const year = parseInt(dateParts[2]);
-
-    const date = new Date(year, month - 1, day);
-
-    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day && dateParts[0].length === 2 && dateParts[1].length === 2 && dateParts[2].length === 4;
-
-}
+import { isValidDate } from "../../../utils/dates"
 
 
 function ManagementContractDetails(props) {
@@ -344,7 +334,7 @@ function PropertyCard(props) {
             setShowInvalidStartDatePrompt(true);
         }
     }, [contractStartDate]);
-    
+
     useEffect(() => {        
         if(isValidDate(contractEndDate)){
             setShowInvalidEndDatePrompt(false);
@@ -619,14 +609,11 @@ function PropertyCard(props) {
         formData.append("contract_assigned_contacts", contractContactsJSONString);
         formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
 
-        const endDateIsValid = isValidDate(contractEndDate);
-        if(!endDateIsValid){
-            setShowInvalidEndDatePrompt(true);
+        if(!isValidDate(contractEndDate) || !isValidDate(contractStartDate)){            
             return;
-        }
+        }        
 
-        const hasMissingType = !checkFileTypeSelected();
-        console.log("HAS MISSING TYPE", hasMissingType);
+        const hasMissingType = !checkFileTypeSelected();        
 
         if (hasMissingType) {
             setShowMissingFileTypePrompt(true);

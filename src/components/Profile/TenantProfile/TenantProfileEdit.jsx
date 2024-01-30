@@ -1020,9 +1020,9 @@ function TenantProfileEdit(props) {
                                                 </Box>
                                             </Box>
                                             ALLOWED FILE EXTENSIONS = '.txt', '.pdf', '.doc', '.docx'
-                                            {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
+                                            {/* {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
                                                 <DocumentCard key={index} data={{ title: document.name, description:document.description, date: document.created_date, link: document.link,  }} />
-                                            ))}
+                                            ))} */}
                                         </Box>
                                     </ProfileAccordionDetail>
                                 </ProfileAccordion>
