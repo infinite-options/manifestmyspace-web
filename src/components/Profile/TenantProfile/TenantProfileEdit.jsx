@@ -57,7 +57,15 @@ function TenantProfileEdit(props) {
     const [tenantFiles, setTenantFiles] = useState([]);
     const [tenantFileTypes, setTenantFileTypes] = useState([]);
     const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
+    const [deletedDocs, setDeletedDocs] = useState([]);    
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
+
+    useEffect(() => {
+        console.log("ROHIT - deletedDocs - ", deletedDocs);
+    }, [deletedDocs]);
+    useEffect(() => {
+        console.log("ROHIT - prevUploadedDocs - ", previouslyUploadedDocs);
+    }, [previouslyUploadedDocs]);
     
     
     // const [tenant, setTenant] = useState('');
@@ -281,6 +289,10 @@ function TenantProfileEdit(props) {
             });
             profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
         }
+
+        if(deletedDocs.length > 0){
+            profileFormData.append('deleted_documents', JSON.stringify(deletedDocs));
+        }
         
         // Make a PUT request with formData to update data on the backend
         if(isEdited){
@@ -304,11 +316,15 @@ function TenantProfileEdit(props) {
     
 
     const handleDeletePrevUploadedFile = (index) => {
+        setDeletedDocs((prevDeletedDocs) =>             
+            [...prevDeletedDocs, previouslyUploadedDocs[index].link]
+        );
         setPreviouslyUploadedDocs(prevFiles => {
             const filesArray = Array.from(prevFiles);
             filesArray.splice(index, 1);
             return filesArray;
         });
+        setIsEdited(true);        
     }
 
     const handleRemoveFile = (index) => {
