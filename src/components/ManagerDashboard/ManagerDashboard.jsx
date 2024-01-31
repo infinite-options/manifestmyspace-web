@@ -18,6 +18,7 @@ import AddRevenueIcon from '../../images/AddRevenueIcon.png'
 import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import OwnerList from "./OwnerList";
 
 const useStyles = makeStyles({
     button: {
@@ -133,8 +134,9 @@ function ManagerDashboard() {
                     </div>
 
                     <br />
-                    <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
+                    <div className="mt-widget-owner-happiness" >
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
+                        <OwnerList />
                     </div>
                     <br />
             
@@ -217,7 +219,7 @@ function ManagerDashboard() {
                             id="expense"
                             className={classes.button}
                             onClick={() => {
-                            navigate('/pmDocuments');
+                            navigate('/ownerDocuments');
                             }}
                             >
 
