@@ -33,7 +33,7 @@ import dataURItoBlob from '../utils/dataURItoBlob'
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from '../../theme/theme';
-
+import { darken } from '@mui/system';
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
 export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, propertyId}){
@@ -331,12 +331,18 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     color: 'white',
                                     marginRight: "10px",
                                     '&.Mui-selected': {
-                                    borderColor: "black",
+                                    // borderColor: "black",
+                                    borderBlockColor: "white",
+                                    borderWidth: "3px",
                                     backgroundColor: theme.palette.priority.low,
                                     },
                                     '&:hover': {
                                     borderColor: "white",
-                                    backgroundColor: theme.palette.priority.low,
+                                    // backgroundColor: theme.palette.priority.low,
+                                    backgroundColor: darken(theme.palette.priority.low, 0.3),
+                                    },
+                                    '&.Mui-selected + .MuiToggleButton-root': {
+                                        borderLeftColor: 'white',
                                     },
                                 }}>
                                 Low
@@ -350,11 +356,15 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     marginRight: "10px",
                                     '&.Mui-selected': {
                                     borderColor: "black",
+                                    // borderColor: "white",
+                                    color: "white",
+                                    borderWidth: "6px",
                                     backgroundColor: theme.palette.priority.medium,
                                     },
                                     '&:hover': {
                                     borderColor: "white",
-                                    backgroundColor: theme.palette.priority.medium,
+                                    // backgroundColor: theme.palette.priority.medium,
+                                    backgroundColor: darken(theme.palette.priority.medium, 0.3),
                                     },
                                 }}>
                                 Medium
@@ -367,12 +377,19 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     color: 'white',
                                     marginRight: "10px",
                                     '&.Mui-selected': {
-                                    borderColor: "black",
+                                    // borderColor: "black",
+                                    color: "white",
+                                    borderColor: "white",
+                                    borderWidth: "6px",
                                     backgroundColor: theme.palette.priority.high,
                                     },
                                     '&:hover': {
                                     borderColor: "white",
-                                    backgroundColor: theme.palette.priority.high,
+                                    backgroundColor: darken(theme.palette.priority.high, 0.3),
+                                    // backgroundColor: theme.palette.priority.high,
+                                    },
+                                    '&.Mui-selected + .MuiToggleButton-root': {
+                                        borderLeftColor: 'white',
                                     },
                                 }}>
                                 High

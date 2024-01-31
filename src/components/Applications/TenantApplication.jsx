@@ -808,9 +808,9 @@ export default function TenantApplication(){
                                             borderRadius: "5px",
                                             display: 'flex',
                                             width: "45%",
-                                            '&:hover': {
-                                                backgroundColor: "#CB8E8E",
-                                            },
+                                            // '&:hover': {
+                                            //     backgroundColor: "#CB8E8E",
+                                            // },
                                         }}
                                         onClick={() => handleApplicationSubmit()}
                                         >
@@ -832,9 +832,9 @@ export default function TenantApplication(){
                                             borderRadius: "5px",
                                             display: 'flex',
                                             width: "45%",
-                                            '&:hover': {
-                                                backgroundColor: "#9EAED6",
-                                            },
+                                            // '&:hover': {
+                                            //     backgroundColor: "#9EAED6",
+                                            // },
                                         }}
                                         onClick={() => navigate("/tenantProfileEdit")}
 
@@ -848,7 +848,7 @@ export default function TenantApplication(){
                                         }}>
                                             Edit
                                         </Typography>
-                                    </Button> 
+                                    </Button>
                                 </Box>
                             </>
                         )}
