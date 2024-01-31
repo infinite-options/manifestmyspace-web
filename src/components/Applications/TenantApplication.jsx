@@ -185,7 +185,7 @@ export default function TenantApplication(){
         leaseApplicationData.append('lease_rent', "[]")
         leaseApplicationData.append('lease_application_date', date.toLocaleDateString())
         leaseApplicationData.append('tenant_uid', getProfileId())
-        
+        console.log("leaseApplicationData::::::::::",leaseApplicationData)
         const leaseApplicationResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
             method: 'POST',
             body: leaseApplicationData
@@ -222,7 +222,7 @@ export default function TenantApplication(){
                             fontWeight: theme.typography.primary.fontWeight,
                             fontSize: theme.typography.largeFont
                         }}>
-                            Your Application For
+                            Your Application For!!!!!!
                     </Typography>
                 </Box>
                 <Box
@@ -749,43 +749,107 @@ export default function TenantApplication(){
                           null
                         ) : (
                             <>
-                                <Grid item xs={6} alignContent={'center'}>
+                                {/* <Grid container direction="row" columnSpacing={6} rowSpacing={6} >
+                                    <Grid item xs={6} alignContent={'center'}>
+                                        <Button
+                                            sx={{
+                                                justifyContent: 'center',
+                                                color: "#160449",
+                                                backgroundColor: "#9EAED6",
+                                                fontWeight: theme.typography.medium.fontWeight,
+                                                fontSize: theme.typography.mediumFont,
+                                                textTransform: "none",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+            
+                                            }}
+                                            onClick={() => handleApplicationSubmit()}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={6} alignContent={'center'}>
+                                        <Button
+                                            sx={{
+                                                justifyContent: 'center',
+                                                color: "#000000",
+                                                backgroundColor: "#CB8E8E",
+                                                fontWeight: theme.typography.medium.fontWeight,
+                                                fontSize: theme.typography.mediumFont,
+                                                textTransform: "none",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                            }}
+                                            onClick={() => navigate("/tenantProfileEdit")}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </Grid>
+                                </Grid> */}
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent:'space-between',
+                                    alignItems: 'center',
+                                    paddingTop: '10px',
+                                    marginBottom: '7px',
+                                    width: '100%',
+                                }}>
+
+                                
                                     <Button
+                                        variant="contained"
+                                        disableElevation
                                         sx={{
-                                            justifyContent: 'center',
-                                            color: "#160449",
                                             backgroundColor: "#9EAED6",
-                                            fontWeight: theme.typography.medium.fontWeight,
-                                            fontSize: theme.typography.mediumFont,
                                             textTransform: "none",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-        
+                                            borderRadius: "5px",
+                                            display: 'flex',
+                                            width: "45%",
+                                            '&:hover': {
+                                                backgroundColor: "#CB8E8E",
+                                            },
                                         }}
                                         onClick={() => handleApplicationSubmit()}
-                                    >
-                                        Submit
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={6} alignContent={'center'}>
-                                    <Button
-                                        sx={{
-                                            justifyContent: 'center',
-                                            color: "#000000",
-                                            backgroundColor: "#CB8E8E",
-                                            fontWeight: theme.typography.medium.fontWeight,
-                                            fontSize: theme.typography.mediumFont,
+                                        >
+                                        <Typography sx={{
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px",
+                                            color: "#160449",
                                             textTransform: "none",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
+                                        }}>
+                                            Submit
+                                        </Typography>
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            backgroundColor: "#CB8E8E",
+                                            textTransform: "none",
+                                            borderRadius: "5px",
+                                            display: 'flex',
+                                            width: "45%",
+                                            '&:hover': {
+                                                backgroundColor: "#9EAED6",
+                                            },
                                         }}
                                         onClick={() => navigate("/tenantProfileEdit")}
-                                    >
-                                        Edit
-                                    </Button>
-                                </Grid>
+
+                                        
+                                        >
+                                        <Typography sx={{
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px",
+                                            color: "#160449",
+                                            textTransform: "none",
+                                        }}>
+                                            Edit
+                                        </Typography>
+                                    </Button> 
+                                </Box>
                             </>
                         )}
                     </Grid>
