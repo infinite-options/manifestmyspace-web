@@ -403,7 +403,7 @@ export default function Cashflow(){
                              <Typography 
                                 sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '14px'}}
                             >
-                                Change Chart
+                                {showChart === "Current" ? "Show Expected Cashflow" : "Show Current Cashflow"}
                             </Typography>
                         </Button>
                     </Stack>
