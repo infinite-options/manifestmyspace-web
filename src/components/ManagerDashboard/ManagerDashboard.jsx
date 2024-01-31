@@ -18,6 +18,7 @@ import AddRevenueIcon from '../../images/AddRevenueIcon.png'
 import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import OwnerList from "./OwnerList";
 
 const useStyles = makeStyles({
     button: {
@@ -89,7 +90,9 @@ function ManagerDashboard() {
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
             const jsonData = await response.json()
 
-
+            const contractsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`)
+            const contractsData = await contractsResponse.json();
+            console.log(contractsData)           
             // MAINTENANCE Status
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
             
@@ -131,14 +134,15 @@ function ManagerDashboard() {
                     </div>
 
                     <br />
-                    <div className="mt-widget-owner-happiness" onClick={() => navigate("/managerDashboardHappinessMatrix")}>
+                    <div className="mt-widget-owner-happiness" >
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
+                        <OwnerList />
                     </div>
                     <br />
             
                     <div className={classes.container}>
                     <Grid container spacing={2} className={classes.row}>
-                        <Grid item xs={12}>
+                        <Grid item xs={4}>
                             <Button
                                 variant="outlined"
                                 id="revenue"
@@ -152,10 +156,7 @@ function ManagerDashboard() {
                                 Pay Bills
                             </Button>
                         </Grid>
-                    </Grid>
-
-                    <Grid container spacing={2} className={classes.row}>
-                        <Grid item xs={12}>
+                        <Grid item xs={4}>
                             <Button
                                 variant="outlined"
                                 id="revenue"
@@ -166,6 +167,34 @@ function ManagerDashboard() {
                             >
                                 <img src={User_fill_dark} alt="Contacts" />
                                 Contacts
+                            </Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button
+                                variant="outlined"
+                                id="revenue"
+                                className={classes.button}
+                                onClick={() => {
+                                    navigate('/pmQuotesList');
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: 7,
+                                        height: 7,
+                                        backgroundColor: 'primary.main',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        color: '#160449',
+                                        fontSize: '2rem',
+                                        paddingRight: '10px'
+                                    }}
+                                >
+                                    5
+                                </Box>
+                                New Requests
                             </Button>
                         </Grid>
                     </Grid>
@@ -190,7 +219,7 @@ function ManagerDashboard() {
                             id="expense"
                             className={classes.button}
                             onClick={() => {
-                            navigate('/pmDocuments');
+                            navigate('/ownerDocuments');
                             }}
                             >
 

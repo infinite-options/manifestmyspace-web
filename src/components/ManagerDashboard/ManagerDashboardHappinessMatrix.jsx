@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Box,
-    ThemeProvider,
-    Paper,
-    Typography,
-    Stack,
-    Grid,
-    CircularProgress,
-} from "@mui/material";
+import {Box, ThemeProvider, Paper, Typography, Stack, Grid, CircularProgress} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
 import CashflowData from '../Cashflow/CashflowData';
@@ -15,45 +7,28 @@ import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 
 export default function ManagerDashboardHappinessMatrix(props) {
     const navigate = useNavigate();
+    const location = useLocation();
+    let matrixData= location.state.matrixData;
+    let clicked_owner_index=location.state.clicked_index;
+
     const { user, getProfileId } = useUser();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
     const [showSpinner, setShowSpinner] = useState([]);
-    let [matrixData, setMatrixData] = useState({})
     let date = new Date();
     let month = date.toLocaleString('default', { month: 'long' });
     let year = date.getFullYear().toString()
-    let [p_owner, p_owner_setter] = useState({ name: 'Steve Albin', vacant_count: 1 })
-    let data = [
-        { x: -100, y: -200, name: 'Roberto Baggio', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCPRv_8LK6cRBMpksFuhzPuC1DSGlcPoUQdg&usqp=CAU',},
-        { x: -100, y: 200, name: 'Roberto Carlos',  photo: 'https://e0.365dm.com/12/02/2048x1152/Roberto-Carlos-2_2714252.jpg?20120206163955',},
-        { x: 120, y: 100, name: 'Gianluca Pagliuca', photo:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvUK7_R60mszrOUeShtB-qKEjseDuYMduo3g&usqp=CAU',},
-        { x: 120, y: -100, name: 'Fabien Barthez', photo:'https://img.a.transfermarkt.technology/portrait/big/3289-1414053325.jpg?lm=1',},
-        { x: 0, y: 0, name: 'Harry Maguire',},
-    ];
-    data=data.map((c,i) => {return {...c, index:i}})
+    let [p_owner, p_owner_setter] = useState(matrixData[clicked_owner_index])
+    
 
-    useEffect(() => {
-        
-        const fetchMatrixData = async () => {
-            
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/happinessMatrix/${getProfileId()}`)
-            
-            const jsonData = await response.json()
-
-            console.log('Ramin')
-            console.log(jsonData.vacancy.result)
-            setMatrixData(jsonData.vacancy.result)
-            console.log('Ramin')
-            
-        }
-        fetchMatrixData();
-    }, []);
+     
+    
+    
 
     return (
         <>
@@ -97,7 +72,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                             margin: '50px', // Add margin here
                             padding: '40px',
                             backgroundColor: theme.palette.primary.main,
-                            height: 200,
+                            height: 400,
                             [theme.breakpoints.down('sm')]: {
                                 width: '80%',
                             },
@@ -106,7 +81,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                             },
                         }}
                     >
-                        <HappinessMatrix data={data} dataSetter={p_owner_setter}> </HappinessMatrix>
+                        <HappinessMatrix data={matrixData} dataSetter={p_owner_setter}> </HappinessMatrix>
                     </Paper>
                     <Paper
                         style={{
@@ -144,7 +119,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                                         justifyContent="left"
                                     >
                                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-                                            {p_owner.name}
+                                            {p_owner?.name || ''}
                                         </Typography>
                                     </Stack>
                                     <Stack
@@ -152,7 +127,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                                         justifyContent="left"
                                     >
                                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-                                            {p_owner.vacant_count} Property Vacant
+                                            {p_owner?.total_properties || ''} Properties Managed by You
                                         </Typography>
                                     </Stack>
                                     <Stack
@@ -160,7 +135,15 @@ export default function ManagerDashboardHappinessMatrix(props) {
                                         justifyContent="left"
                                     >
                                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-                                            -$350 (2.6%) Cashflow Delta
+                                            {p_owner?.vacancy_num || ''} Properties Vacant
+                                        </Typography>
+                                    </Stack>
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="left"
+                                    >
+                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                            {`$${p_owner?.delta_cashflow} (${p_owner?.delta_cashflow_perc}%) Cashflow Delta`}
                                         </Typography>
                                     </Stack>
                                 </Grid>
@@ -197,7 +180,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                                         justifyContent="left"
                                     >
                                         <Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                            Expected Cashflow: $13,400
+                                            {`Actual Cashflow: \$ ${p_owner?.cashflow}`}
                                         </Typography>
                                     </Stack>
                                     <Stack
@@ -205,7 +188,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
                                         justifyContent="left"
                                     >
                                         <Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                            Actual Cashflow: $13,050
+                                        {`Expected Cashflow: \$ ${p_owner?.expected_cashflow}`}
                                         </Typography>
                                     </Stack>
                                 </Grid>

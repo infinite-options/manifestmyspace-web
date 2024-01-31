@@ -526,9 +526,6 @@ function DocumentCard(props) {
                     setFees(JSON.parse(responseData.result[0].business_services_fees));
                 }
 
-        
-
-
             } catch (error){
                 console.log("error", error)
             }
