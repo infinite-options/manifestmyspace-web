@@ -1,57 +1,57 @@
-    import React, { useState, useEffect } from "react";
-    import { useLocation, useNavigate } from "react-router-dom";
-    import {
-    Typography,
-    Box,
-    Stack,
-    Paper,
-    Button,
-    ThemeProvider,
-    Form,
-    TextField,
-    ToggleButton,
-    ToggleButtonGroup,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Grid,
-    Input,
-    Container,
-    Radio,
-    FormLabel,
-    FormControlLabel,
-    RadioGroup,
-    UploadFile,
-    InputAdornment,
-    InputBase,
-    IconButton,
-    CardMedia,
-    CardContent,
-    CardActions,
-    ListItemText,
-    ListItem,
-    List,
-    Avatar,
-    Badge,
-    } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+Typography,
+Box,
+Stack,
+Paper,
+Button,
+ThemeProvider,
+Form,
+TextField,
+ToggleButton,
+ToggleButtonGroup,
+FormControl,
+InputLabel,
+MenuItem,
+Select,
+Grid,
+Input,
+Container,
+Radio,
+FormLabel,
+FormControlLabel,
+RadioGroup,
+UploadFile,
+InputAdornment,
+InputBase,
+IconButton,
+CardMedia,
+CardContent,
+CardActions,
+ListItemText,
+ListItem,
+List,
+Avatar,
+Badge,
+} from "@mui/material";
 
-    import theme from "../../theme/theme";
-    import AddIcon from "@mui/icons-material/Add";
-    import SearchIcon from "@mui/icons-material/Search";
-    import CloseIcon from '@mui/icons-material/Close';
-    import propertyImage from "./propertyImage.png";
-    import maintenanceIcon from "./maintenanceIcon.png";
-    import samplePropertyData from "./samplePropertyData";
-    import { useUser } from "../../contexts/UserContext";
-    import { get } from "../utils/api";
-    import Backdrop from "@mui/material/Backdrop"; 
-    import CircularProgress from "@mui/material/CircularProgress";
-    // import PropertyData from './PropertyData';
+import theme from "../../theme/theme";
+import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from '@mui/icons-material/Close';
+import propertyImage from "./propertyImage.png";
+import maintenanceIcon from "./maintenanceIcon.png";
+import samplePropertyData from "./samplePropertyData";
+import { useUser } from "../../contexts/UserContext";
+import { get } from "../utils/api";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
+// import PropertyData from './PropertyData';
 
-    const SearchBar = ({ propertyList, setFilteredItems }) => {
+const SearchBar = ({ propertyList, setFilteredItems }) => {
     const [searchTerm, setSearchTerm] = useState("");
-    
+
     const handleSearchChange = (event) => {
         const query = event.target.value;
         setSearchTerm(query);
@@ -153,7 +153,7 @@
     })
     }
 
-    export default function PropertyList({}) {
+export default function PropertyList({}) {
     let navigate = useNavigate();
     const { getProfileId, isManagement, isOwner } = useUser();
     const [propertyList, setPropertyList] = useState([]);
@@ -368,6 +368,17 @@
                     </Box>
                     <Box
                         sx={{
+                        display: "flex",
+                        alignItems: "center", // vertically align items to the center
+                        justifyContent: "center", // horizontally align items to the center
+                        height: "100%", // to take full height of its parent
+                        width: "50%", // to take full width of its parent
+                        }}
+                    >
+                        Tenant and Lease Id
+                    </Box>
+                    <Box
+                        sx={{
                         backgroundColor: getPaymentStatusColor(property.rent_status),
                         width: "25%", // Ensure it takes up full width of its parent
                         height: "100%", // Ensure it takes up full height of its parent
@@ -436,6 +447,6 @@
         </Box>
         </ThemeProvider>
     );
-    }
+}
 
-    export { SearchBar, getPaymentStatusColor, getPaymentStatus };
+export { SearchBar, getPaymentStatusColor, getPaymentStatus };
