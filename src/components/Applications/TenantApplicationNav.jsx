@@ -283,6 +283,15 @@ const TenantApplicationNav = () => {
                       </Grid>
                       <Grid item xs={4}></Grid>
                       <Grid item xs={12}>
+                          <Typography
+                            sx={{
+                              fontSize: 13,
+                              fontFamily: "Source Sans Pro, sans-serif",
+                              color: "#3D5CAC",
+                            }}
+                          >
+                            {"Current Address"}
+                          </Typography>
                         <Typography
                           sx={{
                             fontSize: 13,
@@ -293,6 +302,15 @@ const TenantApplicationNav = () => {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack>
+                          <Typography
+                            sx={{
+                              fontSize: 13,
+                              fontFamily: "Source Sans Pro, sans-serif",
+                              color: "#3D5CAC",
+                            }}
+                          >
+                            {"SSN"}
+                          </Typography>
                           <Typography
                             sx={{
                               fontSize: 13,
@@ -308,28 +326,19 @@ const TenantApplicationNav = () => {
                                 .toString()
                                 .slice(-4)}
                           </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {"SSN"}
-                          </Typography>
+                          
                         </Stack>
                       </Grid>
                       <Grid item xs={6}>
-                        <Stack>
+                        <Stack>                          
                           <Typography
                             sx={{
                               fontSize: 13,
                               fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
+                              color: "#3D5CAC",
                             }}
                           >
-                            {application.tenant_drivers_license_number}/
-                            {application.tenant_drivers_license_state}
+                            {"License Number/ State"}
                           </Typography>
                           <Typography
                             sx={{
@@ -338,7 +347,8 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {"License Number/ State"}
+                            {application.tenant_drivers_license_number? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
+                            {application.tenant_drivers_license_state? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
                           </Typography>
                         </Stack>
                       </Grid>

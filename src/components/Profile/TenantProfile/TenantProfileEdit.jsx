@@ -291,9 +291,7 @@ function TenantProfileEdit(props) {
         
         for (const key in modifiedData) {
             if (Object.hasOwnProperty.call(modifiedData, key)) {
-                const value = modifiedData[key];
-                
-                // Check if the value is a non-null object (excluding arrays)
+                const value = modifiedData[key];                                
                 const serializedValue = (value !== null && typeof value === 'object')
                     ? JSON.stringify(value)
                     : String(value);
