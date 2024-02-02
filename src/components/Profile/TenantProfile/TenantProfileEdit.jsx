@@ -60,12 +60,6 @@ function TenantProfileEdit(props) {
     const [deletedDocs, setDeletedDocs] = useState([]);    
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
 
-    useEffect(() => {
-        console.log("ROHIT - deletedDocs - ", deletedDocs);
-    }, [deletedDocs]);
-    useEffect(() => {
-        console.log("ROHIT - prevUploadedDocs - ", previouslyUploadedDocs);
-    }, [previouslyUploadedDocs]);
     
     
     // const [tenant, setTenant] = useState('');
@@ -137,8 +131,8 @@ function TenantProfileEdit(props) {
             setTenantState(responseData.tenant_state)
             setTenantCity(responseData.tenant_city)
             setTenantZip(responseData.tenant_zip)
-            if (responseData.tenant_profile_image) {
-                setTenantProfileImage(responseData.tenant_profile_image);
+            if (responseData.tenant_photo_url) {
+                setTenantProfileImage(responseData.tenant_photo_url);
             }
             setModifiedData({
                 'tenant_uid': responseData.tenant_uid,
@@ -292,6 +286,20 @@ function TenantProfileEdit(props) {
 
         if(deletedDocs.length > 0){
             profileFormData.append('deleted_documents', JSON.stringify(deletedDocs));
+        }
+
+        
+        for (const key in modifiedData) {
+            if (Object.hasOwnProperty.call(modifiedData, key)) {
+                const value = modifiedData[key];
+                
+                // Check if the value is a non-null object (excluding arrays)
+                const serializedValue = (value !== null && typeof value === 'object')
+                    ? JSON.stringify(value)
+                    : String(value);
+    
+                profileFormData.append(key, serializedValue);
+            }
         }
         
         // Make a PUT request with formData to update data on the backend
@@ -1329,7 +1337,7 @@ function ProfileTenantTable(props) {
 
         
             <Grid container columnSpacing={2} rowSpacing={2}>
-                {console.log("debug", data[0])}
+                {/* {console.log("debug", data[0])} */}
                 {data && data.length > 0 ? (
                     data.map((rowData, index) => (
                         <>
@@ -1374,7 +1382,7 @@ function ProfileTableCell(props) {
     const setData = props.setData;
     const index = props.index
 
-    console.log("In ProfileTableCell: ",props)
+    // console.log("In ProfileTableCell: ",props)
 
     if ((!props.value) && occupantsDataComplete){
         setOccupantsDataComplete(false)
@@ -1388,8 +1396,8 @@ function ProfileTableCell(props) {
       
         const fieldName = props.field;
 
-        console.log("In Debug Function")
-        console.log(fieldName, value)
+        // console.log("In Debug Function")
+        // console.log(fieldName, value)
         // console.log("prevData: ",prevData)
 
         setData((prevData) => {

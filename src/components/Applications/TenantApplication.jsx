@@ -38,7 +38,23 @@ export default function TenantApplication(){
     const [petOccupants, setPetOccupants] = useState(null);
     const [childOccupants, setChildOccupants] = useState(null);
 
+    const [tenantDocuments, setTenantDocuments] = useState([]);
 
+
+    function formatDocumentType(type) {
+        switch(type){            
+            case "income_proof": return "Proof of Income";
+            case "bank_statement": return "Bank Statement";
+            case "id": return "ID";
+            case "renters_insurance_proof": return "Proof of Renter's Insurance";
+            case "ssn": return "SSN";
+            case "credit_report": return "Credit Report";
+            case "reference": return "Reference";
+            case "other": return "Other";
+            
+            default: return "";            
+        }
+    }
     function formattedAddress(){
         return `${property.property_address} ${property.property_unit} ${property.property_city} ${property.property_state} ${property.property_zip}`
     }
@@ -137,6 +153,7 @@ export default function TenantApplication(){
         formatTenantAdultOccupants()
         formatTenantPetOccupants()
         formatTenantChildOccupants()
+        setTenantDocuments(tenantProfile? JSON.parse(tenantProfile?.tenant_documents): []);
     }, [tenantProfile])
 
     function getApplicationDate(){
@@ -617,7 +634,7 @@ export default function TenantApplication(){
                             <Typography
                                 sx={{
                                     justifySelf: 'center',
-                                    color: theme.typography.primary.black,
+                                    color: theme.typography.common.blue,
                                     fontWeight: theme.typography.primary.fontWeight,
                                     fontSize: theme.typography.secondaryFont
                                 }}
@@ -744,6 +761,62 @@ export default function TenantApplication(){
                             >
                                 Porsche Cayenne S | SUV | ASD1235 | CA
                             </Typography> */}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography
+                                sx={{
+                                    justifySelf: 'center',
+                                    color: theme.typography.common.blue,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.secondaryFont
+                                }}
+                            >
+                                Your Documents:
+                            </Typography>
+                            <Box
+                                sx={{
+                                    display:'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    paddingTop: '5px',
+                                    color: theme.typography.common.blue,
+                                }}
+                            >
+                                <Box>Filename</Box>
+                                <Box>Type</Box>
+                                
+                            </Box>
+                            {[...tenantDocuments].map((doc, i) => (
+                                <>                                
+                                    <Box
+                                        key={i} 
+                                        sx={{
+                                            display:'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                            <Box
+                                                sx={{
+                                                    // height: '16px',
+                                                    width: '100%', 
+                                                    
+                                                    
+                                                    cursor: 'pointer', // Change cursor to indicate clickability
+                                                    color: '#3D5CAC',
+                                                }}
+                                            >
+                                            {doc.filename}
+                                            </Box>
+                                        </a>
+                                        {formatDocumentType(doc.type)}
+                                        
+                                    </Box>
+                                </>                                        
+                            ))}
                         </Grid>
                         {status ? (
                           null
