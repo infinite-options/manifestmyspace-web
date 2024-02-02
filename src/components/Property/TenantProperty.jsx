@@ -52,29 +52,15 @@ export default function TenantProperty({ }) {
     }
     
     const location = useLocation();
-    const propertyData = location.state.propertyData[0];
+    const propertyData = location.state.propertyData;
+    const propertyId = location.state.propertyId;
+
+    const tenantCurrentProperty = propertyData.find(property => property.property_uid === propertyId)
 
     const color = theme.palette.form.main
 
     // const images = [
-    //     {
-    //       label: 'maintenanceRequest',
-    //       imgPath: propertyImage,
-    //     },
-    //     {
-    //       label: 'maintenanceRequest',
-    //       imgPath: propertyImage,
-    //     },
-    //     {
-    //       label: 'maintenanceRequest',
-    //       imgPath: propertyImage,
-    //     },
-    //     {
-    //       label: 'maintenanceRequest',
-    //       imgPath: propertyImage,
-    //     },
-    //   ];
-      let images = JSON.parse(propertyData.property_images);
+      let images = JSON.parse(tenantCurrentProperty.property_images);
 
     
       const maxSteps = images.length;
@@ -247,7 +233,7 @@ export default function TenantProperty({ }) {
                                             >
                                                 <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
                                                     {/* {item.property_address} {item.property_unit}, {item.property_city} {item.property_state} {item.property_zip} */}
-                                                    {propertyData.property_address} {propertyData.property_unit}, {propertyData.property_city} {propertyData.property_state} {propertyData.property_zip}
+                                                    {tenantCurrentProperty.property_address} {tenantCurrentProperty.property_unit}, {tenantCurrentProperty.property_city} {tenantCurrentProperty.property_state} {tenantCurrentProperty.property_zip}
                                                   </Typography>
                                                 <Box
                                                     sx={{
@@ -357,7 +343,7 @@ export default function TenantProperty({ }) {
                                                                     fontSize:theme.typography.smallFont,
                                                                 }}
                                                             >
-                                                            Rent: ${propertyData.property_listed_rent}
+                                                            Rent: ${tenantCurrentProperty.property_listed_rent}
                                                             </Typography>
                                                             <Typography
                                                                 sx={{
@@ -367,7 +353,7 @@ export default function TenantProperty({ }) {
                                                                     paddingBottom: "10px"
                                                                 }}
                                                             >
-                                                                Due: {propertyData.earliest_due_date}                                                            </Typography>
+                                                                Due: {tenantCurrentProperty.earliest_due_date}                                                            </Typography>
                                                         </Grid>
                                                         <Grid item xs={6}>
                                                             <Button
@@ -397,7 +383,7 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    Expiring: {propertyData.lease_end}
+                                                                    Expiring: {tenantCurrentProperty.lease_end}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={6}>
@@ -445,7 +431,7 @@ export default function TenantProperty({ }) {
                                                                     }}
                                                                 >
                                                                 {/* {item.property_area} */}
-                                                                {propertyData.property_area}
+                                                                {tenantCurrentProperty.property_area}
                                                               
                                                             </Typography>
                                                         </Grid>
@@ -469,7 +455,7 @@ export default function TenantProperty({ }) {
                                                                         fontSize:theme.typography.smallFont,
                                                                     }}
                                                                 >
-                                                                    {propertyData.property_type}
+                                                                    {tenantCurrentProperty.property_type}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={4}>
@@ -493,7 +479,7 @@ export default function TenantProperty({ }) {
                                                                     }}
                                                                 >
                                                                     {/* {item.property_num_beds} */}
-                                                                    {propertyData.property_num_beds}
+                                                                    {tenantCurrentProperty.property_num_beds}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={4}>
@@ -517,7 +503,7 @@ export default function TenantProperty({ }) {
                                                                     }}
                                                                 >
                                                                     {/* {item.property_num_baths} */}
-                                                                    {propertyData.property_num_baths}
+                                                                    {tenantCurrentProperty.property_num_baths}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={12}>

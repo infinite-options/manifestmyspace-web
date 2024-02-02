@@ -31,6 +31,7 @@ import PhoneIcon from '@mui/icons-material/Phone'; // For "Phone"
 import BuildIcon from '@mui/icons-material/Build'; // For "Maintenance"
 import AddIcon from '@mui/icons-material/Add'; // For "New Request"
 import { PropertyCard } from '../Property/PropertyListings'
+import CircleIcon from '@mui/icons-material/Circle';
 
 
 function TenantDashboard(props) {
@@ -56,6 +57,7 @@ function TenantDashboard(props) {
   const [announcementsData, setAnnouncementsData] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [propertyAddr, setPropertyAddr] = useState();
+  const [propertyId, setPropertyId] = useState("")
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
   // const [balance, setBalance] = useState("0.00");
   const [total, setTotal] = useState("0.00");
@@ -83,6 +85,19 @@ function TenantDashboard(props) {
         navigate("/listings");
       }
   }
+
+    const showLeaseStatusIndicator = (lease_status) => {
+        console.log("--debug--", lease_status)
+        return (
+            <>
+                {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
+                {lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null}
+                {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
+                {lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+                {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+            </>
+        )
+    }
 
     useEffect(() => {
         const getTenantData = async () => {
@@ -133,7 +148,7 @@ function TenantDashboard(props) {
             setMaintenanceRequestsData(maintenanceRequestsData || []);
             setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
 
-            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit :"No Data"
+            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
             setPropertyAddr(propertyAddress);
             setFirstName(user.first_name)
             setShowSpinner(false);
@@ -151,14 +166,6 @@ function TenantDashboard(props) {
         }
     },[userLeases, selectedProperty]);
 
-//   useEffect(() => {
-//     console.log("TenantDashboard useEffect")
-
-//     let paymentData = createPaymentdata(total)
-//     console.log(paymentData)
-//     setPaymentData(paymentData)
-
-//   }, [total])
 
   const thStyle = {
     color: "#160449",
@@ -212,7 +219,7 @@ function TenantDashboard(props) {
   function NonActiveLeaseDashboardTab({property, leaseStatus, lease}){
     // console.log("Property: ", property);
     // console.log("Lease Status: ", lease_status);
-    console.log("Lease Data:", lease)
+    // console.log("Lease Data:", lease)
     return (
         <PropertyCard data={property} status={leaseStatus} leaseData={lease}/>
     )
@@ -299,12 +306,18 @@ function TenantDashboard(props) {
                             }}
                         >
                             <Typography
-                            onClick={ () => {navigate('/myProperty', {
-                                state: {propertyData: propertyData}
-                                })}
-                            }
+                                onClick={ () => {navigate('/myProperty', {
+                                    state: {
+                                        propertyData: propertyData,
+                                        propertyId: propertyId, 
+                                    }
+                                    })}
+                                }
                             >
-                            {propertyAddr}
+                                {/* {showLeaseStatusIndicator(propertyData.find(item => item.address === selectedProperty.property_address).lease_status)} */}
+                                {console.log(propertyData)}
+                                {showLeaseStatusIndicator(propertyData.lease_status)}
+                                {propertyAddr}
                             </Typography>
 
                             <KeyboardArrowDownIcon 
@@ -326,6 +339,7 @@ function TenantDashboard(props) {
                                     key={index}
                                     onClick={() => {
                                         setPropertyAddr(item.property_address + " " + item.property_unit)
+                                        setPropertyId(item.property_uid)
                                         setTotal(item.balance)
                                         setSelectedProperty(item)
                                         setSelectedLease(userLeases.find(lease => lease.lease_uid === item.lease_uid))
@@ -333,6 +347,12 @@ function TenantDashboard(props) {
                                     }}
                                     disableRipple
                                 >
+                                    {/* {item.lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
+                                    {item.lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null}
+                                    {item.lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
+                                    {item.lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+                                    {item.lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null} */}
+                                    {showLeaseStatusIndicator(item.lease_status)}
                                     {item.property_address + " " + item.property_unit}
                                 </MenuItem>
                                 )
