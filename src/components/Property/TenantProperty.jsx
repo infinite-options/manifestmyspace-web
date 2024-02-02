@@ -29,7 +29,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-// import propertyImage from './propertyImage.png';
 import propertyImage from './propertyImage.png';
 import ArrowLeft from './ArrowLeft.png';
 import ArrowRight from './ArrowRight.png';
@@ -59,19 +58,17 @@ export default function TenantProperty({ }) {
 
     const color = theme.palette.form.main
 
-    // const images = [
-      let images = JSON.parse(tenantCurrentProperty.property_images);
+    let images = JSON.parse(tenantCurrentProperty?.property_images);
 
-    
-      const maxSteps = images.length;
-    
-      const handleNext = () => {
+    const maxSteps = images.length;
+
+    const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      };
-    
-      const handleBack = () => {
+    };
+
+    const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-      };
+    };
 
 
     return( 
@@ -126,24 +123,6 @@ export default function TenantProperty({ }) {
                             </Button>
                         </Box>
                     </Stack>
-                    {/* <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="center"
-                        // sx={{
-                        //     paddingBottom: "20px"
-                        // }}
-                    >
-                        <Box>
-                            <Button onClick={() => handleBackButton()}>
-
-                                <img src={refundIcon} style={{width: '25px', height: '25px', margin:'5px'}}/>
-                                <Typography sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '16px'}}>
-                                    Return to Viewing All Properties
-                                </Typography>
-                            </Button>
-                        </Box>
-                    </Stack> */}
                     <Stack
                         direction="column"
                         justifyContent="center"
@@ -168,44 +147,6 @@ export default function TenantProperty({ }) {
                                         paddingTop: "20px"
                                     }}
                                 > 
-                                    {/* <Stack
-                                        direction="row"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        spacing={2}
-                                    >
-                                        <Button onClick={handlePreviousCard} disabled={currentIndex == 0}>
-                                            {currentIndex === 0 ? (
-                                                // <img src={ArrowLeft} style={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
-                                                <ArrowBackIcon sx={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
-                                            ) : (
-                                                // <img src={ArrowLeft} style={{width: '25px', height: '25px', margin:'0px'}}/>
-                                                <ArrowBackIcon sx={{color: "#000000", width: '25px', height: '25px', margin:'0px'}}/>
-                                            )}
-                                        </Button>
-                                        <Stack
-                                            direction="column"
-                                            margin='0px'
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            spacing={2}
-                                        >
-                                            <Typography
-                                                sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: '16px'}}
-                                            >
-                                                {currentIndex + 1} of {propertyData.length} Properties
-                                            </Typography>
-                                        </Stack>
-                                        <Button onClick={handleNextCard} disabled={currentIndex == propertyData.length-1}>
-                                            {currentIndex == propertyData.length-1 ? (
-                                                // <img src={ArrowRight} style={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
-                                                <ArrowForwardIcon sx={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
-                                            ) : (
-                                                // <img src={ArrowRight} style={{width: '25px', height: '25px', margin:'0px'}}/>
-                                                <ArrowForwardIcon sx={{color: "#000000", width: '25px', height: '25px', margin:'0px'}}/>
-                                            )}
-                                        </Button>  
-                                    </Stack> */}
                                     <Stack
                                         alignItems="center"
                                         justifyContent="center"
@@ -302,21 +243,6 @@ export default function TenantProperty({ }) {
                                                     }
                                                 />
                                             </CardContent>
-                                            {/* <Grid container spacing={0}
-                                                alignContent="center"
-                                                justifyContent="center"
-                                                alignItems="center"
-                                                direction="column"
-                                                sx={{
-                                                    backgroundColor: paymentStatusMap["Paid Late"],
-                                                }}
-                                            >   
-                                                <Grid item xs={12}>
-                                                    <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                                        <b>Rent Status:</b> Paid Late
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid> */}
                                             <CardContent
                                                 sx={{
                                                     flexDirection: "column",

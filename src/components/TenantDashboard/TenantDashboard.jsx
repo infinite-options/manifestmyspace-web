@@ -18,7 +18,7 @@ import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from "../../theme/theme";
@@ -68,15 +68,18 @@ function TenantDashboard(props) {
   const [selectedLease, setSelectedLease] = useState(null)
 
   const open = Boolean(anchorEl);
-  const handleOpen = (event) => {
+//   const handleOpen = (event) => {
+//     setAnchorEl(event.currentTarget);
+//   };
+
+  const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
-  };
+  }, []);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const { user } = useUser();
-//   console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
 
   let automatic_navigation_handler =(propertyData)=>{
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
@@ -97,6 +100,25 @@ function TenantDashboard(props) {
                 {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
             </>
         )
+    }
+
+    const returnLeaseStatusColor = (status) => {
+        // console.log("--debug-- returnLeaseStatusColor property_data", property_data)
+        // console.log("--debug-- returnLeaseStatusColor property_id", property_id)
+
+        // let property = property_data.find(property => property.property_uid === property_id);
+
+        // console.log("--debug--", property, property?.property_status)
+
+        const statusColorMapping = {
+            "ACTIVE": "#00D100",
+            "NEW": "#3D5CAC",
+            "PROCESSING": "#FF8832",
+            "DECLINED": "#CB8E8E",
+            "REFUSED": "#CB8E8E"
+        }
+        // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
+        return status ? statusColorMapping[status] : "#ddd"
     }
 
     useEffect(() => {
@@ -282,19 +304,26 @@ function TenantDashboard(props) {
                     sx={{
                         height: "30px",
                         width: "30px",
-                        backgroundColor: "#bbb",
+                        backgroundColor: returnLeaseStatusColor(selectedProperty?.lease_status),
                         borderRadius: "50%",
                         marginRight: "10px",
                     }}
+                    onClick={ () => {navigate('/myProperty', {
+                        state: {
+                            propertyData: propertyData,
+                            propertyId: propertyId, 
+                        }
+                        })}
+                    }
                     ></Box>
                     <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: "22px",
-                        fontWeight: "600",
-                        color: "#3D5CAC",
-                    }}
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "22px",
+                            fontWeight: "600",
+                            color: "#3D5CAC",
+                        }}
                     >
                         <Box
                             sx={{
@@ -305,33 +334,21 @@ function TenantDashboard(props) {
                                 color: "#3D5CAC",
                             }}
                         >
-                            <Typography
-                                onClick={ () => {navigate('/myProperty', {
-                                    state: {
-                                        propertyData: propertyData,
-                                        propertyId: propertyId, 
-                                    }
-                                    })}
-                                }
-                            >
-                                {/* {showLeaseStatusIndicator(propertyData.find(item => item.address === selectedProperty.property_address).lease_status)} */}
-                                {console.log(propertyData)}
-                                {showLeaseStatusIndicator(propertyData.lease_status)}
+                            <Typography>
                                 {propertyAddr}
                             </Typography>
-
                             <KeyboardArrowDownIcon 
-                            sx={{alignItem: "center"}}
-                            onClick={(event) => handleOpen(event)}
+                                sx={{alignItem: "center"}}
+                                onClick={(event) => handleOpen(event)}
                             />
                             <Menu
-                            id="demo-customized-menu"
-                            MenuListProps={{
-                                'aria-labelledby': 'demo-customized-button',
-                            }}
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
+                                id="demo-customized-menu"
+                                MenuListProps={{
+                                    'aria-labelledby': 'demo-customized-button',
+                                }}
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
                             >
                             {propertyData.map((item, index) => {
                                 return (
@@ -347,19 +364,13 @@ function TenantDashboard(props) {
                                     }}
                                     disableRipple
                                 >
-                                    {/* {item.lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
-                                    {item.lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null}
-                                    {item.lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
-                                    {item.lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
-                                    {item.lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null} */}
                                     {showLeaseStatusIndicator(item.lease_status)}
                                     {item.property_address + " " + item.property_unit}
                                 </MenuItem>
                                 )
                             })}
                             </Menu>
-                        </Box>
-                        
+                        </Box> 
                     </Box>
                 </Box>
             </Grid>
