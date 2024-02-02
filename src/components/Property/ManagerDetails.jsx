@@ -18,11 +18,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useUser } from "../../contexts/UserContext";
 
 const ManagerDetails = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { ownerId, managerBusinessId, managerData, propertyData, index } = location.state;
+    const { user, selectedRole } = useUser();
 
     console.log("ownerId", ownerId);
     console.log("managerBusinessId", managerBusinessId);
@@ -172,7 +174,9 @@ const ManagerDetails = () => {
                 >
                     {"Property Manager"}
                 </Typography>
-                <SearchIcon onClick={() => navigate("/searchManager")} />
+                {selectedRole !== "MANAGER" ? (
+                    <SearchIcon onClick={() => navigate("/searchManager")} />
+                ) : null }
             </Box>
             <Box
                 sx={{
@@ -472,7 +476,7 @@ const ManagerDetails = () => {
                                         </>
                                     )}
                         )} */}
-                        {managerData.contract_status === "ACTIVE" ? (
+                        {managerData.contract_status === "ACTIVE" && selectedRole !== "MANAGER" ? (
                             <>
                                 <Button
                                     sx={{
