@@ -49,7 +49,7 @@ const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="R
 
 export default function PropertyNavigator({currentIndex, setCurrentIndex, propertyData, contracts, props}){
     const navigate = useNavigate();
-    const { getProfileId, isManager, roleName } = useUser();
+    const { getProfileId, isManager, roleName, selectedRole } = useUser();
     // console.log(currentIndex)
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
@@ -822,7 +822,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                     </Grid>
                                     {/* {console.log("--debug-- this is contractsData", contractsData)}
                                     {console.log("--debug-- contractsNewSent", contractsNewSent)} */}
-                                    {contractsData && contractsData.length > 0 ? (
+                                    {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
                                         <>
                                             <Grid item xs={11}>
                                                 <Typography
