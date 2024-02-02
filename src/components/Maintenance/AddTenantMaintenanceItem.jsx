@@ -24,7 +24,7 @@ import {
     InputAdornment
 } from "@mui/material";
 import { useUser } from "../../contexts/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -50,6 +50,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
     const [description, setDescription] = useState('');
     const [file, setFile] = useState('');
     const [showSpinner, setShowSpinner] = useState(false);
+
+    useEffect(() => {
+        console.log(selectedImageList)
+    }, [selectedImageList])
 
     const handlePropertyChange = (event) => {
         setProperty(event.target.value);
@@ -122,8 +126,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
             try {
                 let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                if(selectedImageList[i]?.image?.startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i].image);
                     formData.append(key, imageBlob)
                 } else {
                     formData.append(key, selectedImageList[i])

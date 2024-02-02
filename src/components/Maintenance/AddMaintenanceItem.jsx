@@ -159,8 +159,8 @@ export default function AddMaintenanceItem(){
             try {
                 let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                if(selectedImageList[i]?.image?.startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i].image);
                     formData.append(key, imageBlob)
                 } else {
                     formData.append(key, selectedImageList[i])

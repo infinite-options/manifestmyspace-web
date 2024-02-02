@@ -50,6 +50,7 @@ function ManagerDashboard() {
     const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
+    const [contractRequests, setContractRequests] = useState([])
     
 
     const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
@@ -92,7 +93,12 @@ function ManagerDashboard() {
 
             const contractsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`)
             const contractsData = await contractsResponse.json();
-            console.log(contractsData)           
+
+            const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
+            const propertiesResponseJSON = await propertiesResponse.json()
+            setContractRequests(propertiesResponseJSON.NewPMRequests.result)
+            console.log(propertiesResponseJSON.NewPMRequests.result)
+            
             // MAINTENANCE Status
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
             
@@ -192,7 +198,8 @@ function ManagerDashboard() {
                                         paddingRight: '10px'
                                     }}
                                 >
-                                    5
+                                    {/* {contractRequests.length()} */}
+                                    {contractRequests.length}
                                 </Box>
                                 New Requests
                             </Button>
