@@ -245,6 +245,7 @@ export default function EditProfileSettingsManager() {
                     console.log('Data updated successfully');
                     setIsEdited(false); // Reset the edit status
                     navigate('/pmProfile');
+                    
                 })
                 .catch((error) => {
                     if (error.response) {
@@ -338,7 +339,7 @@ export default function EditProfileSettingsManager() {
                         />):
                         (manager_data.business_photo_url !== null ? (
                         <img
-                            src={manager_data.business_photo_url}
+                            src={`${manager_data.business_photo_url}?${Date.now()}`}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',

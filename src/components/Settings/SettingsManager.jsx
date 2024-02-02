@@ -79,30 +79,30 @@ export default function SettingsManager() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {manager_data.business_photo_url !== null ? (
-                        <img
-                            src={manager_data.business_photo_url}
-                            alt="Profile"
-                            style={{
-                                borderRadius: '50%',
-                                color: theme.typography.common.blue,
-                                width: 45,
-                                height: 45,
-                                position: 'absolute',
-                                left: 0
-                            }}
-                        />
-                    ) : (
-                        <AccountCircleIcon
-                            sx={{
-                                color: theme.typography.common.blue,
-                                width: 45,
-                                height: 45,
-                                position: 'absolute',
-                                left: 0
-                            }}
-                        />
-                    )}
+            {manager_data.business_photo_url !== null ? (
+              <img
+                  src={`${manager_data.business_photo_url}?${Date.now()}`}  // Append timestamp to the image URL
+                  alt="Profile"
+                  style={{
+                      borderRadius: '50%',
+                      color: theme.typography.common.blue,
+                      width: 45,
+                      height: 45,
+                      position: 'absolute',
+                      left: 0
+                  }}
+              />
+          ) : (
+              <AccountCircleIcon
+                  sx={{
+                      color: theme.typography.common.blue,
+                      width: 45,
+                      height: 45,
+                      position: 'absolute',
+                      left: 0
+                  }}
+              />
+          )}
                     <>
                     <Stack
                     direction="row"
