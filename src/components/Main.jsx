@@ -13,7 +13,7 @@ import Cashflow from "./Cashflow/Cashflow";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
-import PropertyListings from "./Property/PropertyListings";
+import { PropertyListings } from "./Property/PropertyListings";
 
 import Announcements from "./Announcement/Announcements";
 import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
