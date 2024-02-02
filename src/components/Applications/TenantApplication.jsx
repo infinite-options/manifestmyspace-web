@@ -251,7 +251,8 @@ export default function TenantApplication(){
                     sx={{  paddingBottom: "10px"}}
                 >
                    <Button
-                        onClick={() => navigate("/listings")}
+                        // onClick={() => navigate("-1")}
+                        onClick={() => navigate(-1)}
                         sx={{
                             textTransform: 'none',
                             padding: '10px 10px 0px 10px',

@@ -133,11 +133,6 @@ function ManagerDashboard() {
                         <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData}/>
                         <PropertyRentWidget profile={"MANAGER"} rentData={rentStatus}/>
                     </div>
-                    
-					<div className="mt-widget-owner-happiness" >
-                        <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
-                        <OwnerList />
-                    </div>
 
                     <div className="mt-container">
                         {/* <LeaseWidget selectedRole={"OWNER"}/> */}
