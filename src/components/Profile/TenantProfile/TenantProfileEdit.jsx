@@ -95,6 +95,7 @@ function TenantProfileEdit(props) {
             let responseData = res.data.Profile.result[0];
             parseJSONFields(responseData);
             console.log('responseData.tenant_ssn:', responseData.tenant_ssn);
+            console.log("responseData}}}}}}}",responseData)
             if (responseData.tenant_ssn) {
                 responseData.tenant_ssn = maskSSN(responseData.tenant_ssn);
             } else {
@@ -231,6 +232,7 @@ function TenantProfileEdit(props) {
     // leaseApplicationFormData.append("lease_status", "ENDED");
 
     profileFormData.append("tenant_adult_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
+    profileFormData.append("tenant_children_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
 
     profileFormData.append("tenant_uid", getProfileId())
     for (const item of profileFormData){
@@ -242,6 +244,7 @@ function TenantProfileEdit(props) {
         event.preventDefault();
         console.log("FORM SUBMITTED")
         console.log(modifiedData)
+        console.log("profileFormData>>>>>>",profileFormData)
         
         // Make a PUT request with formData to update data on the backend
         if(isEdited){

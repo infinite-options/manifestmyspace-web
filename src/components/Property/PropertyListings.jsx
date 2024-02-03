@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import theme from '../../theme/theme';
+// import { useLocation, useNavigate } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import AddIcon from "@mui/icons-material/Add";
 import {
     ThemeProvider,
     Box,
@@ -353,6 +355,7 @@ const PropertyListings = (props) => {
     const profileId = getProfileId();
     const [showSpinner, setShowSpinner] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const navigate = useNavigate();
 
 
 
@@ -466,12 +469,17 @@ const PropertyListings = (props) => {
                 >
                     <Stack
                         direction="row"
-                        justifyContent="center"
+                        // justifyContent="center"
+                        justifyContent="space-between"
+                        
                         alignItems="center"
                         position="relative"
-                        sx={{ paddingBottom: '25px', paddingTop: '15px' }}
+                        sx={{ paddingBottom: '25px', paddingTop: '15px', padding: theme.spacing(2), }}
                     >
+                        <Box sx={{ flex: 1 }} />
                         <Box
+                            position="absolute"
+                            left="40%"
                             direction="row"
                             justifyContent="center"
                             alignItems="center"
@@ -487,6 +495,9 @@ const PropertyListings = (props) => {
                                 Search For Your New Home
                             </Typography>
                         </Box>
+                        <Button position="absolute" right={0} sx={{ "&:hover, &:focus, &:active": {background: theme.palette.primary.main } }} onClick={() => navigate("/addTenantMaintenanceItem")}>
+                        <   AddIcon onClick={() => navigate("/addTenantMaintenanceItem")} sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+                        </Button>
                     </Stack>
                     <Stack>
                         <SearchBar propertyList={sortedProperties} setFilteredItems={setDisplayProperties} sx={{ width: "100%" }} />

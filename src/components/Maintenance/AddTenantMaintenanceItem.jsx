@@ -72,8 +72,17 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     };
 
     const handlePriorityChange = (event, newToggleGroupValue) => {
+        console.log("inside handlePriorityChange")
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
+        const buttons = document.querySelectorAll('.MuiToggleButton-root');
+        buttons.forEach(button => {
+            if (button.classList.contains('Mui-selected')) {
+                button.style.borderColor = 'white';
+            } else {
+                button.style.borderColor = ''; // Reset other buttons' border color
+            }
+        });
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
@@ -313,7 +322,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                         <ToggleButtonGroup
                             exclusive
                             fullWidth
-                            onChange={handlePriorityChange}
+                            onClick={handlePriorityChange}
+                            // onClick={ sx={{borderBlockColor:"white"}}}
                             aria-label="Priority"
                             size="small"
                             sx={{
@@ -330,20 +340,25 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     borderRadius: '20px',
                                     color: 'white',
                                     marginRight: "10px",
-                                    '&.Mui-selected': {
-                                    // borderColor: "black",
-                                    borderBlockColor: "white",
-                                    borderWidth: "3px",
-                                    backgroundColor: theme.palette.priority.low,
-                                    },
-                                    '&:hover': {
-                                    borderColor: "white",
+                                    // '&.Mui-selected': {
+                                    // // borderColor: "black",
+                                    // borderBlockColor: "white",
+                                    // borderWidth: "3px",
                                     // backgroundColor: theme.palette.priority.low,
-                                    backgroundColor: darken(theme.palette.priority.low, 0.3),
-                                    },
-                                    '&.Mui-selected + .MuiToggleButton-root': {
-                                        borderLeftColor: 'white',
-                                    },
+                                    // },
+                                    // '& .MuiToggleButton-root.Mui-selected': {
+                                    //     backgroundColor: 'lightblue', // Selected background color
+                                    //     color: 'white', // Selected text color
+                                    //     borderColor: 'white', // Add this line to set border color when selected
+                                    // },
+                                    // '&:hover': {
+                                    // borderColor: "white",
+                                    // // backgroundColor: theme.palette.priority.low,
+                                    // backgroundColor: darken(theme.palette.priority.low, 0.3),
+                                    // },
+                                    // '&.Mui-selected + .MuiToggleButton-root': {
+                                    //     borderLeftColor: 'white',
+                                    // },
                                 }}>
                                 Low
                             </ToggleButton>
@@ -354,18 +369,23 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     borderRadius: '20px',
                                     color: 'white',
                                     marginRight: "10px",
-                                    '&.Mui-selected': {
-                                    borderColor: "black",
-                                    // borderColor: "white",
-                                    color: "white",
-                                    borderWidth: "6px",
-                                    backgroundColor: theme.palette.priority.medium,
-                                    },
-                                    '&:hover': {
-                                    borderColor: "white",
+                                    // '&.Mui-selected': {
+                                    // borderColor: "black",
+                                    // // borderColor: "white",
+                                    // color: "white",
+                                    // borderWidth: "6px",
                                     // backgroundColor: theme.palette.priority.medium,
-                                    backgroundColor: darken(theme.palette.priority.medium, 0.3),
-                                    },
+                                    // },
+                                    // '& .MuiToggleButton-root.Mui-selected': {
+                                    //     backgroundColor: 'lightblue', // Selected background color
+                                    //     color: 'white', // Selected text color
+                                    //     borderColor: 'white', // Add this line to set border color when selected
+                                    // },
+                                    // '&:hover': {
+                                    // borderColor: "white",
+                                    // // backgroundColor: theme.palette.priority.medium,
+                                    // backgroundColor: darken(theme.palette.priority.medium, 0.3),
+                                    // },
                                 }}>
                                 Medium
                             </ToggleButton>
@@ -382,6 +402,11 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                     borderColor: "white",
                                     borderWidth: "6px",
                                     backgroundColor: theme.palette.priority.high,
+                                    },
+                                    '& .MuiToggleButton-root.Mui-selected': {
+                                        backgroundColor: 'lightblue', // Selected background color
+                                        color: 'white', // Selected text color
+                                        borderColor: 'white', // Add this line to set border color when selected
                                     },
                                     '&:hover': {
                                     borderColor: "white",

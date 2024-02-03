@@ -49,8 +49,10 @@ const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="R
 
 export default function PropertyNavigator({currentIndex, setCurrentIndex, propertyData, contracts, props}){
     const navigate = useNavigate();
+    console.log("inside propertyNavigator????")
     const { getProfileId, isManager, roleName } = useUser();
     // console.log(currentIndex)
+    console.log("propertyDatapropertyDatapropertyDatapropertyData",propertyData)
     const item = propertyData[currentIndex];
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [maintenanceData, setMaintenanceData] = useState([{}]);

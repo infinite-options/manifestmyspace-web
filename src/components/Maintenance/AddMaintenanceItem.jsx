@@ -87,13 +87,47 @@ export default function AddMaintenanceItem(){
         setDescription(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handlePriorityChange", event.target.value)
-        // console.log("handleToggleGroupChange", newToggleGsroupValue)
-        setPriority(event.target.value)
-        // setToggleGroupValue(newToggleGroupValue);
-        // setToggleAlignment(newToggleGroupValue);
+    const handlePriorityChange = (event, newToggleGroupValue, value) => {
+        // console.log("handlePriorityChange", event.target.value)
+        // // console.log("handleToggleGroupChange", newToggleGsroupValue)
+        // setPriority(event.target.value)
+        // console.log("priority",priority)
+        // // setToggleGroupValue(newToggleGroupValue);
+        // // setToggleAlignment(newToggleGroupValue);
+        // const buttons = document.querySelectorAll('.MuiToggleButton-root');
+        // buttons.forEach(button => {
+        //     if (button.classList.contains('Mui-selected')) {
+        //         button.style.borderColor = 'white';
+        //     } else {
+        //         button.style.borderColor = ''; // Reset other buttons' border color
+        //     }
+        // });
+
+        setToggleGroupValue(value);
+        setToggleAlignment(value);
     };
+
+    const priorityOptions = ['low', 'medium', 'high'];
+
+    const PriorityToggleButton = ({ value, onClick, isSelected }) => (
+        <Button
+            variant="outlined"
+            size="small"
+            onClick={() => onClick(value)}
+            sx={{
+                borderRadius: '20px',
+                marginRight: "10px",
+                borderColor: isSelected ? 'white' : '',
+                color: isSelected ? 'white' : 'black',
+                '&:hover': {
+                    borderColor: 'white',
+                    backgroundColor: isSelected ? darken(theme.palette.priority[value], 0.3) : '',
+                },
+            }}
+        >
+            {value.charAt(0).toUpperCase() + value.slice(1)}
+        </Button>
+    );
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
         console.log("handleToggleGroupChange", newToggleGroupValue)
@@ -372,7 +406,25 @@ export default function AddMaintenanceItem(){
                                     <ToggleButtonGroup
                                         exclusive
                                         fullWidth
-                                        onChange={handlePriorityChange}
+                                        value={toggleAlignment}
+                                        onChange={(event, value) => handlePriorityChange(value)}
+                                        aria-label="Priority"
+                                        size="small"
+                                    >
+                                        {priorityOptions.map((option) => (
+                                            <PriorityToggleButton
+                                                key={option}
+                                                value={option}
+                                                onClick={handlePriorityChange}
+                                                isSelected={toggleAlignment === option}
+                                            />
+                                        ))}
+                                    </ToggleButtonGroup>
+
+                                    {/* <ToggleButtonGroup
+                                        exclusive
+                                        fullWidth
+                                        onClick={handlePriorityChange}
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
@@ -458,7 +510,7 @@ export default function AddMaintenanceItem(){
                                             }}>
                                             High
                                         </ToggleButton>
-                                    </ToggleButtonGroup>
+                                    </ToggleButtonGroup> */}
                                 </Grid>
 
                                 {/* Text Field for Description */}
