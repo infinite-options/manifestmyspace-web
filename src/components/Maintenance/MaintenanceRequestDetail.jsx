@@ -380,12 +380,9 @@ export function MaintenanceRequestDetail(){
                                 }}
                             >
                                 {colorStatus.map((item, index) => {
-                                        console.log('Ramin', index, ' ',item )
-                                        console.log('Mousivand', ' ', allData )
 
                                         let color = greyOutTab(item.mapping, allData, item.color)
-                                        
-                                        
+                                        let title = item.mapping
                                         
                                         return (
                                             <Tab key={index}
@@ -399,6 +396,11 @@ export function MaintenanceRequestDetail(){
                                                     minWidth: '5px',
                                                     padding: '0px',
                                                 }}
+                                                label={
+                                                    <Typography sx={{color: theme.typography.primary.grey, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                        {title}
+                                                    </Typography>
+                                                }
                                             />
                                         )
                                     }

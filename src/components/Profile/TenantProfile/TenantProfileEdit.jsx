@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, TextField } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Button, Stack, Typography, TextField, Select, MenuItem, } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState, createContext, useContext  } from "react";
 import { useUser } from "../../../contexts/UserContext";
@@ -53,6 +53,12 @@ function TenantProfileEdit(props) {
     const [tenantChildrenOccupants, setTenantChildrenOccupants] = useState([]);
     const [tenantPetOccupants, setTenantPetOccupants] = useState([]);
     const [tenantVehicleInfo, setTenantVehicleInfo] = useState([]);
+
+    const [tenantFiles, setTenantFiles] = useState([]);
+    const [tenantFileTypes, setTenantFileTypes] = useState([]);
+    const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
+    const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
+    
     
     // const [tenant, setTenant] = useState('');
 
@@ -139,6 +145,8 @@ function TenantProfileEdit(props) {
             // setTenantMonthlyRent(responseData.tenant_monthly_rent)
             // setTenantPMName(responseData.tenant_pm_name)
             // setTenantPMPhone(responseData.tenant_pm_phone)
+            
+            setPreviouslyUploadedDocs(responseData.tenant_documents);
 
             setShowSpinner(false);
         });
@@ -232,7 +240,10 @@ function TenantProfileEdit(props) {
     // leaseApplicationFormData.append("lease_status", "ENDED");
 
     profileFormData.append("tenant_adult_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
-    profileFormData.append("tenant_children_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
+    profileFormData.append("tenant_children_occupants", JSON.stringify(modifiedData["tenant_children_occupants"]));
+    profileFormData.append("tenant_pet_occupants", JSON.stringify(modifiedData["tenant_pet_occupants"]));
+    profileFormData.append("tenant_vehicle_info", JSON.stringify(modifiedData["tenant_vehicle_info"]));
+    
 
     profileFormData.append("tenant_uid", getProfileId())
     for (const item of profileFormData){
@@ -244,13 +255,40 @@ function TenantProfileEdit(props) {
         event.preventDefault();
         console.log("FORM SUBMITTED")
         console.log(modifiedData)
-        console.log("profileFormData>>>>>>",profileFormData)
+
+        profileFormData.append("tenant_documents", JSON.stringify(previouslyUploadedDocs));
+        const hasMissingType = !checkFileTypeSelected();
+        console.log("HAS MISSING TYPE", hasMissingType);
+
+        if (hasMissingType) {
+            setShowMissingFileTypePrompt(true);
+            return;
+        }
+
+        
+        if(tenantFiles.length){
+            setIsEdited(true);
+            const documentsDetails = [];
+            [...tenantFiles].forEach((file, i) => {
+                profileFormData.append(`file-${i}`, file, file.name);
+                const fileType = tenantFileTypes[i] || '';
+                const documentObject = {
+                    // file: file,
+                    fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                    fileName: file.name, //may not need filename
+                    fileType: fileType,
+                };
+                documentsDetails.push(documentObject);
+            });
+            profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+        }
         
         // Make a PUT request with formData to update data on the backend
         if(isEdited){
             console.log("EDITED")
             // axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
+            // axios.put('http://localhost:4000/profile', profileFormData, headers)            
             .then((response) => {
                 console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
@@ -264,6 +302,44 @@ function TenantProfileEdit(props) {
         }
         
     };
+    
+
+    const handleDeletePrevUploadedFile = (index) => {
+        setPreviouslyUploadedDocs(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
+        });
+    }
+
+    const handleRemoveFile = (index) => {
+        setTenantFiles(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
+        });
+        setTenantFileTypes(prevTypes => {
+            const typesArray = [...prevTypes];
+            typesArray.splice(index, 1);
+            return typesArray;
+        });
+    };
+
+    const checkFileTypeSelected = () => {
+        for (let i = 0; i < tenantFiles.length; i++) {
+          if (i >= tenantFileTypes.length) {
+            return false; // Return false if the index is out of bounds
+          }
+          const fileType = tenantFileTypes[i];
+          console.log("FILE TYPE: ", fileType);
+          if (!fileType || fileType.trim() === "") {
+            return false;
+          }
+        }
+        setShowMissingFileTypePrompt(false);
+        return true;
+    };
+
 
     return (
         <TenantProfileEditContext.Provider value={{modifiedData, setModifiedData, isEdited, setIsEdited, occupantsDataComplete, setOccupantsDataComplete }}>
@@ -700,7 +776,204 @@ function TenantProfileEdit(props) {
                                     <ProfileAccordionSummary>
                                         Tenant Documents
                                     </ProfileAccordionSummary>
-                                    <ProfileAccordionDetail>
+                                    <ProfileAccordionDetail>                                    
+                                    {
+                                        previouslyUploadedDocs.length? (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                justifyContent:'space-between',
+                                                alignItems: 'center',
+                                                marginBottom: '7px',
+                                                width: '100%',
+                                            }}>
+                                                
+                                                <Box
+                                                    sx={{
+                                                        fontSize: '15px',
+                                                        fontWeight: 'bold',
+                                                        paddingTop: '10px',
+                                                        paddingLeft: '5px',
+                                                        color: '#3D5CAC',
+                                                        width: '100%',
+                                                    }}
+                                                >
+                                                    Previously Uploaded Documents:
+                                                    <Box
+                                                        sx={{
+                                                            display:'flex',
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between',
+                                                            paddingTop: '5px',
+                                                            color: 'black',
+                                                        }}
+                                                    >
+                                                        <Box>filename</Box>
+                                                        <Box>type</Box>
+                                                        <Box>{' '}</Box>
+                                                    </Box>
+                                                    {[...previouslyUploadedDocs].map((doc, i) => (
+                                                        <>                                
+                                                            <Box
+                                                                key={i} 
+                                                                sx={{
+                                                                    display:'flex',
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'space-between',
+                                                                }}
+                                                            >
+                                                                <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                                                    <Box
+                                                                        sx={{
+                                                                            // height: '16px',
+                                                                            width: '100%', 
+                                                                            
+                                                                            
+                                                                            cursor: 'pointer', // Change cursor to indicate clickability
+                                                                            color: '#3D5CAC',
+                                                                        }}
+                                                                    >
+                                                                    {doc.filename}
+                                                                    </Box>
+                                                                </a>
+                                                                {doc.type}
+                                                                <Button 
+                                                                    variant="text"
+                                                                    onClick={(event) => {
+                                                                        handleDeletePrevUploadedFile(i);
+                                                                    }}
+                                                                    sx={{
+                                                                        width: '10%', 
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '14px',
+                                                                        fontWeight: 'bold', 
+                                                                        color: '#3D5CAC',
+                                                                        '&:hover': {
+                                                                            backgroundColor: 'transparent', // Set to the same color as the default state
+                                                                        },
+                                                                    }}
+                                                                    
+                                                                >
+                                                                    <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                                                </Button>
+                                                            </Box>
+                                                        </>
+                                
+                                                        
+                                                    ))}
+                                                </Box>
+                                
+                                            </Box>
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
+                                    {
+                                        tenantFiles.length? (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                justifyContent:'space-between',
+                                                alignItems: 'center',
+                                                marginBottom: '7px',
+                                                width: '100%',
+                                            }}>
+                                                
+                                                <Box
+                                                    sx={{
+                                                        fontSize: '15px',
+                                                        fontWeight: 'bold',
+                                                        padding: '5px',
+                                                        color: '#3D5CAC',
+                                                        width: '100%',
+                                                    }}
+                                                >
+                                                    Added Documents:
+                                                    {[...tenantFiles].map((f, i) => (
+                                                        <Box
+                                                            key={i} 
+                                                            sx={{
+                                                                display:'flex',
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between',
+                                                            }}
+                                                        >
+                                                            <Box
+                                                                sx={{
+                                                                    
+                                                                    // height: '16px',
+                                                                    width: '50%', // Adjust the width as needed
+                                                                    padding: '8px', // Adjust the padding as needed
+                                                                }}
+                                                            >
+                                                            {f.name}
+                                                            </Box>
+                                                            <Select
+                                                                value={tenantFileTypes[i]}
+                                                                label="Document Type"
+                                                                onChange={(e) => {
+                                                                        const updatedTypes = [...tenantFileTypes];
+                                                                        updatedTypes[i] = e.target.value;
+                                                                        setTenantFileTypes(updatedTypes);
+                                                                    }
+                                                                }
+                                                                required
+                                                                sx={{
+                                                                    backgroundColor: '#D6D5DA',
+                                                                    height: '16px',
+                                                                    width: '40%', // Adjust the width as needed
+                                                                    padding: '8px', // Adjust the padding as needed
+                                                                }}
+                                                            >
+                                                                <MenuItem value={"income_proof"}>Proof of Income</MenuItem>
+                                                                <MenuItem value={"bank_statement"}>Bank Statement</MenuItem>
+                                                                <MenuItem value={"id"}>ID</MenuItem>
+                                                                <MenuItem value={"renters_insurance_proof"}>Proof of Renter's Insurance</MenuItem>
+                                                                <MenuItem value={"ssn"}>SSN</MenuItem>
+                                                                <MenuItem value={"credit_report"}>Credit Report</MenuItem>
+                                                                <MenuItem value={"reference"}>Reference</MenuItem>
+                                                                <MenuItem value={"other"}>Other</MenuItem>
+                                                            </Select>
+                                                            <Button 
+                                                                variant="text"
+                                                                onClick={() => {
+                                                                    // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
+                                                                    handleRemoveFile(i)
+                                                                }}
+                                                                sx={{
+                                                                    width: '10%', 
+                                                                    cursor: 'pointer',
+                                                                    fontSize: '14px',
+                                                                    fontWeight: 'bold', 
+                                                                    color: '#3D5CAC', 
+                                                                }}
+                                                                
+                                                            >
+                                                                <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                                            </Button>
+                                                        </Box>
+                                
+                                                        
+                                                    ))}
+                                                    
+                                                    {showMissingFileTypePrompt && (
+                                                        <Box
+                                                            sx={{
+                                                                color: 'red',
+                                                                fontSize: '13px',
+                                                            }}
+                                                        >
+                                                            Please select document types for all documents before proceeding.
+                                                        </Box>
+                                                    )}
+                                                </Box>
+                                
+                                            </Box>
+                                        ) : (<></>)
+                                    }
                                         <Box sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -720,9 +993,18 @@ function TenantProfileEdit(props) {
                                                 color: '#FFFFFF',
                                                 marginBottom: '14px',
                                             }}>
-                                                <Box>
+                                                
+                                                <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
                                                     Add Documents
-                                                </Box>
+                                                </label>                                                
+                                                <input
+                                                    id="file-upload"
+                                                    type="file"
+                                                    accept=".doc,.docx,.txt,.pdf"
+                                                    hidden                                                    
+                                                    onChange={(e) => setTenantFiles((prevFiles) => [...prevFiles, ...e.target.files])}                                                    
+                                                    multiple
+                                                />
                                                 <Box sx={{
                                                     display: 'flex',
                                                     justifyContent: 'center',
@@ -738,6 +1020,7 @@ function TenantProfileEdit(props) {
                                                     </svg>
                                                 </Box>
                                             </Box>
+                                            ALLOWED FILE EXTENSIONS = '.txt', '.pdf', '.doc', '.docx'
                                             {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
                                                 <DocumentCard key={index} data={{ title: document.name, description:document.description, date: document.created_date, link: document.link,  }} />
                                             ))}

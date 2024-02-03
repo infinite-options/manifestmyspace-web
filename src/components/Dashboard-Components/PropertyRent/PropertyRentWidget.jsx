@@ -91,9 +91,10 @@ export default function PropertyRentWidget(props) {
                         outerRadius={60}
                         paddingAngle={0}
                         dataKey="number"
+                        filter="url(#shadow)"
                         onClick={() => {
-                            if(props.profile === "manager"){
-                                navigate('/PMProperties')     
+                            if(props.profile === "MANAGER"){
+                                navigate('/PMProperties')
                             }else{
                                 navigate('/properties') 
                             } 

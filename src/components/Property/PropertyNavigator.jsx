@@ -49,8 +49,7 @@ const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="R
 
 export default function PropertyNavigator({currentIndex, setCurrentIndex, propertyData, contracts, props}){
     const navigate = useNavigate();
-    console.log("inside propertyNavigator????")
-    const { getProfileId, isManager, roleName } = useUser();
+    const { getProfileId, isManager, roleName, selectedRole } = useUser();
     // console.log(currentIndex)
     console.log("propertyDatapropertyDatapropertyDatapropertyData",propertyData)
     const item = propertyData[currentIndex];
@@ -211,7 +210,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         // console.log(`maintenanceReqData in displayTopMaintenanceItem for ${propertyId}`, maintenanceReqData)
         // console.log(`maintenanceData before maintenance table ${JSON.stringify(maintenanceData)}`)
         // console.log(`colorStatus mapping ${JSON.stringify(colorStatus)}`)
-        console.log(maintenanceData)
+        // console.log(maintenanceData)
         if(maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid){
             return (
                 <DataGrid
@@ -277,15 +276,17 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     };
 
     const handleManagerChange = (index) => {
-        if(item.business_uid) navigate("/managerDetails", { 
-            state: { 
-                ownerId: item.owner_uid, 
-                managerBusinessId: item.business_uid,
-                managerData: item,
-                propertyData: propertyData,
-                index: currentIndex,
-            } 
-        });
+        if(item.business_uid) {
+            navigate("/managerDetails", { 
+                state: { 
+                    ownerId: item.owner_uid, 
+                    managerBusinessId: item.business_uid,
+                    managerData: item,
+                    propertyData: propertyData,
+                    index: currentIndex,
+                } 
+            });
+        }   
         else {
             // console.log("--debug--", index, propertyData)
             navigate("/searchManager", { state: { index: index, propertyData } });
@@ -822,7 +823,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                     </Grid>
                                     {/* {console.log("--debug-- this is contractsData", contractsData)}
                                     {console.log("--debug-- contractsNewSent", contractsNewSent)} */}
-                                    {contractsData && contractsData.length > 0 ? (
+                                    {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
                                         <>
                                             <Grid item xs={11}>
                                                 <Typography

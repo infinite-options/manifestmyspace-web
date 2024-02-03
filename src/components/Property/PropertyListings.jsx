@@ -574,6 +574,8 @@ const PropertyListings = (props) => {
                         var status = ""
                         let i = sortedProperties.findIndex(p=>p.property_uid===property.property_uid) // This is to make sure the filtered property items don't confuse with sorted property items, and there's no wrong label or attribute
                         const appliedData = userLeases.find((lease) => lease.lease_property_id === property.property_uid);
+                        console.log("appliedData", appliedData)
+                        console.log("userLeases", userLeases)
                         if (appliedData) { 
                             console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status)
                             status = appliedData.lease_status;
@@ -599,8 +601,8 @@ function PropertyCard(props) {
 
     const property = props.data;
 
-    const propertyImages = property.property_images || "";
-    const ppt_images = propertyImages.split(',');
+    const propertyImages = property?.property_images || "";
+    const ppt_images = propertyImages.split(',');   
 
     // useEffect(() => {
     //     if(status !== "" || status !== null){
@@ -636,7 +638,7 @@ function PropertyCard(props) {
         currency: 'USD',
         maximumFractionDigits: 0,
         minimumFractionDigits: 0,
-    }).format(property.property_listed_rent);
+    }).format(property?.property_listed_rent);
 
     const handleDetailsButton = () => {
         navigate('/propertyInfo', {
@@ -650,10 +652,10 @@ function PropertyCard(props) {
     };
 
     function formatAddress(){
-        if(property.property_unit !== ""){
-            return property.property_address + " Unit " + property.property_unit;
+        if(property?.property_unit !== ""){
+            return property?.property_address + " Unit " + property?.property_unit;
         }
-        return property.property_address;
+        return property?.property_address;
     }
     
     const new_label= <Box  sx={{
@@ -695,17 +697,10 @@ function PropertyCard(props) {
                         textTransform: 'none'
                     }}
                     onClick={() => {
-                        // navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})
-                        console.log('Soooooltan')
-                        console.log(lease)
-                        console.log('lease')
-                        console.log('property')
-                        console.log(property)
-                        console.log('status')
-                        console.log(status)
-                        navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})
-                        
-                        
+                            console.log('lease:', lease)
+                            console.log('property:', property)                            
+                            console.log('status:', status)
+                            navigate("/tenantLeases", {state: { property: property, status: status, lease: lease }})
                         }}
                 >
                     <Typography
@@ -910,11 +905,11 @@ function PropertyCard(props) {
                             fontSize: '16px',
                         }}
                     >
-                        {property.property_city +
+                        {property?.property_city +
                             ', ' +
-                            property.property_state +
+                            property?.property_state +
                             ' ' +
-                            property.property_zip}
+                            property?.property_zip}
                     </Typography>
                     <Stack
                         justifyContent={'center'}
@@ -935,7 +930,7 @@ function PropertyCard(props) {
                                     fontSize: '16px',
                                 }}
                             >
-                                {property.property_type}
+                                {property?.property_type}
                             </Typography>
                             <Typography
                                 sx={{
@@ -960,7 +955,7 @@ function PropertyCard(props) {
                                     fontSize: '16px',
                                 }}
                             >
-                                {property.property_num_beds}
+                                {property?.property_num_beds}
                             </Typography>
                             <Typography
                                 sx={{
@@ -985,7 +980,7 @@ function PropertyCard(props) {
                                     fontSize: '16px',
                                 }}
                             >
-                                {property.property_num_baths}
+                                {property?.property_num_baths}
                             </Typography>
                             <Typography
                                 sx={{
@@ -1010,7 +1005,7 @@ function PropertyCard(props) {
                                     fontSize: '16px',
                                 }}
                             >
-                                {property.property_area}
+                                {property?.property_area}
                             </Typography>
                             <Typography
                                 sx={{
@@ -1106,4 +1101,4 @@ function PropertyCard(props) {
     );
 }
 
-export default PropertyListings;
+export {PropertyListings, PropertyCard};

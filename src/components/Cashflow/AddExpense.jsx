@@ -145,7 +145,7 @@ const AddExpense = (props) => {
     if (edit && itemToEdit){
       console.log("itemToEdit", itemToEdit)
     }
-    let data = JSON.stringify({
+    let data = {
       "pur_property_id": selectedProperty.property_uid,
       "purchase_type": category,
       "pur_cf_type": "expense",
@@ -160,7 +160,11 @@ const AddExpense = (props) => {
       "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
       "pur_frequency": frequency,
       "pur_notes": notes,
-    });
+    };
+
+    if (determinePurchaseStatus() === "PARTIALLY PAID"){
+      data["partial_amount"] = Number(partialAmount)
+    }
     
     let config = {
         method: 'post',
@@ -169,7 +173,7 @@ const AddExpense = (props) => {
         headers: { 
             'Content-Type': 'application/json'
         },
-        data : data
+        data: JSON.stringify(data)
     };
     setShowSpinner(true);
     axios.request(config)

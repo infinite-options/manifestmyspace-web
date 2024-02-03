@@ -25,38 +25,33 @@ function PMProfile() {
     const [business_service_fees, set_business_service_fees] = useState([]); // State for business_services_fees
     const [payment_accounts, set_payment_accounts] = useState([]);
   
-    useEffect( () => {
-      setShowSpinner(true);
-      axios
-        .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
-        .then((res) => {
-          setProfileData(res.data.result[0]);
-          setShowSpinner(false);
-          try {
-             const  parsedFees = JSON.parse(res.data.result[0]?.business_services_fees);
-            set_business_service_fees(parsedFees);
-          } catch (e) {
-            set_business_service_fees([]);
-          }
-        });
-
+    useEffect(() => {
+        setShowSpinner(true);
+        axios
+            .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
+            .then((res) => {
+                setProfileData(res.data.result[0]);
+                setShowSpinner(false);
+                  try {
+                    const parsedFees = JSON.parse(res.data.result[0]?.business_services_fees);
+                    set_business_service_fees(parsedFees);
+                } catch (e) {
+                    set_business_service_fees([]);
+                }
+            });
+    
         const fetchPaymentData = async () => {
             try {
-              const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
-              set_payment_accounts(response.data.result);
-              
-              
+                const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+                set_payment_accounts(response.data.result);
             } catch (error) {
-              set_payment_accounts([]);
-              console.error('Error fetching payment accounts:', error);
+                set_payment_accounts([]);
+                console.error('Error fetching payment accounts:', error);
             }
-          };
-      
-          fetchPaymentData();
-
-
-
-    }, []); // Include getProfileId in the dependencies array to avoid eslint warnings
+        };
+    
+        fetchPaymentData();
+    }, [getProfileId]);
 
 
 
@@ -118,45 +113,44 @@ function PMProfile() {
                 </Box>
 
                 {profileData.business_photo_url !== null ? (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            height: '121px',
-                            width: '121px',
-                            backgroundColor: '#bbb',
-                            borderRadius: '50%',
-                            marginLeft: 'auto',
-                            marginRight: 'auto',
-                            boxShadow: '0px 4px 4px #00000032'
-                        }}
-                    >
-                        <img
-                            src={profileData.business_photo_url}
-                            alt="Profile"
-                            style={{
-                                borderRadius: '50%',
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover'
-                            }}
-                        />
-                    </Box>
-                ) : (
-                    <Box sx={{
-                        justifySelf: 'center',
-                        height: '121px',
-                        width: '121px',
-                        backgroundColor: '#bbb',
-                        borderRadius: '50%',
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        boxShadow: '0px 4px 4px #00000032'
-                    }}>
-                        
-                    </Box>
-                )}
+    <Box
+        sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '121px',
+            width: '121px',
+            backgroundColor: '#bbb',
+            borderRadius: '50%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            boxShadow: '0px 4px 4px #00000032',
+        }}
+    >
+        <img
+            src={`${profileData.business_photo_url}?${Date.now()}`} // Append timestamp to the image URL
+            alt="Profile"
+            style={{
+                borderRadius: '50%',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+            }}
+        />
+    </Box>
+) : (
+    <Box sx={{
+            justifySelf: 'center',
+            height: '121px',
+            width: '121px',
+            backgroundColor: '#bbb',
+            borderRadius: '50%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            boxShadow: '0px 4px 4px #00000032',
+        }}>
+        </Box>
+)}
                 
                 
                 

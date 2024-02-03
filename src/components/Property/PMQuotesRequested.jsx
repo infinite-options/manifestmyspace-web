@@ -31,7 +31,7 @@ export default function PMQuotesRequested({}){
 
     const [contracts, setContracts] = useState(location.state.contracts);
    
-    const [refresh, setRefresh]=useState(false)
+    const [refresh, setRefresh] = useState(false)
     const property = location.state.propertyData;
     const propertyId= property[location.state.index]?.property_uid
     const index = location.state.index;
@@ -99,9 +99,6 @@ export default function PMQuotesRequested({}){
         }
         getContractsForOwner();
 
-
-
-
     }, [refresh]);
 
     function displayPMQuotesRequested(){
@@ -155,7 +152,8 @@ export default function PMQuotesRequested({}){
                             } if (contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED"){
                                 return (
                                     <div>
-                                        <DocumentCard data={contract}/>
+                                        {/* <DocumentCard data={contract}/> */}
+                                        <p>this contract is withdraw/rejected</p>
                                     </div>
                                 )
                             } if (contract.contract_status === "NEW"){
@@ -262,7 +260,7 @@ export default function PMQuotesRequested({}){
             console.log("error", error)
             return false;
         }
-
+        setRefresh(!refresh)
         setTabStatus(1);
     }
     
@@ -527,9 +525,6 @@ function DocumentCard(props) {
                 if(responseData.result.business_services_fees !== null && responseData.result[0].business_services_fees !== undefined){
                     setFees(JSON.parse(responseData.result[0].business_services_fees));
                 }
-
-        
-
 
             } catch (error){
                 console.log("error", error)

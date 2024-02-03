@@ -169,7 +169,7 @@ export default function AddMaintenanceItem(){
         const currentDate = new Date();
         // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
-
+        console.log(formattedDate)
         console.log("toggleAlignment", toggleAlignment)
 
         formData.append("maintenance_property_id", propertyId);
@@ -193,8 +193,8 @@ export default function AddMaintenanceItem(){
             try {
                 let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                if(selectedImageList[i]?.image?.startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i].image);
                     formData.append(key, imageBlob)
                 } else {
                     formData.append(key, selectedImageList[i])

@@ -34,7 +34,7 @@ function Onboarding() {
             <Typography
               sx={{ color: theme.palette.background.default, fontSize: 38 }}
             >
-              <b>{"Welcome to ManifestMy.Space!"}</b>
+              <b>{"Welcome to Manifest!"}</b>
             </Typography>
             <br />
             <Typography
@@ -63,23 +63,40 @@ function Onboarding() {
             </Typography>
           </Stack>
         </Box>
-        <Button
-          variant="contained"
-          sx={{
-            background: "#3D5CAC",
-            color: theme.palette.background.default,
-            width: `90%`,
-            height: `15%`,
-            left: `5%`,
-            borderRadius: "15px",
-          }}
-          onClick={() => {
-            navigate("/newUser");
-          }}
-        >
-          {"Create Account"}
-        </Button>
-
+        <Box>
+          <Button
+            variant="contained"
+            sx={{
+              background: "#3D5CAC",
+              color: theme.palette.background.default,
+              width: `90%`,
+              height: `15%`,
+              left: `5%`,
+              borderRadius: "15px",
+            }}
+            onClick={() => {
+              navigate("/newUser");
+            }}
+          >
+            {"Create Account"}
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              background: "#3D5CAC",
+              color: theme.palette.background.default,
+              width: `90%`,
+              height: `15%`,
+              left: `5%`,
+              borderRadius: "15px",
+            }}
+            onClick={() => {
+              navigate("/newUser");
+            }}
+          >
+            {"Sign Up"}
+          </Button>
+        </Box>
         <Box
           sx={{
             padding: "5%",
@@ -88,7 +105,7 @@ function Onboarding() {
           <Box sx={{ paddingTop: "3%" }}>
             <img src={Owners} alt="Owners" />
           </Box>
-          <Box sx={{ paddingTop: "3%" }}>
+          <Box sx={{ paddingTop: "3%", width: "500px", height: "500px" }}>
             <img src={Manager} alt="Manager" />
           </Box>
           <Box sx={{ paddingTop: "3%" }}>
@@ -98,22 +115,6 @@ function Onboarding() {
             <img src={Maintenance} alt="Maintenance" />
           </Box>
         </Box>
-        <Button
-          variant="contained"
-          sx={{
-            background: "#3D5CAC",
-            color: theme.palette.background.default,
-            width: `90%`,
-            height: `15%`,
-            left: `5%`,
-            borderRadius: "15px",
-          }}
-          onClick={() => {
-            navigate("/newUser");
-          }}
-        >
-          {"Sign Up"}
-        </Button>
         <Stack spacing={-16} m={12}></Stack>
       </Box>
     </ThemeProvider>
