@@ -24,7 +24,7 @@ import {
     InputAdornment
 } from "@mui/material";
 import { useUser } from "../../contexts/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -36,12 +36,12 @@ import theme from '../../theme/theme';
 import { darken } from '@mui/system';
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, propertyId}){
+export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){
     const location = useLocation();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
     const [selectedImageList, setSelectedImageList] = useState([]);
-    const [property, setProperty] = useState('200-000029');
+    const [property, setProperty] = useState(location.state.propertyData);
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('left');
@@ -50,6 +50,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     const [description, setDescription] = useState('');
     const [file, setFile] = useState('');
     const [showSpinner, setShowSpinner] = useState(false);
+
+    useEffect(() => {
+        console.log(selectedImageList)
+    }, [selectedImageList])
 
     const handlePropertyChange = (event) => {
         setProperty(event.target.value);
@@ -101,7 +105,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
 
 
-        formData.append("maintenance_property_id", property);
+        formData.append("maintenance_property_id", property.property_uid);
         formData.append("maintenance_title", title);
         formData.append("maintenance_desc", description);
         formData.append("maintenance_request_type", issue);
@@ -122,8 +126,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
             try {
                 let key = i === 0 ? "img_cover" : `img_${i-1}`;
 
-                if(selectedImageList[i].startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i]);
+                if(selectedImageList[i]?.image?.startsWith("data:image")){
+                    const imageBlob = dataURItoBlob(selectedImageList[i].image);
                     formData.append(key, imageBlob)
                 } else {
                     formData.append(key, selectedImageList[i])
@@ -156,7 +160,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         postData();
 
         setSelectedImageList([])
-        setProperty('200-000029')
+        setProperty('')
         setIssue('')
         setToggleGroupValue('tenant')
         setToggleAlignment('left')
@@ -262,8 +266,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                 size="small"
                             >
                                 {/* <InputLabel>Select Property</InputLabel> */}
-                                <Select defaultValue="" onChange={handlePropertyChange}>
-                                    <MenuItem value={property}>5640 W. Sunset Road</MenuItem>
+                                <Select defaultValue={property.property_uid} onChange={handlePropertyChange}>
+                                    <MenuItem value={property.property_uid}>{property.property_address} {property.property_unit}</MenuItem>
                                     {/* <MenuItem value={"9501 Kempler Drive"}>9501 Kempler Drive</MenuItem>
                                     <MenuItem value={"9107 Japonica Court"}>9107 Japonica Court</MenuItem> */}
                                 </Select>

@@ -30,6 +30,7 @@ import ArticleIcon from '@mui/icons-material/Article'; // For "Document"
 import PhoneIcon from '@mui/icons-material/Phone'; // For "Phone"
 import BuildIcon from '@mui/icons-material/Build'; // For "Maintenance"
 import AddIcon from '@mui/icons-material/Add'; // For "New Request"
+import { PropertyCard } from '../Property/PropertyListings'
 
 
 function TenantDashboard(props) {
@@ -60,6 +61,9 @@ function TenantDashboard(props) {
   const [total, setTotal] = useState("0.00");
 
   const [anchorEl, setAnchorEl] = useState(null);
+  
+  const [userLeases, setUserLeases] = useState(null)
+  const [selectedLease, setSelectedLease] = useState(null)
 
   const open = Boolean(anchorEl);
   const handleOpen = (event) => {
@@ -70,7 +74,7 @@ function TenantDashboard(props) {
   };
 
   const { user } = useUser();
-  console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
+//   console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
 
   let automatic_navigation_handler =(propertyData)=>{
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
@@ -80,55 +84,72 @@ function TenantDashboard(props) {
       }
   }
 
-  useEffect(() => {
-    const getTenantData = async () => {
-        setShowSpinner(true);
-        const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
-        // const tenantRequests = await fetch(`http://127.0.0.1:4000/dashboard/${getProfileId()}`);
-        const tenantRequestsData = await tenantRequests.json()  
-        
-        console.log(tenantRequestsData)
+    useEffect(() => {
+        const getTenantData = async () => {
+            setShowSpinner(true);
+            const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+            const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+            const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`)
 
-        let propertyData = tenantRequestsData?.property?.result;
-        let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
-        let announcementsData = tenantRequestsData?.announcements?.result;
-        console.log("PropertyData", propertyData)
-        const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
+            const tenantRequestsData = await tenantRequests.json()  
+            const leaseData = await leaseResponse.json()
+            const propertyResponseData = await propertyResponse.json();
 
-      // sort propertyData by lease_status so that active lease is first
-        propertyData.sort((a, b) => {
-            if (a.lease_status === "ACTIVE") {
-                return -1;
+            // setUserLeases(propertyResponseData.Tenant_Leases.result)
+            setUserLeases(propertyResponseData.Tenant_Leases.result)
+
+            console.log("leaseData from API==>", leaseData.Lease_Details.result)
+            console.log("tenantRequestsData", tenantRequestsData)
+            console.log("propertyResponseData", propertyResponseData)
+
+            let propertyData = tenantRequestsData?.property?.result;
+            let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
+            let announcementsData = tenantRequestsData?.announcements?.result;
+            console.log("PropertyData", propertyData)
+            const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
+
+        // sort propertyData by lease_status so that active lease is first
+            propertyData.sort((a, b) => {
+                if (a.lease_status === "ACTIVE") {
+                    return -1;
+                }
+                if (b.lease_status === "ACTIVE") {
+                    return 1;
+                }
+                return 0;
+            });
+
+            console.log(allNonActiveLease)
+
+            if(!propertyData || propertyData.length === 0){
+                console.log("!propertyData || propertyData.length === 0")
+                navigate("/listings")
             }
-            if (b.lease_status === "ACTIVE") {
-                return 1;
+            if (allNonActiveLease) {
+                navigate('/listings');
             }
-            return 0;
-        });
 
-        console.log(allNonActiveLease)
+            setPropertyData(propertyData || []);
+            setMaintenanceRequestsData(maintenanceRequestsData || []);
+            setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
 
-        if(!propertyData || propertyData.length === 0){
-            console.log("!propertyData || propertyData.length === 0")
-            navigate("/listings")
+            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit :"No Data"
+            setPropertyAddr(propertyAddress);
+            setFirstName(user.first_name)
+            setShowSpinner(false);
+            setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
+            setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
         }
-        if (allNonActiveLease) {
-            navigate('/listings');
+        getTenantData();
+    }, [])
+
+    useEffect(() => {
+        if (userLeases){
+            console.log("selectedProperty.lease_uid", selectedProperty.lease_uid)
+            let filteredLease = userLeases.find(lease => lease.lease_uid === selectedProperty.lease_uid)
+            setSelectedLease(filteredLease)
         }
-
-        setPropertyData(propertyData || []);
-        setMaintenanceRequestsData(maintenanceRequestsData || []);
-        setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
-
-        let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit :"No Data"
-        setPropertyAddr(propertyAddress);
-        setFirstName(user.first_name)
-        setShowSpinner(false);
-        setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
-        setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
-    }
-    getTenantData();
-  }, [])
+    },[userLeases, selectedProperty]);
 
 //   useEffect(() => {
 //     console.log("TenantDashboard useEffect")
@@ -149,7 +170,11 @@ function TenantDashboard(props) {
 
   function handleTenantMaintenanceNavigate() {
     console.log("Tenant Maintenance Navigate");
-    navigate("/addTenantMaintenanceItem");
+    let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address)
+    console.log(navPropertyData)
+    navigate("/addTenantMaintenanceItem", {
+        state: { propertyData: navPropertyData },
+    });
   }
 
   function handleViewLeaseNavigate(lease_uid){
@@ -181,6 +206,16 @@ function TenantDashboard(props) {
       console.log(error);
     }
     setShowSpinner(false);
+  }
+  
+
+  function NonActiveLeaseDashboardTab({property, leaseStatus, lease}){
+    // console.log("Property: ", property);
+    // console.log("Lease Status: ", lease_status);
+    console.log("Lease Data:", lease)
+    return (
+        <PropertyCard data={property} status={leaseStatus} leaseData={lease}/>
+    )
   }
 
   return (
@@ -265,7 +300,7 @@ function TenantDashboard(props) {
                         >
                             <Typography
                             onClick={ () => {navigate('/myProperty', {
-                                state: {propertyData, propertyData}
+                                state: {propertyData: propertyData}
                                 })}
                             }
                             >
@@ -290,10 +325,11 @@ function TenantDashboard(props) {
                                 <MenuItem 
                                     key={index}
                                     onClick={() => {
-                                    setPropertyAddr(item.property_address + " " + item.property_unit)
-                                    setTotal(item.balance)
-                                    setSelectedProperty(item)
-                                    handleClose()
+                                        setPropertyAddr(item.property_address + " " + item.property_unit)
+                                        setTotal(item.balance)
+                                        setSelectedProperty(item)
+                                        setSelectedLease(userLeases.find(lease => lease.lease_uid === item.lease_uid))
+                                        handleClose()
                                     }}
                                     disableRipple
                                 >
@@ -336,244 +372,246 @@ function TenantDashboard(props) {
 
       {selectedProperty?.lease_status === "ACTIVE" ? (
         <>
-        <DashboardTab>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    padding: "10px",
-                    paddingRight: "0px",
-                }}
-            >
+            <DashboardTab>
                 <Box
-                    sx={{
-                        marginLeft: "5px",
-                    }}
-                >
-                    <Box sx={{fontSize: "20px", fontWeight: "bold", color: "#160449",}}>
-                        Balance
-                    </Box>
-                    <Box sx={{fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px",}}>
-                        ${total}
-                    </Box>
-                    <Box sx={{fontSize: "15px", fontWeight: "600",color: "#3D5CAC",}} onClick={()=>{navigate('/payments')}}>
-                        View Details
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItem: "center",
-                    marginRight: "20px",
-                    }}
-                >
-                    <Box
                     sx={{
                         display: "flex",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        color: "#00000080",
-                        padding: "6px",
-                    }}
-                    >
-                        Pay before {propertyData[0]!==undefined? propertyData[0].earliest_due_date:"No Data"}
-                    </Box>
-                    <Box
-                    sx={{
-                        backgroundColor: "#3D5CAC",
-                        borderRadius: "10px",
-                        color: "#FFFFFF",
-                        fontWeight: "bold",
-                        fontSize: "22px",
-
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                         padding: "10px",
-                        paddingRight: "20px",
-                        paddingLeft: "20px",
-                    }}
-                    onClick={() => {
-                        // handleStripePayment()
-                        navigate('/payments')
-                    }}
-                    >
-                        Make a Payment
-                    </Box>
-                </Box>
-            </Box>
-        </DashboardTab>
-        <DashboardTab>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    margin: "10px",
-                }}
-            >
-                <Box
-                    sx={{
-                        color: "#160449",
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        marginLeft: "5px",
-                        marginTop: "10px",
-                    }}
-                    onClick={() => navigate("/tenantMaintenance")}
-                >
-                    Maintenance
-                </Box>
-                <Box
-                    sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#3D5CAC",
-                    borderRadius: "5px",
-                    paddingLeft: "5px",
-                    paddingRight: "5px",
-                    marginTop: "10px",
-                    marginRight: "10px",
-                    height: "35px",
+                        paddingRight: "0px",
                     }}
                 >
                     <Box
                         sx={{
-                            marginTop: "5px",
-                            color: "#FFFFFF",
+                            marginLeft: "5px",
                         }}
                     >
-                        <AddIcon/>
+                        <Box sx={{fontSize: "20px", fontWeight: "bold", color: "#160449",}}>
+                            Balance
+                        </Box>
+                        <Box sx={{fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px",}}>
+                            ${total}
+                        </Box>
+                        <Box sx={{fontSize: "15px", fontWeight: "600",color: "#3D5CAC",}} onClick={()=>{navigate('/payments')}}>
+                            View Details
+                        </Box>
                     </Box>
-                    <Button
+                    <Box
                         sx={{
-                            color: "#FFFFFF",
-                            fontSize: "16px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItem: "center",
+                        marginRight: "20px",
                         }}
-                        onClick={() => handleTenantMaintenanceNavigate()}
                     >
-                        <Typography sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: '16px'}}>
-                            New Request
-                        </Typography>
-                    </Button>
+                        <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                            color: "#00000080",
+                            padding: "6px",
+                        }}
+                        >
+                            Pay before {propertyData[0]!==undefined? propertyData[0].earliest_due_date:"No Data"}
+                        </Box>
+                        <Box
+                        sx={{
+                            backgroundColor: "#3D5CAC",
+                            borderRadius: "10px",
+                            color: "#FFFFFF",
+                            fontWeight: "bold",
+                            fontSize: "22px",
+
+                            padding: "10px",
+                            paddingRight: "20px",
+                            paddingLeft: "20px",
+                        }}
+                        onClick={() => {
+                            // handleStripePayment()
+                            navigate('/payments')
+                        }}
+                        >
+                            Make a Payment
+                        </Box>
+                    </Box>
                 </Box>
-            </Box>
-            <TableContainer component={Paper} sx={{ maxHeight: 170, backgroundColor: "#F2F2F2" }}>
-                <Table sx={{backgroundColor: "#F2F2F2"}}>
-                    <TableHead sx={{backgroundColor: "#F2F2F2"}}>
-                        <TableRow sx={{backgroundColor: "#F2F2F2"}}>
-                            <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Images</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Title</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Priority</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Date</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Time</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {maintenanceRequestsData.length > 0 && maintenanceRequestsData.map((item, index) => {
-                                let array = [PlaceholderImage,
-                                item.maintenance_title,
-                                item.maintenance_request_status,
-                                item.maintenance_priority,
-                                item.maintenance_scheduled_date, 
-                                item.maintenance_scheduled_time,item]
-                            return (<CustomTableRow key={index} data={array}/>)
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </DashboardTab>
-        <DashboardTab>
-            <Box
-                sx={{
+            </DashboardTab>
+            <DashboardTab>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        margin: "10px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            color: "#160449",
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                            marginLeft: "5px",
+                            marginTop: "10px",
+                        }}
+                        onClick={() => navigate("/tenantMaintenance")}
+                    >
+                        Maintenance
+                    </Box>
+                    <Box
+                        sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#3D5CAC",
+                        borderRadius: "5px",
+                        paddingLeft: "5px",
+                        paddingRight: "5px",
+                        marginTop: "10px",
+                        marginRight: "10px",
+                        height: "35px",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                marginTop: "5px",
+                                color: "#FFFFFF",
+                            }}
+                        >
+                            <AddIcon/>
+                        </Box>
+                        <Button
+                            sx={{
+                                color: "#FFFFFF",
+                                fontSize: "16px",
+                            }}
+                            onClick={() => handleTenantMaintenanceNavigate()}
+                        >
+                            <Typography sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: '16px'}}>
+                                New Request
+                            </Typography>
+                        </Button>
+                    </Box>
+                </Box>
+                <TableContainer component={Paper} sx={{ maxHeight: 170, backgroundColor: "#F2F2F2" }}>
+                    <Table sx={{backgroundColor: "#F2F2F2"}}>
+                        <TableHead sx={{backgroundColor: "#F2F2F2"}}>
+                            <TableRow sx={{backgroundColor: "#F2F2F2"}}>
+                                <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Images</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Title</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Status</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Priority</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Date</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontSize: '15px' }}>Time</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {maintenanceRequestsData.length > 0 && maintenanceRequestsData.map((item, index) => {
+                                    let array = [PlaceholderImage,
+                                    item.maintenance_title,
+                                    item.maintenance_request_status,
+                                    item.maintenance_priority,
+                                    item.maintenance_scheduled_date, 
+                                    item.maintenance_scheduled_time,item]
+                                return (<CustomTableRow key={index} data={array}/>)
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </DashboardTab>
+            <DashboardTab>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        margin: "10px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            color: "#160449",
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                            marginLeft: "5px",
+                            marginTop: "10px",
+                        }}
+                    >
+                        Announcement
+                    </Box>
+                    <Box
+                        sx={{
+                            color: "#007AFF",
+                            fontSize: "18px",
+                            marginLeft: "20px",
+                            marginTop: "10px",
+                        }}
+                        onClick={()=>{navigate('/announcement',
+                            {state: 
+                                {announcementsData, propertyAddr}
+                            })
+                        }}
+                    >
+                        View all ({announcementsData.length})
+                    </Box>
+                </Box>
+                <CardSlider data={announcementsData} />
+            </DashboardTab>
+            <DashboardTab>
+                <Box
+                    sx={{
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    margin: "10px",
-                }}
-            >
-                <Box
-                    sx={{
-                        color: "#160449",
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        marginLeft: "5px",
-                        marginTop: "10px",
+                    alignItems: "center",
+                    padding: "15px"
                     }}
                 >
-                    Announcement
+                    <Grid container spacing={2} justifyContent="center">
+                        <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <DashboardActionItem 
+                                icon={<PhoneIcon/>}
+                                text={"Call Manager"}
+                                onClick={() => {console.log("Call Manager")}} 
+                            />
+                        </Grid>
+                        <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <DashboardActionItem 
+                                icon={<BuildIcon/>}
+                                text={"Urgent Maintenance"}
+                                onClick={() => {handleTenantMaintenanceNavigate()}} 
+                            />
+                        </Grid>
+                        <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <DashboardActionItem 
+                                icon={<ArticleIcon/>}
+                                text={"View Lease"}
+                                onClick={()=>{handleViewLeaseNavigate(selectedProperty.lease_uid)}}
+                            />
+                        </Grid>
+                        <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <DashboardActionItem 
+                                icon={<ArticleIcon/>}
+                                text={"Documents"}
+                                onClick={()=>{navigate('/tenantDocuments',{
+                                    state: 
+                                        {propertyAddr: propertyAddr}
+                                    }
+                                )}} 
+                            />
+                        </Grid>
+                    </Grid>
                 </Box>
-                <Box
-                    sx={{
-                        color: "#007AFF",
-                        fontSize: "18px",
-                        marginLeft: "20px",
-                        marginTop: "10px",
-                    }}
-                    onClick={()=>{navigate('/announcement',
-                        {state: 
-                            {announcementsData, propertyAddr}
-                        })
-                    }}
-                >
-                    View all ({announcementsData.length})
-                </Box>
-            </Box>
-            <CardSlider data={announcementsData} />
-        </DashboardTab>
-        <DashboardTab>
-            <Box
-                sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "15px"
-                }}
-            >
-                <Grid container spacing={2} justifyContent="center">
-                    <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <DashboardActionItem 
-                            icon={<PhoneIcon/>}
-                            text={"Call Manager"}
-                            onClick={() => {console.log("Call Manager")}} 
-                        />
-                    </Grid>
-                    <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <DashboardActionItem 
-                            icon={<BuildIcon/>}
-                            text={"Urgent Maintenance"}
-                            onClick={() => {handleTenantMaintenanceNavigate()}} 
-                        />
-                    </Grid>
-                    <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <DashboardActionItem 
-                            icon={<ArticleIcon/>}
-                            text={"View Lease"}
-                            onClick={()=>{handleViewLeaseNavigate(selectedProperty.lease_uid)}}
-                        />
-                    </Grid>
-                    <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <DashboardActionItem 
-                            icon={<ArticleIcon/>}
-                            text={"Documents"}
-                            onClick={()=>{navigate('/tenantDocuments',{
-                                state: 
-                                    {propertyAddr: propertyAddr}
-                                }
-                            )}} 
-                        />
-                    </Grid>
-                </Grid>
-            </Box>
-        </DashboardTab>
+            </DashboardTab>
         </>
         ) : (
-            <DashboardTab>
-                Lease Status = {selectedProperty?.lease_status}
-            </DashboardTab>
+            <>
+                {console.log(selectedProperty)}
+                {console.log(selectedLease)}
+                <NonActiveLeaseDashboardTab property={selectedProperty} leaseStatus={selectedProperty?.lease_status} lease={selectedLease}/>
+            </>
         )}
         </Box>
   );

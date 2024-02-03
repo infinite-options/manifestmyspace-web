@@ -4,44 +4,52 @@ import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Co
 import theme from "../../theme/theme";
 import { Stack, Typography } from '@mui/material';
 
-const data1 = [
-  { name: 'Jan', cashflow: 5000, revenue: 2000 },
-  { name: 'Feb', cashflow: 8000, revenue: 4000 },
-  { name: 'Mar', cashflow: 10000, revenue: 6000 },
-  { name: 'Apr', cashflow: 9000, revenue: 6000 },
-  { name: 'May', cashflow: 8000, revenue: 8000 },
-  { name: 'Jun', cashflow: 10000, revenue: 4000 },
-  { name: 'Jul', cashflow: 5000, revenue: 2000 },
-  { name: 'Aug', cashflow: 4000, revenue: 3000 },
-  { name: 'Sep', cashflow: 8000, revenue: 1000 },
-  { name: 'Oct', cashflow: 6000, revenue: 5000 },
-  { name: 'Nov', cashflow: 10000, revenue: 6000 },
-  { name: 'Dec', cashflow: 8000, revenue: 3000 },
-  // Add data for other months (up to 12)
-];
+// const data1 = [
+//   { name: 'Jan', cashflow: 5000, revenue: 2000 },
+//   { name: 'Feb', cashflow: 8000, revenue: 4000 },
+//   { name: 'Mar', cashflow: 10000, revenue: 6000 },
+//   { name: 'Apr', cashflow: 9000, revenue: 6000 },
+//   { name: 'May', cashflow: 8000, revenue: 8000 },
+//   { name: 'Jun', cashflow: 10000, revenue: 4000 },
+//   { name: 'Jul', cashflow: 5000, revenue: 2000 },
+//   { name: 'Aug', cashflow: 4000, revenue: 3000 },
+//   { name: 'Sep', cashflow: 8000, revenue: 1000 },
+//   { name: 'Oct', cashflow: 6000, revenue: 5000 },
+//   { name: 'Nov', cashflow: 10000, revenue: 6000 },
+//   { name: 'Dec', cashflow: 8000, revenue: 3000 },
+//   // Add data for other months (up to 12)
+// ];
 
 const MixedChart = (props) => {
-  const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
+  // I want props.revenueCashflowByMonth to be sorted in order of month and year
+
+  const data = props.revenueCashflowByMonth // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
   const activeButton = props.activeButton;
-  const selectedProperty = props.selectedProperty;
+  console.log("MixedChart called here and printing data", data)
+  // const selectedProperty = props.selectedProperty;
+  // find max and min of data
+  const max = Math.max.apply(Math, data.map(function(o) { return o.cashflow; }))
+  const min = Math.min.apply(Math, data.map(function(o) { return o.cashflow; }))
+
   return (
     <ThemeProvider theme={theme}>
     <ResponsiveContainer>
-      <ComposedChart data={data1} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
+      <ComposedChart data={data} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
         <CartesianGrid vertical={false} />
           <XAxis
-            dataKey="monthYear" 
-            axisLine={false}
+            dataKey="monthYear"
+            axisLine={true}
+            type="category"
+            tickCount={12}
             style={{
-            fontSize: '10px'
-            }} />
-          {/* type="number" domain={[0, 50000]} tickCount={11} interval={1000}  */}
+              fontSize: '10px'
+            }} 
+          />
           <YAxis
             yAxisId="left"
             axisLine={false}
             tickCount={8}
-            // domain={selectedProperty!=={} ? [-2000,7000] : [-5000, 30000]}
-            domain={[-5000, 30000]}
+            domain={[(min-1000)*1.1, max*2]}
             tickFormatter={(value) => `$${value}`}
             style={{
             fontSize: '10px'

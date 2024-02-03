@@ -1,22 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ReferenceLine,
-  ResponsiveContainer,
-} from 'recharts';
-
+import React, { useState } from 'react';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-
 export default function HappinessMatrix(props) {
-  const chartWidth = 800;
-  const chartHeight = 800;
-  const chartMargin = { top: 20, right: 20, bottom: 20, left: 20 };
+  const chartWidth = 400;
+  const chartHeight = 400;
+  const chartMargin = { top: 20, right: 20, bottom: 60, left: 120 };
   const { data, dataSetter } = props;
 
   const axisLabelStyle = {
@@ -26,11 +15,33 @@ export default function HappinessMatrix(props) {
   };
 
   const [clickedIndex, setClickedIndex] = useState(null);
-
+  const [hiddenPoints, setHiddenPoints] = useState([]);
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
+  const handlePointClick = (payload) => {
+    let {index}=payload
+    if (clickedIndex === index) {
+      setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
+    } else {
+      setClickedIndex(index);
+      dataSetter(payload);
+    }
+    setTooltipVisible(true);
+  };
+
+  const handleShowAllPoints = () => {
+    setHiddenPoints([]);
+  };
+
   return (
-    <ResponsiveContainer>
+    <div>
+      <button
+        style={{ top: chartMargin.top + 20, left: 10, zIndex: 999 }}
+        onClick={handleShowAllPoints}
+      >
+        Show All Owners
+      </button>
+
       <ScatterChart
         width={chartWidth}
         height={chartHeight}
@@ -38,22 +49,46 @@ export default function HappinessMatrix(props) {
         onClick={() => setTooltipVisible(!tooltipVisible)}
       >
         <CartesianGrid />
-        <XAxis
-          type="number"
-          dataKey="x"
-          name="Delta Cashflow"
-          axisLine={false}
-          tick={false}
-          style={axisLabelStyle}
-        />
+
         <YAxis
           type="number"
-          dataKey="y"
+          dataKey="delta_cashflow_perc"
+          name="Delta Cashflow"
+          axisLine={false}
+          tickLine={false}
+          style={axisLabelStyle}
+          tick={{ transform: 'translate(-10, 7.5)' }}
+          label={{
+            value: 'Delta Cashflow',
+            angle: -90,
+            position: 'insideLeft',
+            dx: -20,
+            dy: 40,
+            style: axisLabelStyle,
+            fill: '#160449',
+          }}
+          domain={[-100, 0]}
+        />
+
+        <XAxis
+          type="number"
+          dataKey="vacancy_perc"
           name="Vacancies"
           axisLine={false}
-          tick={false}
+          tickLine={false}
           style={axisLabelStyle}
+          tick={{ transform: 'translate(0, 10)' }}
+          label={{
+            value: 'Vacancies',
+            position: 'insideBottom',
+            dy: 40,
+            dx: 0,
+            style: axisLabelStyle,
+            fill: '#160449',
+          }}
+          domain={[-100, 0]}
         />
+
         <Tooltip
           cursor={{ strokeDasharray: '3 3' }}
           content={({ payload }) => {
@@ -62,124 +97,81 @@ export default function HappinessMatrix(props) {
               return (
                 <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
                   <p><strong>Name:</strong> {dataPoint.name}</p>
-                  <p><strong>Delta Cashflow:</strong> {dataPoint.x}</p>
-                  <p><strong>Vacancies:</strong> {dataPoint.y}</p>
+                  <p><strong>Delta Cashflow:</strong> {dataPoint.delta_cashflow_perc}</p>
+                  <p><strong>Vacancies:</strong> {dataPoint.vacancy_perc}</p>
                 </div>
               );
             }
             return null;
           }}
         />
+
         <Scatter
           name="A school"
-          data={data}
+          data={data.sort((a, b) => b.diameter - a.diameter)}
           shape={(props) => (
             <CustomImage
               {...props}
-              onClick={() => {
-                dataSetter((prev) => ({ ...prev, name: props.payload.name }));
-                setClickedIndex(props.payload.index);
-                setTooltipVisible(true); // Show the tooltip on click
-              }}
+              onClick={() => handlePointClick(props.payload)}
               isClicked={props.payload.index === clickedIndex}
+              isVisible={!hiddenPoints.includes(props.payload.index)}
             />
           )}
         >
-          {/* Render circle outline only for the clicked point */}
-          {clickedIndex !== null && (
-            <Scatter
-              data={[data[clickedIndex]]}
-              shape={(props) => (
-                <CustomImage
-                  {...props}
-                  isClicked={true}
-                />
-              )}
-            />
-          )}
+          {data.map((point, index) => (
+            !hiddenPoints.includes(index) && (
+              <Scatter
+                key={`hidden-${index}`}
+                data={[point]}
+                shape={(props) => (
+                  <CustomImage
+                    {...props}
+                    isClicked={false}
+                    isVisible={false}
+                  />
+                )}
+              />
+            )
+          ))}
         </Scatter>
+
         <ReferenceLine
-          y={0}
+          y={-50}
           stroke="#000000"
           strokeDasharray="3 3"
-          label={{
-            value: 'Delta Cashflow',
-            angle: -90,
-            position: 'insideLeft',
-            dx: -30,
-            dy: 50,
-            style: axisLabelStyle,
-            fill: '#160449',
-          }}
         />
+
         <ReferenceLine
-          x={0}
+          x={-50}
           stroke="#000000"
           strokeDasharray="3 3"
-          label={{
-            value: 'Vacancies',
-            position: 'insideBottom',
-            dy: 30,
-            style: axisLabelStyle,
-            fill: '#160449',
-          }}
         />
+
         <ReferenceLine
-          segment={[{ x: -300, y: -300 }, { x: 300, y: 300 }]}
+          segment={[{ x: -100, y: -100 }, { x: 100, y: 100 }]}
           stroke="#000000"
           strokeWidth={1}
           ifOverflow="hidden"
         />
       </ScatterChart>
-    </ResponsiveContainer>
+    </div>
   );
-
 }
 
-// Inside the CustomImage component
 const CustomImage = (props) => {
-  const { cx, cy, payload, onClick, isClicked } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index } = props;
+
+  if (!isVisible) {
+    return null;
+  }
+
   const diameter = 30;
-
-  let quarter;
-  if (payload.x < 0 && payload.y < 0) {
-    quarter = 1;
-  } else if (payload.x > 0 && payload.y < 0) {
-    quarter = 2;
-  } else if (payload.x < 0 && payload.y > 0) {
-    quarter = 3;
-  } else if (payload.x > 0 && payload.y > 0) {
-    quarter = 4;
-  }
-
-  // Set the default borderColor
-  let borderColor;
-  switch (quarter) {
-    case 1:
-      borderColor = '#A52A2A';
-      break;
-    case 2:
-      borderColor = '#FF8A00';
-      break;
-    case 3:
-      borderColor = '#FFC85C';
-      break;
-    case 4:
-      borderColor = '#3D5CAC';
-      break;
-    default:
-      borderColor = '#000000';
-  }
-
-  // Set the borderColor to blue only for the selected point
-
-  // Define the outline width based on isClicked
   const outlineWidth = isClicked ? 4 : 2;
 
   return (
     <g onClick={() => onClick(payload.name)}>
       <foreignObject x={cx - diameter / 2} y={cy - diameter / 2} width={diameter} height={diameter}>
-        {payload?.photo ? (
+        {![null, undefined, ''].includes(payload?.photo) ? (
           <img
             src={payload.photo}
             alt="scatter-image"
@@ -188,23 +180,23 @@ const CustomImage = (props) => {
         ) : (
           <AccountCircleIcon
             sx={{
-              color: borderColor,
+              color: payload.color,
               width: '100%',
               height: '100%',
-              borderRadius: '50%', // Add border radius to fill the shape
-              borderWidth: outlineWidth, // Control the width of the border
-              borderStyle: 'solid', // Add border style
+              borderRadius: '50%',
+              borderWidth: outlineWidth,
+              borderStyle: 'solid',
             }}
           />
         )}
       </foreignObject>
-      {payload?.photo && ( // Display circle outline only if there is a photo
+      {payload?.photo && (
         <circle
           cx={cx}
           cy={cy}
           r={diameter / 2 + outlineWidth / 2}
           fill="none"
-          stroke={borderColor}
+          stroke={payload.color}
           strokeWidth={outlineWidth}
         />
       )}

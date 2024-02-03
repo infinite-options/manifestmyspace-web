@@ -18,17 +18,29 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useUser } from "../../contexts/UserContext";
 
 const ManagerDetails = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { ownerId, managerBusinessId, managerData, propertyData, index } = location.state;
+    const { user, selectedRole } = useUser();
 
     console.log("ownerId", ownerId);
     console.log("managerBusinessId", managerBusinessId);
     console.log("managerData", managerData);
     console.log("propertyData", propertyData);
     console.log("index", index);
+
+    propertyData.sort((a, b) => {
+        if (a.address < b.address) {
+            return -1;
+        }
+        if (a.address > b.address) {
+            return 1;
+        }
+        return 0;
+    });
 
     if (managerData !== undefined) {
         let businessLocations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");
@@ -58,13 +70,13 @@ const ManagerDetails = () => {
     ]);
     function sortProperties(properties){
         properties.sort((a, b) => {
-            if (a.contract_status === "NEW" && b.contract_status !== "NEW") {
+            if (a.property_address < b.property_address) {
             return -1;
             }
-            if (a.contract_status !== "NEW" && b.contract_status === "NEW") {
+            if (a.property_address > b.property_address) {
             return 1;
             }
-            return a.contract_status > b.contract_status;
+            return 0;
         })
     }
 
@@ -162,7 +174,9 @@ const ManagerDetails = () => {
                 >
                     {"Property Manager"}
                 </Typography>
-                <SearchIcon onClick={() => navigate("/searchManager")} />
+                {selectedRole !== "MANAGER" ? (
+                    <SearchIcon onClick={() => navigate("/searchManager")} />
+                ) : null }
             </Box>
             <Box
                 sx={{
@@ -336,7 +350,80 @@ const ManagerDetails = () => {
 
                             
                         </Typography>
-                        {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
+                        {(properties.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
+                                let index=properties.findIndex((property)=>property.property_uid===p.property_uid);
+                                let navIndex = propertyData.findIndex((property)=>property.property_uid===p.property_uid);
+                                // console.log(p)
+                                let docList = JSON.parse(p.contract_documents);
+                                // console.log(docList, typeof(docList))
+                                const doc =docList && docList.find(
+                                    (document) => document.type === "contract"
+                                );
+                                const contractDocumentLink = doc ? doc.link : '';
+                                return (
+                                        < >
+                                            <Grid container direction="row">
+                                                <Grid item xs={8}>
+                                                    <Box display="flex" alignItems="left"> 
+                                                        <Typography
+                                                            sx={{
+                                                            paddingLeft: "15px",
+                                                            fontFamily: "Source Sans Pro, sans-serif",
+                                                            fontWeight: 600,
+                                                            color: "#160449",
+                                                            textDecoration: "underline",
+                                                            cursor: "pointer"
+                                                            }}
+                                                            onClick={() => navigate("/propertyDetail", {state: {index: navIndex, propertyList: propertyData}})}
+                                                        >
+                                                            {`${p.property_address}, ${p.property_unit && p.property_unit+ ', ' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <Box display="flex" alignItems="right"> 
+                                                        <Typography
+                                                            sx={{
+                                                            fontWeight: 800,
+                                                            paddingLeft: "10px",
+                                                            fontFamily: "Source Sans Pro, sans-serif",
+                                                            color: "#160449",
+                                                            }}
+                                                        >
+                                                            {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"}
+                                                            
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <Box display="flex" alignItems="right" alignContent="right"> 
+                                                        {contractDocumentLink !== "" ? (
+                                                            <Box onClick={()=>{
+                                                                window.open(contractDocumentLink, "_blank");
+                                                                // console.log("we should show a document here")
+                                                            }}>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontWeight: 800,
+                                                                        paddingLeft: "10px",
+                                                                        fontFamily: "Source Sans Pro, sans-serif",
+                                                                        color: "#160449",
+                                                                        cursor: "pointer"
+                                                                    }}
+                                                                >
+                                                                    <img src={documentIcon} alt="document-icon" style={{width: '15px', height: '17px', margin:'0px', paddingLeft: "15px"}}/>
+                                                                </Typography>
+                                                            </Box>
+                                                        )
+                                                        : null
+                                                    }
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                        </>
+                                    )}
+                        )}
+                        {/* {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
                                 let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
                                 let docList = JSON.parse(p.contract_documents);
                                 const doc =docList && docList.find(
@@ -344,7 +431,7 @@ const ManagerDetails = () => {
                                 );
                                 const contractDocumentLink = doc ? doc.link : '';
                                 return (
-                                        < >
+                                        <>
                                             <Grid container direction="row" onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}>
                                                 <Typography
                                                     sx={{
@@ -388,8 +475,8 @@ const ManagerDetails = () => {
                                             </Grid>
                                         </>
                                     )}
-                        )}
-                        {managerData.contract_status === "ACTIVE" ? (
+                        )} */}
+                        {managerData.contract_status === "ACTIVE" && selectedRole !== "MANAGER" ? (
                             <>
                                 <Button
                                     sx={{

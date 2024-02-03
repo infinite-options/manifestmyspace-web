@@ -116,7 +116,7 @@ const AddRevenue = (props) => {
   }
   const handleAddRevenue = async () => {
     console.log("amount ", selectedProperty);
-    let data = JSON.stringify({
+    let data = {
       "pur_property_id": selectedProperty.property_uid,
       "purchase_type": category,
       "pur_cf_type": "revenue",
@@ -130,7 +130,11 @@ const AddRevenue = (props) => {
       "pur_initiator": getProfileId(),
       "pur_payer": purPayerId,
       "pur_notes": notes,
-    });
+    };
+
+    if (determinePurchaseStatus() === "PARTIALLY PAID"){
+      data["partial_amount"] = Number(partialAmount)
+    }
     
     let config = {
       method: 'post',
@@ -139,7 +143,7 @@ const AddRevenue = (props) => {
       headers: { 
         'Content-Type': 'application/json'
       },
-      data : data
+      data: JSON.stringify(data)
     };
     setShowSpinner(true);
     axios.request(config)

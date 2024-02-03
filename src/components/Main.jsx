@@ -4,16 +4,16 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
-import CashflowOwner from "./Cashflow/CashflowOwner";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
+import Cashflow from "./Cashflow/Cashflow";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
-import PropertyListings from "./Property/PropertyListings";
+import { PropertyListings } from "./Property/PropertyListings";
 
 import Announcements from "./Announcement/Announcements";
 import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
@@ -45,7 +45,6 @@ import ViewTransactionOwner from "./Transactions/ViewTransactionOwner";
 import PaymentsTenant from "./Payments/PaymentsTenant";
 import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
-import CashflowManager from "./Cashflow/CashflowManager";
 import ManagerDashboardHappinessMatrix from "./ManagerDashboard/ManagerDashboardHappinessMatrix";
 import Settings from "./Settings/SettingsOwner";
 import SettingsManager from "./Settings/SettingsManager";
@@ -72,7 +71,6 @@ import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
 import PMProperties from "./Property/PMProperties";
-import POProperties from "./Property/POProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
@@ -162,6 +160,7 @@ import TenantApplicationNav from "./Applications/TenantApplicationNav";
 import PONotifications from "./Notifications/PONotifications";
 import PropertyContract from "./Notifications/PropertyContract";
 import TenantLease from "./Applications/TenantLease";
+import PMQuotesList from "./Property/PMQuotesList"
 
 function Main() {
   return (
@@ -196,7 +195,7 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="dashboard" element={<MaintenanceWidget />} />
-            <Route path="cashflow" element={<CashflowOwner />} />
+            <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
@@ -251,7 +250,6 @@ function Main() {
             {/* <Route path="payments" element={<PaymentsTenant />} /> */}
             <Route path="payments" element={<Payments />} />
             <Route path="card" element={<CardDetails />} />
-            <Route path="cashflowManager" element={<CashflowManager />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
             <Route path="settingsOwner" element={<Settings />} />
             <Route path="settingsTenant" element={<SettingsTenant />} />
@@ -305,7 +303,6 @@ function Main() {
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
             <Route path="PMProperties" element={<PMProperties />} /> 
-            <Route path="POProperties" element={<POProperties />} /> 
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
@@ -330,6 +327,7 @@ function Main() {
             <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
+            <Route path="pmQuotesList" element={<PMQuotesList/>}/>
             <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
             <Route path="requestQuotes" element={<RequestQuotes />} />
             <Route path="viewDocument" element={<ViewDocument />} />

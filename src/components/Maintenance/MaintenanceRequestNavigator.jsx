@@ -185,6 +185,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
       const diffInMilliseconds = currentDate.getTime() - postDate.getTime();
       openTime = Math.floor(diffInMilliseconds / (1000 * 3600 * 24));
     }
+    console.log("formattedDate", formattedDate, "openTime", openTime);
     // console.log("formattedDate", formattedDate, "openTime", openTime);
     setNumOpenRequestDays(openTime);
     setFormattedDate(formattedDate);
@@ -435,7 +436,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     paddingBottom: "10px",
                   }} underline="always"
                 >
-                    {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
+                    {data?.property_address} {data?.property_unit}, {data?.property_city} {data?.property_state} {data?.property_zip}
             </Typography>
                 <Typography
                   sx={{

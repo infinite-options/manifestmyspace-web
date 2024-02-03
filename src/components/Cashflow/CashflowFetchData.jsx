@@ -27,17 +27,106 @@ function getExpenseList(data){
     return data.response_expense.result
 }
 
-function getPast12MonthsCashflow(){
+function getPast12MonthsCashflow(data, month, year){
+    var pastTwelveMonths = []
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
+    console.log(data)
+    console.log(month, year)
 
+    var currentMonth = month
+    var currentYear = year
+
+    // create a loop that goes back 12 months
+    for (var i = 0; i < 12; i++){
+        console.log(currentMonth, currentYear)
+        
+        // let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
+        // let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
+        let currentMonthRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear)
+        let currentMonthExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear)
+
+        // console.log("currentMonthRevenue", currentMonthRevenue)
+        // console.log("currentMonthExpense", currentMonthExpense)
+        // console.log("expectedMonthRevenue", expectedMonthRevenue)
+        // console.log("expectedMonthExpense", expectedMonthExpense)
+
+        pastTwelveMonths.push({
+            "month": currentMonth,
+            "year": currentYear,
+            "revenue": currentMonthRevenue,
+            "cashflow": currentMonthRevenue - currentMonthExpense,
+            "monthYear": currentMonth.slice(0,3) + " " + currentYear.slice(2,4),
+            // "expected_revenue": expectedMonthRevenue,
+            // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
+        })
+        if (currentMonth === "January"){
+            currentMonth = "December"
+            currentYear = (parseInt(currentYear) - 1).toString()
+            console.log(currentYear)
+        } else{
+            currentMonth = months[months.indexOf(currentMonth) - 1]
+        }
+    }
+    console.log(pastTwelveMonths)
+
+    pastTwelveMonths.reverse()
+
+    return pastTwelveMonths
+}
+
+function getNext12MonthsCashflow(data, month, year){
+    var nextTwelveMonths = []
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
+    console.log(data)
+
+    console.log(data)
+    console.log(month, year)
+
+    var currentMonth = month
+    var currentYear = year
+
+    // create a loop that goes forward 12 months and if 
+
+    for (var i = 0; i < 12; i++){
+        console.log(currentMonth, currentYear)
+
+        let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
+        let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
+
+        // console.log("expectedMonthRevenue", expectedMonthRevenue)
+        // console.log("expectedMonthExpense", expectedMonthExpense)
+
+        nextTwelveMonths.push({
+            "month": currentMonth,
+            "year": currentYear,
+            "revenue": expectedMonthRevenue,
+            "cashflow": expectedMonthRevenue - expectedMonthExpense,
+            "monthYear": currentMonth.slice(0,3) + " " + currentYear.slice(2,4),
+            // "expected_revenue": expectedMonthRevenue,
+            // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
+        })
+
+        if (currentMonth === "December"){
+            currentMonth = "January"
+            currentYear = (parseInt(currentYear) + 1).toString()
+        } else{
+            currentMonth = months[months.indexOf(currentMonth) + 1]
+        }
+    }
+    console.log(nextTwelveMonths)
+    return nextTwelveMonths
 }
 
 function getRevenueByMonth(data){
     console.log("revenue by month", data)
-
 }
 
 function getExpenseByMonth(data){
     console.log("expense by month", data)
+}
+
+function revenueCashflowByMonth(data){
+    console.log("revenueCashflowByMonth", data)
 }
 
 function getExpectedRevenueByType(data, month, year){ 
@@ -231,6 +320,21 @@ function getTotalExpectedExpenseByMonthYear(data, month, year){
 
 
 
-export { getTotalRevenueByType, getTotalExpenseByType, getRevenueList, getExpenseList, fetchCashflow, getTotalRevenueByMonthYear, getTotalExpenseByMonthYear, getRevenueByMonth, getExpenseByMonth, getTotalExpectedRevenueByMonthYear, getTotalExpectedExpenseByMonthYear }
+export { 
+    getTotalRevenueByType, 
+    getTotalExpenseByType, 
+    getPast12MonthsCashflow, 
+    revenueCashflowByMonth, 
+    getRevenueList, 
+    getExpenseList, 
+    fetchCashflow, 
+    getTotalRevenueByMonthYear, 
+    getTotalExpenseByMonthYear, 
+    getRevenueByMonth, 
+    getExpenseByMonth, 
+    getTotalExpectedRevenueByMonthYear, 
+    getTotalExpectedExpenseByMonthYear, 
+    getNext12MonthsCashflow 
+}
 
 

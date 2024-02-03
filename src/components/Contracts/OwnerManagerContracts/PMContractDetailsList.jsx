@@ -27,6 +27,7 @@ import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
 
 
+
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
@@ -49,7 +50,7 @@ function isValidDate(dateString){
 }
 
 
-function ManagementContractDetails(props) {
+function PMContractDetailsList(props) {
     const { getProfileId } = useUser();
     const navigate = useNavigate();
 
@@ -309,8 +310,6 @@ function PropertyCard(props) {
     const timeDiff = props.timeDifference;
     const contractBusinessID = props.contractBusinessID;
     const contractPropertyID = props.contractPropertyID;
-
-    console.log("--debug-- PropertyCard props", props)
 
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
@@ -670,38 +669,36 @@ function PropertyCard(props) {
         const fetchData = async () => {
             const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
             const data = await result.json();
-            console.log("--debug--", data)
 
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
             console.log("props.contractUID:", props.contractUID);
-            setContractUID(props.contractUID);
-            if (data !== "No records for this Uid") {
-                const contractData = data["result"].find(contract => contract.contract_uid === props.contractUID);
-                
-                console.log("CONTRACT - ", contractData);
-                // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-                setContractName(contractData["contract_name"]? contractData["contract_name"] : "");
-                setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
-                setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
-                setContractStatus(contractData["contract_status"]? contractData["contract_status"] : "");
-                setContractAssignedContacts(contractData["contract_assigned_contacts"]? JSON.parse(contractData["contract_assigned_contacts"]) : []);
-                setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
-                const oldDocs = (contractData["contract_documents"]? JSON.parse(contractData["contract_documents"]): []);
-                setPreviouslyUploadedDocs(oldDocs);
-                const contractDoc = oldDocs?.find(doc => doc.type === "contract");
-                if(contractDoc){
-                    setContractDocument(contractDoc);
-                }
-                setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
+            setContractUID(props.contractUID); 
+            const contractData = data["result"].find(contract => contract.contract_uid === props.contractUID);
+            
+            console.log("CONTRACT - ", contractData);
+            // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+            setContractName(contractData["contract_name"]? contractData["contract_name"] : "");
+            setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
+            setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
+            setContractStatus(contractData["contract_status"]? contractData["contract_status"] : "");
+            setContractAssignedContacts(contractData["contract_assigned_contacts"]? JSON.parse(contractData["contract_assigned_contacts"]) : []);
+            setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
+            const oldDocs = (contractData["contract_documents"]? JSON.parse(contractData["contract_documents"]): []);
+            setPreviouslyUploadedDocs(oldDocs);
+            const contractDoc = oldDocs?.find(doc => doc.type === "contract");
+            if(contractDoc){
+                setContractDocument(contractDoc);
             }
+            setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
+
 
             //get default contract fees for manager
-            // const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
-            // const data2 = await businessProfileResult.json();
-            // const businessProfileData = data2["result"][0];
-            // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
-            // setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
+            const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
+            const data2 = await businessProfileResult.json();
+            const businessProfileData = data2["result"][0];
+            console.log("Business Services Fees", businessProfileData["business_services_fees"]);
+            setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
           };
       
           fetchData();
@@ -1371,6 +1368,22 @@ function PropertyCard(props) {
                         
                     ))
                 )}
+                
+                {/* <Box>
+                    Monthly service charge: {'15% of all rent'}
+                </Box>
+                <Box>
+                    Tenant Setup Fee: $100
+                </Box>
+                <Box>
+                    Annual Inspection Fee: $200
+                </Box>
+                <Box>
+                    Re-Keying Charge: $200
+                </Box>
+                <Box>
+                    Annual Postage and Communication Fee: $20
+                </Box> */}
             </Box>
             {
                 previouslyUploadedDocs.length? (
@@ -2989,4 +3002,4 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 
 }
 
-export default ManagementContractDetails;
+export default PMContractDetailsList;
