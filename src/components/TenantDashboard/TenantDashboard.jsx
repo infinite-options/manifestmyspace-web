@@ -18,7 +18,7 @@ import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from "../../theme/theme";
@@ -31,6 +31,7 @@ import PhoneIcon from '@mui/icons-material/Phone'; // For "Phone"
 import BuildIcon from '@mui/icons-material/Build'; // For "Maintenance"
 import AddIcon from '@mui/icons-material/Add'; // For "New Request"
 import { PropertyCard } from '../Property/PropertyListings'
+import CircleIcon from '@mui/icons-material/Circle';
 
 
 function TenantDashboard(props) {
@@ -56,6 +57,7 @@ function TenantDashboard(props) {
   const [announcementsData, setAnnouncementsData] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [propertyAddr, setPropertyAddr] = useState();
+  const [propertyId, setPropertyId] = useState("")
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
   // const [balance, setBalance] = useState("0.00");
   const [total, setTotal] = useState("0.00");
@@ -66,15 +68,18 @@ function TenantDashboard(props) {
   const [selectedLease, setSelectedLease] = useState(null)
 
   const open = Boolean(anchorEl);
-  const handleOpen = (event) => {
+//   const handleOpen = (event) => {
+//     setAnchorEl(event.currentTarget);
+//   };
+
+  const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
-  };
+  }, []);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const { user } = useUser();
-//   console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
 
   let automatic_navigation_handler =(propertyData)=>{
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
@@ -83,6 +88,38 @@ function TenantDashboard(props) {
         navigate("/listings");
       }
   }
+
+    const showLeaseStatusIndicator = (lease_status) => {
+        console.log("--debug--", lease_status)
+        return (
+            <>
+                {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
+                {lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null}
+                {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
+                {lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+                {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+            </>
+        )
+    }
+
+    const returnLeaseStatusColor = (status) => {
+        // console.log("--debug-- returnLeaseStatusColor property_data", property_data)
+        // console.log("--debug-- returnLeaseStatusColor property_id", property_id)
+
+        // let property = property_data.find(property => property.property_uid === property_id);
+
+        // console.log("--debug--", property, property?.property_status)
+
+        const statusColorMapping = {
+            "ACTIVE": "#00D100",
+            "NEW": "#3D5CAC",
+            "PROCESSING": "#FF8832",
+            "DECLINED": "#CB8E8E",
+            "REFUSED": "#CB8E8E"
+        }
+        // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
+        return status ? statusColorMapping[status] : "#ddd"
+    }
 
     useEffect(() => {
         const getTenantData = async () => {
@@ -133,7 +170,7 @@ function TenantDashboard(props) {
             setMaintenanceRequestsData(maintenanceRequestsData || []);
             setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
 
-            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit :"No Data"
+            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
             setPropertyAddr(propertyAddress);
             setFirstName(user.first_name)
             setShowSpinner(false);
@@ -151,14 +188,6 @@ function TenantDashboard(props) {
         }
     },[userLeases, selectedProperty]);
 
-//   useEffect(() => {
-//     console.log("TenantDashboard useEffect")
-
-//     let paymentData = createPaymentdata(total)
-//     console.log(paymentData)
-//     setPaymentData(paymentData)
-
-//   }, [total])
 
   const thStyle = {
     color: "#160449",
@@ -212,7 +241,7 @@ function TenantDashboard(props) {
   function NonActiveLeaseDashboardTab({property, leaseStatus, lease}){
     // console.log("Property: ", property);
     // console.log("Lease Status: ", lease_status);
-    console.log("Lease Data:", lease)
+    // console.log("Lease Data:", lease)
     return (
         <PropertyCard data={property} status={leaseStatus} leaseData={lease}/>
     )
@@ -275,19 +304,26 @@ function TenantDashboard(props) {
                     sx={{
                         height: "30px",
                         width: "30px",
-                        backgroundColor: "#bbb",
+                        backgroundColor: returnLeaseStatusColor(selectedProperty?.lease_status),
                         borderRadius: "50%",
                         marginRight: "10px",
                     }}
+                    onClick={ () => {navigate('/myProperty', {
+                        state: {
+                            propertyData: propertyData,
+                            propertyId: propertyId, 
+                        }
+                        })}
+                    }
                     ></Box>
                     <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: "22px",
-                        fontWeight: "600",
-                        color: "#3D5CAC",
-                    }}
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "22px",
+                            fontWeight: "600",
+                            color: "#3D5CAC",
+                        }}
                     >
                         <Box
                             sx={{
@@ -298,27 +334,21 @@ function TenantDashboard(props) {
                                 color: "#3D5CAC",
                             }}
                         >
-                            <Typography
-                            onClick={ () => {navigate('/myProperty', {
-                                state: {propertyData: propertyData}
-                                })}
-                            }
-                            >
-                            {propertyAddr}
+                            <Typography>
+                                {propertyAddr}
                             </Typography>
-
                             <KeyboardArrowDownIcon 
-                            sx={{alignItem: "center"}}
-                            onClick={(event) => handleOpen(event)}
+                                sx={{alignItem: "center"}}
+                                onClick={(event) => handleOpen(event)}
                             />
                             <Menu
-                            id="demo-customized-menu"
-                            MenuListProps={{
-                                'aria-labelledby': 'demo-customized-button',
-                            }}
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
+                                id="demo-customized-menu"
+                                MenuListProps={{
+                                    'aria-labelledby': 'demo-customized-button',
+                                }}
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
                             >
                             {propertyData.map((item, index) => {
                                 return (
@@ -326,6 +356,7 @@ function TenantDashboard(props) {
                                     key={index}
                                     onClick={() => {
                                         setPropertyAddr(item.property_address + " " + item.property_unit)
+                                        setPropertyId(item.property_uid)
                                         setTotal(item.balance)
                                         setSelectedProperty(item)
                                         setSelectedLease(userLeases.find(lease => lease.lease_uid === item.lease_uid))
@@ -333,13 +364,13 @@ function TenantDashboard(props) {
                                     }}
                                     disableRipple
                                 >
+                                    {showLeaseStatusIndicator(item.lease_status)}
                                     {item.property_address + " " + item.property_unit}
                                 </MenuItem>
                                 )
                             })}
                             </Menu>
-                        </Box>
-                        
+                        </Box> 
                     </Box>
                 </Box>
             </Grid>

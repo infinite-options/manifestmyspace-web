@@ -89,25 +89,25 @@ function ManagerDashboard() {
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
-            const jsonData = await response.json()
-
             const contractsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`)
-            const contractsData = await contractsResponse.json();
 
             const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
-            const propertiesResponseJSON = await propertiesResponse.json()
-            setContractRequests(propertiesResponseJSON.NewPMRequests.result)
-            console.log(propertiesResponseJSON.NewPMRequests.result)
-            
-            // MAINTENANCE Status
-            setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
-            
-            // RENT Status
-            setRentStatus(jsonData.RentStatus.result);
-            
-            // LEASE Status
-            setLeaseStatus(jsonData.LeaseStatus.result);
-
+            try {
+                const contractsData = await contractsResponse.json();
+                const jsonData = await response.json()
+                const propertiesResponseJSON = await propertiesResponse.json()
+                setContractRequests(propertiesResponseJSON.NewPMRequests.result)
+                // MAINTENANCE Status
+                setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
+                
+                // RENT Status
+                setRentStatus(jsonData.RentStatus.result);
+                
+                // LEASE Status
+                setLeaseStatus(jsonData.LeaseStatus.result);
+            } catch (error) {
+                console.error(error)                    
+            }
 
             setShowSpinner(false);
         }
