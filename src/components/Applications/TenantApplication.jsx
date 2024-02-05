@@ -185,7 +185,6 @@ export default function TenantApplication(){
         leaseApplicationData.append('lease_rent', "[]")
         leaseApplicationData.append('lease_application_date', date.toLocaleDateString())
         leaseApplicationData.append('tenant_uid', getProfileId())
-        console.log("leaseApplicationData::::::::::",leaseApplicationData)
         const leaseApplicationResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
             method: 'POST',
             body: leaseApplicationData
@@ -222,7 +221,7 @@ export default function TenantApplication(){
                             fontWeight: theme.typography.primary.fontWeight,
                             fontSize: theme.typography.largeFont
                         }}>
-                            Your Application For!!!!!!
+                            Your Application For
                     </Typography>
                 </Box>
                 <Box
