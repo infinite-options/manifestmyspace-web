@@ -58,6 +58,7 @@ export default function EditProfileSettingsManager() {
     const [managementFees, setManagementFees] = useState(manager_data.business_services_fees? JSON.parse(manager_data.business_services_fees) : []);
     const [EIN, setEIN] = useState(manager_data.business_ein_number? manager_data.business_ein_number : '');
     const [uploadedImage, setUploadedImage] = useState(null);
+    const [displayed_Image, set_displayed_Image] = useState(null);
 
     const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
     const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
@@ -192,6 +193,16 @@ export default function EditProfileSettingsManager() {
     }
 
     const handleProfileImageUpload = (file) => {
+        if (file) {
+            const reader = new FileReader();
+      
+            reader.onload = (e) => {
+                set_displayed_Image(e.target.result);
+            };
+      
+            reader.readAsDataURL(file);
+          }
+
         setUploadedImage(file);
         setIsEdited(true);
     }
@@ -200,7 +211,7 @@ export default function EditProfileSettingsManager() {
         event.preventDefault();
         console.log("FORM SUBMITTED");
         console.log(modifiedData);
-
+    
         const formData = new FormData();
         for (const key in modifiedData) {
             if (Object.hasOwnProperty.call(modifiedData, key)) {
@@ -214,35 +225,36 @@ export default function EditProfileSettingsManager() {
                 formData.append(key, serializedValue);
             }
         }
-        if(uploadedImage){
+        if (uploadedImage) {
             formData.append("business_photo", uploadedImage);
         }
-
-
-
+    
         const headers = { 
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "*",
             "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Credentials":"*"
+            "Access-Control-Allow-Credentials": "*"
         };
-
-        if(isEdited){
-            console.log("EDITED")
-            // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
+    
+        if (isEdited) {
+            console.log("EDITED");
+    
+            // Perform the update asynchronously
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
-            .then((response) => {
-                console.log('Data updated successfully');
-                setIsEdited(false); // Reset the edit status
-                navigate(-1)
-            })
-            .catch((error) => {
-                if(error.response){
-                    console.log(error.response.data);
-                }
-            });
+                .then((response) => {
+                    console.log('Data updated successfully');
+                    setIsEdited(false); // Reset the edit status
+                    navigate('/pmProfile');
+                    
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        console.log(error.response.data);
+                    }
+                });
         }
-    }
+    };
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -311,9 +323,23 @@ export default function EditProfileSettingsManager() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {manager_data.business_photo_url !== null ? (
+                    {   displayed_Image !== null ? (
+                        
                         <img
-                            src={manager_data.business_photo_url}
+                            src={displayed_Image}
+                            alt="Profile Photo"
+                            style={{
+                                borderRadius: '50%',
+                                color: theme.typography.common.blue,
+                                width: 45,
+                                height: 45,
+                                position: 'absolute',
+                                left: 0
+                            }}
+                        />):
+                        (manager_data.business_photo_url !== null ? (
+                        <img
+                            src={`${manager_data.business_photo_url}?${Date.now()}`}
                             alt="Profile"
                             style={{
                                 borderRadius: '50%',
@@ -334,7 +360,7 @@ export default function EditProfileSettingsManager() {
                                 left: 0
                             }}
                         />
-                    )}
+                    ))}
                     <>
                     <Stack
                     direction="row"

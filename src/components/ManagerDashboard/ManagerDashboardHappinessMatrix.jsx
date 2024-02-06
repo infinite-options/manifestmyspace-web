@@ -3,6 +3,7 @@ import {Box, ThemeProvider, Paper, Typography, Stack, Grid, CircularProgress} fr
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
 import CashflowData from '../Cashflow/CashflowData';
+import { getPast12MonthsCashflow, fetchCashflow } from '../Cashflow/CashflowFetchData';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -18,17 +19,33 @@ export default function ManagerDashboardHappinessMatrix(props) {
     let clicked_owner_index=location.state.clicked_index;
 
     const { user, getProfileId } = useUser();
+    const profileId=getProfileId();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
     const [showSpinner, setShowSpinner] = useState([]);
     let date = new Date();
-    let month = date.toLocaleString('default', { month: 'long' });
-    let year = date.getFullYear().toString()
+    let currentMonth = date.toLocaleString('default', { month: 'long' });
+    let currentYear = date.getFullYear().toString()
     let [p_owner, p_owner_setter] = useState(matrixData[clicked_owner_index])
+    const [cashflowData,setCashflowData ]=useState(null)
+    const [last12Months, setLast12Months]=useState([])
     
+    useEffect(() => {
+        fetchCashflow(profileId).then((data) => {
+            setCashflowData(data)
+            // let currentMonthYearRevenueExpected = get
 
-     
+        }).catch((error) => {
+            console.error("Error fetching cashflow data:", error)
+        })
+    }, [])
+
     
+useEffect(() => {
+    if (cashflowData){
+         setLast12Months(getPast12MonthsCashflow(cashflowData,currentMonth, currentYear));
+    }
     
+}, [cashflowData])
 
     return (
         <>
@@ -38,7 +55,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <CashflowData setShowSpinner={setShowSpinner} year={year} month={month} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
+            <CashflowData setShowSpinner={setShowSpinner} year={currentYear} month={currentMonth} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
             <ThemeProvider theme={theme}>
                 <Paper
                     component={Stack}
@@ -198,7 +215,8 @@ export default function ManagerDashboardHappinessMatrix(props) {
                                         justifyContent="right"
                                         height={150}
                                     >
-                                        <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart>
+                                        {/* <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart> */}
+                                        <MixedChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
                                     </Stack>
                                 </Grid>
                             </Grid>
