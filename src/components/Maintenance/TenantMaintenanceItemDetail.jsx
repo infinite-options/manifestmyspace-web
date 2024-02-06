@@ -61,7 +61,7 @@ export default function TenantMaintenanceItemDetail() {
   };
 
   function closeAddTenantMaintenanceItem() {
-    navigate("/tenantMaintenance");
+    navigate("/tenantDashboard");
   }
 
   // const images = [
