@@ -17,12 +17,13 @@ export default function LandingPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const roleTextStyling = {color: "#160449", fontSize: isMobile ? 22 : 30, fontWeight: 700, textAlign: "center" }
+  const useCaseTextStyling = {color: "#160449", fontSize: isMobile ? 16 : 18, fontWeight: 600 }
  
   return (
     <ThemeProvider theme={theme}>
         <Box>
             <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} sx={{display: "flex"}}>
                     <Box sx={{
                         justifyContent: "center",
                         alignItems: "center",
@@ -35,7 +36,7 @@ export default function LandingPage() {
                             <Typography
                                 sx={{ 
                                     color: "#000000", 
-                                    fontSize: isMobile ? 28 : 56, 
+                                    fontSize: isMobile ? 28 : 48, 
                                     fontWeight: 800,
 
                                 }}
@@ -83,7 +84,7 @@ export default function LandingPage() {
                                     variant="contained"
                                 >
                                     <Typography
-                                        sx={{ color: "#000000", fontSize: 18, fontWeight: 700 }}
+                                        sx={{ color: "#160449", fontSize: 18, fontWeight: 700 }}
                                     >
                                         Login
                                     </Typography>
@@ -92,7 +93,7 @@ export default function LandingPage() {
                         </Stack>
                     </Box>
                 </Grid>
-                <Grid item xs={12} sm={6} sx={{ order: { xs: -1, sm: 0 } }}>
+                <Grid item xs={12} sm={6} sx={{ order: { xs: -1, sm: 0 }, display: "flex" }}>
                     <Box sx={{
                         }}
                         width="100%"
@@ -103,7 +104,7 @@ export default function LandingPage() {
                 </Grid>
                 
                 <Grid item xs={12}>
-                    <Box sx={{ height: isMobile ? '10vh' : '20vh' }}></Box>
+                    <Box sx={{ height: isMobile ? '10vh' : '10vh' }}></Box>
                         <Stack sx={{
                                 alignContent: "center",
                                 alignItems: "center"
@@ -115,7 +116,7 @@ export default function LandingPage() {
                         </Stack>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} sx={{display: "flex"}}>
                     <Paper
                         style={{
                             margin: '25px',
@@ -131,21 +132,21 @@ export default function LandingPage() {
                             <Typography sx={roleTextStyling}>
                                 For Property Owners
                             </Typography>
-                            <Box sx={{width: "80%", height: "80%"}} >
-                                <img src={Owners} width="100%"/>
+                            <Box sx={{width: "80%", height: "80%", display: "flex"}} >
+                                <img src={Owners} width="100%" alt="owners view"/>
                             </Box>
-                            <Typography>
-                            <ul>
-                                <li>Monitor rent payments</li>
-                                <li>Track maintenance requests</li>
-                                <li>View/edit property details</li>
-                                <li>Track property cashflow</li>
-                            </ul>
-                        </Typography>
+                            <Typography sx={useCaseTextStyling}>
+                                <ul>
+                                    <li>Monitor rent payments</li>
+                                    <li>Track maintenance requests</li>
+                                    <li>View/edit property details</li>
+                                    <li>Track property cashflow</li>
+                                </ul>
+                            </Typography>
                         </Stack> 
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} sx={{display: "flex"}}>
                     <Paper
                         style={{
                             margin: '25px',
@@ -161,10 +162,10 @@ export default function LandingPage() {
                             <Typography sx={roleTextStyling}>
                                 For Tenants
                             </Typography>
-                            <Box sx={{}} width="80%" height="80%">
-                                <img src={Tenants} width="100%"/>
+                            <Box sx={{ width:"80%", height:"80%", display: "flex" }}>
+                                <img src={Tenants} width="100%" alt="tenants view"/>
                             </Box>
-                            <Typography>
+                            <Typography sx={useCaseTextStyling}>
                                 <ul>
                                     <li>View new properties</li>
                                     <li>Pay rent on time</li>
@@ -175,7 +176,7 @@ export default function LandingPage() {
                         </Stack>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} sx={{display: "flex"}}>
                     <Paper
                         style={{
                             margin: '25px',
@@ -191,10 +192,10 @@ export default function LandingPage() {
                             <Typography sx={roleTextStyling}>
                                 For Property Managers
                             </Typography>
-                            <Box sx={{}} width="80%" height="80%">
-                                <img src={Manager} width="100%"/>
+                            <Box sx={{ width:"80%", height:"80%", display: "flex" }}>
+                                <img src={Manager} width="100%" alt="property manager view"/>
                             </Box>
-                            <Typography>
+                            <Typography sx={useCaseTextStyling}>
                                 <ul>
                                     <li>Manager your clients, tenants, and personnel</li>
                                     <li>See property cashflow</li>
@@ -204,18 +205,9 @@ export default function LandingPage() {
                                 </ul>
                             </Typography>
                         </Stack>
-                        {/* <Typography>
-                                <ul>
-                                    <li>Manager your clients, tenants, and personnel</li>
-                                    <li>See property cashflow</li>
-                                    <li>Track maintenance requests</li>
-                                    <li>View/Edit property details</li>
-                                    <li>View owner "happiness"</li>
-                                </ul>
-                            </Typography> */}
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} sx={{display: "flex"}}>
                     <Paper
                         style={{
                             margin: '25px',
@@ -231,10 +223,10 @@ export default function LandingPage() {
                             <Typography sx={roleTextStyling}>
                                 For Maintenance Professionals
                             </Typography>
-                            <Box sx={{}} width="80%" height="80%">
-                                <img src={Maintenance} width="100%"/>
+                            <Box sx={{ width:"80%", height:"80%", display: "flex" }}>
+                                <img src={Maintenance} width="100%" alt="maintenance view"/>
                             </Box>
-                            <Typography>
+                            <Typography sx={useCaseTextStyling}>
                                 <ul>
                                     <li>View quote requests</li>
                                     <li>See past jobs and schedule more</li>
