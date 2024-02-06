@@ -69,13 +69,13 @@ function ManagerDashboard() {
   useEffect(() => {
     const fetchMatrixData = async () => {
       const response = await fetch(
-        `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/happinessMatrix/${getProfileId()}`
+        `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`
       );
       const jsonData = await response.json();
 
       // Transforming the data
-      const transformedData = jsonData.vacancy.result.map((vacancyItem, i) => {
-        const deltaCashflowItem = jsonData.delta_cashflow.result.find(
+      const transformedData = jsonData.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
+        const deltaCashflowItem = jsonData.HappinessMatrix.delta_cashflow.result.find(
           (item) => item.owner_id === vacancyItem.owner_uid
         );
         const fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
@@ -143,7 +143,7 @@ function ManagerDashboard() {
           "#A52A2A": 1, "#FF8A00": 2, "#FFC85C": 3, "#3D5CAC": 4, "#000000": 5,};
         return colorOrder[a.color] - colorOrder[b.color];
       });
-      
+
       setMatrixData(sortedData);
     };
 
