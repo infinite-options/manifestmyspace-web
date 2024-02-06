@@ -24,6 +24,9 @@ const TenantApplicationNav = () => {
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
+//   useEffect(() => {
+//     console.log("application - ", application);
+// }, [application]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(
     JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]')
@@ -39,6 +42,24 @@ const TenantApplicationNav = () => {
       application?.tenant_children_occupants || '["No Child Occupants"]'
     )
   );
+  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application.lease_documents));
+  // useEffect(() => {
+  //     console.log("applicationDocuments - ", applicationDocuments);
+  // }, [applicationDocuments]);
+  function formatDocumentType(type) {
+    switch(type){            
+        case "income_proof": return "Proof of Income";
+        case "bank_statement": return "Bank Statement";
+        case "id": return "ID";
+        case "renters_insurance_proof": return "Proof of Renter's Insurance";
+        case "ssn": return "SSN";
+        case "credit_report": return "Credit Report";
+        case "reference": return "Reference";
+        case "other": return "Other";
+        
+        default: return "";            
+    }
+}
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
   };
@@ -102,8 +123,7 @@ const TenantApplicationNav = () => {
         }}
       >
         <Paper
-          style={{
-            margin: "30px",
+          style={{            
             backgroundColor: theme.palette.primary.main,
             width: "100%",
             paddingTop: "10px",
@@ -113,7 +133,7 @@ const TenantApplicationNav = () => {
             <Box
               sx={{
                 borderBottom: 0,
-                width: "75%",
+                width: "90%",
               }}
             >
               <Paper
@@ -283,7 +303,7 @@ const TenantApplicationNav = () => {
                       </Grid>
                       <Grid item xs={4}></Grid>
                       <Grid item xs={12}>
-                          <Typography
+                          {/* <Typography
                             sx={{
                               fontSize: 13,
                               fontFamily: "Source Sans Pro, sans-serif",
@@ -291,26 +311,23 @@ const TenantApplicationNav = () => {
                             }}
                           >
                             {"Current Address"}
-                          </Typography>
+                          </Typography> */}
                         <Typography
                           sx={{
-                            fontSize: 13,
+                            fontSize: 15,
                             fontFamily: "Source Sans Pro, sans-serif",
                             color: "#160449",
                           }}
                         >{`${application.tenant_address}, ${application.tenant_city}, ${application.tenant_state} ${application.tenant_zip}`}</Typography>
                       </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"SSN"}
-                          </Typography>
+                      <Grid item xs={12} sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                      }}>
+                        <Stack sx={{
+                          marginLeft: '0px',
+                        }}>                          
                           <Typography
                             sx={{
                               fontSize: 13,
@@ -326,20 +343,18 @@ const TenantApplicationNav = () => {
                                 .toString()
                                 .slice(-4)}
                           </Typography>
-                          
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>                          
                           <Typography
                             sx={{
                               fontSize: 13,
                               fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
+                              color: "#160449",                              
                             }}
                           >
-                            {"License Number/ State"}
+                            {"SSN"}
                           </Typography>
+                          
+                        </Stack>
+                        <Stack sx={{marginRight: '40px',}}>                                                    
                           <Typography
                             sx={{
                               fontSize: 13,
@@ -350,8 +365,72 @@ const TenantApplicationNav = () => {
                             {application.tenant_drivers_license_number? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
                             {application.tenant_drivers_license_state? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
                           </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: 13,
+                              fontFamily: "Source Sans Pro, sans-serif",
+                              color: "#160449",
+                            }}
+                          >
+                            {"License Number/ State"}
+                          </Typography>
                         </Stack>
                       </Grid>
+                      {/* <Grid item xs={6}>
+                        <Stack sx={{
+                            marginLeft: '20px',
+                          }}>                          
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                color: "#160449",
+                              }}
+                            >
+                              {"***-**-" +
+                                AES.decrypt(
+                                  application.tenant_ssn,
+                                  process.env.REACT_APP_ENKEY
+                                )
+                                  .toString()
+                                  .slice(-4)}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontFamily: "Source Sans Pro, sans-serif",
+                                color: "#160449",                              
+                              }}
+                            >
+                              {"SSN"}
+                            </Typography>
+                            
+                        </Stack>
+                      </Grid>
+                      
+                      <Grid item xs={6}>
+                        <Stack sx={{marginRight: '40px',}}>                                                    
+                          <Typography
+                            sx={{
+                              fontSize: 13,
+                              fontFamily: "Source Sans Pro, sans-serif",
+                              color: "#160449",
+                            }}
+                          >
+                            {application.tenant_drivers_license_number? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
+                            {application.tenant_drivers_license_state? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: 13,
+                              fontFamily: "Source Sans Pro, sans-serif",
+                              color: "#160449",
+                            }}
+                          >
+                            {"License Number/ State"}
+                          </Typography>
+                        </Stack>
+                      </Grid> */}
                       <Grid item xs={6}>
                         <Stack>
                           <Typography
@@ -629,6 +708,63 @@ const TenantApplicationNav = () => {
                             </Typography>
                           ))}
                       </Grid>
+                      <Grid item xs={12} sx={{
+                        marginRight: '30px',
+                      }}>
+                            <Typography
+                                sx={{
+                                    justifySelf: 'center',
+                                    color: theme.typography.common.blue,                                    
+                                    fontSize: 13,
+                                }}
+                            >
+                                Application Documents:
+                            </Typography>
+                            <Box
+                                sx={{
+                                    display:'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    paddingTop: '5px',
+                                    color: theme.typography.common.blue,
+                                    fontSize: 13,
+                                }}
+                            >
+                                <Box>Filename</Box>
+                                <Box>Type</Box>                                                                
+                            </Box>
+                            {[...applicationDocuments].map((doc, i) => (
+                                <>                                
+                                    <Box
+                                        key={i} 
+                                        sx={{
+                                            display:'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            fontSize: 13
+                                        }}
+                                    >
+                                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                            <Box
+                                                sx={{
+                                                    // height: '16px',
+                                                    width: '100%',                                                                                                         
+                                                    cursor: 'pointer', // Change cursor to indicate clickability
+                                                    color: "#160449",
+                                                }}
+                                            >
+                                            {doc.filename}
+                                            </Box>
+                                        </a>
+                                        <Box sx={{color: "#160449",}}>
+                                        {formatDocumentType(doc.type)}                                                                                
+                                        </Box>
+                                    </Box>
+                                </>                                        
+                            ))}
+                        </Grid>
                     </Grid>
                     <Stack
                       direction="row"

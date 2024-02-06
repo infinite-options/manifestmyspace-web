@@ -18,6 +18,7 @@ import {
 import { Form, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import backButton from '../Payments/backIcon.png';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function TenantApplication(){
     const location = useLocation();
@@ -28,8 +29,8 @@ export default function TenantApplication(){
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
-    console.log("status", status)
-    console.log(property)
+    // console.log("status", status)
+    // console.log(property)
 
     const [tenantProfile, setTenantProfile] = useState(null);
     
@@ -39,6 +40,10 @@ export default function TenantApplication(){
     const [childOccupants, setChildOccupants] = useState(null);
 
     const [tenantDocuments, setTenantDocuments] = useState([]);
+
+    useEffect(() => {
+        console.log("ROHIT - tenantDocuments - ", tenantDocuments);
+    }, [tenantDocuments])
 
 
     function formatDocumentType(type) {
@@ -94,9 +99,9 @@ export default function TenantApplication(){
         } else{
             let info = JSON.parse(tenantProfile?.tenant_vehicle_info)
             setVehicles(info)
-            for (const vehicle of info){
-                console.log(vehicle)
-            }
+            // for (const vehicle of info){
+            //     console.log(vehicle)
+            // }
         }
     }
 
@@ -104,12 +109,12 @@ export default function TenantApplication(){
         if (!tenantProfile){
             return "No Adult Occupants"
         } else {
-            console.log(tenantProfile?.tenant_adult_occupants)
+            // console.log(tenantProfile?.tenant_adult_occupants)
             let info = JSON.parse(tenantProfile?.tenant_adult_occupants)
             setAdultOccupants(info)
-            for (const occupant of info){
-                console.log(occupant)
-            }
+            // for (const occupant of info){
+            //     console.log(occupant)
+            // }
         }
     }
 
@@ -119,9 +124,9 @@ export default function TenantApplication(){
         } else {
             let info = JSON.parse(tenantProfile?.tenant_pet_occupants)
             setPetOccupants(info)
-            for (const pet of info){
-                console.log(pet)
-            }
+            // for (const pet of info){
+            //     console.log(pet)
+            // }
         } 
     }
     function formatTenantChildOccupants(){
@@ -130,10 +135,18 @@ export default function TenantApplication(){
         } else {
             let info = JSON.parse(tenantProfile?.tenant_children_occupants)
             setChildOccupants(info)
-            for (const child of info){
-                console.log(child)
-            }
+            // for (const child of info){
+            //     console.log(child)
+            // }
         }
+    }
+
+    const deleteTenantDocument = (index) => {
+        setTenantDocuments(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
+        });
     }
 
     useEffect(() => {
@@ -166,9 +179,9 @@ export default function TenantApplication(){
 
     function handleApplicationSubmit(){
         //submit to backend
-        console.log("Application Submitted")
-        console.log("should call /annoucements")
-        console.log("should call /leases")
+        // console.log("Application Submitted")
+        // console.log("should call /annoucements")
+        // console.log("should call /leases")
         let date = new Date()
 
 
@@ -193,7 +206,7 @@ export default function TenantApplication(){
         leaseApplicationData.append('lease_property_id', property.property_uid)
         leaseApplicationData.append('lease_status', "NEW")
         leaseApplicationData.append('lease_assigned_contacts', JSON.stringify([getProfileId()]))
-        leaseApplicationData.append('lease_documents', "[]")
+        leaseApplicationData.append('lease_documents', JSON.stringify(tenantDocuments))
         leaseApplicationData.append('lease_adults', tenantProfile?.tenant_adult_occupants)
         leaseApplicationData.append('lease_children', tenantProfile?.tenant_children_occupants)
         leaseApplicationData.append('lease_pets', tenantProfile?.tenant_pet_occupants)
@@ -786,6 +799,7 @@ export default function TenantApplication(){
                             >
                                 <Box>Filename</Box>
                                 <Box>Type</Box>
+                                <Box>{' '}</Box>
                                 
                             </Box>
                             {[...tenantDocuments].map((doc, i) => (
@@ -814,6 +828,25 @@ export default function TenantApplication(){
                                             </Box>
                                         </a>
                                         {formatDocumentType(doc.type)}
+                                        <Button 
+                                            variant="text"
+                                            onClick={(event) => {
+                                                deleteTenantDocument(i)
+                                            }}
+                                            sx={{
+                                                width: '10%', 
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold', 
+                                                color: '#3D5CAC',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent', // Set to the same color as the default state
+                                                },
+                                            }}
+                                            
+                                        >
+                                            <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                        </Button>
                                         
                                     </Box>
                                 </>                                        
