@@ -21,7 +21,6 @@ function getInitialImages(requestData, currentIndex) {
 }
 
 export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs  }) {
-  console.log("Inside MaintenanceRequestNavigator()");
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   
   const [activeStep, setActiveStep] = useState(0);
@@ -407,7 +406,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                         width: "100%",
                       }}
                     >
-                      {data?.maintenance_priority} Priority
+                      {data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority
                       
                         <CreateIcon sx={{
                             color: "#FFFFFF",

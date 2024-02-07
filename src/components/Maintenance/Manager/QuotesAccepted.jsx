@@ -29,6 +29,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function QuotesAccepted({maintenanceItem, navigateParams}){
+    console.log("--debug-- maintenanceItem", maintenanceItem)
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
@@ -92,8 +93,8 @@ export default function QuotesAccepted({maintenanceItem, navigateParams}){
         const changeMaintenanceQuoteStatus = async () => {
             setShowSpinner(true);
             const formData = new FormData();
-            formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
-            formData.append("quote_maintenance_request_id", maintenanceItem.quote_maintenance_request_id)
+            formData.append("maintenance_quote_uid", maintenanceItem?.qmr_id); // 900-xxx
+            formData.append("quote_maintenance_request_id", maintenanceItem?.maintenance_request_uid) //quote_maintenance_request_id maintenance_request_uid
             formData.append("quote_status", "SCHEDULED")
             
             try {

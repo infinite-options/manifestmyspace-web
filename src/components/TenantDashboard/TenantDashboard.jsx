@@ -191,9 +191,21 @@ function TenantDashboard(props) {
         }
         if(allMaintenanceRequests){
             let filteredMaintenanceItems = allMaintenanceRequests.filter(request => request.property_uid === selectedProperty.property_uid)
-            setMaintenanceRequests(filteredMaintenanceItems)
+            setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems))
         }
     },[userLeases, selectedProperty]);
+
+    function sortMaintenanceRequests(maintenanceDataArray){
+        const statusSortPriority = {
+            "NEW": 0,
+            "INFO REQUESTED": 1,
+            "PROCESSING": 2,
+            "SCHEDULED": 3,
+            "COMPLETED": 4,
+            "CANCELLED": 5,
+        }
+        return maintenanceDataArray.sort((a,b) => statusSortPriority[a.maintenance_request_status] - statusSortPriority[b.maintenance_request_status])
+    }
 
 
   const thStyle = {
