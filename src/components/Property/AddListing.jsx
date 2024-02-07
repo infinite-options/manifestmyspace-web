@@ -57,7 +57,6 @@ export default function AddListing({}){
     // const propertyData = location.state.item;
     const propertyData = propertyList[index];
     const page = location.state.page;
-    console.log("This is the property you are creating a listing for", propertyData)
     const propertyId = location.state.propertyId;
     const { user, selectedRole, selectRole, Name } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
@@ -167,7 +166,6 @@ export default function AddListing({}){
     
 
     const utilitiesObject = JSON.parse(propertyData.property_utilities);
-    console.log("UTILITIES OBJECT", utilitiesObject);
     let utilitiesInUIDForm = {};
     let mappedUtilities2 = {};
     useEffect(() => {

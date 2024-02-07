@@ -113,7 +113,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - {maintenanceItem.tenant_adult_occupants ? maintenanceItem.tenant_adult_occupants[0] : "No Tenant Assigned"}
+                            Tenant - {maintenanceItem?.tenant_adult_occupants ? maintenanceItem?.tenant_adult_occupants[0] : "No Tenant Assigned"}
                         </Typography>
                     </Button>
                 </Grid>
@@ -134,7 +134,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - {maintenanceItem.owner_first_name} {maintenanceItem.owner_last_name}
+                            Owner - {maintenanceItem?.owner_first_name} {maintenanceItem?.owner_last_name}
                         </Typography>
                     </Button>
                 </Grid> 
@@ -156,7 +156,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         onClick={() => handleNavigate()}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Pay Maintenance - {maintenanceItem.business_name}
+                            Pay Maintenance - {maintenanceItem?.business_name}
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
@@ -175,7 +175,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleCancel(maintenanceItem?.maintenance_request_uid)}
                     >
                         <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -198,7 +198,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                             display: 'flex',
                             width: "100%"
                         }}
-                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleComplete(maintenanceItem?.maintenance_request_uid)}
                     >
                         <CheckIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

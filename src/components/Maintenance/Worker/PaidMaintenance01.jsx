@@ -145,7 +145,10 @@ export default function PaidMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                  
+                        {maintenanceItem?.quote_services_expenses !== undefined ? (
+                            <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                  
+                        ) : null }
+
                     </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
@@ -171,7 +174,7 @@ export default function PaidMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            {maintenanceItem.quote_notes}
+                            {maintenanceItem?.quote_notes ? maintenanceItem.quote_notes  : ""} 
                         </Typography>
                        </Box>
                 </Grid>
@@ -198,23 +201,23 @@ export default function PaidMaintenance01({maintenanceItem}){
                             width: "95%",
                         }}
                     >
-                        {maintenanceItem.purchase_status === "UNPAID" ? (
+                        {maintenanceItem?.purchase_status === "UNPAID"  || maintenanceItem?.purchase_status === null ? (
                             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                                 Payment Requested
                             </Typography>                            
                         ): (
                             <>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Paid On: {maintenanceItem.payment_date}
+                                Paid On: {maintenanceItem?.payment_date ? maintenanceItem?.payment_date : "Not Provided"}
                                 </Typography>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Method: {maintenanceItem.payment_type}
+                                Method: {maintenanceItem?.payment_type ? maintenanceItem?.payment_type : "Not Provided"}
                                 </Typography>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Amount: {maintenanceItem.pay_amount}
+                                Amount: {maintenanceItem?.pay_amount ? maintenanceItem?.pay_amount : "Not Provided"}
                                 </Typography>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Payment Notes: {maintenanceItem.payment_notes}
+                                Payment Notes: {maintenanceItem?.payment_notes ? maintenanceItem?.payment_notes : "Not Provided"}
                                 </Typography>
                             </>
                         )}
@@ -238,7 +241,7 @@ export default function PaidMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            {maintenanceItem.quote_notes}
+                            {maintenanceItem?.quote_notes ? maintenanceItem?.quote_notes : "No Quote Notes"}
                         </Typography>
                        </Box>
                 </Grid>
