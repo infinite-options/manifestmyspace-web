@@ -66,20 +66,15 @@ function ManagerDashboard() {
 
     let [matrixData, setMatrixData] = useState([]);
 
-  useEffect(() => {
-    const fetchMatrixData = async () => {
-      const response = await fetch(
-        `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`
-      );
-      const jsonData = await response.json();
-
-      // Transforming the data
-      const transformedData = jsonData.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
-        const deltaCashflowItem = jsonData.HappinessMatrix.delta_cashflow.result.find(
+    const setting_matrix_data =  (happiness_response) => {
+      
+       // Transforming the data
+        const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
+        const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find(
           (item) => item.owner_id === vacancyItem.owner_uid
         );
         const fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
-
+        
         let quarter;
         if (
           deltaCashflowItem.delta_cashflow_perc < -50 &&
@@ -147,9 +142,6 @@ function ManagerDashboard() {
       setMatrixData(sortedData);
     };
 
-    fetchMatrixData();
-  }, []);
-
     // let propsForPropertyRentWidget = {
     //     rentData: data,
     //     unpaidRentStatusCount: totalPropertiesCount,
@@ -190,6 +182,7 @@ function ManagerDashboard() {
                 
                 // LEASE Status
                 setLeaseStatus(jsonData.LeaseStatus.result);
+                setting_matrix_data(jsonData)
             } catch (error) {
                 console.error(error)                    
             }
