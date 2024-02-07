@@ -599,77 +599,81 @@ const PropertyInfo = (props) => {
                         </Typography>
                     </Stack>
                     <Stack>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            Apartment Amenities
-                        </Typography>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                            }}
-                        >
-                            {property.property_amenities_unit}
-                        </Typography>
-                        <Box height={'150px'}></Box>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            Community Amenities
-                        </Typography>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                            }}
-                        >
-                            {property.property_amenities_community}
-                        </Typography>
-                        <Box height={'150px'}></Box>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            
-                            Location
-                        </Typography>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                            }}
-                        >
-                            {formatAddress() +
-                                ', ' +
-                                property.property_city +
-                                ', ' +
-                                property.property_state +
-                                ' ' +
-                                property.property_zip}
-                        </Typography>
-                        <Box height={'150px'}></Box>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            Places Nearby
-                        </Typography>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                            }}
-                        >
-                            {property.property_amenities_nearby}
-                        </Typography>
-                        <Box height={'150px'}></Box>
+                        <Box paddingBottom={'50px'}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Apartment Amenities
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                }}
+                            >
+                                {property.property_amenities_unit}
+                            </Typography>
+                        </Box>
+                        <Box paddingBottom={'50px'}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Community Amenities
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                }}
+                            >
+                                {property.property_amenities_community}
+                            </Typography>
+                        </Box>
+                        <Box paddingBottom={'50px'}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                
+                                Location
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                }}
+                            >
+                                {formatAddress() +
+                                    ', ' +
+                                    property.property_city +
+                                    ', ' +
+                                    property.property_state +
+                                    ' ' +
+                                    property.property_zip}
+                            </Typography>
+                        </Box>
+                        <Box paddingBottom={'50px'}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Places Nearby
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                }}
+                            >
+                                {property.property_amenities_nearby}
+                            </Typography>
+                        </Box>
                     </Stack>
                 </Paper>
             </Box>

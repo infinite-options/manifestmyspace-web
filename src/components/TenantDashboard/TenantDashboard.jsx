@@ -12,7 +12,8 @@ import {
   TableContainer, 
   TableHead,
   Paper,
-  TableRow
+  TableRow,
+  ListItemAvatar
 } from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
@@ -51,7 +52,8 @@ function TenantDashboard(props) {
 
   const { getProfileId } = useUser();
 
-  const [maintenanceRequestsData, setMaintenanceRequestsData] = useState([]);
+  const [maintenanceRequests, setMaintenanceRequests] = useState([]);
+  const [allMaintenanceRequests, setAllMaintenanceRequests] = useState([])
   const [propertyData, setPropertyData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [announcementsData, setAnnouncementsData] = useState([]);
@@ -90,7 +92,6 @@ function TenantDashboard(props) {
   }
 
     const showLeaseStatusIndicator = (lease_status) => {
-        console.log("--debug--", lease_status)
         return (
             <>
                 {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
@@ -142,7 +143,6 @@ function TenantDashboard(props) {
             let propertyData = tenantRequestsData?.property?.result;
             let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
             let announcementsData = tenantRequestsData?.announcements?.result;
-            console.log("PropertyData", propertyData)
             const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
 
         // sort propertyData by lease_status so that active lease is first
@@ -167,7 +167,8 @@ function TenantDashboard(props) {
             }
 
             setPropertyData(propertyData || []);
-            setMaintenanceRequestsData(maintenanceRequestsData || []);
+            setAllMaintenanceRequests(maintenanceRequestsData)
+            setMaintenanceRequests(maintenanceRequestsData || []);
             setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
 
             let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
@@ -176,6 +177,7 @@ function TenantDashboard(props) {
             setShowSpinner(false);
             setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
             setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
+            // console.log(propertyData[0])
         }
         getTenantData();
     }, [])
@@ -186,7 +188,23 @@ function TenantDashboard(props) {
             let filteredLease = userLeases.find(lease => lease.lease_uid === selectedProperty.lease_uid)
             setSelectedLease(filteredLease)
         }
+        if(allMaintenanceRequests){
+            let filteredMaintenanceItems = allMaintenanceRequests.filter(request => request.property_uid === selectedProperty.property_uid)
+            setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems))
+        }
     },[userLeases, selectedProperty]);
+
+    function sortMaintenanceRequests(maintenanceDataArray){
+        const statusSortPriority = {
+            "NEW": 0,
+            "INFO REQUESTED": 1,
+            "PROCESSING": 2,
+            "SCHEDULED": 3,
+            "COMPLETED": 4,
+            "CANCELLED": 5,
+        }
+        return maintenanceDataArray.sort((a,b) => statusSortPriority[a.maintenance_request_status] - statusSortPriority[b.maintenance_request_status])
+    }
 
 
   const thStyle = {
@@ -489,7 +507,7 @@ function TenantDashboard(props) {
                         }}
                         onClick={() => navigate("/tenantMaintenance")}
                     >
-                        Maintenance
+                        Maintenance ({maintenanceRequests.length})
                     </Box>
                     <Box
                         sx={{
@@ -526,7 +544,7 @@ function TenantDashboard(props) {
                         </Button>
                     </Box>
                 </Box>
-                <TableContainer component={Paper} sx={{ maxHeight: 170, backgroundColor: "#F2F2F2" }}>
+                <TableContainer component={Paper} sx={{ maxHeight: 275, backgroundColor: "#F2F2F2" }}>
                     <Table sx={{backgroundColor: "#F2F2F2"}}>
                         <TableHead sx={{backgroundColor: "#F2F2F2"}}>
                             <TableRow sx={{backgroundColor: "#F2F2F2"}}>
@@ -539,14 +557,19 @@ function TenantDashboard(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {maintenanceRequestsData.length > 0 && maintenanceRequestsData.map((item, index) => {
-                                    let array = [PlaceholderImage,
-                                    item.maintenance_title,
+                            {maintenanceRequests.map((item, index) => {
+                                const requestData = [PlaceholderImage, 
+                                    item.maintenance_title, 
                                     item.maintenance_request_status,
                                     item.maintenance_priority,
-                                    item.maintenance_scheduled_date, 
-                                    item.maintenance_scheduled_time,item]
-                                return (<CustomTableRow key={index} data={array}/>)
+                                    item.maintenance_scheduled_date,
+                                    item.maintenance_scheduled_time,
+                                    item
+                                ]
+
+                                return (
+                                    <CustomTableRow key={index} data={requestData}/>
+                                )
                             })}
                         </TableBody>
                     </Table>
