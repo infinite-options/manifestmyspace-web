@@ -189,7 +189,7 @@ export function MaintenanceRequestDetail(){
             const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
             console.log("--debug-- quotesFilteredById", quotesFilteredById)
             //sort quotesFilteredBy status so that the SENT quote status is at the top
-            quotesFilteredById.sort((a, b) => {
+            quotesFilteredById.sort((a, b) => { 
                 if(a.quote_status === "SENT"){
                     return -1
                 } else if (b.quote_status === "SENT"){
@@ -445,8 +445,9 @@ export function MaintenanceRequestDetail(){
                                     <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
+                                {console.log("--debug-- maintenenceRequestDetail", filteredQuotes)}
                                 {colorStatus[value]?.status === "Quotes Accepted" ?
-                                    <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
                                 {colorStatus[value]?.status === "Scheduled" ?    
