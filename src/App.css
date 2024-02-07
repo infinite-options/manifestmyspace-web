@@ -21,6 +21,13 @@
     margin: 20px;
 }
 
+.main-header-title-logo-container-logged-out {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    margin: 20px;
+}
+
 .main-header-title {
     display: inline-block;
     font-family: 'Playfair Display', serif;
@@ -114,6 +121,11 @@
     width: 26.5px;
     border: 1px solid var(--text-color);
     transform: rotate(-44.5deg) translateX(25px);
+}
+
+.main-header-new-user-button {
+    align-content: right;
+    align-items: right;
 }
 
 .footer {
