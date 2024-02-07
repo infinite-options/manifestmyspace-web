@@ -142,7 +142,6 @@ function TenantDashboard(props) {
 
             let propertyData = tenantRequestsData?.property?.result;
             let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
-            console.log("maintenanceRequestsData", maintenanceRequestsData.length)
             let announcementsData = tenantRequestsData?.announcements?.result;
             const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
 
@@ -178,7 +177,7 @@ function TenantDashboard(props) {
             setShowSpinner(false);
             setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
             setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
-            console.log(propertyData[0])
+            // console.log(propertyData[0])
         }
         getTenantData();
     }, [])
