@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -7,6 +7,35 @@ export default function HappinessMatrix(props) {
   const chartHeight = 400;
   const chartMargin = { top: 20, right: 20, bottom: 60, left: 120 };
   const { data, dataSetter } = props;
+  let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
+
+  // Function to check if two points overlap
+  function overlap(owner1, owner2, margin = 5) {
+    const { vacancy_perc: x1, delta_cashflow_perc: y1 } = owner1;
+    const { vacancy_perc: x2, delta_cashflow_perc: y2 } = owner2;
+    const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    return distance < margin;
+  }
+
+  // Function to adjust points
+  function adjustPoints(owners, margin = 10) {
+    for (let i = 0; i < owners.length; i++) {
+      for (let j = i + 1; j < owners.length; j++) {
+        while (overlap(owners[i], owners[j], margin)) {
+          // Move points slightly in both x and y directions
+          owners[j].vacancy_perc -= Math.random() * (2 * margin) - margin;
+          owners[j].delta_cashflow_perc -= Math.random() * (2 * margin) - margin;
+        }
+      }
+    }
+    return owners;
+  }
+
+  
+  //  Adjust points before rendering
+   useEffect(() => {
+    shift( adjustPoints(shifted_data));
+   }, []);
 
   const axisLabelStyle = {
     fontFamily: 'Source Sans Pro',
@@ -19,12 +48,13 @@ export default function HappinessMatrix(props) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handlePointClick = (payload) => {
-    let {index}=payload
+    let { index } = payload;
     if (clickedIndex === index) {
       setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
     } else {
       setClickedIndex(index);
-      dataSetter(payload);
+      let owner= data.find((o)=>o.index===index)
+      dataSetter(owner);
     }
     setTooltipVisible(true);
   };
@@ -51,43 +81,45 @@ export default function HappinessMatrix(props) {
         <CartesianGrid />
 
         <YAxis
-          type="number"
-          dataKey="delta_cashflow_perc"
-          name="Delta Cashflow"
-          axisLine={false}
-          tickLine={false}
-          style={axisLabelStyle}
-          tick={{ transform: 'translate(-10, 7.5)' }}
-          label={{
-            value: 'Delta Cashflow',
-            angle: -90,
-            position: 'insideLeft',
-            dx: -20,
-            dy: 40,
-            style: axisLabelStyle,
-            fill: '#160449',
-          }}
-          domain={[-100, 0]}
-        />
+  type="number"
+  dataKey="delta_cashflow_perc"
+  name="Delta Cashflow"
+  axisLine={false}
+  tickLine={false}
+  style={axisLabelStyle}
+  tick={{ transform: 'translate(-10, 7.5)' }}
+  label={{
+    value: 'Delta Cashflow',
+    angle: -90,
+    position: 'insideLeft',
+    dx: -20,
+    dy: 40,
+    style: axisLabelStyle,
+    fill: '#160449',
+  }}
+  domain={[-100, 0]}
+  ticks={[-100, -50, 0]} // Add this line
+/>
 
-        <XAxis
-          type="number"
-          dataKey="vacancy_perc"
-          name="Vacancies"
-          axisLine={false}
-          tickLine={false}
-          style={axisLabelStyle}
-          tick={{ transform: 'translate(0, 10)' }}
-          label={{
-            value: 'Vacancies',
-            position: 'insideBottom',
-            dy: 40,
-            dx: 0,
-            style: axisLabelStyle,
-            fill: '#160449',
-          }}
-          domain={[-100, 0]}
-        />
+<XAxis
+  type="number"
+  dataKey="vacancy_perc"
+  name="Vacancies"
+  axisLine={false}
+  tickLine={false}
+  style={axisLabelStyle}
+  tick={{ transform: 'translate(0, 10)' }}
+  label={{
+    value: 'Vacancies',
+    position: 'insideBottom',
+    dy: 40,
+    dx: 0,
+    style: axisLabelStyle,
+    fill: '#160449',
+  }}
+  domain={[-100, 0]}
+  ticks={[-100, -50, 0]} // Add this line
+/>
 
         <Tooltip
           cursor={{ strokeDasharray: '3 3' }}
@@ -108,7 +140,7 @@ export default function HappinessMatrix(props) {
 
         <Scatter
           name="A school"
-          data={data.sort((a, b) => b.diameter - a.diameter)}
+          data={shifted_data}
           shape={(props) => (
             <CustomImage
               {...props}
@@ -118,7 +150,7 @@ export default function HappinessMatrix(props) {
             />
           )}
         >
-          {data.map((point, index) => (
+          {shifted_data.map((point, index) => (
             !hiddenPoints.includes(index) && (
               <Scatter
                 key={`hidden-${index}`}

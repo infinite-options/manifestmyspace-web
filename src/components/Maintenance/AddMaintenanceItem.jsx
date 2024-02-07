@@ -92,22 +92,22 @@ export default function AddMaintenanceItem(){
     };
 
     const handleIssueChange = (event) => {
-        console.log("handleIssueCategoryChange", event.target.value)
+        // console.log("handleIssueCategoryChange", event.target.value)
         setIssue(event.target.value);
     };
 
     const handleCostChange = (event) => {
-        console.log("handleCostChange", event.target.value)
+        // console.log("handleCostChange", event.target.value)
         setCost(event.target.value);
     };
 
     const handleTitleChange = (event) => {
-        console.log("handleTitleChange", event.target.value)
+        // console.log("handleTitleChange", event.target.value)
         setTitle(event.target.value);
     };
 
     const handleDescriptionChange = (event) => {
-        console.log("handleDescriptionChange", event.target.value)
+        // console.log("handleDescriptionChange", event.target.value)
         setDescription(event.target.value);
     };
 
@@ -146,7 +146,7 @@ export default function AddMaintenanceItem(){
     // };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
+        // console.log("handleToggleGroupChange", newToggleGroupValue)
         setCompleted(event.target.value)
     };
 
