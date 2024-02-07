@@ -111,7 +111,6 @@ export default function AddMaintenanceItem(){
         setDescription(event.target.value);
     };
 
-<<<<<<< HEAD
     // const handlePriorityChange = (event, newToggleGroupValue) => {
     //     console.log("handlePriorityChange", event.target.value)
     //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
@@ -136,14 +135,6 @@ export default function AddMaintenanceItem(){
                 button.style.borderColor = '';
             }
         });
-=======
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        // console.log("handlePriorityChange", event.target.value)
-        // console.log("handleToggleGroupChange", newToggleGsroupValue)
-        setPriority(event.target.value)
-        // setToggleGroupValue(newToggleGroupValue);
-        // setToggleAlignment(newToggleGroupValue);
->>>>>>> c74dc9b6e19fbe0cebfa96344271b825926fb4dc
     };
 
     
