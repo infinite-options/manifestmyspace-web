@@ -75,9 +75,28 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         setDescription(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        setToggleGroupValue(newToggleGroupValue);
-        setToggleAlignment(newToggleGroupValue);
+    // const handlePriorityChange = (event, newToggleGroupValue) => {
+    //     setToggleGroupValue(newToggleGroupValue);
+    //     setToggleAlignment(newToggleGroupValue);
+    // };
+
+    const handlePriorityChange = (priority) => {
+        setToggleAlignment(priority);
+        setToggleGroupValue(priority);
+    
+        // Update styles for all toggle buttons based on the selected priority
+        const buttons = document.querySelectorAll('.MuiToggleButton-root');
+        buttons.forEach(button => {
+            const buttonPriority = button.getAttribute('value');
+    
+            if (buttonPriority === priority) {
+                // Set white border for the selected button
+                button.style.borderColor = 'white';
+            } else {
+                // Reset border color for other buttons
+                button.style.borderColor = '';
+            }
+        });
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
@@ -317,25 +336,28 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                         <ToggleButtonGroup
                             exclusive
                             fullWidth
-                            onChange={handlePriorityChange}
+                            value={toggleAlignment}
+                            onChange={(event, value) => handlePriorityChange(value)}
                             aria-label="Priority"
                             size="small"
                             sx={{
                                 '& .MuiToggleButton-root.Mui-selected': {
-                                backgroundColor: 'lightblue', // Selected background color
+                                // backgroundColor: 'lightblue', // Selected background color
                                 color: 'white', // Selected text color
                             },
                             }}
                         >
                             <ToggleButton 
-                                value="low"
+                                key={"Low"}
+                                value={"Low"}
                                 sx={{
                                     backgroundColor: theme.palette.priority.low,
                                     borderRadius: '20px',
                                     color: 'white',
                                     marginRight: "10px",
+                                    borderWidth: "3px",
                                     '&.Mui-selected': {
-                                    // borderColor: "black",
+                                    borderColor: "white",
                                     borderBlockColor: "white",
                                     borderWidth: "3px",
                                     backgroundColor: theme.palette.priority.low,
@@ -348,11 +370,15 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                     '&.Mui-selected + .MuiToggleButton-root': {
                                         borderLeftColor: 'white',
                                     },
-                                }}>
+                                }}
+                                onClick={() => handlePriorityChange("Low")}
+                                isSelected={toggleAlignment === "Low"}
+                                >
                                 Low
                             </ToggleButton>
                             <ToggleButton 
-                                value="medium"
+                                key={"Medium"}
+                                value={"Medium"}
                                 sx={{
                                     backgroundColor: theme.palette.priority.medium,
                                     borderRadius: '20px',
@@ -362,7 +388,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                     borderColor: "black",
                                     // borderColor: "white",
                                     color: "white",
-                                    borderWidth: "6px",
+                                    borderWidth: "3px",
                                     backgroundColor: theme.palette.priority.medium,
                                     },
                                     '&:hover': {
@@ -370,11 +396,15 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                     // backgroundColor: theme.palette.priority.medium,
                                     backgroundColor: darken(theme.palette.priority.medium, 0.3),
                                     },
-                                }}>
+                                }}
+                                onClick={() => handlePriorityChange("Medium")}
+                                isSelected={toggleAlignment === "Medium"}
+                                >
                                 Medium
                             </ToggleButton>
                             <ToggleButton 
-                                value="high"
+                                key={"Medium"}
+                                value={"Medium"}
                                 sx={{
                                     backgroundColor: theme.palette.priority.high,
                                     borderRadius: '20px',
@@ -384,7 +414,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                     // borderColor: "black",
                                     color: "white",
                                     borderColor: "white",
-                                    borderWidth: "6px",
+                                    borderWidth: "3px",
                                     backgroundColor: theme.palette.priority.high,
                                     },
                                     '&:hover': {
@@ -395,7 +425,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                     '&.Mui-selected + .MuiToggleButton-root': {
                                         borderLeftColor: 'white',
                                     },
-                                }}>
+                                }}
+                                onClick={() => handlePriorityChange("High")}
+                                isSelected={toggleAlignment === "High"}
+                                >
                                 High
                             </ToggleButton>
 

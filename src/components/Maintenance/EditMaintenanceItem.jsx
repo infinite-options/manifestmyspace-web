@@ -135,13 +135,30 @@ export default function EditMaintenanceItem(){
         setDescription(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handlePriorityChange", event.target.value)
-        // console.log("handleToggleGroupChange", newToggleGsroupValue)
-        setPriority(event.target.value)
-        // setPriority(testPriority1)
-        // setToggleGroupValue(newToggleGroupValue);
-        // setToggleAlignment(newToggleGroupValue);
+    // const handlePriorityChange = (event, newToggleGroupValue) => {
+    //     console.log("handlePriorityChange", event.target.value)
+    //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
+    //     setPriority(event.target.value)
+    //     // setPriority(testPriority1)
+    //     // setToggleGroupValue(newToggleGroupValue);
+    //     // setToggleAlignment(newToggleGroupValue);
+    // };
+    const handlePriorityChange = (priority) => {
+        setToggleAlignment(priority);
+    
+        // Update styles for all toggle buttons based on the selected priority
+        const buttons = document.querySelectorAll('.MuiToggleButton-root');
+        buttons.forEach(button => {
+            const buttonPriority = button.getAttribute('value');
+    
+            if (buttonPriority === priority) {
+                // Set white border for the selected button
+                button.style.borderColor = 'white';
+            } else {
+                // Reset border color for other buttons
+                button.style.borderColor = '';
+            }
+        });
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
@@ -464,15 +481,20 @@ export default function EditMaintenanceItem(){
                                     <ToggleButtonGroup
                                         exclusive
                                         fullWidth
-                                        value={testPriority1}
-                                        onChange={handlePriorityChange}
+                                        // value={testPriority1}
+                                        value={toggleAlignment}
+                                        // onChange={handlePriorityChange}
+                                        onChange={(event, value) => handlePriorityChange(value)}
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
-                                            // '& .MuiToggleButton-root.Mui-selected': {
-                                            //     backgroundColor: 'lightblue', // Selected background color
-                                            //     color: 'white', // Selected text color
-                                            // },
+                                            '& .MuiToggleButton-root.Mui-selected': {
+                                                // backgroundColor: 'transparent', // Selected background color
+                                                color: 'white', // Selected text color
+                                            },
+                                            '&.Mui-selected + .MuiToggleButton-root': {
+                                                // borderLeftColor: 'white',
+                                            },
                                             // display: "grid",
                                             // gridTemplateColumns: "auto auto auto auto",
                                             // gridGap: "50px",
@@ -480,7 +502,9 @@ export default function EditMaintenanceItem(){
                                         }}
                                     >
                                         <ToggleButton 
-                                            value="Low"
+                                            // value="Low"
+                                            key={"Low"}
+                                            value={"Low"}
                                             sx={{
                                                 backgroundColor: theme.palette.priority.low,
                                                 borderRadius: '20px',
@@ -498,11 +522,16 @@ export default function EditMaintenanceItem(){
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.low, 0.3),
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             Low
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="Medium"
+                                            // value="Medium"
+                                            key={"Medium"}
+                                            value={"Medium"}
                                             sx={{
                                                 backgroundColor: theme.palette.priority.medium,
                                                 borderRadius: '20px',
@@ -523,11 +552,16 @@ export default function EditMaintenanceItem(){
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             Medium
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="High"
+                                            key={"High"}
+                                            value={"High"}
+                                            // value="High"
                                             sx={{
                                                 backgroundColor: theme.palette.priority.high,
                                                 borderRadius: '20px',
@@ -548,7 +582,10 @@ export default function EditMaintenanceItem(){
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             High
                                         </ToggleButton>
                                     </ToggleButtonGroup>
