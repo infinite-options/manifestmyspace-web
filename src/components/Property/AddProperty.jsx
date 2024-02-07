@@ -1,32 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { 
-    Typography, 
-    Box, 
-    Stack,
-    Paper,
-    Button,
-    ThemeProvider,
-    Form,
-    TextField,
-    ToggleButton,
-    ToggleButtonGroup,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Grid,
-    Input,
-    Container,
-    Radio,
-    FormLabel,
-    FormControlLabel,
-    RadioGroup,
-    UploadFile,
-    CardMedia,
-    InputAdornment,
-    Checkbox
+    Typography, Box, Stack, Paper, Button, ThemeProvider, Form, TextField, ToggleButton, ToggleButtonGroup, FormControl,
+    InputLabel, MenuItem, Select, Grid, Input, Container, Radio, FormLabel, FormControlLabel, RadioGroup, UploadFile,
+    CardMedia, InputAdornment, Checkbox
 } from "@mui/material";
+
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
@@ -82,21 +62,20 @@ export default function AddProperty({}){
 
 
     // React hooks that runs every time a dependancy variable changes  
-    useEffect(() => {
+    useEffect(() => { //This runs for a manager who wants to select an owner while adding a property
+        if (selectedRole === 'MANAGER'){
         console.log("OWNER ID", ownerId);
         const getOwnerContacts = async () => {
             try {
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`);
-                // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000035`);
 
                 if(!response.ok){
                     console.log("Error fetching owner data")
+                    return;
                 }
                 const ownerdata = await response.json();
                 console.log(ownerdata)
-                console.log("Owner Data", ownerdata.owner_contacts.managers)
-
-                let contactArray = ownerdata.owner_contacts.managers;
+                let contactArray = ownerdata.management_contacts.owners;
                 let ownerObjList = [];
                 contactArray.forEach((contact)=>{
                     let obj ={
@@ -112,9 +91,8 @@ export default function AddProperty({}){
             }
         }
         getOwnerContacts();
-
-    //  Dependancy array that triggers function calls
-    }, [ownerId]);  
+        }
+    }, []);  
 
     useEffect(() => {
         console.log("SELECTED OWNER", selectedOwner);
