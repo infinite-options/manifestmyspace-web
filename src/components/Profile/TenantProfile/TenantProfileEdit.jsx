@@ -623,10 +623,60 @@ function TenantProfileEdit(props) {
                                         <Box sx={{
                                             display: 'flex',
                                             flexDirection: 'row',
+                                            justifyContent: 'space-evenly',
                                             gap: 2,
                                         }}>
-                                            <ProfileTextInputField name="tenant_current_salary" value={tenantCurrentSalary} onChange={handleInputChange}>Current Salary</ProfileTextInputField>
-                                            <ProfileTextInputField name="tenant_salary_frequency" value={tenantSalaryFrequency} onChange={handleInputChange}>Salary Frequency</ProfileTextInputField>
+                                            <Box sx={{
+                                                width: '50%',
+                                            }}>
+                                                <ProfileTextInputField name="tenant_current_salary" value={tenantCurrentSalary} onChange={handleInputChange} >Current Salary</ProfileTextInputField>
+                                            </Box>
+                                            
+                                            {/* <ProfileTextInputField name="tenant_salary_frequency" value={tenantSalaryFrequency} onChange={handleInputChange}>Salary Frequency</ProfileTextInputField> */}
+                                            <Box sx={{
+                                                width: '50%',
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                gap: 2,
+                                            }}>
+                                                <Typography sx={{
+                                                    fontFamily: 'Source Sans Pro',
+                                                    fontSize: '12px',
+                                                    fontWeight: 600,
+                                                    color: '#160449',
+                                                    width: '30%',
+                                                    marginLeft: '10px',
+                                                }}>
+                                                    Salary Frequency :
+                                                </Typography>
+                                                <Select
+                                                    value={tenantSalaryFrequency}
+                                                    name = "tenant_salary_frequency"
+                                                    label="Salary Frequency"
+                                                    // onChange={(e) => {
+                                                    //         const updatedTypes = [...tenantFileTypes];
+                                                    //         updatedTypes[i] = e.target.value;
+                                                    //         setTenantFileTypes(updatedTypes);
+                                                    //     }
+                                                    // }
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    sx={{
+                                                        backgroundColor: '#D6D5DA',
+                                                        height: '20px',
+                                                        width: '70%', 
+                                                        padding: '8px', 
+                                                    }}
+                                                >
+                                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
+                                                    <MenuItem value={"semi-monthly"}>Semi-monthly</MenuItem>                                               
+                                                    <MenuItem value={"bi-weekly"}>Bi-weekly</MenuItem>                                                                                                        
+                                                    <MenuItem value={"daily"}>Daily</MenuItem>
+                                                    <MenuItem value={"hourly"}>Hourly</MenuItem>                                                    
+                                                    <MenuItem value={"yearly"}>Yearly</MenuItem>
+                                                </Select>
+                                            </Box>
+                                            
                                         </Box>
                                             <ProfileTextInputField name="tenant_current_job_title" value={tenantJobTitle} onChange={handleInputChange}>Job title</ProfileTextInputField>
                                             <ProfileTextInputField name="tenant_current_job_company" value={tenantCompanyName} onChange={handleInputChange}>Company Name</ProfileTextInputField>
@@ -944,7 +994,7 @@ function TenantProfileEdit(props) {
                                                                 required
                                                                 sx={{
                                                                     backgroundColor: '#D6D5DA',
-                                                                    height: '16px',
+                                                                    height: '20px',
                                                                     width: '40%', // Adjust the width as needed
                                                                     padding: '8px', // Adjust the padding as needed
                                                                 }}

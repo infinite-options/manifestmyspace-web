@@ -41,9 +41,9 @@ export default function TenantApplication(){
 
     const [tenantDocuments, setTenantDocuments] = useState([]);
 
-    useEffect(() => {
-        console.log("ROHIT - tenantDocuments - ", tenantDocuments);
-    }, [tenantDocuments])
+    // useEffect(() => {
+    //     console.log("tenantDocuments - ", tenantDocuments);
+    // }, [tenantDocuments])
 
 
     function formatDocumentType(type) {

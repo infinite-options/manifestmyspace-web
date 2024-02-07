@@ -30,7 +30,7 @@ const ViewLease = (props) => {
     const [moveOut, setMoveOut] = useState("")
 
     const [showSpinner, setShowSpinner] = useState(false);
-    const { getProfileId } = useUser();
+    const { getProfileId, selectedRole, } = useUser();
     const handleBackButton = () => {
         navigate(-1)
     };
@@ -39,7 +39,7 @@ const ViewLease = (props) => {
         setMoveOut(event.target.value);
     }
 
-
+    console.log("ROHIT - Selected Role - ", selectedRole)
     const handleViewButton = (leaseData) => {
         console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
         let link = JSON.parse(leaseData.lease_documents)[0]?.link
@@ -190,7 +190,7 @@ const ViewLease = (props) => {
                                     fontSize: theme.typography.largeFont,
                                 }}
                             >
-                                Viewing Lease
+                                Viewing Current Lease
                             </Typography>
                         </Box>
                         {document>0 ?<Box position="absolute" right={0}
@@ -223,89 +223,97 @@ const ViewLease = (props) => {
                                     </Typography>
                                 </TableCell>
                             </TableRow>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.primary
-                                                .black,
-                                            fontWeight:
-                                                theme.typography.primary
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Owner: {`${leaseData.owner_first_name} ${leaseData.owner_last_name}`}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Button>
-                                        <Chat
+                            {selectedRole === "MANAGER" && (
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography
                                             sx={{
-                                                color: theme.typography.common
-                                                    .blue,
+                                                color: theme.typography.primary
+                                                    .black,
+                                                fontWeight:
+                                                    theme.typography.primary
+                                                        .fontWeight,
                                                 fontSize: '16px',
-                                                margin: '5px',
                                             }}
-                                        />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.primary
-                                                .black,
-                                            fontWeight:
-                                                theme.typography.primary
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Tenant:  {getTenantName(leaseData)}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Button>
-                                        <Chat
+                                        >
+                                            Owner: {`${leaseData.owner_first_name} ${leaseData.owner_last_name}`}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Button>
+                                            <Chat
+                                                sx={{
+                                                    color: theme.typography.common
+                                                        .blue,
+                                                    fontSize: '16px',
+                                                    margin: '5px',
+                                                }}
+                                            />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                                
+                            {selectedRole === "MANAGER" && (
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography
                                             sx={{
-                                                color: theme.typography.common
-                                                    .blue,
+                                                color: theme.typography.primary
+                                                    .black,
+                                                fontWeight:
+                                                    theme.typography.primary
+                                                        .fontWeight,
                                                 fontSize: '16px',
-                                                margin: '5px',
                                             }}
-                                        />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
+                                        >
+                                            Tenant:  {getTenantName(leaseData)}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Button>
+                                            <Chat
+                                                sx={{
+                                                    color: theme.typography.common
+                                                        .blue,
+                                                    fontSize: '16px',
+                                                    margin: '5px',
+                                                }}
+                                            />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            )}                            
                         </TableBody>
                     </Table>
                     <Table>
                         <TableBody>
-                            <TableRow>
-                                <TableCell colSpan={2}>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Contract Name
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        {leaseData.ld_name}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
+                            {selectedRole === "MANAGER" && (
+                                <TableRow>
+                                    <TableCell colSpan={2}>
+                                        <Typography
+                                            sx={{
+                                                color: theme.typography.common.blue,
+                                                fontWeight:
+                                                    theme.typography.common
+                                                        .fontWeight,
+                                                fontSize: '16px',
+                                            }}
+                                        >
+                                            Contract Name
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                color: theme.typography.common.blue,
+                                                fontSize: '16px',
+                                            }}
+                                        >
+                                            {leaseData.ld_name}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            
                             <TableRow>
                                 <TableCell>
                                     <Typography
@@ -361,6 +369,138 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
+                                        Rent
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        ${leaseData.property_listed_rent}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Rent Frequency
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        {leaseData.frequency? leaseData.frequency : "<FREQUENCY>"}
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Late Fee After
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                    {leaseData.late_by} days
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Late Fee Per Day
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        ${leaseData.perDay_late_fee}
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Rent Due Date
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        {leaseData.due_by} of month
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Available to Pay
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        {leaseData.available_topay} days before
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
                                         Move In Date
                                     </Typography>
                                     <Typography
@@ -369,7 +509,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {leaseData.lease_move_in_date}
+                                        {leaseData.lease_move_in_date? leaseData.lease_move_in_date : "<MOVE-IN-DATE>"}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -390,11 +530,100 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {countNoOfOccupents(leaseData)}
+                                        {leaseData? countNoOfOccupents(leaseData) : "NUM-OCCUPANTS"}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
                             <TableRow>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        # of Pets
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        {leaseData? CountNoOfPets(leaseData) : "PETS"}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        # of Vehicles
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        {/* {leaseData? countNoOfOccupents(leaseData) : "NUM-OCCUPANTS"} */}
+                                        {"<NUM_VEHICLES>"}
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Tenant Utilities
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        {/* {leaseData? CountNoOfPets(leaseData) : "PETS"} */}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontWeight:
+                                                theme.typography.common
+                                                    .fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        View Lease
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.common.blue,
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>                            
+                            {/* <TableRow>
                                 <TableCell colSpan={1}>
                                     <Typography
                                         sx={{
@@ -429,139 +658,10 @@ const ViewLease = (props) => {
                                         }}
                                     />
                                 </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Rent
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        ${leaseData.property_listed_rent}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Rent Frequency
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        {leaseData.frequency}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Late Fee After
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                    {leaseData.lease_rent_late_by} days
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Late Fee Per Day
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        ${leaseData.lease_rent_late_fee}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Rent Due Date
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        {getDayText(leaseData.lease_rent_due_by)} of month
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontWeight:
-                                                theme.typography.common
-                                                    .fontWeight,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        Available to Pay
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize: '16px',
-                                        }}
-                                    >
-                                        {leaseData.lease_rent_available_topay} days before
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
+                            </TableRow> */}
+                            
+                            
+                            
                         </TableBody>
                     </Table>
                     <Stack
@@ -569,7 +669,7 @@ const ViewLease = (props) => {
                         justifyContent="space-between"
                         alignItems="center"
                         position="relative"
-                        sx={{ padding: '15px' }}
+                        sx={{ paddingTop: '15px' }}
                     >
                         <Button
                             variant="contained"
@@ -617,6 +717,18 @@ function countNoOfOccupents(leaseData){
         no_of_occupants += ChildNo.length;
     }
     return no_of_occupants;
+}
+
+function CountNoOfPets(leaseData){
+    let pets = leaseData.lease_adults?JSON.parse(leaseData.lease_pets):[];
+
+    let numPets = 0
+
+    if(pets){
+        numPets = pets.length
+    }
+
+    return numPets
 }
 
 
