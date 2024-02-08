@@ -34,6 +34,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from '../../theme/theme';
 
+import PhoneNumberField from '../FormComponents/PhoneNumberField'
+
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
 export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){
@@ -64,6 +66,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
     };
 
     const handlePhoneNumberChange = (event) => {
+        let input = event.target.value
+        if(phoneNumber.length < 3){
+
+        }
         setPhoneNumber(event.target.value);
     };
 
