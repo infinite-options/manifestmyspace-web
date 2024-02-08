@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+  Box,
+  Stack,
+  Paper,
+  Grid,
+} from "@mui/material";
 import theme from "../../theme/theme";
 import maintenanceRequestImage from "./maintenanceRequest.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -9,8 +19,7 @@ import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
-import CreateIcon from '@mui/icons-material/Create';
-
+import CreateIcon from "@mui/icons-material/Create";
 
 function getInitialImages(requestData, currentIndex) {
   if (requestData[currentIndex].maintenance_images != "[]") {
@@ -20,102 +29,94 @@ function getInitialImages(requestData, currentIndex) {
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs  }) {
+export default function MaintenanceRequestNavigator({
+  requestIndex,
+  backward_active_status,
+  forward_active_status,
+  updateRequestIndex,
+  requestData,
+  color,
+  item,
+  allData,
+  maintenanceQuotes,
+  currentTabValue,
+  status,
+  tabs,
+}) {
   console.log("Inside MaintenanceRequestNavigator()");
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
-  
+
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
   const [images, setImages] = useState([maintenanceRequestImage]);
-  let [currentTab, setCurrentTab]=useState(currentTabValue);
-  
+  let [currentTab, setCurrentTab] = useState(currentTabValue);
+
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   // const [propertyId, setPropertyId] = useState("200-000029")
-  
+
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
 
-  function navigateToEditMaintenanceItem(testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID){
+  function navigateToEditMaintenanceItem(
+    testIssue,
+    testProperty,
+    testIssueItem,
+    testCost,
+    testTitle,
+    testPriority,
+    completionStatus,
+    requestUid,
+    propID
+  ) {
     // console.log("navigateToAddMaintenanceItem")
-    console.log("testTitle>>",(testTitle))
-    console.log("testCost>>",(testCost))
-    navigate('/editMaintenanceItem', {state: {testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID, month, year}})
+    console.log("testTitle>>", testTitle);
+    console.log("testCost>>", testCost);
+    navigate("/editMaintenanceItem", {
+      state: {
+        testIssue,
+        testProperty,
+        testIssueItem,
+        testCost,
+        testTitle,
+        testPriority,
+        completionStatus,
+        requestUid,
+        propID,
+        month,
+        year,
+      },
+    });
   }
 
-
-//   console.log("--debug-- In MaintenanceRequestNavigator now")
+  //   console.log("--debug-- In MaintenanceRequestNavigator now")
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
     setImages(initialImages);
     setActiveStep(0);
-
   }, [currentIndex]);
 
-//   console.log("-- DEBUG -- RequestNavigator");
-//   console.log("requestIndex", requestIndex);
-//   console.log("requestData", requestData);
-//   console.log("currentIndex", currentIndex);
-//   console.log("color", color);
-//   console.log("item", item);
-//   console.log("allData", allData);
+  //   console.log("-- DEBUG -- RequestNavigator");
+  //   console.log("requestIndex", requestIndex);
+  //   console.log("requestData", requestData);
+  //   console.log("currentIndex", currentIndex);
+  //   console.log("color", color);
+  //   console.log("item", item);
+  //   console.log("allData", allData);
 
   const maxSteps = images.length;
 
   // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
-      
-      setCurrentIndex((prevIndex) => {
-          let newIndex = (prevIndex + 1);
-          if(prevIndex< requestData.length-1){
-            
-            let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-
-            
-            // navigate(`/maintenance/${nextMaintenanceId}`, { 
-            //     replace: true,   
-            //     state: {
-            //         requestIndex,
-            //         status,
-            //         maintenanceItemsForStatus,
-            //         allData,
-            //     }
-            // });
-
-            console.log("currentIndex", newIndex);
-            console.log("allData", allData);
-            console.log("requestData", requestData);
-            console.log("requestData[newIndex]", requestData[newIndex]);
-            updateRequestIndex(newIndex, {changeTab:'noChange'})
-            return newIndex;
-          }
-          else{
-            updateRequestIndex(newIndex, {changeTab:'forward'});
-            return newIndex;
-          }
-      });
-    //   navigate(`/maintenance/detail`, {
-    //     state: {
-    //         maintenance_request_index,
-    //         status,
-    //         maintenanceItemsForStatus,
-    //         allMaintenanceData,
-    //     }
-    // })
-  };
-
-  const handlePreviousCard = () => {
-
-
     setCurrentIndex((prevIndex) => {
-      let newIndex = (prevIndex - 1);
-      if(prevIndex> 0){
+      let newIndex = prevIndex + 1;
+      if (prevIndex < requestData.length - 1) {
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-        
-        // navigate(`/maintenance/${nextMaintenanceId}`, { 
-        //     replace: true,   
+
+        // navigate(`/maintenance/${nextMaintenanceId}`, {
+        //     replace: true,
         //     state: {
         //         requestIndex,
         //         status,
@@ -128,16 +129,51 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         console.log("allData", allData);
         console.log("requestData", requestData);
         console.log("requestData[newIndex]", requestData[newIndex]);
-        updateRequestIndex(newIndex, {changeTab:'noChange'})
+        updateRequestIndex(newIndex, { changeTab: "noChange" });
+        return newIndex;
+      } else {
+        updateRequestIndex(newIndex, { changeTab: "forward" });
         return newIndex;
       }
-      else{
-        updateRequestIndex(newIndex, {changeTab:'backward'});
-        return newIndex;
-      }
-  });
+    });
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //         maintenance_request_index,
+    //         status,
+    //         maintenanceItemsForStatus,
+    //         allMaintenanceData,
+    //     }
+    // })
   };
 
+  const handlePreviousCard = () => {
+    setCurrentIndex((prevIndex) => {
+      let newIndex = prevIndex - 1;
+      if (prevIndex > 0) {
+        let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+
+        // navigate(`/maintenance/${nextMaintenanceId}`, {
+        //     replace: true,
+        //     state: {
+        //         requestIndex,
+        //         status,
+        //         maintenanceItemsForStatus,
+        //         allData,
+        //     }
+        // });
+
+        console.log("currentIndex", newIndex);
+        console.log("allData", allData);
+        console.log("requestData", requestData);
+        console.log("requestData[newIndex]", requestData[newIndex]);
+        updateRequestIndex(newIndex, { changeTab: "noChange" });
+        return newIndex;
+      } else {
+        updateRequestIndex(newIndex, { changeTab: "backward" });
+        return newIndex;
+      }
+    });
+  };
 
   // const handleNextCard = () => {
   //   setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
@@ -195,27 +231,42 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   // console.log("--DEBUG requestData--")
   // console.log("requestData", requestData)
   // console.log("currentIndex", currentIndex)
-  console.log("data>>>>>", data)
+  console.log("data>>>>>", data);
 
-  let propertyAddress = " "
-  propertyAddress = propertyAddress.concat(" ", (data?.property_address), " ",  (data?.property_city)," ", (data?.property_state), " ", (data?.property_zip))
-  console.log("propertyAddress",typeof(propertyAddress))
+  let propertyAddress = " ";
+  propertyAddress = propertyAddress.concat(
+    " ",
+    data?.property_address,
+    " ",
+    data?.property_city,
+    " ",
+    data?.property_state,
+    " ",
+    data?.property_zip
+  );
+  console.log("propertyAddress", typeof propertyAddress);
 
-  let estimatedCost = " "
-  estimatedCost = estimatedCost.concat(" ", (data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : "Not reported"))
-  console.log("estimatedCost>>",typeof(estimatedCost))
+  let estimatedCost = " ";
+  estimatedCost = estimatedCost.concat(
+    " ",
+    data?.maintenance_estimated_cost
+      ? data?.maintenance_estimated_cost
+      : "Not reported"
+  );
+  console.log("estimatedCost>>", typeof estimatedCost);
 
-  let completionStatus = "no"
-  if (data?.maintenance_request_status == "Completed" || data?.maintenance_request_status == "Closed") {
-    console.log("inside ifffff", data?.maintenance_request_status)
-    completionStatus = "yes"
+  let completionStatus = "no";
+  if (
+    data?.maintenance_request_status == "Completed" ||
+    data?.maintenance_request_status == "Closed"
+  ) {
+    console.log("inside ifffff", data?.maintenance_request_status);
+    completionStatus = "yes";
+  } else {
+    console.log(data?.maintenance_request_status);
+    completionStatus = "no";
+    console.log(completionStatus);
   }
-  else {
-    console.log(data?.maintenance_request_status)
-    completionStatus = "no"
-    console.log(completionStatus)
-  }
-  
 
   useEffect(() => {
     formatDate(data.maintenance_request_created_date);
@@ -240,7 +291,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
           // width= "100%" // Take up full screen width
           spacing={2}
         >
-          <Button onClick={handlePreviousCard} disabled={backward_active_status}>
+          <Button
+            onClick={handlePreviousCard}
+            disabled={backward_active_status}
+          >
             <ArrowBackIcon />
           </Button>
           <Stack
@@ -250,10 +304,22 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             // width= "100%" // Take up full screen width
             spacing={2}
           >
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+            <Typography
+              sx={{
+                color: theme.typography.secondary.white,
+                fontWeight: theme.typography.secondary.fontWeight,
+                fontSize: theme.typography.largeFont,
+              }}
+            >
               {item.status}
             </Typography>
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+            <Typography
+              sx={{
+                color: theme.typography.secondary.white,
+                fontWeight: theme.typography.secondary.fontWeight,
+                fontSize: theme.typography.largeFont,
+              }}
+            >
               {currentIndex + 1} of {requestData.length}
             </Typography>
           </Stack>
@@ -261,7 +327,11 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             <ArrowForwardIcon />
           </Button>
         </Stack>
-        <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          sx={{ paddingBottom: "0px" }}
+        >
           <Card
             sx={{
               backgroundColor: color,
@@ -272,7 +342,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              padding: "0px"
+              padding: "0px",
             }}
           >
             <CardContent
@@ -328,18 +398,24 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   boxShadow: "none",
                 }}
                 nextButton={
-                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1} 
-                    sx={{color: "white"}}
-                  > 
-                    <KeyboardArrowRight sx={{color: "white"}} />
+                  <Button
+                    size="small"
+                    onClick={handleNext}
+                    disabled={activeStep === maxSteps - 1}
+                    sx={{ color: "white" }}
+                  >
+                    <KeyboardArrowRight sx={{ color: "white" }} />
                   </Button>
                 }
                 backButton={
-                  <Button size="small" onClick={handleBack} disabled={activeStep === 0} 
-                    sx={{color: "white"}}
+                  <Button
+                    size="small"
+                    onClick={handleBack}
+                    disabled={activeStep === 0}
+                    sx={{ color: "white" }}
                   >
-                  <KeyboardArrowLeft sx={{color: "white"}} />
-                </Button>
+                    <KeyboardArrowLeft sx={{ color: "white" }} />
+                  </Button>
                 }
               />
             </CardContent>
@@ -349,7 +425,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 alignItems: "left",
                 justifyContent: "left",
                 width: "100%",
-                padding: "0px"
+                padding: "0px",
               }}
             >
               <div
@@ -360,7 +436,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   alignItems: "left",
                 }}
               >
-                 {/* <Typography
+                {/* <Typography
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
@@ -368,76 +444,81 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     paddingBottom: "10px",
                   }}
                 > */}
-              {/* {data?.maintenance_priority} Priority */}
+                {/* {data?.maintenance_priority} Priority */}
 
-              <Stack alignItems="center" justifyContent="center" sx={{ paddingBottom: "0px" }}>
-                <Card
-                  sx={{
-                    backgroundColor: color,
-                    // backgroundColor: "blue",
-                    boxShadow: "none",
-                    elevation: "0",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "0px"
-                  }}
+                <Stack
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{ paddingBottom: "0px" }}
                 >
-                  <CardContent
+                  <Card
                     sx={{
+                      backgroundColor: color,
+                      // backgroundColor: "blue",
+                      boxShadow: "none",
+                      elevation: "0",
+                      width: "100%",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      width: "100%",
-                      paddingBottom: "0px",
+                      padding: "0px",
                     }}
                   >
-                    {/* Priority Typography with Button */}
-                    <Typography
+                    <CardContent
                       sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.mediumFont,
-                        paddingBottom: "0px",
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "center",
+                        justifyContent: "center",
                         width: "100%",
+                        paddingBottom: "0px",
                       }}
                     >
-                      {data?.maintenance_priority} Priority
-                      
-                        <CreateIcon sx={{
+                      {/* Priority Typography with Button */}
+                      <Typography
+                        sx={{
+                          color: theme.typography.secondary.white,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.mediumFont,
+                          paddingBottom: "0px",
+                          display: "flex",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                      >
+                        {data?.maintenance_priority} Priority
+                        <CreateIcon
+                          sx={{
                             color: "#FFFFFF",
                             // color: "red",
                             // backgroundColor: "yellow",
                             // margin:"5px",
                             marginLeft: "auto",
-                            fontSize: "18px"
-                        }} 
-                         
-                        onClick={() => navigateToEditMaintenanceItem(data?.maintenance_desc, data?.property_address, data?.maintenance_request_type, estimatedCost, data.maintenance_title, data.maintenance_priority, completionStatus, data.maintenance_request_uid, data.maintenance_property_id )}/>  
-                      
-                    </Typography>
+                            fontSize: "18px",
+                          }}
+                          onClick={() =>
+                            navigateToEditMaintenanceItem(
+                              data?.maintenance_desc,
+                              data?.property_address,
+                              data?.maintenance_request_type,
+                              estimatedCost,
+                              data.maintenance_title,
+                              data.maintenance_priority,
+                              completionStatus,
+                              data.maintenance_request_uid,
+                              data.maintenance_property_id
+                            )
+                          }
+                        />
+                      </Typography>
 
-                    {/*  */}
-                  </CardContent>
-                </Card>
-              </Stack>
+                      {/*  */}
+                    </CardContent>
+                  </Card>
+                </Stack>
 
-             {/* </Typography> */}
-                <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                    paddingBottom: "10px",
-                  }} underline="always"
-                >
-                    {data?.property_address} {data?.property_unit}, {data?.property_city} {data?.property_state} {data?.property_zip}
-            </Typography>
+                {/* </Typography> */}
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -445,9 +526,11 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
+                  underline="always"
                 >
-                  { data !== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
-            
+                  {data?.property_address} {data?.property_unit},{" "}
+                  {data?.property_city} {data?.property_state}{" "}
+                  {data?.property_zip}
                 </Typography>
                 <Typography
                   sx={{
@@ -457,7 +540,25 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     paddingBottom: "10px",
                   }}
                 >
-                  Estimated Cost: {data?.maintenance_estimated_cost ? "$" + data?.maintenance_estimated_cost : "Not reported"}
+                  {data !== undefined
+                    ? data.maintenance_title !== undefined
+                      ? data.maintenance_title
+                      : "No Data"
+                    : "No data"}{" "}
+                  - {data?.maintenance_request_uid}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.secondary.white,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                  Estimated Cost:{" "}
+                  {data?.maintenance_estimated_cost
+                    ? "$" + data?.maintenance_estimated_cost
+                    : "Not reported"}
                 </Typography>
                 <Typography
                   sx={{
@@ -469,7 +570,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
                 </Typography>
-                  {/* {data.maintenance} */}
+                {/* {data.maintenance} */}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",
@@ -478,7 +579,12 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     fontSize: theme.typography.mediumFont,
                   }}
                 >
-                  {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
+                  {data.maintenance_request_status === "SCHEDULED"
+                    ? "Scheduled for " +
+                      data.maintenance_scheduled_date +
+                      " at " +
+                      data.maintenance_scheduled_time
+                    : null}
                 </Typography>
                 <Typography
                   sx={{
@@ -491,63 +597,70 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   Issue Description: {data?.maintenance_desc}
                 </Typography>
                 {data.maintenance_request_status === "PROCESSING" ? (
-                    <Typography
-                        sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.mediumFont,
-                        paddingBottom: "10px",
-                        }}
-                    >
-                        {data?.business_name} is processing this request.
-                    </Typography>
+                  <Typography
+                    sx={{
+                      color: theme.typography.secondary.white,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.mediumFont,
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    {data?.business_name} is processing this request.
+                  </Typography>
                 ) : null}
                 {/* {console.log(maintenanceQuotes)} */}
                 <Grid container>
-                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                            {maintenanceQuotes.length > 0 ? (
-                                <Typography
-                                    sx={{
-                                    color: theme.typography.secondary.white,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.mediumFont,
-                                    paddingBottom: "10px",
-                                    }}
-                                >
-                                    {maintenanceQuotes.length} quote(s) for this request.
-                                </Typography>
-                            ) : null}
+                  <Grid item xs={12} sx={{ paddingTop: "10px" }}>
+                    {maintenanceQuotes.length > 0 ? (
+                      <Typography
+                        sx={{
+                          color: theme.typography.secondary.white,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.mediumFont,
+                          paddingBottom: "10px",
+                        }}
+                      >
+                        {maintenanceQuotes.length} quote(s) for this request.
+                      </Typography>
+                    ) : null}
+                  </Grid>
+                  {maintenanceQuotes.map((quote, index) => (
+                    <Grid item xs={12} sx={{ paddingTop: "10px" }}>
+                      <div key={index}>
+                        <Paper
+                          elevation={3}
+                          sx={{ paddingLeft: "10px", paddingRight: "10px" }}
+                        >
+                          {quote.quote_status === "SENT" ? (
+                            <Typography
+                              sx={{
+                                color: "#000000",
+                                fontWeight:
+                                  theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.largeFont,
+                              }}
+                            >
+                              <u>{quote.quote_business_id}</u> quoted $
+                              {quote.quote_total_estimate} for this request.
+                            </Typography>
+                          ) : null}
+                          {quote.quote_status === "REQUESTED" ? (
+                            <Typography
+                              sx={{
+                                color: "#000000",
+                                fontWeight:
+                                  theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.largeFont,
+                              }}
+                            >
+                              A quote from <u>{quote.quote_business_id}</u> has
+                              been requested.
+                            </Typography>
+                          ) : null}
+                        </Paper>
+                      </div>
                     </Grid>
-                    {maintenanceQuotes.map((quote, index) => 
-                        <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                            <div key={index}>
-                                <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px"}}>
-                                    {quote.quote_status === "SENT" ? (
-                                        <Typography
-                                            sx={{
-                                            color: "#000000",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.largeFont,
-                                            }}
-                                        >
-                                            <u>{quote.quote_business_id}</u> quoted ${quote.quote_total_estimate} for this request.
-                                        </Typography>  
-                                    ) : null}
-                                    {quote.quote_status === "REQUESTED" ? (
-                                        <Typography
-                                            sx={{
-                                            color: "#000000",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.largeFont,
-                                            }}
-                                        >
-                                            A quote from <u>{quote.quote_business_id}</u> has been requested.
-                                        </Typography>  
-                                    ) : null}
-                                </Paper>
-                            </div>
-                        </Grid>
-                    )}
+                  ))}
                 </Grid>
               </div>
             </CardContent>
