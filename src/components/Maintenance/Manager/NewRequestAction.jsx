@@ -113,15 +113,18 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     return(
         <Box 
             sx={{
-                display: "flex",
+                display: "flex" ,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
+
+                // backgroundColor:'pink'
             }}
         >
             <Backdrop
                 sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                // sx={{ color: "yellow", zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={showSpinner}
             >
                 <CircularProgress color="inherit" />
@@ -133,13 +136,14 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 setDate={setSchedulerDate}
                 handleSubmit={handleSubmit}
             />
-            <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <Grid item xs={1} sx={{
-                        alignItems: "center",
+            <Grid container direction="row" columnSpacing={4} rowSpacing={6} >
+                {/* <Grid item xs={1} sx={{ */}
+                        {/* alignItems: "center",
                         justifyContent: "left",
                         paddingLeft: "0px",
-                    }}>
-                    <Button sx={{
+                        backgroundColor: 'blue' */}
+                    {/* // }}> */}
+                    {/* <Button sx={{
                         maxWidth: "10px",
                         paddingRight: "0px",
                         paddingLeft: "0px",
@@ -149,19 +153,21 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         <ChatIcon sx={{
                             color: "#3D5CAC"
                         }}/>
-                    </Button>
-                </Grid>
-                <Grid item xs={5} sx={{
+                    </Button> */}
+                {/* </Grid> */}
+                <Grid item xs={6} sx={{
                         alignItems: "center",
                         justifyContent: "center",
+                        // backgroundColor: "yellow"
                     }}>
                     <Button
                         variant="contained"
                         disableElevation
                         sx={{
                             backgroundColor: "#D6D5DA",
+                            // backgroundColor: "transparent",
                             textTransform: "none",
-                            paddingRight: "0px",
+                            // paddingRight: "0px",
                             borderRadius: "10px",
                             display: 'flex',
                             width: "100%",
@@ -175,14 +181,17 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <Grid item xs={6} sx={{
                         alignItems: "center",
                         justifyContent: "center",
+                        // backgroundColor: "lightcyan"
                     }}>
                     <Button
                         variant="contained"
                         disableElevation
                         sx={{
                             backgroundColor: "#D6D5DA",
+                            // backgroundColor: "transparent",
                             textTransform: "none",
-                            paddingRight: "0px",
+                            // paddingRight: "0px",
+                            // paddingLeft: "50px",
                             borderRadius: "10px",
                             display: 'flex',
                             width: "100%",
@@ -193,46 +202,53 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         </Typography>
                     </Button>
                 </Grid>
-                <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                    <Grid item xs={12} sx={{
-                            alignItems: "center",
-                            justifyContent: "left",
-                            
-                        }}>
-                            <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRight:"10%",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }} 
-                        onClick={() => setShowRequestMoreInfo(true)}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Request More Info
-                        </Typography>
-                    </Button>
-                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
-                           
-                    </Grid>
+                {/* <Grid container direction="row" columnSpacing={6} rowSpacing={6}> */}
+                <Grid item xs={12} sx={{
+                        // marginTop: "9px",
+                        // marginLeft: "9px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        // backgroundColor: "blue"
+                    }}>
+                        <Button
+                    variant="contained"
+                    disableElevation
+                    sx={{
+                        backgroundColor: "#D6D5DA",
+                        // backgroundColor:"transparent",
+                        textTransform: "none",
+                        // paddingRight: "10px",
+                        // borderRight:"10%",
+                        borderRadius: "10px",
+                        // display: 'flex',
+                        width: "100%",
+                    }} 
+                    onClick={() => setShowRequestMoreInfo(true)}
+                >
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                        Request More Info
+                    </Typography>
+                </Button>
+                <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
+                        
                 </Grid>
+                {/* </Grid> */}
            
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
+                    // backgroundColor : "lightblue"
                 }}>
                     <Button
                         variant="contained"
                         disableElevation
                         sx={{
                             backgroundColor: "#9EAED6",
+                            // backgroundColor:"transparent",
+                            // borderColor : "red",
+                            // border:"1px",
                             textTransform: "none",
-                            paddingRight: "0px",
+                            // paddingRight: "0px",
                             borderRadius: "10px",
                             display: 'flex',
                             width: "100%",
@@ -251,12 +267,14 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
+                    // backgroundColor: "lightseagreen"
                 }}>
                     <Button
                         variant="contained"
                         disableElevation
                         sx={{
                             backgroundColor: "#C06A6A",
+                            // backgroundColor: "transparent",
                             textTransform: "none",
                             paddingRight: "0px",
                             borderRadius: "10px",
@@ -277,12 +295,14 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
+                    // backgroundColor : "lightred"
                 }}>
                     <Button
                         variant="contained"
                         disableElevation
                         sx={{
                             backgroundColor: "#FFFFFF",
+                            // backgroundColor: 'transparent',
                             textTransform: "none",
                             borderRadius: "10px",
                             display: 'flex',
@@ -299,6 +319,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
+                    // backgroundColor: "lightgreen"
 
                 }}>
                     <Button
@@ -306,6 +327,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         disableElevation
                         sx={{
                             backgroundColor: "#FFFFFF",
+                            // backgroundColor: "transparent",
                             textTransform: "none",
                             borderRadius: "10px",
                             display: 'flex',
