@@ -30,6 +30,7 @@ export default function TenantApplication(){
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
     // console.log("status", status)
+    // console.log("lease", lease)
     // console.log(property)
 
     const [tenantProfile, setTenantProfile] = useState(null);
@@ -175,6 +176,21 @@ export default function TenantApplication(){
 
     function displaySSN(){
         return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`
+    }
+
+    function handleWithdrawLease() {
+        const withdrawLeaseData = new FormData();
+        withdrawLeaseData.append('lease_uid', lease.lease_uid)
+        withdrawLeaseData.append('lease_status', "WITHDRAWN")
+        
+        const withdrawLeaseResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+            method: 'PUT',
+            body: withdrawLeaseData
+        })
+
+        Promise.all([withdrawLeaseResponse]).then((values) => {
+            navigate("/listings") // send success data back to the propertyInfo page
+        })
     }
 
     function handleApplicationSubmit(){
@@ -894,6 +910,34 @@ export default function TenantApplication(){
                                     </Button>
                                 </Grid>
                             </>
+                        )}
+                        {status && status === "NEW" ? (
+                          <>
+                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: 'center', }}>
+                                <Button
+                                    sx={{
+                                        marginTop: "30px",
+                                        color: "#160449",
+                                        backgroundColor: "#ffe230",
+                                        fontWeight: theme.typography.medium.fontWeight,
+                                        fontSize: theme.typography.mediumFont,
+                                        textTransform: "none",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        ":hover": {
+                                            color: "white",
+                                        }
+    
+                                    }}
+                                    onClick={() => handleWithdrawLease()}
+                                >
+                                    Withdraw
+                                </Button>
+                            </Grid>                                
+                        </>
+                        ) : (
+                            null
                         )}
                     </Grid>
                 </Paper>

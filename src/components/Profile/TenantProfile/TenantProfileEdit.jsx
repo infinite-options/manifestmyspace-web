@@ -46,6 +46,7 @@ function TenantProfileEdit(props) {
     const [tenantLeaseStartDate, setTenantLeaseStartDate] = useState('');
     const [tenantLeaseEndDate, setTenantLeaseEndDate] = useState('');
     const [tenantMonthlyRent, setTenantMonthlyRent] = useState('');
+    const [tenantRentFrequency, setTenantRentFrequency] = useState('');
     const [tenantPMName, setTenantPMName] = useState('');
     const [tenantPMPhone, setTenantPMPhone] = useState('');
 
@@ -668,12 +669,13 @@ function TenantProfileEdit(props) {
                                                         padding: '8px', 
                                                     }}
                                                 >
-                                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
-                                                    <MenuItem value={"semi-monthly"}>Semi-monthly</MenuItem>                                               
                                                     <MenuItem value={"bi-weekly"}>Bi-weekly</MenuItem>                                                                                                        
-                                                    <MenuItem value={"daily"}>Daily</MenuItem>
+                                                    <MenuItem value={"semi-monthly"}>Semi-monthly</MenuItem>                                               
                                                     <MenuItem value={"hourly"}>Hourly</MenuItem>                                                    
-                                                    <MenuItem value={"yearly"}>Yearly</MenuItem>
+                                                    <MenuItem value={"daily"}>Daily</MenuItem>
+                                                    <MenuItem value={"weekly"}>Weekly</MenuItem>                                                                                                        
+                                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
+                                                    <MenuItem value={"yearly"}>Yearly</MenuItem>                                                                                                                                                                                                                                                                    
                                                 </Select>
                                             </Box>
                                             
@@ -756,7 +758,7 @@ function TenantProfileEdit(props) {
                                             alignItems: 'center',
                                         }}>
                                             <Box>
-                                                Additional details - {'<TBD>'}
+                                                Additional details
                                             </Box>
                                             {!(tenantLeaseStartDate && tenantLeaseEndDate && tenantMonthlyRent && tenantPMName && tenantPMPhone) && (
                                                 <Box sx={{
@@ -783,13 +785,16 @@ function TenantProfileEdit(props) {
                                             flexDirection: 'row',
                                             gap: 2,
                                         }}>
-                                            <ProfileTextInputField name="tenant_lease_start_date" value = {tenantLeaseStartDate} onChange={handleInputChange}>lease start date</ProfileTextInputField>
-                                            <ProfileTextInputField name="tenant_lease_end_date" value = {tenantLeaseEndDate} onChange={handleInputChange}>lease end date</ProfileTextInputField>
+                                            <ProfileTextInputField name="tenant_lease_start_date" value = {tenantLeaseStartDate} onChange={handleInputChange}>Lease Start Date</ProfileTextInputField>
+                                            <ProfileTextInputField name="tenant_lease_end_date" value = {tenantLeaseEndDate} onChange={handleInputChange}>Lease End Date</ProfileTextInputField>
                                         </Box>
                                         <Box sx={{
-                                            width: '40%',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            gap: 2,
                                         }}>
                                             <ProfileTextInputField name="tenant_monthly_rent" value = {tenantMonthlyRent} onChange={handleInputChange}>Monthly Rent</ProfileTextInputField>
+                                            <ProfileTextInputField name="tenant_rent_frequency" value = {tenantRentFrequency} onChange={handleInputChange}>Rent Frequency</ProfileTextInputField>
                                         </Box>
 
                                         <ProfileTextInputField name="tenant_pm_name" value = {tenantPMName} onChange={handleInputChange}>Property Manager Name</ProfileTextInputField>

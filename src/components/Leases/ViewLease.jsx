@@ -22,8 +22,30 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from "dayjs";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      "& .MuiOutlinedInput-input": {
+        border: 0,
+        borderRadius: 3,
+        color: "#3D5CAC",
+        fontSize: 50
+      }
+    }
+}));
 
 const ViewLease = (props) => {
+    const classes = useStyles();
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -31,6 +53,39 @@ const ViewLease = (props) => {
 
     const [showSpinner, setShowSpinner] = useState(false);
     const { getProfileId, selectedRole, } = useUser();
+
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [month, day, year].join('-');
+    }
+
+    const [endLeaseDialogOpen, setEndLeaseDialogOpen] = useState(false);
+
+    const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
+    useEffect(() => {
+        // console.log("Move-out Date - ", formatDate(moveOutDate));
+        setMoveOut(formatDate(moveOutDate));
+    }, [moveOutDate]);
+    
+
+    const closeEndLeaseDialog = () => {
+        setEndLeaseDialogOpen(false);
+    }
+
+    const openEndLeaseDialog = () => {
+        setEndLeaseDialogOpen(true);
+    }
+
     const handleBackButton = () => {
         navigate(-1)
     };
@@ -39,7 +94,7 @@ const ViewLease = (props) => {
         setMoveOut(event.target.value);
     }
 
-    console.log("ROHIT - Selected Role - ", selectedRole)
+    // console.log("Selected Role - ", selectedRole)
     const handleViewButton = (leaseData) => {
         console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
         let link = JSON.parse(leaseData.lease_documents)[0]?.link
@@ -66,7 +121,7 @@ const ViewLease = (props) => {
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
         leaseApplicationFormData.append("move_out_date", moveOut);
-       // leaseApplicationFormData.append("lease_status", "ENDED");
+        leaseApplicationFormData.append("lease_status", "ENDED");
     
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
@@ -530,7 +585,7 @@ const ViewLease = (props) => {
                                             fontSize: '16px',
                                         }}
                                     >
-                                        {leaseData? countNoOfOccupents(leaseData) : "NUM-OCCUPANTS"}
+                                        {leaseData? countNoOfOccupents(leaseData) : "<NUM-OCCUPANTS>"}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -680,7 +735,8 @@ const ViewLease = (props) => {
                                 backgroundColor: theme.palette.custom.pink,
                                 margin: '10px',
                             }}
-                            onClick={handleEndLease}
+                            // onClick={handleEndLease}
+                            onClick={() => setEndLeaseDialogOpen(true)}
                         >
                             End Lease
                         </Button>
@@ -700,6 +756,78 @@ const ViewLease = (props) => {
                     </Stack>
                 </Paper>
             </Box>
+            <Dialog
+                open={endLeaseDialogOpen}
+                onClose={closeEndLeaseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">Confirm End Lease</DialogTitle>
+                <DialogContent>
+                    <DialogContentText 
+                        id="alert-dialog-description"
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.common.fontWeight,                                                        
+                        }}
+                    >
+                        Please select a Move-Out Date
+                    </DialogContentText>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DatePicker', 'DatePicker']}>
+                            <DatePicker                                
+                                value={moveOutDate}
+                                onChange={(newValue) => setMoveOutDate(newValue)}
+                                disablePast={true}
+                                sx={{
+                                    paddingTop: "10px",
+                                    paddingBottom: "10px",
+                                    // color: "#3D5CAC",
+                                }}
+                                renderInput={(params) => <TextField className={classes.root} {...params} />}                                
+                            />
+                        </DemoContainer>
+                    </LocalizationProvider>
+                    <DialogContentText 
+                        id="alert-dialog-description"
+                        sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.common.fontWeight,
+                            paddingTop: "10px",                                                        
+                        }}
+                    >
+                        Are you sure you want to end the lease?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    {/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
+                    <Button
+                        onClick={() => handleEndLease()}
+                        sx={{
+                            color:"white",                            
+                            backgroundColor: "#3D5CAC80",
+                            ':hover': { 
+                                backgroundColor: '#3D5CAC'
+                            }                             
+                        }}
+                        autoFocus
+                    >
+                        Yes
+                    </Button>
+                    <Button 
+                        onClick={()=> setEndLeaseDialogOpen(false)}
+                        sx={{
+                            color:"white",                            
+                            backgroundColor: "#3D5CAC80",
+                            ':hover': { 
+                                backgroundColor: '#3D5CAC'
+                            }                             
+                        }}>
+                        No
+                    </Button>
+                    
+                </DialogActions>
+            </Dialog>
         </ThemeProvider>
     );
 };
