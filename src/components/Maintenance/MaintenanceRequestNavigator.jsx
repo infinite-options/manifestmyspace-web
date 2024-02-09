@@ -90,10 +90,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => {
-      console.log("--debug-- prevIndex", prevIndex)
+      // console.log("--debug-- prevIndex", prevIndex)
       let newIndex = (prevIndex - 1);
-      console.log("--debug-- newIndex", newIndex)
-      if(newIndex => 0){
+      // console.log("--debug-- newIndex", newIndex)
+      if(prevIndex > 0){
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
         console.log("--debug--", nextMaintenanceId)
 
@@ -104,7 +104,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         updateRequestIndex(newIndex, {changeTab:'noChange'})
         return newIndex;
       }
-      else if (newIndex === -1){
+      else {
         // if (prevIndex === -1){
         //   newIndex = 0
         //   console.log("--debug-- newIndex", newIndex)
