@@ -4,6 +4,7 @@ import {
     ThemeProvider, Box, Paper, Stack, Typography, Button, Avatar, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, Radio, RadioGroup, FormControlLabel, Select, MenuItem, Grid, 
 } from '@mui/material';
+import { useUser } from "../../../contexts/UserContext";
 import theme from '../../../theme/theme';
 
 import ImageCarousel from "../../ImageCarousel";
@@ -46,7 +47,7 @@ function TextInputField(props) {
 
 
 function AddFeeDialog({ open, handleClose, onAddFee }) {
-
+    const { getProfileId } = useUser();
     const [feeName, setFeeName] = useState('');
     useEffect(() => {
         console.log('FEE Name: ', feeName);
@@ -1277,7 +1278,6 @@ useEffect(() => {
         setContractUID(props.contractUID);
         if (data !== "No records for this Uid") {
             const contractData = data["result"].find(contract => contract.contract_uid === props.contractUID);
-            
             console.log("CONTRACT - ", contractData);
             // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
             setContractName(contractData["contract_name"]? contractData["contract_name"] : "");

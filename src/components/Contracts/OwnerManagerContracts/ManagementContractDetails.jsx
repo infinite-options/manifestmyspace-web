@@ -20,30 +20,19 @@ function ManagementContractDetails(props) {
     const navigate = useNavigate();
 
     const {state} = useLocation();
-    const { contract_uid, contract_business_id, contract_property_id } = state;
+    const { contract_uid, contract_business_id, contract_property_id, property_endpoint_resp } = state;
     
     const [contractUID, setContractUID] = useState(null);
-    const [contractBusinessID, setContractBusinessID] = useState(null);
-    useEffect(() => {
-        console.log('CONTRACT BUSINESS ID: ', contractBusinessID);
-    }, [contractBusinessID]);
-    // let contractBusinessID = "";
+    
+;
 
     const [contractPropertyID, setContractPropertyID] = useState(null);
-    useEffect(() => {
-        console.log('CONTRACT PROPERTY ID: ', contractPropertyID);
-    }, [contractPropertyID]);
-    // let contractPropertyID = "";
 
     const [showSpinner, setShowSpinner] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [propertiesData, setPropertiesData] = useState([]);
     const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
-    
-    // useEffect(() => {
-    //     // setContractPropertyID(filteredPropertiesData["property_uid"]);
-    // }, [filteredPropertiesData]);
-    
+
     
     const [index, setIndex] = useState(0);
     const [timeDiff, setTimeDiff] = useState(null);
@@ -56,20 +45,11 @@ function ManagementContractDetails(props) {
 
             
 
-            // console.log("ANNOUNCEMENT DATA", announcementData);
 
-            // setContractBusinessID(announcementData["announcement_receiver"]);
-            setContractBusinessID(contract_business_id);
+            
             setContractUID(contract_uid)
 
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
-            
-            const responseData = await response.json();
-
-            
-            // setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
-            // const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
-            const properties = responseData["NewPMRequests"]["result"]? responseData["NewPMRequests"]["result"] : [];
+            const properties = property_endpoint_resp["NewPMRequests"]["result"]? property_endpoint_resp["NewPMRequests"]["result"] : [];
             console.log("PROPERTIES", properties);
             setPropertiesData(properties);
 
@@ -246,7 +226,7 @@ function ManagementContractDetails(props) {
                 </Box>
                 <PropertyCard data={filteredPropertiesData[index]? filteredPropertiesData[index]: []} 
                 timeDifference={timeDiff} contractUID={contractUID} 
-                contractBusinessID={contractBusinessID} contractPropertyID={contractPropertyID}/>
+                contractBusinessID={getProfileId()} contractPropertyID={contractPropertyID}/>
                 
             </Box>
         </ThemeProvider>
