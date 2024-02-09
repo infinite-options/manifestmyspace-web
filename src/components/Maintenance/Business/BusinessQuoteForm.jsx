@@ -149,7 +149,6 @@ function CostPartsTable({parts, setParts}){
 // /businessAcceptQuoteForm
 export default function BusinessQuoteForm({acceptBool}){
 
-    console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
     const { getProfileId } = useUser();
@@ -655,7 +654,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     sx={{
                                                         color: "#3D5CAC"
                                                     }}
-                                                    label="Diagnostic fees included or extra"
+                                                    label="Diagnostic fees included"
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>

@@ -261,13 +261,8 @@ export function MaintenanceRequestDetail(){
 
         if(i>=0)
         {setValue(i);
-            console.log('Mousivand')
             let requestType= colorStatus[i].status.toUpperCase();
-            console.log(allData)
-            console.log(requestType)
             let j= allData[requestType].length-1
-            console.log('Mousivand')
-            
         setMaintenanceRequestIndex(j)}
      }  
     
@@ -442,7 +437,6 @@ export function MaintenanceRequestDetail(){
                                     <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
-                                {console.log("--debug-- maintenenceRequestDetail", filteredQuotes)}
                                 {colorStatus[value]?.status === "Quotes Accepted" ?
                                     <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
