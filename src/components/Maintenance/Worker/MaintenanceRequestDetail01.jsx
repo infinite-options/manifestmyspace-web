@@ -315,11 +315,11 @@ export default function MaintenanceRequestDetail01(){
                                 {colorStatus.map((item, index) => {
 
                                         let color = greyOutTab(item.mapping, allData, item.color)
-                                        // let color = item.color
+                                        let title = item.mapping
+
                                         return (
                                             <Tab key={index}
                                                 disabled={deactivateTab(item.mapping, allData)}
-                                                // disabled={true}
                                                 {...a11yProps(index)} 
                                                 sx={{
                                                     backgroundColor: color,
@@ -329,6 +329,11 @@ export default function MaintenanceRequestDetail01(){
                                                     minWidth: '5px',
                                                     padding: '0px',
                                                 }}
+                                                label={
+                                                    <Typography sx={{color: theme.typography.primary.grey, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                        {title}
+                                                    </Typography>
+                                                }
                                             />
                                         )
                                     }
@@ -379,7 +384,7 @@ export default function MaintenanceRequestDetail01(){
                                     <QuotesAccepted01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value]?.mapping === "Scheduled" ?
+                                {colorStatus[value]?.mapping === "SCHEDULED" ?
                                     <ScheduleMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }

@@ -33,6 +33,7 @@ import dataURItoBlob from '../utils/dataURItoBlob'
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from '../../theme/theme';
+import { formatPhoneNumber } from "../Onboarding/helper";
 
 import PhoneNumberField from '../FormComponents/PhoneNumberField'
 
@@ -53,10 +54,11 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
     const [description, setDescription] = useState('');
     const [file, setFile] = useState('');
     const [showSpinner, setShowSpinner] = useState(false);
+    const [errorFlag, setErrorFlag] = useState(false);
 
-    useEffect(() => {
-        console.log(selectedImageList)
-    }, [selectedImageList])
+    // useEffect(() => {
+    //     console.log(selectedImageList)
+    // }, [selectedImageList])
 
     const handlePropertyChange = (event) => {
         setProperty(event.target.value);
@@ -64,14 +66,6 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
 
     const handleIssueChange = (event) => {
         setIssue(event.target.value);
-    };
-
-    const handlePhoneNumberChange = (event) => {
-        let input = event.target.value
-        if(phoneNumber.length < 3){
-
-        }
-        setPhoneNumber(event.target.value);
     };
 
     const handleTitleChange = (event) => {
@@ -121,7 +115,6 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
     }
 
     const handleSubmit = (event) => {
-
         console.log("handleSubmit")
         event.preventDefault();
 
@@ -410,7 +403,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                 Medium
                             </ToggleButton>
                             <ToggleButton 
-                                key={"Medium"}
+                                key={"High"}
                                 value={"Medium"}
                                 sx={{
                                     backgroundColor: theme.palette.priority.high,
@@ -438,60 +431,6 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                 >
                                 High
                             </ToggleButton>
-
-                            {/* <ToggleButton
-                                value="vol1"
-                                onClick={() => handlePriorityChange('vol1')}
-                                selected={toggleAlignment === 'vol1'}
-                                sx={{
-                                    borderRadius: '20px',
-                                    marginRight: "10px",
-                                    borderColor: toggleAlignment === 'vol1' ? 'white' : '',
-                                    color: toggleAlignment === 'vol1' ? 'white' : 'black',
-                                    '&:hover': {
-                                        borderColor: 'white',
-                                        backgroundColor: toggleAlignment === 'vol1' ? darken(theme.palette.priority.vol1, 0.3) : '',
-                                    },
-                                }}
-                            >
-                                Vol1
-                            </ToggleButton>
-
-                            <ToggleButton
-                                value="vol2"
-                                onClick={() => handlePriorityChange('vol2')}
-                                selected={toggleAlignment === 'vol2'}
-                                sx={{
-                                    borderRadius: '20px',
-                                    marginRight: "10px",
-                                    borderColor: toggleAlignment === 'vol2' ? 'white' : '',
-                                    color: toggleAlignment === 'vol2' ? 'white' : 'black',
-                                    '&:hover': {
-                                        borderColor: 'white',
-                                        backgroundColor: toggleAlignment === 'vol2' ? darken(theme.palette.priority.vol2, 0.3) : '',
-                                    },
-                                }}
-                            >
-                                Vol2
-                            </ToggleButton>
-
-                            <ToggleButton
-                                value="vol3"
-                                onClick={() => handlePriorityChange('vol3')}
-                                selected={toggleAlignment === 'vol3'}
-                                sx={{
-                                    borderRadius: '20px',
-                                    marginRight: "10px",
-                                    borderColor: toggleAlignment === 'vol3' ? 'white' : '',
-                                    color: toggleAlignment === 'vol3' ? 'white' : 'black',
-                                    '&:hover': {
-                                        borderColor: 'white',
-                                        backgroundColor: toggleAlignment === 'vol3' ? darken(theme.palette.priority.vol3, 0.3) : '',
-                                    },
-                                }}
-                            >
-                                Vol3
-                            </ToggleButton> */}
                         </ToggleButtonGroup> 
                         </Grid>
 
@@ -499,15 +438,11 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                 Call Back Number
                             </Typography>
-                            <TextField
-                                fullWidth
-                                sx={{
-                                    backgroundColor: 'white',
-                                    borderColor: 'black',
-                                    borderRadius: '7px',
-                                }}
-                                size="small"
-                                onChange={handlePhoneNumberChange}
+                            <PhoneNumberField 
+                                phoneNumber={phoneNumber} 
+                                setPhoneNumber={setPhoneNumber}
+                                setErrorFlag={setErrorFlag}
+                                errorFlag={errorFlag}
                             />
                         </Grid>
 
@@ -518,7 +453,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
 
                         {/* Submit Button */}
                         <Grid item xs={12}>
-                            <Button variant="contained" color="primary" type="submit" sx={{
+                            <Button variant="contained" color="primary" type="submit" disabled={errorFlag} sx={{
                                 width: "100%",
                                 backgroundColor: theme.typography.common.blue,
                                 color: "#FFFFFF",

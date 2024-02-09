@@ -38,9 +38,9 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export default function ImageUploader({selectedImageList, setSelectedImageList, setDeletedImageList, page}){
 
-    useEffect(() =>{
-        console.log("selectedImageList - ", selectedImageList);
-    }, [selectedImageList]);
+    // useEffect(() =>{
+    //     console.log("selectedImageList - ", selectedImageList);
+    // }, [selectedImageList]);
 
     const readImage = (file) => {
         const reader = new FileReader();
