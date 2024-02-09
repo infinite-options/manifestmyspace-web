@@ -115,7 +115,7 @@ function Onboarding() {
             <img src={Maintenance} alt="Maintenance" />
           </Box>
         </Box>
-        <Stack spacing={-16} m={12}></Stack>
+        {/* <Stack spacing={-16} m={12}></Stack> */}
       </Box>
     </ThemeProvider>
   );

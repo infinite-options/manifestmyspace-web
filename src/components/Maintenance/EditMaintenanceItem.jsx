@@ -135,13 +135,30 @@ export default function EditMaintenanceItem(){
         setDescription(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handlePriorityChange", event.target.value)
-        // console.log("handleToggleGroupChange", newToggleGsroupValue)
-        setPriority(event.target.value)
-        // setPriority(testPriority1)
-        // setToggleGroupValue(newToggleGroupValue);
-        // setToggleAlignment(newToggleGroupValue);
+    // const handlePriorityChange = (event, newToggleGroupValue) => {
+    //     console.log("handlePriorityChange", event.target.value)
+    //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
+    //     setPriority(event.target.value)
+    //     // setPriority(testPriority1)
+    //     // setToggleGroupValue(newToggleGroupValue);
+    //     // setToggleAlignment(newToggleGroupValue);
+    // };
+    const handlePriorityChange = (priority) => {
+        setToggleAlignment(priority);
+    
+        // Update styles for all toggle buttons based on the selected priority
+        const buttons = document.querySelectorAll('.MuiToggleButton-root');
+        buttons.forEach(button => {
+            const buttonPriority = button.getAttribute('value');
+    
+            if (buttonPriority === priority) {
+                // Set white border for the selected button
+                button.style.borderColor = 'white';
+            } else {
+                // Reset border color for other buttons
+                button.style.borderColor = '';
+            }
+        });
     };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
@@ -360,8 +377,12 @@ export default function EditMaintenanceItem(){
                                         size="small"
                                     >
                                            
-                                        <InputLabel>{testProperty1}</InputLabel>
+                                        {/* <Tooltip title={testProperty1} style={{ zIndex: '1' }}>   */}
+                                        <InputLabel hidden={true} shrink={false}>{testProperty1}</InputLabel>
                                         <Select
+                                            // value={testProperty1}
+                                            // display={" "}
+                                            // onFocus={true}
                                             onChange={handlePropertyChange}
                                             MenuProps={{
                                                 PaperProps: {
@@ -377,6 +398,8 @@ export default function EditMaintenanceItem(){
                                                 <MenuItem key={property.property_uid} value={property.property_uid}>{property.property_address} {property?.property_unit}</MenuItem>
                                             ))}
                                         </Select>
+                                        {/* </Tooltip> */}
+                                        
                                     </FormControl>
                                 </Grid>
 
@@ -397,7 +420,7 @@ export default function EditMaintenanceItem(){
                                     >
                                            
                                         <InputLabel>{testIssueItem1}</InputLabel>
-                                        <Select onChange={handleIssueChange}>
+                                        <Select onChange={handleIssueChange} defaultValue={testIssueItem1}>
                                             <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
                                             <MenuItem value={"Electrical"}>Electrical</MenuItem>
                                             <MenuItem value={"Appliance"}>Appliance</MenuItem>
@@ -412,6 +435,7 @@ export default function EditMaintenanceItem(){
                                     </Typography>
                                     <TextField
                                         placeholder= {testCost1}
+                                        defaultValue={testCost1}
                                         fullWidth
                                         sx={{
                                             backgroundColor: 'white',
@@ -436,6 +460,7 @@ export default function EditMaintenanceItem(){
                                     </Typography>
                                     <TextField 
                                         placeholder= {testTitle1}
+                                        defaultValue={testTitle1}
                                         onChange={handleTitleChange} 
                                         sx={{
                                             backgroundColor: 'white',
@@ -456,15 +481,20 @@ export default function EditMaintenanceItem(){
                                     <ToggleButtonGroup
                                         exclusive
                                         fullWidth
-                                        value={testPriority1}
-                                        onChange={handlePriorityChange}
+                                        // value={testPriority1}
+                                        value={toggleAlignment}
+                                        // onChange={handlePriorityChange}
+                                        onChange={(event, value) => handlePriorityChange(value)}
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
-                                            // '& .MuiToggleButton-root.Mui-selected': {
-                                            //     backgroundColor: 'lightblue', // Selected background color
-                                            //     color: 'white', // Selected text color
-                                            // },
+                                            '& .MuiToggleButton-root.Mui-selected': {
+                                                // backgroundColor: 'transparent', // Selected background color
+                                                color: 'white', // Selected text color
+                                            },
+                                            '&.Mui-selected + .MuiToggleButton-root': {
+                                                // borderLeftColor: 'white',
+                                            },
                                             // display: "grid",
                                             // gridTemplateColumns: "auto auto auto auto",
                                             // gridGap: "50px",
@@ -472,7 +502,9 @@ export default function EditMaintenanceItem(){
                                         }}
                                     >
                                         <ToggleButton 
-                                            value="Low"
+                                            // value="Low"
+                                            key={"Low"}
+                                            value={"Low"}
                                             sx={{
                                                 backgroundColor: theme.palette.priority.low,
                                                 borderRadius: '20px',
@@ -490,11 +522,16 @@ export default function EditMaintenanceItem(){
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.low, 0.3),
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             Low
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="Medium"
+                                            // value="Medium"
+                                            key={"Medium"}
+                                            value={"Medium"}
                                             sx={{
                                                 backgroundColor: theme.palette.priority.medium,
                                                 borderRadius: '20px',
@@ -515,11 +552,16 @@ export default function EditMaintenanceItem(){
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             Medium
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="High"
+                                            key={"High"}
+                                            value={"High"}
+                                            // value="High"
                                             sx={{
                                                 backgroundColor: theme.palette.priority.high,
                                                 borderRadius: '20px',
@@ -540,7 +582,10 @@ export default function EditMaintenanceItem(){
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             High
                                         </ToggleButton>
                                     </ToggleButtonGroup>
@@ -557,6 +602,7 @@ export default function EditMaintenanceItem(){
                                         size="small"
                                         multiline
                                         placeholder= {testIssue1}
+                                        defaultValue={testIssue1}
                                         onChange={handleDescriptionChange}
                                         sx={{ 
                                             width: '100%',
@@ -571,7 +617,7 @@ export default function EditMaintenanceItem(){
                                         Already Completed?
                                     </Typography>
                                     <FormControl component="fieldset">
-                                        <RadioGroup column onChange={handleCompletedChange} value={completionStatus1}>
+                                        <RadioGroup column onChange={handleCompletedChange} defaultValue={completionStatus1}>
                                             <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                             <FormControlLabel value="no" control={<Radio />} label="No" />
                                         </RadioGroup>

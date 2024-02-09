@@ -161,6 +161,7 @@ import PONotifications from "./Notifications/PONotifications";
 import PropertyContract from "./Notifications/PropertyContract";
 import TenantLease from "./Applications/TenantLease";
 import PMQuotesList from "./Property/PMQuotesList"
+import LandingPage from "./Onboarding/LandingPage";
 
 function Main() {
   return (
@@ -176,8 +177,9 @@ function Main() {
         <Header />
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<PublicRoutes />}>
-            <Route path="/" element={<Onboarding />} />
+            <Route path="/" element={<PublicRoutes />}>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="newUser" element={<NewUser />} />
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />

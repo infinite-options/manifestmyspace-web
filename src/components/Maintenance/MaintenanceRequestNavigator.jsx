@@ -21,7 +21,6 @@ function getInitialImages(requestData, currentIndex) {
 }
 
 export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs  }) {
-  console.log("Inside MaintenanceRequestNavigator()");
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   
   const [activeStep, setActiveStep] = useState(0);
@@ -185,7 +184,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
       const diffInMilliseconds = currentDate.getTime() - postDate.getTime();
       openTime = Math.floor(diffInMilliseconds / (1000 * 3600 * 24));
     }
-    console.log("formattedDate", formattedDate, "openTime", openTime);
     // console.log("formattedDate", formattedDate, "openTime", openTime);
     setNumOpenRequestDays(openTime);
     setFormattedDate(formattedDate);
@@ -220,6 +218,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   useEffect(() => {
     formatDate(data.maintenance_request_created_date);
   }, [data]);
+  //automatic refresh problem - the data is not displaying after save update 
 
   return (
     <div style={{ paddingBottom: "10px" }}>
@@ -407,7 +406,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                         width: "100%",
                       }}
                     >
-                      {data?.maintenance_priority} Priority
+                      {data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority
                       
                         <CreateIcon sx={{
                             color: "#FFFFFF",
@@ -436,7 +435,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     paddingBottom: "10px",
                   }} underline="always"
                 >
-                    {data?.property_address} {data?.property_unit}, {data?.property_city} {data?.property_state} {data?.property_zip}
+                    {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
             </Typography>
                 <Typography
                   sx={{
