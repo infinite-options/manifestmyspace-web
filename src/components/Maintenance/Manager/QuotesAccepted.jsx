@@ -27,6 +27,8 @@ import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
+import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}){
     // console.log("--debug-- maintenanceItem", maintenanceItem)
@@ -72,16 +74,13 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
     async function handleScheduleStatusChange(){
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
+            const formData = new FormData();
+            formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_status", "SCHEDULED");
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "SCHEDULED"
-                    })
+                    body: formData
                 });
 
                 const responseData = await response.json();
@@ -147,65 +146,8 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <Grid item xs={1} sx={{
-                        alignItems: "center",
-                        justifyContent: "left",
-                        paddingLeft: "0px",
-                    }}>
-                    <Button sx={{
-                        maxWidth: "10px",
-                        paddingRight: "0px",
-                        paddingLeft: "0px",
-                        }}
-                        onClick={() => console.log("Chat Button")}
-                    >
-                        <ChatIcon sx={{
-                            color: "#3D5CAC"
-                        }}/>
-                    </Button>
-                </Grid>
-                <Grid item xs={5} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - Kim Gordon
-                        </Typography>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - {maintenanceItem.owner_first_name} {maintenanceItem.owner_last_name}
-                        </Typography>
-                    </Button>
-                </Grid>
+                <TenantProfileLink maintenanceItem={maintenanceItem}/>
+                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",

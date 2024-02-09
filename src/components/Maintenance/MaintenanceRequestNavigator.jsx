@@ -68,25 +68,16 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
       
       setCurrentIndex((prevIndex) => {
           let newIndex = (prevIndex + 1);
-          if(prevIndex< requestData.length-1){
+          if(prevIndex < requestData.length-1){
             
             let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
+            console.log("--debug--", nextMaintenanceId)
             
-            // navigate(`/maintenance/${nextMaintenanceId}`, { 
-            //     replace: true,   
-            //     state: {
-            //         requestIndex,
-            //         status,
-            //         maintenanceItemsForStatus,
-            //         allData,
-            //     }
-            // });
-
-            console.log("currentIndex", newIndex);
-            console.log("allData", allData);
-            console.log("requestData", requestData);
-            console.log("requestData[newIndex]", requestData[newIndex]);
+            // console.log("currentIndex", newIndex);
+            // console.log("allData", allData);
+            // console.log("requestData", requestData);
+            // console.log("requestData[newIndex]", requestData[newIndex]);
             updateRequestIndex(newIndex, {changeTab:'noChange'})
             return newIndex;
           }
@@ -95,42 +86,33 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             return newIndex;
           }
       });
-    //   navigate(`/maintenance/detail`, {
-    //     state: {
-    //         maintenance_request_index,
-    //         status,
-    //         maintenanceItemsForStatus,
-    //         allMaintenanceData,
-    //     }
-    // })
   };
 
   const handlePreviousCard = () => {
-
-
     setCurrentIndex((prevIndex) => {
+      // console.log("--debug-- prevIndex", prevIndex)
       let newIndex = (prevIndex - 1);
-      if(prevIndex> 0){
+      // console.log("--debug-- newIndex", newIndex)
+      if(prevIndex > 0){
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-        
-        // navigate(`/maintenance/${nextMaintenanceId}`, { 
-        //     replace: true,   
-        //     state: {
-        //         requestIndex,
-        //         status,
-        //         maintenanceItemsForStatus,
-        //         allData,
-        //     }
-        // });
+        console.log("--debug--", nextMaintenanceId)
 
-        console.log("currentIndex", newIndex);
-        console.log("allData", allData);
-        console.log("requestData", requestData);
-        console.log("requestData[newIndex]", requestData[newIndex]);
+        // console.log("currentIndex", newIndex);
+        // console.log("allData", allData);
+        // console.log("requestData", requestData);
+        // console.log("requestData[newIndex]", requestData[newIndex]);
         updateRequestIndex(newIndex, {changeTab:'noChange'})
         return newIndex;
       }
-      else{
+      else {
+        // if (prevIndex === -1){
+        //   newIndex = 0
+        //   console.log("--debug-- newIndex", newIndex)
+        //   updateRequestIndex(newIndex, {changeTab:'backward'});
+        //   return newIndex;
+        // }
+        console.log("--debug-- WE ARE GOING TO A NEW TAB HERE")
+        console.log("--debug-- newIndex", newIndex)
         updateRequestIndex(newIndex, {changeTab:'backward'});
         return newIndex;
       }
@@ -193,25 +175,25 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   // console.log("--DEBUG requestData--")
   // console.log("requestData", requestData)
   // console.log("currentIndex", currentIndex)
-  console.log("data>>>>>", data)
+  // console.log("data>>>>>", data)
 
   let propertyAddress = " "
   propertyAddress = propertyAddress.concat(" ", (data?.property_address), " ",  (data?.property_city)," ", (data?.property_state), " ", (data?.property_zip))
-  console.log("propertyAddress",typeof(propertyAddress))
+  // console.log("propertyAddress",typeof(propertyAddress))
 
   let estimatedCost = " "
   estimatedCost = estimatedCost.concat(" ", (data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : "Not reported"))
-  console.log("estimatedCost>>",typeof(estimatedCost))
+  // console.log("estimatedCost>>",typeof(estimatedCost))
 
   let completionStatus = "no"
   if (data?.maintenance_request_status == "Completed" || data?.maintenance_request_status == "Closed") {
-    console.log("inside ifffff", data?.maintenance_request_status)
+    // console.log("inside ifffff", data?.maintenance_request_status)
     completionStatus = "yes"
   }
   else {
-    console.log(data?.maintenance_request_status)
+    // console.log(data?.maintenance_request_status)
     completionStatus = "no"
-    console.log(completionStatus)
+    // console.log(completionStatus)
   }
   
 

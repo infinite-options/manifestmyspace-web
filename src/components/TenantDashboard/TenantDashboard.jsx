@@ -191,6 +191,7 @@ function TenantDashboard(props) {
         if(allMaintenanceRequests){
             let filteredMaintenanceItems = allMaintenanceRequests.filter(request => request.property_uid === selectedProperty.property_uid)
             setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems))
+            console.log("--debug filteredMaintenanceItems", filteredMaintenanceItems)
         }
     },[userLeases, selectedProperty]);
 
