@@ -562,8 +562,16 @@ const PropertyListings = (props) => {
                     {displayProperties.length > 0 && displayProperties.map((property, index) => {
                         var status = ""
                         let i = sortedProperties.findIndex(p=>p.property_uid===property.property_uid) // This is to make sure the filtered property items don't confuse with sorted property items, and there's no wrong label or attribute
-                        const appliedData = userLeases.find((lease) => lease.lease_property_id === property.property_uid);
-                        console.log("appliedData", appliedData)
+                        // const appliedData = userLeases.find((lease) => lease.lease_property_id === property.property_uid); // rohit
+                        const appliedData = userLeases
+                            .filter(lease => lease.lease_property_id === property.property_uid && lease.lease_uid !== null)
+                            .sort((a, b) => {
+                                const uidA = parseInt(a.lease_uid.split('-')[1]);
+                                const uidB = parseInt(b.lease_uid.split('-')[1]);                                                                
+                                return uidB - uidA;
+                              })[0];
+                                                      
+                        console.log("ROHIT - appliedData", appliedData)
                         console.log("userLeases", userLeases)
                         if (appliedData) { 
                             console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status)

@@ -46,6 +46,7 @@ const PropertyInfo = (props) => {
     const index = location.state.index;
     const property = location.state.data;
     const status = location.state.status;
+    console.log("ROHIT - status - ", status);
     const lease = location.state.lease;
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);
@@ -123,7 +124,7 @@ const PropertyInfo = (props) => {
     }
 
     function renderCorrectButtonText() {
-        if (status === "") { 
+        if (status === "" || status === "WITHDRAWN" || status === "ENDED") { 
             return 'Apply Now';
         } else if (status === "NEW") {
             return 'View Application';            
@@ -139,7 +140,7 @@ const PropertyInfo = (props) => {
     }
 
     function navigateToCorrectPage(){
-        if (status === "" || status === "NEW") {
+        if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED") {
             navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
         } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
             navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})

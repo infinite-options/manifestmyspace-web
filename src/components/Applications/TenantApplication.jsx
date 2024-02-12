@@ -25,7 +25,7 @@ export default function TenantApplication(){
     const navigate = useNavigate();
     const { user, getProfileId, roleName } = useUser();
 
-
+    console.log("ROHIT - tenantApplication - status - ",location.state.status);
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
@@ -867,9 +867,9 @@ export default function TenantApplication(){
                                 </>                                        
                             ))}
                         </Grid>
-                        {status ? (
-                          null
-                        ) : (
+                        {status && status !== "WITHDRAWN" ? (
+                            null
+                          ) : (
                             <>
                                 {/* <Grid container direction="row" columnSpacing={6} rowSpacing={6} >
                                     <Grid item xs={6} alignContent={'center'}>
