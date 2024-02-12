@@ -61,6 +61,30 @@ export default function AddMaintenanceItem(){
 
     const profileId = getProfileId(); 
 
+    const priorityOptions = ['low', 'medium', 'high'];
+
+    const PriorityToggleButton = ({ value, onClick, isSelected }) => (
+        <Button
+            variant="outlined"
+            size="small"
+            onClick={() => onClick(value)}
+            sx={{
+                borderRadius: '20px',
+                marginRight: "10px",
+                borderColor: isSelected ? 'white' : '',
+                color: isSelected ? 'white' : 'black',
+                '&:hover': {
+                    borderColor: 'white',
+                    backgroundColor: isSelected ? darken(theme.palette.priority[value], 0.3) : '',
+                },
+            }}
+        >
+            {value.charAt(0).toUpperCase() + value.slice(1)}
+        </Button>
+    );
+
+
+
     const handlePropertyChange = (event) => {
         console.log("handlePropertyChange", event.target.value)
         setProperty(event.target.value);
@@ -68,35 +92,61 @@ export default function AddMaintenanceItem(){
     };
 
     const handleIssueChange = (event) => {
-        console.log("handleIssueCategoryChange", event.target.value)
+        // console.log("handleIssueCategoryChange", event.target.value)
         setIssue(event.target.value);
     };
 
     const handleCostChange = (event) => {
-        console.log("handleCostChange", event.target.value)
+        // console.log("handleCostChange", event.target.value)
         setCost(event.target.value);
     };
 
     const handleTitleChange = (event) => {
-        console.log("handleTitleChange", event.target.value)
+        // console.log("handleTitleChange", event.target.value)
         setTitle(event.target.value);
     };
 
     const handleDescriptionChange = (event) => {
-        console.log("handleDescriptionChange", event.target.value)
+        // console.log("handleDescriptionChange", event.target.value)
         setDescription(event.target.value);
     };
 
-    const handlePriorityChange = (event, newToggleGroupValue) => {
-        console.log("handlePriorityChange", event.target.value)
-        // console.log("handleToggleGroupChange", newToggleGsroupValue)
-        setPriority(event.target.value)
-        // setToggleGroupValue(newToggleGroupValue);
-        // setToggleAlignment(newToggleGroupValue);
+    // const handlePriorityChange = (event, newToggleGroupValue) => {
+    //     console.log("handlePriorityChange", event.target.value)
+    //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
+    //     setPriority(event.target.value)
+    //     // setToggleGroupValue(newToggleGroupValue);
+    //     // setToggleAlignment(newToggleGroupValue);
+    // };
+
+    const handlePriorityChange = (priority) => {
+        setToggleAlignment(priority);
+    
+        // Update styles for all toggle buttons based on the selected priority
+        const buttons = document.querySelectorAll('.MuiToggleButton-root');
+        buttons.forEach(button => {
+            const buttonPriority = button.getAttribute('value');
+    
+            if (buttonPriority === priority) {
+                // Set white border for the selected button
+                button.style.borderColor = 'white';
+            } else {
+                // Reset border color for other buttons
+                button.style.borderColor = '';
+            }
+        });
     };
 
+    
+
+
+    // const handlePriorityChange = (value) => {
+    //     setToggleGroupValue(value);
+    //     setToggleAlignment(value);
+    // };
+
     const handleCompletedChange = (event, newToggleGroupValue) => {
-        console.log("handleToggleGroupChange", newToggleGroupValue)
+        // console.log("handleToggleGroupChange", newToggleGroupValue)
         setCompleted(event.target.value)
     };
 
@@ -372,22 +422,39 @@ export default function AddMaintenanceItem(){
                                     <ToggleButtonGroup
                                         exclusive
                                         fullWidth
-                                        onChange={handlePriorityChange}
+                                        value={toggleAlignment}
+                                        // onChange={handlePriorityChange}
+                                        onChange={(event, value) => handlePriorityChange(value)}
+                                        // onClick={selectingPriority}
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
-                                            // '& .MuiToggleButton-root.Mui-selected': {
-                                            //     backgroundColor: 'lightblue', // Selected background color
-                                            //     color: 'white', // Selected text color
-                                            // },
+                                            '& .MuiToggleButton-root.Mui-selected': {
+                                                // backgroundColor: 'transparent', // Selected background color
+                                                color: 'white', // Selected text color
+                                            },
+                                            '&.Mui-selected + .MuiToggleButton-root': {
+                                                // borderLeftColor: 'white',
+                                            },
+
                                             // display: "grid",
                                             // gridTemplateColumns: "auto auto auto auto",
                                             // gridGap: "50px",
-                                            // padding: "10px",
+                                            padding: "10px",
                                         }}
                                     >
+                                        {/* {priorityOptions.map((option) => (
+                                            <PriorityToggleButton
+                                                key={option}
+                                                value={option}
+                                                onClick={() => handlePriorityChange(option)}
+                                                isSelected={toggleAlignment === option}
+                                            />
+                                        ))} */}
                                         <ToggleButton 
-                                            value="Low"
+                                            // value="Low"
+                                            key={"Low"}
+                                            value={"Low"}
                                             sx={{
                                                 backgroundColor: theme.palette.priority.low,
                                                 borderRadius: '20px',
@@ -405,11 +472,16 @@ export default function AddMaintenanceItem(){
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.low, 0.3),
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Low")}
+                                            isSelected={toggleAlignment === "Low"}
+                                            >
                                             Low
                                         </ToggleButton>
                                         <ToggleButton 
-                                            value="Medium"
+                                            // value="Medium"
+                                            key={"Medium"}
+                                            value={"Medium"}
                                             sx={{
                                                 backgroundColor: theme.palette.priority.medium,
                                                 borderRadius: '20px',
@@ -421,16 +493,23 @@ export default function AddMaintenanceItem(){
                                                     borderColor: "white",
                                                     color: "white",
                                                     backgroundColor: theme.palette.priority.medium,
-                                                    borderWidth: "3px"  // Ensure consistent border width
+                                                    borderWidth: "3px",  // Ensure consistent border width
+                                                    // borderLeftWidth: "3px",
                                                 },
                                                 '&:hover': {
+                                                    // borderLeftColor: 'white',
+                                                    // borderLeftWidth: "3px",
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.medium, 0.3),
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
+                                                    // borderRightWidth: "3px",
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("Medium")}
+                                            isSelected={toggleAlignment === "Medium"}
+                                            >
                                             Medium
                                         </ToggleButton>
                                         <ToggleButton 
@@ -446,19 +525,111 @@ export default function AddMaintenanceItem(){
                                                     borderColor: "white",
                                                     color: "white",
                                                     backgroundColor: theme.palette.priority.high,
-                                                    borderWidth: "3px"  // Ensure consistent border width
+                                                    borderWidth: "3px",  // Ensure consistent border width
+                                                    borderLeftWidth: "3px",
                                                 },
                                                 '&:hover': {
+                                                    borderLeftColor: 'white',
+                                                    // borderLeftWidth: "3px",
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.high, 0.3),
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
+                                                    
                                                 },
-                                            }}>
+                                            }}
+                                            onClick={() => handlePriorityChange("High")}
+                                            isSelected={toggleAlignment === "High"}
+                                            >
                                             High
                                         </ToggleButton>
                                     </ToggleButtonGroup>
+
+                                    {/* <ToggleButtonGroup
+                                        exclusive
+                                        fullWidth
+                                        value={toggleAlignment}
+                                        onChange={(event, value) => handlePriorityChange(value)}
+                                        aria-label="Priority"
+                                        size="small"
+                                        sx={{
+                                            '& .MuiToggleButton-root.Mui-selected': {
+                                                backgroundColor: 'lightblue',
+                                                color: 'white',
+                                                borderColor: 'white',
+                                            },
+                                            '&.Mui-selected + .MuiToggleButton-root': {
+                                                borderLeftColor: 'white',
+                                            },
+                                        }}
+                                    >
+                                        {/* Priority ToggleButtons */}
+                                        {/* {priorityOptions.map((option) => (
+                                            <PriorityToggleButton
+                                                key={option}
+                                                value={option}
+                                                onClick={handlePriorityChange}
+                                                isSelected={toggleAlignment === option}
+                                            />
+                                        ))} */} 
+
+                                        {/* Additional ToggleButtons for vol1, vol2, vol3
+                                        <ToggleButton
+                                            value="vol1"
+                                            onClick={() => handlePriorityChange('vol1')}
+                                            selected={toggleAlignment === 'vol1'}
+                                            sx={{
+                                                borderRadius: '20px',
+                                                marginRight: "10px",
+                                                borderColor: toggleAlignment === 'vol1' ? 'white' : '',
+                                                color: toggleAlignment === 'vol1' ? 'white' : 'black',
+                                                '&:hover': {
+                                                    borderColor: 'white',
+                                                    backgroundColor: toggleAlignment === 'vol1' ? darken(theme.palette.priority.medium, 0.3) : '',
+                                                },
+                                            }}
+                                        >
+                                            Vol1
+                                        </ToggleButton>
+
+                                        <ToggleButton
+                                            value="vol2"
+                                            onClick={() => handlePriorityChange('vol2')}
+                                            selected={toggleAlignment === 'vol2'}
+                                            sx={{
+                                                borderRadius: '20px',
+                                                marginRight: "10px",
+                                                borderColor: toggleAlignment === 'vol2' ? 'white' : '',
+                                                color: toggleAlignment === 'vol2' ? 'white' : 'black',
+                                                '&:hover': {
+                                                    borderColor: 'white',
+                                                    backgroundColor: toggleAlignment === 'vol2' ? darken(theme.palette.priority.medium, 0.3) : '',
+                                                },
+                                            }}
+                                        >
+                                            Vol2
+                                        </ToggleButton>
+
+                                        <ToggleButton
+                                            value="vol3"
+                                            onClick={() => handlePriorityChange('vol3')}
+                                            selected={toggleAlignment === 'vol3'}
+                                            sx={{
+                                                borderRadius: '20px',
+                                                marginRight: "10px",
+                                                borderColor: toggleAlignment === 'vol3' ? 'white' : '',
+                                                color: toggleAlignment === 'vol3' ? 'white' : 'black',
+                                                '&:hover': {
+                                                    borderColor: 'white',
+                                                    backgroundColor: toggleAlignment === 'vol3' ? darken(theme.palette.priority.medium, 0.3) : '',
+                                                },
+                                            }}
+                                        >
+                                            Vol3
+                                        </ToggleButton>
+                                    </ToggleButtonGroup> */}
+
                                 </Grid>
 
                                 {/* Text Field for Description */}

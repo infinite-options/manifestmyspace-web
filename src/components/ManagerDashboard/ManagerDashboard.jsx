@@ -64,6 +64,83 @@ function ManagerDashboard() {
         ["paid on time", 36],
     ];
 
+    let [matrixData, setMatrixData] = useState([]);
+
+    const setting_matrix_data =  (happiness_response) => {
+      
+       // Transforming the data
+        const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
+        const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find(
+          (item) => item.owner_id === vacancyItem.owner_uid
+        );
+        const fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
+        
+        let quarter;
+        if (
+          deltaCashflowItem.delta_cashflow_perc < -50 &&
+          vacancyItem.vacancy_perc < -50
+        ) {
+          quarter = 1;
+        } else if (
+          deltaCashflowItem.delta_cashflow_perc > -50 &&
+          vacancyItem.vacancy_perc < -50
+        ) {
+          quarter = 2;
+        } else if (
+          deltaCashflowItem.delta_cashflow_perc < -50 &&
+          vacancyItem.vacancy_perc > -50
+        ) {
+          quarter = 3;
+        } else if (
+          deltaCashflowItem.delta_cashflow_perc > -50 &&
+          vacancyItem.vacancy_perc > -50
+        ) {
+          quarter = 4;
+        }
+
+        let borderColor;
+        switch (quarter) {
+          case 1:
+            borderColor = "#A52A2A"; // Red color
+            break;
+          case 2:
+            borderColor = "#FF8A00"; // Orange color
+            break;
+          case 3:
+            borderColor = "#FFC85C"; // Yellow color
+            break;
+          case 4:
+            borderColor = "#3D5CAC"; // Blue color
+            break;
+          default:
+            borderColor = "#000000"; // Black color
+        }
+
+        return {
+          name: fullName.trim(),
+          photo: deltaCashflowItem.owner_photo_url,
+          vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
+          delta_cashflow_perc: deltaCashflowItem.delta_cashflow_perc || 0,
+          vacancy_num: vacancyItem.vacancy_num || 0,
+          cashflow: deltaCashflowItem.cashflow || 0,
+          expected_cashflow: deltaCashflowItem.expected_cashflow || 0,
+          delta_cashflow:
+            deltaCashflowItem.cashflow - deltaCashflowItem.expected_cashflow,
+          index: i,
+          color: borderColor,
+          total_properties: vacancyItem.total_properties || 0,
+        };
+      });
+
+      // Sorting transformedData based on the color
+      const sortedData = transformedData.sort((a, b) => {
+        const colorOrder = {
+          "#A52A2A": 1, "#FF8A00": 2, "#FFC85C": 3, "#3D5CAC": 4, "#000000": 5,};
+        return colorOrder[a.color] - colorOrder[b.color];
+      });
+
+      setMatrixData(sortedData);
+    };
 
     // let propsForPropertyRentWidget = {
     //     rentData: data,
@@ -89,25 +166,26 @@ function ManagerDashboard() {
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
-            const jsonData = await response.json()
-
             const contractsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`)
-            const contractsData = await contractsResponse.json();
 
             const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
-            const propertiesResponseJSON = await propertiesResponse.json()
-            setContractRequests(propertiesResponseJSON.NewPMRequests.result)
-            console.log(propertiesResponseJSON.NewPMRequests.result)
-            
-            // MAINTENANCE Status
-            setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
-            
-            // RENT Status
-            setRentStatus(jsonData.RentStatus.result);
-            
-            // LEASE Status
-            setLeaseStatus(jsonData.LeaseStatus.result);
-
+            try {
+                const contractsData = await contractsResponse.json();
+                const jsonData = await response.json()
+                const propertiesResponseJSON = await propertiesResponse.json()
+                setContractRequests(propertiesResponseJSON.NewPMRequests.result)
+                // MAINTENANCE Status
+                setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
+                
+                // RENT Status
+                setRentStatus(jsonData.RentStatus.result);
+                
+                // LEASE Status
+                setLeaseStatus(jsonData.LeaseStatus.result);
+                setting_matrix_data(jsonData)
+            } catch (error) {
+                console.error(error)                    
+            }
 
             setShowSpinner(false);
         }
@@ -142,7 +220,7 @@ function ManagerDashboard() {
                     <br />
                     <div className="mt-widget-owner-happiness" >
                         <h2 className="mt-expiry-widget-title"> Owner Happiness </h2>
-                        <OwnerList />
+                        <OwnerList matrixData={matrixData} />
                     </div>
                     <br />
             

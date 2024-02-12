@@ -12,13 +12,14 @@ import {
   TableContainer, 
   TableHead,
   Paper,
-  TableRow
+  TableRow,
+  ListItemAvatar
 } from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from "../../theme/theme";
@@ -31,6 +32,7 @@ import PhoneIcon from '@mui/icons-material/Phone'; // For "Phone"
 import BuildIcon from '@mui/icons-material/Build'; // For "Maintenance"
 import AddIcon from '@mui/icons-material/Add'; // For "New Request"
 import { PropertyCard } from '../Property/PropertyListings'
+import CircleIcon from '@mui/icons-material/Circle';
 
 
 function TenantDashboard(props) {
@@ -50,12 +52,14 @@ function TenantDashboard(props) {
 
   const { getProfileId } = useUser();
 
-  const [maintenanceRequestsData, setMaintenanceRequestsData] = useState([]);
+  const [maintenanceRequests, setMaintenanceRequests] = useState([]);
+  const [allMaintenanceRequests, setAllMaintenanceRequests] = useState([])
   const [propertyData, setPropertyData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [announcementsData, setAnnouncementsData] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [propertyAddr, setPropertyAddr] = useState();
+  const [propertyId, setPropertyId] = useState("")
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
   // const [balance, setBalance] = useState("0.00");
   const [total, setTotal] = useState("0.00");
@@ -66,15 +70,18 @@ function TenantDashboard(props) {
   const [selectedLease, setSelectedLease] = useState(null)
 
   const open = Boolean(anchorEl);
-  const handleOpen = (event) => {
+//   const handleOpen = (event) => {
+//     setAnchorEl(event.currentTarget);
+//   };
+
+  const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
-  };
+  }, []);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const { user } = useUser();
-//   console.log(`User ID: ${getProfileId()} ` + " " + { tenantId });
 
   let automatic_navigation_handler =(propertyData)=>{
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
@@ -83,6 +90,37 @@ function TenantDashboard(props) {
         navigate("/listings");
       }
   }
+
+    const showLeaseStatusIndicator = (lease_status) => {
+        return (
+            <>
+                {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
+                {lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null}
+                {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
+                {lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+                {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+            </>
+        )
+    }
+
+    const returnLeaseStatusColor = (status) => {
+        // console.log("--debug-- returnLeaseStatusColor property_data", property_data)
+        // console.log("--debug-- returnLeaseStatusColor property_id", property_id)
+
+        // let property = property_data.find(property => property.property_uid === property_id);
+
+        // console.log("--debug--", property, property?.property_status)
+
+        const statusColorMapping = {
+            "ACTIVE": "#00D100",
+            "NEW": "#3D5CAC",
+            "PROCESSING": "#FF8832",
+            "DECLINED": "#CB8E8E",
+            "REFUSED": "#CB8E8E"
+        }
+        // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
+        return status ? statusColorMapping[status] : "#ddd"
+    }
 
     useEffect(() => {
         const getTenantData = async () => {
@@ -105,7 +143,6 @@ function TenantDashboard(props) {
             let propertyData = tenantRequestsData?.property?.result;
             let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
             let announcementsData = tenantRequestsData?.announcements?.result;
-            console.log("PropertyData", propertyData)
             const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
 
         // sort propertyData by lease_status so that active lease is first
@@ -130,15 +167,17 @@ function TenantDashboard(props) {
             }
 
             setPropertyData(propertyData || []);
-            setMaintenanceRequestsData(maintenanceRequestsData || []);
+            setAllMaintenanceRequests(maintenanceRequestsData)
+            setMaintenanceRequests(maintenanceRequestsData || []);
             setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
 
-            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit :"No Data"
+            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
             setPropertyAddr(propertyAddress);
             setFirstName(user.first_name)
             setShowSpinner(false);
             setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
             setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
+            // console.log(propertyData[0])
         }
         getTenantData();
     }, [])
@@ -149,16 +188,24 @@ function TenantDashboard(props) {
             let filteredLease = userLeases.find(lease => lease.lease_uid === selectedProperty.lease_uid)
             setSelectedLease(filteredLease)
         }
+        if(allMaintenanceRequests){
+            let filteredMaintenanceItems = allMaintenanceRequests.filter(request => request.property_uid === selectedProperty.property_uid)
+            setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems))
+        }
     },[userLeases, selectedProperty]);
 
-//   useEffect(() => {
-//     console.log("TenantDashboard useEffect")
+    function sortMaintenanceRequests(maintenanceDataArray){
+        const statusSortPriority = {
+            "NEW": 0,
+            "INFO REQUESTED": 1,
+            "PROCESSING": 2,
+            "SCHEDULED": 3,
+            "COMPLETED": 4,
+            "CANCELLED": 5,
+        }
+        return maintenanceDataArray.sort((a,b) => statusSortPriority[a.maintenance_request_status] - statusSortPriority[b.maintenance_request_status])
+    }
 
-//     let paymentData = createPaymentdata(total)
-//     console.log(paymentData)
-//     setPaymentData(paymentData)
-
-//   }, [total])
 
   const thStyle = {
     color: "#160449",
@@ -212,7 +259,7 @@ function TenantDashboard(props) {
   function NonActiveLeaseDashboardTab({property, leaseStatus, lease}){
     // console.log("Property: ", property);
     // console.log("Lease Status: ", lease_status);
-    console.log("Lease Data:", lease)
+    // console.log("Lease Data:", lease)
     return (
         <PropertyCard data={property} status={leaseStatus} leaseData={lease}/>
     )
@@ -275,19 +322,26 @@ function TenantDashboard(props) {
                     sx={{
                         height: "30px",
                         width: "30px",
-                        backgroundColor: "#bbb",
+                        backgroundColor: returnLeaseStatusColor(selectedProperty?.lease_status),
                         borderRadius: "50%",
                         marginRight: "10px",
                     }}
+                    onClick={ () => {navigate('/myProperty', {
+                        state: {
+                            propertyData: propertyData,
+                            propertyId: propertyId, 
+                        }
+                        })}
+                    }
                     ></Box>
                     <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: "22px",
-                        fontWeight: "600",
-                        color: "#3D5CAC",
-                    }}
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "22px",
+                            fontWeight: "600",
+                            color: "#3D5CAC",
+                        }}
                     >
                         <Box
                             sx={{
@@ -298,27 +352,21 @@ function TenantDashboard(props) {
                                 color: "#3D5CAC",
                             }}
                         >
-                            <Typography
-                            onClick={ () => {navigate('/myProperty', {
-                                state: {propertyData: propertyData}
-                                })}
-                            }
-                            >
-                            {propertyAddr}
+                            <Typography>
+                                {propertyAddr}
                             </Typography>
-
                             <KeyboardArrowDownIcon 
-                            sx={{alignItem: "center"}}
-                            onClick={(event) => handleOpen(event)}
+                                sx={{alignItem: "center"}}
+                                onClick={(event) => handleOpen(event)}
                             />
                             <Menu
-                            id="demo-customized-menu"
-                            MenuListProps={{
-                                'aria-labelledby': 'demo-customized-button',
-                            }}
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
+                                id="demo-customized-menu"
+                                MenuListProps={{
+                                    'aria-labelledby': 'demo-customized-button',
+                                }}
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
                             >
                             {propertyData.map((item, index) => {
                                 return (
@@ -326,6 +374,7 @@ function TenantDashboard(props) {
                                     key={index}
                                     onClick={() => {
                                         setPropertyAddr(item.property_address + " " + item.property_unit)
+                                        setPropertyId(item.property_uid)
                                         setTotal(item.balance)
                                         setSelectedProperty(item)
                                         setSelectedLease(userLeases.find(lease => lease.lease_uid === item.lease_uid))
@@ -333,13 +382,13 @@ function TenantDashboard(props) {
                                     }}
                                     disableRipple
                                 >
+                                    {showLeaseStatusIndicator(item.lease_status)}
                                     {item.property_address + " " + item.property_unit}
                                 </MenuItem>
                                 )
                             })}
                             </Menu>
-                        </Box>
-                        
+                        </Box> 
                     </Box>
                 </Box>
             </Grid>
@@ -458,7 +507,7 @@ function TenantDashboard(props) {
                         }}
                         onClick={() => navigate("/tenantMaintenance")}
                     >
-                        Maintenance
+                        Maintenance ({maintenanceRequests.length})
                     </Box>
                     <Box
                         sx={{
@@ -495,7 +544,7 @@ function TenantDashboard(props) {
                         </Button>
                     </Box>
                 </Box>
-                <TableContainer component={Paper} sx={{ maxHeight: 170, backgroundColor: "#F2F2F2" }}>
+                <TableContainer component={Paper} sx={{ maxHeight: 275, backgroundColor: "#F2F2F2" }}>
                     <Table sx={{backgroundColor: "#F2F2F2"}}>
                         <TableHead sx={{backgroundColor: "#F2F2F2"}}>
                             <TableRow sx={{backgroundColor: "#F2F2F2"}}>
@@ -508,14 +557,19 @@ function TenantDashboard(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {maintenanceRequestsData.length > 0 && maintenanceRequestsData.map((item, index) => {
-                                    let array = [PlaceholderImage,
-                                    item.maintenance_title,
+                            {maintenanceRequests.map((item, index) => {
+                                const requestData = [PlaceholderImage, 
+                                    item.maintenance_title, 
                                     item.maintenance_request_status,
                                     item.maintenance_priority,
-                                    item.maintenance_scheduled_date, 
-                                    item.maintenance_scheduled_time,item]
-                                return (<CustomTableRow key={index} data={array}/>)
+                                    item.maintenance_scheduled_date,
+                                    item.maintenance_scheduled_time,
+                                    item
+                                ]
+
+                                return (
+                                    <CustomTableRow key={index} data={requestData}/>
+                                )
                             })}
                         </TableBody>
                     </Table>

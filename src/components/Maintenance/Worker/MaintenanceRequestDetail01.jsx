@@ -33,9 +33,6 @@ import QuotesSubmittedAction01 from "./QuotesRequestAction01";
 
 
 
-
-
-
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
     return (
@@ -370,28 +367,27 @@ export default function MaintenanceRequestDetail01(){
                                     paddingTop: "20px",
                                 }}
                             >
-
-                                {colorStatus[value]?.status === "Requested" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                {colorStatus[value]?.mapping === "REQUESTED" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
                                     <QuotesRequestedAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null 
                                 }
-                                {colorStatus[value]?.status === "Submitted" ?
+                                {colorStatus[value]?.mapping === "SUBMITTED" ?
                                     <QuotesSubmittedAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                 {colorStatus[value]?.status === "Accepted" ?
+                                 {colorStatus[value]?.mapping === "ACCEPTED" ?
                                     <QuotesAccepted01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value]?.status === "Scheduled" ?
+                                {colorStatus[value]?.mapping === "Scheduled" ?
                                     <ScheduleMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value]?.status === "Finished" ?
+                                {colorStatus[value]?.mapping === "FINISHED" ?
                                     <CompleteMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value]?.status === "Paid" ?
+                                {colorStatus[value]?.mapping === "PAID" ?
                                     <PaidMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/> 
                                     : null
                                 } 

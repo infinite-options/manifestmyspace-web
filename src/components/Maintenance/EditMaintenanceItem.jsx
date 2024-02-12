@@ -467,7 +467,7 @@ export default function EditMaintenanceItem() {
                     Estimated Cost
                   </Typography>
                   <TextField
-                    value={cost}
+                    placeholder={testCost1}
                     fullWidth
                     sx={{
                       backgroundColor: "white",
@@ -496,7 +496,7 @@ export default function EditMaintenanceItem() {
                     Title
                   </Typography>
                   <TextField
-                    value={title}
+                    placeholder={testTitle1}
                     onChange={handleTitleChange}
                     sx={{
                       backgroundColor: "white",
@@ -541,18 +541,13 @@ export default function EditMaintenanceItem() {
                   >
                     <ToggleButton
                       value="Low"
-                      selected={selectedButton === "Low"}
-                      onClick={() => handleButtonClick("Low")}
                       sx={{
                         backgroundColor: theme.palette.priority.low,
                         borderRadius: "20px",
                         color: "white",
                         marginRight: "10px",
                         borderWidth: "3px",
-                        borderColor:
-                          selectedButton === "Low"
-                            ? "white"
-                            : theme.palette.priority.low,
+                        borderColor: theme.palette.priority.low,
                         "&.Mui-selected": {
                           borderColor: "white",
                           color: "white",
@@ -561,10 +556,10 @@ export default function EditMaintenanceItem() {
                         },
                         "&:hover": {
                           borderColor: "white",
-                          backgroundColor:
-                            selectedButton === "Low"
-                              ? theme.palette.priority.low
-                              : darken(theme.palette.priority.low, 0.3),
+                          backgroundColor: darken(
+                            theme.palette.priority.low,
+                            0.3
+                          ),
                         },
                       }}
                     >
@@ -572,18 +567,13 @@ export default function EditMaintenanceItem() {
                     </ToggleButton>
                     <ToggleButton
                       value="Medium"
-                      selected={selectedButton === "Medium"}
-                      onClick={() => handleButtonClick("Medium")}
                       sx={{
                         backgroundColor: theme.palette.priority.medium,
                         borderRadius: "20px",
                         color: "white",
                         marginRight: "10px",
                         borderWidth: "3px",
-                        borderColor:
-                          selectedButton === "Medium"
-                            ? "white"
-                            : theme.palette.priority.medium,
+                        borderColor: theme.palette.priority.medium,
                         "&.Mui-selected": {
                           borderColor: "white",
                           color: "white",
@@ -592,10 +582,13 @@ export default function EditMaintenanceItem() {
                         },
                         "&:hover": {
                           borderColor: "white",
-                          backgroundColor:
-                            selectedButton === "Medium"
-                              ? theme.palette.priority.medium
-                              : darken(theme.palette.priority.medium, 0.3),
+                          backgroundColor: darken(
+                            theme.palette.priority.medium,
+                            0.3
+                          ),
+                        },
+                        "&.Mui-selected + .MuiToggleButton-root": {
+                          borderLeftColor: "white",
                         },
                       }}
                     >
@@ -603,18 +596,13 @@ export default function EditMaintenanceItem() {
                     </ToggleButton>
                     <ToggleButton
                       value="High"
-                      selected={selectedButton === "High"}
-                      onClick={() => handleButtonClick("High")}
                       sx={{
                         backgroundColor: theme.palette.priority.high,
                         borderRadius: "20px",
                         color: "white",
                         marginRight: "10px",
                         borderWidth: "3px",
-                        borderColor:
-                          selectedButton === "High"
-                            ? "white"
-                            : theme.palette.priority.high,
+                        borderColor: theme.palette.priority.high,
                         "&.Mui-selected": {
                           borderColor: "white",
                           color: "white",
@@ -623,10 +611,13 @@ export default function EditMaintenanceItem() {
                         },
                         "&:hover": {
                           borderColor: "white",
-                          backgroundColor:
-                            selectedButton === "High"
-                              ? theme.palette.priority.high
-                              : darken(theme.palette.priority.high, 0.3),
+                          backgroundColor: darken(
+                            theme.palette.priority.high,
+                            0.3
+                          ),
+                        },
+                        "&.Mui-selected + .MuiToggleButton-root": {
+                          borderLeftColor: "white",
                         },
                       }}
                     >
@@ -651,7 +642,7 @@ export default function EditMaintenanceItem() {
                     // label="Description"
                     size="small"
                     multiline
-                    value={description}
+                    placeholder={testIssue1}
                     onChange={handleDescriptionChange}
                     sx={{
                       width: "100%",
@@ -675,7 +666,7 @@ export default function EditMaintenanceItem() {
                     <RadioGroup
                       column
                       onChange={handleCompletedChange}
-                      value={completed}
+                      value={completionStatus1}
                     >
                       <FormControlLabel
                         value="yes"
