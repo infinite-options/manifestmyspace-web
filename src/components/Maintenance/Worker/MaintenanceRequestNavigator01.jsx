@@ -93,7 +93,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
 
     setCurrentIndex((prevIndex) => {
       let newIndex = (prevIndex - 1);
-      if(prevIndex => 0){
+      if(prevIndex > 0){
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
         console.log("currentIndex", newIndex);
