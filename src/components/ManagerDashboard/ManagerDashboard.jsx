@@ -51,7 +51,7 @@ function ManagerDashboard() {
     const [showSpinner, setShowSpinner] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(date.getMonth()+1);
     const [contractRequests, setContractRequests] = useState([])
-    
+    const [property_endpoint_resp, set_property_endpoint_resp]=useState([])
 
     const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
     const sliceColors = ['#A52A2A', '#FF8A00', '#FFC85C', '#160449', '#3D5CAC'];
@@ -166,13 +166,12 @@ function ManagerDashboard() {
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
-            const contractsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`)
 
             const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
             try {
-                const contractsData = await contractsResponse.json();
                 const jsonData = await response.json()
                 const propertiesResponseJSON = await propertiesResponse.json()
+                set_property_endpoint_resp(propertiesResponseJSON)
                 setContractRequests(propertiesResponseJSON.NewPMRequests.result)
                 // MAINTENANCE Status
                 setMaintenanceStatusData(jsonData.MaintenanceStatus.result)
@@ -259,7 +258,7 @@ function ManagerDashboard() {
                                 id="revenue"
                                 className={classes.button}
                                 onClick={() => {
-                                    navigate('/pmQuotesList');
+                                    navigate('/pmQuotesList', {state:{property_endpoint_resp}});
                                 }}
                             >
                                 <Box
