@@ -45,8 +45,7 @@ const PropertyInfo = (props) => {
     const navigate = useNavigate();
     const index = location.state.index;
     const property = location.state.data;
-    const status = location.state.status;
-    console.log("ROHIT - status - ", status);
+    const status = location.state.status;    
     const lease = location.state.lease;
     const ppt_images = property.property_images.split(',');
     const [showScheduler, setShowScheduler] = useState(false);

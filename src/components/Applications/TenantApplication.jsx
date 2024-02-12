@@ -24,8 +24,7 @@ export default function TenantApplication(){
     const location = useLocation();
     const navigate = useNavigate();
     const { user, getProfileId, roleName } = useUser();
-
-    console.log("ROHIT - tenantApplication - status - ",location.state.status);
+    
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
