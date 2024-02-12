@@ -14,6 +14,8 @@ import PropertyCard from "./PropertyCard";
 
 
 
+import { isValidDate } from "../../../utils/dates"
+
 
 function ManagementContractDetails(props) {
     const { getProfileId } = useUser();
