@@ -73,8 +73,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
       if(prevIndex< requestData.length-1){
         
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-
-        
+      
         console.log("currentIndex", newIndex);
         console.log("allData", allData);
         console.log("requestData", requestData);
@@ -94,18 +93,8 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
 
     setCurrentIndex((prevIndex) => {
       let newIndex = (prevIndex - 1);
-      if(prevIndex> 0){
+      if(prevIndex => 0){
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-        
-        // navigate(`/maintenance/${nextMaintenanceId}`, { 
-        //     replace: true,   
-        //     state: {
-        //         requestIndex,
-        //         status,
-        //         maintenanceItemsForStatus,
-        //         allData,
-        //     }
-        // });
 
         console.log("currentIndex", newIndex);
         console.log("allData", allData);

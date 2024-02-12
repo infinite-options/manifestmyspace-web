@@ -114,20 +114,12 @@ export default function MaintenanceRequestNavigator({
       if (prevIndex < requestData.length - 1) {
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
-        // navigate(`/maintenance/${nextMaintenanceId}`, {
-        //     replace: true,
-        //     state: {
-        //         requestIndex,
-        //         status,
-        //         maintenanceItemsForStatus,
-        //         allData,
-        //     }
-        // });
+        console.log("--debug--", nextMaintenanceId);
 
-        console.log("currentIndex", newIndex);
-        console.log("allData", allData);
-        console.log("requestData", requestData);
-        console.log("requestData[newIndex]", requestData[newIndex]);
+        // console.log("currentIndex", newIndex);
+        // console.log("allData", allData);
+        // console.log("requestData", requestData);
+        // console.log("requestData[newIndex]", requestData[newIndex]);
         updateRequestIndex(newIndex, { changeTab: "noChange" });
         return newIndex;
       } else {
@@ -135,39 +127,32 @@ export default function MaintenanceRequestNavigator({
         return newIndex;
       }
     });
-    //   navigate(`/maintenance/detail`, {
-    //     state: {
-    //         maintenance_request_index,
-    //         status,
-    //         maintenanceItemsForStatus,
-    //         allMaintenanceData,
-    //     }
-    // })
   };
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => {
+      // console.log("--debug-- prevIndex", prevIndex)
       let newIndex = prevIndex - 1;
+      // console.log("--debug-- newIndex", newIndex)
       if (prevIndex > 0) {
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+        console.log("--debug--", nextMaintenanceId);
 
-        // navigate(`/maintenance/${nextMaintenanceId}`, {
-        //     replace: true,
-        //     state: {
-        //         requestIndex,
-        //         status,
-        //         maintenanceItemsForStatus,
-        //         allData,
-        //     }
-        // });
-
-        console.log("currentIndex", newIndex);
-        console.log("allData", allData);
-        console.log("requestData", requestData);
-        console.log("requestData[newIndex]", requestData[newIndex]);
+        // console.log("currentIndex", newIndex);
+        // console.log("allData", allData);
+        // console.log("requestData", requestData);
+        // console.log("requestData[newIndex]", requestData[newIndex]);
         updateRequestIndex(newIndex, { changeTab: "noChange" });
         return newIndex;
       } else {
+        // if (prevIndex === -1){
+        //   newIndex = 0
+        //   console.log("--debug-- newIndex", newIndex)
+        //   updateRequestIndex(newIndex, {changeTab:'backward'});
+        //   return newIndex;
+        // }
+        console.log("--debug-- WE ARE GOING TO A NEW TAB HERE");
+        console.log("--debug-- newIndex", newIndex);
         updateRequestIndex(newIndex, { changeTab: "backward" });
         return newIndex;
       }
@@ -229,7 +214,7 @@ export default function MaintenanceRequestNavigator({
   // console.log("--DEBUG requestData--")
   // console.log("requestData", requestData)
   // console.log("currentIndex", currentIndex)
-  console.log("data>>>>>", data);
+  // console.log("data>>>>>", data)
 
   let propertyAddress = " ";
   propertyAddress = propertyAddress.concat(
@@ -242,7 +227,7 @@ export default function MaintenanceRequestNavigator({
     " ",
     data?.property_zip
   );
-  console.log("propertyAddress", typeof propertyAddress);
+  // console.log("propertyAddress",typeof(propertyAddress))
 
   let estimatedCost = " ";
   estimatedCost = estimatedCost.concat(
@@ -258,12 +243,12 @@ export default function MaintenanceRequestNavigator({
     data?.maintenance_request_status == "Completed" ||
     data?.maintenance_request_status == "Closed"
   ) {
-    console.log("inside ifffff", data?.maintenance_request_status);
+    // console.log("inside ifffff", data?.maintenance_request_status);
     completionStatus = "yes";
   } else {
-    console.log(data?.maintenance_request_status);
+    // console.log(data?.maintenance_request_status);
     completionStatus = "no";
-    console.log(completionStatus);
+    // console.log(completionStatus);
   }
 
   useEffect(() => {

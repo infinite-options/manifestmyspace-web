@@ -19,12 +19,12 @@ import theme from '../../../theme/theme';
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
-import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
+import ManagerProfileLink from "../../Maintenance/MaintenanceComponents/ManagerProfileLink";
 
 
 export default function QuotesSubmittedAction01({maintenanceItem}){
@@ -80,47 +80,8 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
             }}
         >
              <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <Grid item xs={1} sx={{
-                        alignItems: "center",
-                        justifyContent: "left",
-                        paddingLeft: "0px",
-                    }}>
-                    <Button sx={{
-                        maxWidth: "10px",
-                        paddingRight: "20px",
-                        paddingLeft: "0px",
-                        }}
-                        onClick={() => console.log("Chat Button")}
-                    >
-                        <ChatIcon sx={{
-                            color: "#3D5CAC"
-                        }}/>
-                    </Button>
-                </Grid>
                 
-                <Grid item xs={11} sx={{
-                        alignItems: "center",   
-                        justifyContent: "center",
-                        paddingLeft: "40px",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "30px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Manager - {maintenanceItem?.business_name}
-                        </Typography>
-                    </Button>
-                </Grid>
+                <ManagerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",

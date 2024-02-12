@@ -280,20 +280,17 @@ export function MaintenanceRequestDetail() {
 
       while (areTabsGrey[i] === 1) {
         i--;
-        if (i < 0) break;
-      }
+        if (i<0)
+        break;}
 
-      if (i >= 0) {
-        setValue(i);
-        console.log("Mousivand");
-        let requestType = colorStatus[i].status.toUpperCase();
-        console.log(allData);
-        console.log(requestType);
-        let j = allData[requestType].length - 1;
-        console.log("Mousivand");
-
-        setMaintenanceRequestIndex(j);
-      }
+        if(i>=0)
+        {setValue(i);
+            let requestType= colorStatus[i].status.toUpperCase();
+            let j= allData[requestType].length-1
+        setMaintenanceRequestIndex(j)}
+     }  
+    
+    
     }
   };
 
@@ -316,245 +313,175 @@ export function MaintenanceRequestDetail() {
     }
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          // alignItems: 'center',
-          width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
-        }}
-      >
-        <Paper
-          style={{
-            margin: "10px",
-            backgroundColor: theme.palette.primary.main,
-            width: "100%", // Occupy full width with 25px margins on each side
-            paddingTop: "10px",
-            paddingBottom: "30px",
-          }}
-        >
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            sx={{
-              paddingBottom: "20px",
-              paddingLeft: "0px",
-              paddingRight: "0px",
-            }}
-          >
-            <Box position="absolute" left={30}>
-              <Button onClick={() => handleBackButton()}>
-                <ArrowBackIcon
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontSize: "30px",
-                    margin: "5px",
-                  }}
-                />
-              </Button>
-            </Box>
-            <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                }}
-              >
-                Maintenance
-              </Typography>
-            </Box>
-            <Box position="absolute" right={30}>
-              <Button onClick={() => navigateToAddMaintenanceItem()}>
-                <AddIcon
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontSize: "30px",
-                    margin: "5px",
-                  }}
-                />
-              </Button>
-            </Box>
-          </Stack>
-          <Stack
-            sx={{
-              justifyContent: "center",
-              alignItems: "center",
-              paddingBottom: "20px",
-            }}
-          >
+    return(
+        <ThemeProvider theme={theme}>
             <Box
-              sx={{
-                borderBottom: 0,
-                width: "95%",
-              }}
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                // alignItems: 'center',
+                width: '100%', // Take up full screen width
+                minHeight: '100vh', // Set the Box height to full height
+                marginTop: theme.spacing(2), // Set the margin to 20px
+            }}
             >
-              <Tabs
-                variant="fullWidth"
-                value={value}
-                onChange={handleChange}
-                TabIndicatorProps={{
-                  style: {
-                    backgroundColor: "transparent",
-                    border: "0px",
-                    minWidth: "5px",
-                    height: "10px",
-                    padding: "0px",
-                  },
-                }}
-                sx={{
-                  [theme.breakpoints.up("sm")]: {
-                    height: "5px", // padding for screens wider than 'sm'
-                  },
-                }}
-              >
-                {colorStatus.map((item, index) => {
-                  let color = greyOutTab(item.mapping, allData, item.color);
-                  let title = item.mapping;
-
-                  return (
-                    <Tab
-                      key={index}
-                      disabled={deactivateTab(item.mapping, allData)}
-                      {...a11yProps(index)}
-                      sx={{
-                        backgroundColor: color,
-                        borderTopLeftRadius: "10px",
-                        borderTopRightRadius: "10px",
-                        height: "10%",
-                        minWidth: "5px",
-                        padding: "0px",
-                      }}
-                      label={
-                        <Typography
-                          sx={{
-                            color: theme.typography.primary.grey,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          {title}
-                        </Typography>
-                      }
-                    />
-                  );
-                })}
-              </Tabs>
-              {colorStatus.map((item, index) => (
-                <div key={index}>
-                  <CustomTabPanel
-                    key={index}
-                    value={value}
-                    index={index}
+                <Paper
                     style={{
-                      backgroundColor: item.color,
+                        margin: '10px',
+                        backgroundColor: theme.palette.primary.main,
+                        width: '100%', // Occupy full width with 25px margins on each side
+                        paddingTop: '10px',
+                        paddingBottom: '30px',
                     }}
-                  >
-                    <Grid
-                      sx={{
-                        backgroundColor: item.color,
-                        justifyContent: "center",
-                        marginLeft: "25px",
-                        marginRight: "25px",
-                        paddingBottom: "0px",
-                      }}
+                >
+                     <Stack
+                        direction="row"
+                        justifyContent="center"
+                        alignItems="center"
+                        sx={{
+                            paddingBottom: "20px",
+                            paddingLeft: "0px",
+                            paddingRight: "0px",
+                        }}
                     >
-                      {allData[item.mapping] &&
-                      allData[item.mapping][maintenanceRequestIndex] ? (
-                        <MaintenanceRequestNavigator
-                          requestIndex={maintenanceRequestIndex}
-                          backward_active_status={
-                            maintenanceRequestIndex === 0 &&
-                            value === tabs.firstTab
-                          }
-                          forward_active_status={
-                            value === tabs.lastTab &&
-                            allData[item.mapping].length - 1 ===
-                              maintenanceRequestIndex
-                          }
-                          updateRequestIndex={
-                            handleMaintenaceRequestIndexChange
-                          }
-                          requestData={allData[item.mapping]}
-                          status={status}
-                          color={item.color}
-                          item={item}
-                          allData={allData}
-                          maintenanceQuotes={filteredQuotes}
-                          currentTabValue={value}
-                          tabs={tabs}
-                        />
-                      ) : null}
-                    </Grid>
-                  </CustomTabPanel>
-                </div>
-              ))}
-              <Box
-                sx={{
-                  paddingBottom: "20px",
-                  paddingTop: "20px",
-                }}
-              >
-                {colorStatus[value]?.status === "New Requests" &&
-                maintenanceItemsForStatus[maintenanceRequestIndex] ? (
-                  <NewRequestAction
-                    maintenanceItem={
-                      maintenanceItemsForStatus[maintenanceRequestIndex]
-                    }
-                    navigateParams={navParams}
-                  />
-                ) : null}
-                {colorStatus[value]?.status === "Quotes Requested" ? (
-                  <QuotesRequestAction
-                    maintenanceItem={
-                      maintenanceItemsForStatus[maintenanceRequestIndex]
-                    }
-                    navigateParams={navParams}
-                    quotes={filteredQuotes}
-                  />
-                ) : null}
-                {colorStatus[value]?.status === "Quotes Accepted" ? (
-                  <QuotesAccepted
-                    maintenanceItem={
-                      maintenanceItemsForStatus[maintenanceRequestIndex]
-                    }
-                    navigateParams={navParams}
-                  />
-                ) : null}
-                {colorStatus[value]?.status === "Scheduled" ? (
-                  <ScheduleMaintenance
-                    maintenanceItem={
-                      maintenanceItemsForStatus[maintenanceRequestIndex]
-                    }
-                    navigateParams={navParams}
-                  />
-                ) : null}
-                {colorStatus[value]?.status === "Completed" ? (
-                  <CompleteMaintenance
-                    maintenanceItem={
-                      maintenanceItemsForStatus[maintenanceRequestIndex]
-                    }
-                    navigateParams={navParams}
-                  />
-                ) : null}
-                {colorStatus[value]?.status === "Paid" ? (
-                  <PaidMaintenance
-                    maintenanceItem={
-                      maintenanceItemsForStatus[maintenanceRequestIndex]
-                    }
-                    navigateParams={navParams}
-                  />
-                ) : null}
-              </Box>
+                        <Box position="absolute" left={30}>
+                            <Button onClick={() => handleBackButton()}>
+                                <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                        <Box
+                            direction="row"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                Maintenance 
+                            </Typography>
+                        </Box>
+                        <Box position="absolute" right={30}>
+                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                            </Button>
+                        </Box>
+                    </Stack>
+                    <Stack
+                        sx={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingBottom: "20px"
+
+                        }}
+                    >
+                        <Box sx={{ 
+                            borderBottom: 0,
+                            width: '95%',
+                        }}>
+                            <Tabs 
+                                variant="fullWidth" 
+                                value={value} 
+                                onChange={handleChange} 
+                                TabIndicatorProps={{
+                                    style: {
+                                        backgroundColor: 'transparent',
+                                        border: '0px',
+                                        minWidth: '5px',
+                                        height: '10px',
+                                        padding: '0px',
+                                    }
+                                }}
+                                sx={{
+                                    [theme.breakpoints.up('sm')]: {
+                                        height: '5px', // padding for screens wider than 'sm'
+                                        },
+
+                                }}
+                            >
+                                {colorStatus.map((item, index) => {
+
+                                        let color = greyOutTab(item.mapping, allData, item.color)
+                                        let title = item.mapping
+                                        
+                                        return (
+                                            <Tab key={index}
+                                                disabled={deactivateTab(item.mapping, allData)}
+                                                {...a11yProps(index)} 
+                                                sx={{
+                                                    backgroundColor: color,
+                                                    borderTopLeftRadius: '10px',
+                                                    borderTopRightRadius: '10px',
+                                                    height: '10%',
+                                                    minWidth: '5px',
+                                                    padding: '0px',
+                                                }}
+                                                label={
+                                                    <Typography sx={{color: theme.typography.primary.grey, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                        {title}
+                                                    </Typography>
+                                                }
+                                            />
+                                        )
+                                    }
+                                )}
+                            </Tabs>
+                            {colorStatus.map((item, index) =>
+                                <div key={index}>
+                                    <CustomTabPanel key={index} value={value} index={index} style={{
+                                        backgroundColor: item.color,
+                                    }}>
+                                        <Grid
+                                            sx={{
+                                                backgroundColor: item.color,
+                                                justifyContent: "center",
+                                                marginLeft: "25px",
+                                                marginRight: "25px",
+                                                paddingBottom: "0px"
+
+                                        }}>
+                                            {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
+                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData} maintenanceQuotes={filteredQuotes} currentTabValue={value}
+                                                    tabs={tabs}
+                                                />
+                                            )
+                                            : null}
+                                        </Grid>
+                                    </CustomTabPanel>
+                                </div>
+                            )}
+                            <Box
+                                sx={{
+                                    paddingBottom: "20px",
+                                    paddingTop: "20px",
+                                }}
+                            >
+                                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
+                                    <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    : null 
+                                }
+                                {colorStatus[value]?.status === "Quotes Requested" ?
+                                    <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
+                                    : null
+                                }
+                                {colorStatus[value]?.status === "Quotes Accepted" ?
+                                    <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
+                                    : null
+                                }
+                                {colorStatus[value]?.status === "Scheduled" ?    
+                                    <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    : null
+                                }
+                                {colorStatus[value]?.status === "Completed" ?
+                                    <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    : null
+                                }
+                                {colorStatus[value]?.status === "Paid" ?
+                                    <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/> 
+                                    : null
+                                }
+                            </Box>
+                        </Box>
+                    </Stack>
+                </Paper>
             </Box>
-          </Stack>
-        </Paper>
-      </Box>
-    </ThemeProvider>
-  );
+        </ThemeProvider>
+    )
 }
