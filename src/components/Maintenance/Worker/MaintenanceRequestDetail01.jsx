@@ -155,7 +155,6 @@ export default function MaintenanceRequestDetail01(){
     }, [status])
 
     const handleChange = (event, newValue) => {
-        // console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);

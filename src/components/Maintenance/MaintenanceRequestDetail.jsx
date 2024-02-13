@@ -212,11 +212,10 @@ export function MaintenanceRequestDetail(){
     }, [status])
 
     const handleChange = (event, newValue) => {
-        // console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
-        const newStatus = colorStatus[newValue].status;
+        const newStatus = colorStatus[newValue].mapping;
         const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
         setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
     };
