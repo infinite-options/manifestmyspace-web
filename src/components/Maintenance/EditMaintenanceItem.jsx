@@ -43,7 +43,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 export default function EditMaintenanceItem() {
   const location = useLocation();
   let testIssue1 = location.state.testIssue;
-  console.log("testIssue1>>>", testIssue1);
   // setDescription(testIssue1);
   // if(description == ""){
   // console.log(description)
@@ -53,30 +52,24 @@ export default function EditMaintenanceItem() {
   // }
 
   let testProperty1 = location.state.testProperty;
-  console.log("testProperty>>>", testProperty1);
   // setProperty(testProperty1);
 
   let testIssueItem1 = location.state.testIssueItem;
-  console.log("testIssueItem1>>>", testIssueItem1);
   // setIssue(testIssueItem1);
   // issue = testIssueItem1;
 
   let testCost1 = location.state.testCost;
-  console.log("testCost1>>>", testCost1);
   // setCost(testCost1);
   // cost = testCost1;
 
   let testTitle1 = location.state.testTitle;
-  console.log("testTitle1>>>", testTitle1);
   // setTitle(location.state.testTitle);
   // title = testTitle1;
 
   let testPriority1 = location.state.testPriority;
-  console.log("testPriority1>>>", testPriority1);
   // setPriority(testPriority1);
 
   let completionStatus1 = location.state.completionStatus;
-  console.log("completionStatus1>>>", completionStatus1);
   // setCompleted(completionStatus1);
   // console.log("completed>>>",completed);
 
@@ -93,31 +86,14 @@ export default function EditMaintenanceItem() {
   const [toggleGroupValue, setToggleGroupValue] = useState("tenant");
   const [toggleAlignment, setToggleAlignment] = useState("low");
   const [priority, setPriority] = useState(testPriority1);
-  const [completed, setCompleted] = useState(completionStatus1);
+  const [completed, setCompleted] = useState("");
   const [cost, setCost] = useState(testCost1);
   const [title, setTitle] = useState(testTitle1);
   const [description, setDescription] = useState(testIssue1);
   const [selectedImageList, setSelectedImageList] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [selectedButton, setSelectedButton] = useState(null);
 
   const profileId = getProfileId();
-
-  const handleButtonClick = (value) => {
-    if (selectedButton === value) {
-      // If the clicked button is already selected, unselect it
-      setSelectedButton(null);
-    } else {
-      // Otherwise, select the clicked button
-      setSelectedButton(value);
-    }
-  };
-
-  useEffect(() => {
-    // Set the selectedButton when the component mounts
-    setSelectedButton(testPriority1);
-    //console.log("priorityselection", data_priority);
-  }, []);
 
   const handlePropertyChange = (event) => {
     console.log("handlePropertyChange", event.target.value);
@@ -145,13 +121,30 @@ export default function EditMaintenanceItem() {
     setDescription(event.target.value);
   };
 
-  const handlePriorityChange = (event, newToggleGroupValue) => {
-    console.log("handlePriorityChange", event.target.value);
-    // console.log("handleToggleGroupChange", newToggleGsroupValue)
-    setPriority(event.target.value);
-    // setPriority(testPriority1)
-    // setToggleGroupValue(newToggleGroupValue);
-    // setToggleAlignment(newToggleGroupValue);
+  // const handlePriorityChange = (event, newToggleGroupValue) => {
+  //     console.log("handlePriorityChange", event.target.value)
+  //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
+  //     setPriority(event.target.value)
+  //     // setPriority(testPriority1)
+  //     // setToggleGroupValue(newToggleGroupValue);
+  //     // setToggleAlignment(newToggleGroupValue);
+  // };
+  const handlePriorityChange = (priority) => {
+    setToggleAlignment(priority);
+
+    // Update styles for all toggle buttons based on the selected priority
+    const buttons = document.querySelectorAll(".MuiToggleButton-root");
+    buttons.forEach((button) => {
+      const buttonPriority = button.getAttribute("value");
+
+      if (buttonPriority === priority) {
+        // Set white border for the selected button
+        button.style.borderColor = "white";
+      } else {
+        // Reset border color for other buttons
+        button.style.borderColor = "";
+      }
+    });
   };
 
   const handleCompletedChange = (event, newToggleGroupValue) => {
@@ -201,17 +194,6 @@ export default function EditMaintenanceItem() {
       "0"
     )}-${currentDate.getFullYear()}`;
 
-    let status = "";
-    let req_status = "";
-
-    if (completed === "yes") {
-      status = "COMPLETED";
-      req_status = "CANCELLED";
-    } else {
-      status = "NEW REQUEST";
-      req_status = "NEW";
-    }
-
     console.log("toggleAlignment", toggleAlignment);
     console.log("*************propertyId******************* ", propertyId);
     console.log("*************description******************* ", description);
@@ -223,7 +205,6 @@ export default function EditMaintenanceItem() {
     editFormData.append("maintenance_request_type", issue);
     editFormData.append("maintenance_request_created_by", getProfileId()); // problem is here it was 600-000003, changed it 600-000012
     editFormData.append("maintenance_priority", priority);
-    editFormData.append("maintenance_estimated_cost", cost);
     editFormData.append("maintenance_can_reschedule", 1);
     editFormData.append("maintenance_assigned_business", null);
     editFormData.append("maintenance_assigned_worker", null);
@@ -234,8 +215,6 @@ export default function EditMaintenanceItem() {
     editFormData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
     editFormData.append("maintenance_request_closed_date", null);
     editFormData.append("maintenance_request_adjustment_date", null);
-    editFormData.append("maintenance_request_status", req_status);
-    //editFormData.append("maintenance_status", status);
 
     for (let i = 0; i < selectedImageList.length; i++) {
       try {
@@ -402,8 +381,14 @@ export default function EditMaintenanceItem() {
                     }}
                     size="small"
                   >
-                    <InputLabel>{testProperty1}</InputLabel>
+                    {/* <Tooltip title={testProperty1} style={{ zIndex: '1' }}>   */}
+                    <InputLabel hidden={true} shrink={false}>
+                      {testProperty1}
+                    </InputLabel>
                     <Select
+                      // value={testProperty1}
+                      // display={" "}
+                      // onFocus={true}
                       onChange={handlePropertyChange}
                       MenuProps={{
                         PaperProps: {
@@ -423,6 +408,7 @@ export default function EditMaintenanceItem() {
                         </MenuItem>
                       ))}
                     </Select>
+                    {/* </Tooltip> */}
                   </FormControl>
                 </Grid>
 
@@ -447,7 +433,10 @@ export default function EditMaintenanceItem() {
                     size="small"
                   >
                     <InputLabel>{testIssueItem1}</InputLabel>
-                    <Select onChange={handleIssueChange}>
+                    <Select
+                      onChange={handleIssueChange}
+                      defaultValue={testIssueItem1}
+                    >
                       <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
                       <MenuItem value={"Electrical"}>Electrical</MenuItem>
                       <MenuItem value={"Appliance"}>Appliance</MenuItem>
@@ -468,6 +457,7 @@ export default function EditMaintenanceItem() {
                   </Typography>
                   <TextField
                     placeholder={testCost1}
+                    defaultValue={testCost1}
                     fullWidth
                     sx={{
                       backgroundColor: "white",
@@ -497,6 +487,7 @@ export default function EditMaintenanceItem() {
                   </Typography>
                   <TextField
                     placeholder={testTitle1}
+                    defaultValue={testTitle1}
                     onChange={handleTitleChange}
                     sx={{
                       backgroundColor: "white",
@@ -522,25 +513,30 @@ export default function EditMaintenanceItem() {
                   <ToggleButtonGroup
                     exclusive
                     fullWidth
-                    value={testPriority1}
-                    onChange={handlePriorityChange}
+                    // value={testPriority1}
+                    value={toggleAlignment}
+                    // onChange={handlePriorityChange}
+                    onChange={(event, value) => handlePriorityChange(value)}
                     aria-label="Priority"
                     size="small"
-                    sx={
-                      {
-                        // '& .MuiToggleButton-root.Mui-selected': {
-                        //     backgroundColor: 'lightblue', // Selected background color
-                        //     color: 'white', // Selected text color
-                        // },
-                        // display: "grid",
-                        // gridTemplateColumns: "auto auto auto auto",
-                        // gridGap: "50px",
-                        // padding: "10px",
-                      }
-                    }
+                    sx={{
+                      "& .MuiToggleButton-root.Mui-selected": {
+                        // backgroundColor: 'transparent', // Selected background color
+                        color: "white", // Selected text color
+                      },
+                      "&.Mui-selected + .MuiToggleButton-root": {
+                        // borderLeftColor: 'white',
+                      },
+                      // display: "grid",
+                      // gridTemplateColumns: "auto auto auto auto",
+                      // gridGap: "50px",
+                      // padding: "10px",
+                    }}
                   >
                     <ToggleButton
-                      value="Low"
+                      // value="Low"
+                      key={"Low"}
+                      value={"Low"}
                       sx={{
                         backgroundColor: theme.palette.priority.low,
                         borderRadius: "20px",
@@ -562,11 +558,15 @@ export default function EditMaintenanceItem() {
                           ),
                         },
                       }}
+                      onClick={() => handlePriorityChange("Low")}
+                      isSelected={toggleAlignment === "Low"}
                     >
                       Low
                     </ToggleButton>
                     <ToggleButton
-                      value="Medium"
+                      // value="Medium"
+                      key={"Medium"}
+                      value={"Medium"}
                       sx={{
                         backgroundColor: theme.palette.priority.medium,
                         borderRadius: "20px",
@@ -591,11 +591,15 @@ export default function EditMaintenanceItem() {
                           borderLeftColor: "white",
                         },
                       }}
+                      onClick={() => handlePriorityChange("Low")}
+                      isSelected={toggleAlignment === "Low"}
                     >
                       Medium
                     </ToggleButton>
                     <ToggleButton
-                      value="High"
+                      key={"High"}
+                      value={"High"}
+                      // value="High"
                       sx={{
                         backgroundColor: theme.palette.priority.high,
                         borderRadius: "20px",
@@ -620,6 +624,8 @@ export default function EditMaintenanceItem() {
                           borderLeftColor: "white",
                         },
                       }}
+                      onClick={() => handlePriorityChange("Low")}
+                      isSelected={toggleAlignment === "Low"}
                     >
                       High
                     </ToggleButton>
@@ -643,6 +649,7 @@ export default function EditMaintenanceItem() {
                     size="small"
                     multiline
                     placeholder={testIssue1}
+                    defaultValue={testIssue1}
                     onChange={handleDescriptionChange}
                     sx={{
                       width: "100%",
@@ -666,7 +673,7 @@ export default function EditMaintenanceItem() {
                     <RadioGroup
                       column
                       onChange={handleCompletedChange}
-                      value={completionStatus1}
+                      defaultValue={completionStatus1}
                     >
                       <FormControlLabel
                         value="yes"
