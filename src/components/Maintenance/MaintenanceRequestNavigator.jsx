@@ -13,9 +13,13 @@ import CreateIcon from '@mui/icons-material/Create';
 
 
 function getInitialImages(requestData, currentIndex) {
-  if (requestData[currentIndex].maintenance_images != "[]") {
-    // console.log(JSON.parse(requestData[currentIndex].maintenance_images))
-    return JSON.parse(requestData[currentIndex].maintenance_images);
+  try {
+    if (requestData[currentIndex] && requestData[currentIndex].maintenance_images && requestData[currentIndex].maintenance_images !== "[]") {
+      const parsedData = JSON.parse(requestData[currentIndex].maintenance_images);
+      return parsedData;
+    }
+  } catch (error) {
+    console.error("Error parsing maintenance_images:", error);
   }
   return [maintenanceRequestImage];
 }
