@@ -90,59 +90,21 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => {
-      // console.log("--debug-- prevIndex", prevIndex)
       let newIndex = (prevIndex - 1);
-      // console.log("--debug-- newIndex", newIndex)
       if(prevIndex > 0){
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-        console.log("--debug--", nextMaintenanceId)
-
-        // console.log("currentIndex", newIndex);
-        // console.log("allData", allData);
-        // console.log("requestData", requestData);
-        // console.log("requestData[newIndex]", requestData[newIndex]);
         updateRequestIndex(newIndex, {changeTab:'noChange'})
         return newIndex;
       }
       else {
-        // if (prevIndex === -1){
-        //   newIndex = 0
-        //   console.log("--debug-- newIndex", newIndex)
-        //   updateRequestIndex(newIndex, {changeTab:'backward'});
-        //   return newIndex;
-        // }
-        console.log("--debug-- WE ARE GOING TO A NEW TAB HERE")
-        console.log("--debug-- newIndex", newIndex)
+        if (newIndex === -1){
+          newIndex = 1
+        }
         updateRequestIndex(newIndex, {changeTab:'backward'});
         return newIndex;
       }
   });
   };
-
-
-  // const handleNextCard = () => {
-  //   setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
-  //   let nextMaintenanceId = requestData[currentIndex].maintenance_request_uid;
-  //   // navigate(`/maintenance/${nextMaintenanceId}`, { replace: true,   state: {
-  //   //     requestIndex,
-  //   //     status,
-  //   //     maintenanceItemsForStatus,
-  //   //     allData,
-  //   // }});
-  //   console.log("currentIndex", currentIndex)
-  //   console.log("allData", allData)
-  //   console.log("requestData", requestData)
-  //   // console.log("item", allData[requestData.mapping][currentIndex])
-  //   console.log("requestData[currentIndex]", requestData[currentIndex])
-  // };
-
-  // const handlePreviousCard = () => {
-  //   setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
-  //   let previousMaintenanceId = requestData[currentIndex].maintenance_request_uid;
-  //   // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
-  //   console.log("currentIndex", currentIndex)
-  //   console.log("item", allData[requestData.mapping][currentIndex])
-  // };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -172,10 +134,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   }
 
   const data = requestData[currentIndex];
-  // console.log("--DEBUG requestData--")
-  // console.log("requestData", requestData)
-  // console.log("currentIndex", currentIndex)
-  // console.log("data>>>>>", data)
+
 
   let propertyAddress = " "
   propertyAddress = propertyAddress.concat(" ", (data?.property_address), " ",  (data?.property_city)," ", (data?.property_state), " ", (data?.property_zip))
@@ -500,8 +459,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                             ) : null}
                     </Grid>
                     {maintenanceQuotes.map((quote, index) => 
-                        <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                            <div key={index}>
+                        <Grid item xs={12} sx={{paddingTop: "10px"}} key={index}>
+                            <div>
                                 <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px"}}>
                                     {quote.quote_status === "SENT" ? (
                                         <Typography
