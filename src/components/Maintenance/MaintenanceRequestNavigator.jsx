@@ -52,17 +52,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
   }, [currentIndex]);
 
-//   console.log("-- DEBUG -- RequestNavigator");
-//   console.log("requestIndex", requestIndex);
-//   console.log("requestData", requestData);
-//   console.log("currentIndex", currentIndex);
-//   console.log("color", color);
-//   console.log("item", item);
-//   console.log("allData", allData);
-
   const maxSteps = images.length;
 
-  // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
       
@@ -72,12 +63,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             
             let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
-            console.log("--debug--", nextMaintenanceId)
-            
-            // console.log("currentIndex", newIndex);
-            // console.log("allData", allData);
-            // console.log("requestData", requestData);
-            // console.log("requestData[newIndex]", requestData[newIndex]);
             updateRequestIndex(newIndex, {changeTab:'noChange'})
             return newIndex;
           }

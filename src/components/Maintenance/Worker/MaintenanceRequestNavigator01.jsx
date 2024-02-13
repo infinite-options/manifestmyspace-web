@@ -70,14 +70,10 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => {
       let newIndex = (prevIndex + 1);
-      if(prevIndex< requestData.length-1){
+      if(prevIndex < requestData.length-1){
         
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-      
-        console.log("currentIndex", newIndex);
-        console.log("allData", allData);
-        console.log("requestData", requestData);
-        console.log("requestData[newIndex]", requestData[newIndex]);
+
         updateRequestIndex(newIndex, {changeTab:'noChange'})
         return newIndex;
       }
@@ -95,45 +91,18 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
       let newIndex = (prevIndex - 1);
       if(prevIndex > 0){
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-
-        console.log("currentIndex", newIndex);
-        console.log("allData", allData);
-        console.log("requestData", requestData);
-        console.log("requestData[newIndex]", requestData[newIndex]);
         updateRequestIndex(newIndex, {changeTab:'noChange'})
         return newIndex;
       }
       else{
+        if (newIndex === -1){
+          newIndex = 0
+        }
         updateRequestIndex(newIndex, {changeTab:'backward'});
         return newIndex;
       }
   });
   };
-
-
-  // const handleNextCard = () => {
-  //   setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
-  //   let nextMaintenanceId = requestData[currentIndex].maintenance_request_uid;
-  //   // navigate(`/maintenance/${nextMaintenanceId}`, { replace: true,   state: {
-  //   //     requestIndex,
-  //   //     status,
-  //   //     maintenanceItemsForStatus,
-  //   //     allData,
-  //   // }});
-  //   console.log("currentIndex", currentIndex)
-  //   console.log("allData", allData)
-  //   console.log("requestData", requestData)
-  //   // console.log("item", allData[requestData.mapping][currentIndex])
-  //   console.log("requestData[currentIndex]", requestData[currentIndex])
-  // };
-
-  // const handlePreviousCard = () => {
-  //   setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
-  //   let previousMaintenanceId = requestData[currentIndex].maintenance_request_uid;
-  //   // navigate(`/maintenance/${previousMaintenanceId}`, { replace: true });
-  //   console.log("currentIndex", currentIndex)
-  //   console.log("item", allData[requestData.mapping][currentIndex])
-  // };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);

@@ -184,23 +184,14 @@ export default function MaintenanceRequestDetail01(){
             if (i<0)
             break;}
     
-            if(i>=0)
-            {setValue(i);
+            if(i >= 0){
                 
-                let requestType= colorStatus[i].status.toUpperCase();
-                console.log('Mousivand')
+                let requestType= colorStatus[i].mapping.toUpperCase();
                 console.log(allData)
-                console.log('Mousivand')
-
-                console.log('Ramin')
-                console.log(requestType)
-                console.log('Ramin')
                 let j= allData[requestType].length-1
-                console.log('jjjj')
-                 console.log(j)
-                 console.log('jjjj')
-                
-            setMaintenanceRequestIndex(j)}
+                setValue(i);
+                setMaintenanceRequestIndex(j)
+            }
          }  
     }
 
