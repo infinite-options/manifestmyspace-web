@@ -6,12 +6,19 @@ import {
 import theme from '../../../theme/theme';
 
 export default function OwnerProfileLink(props){
-    let owner_first_name = props.maintenanceItem.owner_first_name;
-    let owner_last_name = props.maintenanceItem.owner_last_name;
+    var ownerName = "";
+    if (props.maintenanceItem) {    
+        const firstName = props.maintenanceItem.owner_first_name || "";
+        const lastName = props.maintenanceItem.owner_last_name || "";
 
-    console.log("OwnerProfileLink first name", owner_first_name)
-    console.log("OwnerProfileLink last name", owner_last_name)
+        ownerName = `${firstName} ${lastName}`.trim();
 
+        if (!firstName && !lastName) {
+            ownerName = "Owner Name Not Available";
+        }
+    } else {
+        ownerName = "Maintenance Item Not Found";
+    }    
     return (
         <Grid item xs={6} sx={{
             alignItems: "center",
@@ -30,7 +37,7 @@ export default function OwnerProfileLink(props){
             }}
         >
             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                Owner - {owner_first_name} {owner_last_name}
+                Owner - {ownerName}
             </Typography>
         </Button>
     </Grid>

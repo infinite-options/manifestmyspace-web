@@ -31,6 +31,8 @@ import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfi
 export default function CompletedM({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+    
+    let business_name = maintenanceItem?.business_name || "Business Name Not Available";
 
 
     function handleNavigateToQuotesRequested(){
@@ -104,7 +106,7 @@ export default function CompletedM({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Contact Maintenance - Kim Deal
+                            Contact Maintenance - {business_name}
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>

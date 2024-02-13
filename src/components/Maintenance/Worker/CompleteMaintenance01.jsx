@@ -103,7 +103,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
         let laborTotal = 0;
         let partsTotal = 0;
         let laborTime = 0;
-        try{
+        try {
             for (const item in costObject?.labor){
                 console.log(item)
                 laborTotal += parseInt(costObject?.labor[item].charge)

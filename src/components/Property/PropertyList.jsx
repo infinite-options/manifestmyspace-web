@@ -375,34 +375,36 @@ export default function PropertyList({}) {
                         width: "50%", // to take full width of its parent
                         }}
                     >
-                        <Typography  
-                            sx={{
-                                color: "#000000",
-                                fontWeight: 700,
-                                fontSize: "15px",
-                                margin: "0px", // Ensure no margin
-                                padding: "0px", // Ensure no padding
-                                textAlign: "center", // Ensure text is centered within itself
-                                verticalAlign: "middle", // Vertically align text in the middle
-                                alignItems: "center", // vertically align items to the center
-                            }}
-                        >
-                            {property.tenant_first_name} {property.tenant_last_name} 
-                        </Typography>
-                        <Typography
-                             sx={{
-                                color: "#000000",
-                                fontWeight: 700,
-                                fontSize: "15px",
-                                margin: "0px", // Ensure no margin
-                                padding: "0px", // Ensure no padding
-                                textAlign: "center", // Ensure text is centered within itself
-                                verticalAlign: "middle", // Vertically align text in the middle
-                                alignItems: "center", // vertically align items to the center
-                            }}
-                        >
-                            {property.lease_uid}
-                        </Typography>
+                        <Stack>
+                            <Typography  
+                                sx={{
+                                    color: "#000000",
+                                    fontWeight: 700,
+                                    fontSize: "15px",
+                                    margin: "0px", // Ensure no margin
+                                    padding: "0px", // Ensure no padding
+                                    textAlign: "center", // Ensure text is centered within itself
+                                    verticalAlign: "middle", // Vertically align text in the middle
+                                    alignItems: "center", // vertically align items to the center
+                                }}
+                            >
+                                {property.tenant_first_name} {property.tenant_last_name} 
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: "#000000",
+                                    fontWeight: 700,
+                                    fontSize: "15px",
+                                    margin: "0px", // Ensure no margin
+                                    padding: "0px", // Ensure no padding
+                                    textAlign: "center", // Ensure text is centered within itself
+                                    verticalAlign: "middle", // Vertically align text in the middle
+                                    alignItems: "center", // vertically align items to the center
+                                }}
+                            >
+                                {property.lease_uid}
+                            </Typography>
+                        </Stack>
                     </Box>
                     <Box
                         sx={{

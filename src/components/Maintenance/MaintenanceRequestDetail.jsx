@@ -164,10 +164,6 @@ export function MaintenanceRequestDetail() {
   const [navParams, setNavParams] = useState({});
 
   useEffect(() => {
-    // console.log("useEffect")
-    // console.log("status value", status)
-    // console.log("maintenanceRequestIndex", maintenanceRequestIndex)
-
     setNavParams({
       maintenanceRequestIndex,
       status,
@@ -187,12 +183,9 @@ export function MaintenanceRequestDetail() {
       let lastTab = areTabsGrey.lastIndexOf(0);
       setTabs({ firstTab, lastTab });
     });
-    // console.log("maintenance Quotes", maintenanceQuotes)
-    // console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
   }, [maintenanceRequestIndex, status]);
 
   useEffect(() => {
-    // console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex])
     if (
       maintenanceQuotes &&
       maintenanceItemsForStatus[maintenanceRequestIndex]
@@ -203,7 +196,6 @@ export function MaintenanceRequestDetail() {
           maintenanceItemsForStatus[maintenanceRequestIndex]
             .maintenance_request_uid
       );
-      //sort quotesFilteredBy status so that the SENT quote status is at the top
       quotesFilteredById.sort((a, b) => {
         if (a.quote_status === "SENT") {
           return -1;
@@ -213,8 +205,6 @@ export function MaintenanceRequestDetail() {
           return 0;
         }
       });
-
-      // console.log("*****quotesFilteredById", quotesFilteredById)
       setFilteredQuotes(quotesFilteredById);
     }
   }, [maintenanceRequestIndex, maintenanceQuotes]);
@@ -222,8 +212,6 @@ export function MaintenanceRequestDetail() {
   const allData = location.state.allMaintenanceData;
 
   useEffect(() => {
-    // console.log("useEffect")
-    // console.log("status value", status)
     colorStatus.find((item, index) => {
       if (item.mapping === status) {
         console.log("status", item.status, "at", index, "===", status);
@@ -233,21 +221,20 @@ export function MaintenanceRequestDetail() {
   }, [status, fromProperty]);
 
   useEffect(() => {
-    // console.log("running 2nd use effect")
     colorStatus.find((item, index) => {
       if (item.mapping === status) {
-        // console.log("2nd status", item.status, "at", index, "===", status)
         setValue(index);
       }
     });
   }, [status]);
 
   const handleChange = (event, newValue) => {
-    // console.log("tab is changing to ", newValue)
     setStatus(colorStatus[newValue].status);
     setValue(newValue);
     setMaintenanceRequestIndex(0);
-    setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping]);
+    const newStatus = colorStatus[newValue].mapping;
+    const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
+    setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
   };
 
   const handleMaintenaceRequestIndexChange = (
@@ -296,18 +283,6 @@ export function MaintenanceRequestDetail() {
       "aria-controls": `full-width-tabpanel-${index}`,
     };
   }
-
-  const handleNext = () => {
-    if (value < 5) {
-      setValue(value + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (value > 0) {
-      setValue(value - 1);
-    }
-  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -408,7 +383,7 @@ export function MaintenanceRequestDetail() {
               >
                 {colorStatus.map((item, index) => {
                   let color = greyOutTab(item.mapping, allData, item.color);
-                  let title = item.mapping;
+                  let title = item.status;
 
                   return (
                     <Tab

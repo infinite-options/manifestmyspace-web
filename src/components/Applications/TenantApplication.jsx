@@ -18,6 +18,7 @@ import {
 import { Form, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import backButton from "../Payments/backIcon.png";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function TenantApplication() {
   const location = useLocation();
@@ -27,8 +28,9 @@ export default function TenantApplication() {
   const [property, setProperty] = useState(location.state.property);
   const [status, setStatus] = useState(location.state.status);
   const [lease, setLease] = useState(location.state.lease);
-  console.log("status", status);
-  console.log(property);
+  // console.log("status", status)
+  // console.log("lease", lease)
+  // console.log(property)
 
   const [tenantProfile, setTenantProfile] = useState(null);
 
@@ -79,9 +81,9 @@ export default function TenantApplication() {
     } else {
       let info = JSON.parse(tenantProfile?.tenant_vehicle_info);
       setVehicles(info);
-      for (const vehicle of info) {
-        console.log(vehicle);
-      }
+      // for (const vehicle of info){
+      //     console.log(vehicle)
+      // }
     }
   }
 
@@ -89,12 +91,12 @@ export default function TenantApplication() {
     if (!tenantProfile) {
       return "No Adult Occupants";
     } else {
-      console.log(tenantProfile?.tenant_adult_occupants);
+      // console.log(tenantProfile?.tenant_adult_occupants)
       let info = JSON.parse(tenantProfile?.tenant_adult_occupants);
       setAdultOccupants(info);
-      for (const occupant of info) {
-        console.log(occupant);
-      }
+      // for (const occupant of info){
+      //     console.log(occupant)
+      // }
     }
   }
 
@@ -139,6 +141,9 @@ export default function TenantApplication() {
     formatTenantAdultOccupants();
     formatTenantPetOccupants();
     formatTenantChildOccupants();
+    setTenantDocuments(
+      tenantProfile ? JSON.parse(tenantProfile?.tenant_documents) : []
+    );
   }, [tenantProfile]);
 
   function getApplicationDate() {
@@ -151,9 +156,9 @@ export default function TenantApplication() {
 
   function handleApplicationSubmit() {
     //submit to backend
-    console.log("Application Submitted");
-    console.log("should call /annoucements");
-    console.log("should call /leases");
+    // console.log("Application Submitted")
+    // console.log("should call /annoucements")
+    // console.log("should call /leases")
     let date = new Date();
 
     const annoucementsResponse = fetch(
@@ -184,7 +189,10 @@ export default function TenantApplication() {
       "lease_assigned_contacts",
       JSON.stringify([getProfileId()])
     );
-    leaseApplicationData.append("lease_documents", "[]");
+    leaseApplicationData.append(
+      "lease_documents",
+      JSON.stringify(tenantDocuments)
+    );
     leaseApplicationData.append(
       "lease_adults",
       tenantProfile?.tenant_adult_occupants
@@ -207,7 +215,6 @@ export default function TenantApplication() {
       "lease_application_date",
       date.toLocaleDateString()
     );
-    //leaseApplicationData.append('tenant_uid', getProfileId())
 
     if (getProfileId() !== null && getProfileId() !== undefined) {
       leaseApplicationData.append("tenant_uid", getProfileId());
@@ -657,7 +664,7 @@ export default function TenantApplication() {
               <Typography
                 sx={{
                   justifySelf: "center",
-                  color: theme.typography.primary.black,
+                  color: theme.typography.common.blue,
                   fontWeight: theme.typography.primary.fontWeight,
                   fontSize: theme.typography.secondaryFont,
                 }}
