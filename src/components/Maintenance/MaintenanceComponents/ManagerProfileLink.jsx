@@ -6,7 +6,7 @@ import {
 import theme from '../../../theme/theme';
 
 export default function ManagerProfileLink(props){
-    let business_name = props.maintenanceItem?.business_name;
+    let business_name = props.maintenanceItem?.business_name || "Business Name Not Available";
 
     console.log("ManagerProfileLink business name", business_name)
 

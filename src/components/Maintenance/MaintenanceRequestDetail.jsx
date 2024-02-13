@@ -155,9 +155,6 @@ export function MaintenanceRequestDetail(){
     const [navParams, setNavParams] = useState({})
 
     useEffect(() => {
-        // console.log("useEffect")
-        // console.log("status value", status)
-        // console.log("maintenanceRequestIndex", maintenanceRequestIndex)
 
         setNavParams({
             maintenanceRequestIndex,
@@ -177,15 +174,11 @@ export function MaintenanceRequestDetail(){
             let lastTab = areTabsGrey.lastIndexOf(0);
             setTabs({firstTab, lastTab});
         })
-        // console.log("maintenance Quotes", maintenanceQuotes)
-        // console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
     }, [maintenanceRequestIndex, status])
 
     useEffect(() => {
-        // console.log("maintenance item uid --> ", maintenanceItemsForStatus[maintenanceRequestIndex])
         if (maintenanceQuotes && maintenanceItemsForStatus[maintenanceRequestIndex]){
             const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
-            //sort quotesFilteredBy status so that the SENT quote status is at the top
             quotesFilteredById.sort((a, b) => { 
                 if(a.quote_status === "SENT"){
                     return -1
@@ -195,8 +188,6 @@ export function MaintenanceRequestDetail(){
                     return 0
                 }
             })
-
-            // console.log("*****quotesFilteredById", quotesFilteredById)
             setFilteredQuotes(quotesFilteredById)
         }
     }, [maintenanceRequestIndex, maintenanceQuotes])
@@ -204,8 +195,6 @@ export function MaintenanceRequestDetail(){
     const allData = location.state.allMaintenanceData;
 
     useEffect(() => {
-        // console.log("useEffect")
-        // console.log("status value", status)
         colorStatus.find((item, index) => {
             if(item.mapping === status){
                 console.log("status", item.status, "at", index, "===", status)
@@ -215,59 +204,65 @@ export function MaintenanceRequestDetail(){
     }, [status, fromProperty])
 
     useEffect(() => {
-        // console.log("running 2nd use effect")
         colorStatus.find((item, index) => {
             if(item.mapping === status){
-                // console.log("2nd status", item.status, "at", index, "===", status)
                 setValue(index);
             }
         })
     }, [status])
 
     const handleChange = (event, newValue) => {
-        // console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
-        setMaintenanceItemsForStatus(allData[colorStatus[newValue].mapping])
+        const newStatus = colorStatus[newValue].mapping;
+        const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
+        setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
     };
 
     const handleMaintenaceRequestIndexChange = (index, direction, prevTabLastIndex) => {
-        setMaintenanceRequestIndex(index);  
-        // let x=true;
-        // if (x){
-
-
-        if (direction.changeTab==='forward'){
-        let i= value+1;
-          
-        while(areTabsGrey[i]===1 ){
-        i++;
-        if (i>5)
-        break;}
-
-        if(i<=5)
-        {setValue(i);
-        setMaintenanceRequestIndex(0);}
-     }
+        setMaintenanceRequestIndex(index);
     
-     if (direction.changeTab==='backward'){
-        let i= value-1;
-        
-        while(areTabsGrey[i]===1 ){
-        i--;
-        if (i<0)
-        break;}
+        if (direction.changeTab === 'forward') {
+            let i = value + 1;
+    
+            while (areTabsGrey[i] === 1) {
+                i++;
+                if (i > 5) break;
+            }
+    
+            if (i <= 5) {
+                handleChange(null, i); // Re-use handleChange to ensure consistent state update
+            }
+        } else if (direction.changeTab === 'backward') {
+            let i = value - 1;
+    
+            while (areTabsGrey[i] === 1) {
+                i--;
+                if (i < 0) break;
+            }
+    
+            if (i >= 0) {
+                let requestType = colorStatus[i].mapping.toUpperCase();
+                let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
+                console.log(requestType, lastIndex, allData[requestType])
+                const keysForAllData = Object.keys(allData);
+                console.log("keysForAllData", keysForAllData)
+                // Update the tab and maintenance request index correctly
+                setValue(i); // Change tab
+                setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array
+                // Optionally, update maintenanceItemsForStatus if your app's state requires it
+                setMaintenanceItemsForStatus(allData[requestType] || []);
+            }
+        }
+    };
 
-        if(i>=0)
-        {setValue(i);
-            let requestType= colorStatus[i].status.toUpperCase();
-            let j= allData[requestType].length-1
-        setMaintenanceRequestIndex(j)}
-     }  
-    
-    
-    }
+
+    useEffect(() => { 
+        console.log("--DEBUG: maintenanceRequestIndex has changed!--", maintenanceRequestIndex)
+        // tab needs to change 
+        console.log("--DEBUG: maintenanceItem has also changed!--", maintenanceItemsForStatus[maintenanceRequestIndex])
+    }, [maintenanceRequestIndex])
 
 
     function a11yProps(index) {
@@ -276,19 +271,7 @@ export function MaintenanceRequestDetail(){
           'aria-controls': `full-width-tabpanel-${index}`,
         };
       }
-
-    const handleNext = () => {
-        if (value < 5){
-            setValue(value + 1);
-        }
-    }
-
-    const handleBack = () => {
-        if (value > 0){
-            setValue(value - 1);
-        }
-    }
-
+      
     return(
         <ThemeProvider theme={theme}>
             <Box
@@ -375,7 +358,7 @@ export function MaintenanceRequestDetail(){
                                 {colorStatus.map((item, index) => {
 
                                         let color = greyOutTab(item.mapping, allData, item.color)
-                                        let title = item.mapping
+                                        let title = item.status
                                         
                                         return (
                                             <Tab key={index}

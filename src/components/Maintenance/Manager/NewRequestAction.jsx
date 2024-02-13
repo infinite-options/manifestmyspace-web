@@ -41,6 +41,8 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [message, setMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
 
+    console.log("maintenanceItem NewRequestAction", maintenanceItem)
+
     function handleNavigateToQuotesRequested(){
         navigate("/quoteRequest", {
             state:{
@@ -116,13 +118,10 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
-
-                // backgroundColor:'pink'
             }}
         >
             <Backdrop
                 sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                // sx={{ color: "yellow", zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={showSpinner}
             >
                 <CircularProgress color="inherit" />
@@ -138,23 +137,16 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <TenantProfileLink maintenanceItem={maintenanceItem}/>
                 <OwnerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
-                        // marginTop: "9px",
-                        // marginLeft: "9px",
                         alignItems: "center",
                         justifyContent: "center",
-                        // backgroundColor: "blue"
                     }}>
                         <Button
                     variant="contained"
                     disableElevation
                     sx={{
                         backgroundColor: "#D6D5DA",
-                        // backgroundColor:"transparent",
                         textTransform: "none",
-                        // paddingRight: "10px",
-                        // borderRight:"10%",
                         borderRadius: "10px",
-                        // display: 'flex',
                         width: "100%",
                     }} 
                     onClick={() => setShowRequestMoreInfo(true)}
@@ -166,12 +158,10 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                         
                 </Grid>
-                {/* </Grid> */}
            
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
-                    // backgroundColor : "lightblue"
                 }}>
                     <Button
                         variant="contained"
