@@ -4,9 +4,11 @@ import {
     Grid,
 } from "@mui/material";
 import theme from '../../../theme/theme';
+import { useNavigate } from "react-router-dom"
 
 export default function OwnerProfileLink(props){
     var ownerName = "";
+    let navigate = useNavigate();
     if (props.maintenanceItem) {    
         const firstName = props.maintenanceItem.owner_first_name || "";
         const lastName = props.maintenanceItem.owner_last_name || "";
@@ -35,6 +37,10 @@ export default function OwnerProfileLink(props){
                 display: 'flex',
                 width: "100%",
             }}
+            onClick={() => navigate(`/profile/${props.maintenanceItem.owner_uid}`, {state: {
+                maintenanceItem: props.maintenanceItem,
+                profile: "Property Owner",
+            }})}
         >
             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                 Owner - {ownerName}

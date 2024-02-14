@@ -4,28 +4,11 @@ import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Co
 import theme from "../../theme/theme";
 import { Stack, Typography } from '@mui/material';
 
-// const data1 = [
-//   { name: 'Jan', cashflow: 5000, revenue: 2000 },
-//   { name: 'Feb', cashflow: 8000, revenue: 4000 },
-//   { name: 'Mar', cashflow: 10000, revenue: 6000 },
-//   { name: 'Apr', cashflow: 9000, revenue: 6000 },
-//   { name: 'May', cashflow: 8000, revenue: 8000 },
-//   { name: 'Jun', cashflow: 10000, revenue: 4000 },
-//   { name: 'Jul', cashflow: 5000, revenue: 2000 },
-//   { name: 'Aug', cashflow: 4000, revenue: 3000 },
-//   { name: 'Sep', cashflow: 8000, revenue: 1000 },
-//   { name: 'Oct', cashflow: 6000, revenue: 5000 },
-//   { name: 'Nov', cashflow: 10000, revenue: 6000 },
-//   { name: 'Dec', cashflow: 8000, revenue: 3000 },
-//   // Add data for other months (up to 12)
-// ];
-
 const MixedChart = (props) => {
   // I want props.revenueCashflowByMonth to be sorted in order of month and year
 
   const data = props.revenueCashflowByMonth // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
   const activeButton = props.activeButton;
-  console.log("MixedChart called here and printing data", data)
   // const selectedProperty = props.selectedProperty;
   // find max and min of data
   const max = Math.max.apply(Math, data.map(function(o) { return o.cashflow; }))

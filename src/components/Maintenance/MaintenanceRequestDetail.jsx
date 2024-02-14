@@ -197,7 +197,7 @@ export function MaintenanceRequestDetail(){
     useEffect(() => {
         colorStatus.find((item, index) => {
             if(item.mapping === status){
-                console.log("status", item.status, "at", index, "===", status)
+                // console.log("status", item.status, "at", index, "===", status)
                 setValue(index);
             }
         })
@@ -245,9 +245,9 @@ export function MaintenanceRequestDetail(){
             if (i >= 0) {
                 let requestType = colorStatus[i].mapping.toUpperCase();
                 let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
-                console.log(requestType, lastIndex, allData[requestType])
+                // console.log(requestType, lastIndex, allData[requestType])
                 const keysForAllData = Object.keys(allData);
-                console.log("keysForAllData", keysForAllData)
+                // console.log("keysForAllData", keysForAllData)
                 // Update the tab and maintenance request index correctly
                 setValue(i); // Change tab
                 setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array
@@ -256,13 +256,6 @@ export function MaintenanceRequestDetail(){
             }
         }
     };
-
-
-    useEffect(() => { 
-        console.log("--DEBUG: maintenanceRequestIndex has changed!--", maintenanceRequestIndex)
-        // tab needs to change 
-        console.log("--DEBUG: maintenanceItem has also changed!--", maintenanceItemsForStatus[maintenanceRequestIndex])
-    }, [maintenanceRequestIndex])
 
 
     function a11yProps(index) {

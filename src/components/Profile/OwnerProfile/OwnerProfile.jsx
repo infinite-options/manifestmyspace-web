@@ -15,22 +15,8 @@ import theme from '../../../theme/theme';
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-// const theme = createTheme({
-//     palette: {
-//         background: {
-//             basic: '#000000',
-//             gray: '#F2F2F2',
-//             blue: '#3D5CAC'
-//         },
-//         text: {
-//             primary: '#3D5CAC',
-//             secondary: '#F2F2F2',
-//         },
-//         typography: {
-//             body1: {}
-//         }
-//     },
-// });
+
+
 function OwnerProfile() {
     const navigate = useNavigate();
     const { getProfileId } = useUser();
