@@ -328,13 +328,21 @@ export default function EditProfileSettingsTenant() {
                         <Grid item xs={6}>
                             <Stack spacing={-2} m={2}>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>First Name</Typography>
-                            <TextField name="tenant_first_name" value={firstName} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                            <TextField 
+                                name="tenant_first_name" 
+                                value={firstName} 
+                                onChange={handleInputChange} 
+                                variant="filled" 
+                                fullWidth
+                                className={classes.root}
+                                placeholder="3"
+                            />
                             </Stack>
                         </Grid>
                         <Grid item xs={6}>
-                            <Stack spacing={-2} m={2}>
-                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Last Name</Typography>
-                            <TextField name="tenant_last_name" value={lastName} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                            <Stack>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Last Name</Typography>
+                                <TextField name="tenant_last_name" value={lastName} onChange={handleInputChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
                             </Stack>
                         </Grid>
                     </Grid>

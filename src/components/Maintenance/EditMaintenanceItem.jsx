@@ -45,7 +45,6 @@ export default function EditMaintenanceItem(){
     
     const location = useLocation();
     let testIssue1 = location.state.testIssue
-    console.log("testIssue1>>>",testIssue1);
     // setDescription(testIssue1);
     // if(description == ""){
         // console.log(description)
@@ -55,33 +54,27 @@ export default function EditMaintenanceItem(){
     // }
 
     
-    let testProperty1 = location.state.testProperty
-    console.log("testProperty>>>",testProperty1);
+    let testProperty1 = location.state.testProperty 
     // setProperty(testProperty1);
     
     
     let testIssueItem1 = location.state.testIssueItem
-    console.log("testIssueItem1>>>",testIssueItem1);
     // setIssue(testIssueItem1);
     // issue = testIssueItem1;
 
-    let testCost1 = location.state.testCost
-    console.log("testCost1>>>",testCost1);
+    let testCost1 = location.state.testCost 
     // setCost(testCost1);
     // cost = testCost1;
     
     let testTitle1 = location.state.testTitle
-    console.log("testTitle1>>>",testTitle1);
     // setTitle(location.state.testTitle);
     // title = testTitle1;
 
     let testPriority1 = location.state.testPriority
-    console.log("testPriority1>>>",testPriority1);
     // setPriority(testPriority1);
 
     
     let completionStatus1 = location.state.completionStatus
-    console.log("completionStatus1>>>",completionStatus1);
     // setCompleted(completionStatus1);
     // console.log("completed>>>",completed);
 

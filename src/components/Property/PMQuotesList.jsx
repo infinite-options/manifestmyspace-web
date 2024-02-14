@@ -28,6 +28,7 @@ import Backdrop from "@mui/material/Backdrop";
 export default function PMQuotesList({}){
     let navigate = useNavigate();
     const location = useLocation();
+    const property_endpoint_resp=location.state.property_endpoint_resp
     const { getProfileId} = useUser();
     const [contractRequests, setContractRequests] = useState([]);
     const [properties, setProperties] = useState([]);
@@ -58,11 +59,9 @@ export default function PMQuotesList({}){
         const getProperties = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
-                const propertiesResponse = await response.json();
-                console.log(propertiesResponse)
-                setProperties(propertiesResponse.Property.result)
-                setContractRequests(propertiesResponse.NewPMRequests.result)
+                console.log(property_endpoint_resp)
+                setProperties(property_endpoint_resp.Property.result)
+                setContractRequests(property_endpoint_resp.NewPMRequests.result)
                 setShowSpinner(false);         
             } catch (error) {
                 console.log(error)
@@ -120,7 +119,7 @@ export default function PMQuotesList({}){
                     </Stack>
                     {contractRequests.map((contract, index) => {
                             return (            
-                                <ContractCard contract={contract}/>
+                                <ContractCard contract={contract} property_endpoint_resp={property_endpoint_resp}/>
                             )
                         })}
                 </Paper>
@@ -133,6 +132,7 @@ function ContractCard(props){
     let navigate = useNavigate();
 
     const contract = props.contract;
+    const property_endpoint_resp= props.property_endpoint_resp
     // const property = props.property;
     // console.log(contract)
     return (
@@ -149,6 +149,7 @@ function ContractCard(props){
                     contract_business_id: contract.business_id, 
                     contract_property_id: contract.property_id,
                     contractUID: contract.contract_uid,
+                    property_endpoint_resp
                 }})
             }
         >

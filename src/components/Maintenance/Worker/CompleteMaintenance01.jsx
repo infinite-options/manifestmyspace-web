@@ -26,6 +26,7 @@ import { set } from "date-fns";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
+import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 
 
 export default function CompleteMaintenance01({maintenanceItem}){
@@ -102,7 +103,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
         let laborTotal = 0;
         let partsTotal = 0;
         let laborTime = 0;
-        try{
+        try {
             for (const item in costObject?.labor){
                 console.log(item)
                 laborTotal += parseInt(costObject?.labor[item].charge)
@@ -146,47 +147,8 @@ export default function CompleteMaintenance01({maintenanceItem}){
             }}
         >
               <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <Grid item xs={1} sx={{
-                        alignItems: "center",
-                        justifyContent: "left",
-                        paddingLeft: "0px",
-                    }}>
-                    <Button sx={{
-                        maxWidth: "10px",
-                        paddingRight: "20px",
-                        paddingLeft: "0px",
-                        }}
-                        onClick={() => console.log("Chat Button")}
-                    >
-                        <ChatIcon sx={{
-                            color: "#3D5CAC"
-                        }}/>
-                    </Button>
-                </Grid>
                 
-                <Grid item xs={11} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: "40px",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "30px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Manager - {maintenanceItem?.business_name}
-                        </Typography>
-                    </Button>
-                </Grid>
+                <ManagerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",

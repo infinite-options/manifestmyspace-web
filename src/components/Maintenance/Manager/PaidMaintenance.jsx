@@ -24,11 +24,15 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
+import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
+import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 
 export default function CompletedM({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+    
+    let business_name = maintenanceItem?.business_name || "Business Name Not Available";
 
 
     function handleNavigateToQuotesRequested(){
@@ -83,65 +87,8 @@ export default function CompletedM({maintenanceItem}){
             }}
         >
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <Grid item xs={1} sx={{
-                        alignItems: "center",
-                        justifyContent: "left",
-                        paddingLeft: "0px",
-                    }}>
-                    <Button sx={{
-                        maxWidth: "10px",
-                        paddingRight: "0px",
-                        paddingLeft: "0px",
-                        }}
-                        onClick={() => console.log("Chat Button")}
-                    >
-                        <ChatIcon sx={{
-                            color: "#3D5CAC"
-                        }}/>
-                    </Button>
-                </Grid>
-                <Grid item xs={5} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - {maintenanceItem.tenant_adult_occupants != null ? maintenanceItem.tenant_adult_occupants[0] : "No Tenant Assigned"}
-                        </Typography>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - {maintenanceItem.owner_first_name} {maintenanceItem.owner_last_name}
-                        </Typography>
-                    </Button>
-                </Grid>
+                <TenantProfileLink maintenanceItem={maintenanceItem}/>
+                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -159,7 +106,7 @@ export default function CompletedM({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Contact Maintenance - Kim Deal
+                            Contact Maintenance - {business_name}
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>

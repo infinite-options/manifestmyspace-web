@@ -122,7 +122,7 @@ export default function QuoteRequestForm(){
                 try {
                     let key = i === 0 ? "img_cover" : `img_${i-1}`;
     
-                    if(selectedImageList[i].startsWith("data:image")){
+                    if(selectedImageList[i]?.image?.startsWith("data:image")){
                         const imageBlob = dataURItoBlob(selectedImageList[i]);
                         formData.append(key, imageBlob)
                     } else {

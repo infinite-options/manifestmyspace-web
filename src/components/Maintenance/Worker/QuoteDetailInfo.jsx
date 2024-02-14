@@ -147,8 +147,8 @@ function PartsTableReadOnly({parts, setParts}){
 }
 
 export default function QuoteDetailInfo({maintenanceItem}){
-
-    const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
+    console.log(maintenanceItem.quote_services_expenses)
+    const costData = JSON.parse(maintenanceItem?.quote_services_expenses); //failing here in some cases
 
     // console.log(costData)
     // console.log(costData.parts)

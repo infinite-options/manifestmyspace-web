@@ -28,6 +28,8 @@ import Scheduler from "../../utils/Scheduler";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
+import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 export default function NewRequestAction({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
@@ -39,11 +41,9 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [message, setMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
 
-    console.log("NewRequestAction", maintenanceItem)
-    function handleNavigateToQuotesRequested(){
+    console.log("maintenanceItem NewRequestAction", maintenanceItem)
 
-        console.log("NewRequestAction", maintenanceItem)
-        console.log(navigateParams)
+    function handleNavigateToQuotesRequested(){
         navigate("/quoteRequest", {
             state:{
                 maintenanceItem,
@@ -118,13 +118,10 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
-
-                // backgroundColor:'pink'
             }}
         >
             <Backdrop
                 sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                // sx={{ color: "yellow", zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={showSpinner}
             >
                 <CircularProgress color="inherit" />
@@ -137,90 +134,19 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 handleSubmit={handleSubmit}
             />
             <Grid container direction="row" columnSpacing={4} rowSpacing={6} >
-                {/* <Grid item xs={1} sx={{ */}
-                        {/* alignItems: "center",
-                        justifyContent: "left",
-                        paddingLeft: "0px",
-                        backgroundColor: 'blue' */}
-                    {/* // }}> */}
-                    {/* <Button sx={{
-                        maxWidth: "10px",
-                        paddingRight: "0px",
-                        paddingLeft: "0px",
-                        }}
-                        onClick={() => console.log("Chat Button")}
-                    >
-                        <ChatIcon sx={{
-                            color: "#3D5CAC"
-                        }}/>
-                    </Button> */}
-                {/* </Grid> */}
-                <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        // backgroundColor: "yellow"
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            // backgroundColor: "transparent",
-                            textTransform: "none",
-                            // paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Tenant - {maintenanceItem.tenant_adult_occupants != null ? maintenanceItem.tenant_adult_occupants[0] : "No Tenant Assigned"}
-                        </Typography>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        // backgroundColor: "lightcyan"
-                    }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            // backgroundColor: "transparent",
-                            textTransform: "none",
-                            // paddingRight: "0px",
-                            // paddingLeft: "50px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Owner - {maintenanceItem.owner_first_name} {maintenanceItem.owner_last_name}
-                        </Typography>
-                    </Button>
-                </Grid>
-                {/* <Grid container direction="row" columnSpacing={6} rowSpacing={6}> */}
+                <TenantProfileLink maintenanceItem={maintenanceItem}/>
+                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
-                        // marginTop: "9px",
-                        // marginLeft: "9px",
                         alignItems: "center",
                         justifyContent: "center",
-                        // backgroundColor: "blue"
                     }}>
                         <Button
                     variant="contained"
                     disableElevation
                     sx={{
                         backgroundColor: "#D6D5DA",
-                        // backgroundColor:"transparent",
                         textTransform: "none",
-                        // paddingRight: "10px",
-                        // borderRight:"10%",
                         borderRadius: "10px",
-                        // display: 'flex',
                         width: "100%",
                     }} 
                     onClick={() => setShowRequestMoreInfo(true)}
@@ -232,12 +158,10 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                 <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                         
                 </Grid>
-                {/* </Grid> */}
            
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
-                    // backgroundColor : "lightblue"
                 }}>
                     <Button
                         variant="contained"

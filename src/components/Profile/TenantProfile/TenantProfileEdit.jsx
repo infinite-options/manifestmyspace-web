@@ -46,6 +46,7 @@ function TenantProfileEdit(props) {
     const [tenantLeaseStartDate, setTenantLeaseStartDate] = useState('');
     const [tenantLeaseEndDate, setTenantLeaseEndDate] = useState('');
     const [tenantMonthlyRent, setTenantMonthlyRent] = useState('');
+    const [tenantRentFrequency, setTenantRentFrequency] = useState('');
     const [tenantPMName, setTenantPMName] = useState('');
     const [tenantPMPhone, setTenantPMPhone] = useState('');
 
@@ -57,7 +58,9 @@ function TenantProfileEdit(props) {
     const [tenantFiles, setTenantFiles] = useState([]);
     const [tenantFileTypes, setTenantFileTypes] = useState([]);
     const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
+    const [deletedDocs, setDeletedDocs] = useState([]);    
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
+
     
     
     // const [tenant, setTenant] = useState('');
@@ -129,8 +132,8 @@ function TenantProfileEdit(props) {
             setTenantState(responseData.tenant_state)
             setTenantCity(responseData.tenant_city)
             setTenantZip(responseData.tenant_zip)
-            if (responseData.tenant_profile_image) {
-                setTenantProfileImage(responseData.tenant_profile_image);
+            if (responseData.tenant_photo_url) {
+                setTenantProfileImage(responseData.tenant_photo_url);
             }
             setModifiedData({
                 'tenant_uid': responseData.tenant_uid,
@@ -281,6 +284,22 @@ function TenantProfileEdit(props) {
             });
             profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
         }
+
+        if(deletedDocs.length > 0){
+            profileFormData.append('deleted_documents', JSON.stringify(deletedDocs));
+        }
+
+        
+        for (const key in modifiedData) {
+            if (Object.hasOwnProperty.call(modifiedData, key)) {
+                const value = modifiedData[key];                                
+                const serializedValue = (value !== null && typeof value === 'object')
+                    ? JSON.stringify(value)
+                    : String(value);
+    
+                profileFormData.append(key, serializedValue);
+            }
+        }
         
         // Make a PUT request with formData to update data on the backend
         if(isEdited){
@@ -304,11 +323,15 @@ function TenantProfileEdit(props) {
     
 
     const handleDeletePrevUploadedFile = (index) => {
+        setDeletedDocs((prevDeletedDocs) =>             
+            [...prevDeletedDocs, previouslyUploadedDocs[index].link]
+        );
         setPreviouslyUploadedDocs(prevFiles => {
             const filesArray = Array.from(prevFiles);
             filesArray.splice(index, 1);
             return filesArray;
         });
+        setIsEdited(true);        
     }
 
     const handleRemoveFile = (index) => {
@@ -601,10 +624,61 @@ function TenantProfileEdit(props) {
                                         <Box sx={{
                                             display: 'flex',
                                             flexDirection: 'row',
+                                            justifyContent: 'space-evenly',
                                             gap: 2,
                                         }}>
-                                            <ProfileTextInputField name="tenant_current_salary" value={tenantCurrentSalary} onChange={handleInputChange}>Current Salary</ProfileTextInputField>
-                                            <ProfileTextInputField name="tenant_salary_frequency" value={tenantSalaryFrequency} onChange={handleInputChange}>Salary Frequency</ProfileTextInputField>
+                                            <Box sx={{
+                                                width: '50%',
+                                            }}>
+                                                <ProfileTextInputField name="tenant_current_salary" value={tenantCurrentSalary} onChange={handleInputChange} >Current Salary</ProfileTextInputField>
+                                            </Box>
+                                            
+                                            {/* <ProfileTextInputField name="tenant_salary_frequency" value={tenantSalaryFrequency} onChange={handleInputChange}>Salary Frequency</ProfileTextInputField> */}
+                                            <Box sx={{
+                                                width: '50%',
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                gap: 2,
+                                            }}>
+                                                <Typography sx={{
+                                                    fontFamily: 'Source Sans Pro',
+                                                    fontSize: '12px',
+                                                    fontWeight: 600,
+                                                    color: '#160449',
+                                                    width: '30%',
+                                                    marginLeft: '10px',
+                                                }}>
+                                                    Salary Frequency :
+                                                </Typography>
+                                                <Select
+                                                    value={tenantSalaryFrequency}
+                                                    name = "tenant_salary_frequency"
+                                                    label="Salary Frequency"
+                                                    // onChange={(e) => {
+                                                    //         const updatedTypes = [...tenantFileTypes];
+                                                    //         updatedTypes[i] = e.target.value;
+                                                    //         setTenantFileTypes(updatedTypes);
+                                                    //     }
+                                                    // }
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    sx={{
+                                                        backgroundColor: '#D6D5DA',
+                                                        height: '20px',
+                                                        width: '70%', 
+                                                        padding: '8px', 
+                                                    }}
+                                                >
+                                                    <MenuItem value={"bi-weekly"}>Bi-weekly</MenuItem>                                                                                                        
+                                                    <MenuItem value={"semi-monthly"}>Semi-monthly</MenuItem>                                               
+                                                    <MenuItem value={"hourly"}>Hourly</MenuItem>                                                    
+                                                    <MenuItem value={"daily"}>Daily</MenuItem>
+                                                    <MenuItem value={"weekly"}>Weekly</MenuItem>                                                                                                        
+                                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
+                                                    <MenuItem value={"yearly"}>Yearly</MenuItem>                                                                                                                                                                                                                                                                    
+                                                </Select>
+                                            </Box>
+                                            
                                         </Box>
                                             <ProfileTextInputField name="tenant_current_job_title" value={tenantJobTitle} onChange={handleInputChange}>Job title</ProfileTextInputField>
                                             <ProfileTextInputField name="tenant_current_job_company" value={tenantCompanyName} onChange={handleInputChange}>Company Name</ProfileTextInputField>
@@ -684,7 +758,7 @@ function TenantProfileEdit(props) {
                                             alignItems: 'center',
                                         }}>
                                             <Box>
-                                                Additional details - {'<TBD>'}
+                                                Additional details
                                             </Box>
                                             {!(tenantLeaseStartDate && tenantLeaseEndDate && tenantMonthlyRent && tenantPMName && tenantPMPhone) && (
                                                 <Box sx={{
@@ -711,13 +785,16 @@ function TenantProfileEdit(props) {
                                             flexDirection: 'row',
                                             gap: 2,
                                         }}>
-                                            <ProfileTextInputField name="tenant_lease_start_date" value = {tenantLeaseStartDate} onChange={handleInputChange}>lease start date</ProfileTextInputField>
-                                            <ProfileTextInputField name="tenant_lease_end_date" value = {tenantLeaseEndDate} onChange={handleInputChange}>lease end date</ProfileTextInputField>
+                                            <ProfileTextInputField name="tenant_lease_start_date" value = {tenantLeaseStartDate} onChange={handleInputChange}>Lease Start Date</ProfileTextInputField>
+                                            <ProfileTextInputField name="tenant_lease_end_date" value = {tenantLeaseEndDate} onChange={handleInputChange}>Lease End Date</ProfileTextInputField>
                                         </Box>
                                         <Box sx={{
-                                            width: '40%',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            gap: 2,
                                         }}>
                                             <ProfileTextInputField name="tenant_monthly_rent" value = {tenantMonthlyRent} onChange={handleInputChange}>Monthly Rent</ProfileTextInputField>
+                                            <ProfileTextInputField name="tenant_rent_frequency" value = {tenantRentFrequency} onChange={handleInputChange}>Rent Frequency</ProfileTextInputField>
                                         </Box>
 
                                         <ProfileTextInputField name="tenant_pm_name" value = {tenantPMName} onChange={handleInputChange}>Property Manager Name</ProfileTextInputField>
@@ -922,7 +999,7 @@ function TenantProfileEdit(props) {
                                                                 required
                                                                 sx={{
                                                                     backgroundColor: '#D6D5DA',
-                                                                    height: '16px',
+                                                                    height: '20px',
                                                                     width: '40%', // Adjust the width as needed
                                                                     padding: '8px', // Adjust the padding as needed
                                                                 }}
@@ -1020,9 +1097,9 @@ function TenantProfileEdit(props) {
                                                 </Box>
                                             </Box>
                                             ALLOWED FILE EXTENSIONS = '.txt', '.pdf', '.doc', '.docx'
-                                            {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
+                                            {/* {profileData.tenant_documents && profileData.tenant_documents.map((document, index) => (        
                                                 <DocumentCard key={index} data={{ title: document.name, description:document.description, date: document.created_date, link: document.link,  }} />
-                                            ))}
+                                            ))} */}
                                         </Box>
                                     </ProfileAccordionDetail>
                                 </ProfileAccordion>
@@ -1313,7 +1390,7 @@ function ProfileTenantTable(props) {
 
         
             <Grid container columnSpacing={2} rowSpacing={2}>
-                {console.log("debug", data[0])}
+                {/* {console.log("debug", data[0])} */}
                 {data && data.length > 0 ? (
                     data.map((rowData, index) => (
                         <>
@@ -1358,7 +1435,7 @@ function ProfileTableCell(props) {
     const setData = props.setData;
     const index = props.index
 
-    console.log("In ProfileTableCell: ",props)
+    // console.log("In ProfileTableCell: ",props)
 
     if ((!props.value) && occupantsDataComplete){
         setOccupantsDataComplete(false)
@@ -1372,8 +1449,8 @@ function ProfileTableCell(props) {
       
         const fieldName = props.field;
 
-        console.log("In Debug Function")
-        console.log(fieldName, value)
+        // console.log("In Debug Function")
+        // console.log(fieldName, value)
         // console.log("prevData: ",prevData)
 
         setData((prevData) => {

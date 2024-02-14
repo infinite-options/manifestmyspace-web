@@ -18,18 +18,19 @@ import {
 import { Form, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import backButton from '../Payments/backIcon.png';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function TenantApplication(){
     const location = useLocation();
     const navigate = useNavigate();
     const { user, getProfileId, roleName } = useUser();
-
-
+    
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
-    console.log("status", status)
-    console.log(property)
+    // console.log("status", status)
+    // console.log("lease", lease)
+    // console.log(property)
 
     const [tenantProfile, setTenantProfile] = useState(null);
     
@@ -38,7 +39,27 @@ export default function TenantApplication(){
     const [petOccupants, setPetOccupants] = useState(null);
     const [childOccupants, setChildOccupants] = useState(null);
 
+    const [tenantDocuments, setTenantDocuments] = useState([]);
 
+    // useEffect(() => {
+    //     console.log("tenantDocuments - ", tenantDocuments);
+    // }, [tenantDocuments])
+
+
+    function formatDocumentType(type) {
+        switch(type){            
+            case "income_proof": return "Proof of Income";
+            case "bank_statement": return "Bank Statement";
+            case "id": return "ID";
+            case "renters_insurance_proof": return "Proof of Renter's Insurance";
+            case "ssn": return "SSN";
+            case "credit_report": return "Credit Report";
+            case "reference": return "Reference";
+            case "other": return "Other";
+            
+            default: return "";            
+        }
+    }
     function formattedAddress(){
         return `${property.property_address} ${property.property_unit} ${property.property_city} ${property.property_state} ${property.property_zip}`
     }
@@ -78,9 +99,9 @@ export default function TenantApplication(){
         } else{
             let info = JSON.parse(tenantProfile?.tenant_vehicle_info)
             setVehicles(info)
-            for (const vehicle of info){
-                console.log(vehicle)
-            }
+            // for (const vehicle of info){
+            //     console.log(vehicle)
+            // }
         }
     }
 
@@ -88,12 +109,12 @@ export default function TenantApplication(){
         if (!tenantProfile){
             return "No Adult Occupants"
         } else {
-            console.log(tenantProfile?.tenant_adult_occupants)
+            // console.log(tenantProfile?.tenant_adult_occupants)
             let info = JSON.parse(tenantProfile?.tenant_adult_occupants)
             setAdultOccupants(info)
-            for (const occupant of info){
-                console.log(occupant)
-            }
+            // for (const occupant of info){
+            //     console.log(occupant)
+            // }
         }
     }
 
@@ -103,9 +124,9 @@ export default function TenantApplication(){
         } else {
             let info = JSON.parse(tenantProfile?.tenant_pet_occupants)
             setPetOccupants(info)
-            for (const pet of info){
-                console.log(pet)
-            }
+            // for (const pet of info){
+            //     console.log(pet)
+            // }
         } 
     }
     function formatTenantChildOccupants(){
@@ -114,10 +135,18 @@ export default function TenantApplication(){
         } else {
             let info = JSON.parse(tenantProfile?.tenant_children_occupants)
             setChildOccupants(info)
-            for (const child of info){
-                console.log(child)
-            }
+            // for (const child of info){
+            //     console.log(child)
+            // }
         }
+    }
+
+    const deleteTenantDocument = (index) => {
+        setTenantDocuments(prevFiles => {
+            const filesArray = Array.from(prevFiles);
+            filesArray.splice(index, 1);
+            return filesArray;
+        });
     }
 
     useEffect(() => {
@@ -137,6 +166,7 @@ export default function TenantApplication(){
         formatTenantAdultOccupants()
         formatTenantPetOccupants()
         formatTenantChildOccupants()
+        setTenantDocuments(tenantProfile? JSON.parse(tenantProfile?.tenant_documents): []);
     }, [tenantProfile])
 
     function getApplicationDate(){
@@ -147,11 +177,26 @@ export default function TenantApplication(){
         return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`
     }
 
+    function handleWithdrawLease() {
+        const withdrawLeaseData = new FormData();
+        withdrawLeaseData.append('lease_uid', lease.lease_uid)
+        withdrawLeaseData.append('lease_status', "WITHDRAWN")
+        
+        const withdrawLeaseResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+            method: 'PUT',
+            body: withdrawLeaseData
+        })
+
+        Promise.all([withdrawLeaseResponse]).then((values) => {
+            navigate("/listings") // send success data back to the propertyInfo page
+        })
+    }
+
     function handleApplicationSubmit(){
         //submit to backend
-        console.log("Application Submitted")
-        console.log("should call /annoucements")
-        console.log("should call /leases")
+        // console.log("Application Submitted")
+        // console.log("should call /annoucements")
+        // console.log("should call /leases")
         let date = new Date()
 
 
@@ -176,7 +221,7 @@ export default function TenantApplication(){
         leaseApplicationData.append('lease_property_id', property.property_uid)
         leaseApplicationData.append('lease_status', "NEW")
         leaseApplicationData.append('lease_assigned_contacts', JSON.stringify([getProfileId()]))
-        leaseApplicationData.append('lease_documents', "[]")
+        leaseApplicationData.append('lease_documents', JSON.stringify(tenantDocuments))
         leaseApplicationData.append('lease_adults', tenantProfile?.tenant_adult_occupants)
         leaseApplicationData.append('lease_children', tenantProfile?.tenant_children_occupants)
         leaseApplicationData.append('lease_pets', tenantProfile?.tenant_pet_occupants)
@@ -617,7 +662,7 @@ export default function TenantApplication(){
                             <Typography
                                 sx={{
                                     justifySelf: 'center',
-                                    color: theme.typography.primary.black,
+                                    color: theme.typography.common.blue,
                                     fontWeight: theme.typography.primary.fontWeight,
                                     fontSize: theme.typography.secondaryFont
                                 }}
@@ -745,9 +790,85 @@ export default function TenantApplication(){
                                 Porsche Cayenne S | SUV | ASD1235 | CA
                             </Typography> */}
                         </Grid>
-                        {status ? (
-                          null
-                        ) : (
+                        <Grid item xs={12}>
+                            <Typography
+                                sx={{
+                                    justifySelf: 'center',
+                                    color: theme.typography.common.blue,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.secondaryFont
+                                }}
+                            >
+                                Your Documents:
+                            </Typography>
+                            <Box
+                                sx={{
+                                    display:'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    paddingTop: '5px',
+                                    color: theme.typography.common.blue,
+                                }}
+                            >
+                                <Box>Filename</Box>
+                                <Box>Type</Box>
+                                <Box>{' '}</Box>
+                                
+                            </Box>
+                            {[...tenantDocuments].map((doc, i) => (
+                                <>                                
+                                    <Box
+                                        key={i} 
+                                        sx={{
+                                            display:'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                            <Box
+                                                sx={{
+                                                    // height: '16px',
+                                                    width: '100%', 
+                                                    
+                                                    
+                                                    cursor: 'pointer', // Change cursor to indicate clickability
+                                                    color: '#3D5CAC',
+                                                }}
+                                            >
+                                            {doc.filename}
+                                            </Box>
+                                        </a>
+                                        {formatDocumentType(doc.type)}
+                                        <Button 
+                                            variant="text"
+                                            onClick={(event) => {
+                                                deleteTenantDocument(i)
+                                            }}
+                                            sx={{
+                                                width: '10%', 
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold', 
+                                                color: '#3D5CAC',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent', // Set to the same color as the default state
+                                                },
+                                            }}
+                                            
+                                        >
+                                            <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                        </Button>
+                                        
+                                    </Box>
+                                </>                                        
+                            ))}
+                        </Grid>
+                        {status && status !== "WITHDRAWN" ? (
+                            null
+                          ) : (
                             <>
                                 {/* <Grid container direction="row" columnSpacing={6} rowSpacing={6} >
                                     <Grid item xs={6} alignContent={'center'}>
@@ -851,6 +972,34 @@ export default function TenantApplication(){
                                     </Button>
                                 </Box>
                             </>
+                        )}
+                        {status && status === "NEW" ? (
+                          <>
+                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: 'center', }}>
+                                <Button
+                                    sx={{
+                                        marginTop: "30px",
+                                        color: "#160449",
+                                        backgroundColor: "#ffe230",
+                                        fontWeight: theme.typography.medium.fontWeight,
+                                        fontSize: theme.typography.mediumFont,
+                                        textTransform: "none",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        ":hover": {
+                                            color: "white",
+                                        }
+    
+                                    }}
+                                    onClick={() => handleWithdrawLease()}
+                                >
+                                    Withdraw
+                                </Button>
+                            </Grid>                                
+                        </>
+                        ) : (
+                            null
                         )}
                     </Grid>
                 </Paper>

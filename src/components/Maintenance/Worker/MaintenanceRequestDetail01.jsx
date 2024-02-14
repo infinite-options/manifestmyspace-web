@@ -155,7 +155,6 @@ export default function MaintenanceRequestDetail01(){
     }, [status])
 
     const handleChange = (event, newValue) => {
-        // console.log("tab is changing to ", newValue)
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
@@ -184,23 +183,14 @@ export default function MaintenanceRequestDetail01(){
             if (i<0)
             break;}
     
-            if(i>=0)
-            {setValue(i);
+            if(i >= 0){
                 
-                let requestType= colorStatus[i].status.toUpperCase();
-                console.log('Mousivand')
+                let requestType= colorStatus[i].mapping.toUpperCase();
                 console.log(allData)
-                console.log('Mousivand')
-
-                console.log('Ramin')
-                console.log(requestType)
-                console.log('Ramin')
                 let j= allData[requestType].length-1
-                console.log('jjjj')
-                 console.log(j)
-                 console.log('jjjj')
-                
-            setMaintenanceRequestIndex(j)}
+                setValue(i);
+                setMaintenanceRequestIndex(j)
+            }
          }  
     }
 
@@ -315,11 +305,11 @@ export default function MaintenanceRequestDetail01(){
                                 {colorStatus.map((item, index) => {
 
                                         let color = greyOutTab(item.mapping, allData, item.color)
-                                        // let color = item.color
+                                        let title = item.mapping
+
                                         return (
                                             <Tab key={index}
                                                 disabled={deactivateTab(item.mapping, allData)}
-                                                // disabled={true}
                                                 {...a11yProps(index)} 
                                                 sx={{
                                                     backgroundColor: color,
@@ -329,6 +319,11 @@ export default function MaintenanceRequestDetail01(){
                                                     minWidth: '5px',
                                                     padding: '0px',
                                                 }}
+                                                label={
+                                                    <Typography sx={{color: theme.typography.primary.grey, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                        {title}
+                                                    </Typography>
+                                                }
                                             />
                                         )
                                     }
@@ -379,7 +374,7 @@ export default function MaintenanceRequestDetail01(){
                                     <QuotesAccepted01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
-                                {colorStatus[value]?.mapping === "Scheduled" ?
+                                {colorStatus[value]?.mapping === "SCHEDULED" ?
                                     <ScheduleMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }

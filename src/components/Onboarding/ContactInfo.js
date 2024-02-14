@@ -174,7 +174,7 @@ function Register() {
                 placeholder="Phone Number"
                 fullWidth
                 className={classes.root}
-              ></TextField>
+              />
             </Box>
           </Stack>
           <Button
