@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RequestQuotes = () => {
+const RequestQuotes = () => { 
   const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const location = useLocation();
@@ -120,6 +120,7 @@ const RequestQuotes = () => {
 
 
     const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+    // const url = `http://localhost:4000/contracts`; 
 
     try {
       const response = await fetch(url, {

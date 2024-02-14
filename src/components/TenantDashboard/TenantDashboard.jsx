@@ -99,6 +99,8 @@ function TenantDashboard(props) {
                 {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
                 {lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
                 {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+                {lease_status === "ENDED" ? (<CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }}/>) : null} 
+                {lease_status === "WITHDRAWN" ? (<CircleIcon fontSize="small" sx={{ color: "#FFC614", paddingRight: "10px" }}/>) : null}                                
             </>
         )
     }
