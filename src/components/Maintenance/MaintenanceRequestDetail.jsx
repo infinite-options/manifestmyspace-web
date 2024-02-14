@@ -214,7 +214,7 @@ export function MaintenanceRequestDetail() {
   useEffect(() => {
     colorStatus.find((item, index) => {
       if (item.mapping === status) {
-        console.log("status", item.status, "at", index, "===", status);
+        // console.log("status", item.status, "at", index, "===", status)
         setValue(index);
       }
     });
@@ -243,8 +243,6 @@ export function MaintenanceRequestDetail() {
     prevTabLastIndex
   ) => {
     setMaintenanceRequestIndex(index);
-    // let x=true;
-    // if (x){
 
     if (direction.changeTab === "forward") {
       let i = value + 1;
@@ -255,12 +253,9 @@ export function MaintenanceRequestDetail() {
       }
 
       if (i <= 5) {
-        setValue(i);
-        setMaintenanceRequestIndex(0);
+        handleChange(null, i); // Re-use handleChange to ensure consistent state update
       }
-    }
-
-    if (direction.changeTab === "backward") {
+    } else if (direction.changeTab === "backward") {
       let i = value - 1;
 
       while (areTabsGrey[i] === 1) {
@@ -269,10 +264,19 @@ export function MaintenanceRequestDetail() {
       }
 
       if (i >= 0) {
-        setValue(i);
-        let requestType = colorStatus[i].status.toUpperCase();
-        let j = allData[requestType].length - 1;
-        setMaintenanceRequestIndex(j);
+        let requestType = colorStatus[i].mapping.toUpperCase();
+        let lastIndex =
+          allData[requestType] && allData[requestType].length
+            ? allData[requestType].length - 1
+            : 0;
+        // console.log(requestType, lastIndex, allData[requestType])
+        const keysForAllData = Object.keys(allData);
+        // console.log("keysForAllData", keysForAllData)
+        // Update the tab and maintenance request index correctly
+        setValue(i); // Change tab
+        setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array
+        // Optionally, update maintenanceItemsForStatus if your app's state requires it
+        setMaintenanceItemsForStatus(allData[requestType] || []);
       }
     }
   };
