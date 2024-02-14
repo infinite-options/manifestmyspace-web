@@ -8,18 +8,13 @@ import Status from "../../Templates/Status";
 import theme from "../../../theme/theme";
 import { Button, Box, ThemeProvider } from '@mui/material';
 
-
-// export default function LeaseWidget({moveOut, leaseData}) {
 export default function LeaseWidget(props) {
-    console.log('in LeaseWidget');
-    // console.log('leaseWidget lease Data:', props.leaseData);
 
     const navigate = useNavigate();
     let date = new Date();
     let moveoutsInSixWeeks = 0
     let leaseStatusData = props.leaseData
-    // console.log('After setting leaseStatus:', leaseStatusData);
-    // console.log('After setting moveoutsInSixWeeks:', moveoutsInSixWeeks);
+    
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth()+1; // Adding 1 because getMonth() returns 0-based index
     var leaseStatus = {};
@@ -33,17 +28,6 @@ export default function LeaseWidget(props) {
     sixWeeksLater.setDate(today.getDate() + 6 * 7); // Adding 6 weeks worth of days
     // let moveoutsInSixWeeks = 0;
     let diffDate = (sixWeeksLater - today)/ (1000 * 60 * 60 * 24);
-
-    // Print statements
-    // console.log("Current Year: ", currentYear)
-    // console.log("Current Month: ", currentMonth)
-    // console.log("today ", today)
-    // console.log("sixWeeksLater ", sixWeeksLater)
-    // console.log("Date Difference ", diffDate)
-    // console.log("Lease Status: ", leaseStatus)
-    // console.log("Lease Status Data: ", leaseStatusData)
-    // console.log("Lease Dictionary: ", leaseStatusDictionary)
-    
 
     leaseStatusData.forEach(item => {
         // console.log("Lease item: ", item);
@@ -67,11 +51,8 @@ export default function LeaseWidget(props) {
         else {
             // console.log('The date is not within the next six weeks.');
         }
-        console.log("Move Out ", moveoutsInSixWeeks)});
-    
-    
-    console.log("Lease Status ", leaseStatusData)
-    console.log("leaseStatusDictionary ", leaseStatusDictionary)
+    });
+
 
     leaseStatus = leaseStatusDictionary;
 

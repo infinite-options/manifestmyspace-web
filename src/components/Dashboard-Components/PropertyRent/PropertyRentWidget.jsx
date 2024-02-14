@@ -5,16 +5,9 @@ import { Box } from '@mui/material';
 
 
 export default function PropertyRentWidget(props) {
-    console.log('in Property Rent Widget');
-    
-    // console.log('props.rentData: ', props.rentData);
-    // console.log('props.profile: ', props.profile);
-    // console.log('props.propertyCount: ', props.totalPropertiesCount);
     const navigate = useNavigate();
 
-
     let rentStatusData = props.rentData
-
 
     let unpaidCount = rentStatusData ? rentStatusData.find(rs => rs.rent_status === 'UNPAID') : 0;
     unpaidCount = unpaidCount ? unpaidCount.num : 0;

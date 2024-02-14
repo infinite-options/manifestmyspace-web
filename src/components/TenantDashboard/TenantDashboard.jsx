@@ -86,7 +86,6 @@ function TenantDashboard(props) {
   let automatic_navigation_handler =(propertyData)=>{
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
       if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
-        console.log("!propertyData || propertyData.length === 0");
         navigate("/listings");
       }
   }
@@ -104,12 +103,6 @@ function TenantDashboard(props) {
     }
 
     const returnLeaseStatusColor = (status) => {
-        // console.log("--debug-- returnLeaseStatusColor property_data", property_data)
-        // console.log("--debug-- returnLeaseStatusColor property_id", property_id)
-
-        // let property = property_data.find(property => property.property_uid === property_id);
-
-        // console.log("--debug--", property, property?.property_status)
 
         const statusColorMapping = {
             "ACTIVE": "#00D100",
@@ -136,10 +129,6 @@ function TenantDashboard(props) {
             // setUserLeases(propertyResponseData.Tenant_Leases.result)
             setUserLeases(propertyResponseData.Tenant_Leases.result)
 
-            console.log("leaseData from API==>", leaseData.Lease_Details.result)
-            console.log("tenantRequestsData", tenantRequestsData)
-            console.log("propertyResponseData", propertyResponseData)
-
             let propertyData = tenantRequestsData?.property?.result;
             let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
             let announcementsData = tenantRequestsData?.announcements?.result;
@@ -156,10 +145,7 @@ function TenantDashboard(props) {
                 return 0;
             });
 
-            console.log(allNonActiveLease)
-
             if(!propertyData || propertyData.length === 0){
-                console.log("!propertyData || propertyData.length === 0")
                 navigate("/listings")
             }
             if (allNonActiveLease) {
@@ -184,14 +170,12 @@ function TenantDashboard(props) {
 
     useEffect(() => {
         if (userLeases){
-            console.log("selectedProperty.lease_uid", selectedProperty.lease_uid)
             let filteredLease = userLeases.find(lease => lease.lease_uid === selectedProperty.lease_uid)
             setSelectedLease(filteredLease)
         }
         if(allMaintenanceRequests){
             let filteredMaintenanceItems = allMaintenanceRequests.filter(request => request.property_uid === selectedProperty.property_uid)
             setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems))
-            console.log("--debug filteredMaintenanceItems", filteredMaintenanceItems)
         }
     },[userLeases, selectedProperty]);
 
@@ -217,9 +201,7 @@ function TenantDashboard(props) {
   const location = useLocation();
 
   function handleTenantMaintenanceNavigate() {
-    console.log("Tenant Maintenance Navigate");
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address)
-    console.log(navPropertyData)
     navigate("/addTenantMaintenanceItem", {
         state: { propertyData: navPropertyData },
     });
@@ -258,9 +240,6 @@ function TenantDashboard(props) {
   
 
   function NonActiveLeaseDashboardTab({property, leaseStatus, lease}){
-    // console.log("Property: ", property);
-    // console.log("Lease Status: ", lease_status);
-    // console.log("Lease Data:", lease)
     return (
         <PropertyCard data={property} status={leaseStatus} leaseData={lease}/>
     )
@@ -663,8 +642,6 @@ function TenantDashboard(props) {
         </>
         ) : (
             <>
-                {console.log(selectedProperty)}
-                {console.log(selectedLease)}
                 <NonActiveLeaseDashboardTab property={selectedProperty} leaseStatus={selectedProperty?.lease_status} lease={selectedLease}/>
             </>
         )}

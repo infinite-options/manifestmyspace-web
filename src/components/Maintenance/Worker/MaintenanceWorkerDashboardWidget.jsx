@@ -45,7 +45,6 @@ export default function     MaintenanceWorkerDashboardWidget(props){
             setShowSpinner(true);
             const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`)
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
-            console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
             let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ??[];
             let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
