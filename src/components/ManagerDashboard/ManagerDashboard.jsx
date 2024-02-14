@@ -272,7 +272,7 @@ function ManagerDashboard() {
                                         justifyContent: 'center',
                                         color: '#160449',
                                         fontSize: '2rem',
-                                        paddingRight: '10px'
+                                        paddingRight: '20px'
                                     }}
                                 >
                                     {/* {contractRequests.length()} */}

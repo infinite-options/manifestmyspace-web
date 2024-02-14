@@ -26,7 +26,8 @@ import {
     RadioGroup,
     UploadFile,
     CardMedia,
-    InputAdornment
+    InputAdornment,
+    Menu,
 } from "@mui/material";
 import theme from '../../theme/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -47,6 +48,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import StateMenuItems from '../StateMenuItems';
 import UtilitySelection from '../UtilitySelector'
 import { DragHandleOutlined } from '@mui/icons-material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function AddListing({}){
     const location = useLocation();
@@ -111,12 +113,17 @@ export default function AddListing({}){
     }, [deletedImageList]);
 
     //const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
-    const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
     const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
+    const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});    
+    const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
-    useEffect(() => {
-        console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
-    }, [mappedUtilitiesPaidBy]);
+    // useEffect(() => {
+    //     console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+    // }, [newUtilitiesPaidBy]);
+
+    // useEffect(() => {
+    //     console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    // }, [mappedUtilitiesPaidBy]);
 
     const utilitiesMap = new Map([
         ['050-000001', 'electricity'],
@@ -240,14 +247,9 @@ export default function AddListing({}){
     // },[mappedUtilitiesPaidBy]);
 
 
-    const [utilityToBeAdded, setUtilityToBeAdded] = useState(null);
+   
 
-    const onClickAddUtility = () => {
-        // if(utilityToBeAdded){
-        //     setUtilitiesPaidBy()
-        // }
-        
-    }
+   
     
 
     const listOfUtilities =[
@@ -338,7 +340,41 @@ export default function AddListing({}){
         }));
         // setUtilitiesPaidBy(utilities);
         // setMappedUtilitiesPaidBy(utilities);
+        setNewUtilitiesPaidBy(prevState => ({
+            ...prevState,
+            [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+        }));
     };
+
+    const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
+    // const [keysNotInUtilitiesMap] = useState(getKeysNotInUtilitiesMap());
+    const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter(
+        utility => !(utility in mappedUtilitiesPaidBy)
+    );
+
+
+    const handleAddUtilityButtonClick = (event) => {
+        setAddUtilityAnchorElement(event.currentTarget);
+    };
+
+    const handleAddUtilityClose = () => {
+        setAddUtilityAnchorElement(null);
+    };
+
+    const handleAddUtility = (utility) => {
+        const updatedMappedUtilities = { ...mappedUtilitiesPaidBy }; // Create a copy of mappedUtilitiesPaidBy
+        updatedMappedUtilities[utility] = 'owner';
+        setMappedUtilitiesPaidBy(updatedMappedUtilities);
+
+        const updatedNewUtilitiesMappedBy = { ...newUtilitiesPaidBy };
+        updatedNewUtilitiesMappedBy[utility] = 'owner';
+        setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
+
+
+        console.log(`Adding utility: ${utility}`);
+        handleAddUtilityClose();
+    };
+
    
     const handleListedChange = (event) => {
         setListed(event.target.checked);
@@ -521,9 +557,41 @@ export default function AddListing({}){
                 console.log("Error posting data:", error)
             }
             setShowSpinner(false);
+
+
+            const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
+            console.log("----- addedUtilitiesJSONString");
+            console.log(addedUtilitiesJSONString);
+
+            const addedUtilitiesFormData = new FormData();
+            addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
+            addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
+
+            const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
+            if(numberOfAddedUtilities > 0){
+                try{
+                    const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                        method: "POST",
+                        body: addedUtilitiesFormData
+                    })
+                    // const response = await fetch("http://localhost:4000/utilities",{
+                    //     method: "POST",
+                    //     body: addedUtilitiesFormData
+                    // })
+                    const data = await response.json();
+                    console.log("data", data)
+                    if (data.code === 200){
+                        navigate(-1);
+                        // should navigate to the listing page
+                    }
+                } catch(error){
+                    console.log("Error posting data:", error)
+                }
+                setShowSpinner(false);
+            }
         }
 
-        putData();
+        putData();        
         if (page === "create_listing"){
             postUtilitiesData();
         } else if (page === "edit_listing"){
@@ -532,9 +600,14 @@ export default function AddListing({}){
     }
 
 
+    // const capitalizeFirstChar = (utility) => {
+    //     return utility.charAt(0).toUpperCase() + utility.slice(1);
+    // }
+    
     const capitalizeFirstChar = (utility) => {
-        return utility.charAt(0).toUpperCase() + utility.slice(1);
-    }
+        const formattedUtility = utility.replace(/_/g, ' '); // Replace underscores with spaces
+        return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
+    };
 
     const defaultUtilities = {
         electricity: 'owner',
@@ -1158,7 +1231,7 @@ export default function AddListing({}){
                                 <UtilitySelection existingSelection={null} onChangeUtilities={() => console.log("utility changed")}/>
                                 
                             </Box> */}
-                            <Grid item xs={12} xl={3}>
+                            {/* <Grid item xs={12} xl={3}>
                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                     Add Utility
                                 </Typography>
@@ -1173,8 +1246,7 @@ export default function AddListing({}){
                                         onChange={(e) => setUtilityToBeAdded(e.target.value)}
                                         value={""}
                                         renderValue={(value) => (value ? `${value}` : '')}
-                                    >
-                                        {/* <StateMenuItems /> */}
+                                    >                                        
                                         {listOfUtilities.map(item => {
                                             return (
                                                 <MenuItem value={item}>
@@ -1183,6 +1255,31 @@ export default function AddListing({}){
                                             );
                                         })}
                                     </Select>
+                            </Grid> */}
+                            <Grid item xs={12}>
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={handleAddUtilityButtonClick}
+                                    sx={{
+                                        backgroundColor: "#3D5CAC",
+                                        fontWeight: theme.typography.primary.fontWeight, 
+                                        fontSize:theme.typography.smallFont,
+                                        textTransform: 'none',
+                                    }}    
+                                >
+                                    Add Utility <ArrowDropDownIcon />
+                                </Button>
+                                <Menu
+                                    anchorEl={addUtilityAnchorElement}
+                                    open={Boolean(addUtilityAnchorElement)}
+                                    onClose={handleAddUtilityClose}
+                                >
+                                    {keysNotInUtilitiesMap.map((utility, index) => (
+                                        <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
+                                            {capitalizeFirstChar(utility)}
+                                        </MenuItem>
+                                    ))}
+                                </Menu>
                             </Grid>
                         </Stack>
                     </Paper>
