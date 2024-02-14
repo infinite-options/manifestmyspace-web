@@ -121,6 +121,8 @@ export default function AddMaintenanceItem(){
 
     const handlePriorityChange = (priority) => {
         setToggleAlignment(priority);
+        setToggleGroupValue(priority);
+        setPriority(priority);
     
         // Update styles for all toggle buttons based on the selected priority
         const buttons = document.querySelectorAll('.MuiToggleButton-root');

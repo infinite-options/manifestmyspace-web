@@ -48,7 +48,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           // "&:hover, &:focus, &:active": {
-          "&:hover, &:active": {
+          "&:active": {
             backgroundColor: "#160449",
           },
         },

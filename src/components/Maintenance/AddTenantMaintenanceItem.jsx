@@ -358,7 +358,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                                     borderWidth: "3px",
                                     '&.Mui-selected': {
                                     borderColor: "white",
-                                    borderBlockColor: "white",
+                                    // borderBlockColor: "white",
                                     borderWidth: "3px",
                                     backgroundColor: theme.palette.priority.low,
                                     },

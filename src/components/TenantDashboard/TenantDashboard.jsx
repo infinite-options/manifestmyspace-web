@@ -777,7 +777,7 @@ function CustomTableRow(props) {
         </TableCell>
         <TableCell style={tdStyle}>{title}</TableCell>
         <TableCell style={statusStyle}>{status}</TableCell>
-        <TableCell style={tdStyle}>{priority}</TableCell>
+        <TableCell style={tdStyle}>{priority.charAt(0).toUpperCase() + priority.slice(1)}</TableCell>
         <TableCell style={tdStyle}>{date}</TableCell>
         <TableCell style={tdStyle}>{time}</TableCell>
     </TableRow>

@@ -58,9 +58,16 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     // const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
     const [activeStep, setActiveStep] = useState(() => {
         const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
+        // console.log("index in use effect?>>>",index)
+        // console.log("propertyData[currentIndex].property_favorite_image in use effect?>>>",propertyData[currentIndex].property_favorite_image)
         
         return index !== -1 ? index : 0;
     });
+    // console.log("activeStep after useeffect",activeStep)
+    // console.log("currentIndex after useeffect",currentIndex)
+    // console.log("propertyData[currentIndex] after useeffect",propertyData[currentIndex])
+    // console.log("propertyData[currentIndex].property_favorite_image after useeffect",propertyData[currentIndex].property_favorite_image)
+    // setActiveStep(0)
     const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
@@ -82,7 +89,8 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                     console.log("Error fetching property data")
                 }
                 const propertyResponse = await response.json();
-                // console.log("propertyResponse", propertyResponse.result)
+                // console.log("propertyResponse#####", propertyResponse)
+                // console.log("propertyResponse#####", propertyResponse.result)
                 const property = propertyResponse.result
                 // console.log(property)
                 setProperty(propertyData[currentIndex])
@@ -250,6 +258,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     
     const handleNextCard = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
+    //   console.log("nextCard currentIndex>>>>",currentIndex)
       const nextId = propertyData[currentIndex+1].property_uid
       setCurrentId(nextId);
       setImages(JSON.parse(propertyData[currentIndex+1].property_images))
@@ -258,12 +267,19 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     };
   
     const handlePreviousCard = () => {
+        // console.log("prev card currentIndex>>>>",currentIndex)
         setCurrentIndex((prevIndex) => (prevIndex - 1 + propertyData.length) % propertyData.length);
         const previousId = propertyData[currentIndex-1].property_uid
         setCurrentId(previousId);
+        // console.log("prev card currentIndex>>>>",currentIndex)
+        // console.log("propertyData:::>",propertyData)
         setImages(JSON.parse(propertyData[currentIndex-1].property_images))
         // setActiveStep(0);
+        // console.log("propertyData[0].property_images>>>>>",propertyData[currentIndex].property_images)
+        // console.log("propertyData[0].property_favorite_image>>>>>",propertyData[currentIndex].property_favorite_image)
+        // console.log("images>>>>>",images)
         setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
+        // console.log("activeStep]]]]>",activeStep)
     };
   
     const handleNext = () => {
@@ -345,7 +361,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                             {currentIndex + 1} of {propertyData.length} Properties
                         </Typography>
                     </Stack>
-                    <Button onClick={handleNextCard} disabled={currentIndex == propertyData.length-1}>
+                    <Button onClick={handleNextCard} disabled={currentIndex == propertyData.length-1} >
                         {currentIndex == propertyData.length-1 ? (
                             // <img src={ArrowRight} style={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
                             <ArrowForwardIcon sx={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
@@ -435,6 +451,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                         onClick={handleNext}
                                         disabled={activeStep === maxSteps - 1}
                                     >
+                                        {/* <script>{console.log("activeStep??>///",activeStep)}</script> */}
                                         {theme.direction === 'rtl' ? (
                                         <KeyboardArrowLeft />
                                         ) : (

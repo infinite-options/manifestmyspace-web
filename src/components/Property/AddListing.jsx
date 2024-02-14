@@ -83,6 +83,7 @@ export default function AddListing({}){
     // const [selectedImageList, setSelectedImageList] = useState([]);
     const [deletedImageList, setDeletedImageList] = useState([]);
     const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
+    // const [favImage, setFavImage] = useState(propertyData.property_images[0]);
     const [activeStep, setActiveStep] = useState(0);
     const maxSteps = selectedImageList.length;
     const [coverImage, setCoverImage] = useState(defaultHouseImage);
