@@ -271,6 +271,7 @@ export default function TenantApplication() {
       date.toLocaleDateString()
     );
 
+    //Handle null tenantID
     if (getProfileId() !== null && getProfileId() !== undefined) {
       leaseApplicationData.append("tenant_uid", getProfileId());
     } else {
