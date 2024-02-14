@@ -8,9 +8,6 @@ export default function MaintenanceWidget({selectedRole, maintenanceData}){
     const [maintenanceRequestCounts, setMaintenanceRequestCounts] = useState({});
     const colorStatus = selectColorStatus()
 
-    // console.log('in Maintenance Widget');
-    // console.log('Maintenance Data', maintenanceData);
-    console.log('in Maintenance Widget', maintenanceData);
     
 
     // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component

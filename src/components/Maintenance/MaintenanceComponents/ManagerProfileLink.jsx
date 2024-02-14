@@ -4,10 +4,11 @@ import {
     Grid,
 } from "@mui/material";
 import theme from '../../../theme/theme';
+import { useNavigate } from "react-router-dom"
 
 export default function ManagerProfileLink(props){
-    let business_name = props.maintenanceItem?.business_name;
-
+    let business_name = props.maintenanceItem?.business_name || "Business Name Not Available";
+    let navigate = useNavigate();
     console.log("ManagerProfileLink business name", business_name)
 
     return (
@@ -28,6 +29,10 @@ export default function ManagerProfileLink(props){
                 display: 'flex',
                 width: "100%",
             }}
+            onClick={() => navigate(`/profile/${props.maintenanceItem.business_uid}`, {state: {
+                maintenanceItem: props.maintenanceItem,
+                profile: "Property Manager",
+            }})}
         >
             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                 {business_name}

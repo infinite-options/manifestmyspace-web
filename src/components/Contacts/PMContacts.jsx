@@ -28,44 +28,49 @@ const PMContacts = (props) => {
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
     // const [maintenanceData, setMaintenanceData] = useState([]);
-
-    const [ownersData, setOwnersData] = useState([]);
-    const [tenantsData, setTenantsData] = useState([]);
-    const [maintenanceData, setMaintenanceData] = useState([]);
+    const [allOwnersData, setAllOwnersData] =useState([]);
+    const [displayedOwnersData, setDisplayedOwnersData] = useState([]);
+    const [allTenantsData, setAllTenantsData]=useState([]);
+    const [displayedTenantsData, setDisplayedTenantsData] = useState([]);
+    const [allMaintenanceData, setAllMaintenanceData]=useState([])
+    const [displayedMaintenanceData, setDisplayedMaintenanceData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
 
     const [ownerDataDetails, setOwnerDataDetails] = useState([]);
     const [tenantDataDetails, setTenantDataDetails] = useState([]);
     const [maintenanceDataDetails, setMaintenanceDataDetails] = useState([]);
     const [managersDataDetails, setManagersDataDetails] = useState([]);
-
+    const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    const filterContacts = (data) => {
+        if (searchTerm.trim() === '') return data;
+        
+        const terms = searchTerm.trim().toLowerCase().split(" "); // Split the search term into individual terms
+        
+        return data.filter((contact) => {
+            // Customize the filtering logic based on your requirements
+            return terms.every((term) => {
+                // Check if any part of the contact's name includes each term in the search query
+                return (
+                    contact.contact_first_name?.toLowerCase()?.includes(term) ||
+                    contact.contact_last_name?.toLowerCase()?.includes(term)
+                );
+            });
+        });
+    };
+    
 
     const fetchData = async () => {
-        const url =
-            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
         setShowSpinner(true);
 
-        // const url =
-        //     `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/600-000003`;
-        // const url =
-        //     `http://localhost:4000/contacts/600-000003`;
-        await axios
-            .get(url)
+        await axios.get(url)
             .then((resp) => {
                 const data = resp.data['management_contacts'];
-                console.log("PM DATA")
-                console.log(data);
-                console.log("SELECTED ROLE")
-                console.log(selectedRole);
-
-                setOwnersData(data['owners']);
-                setTenantsData(data['tenants']);
-                setMaintenanceData(data['maintenance']);
+                setAllOwnersData(data['owners']);
+                setAllTenantsData(data['tenants']);
+                setAllMaintenanceData(data['maintenance']);
                 setShowSpinner(false);
             })
             .catch((e) => {
@@ -74,42 +79,59 @@ const PMContacts = (props) => {
             });
     };
 
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        switch (contactsTab) {
+            case 'Owner':
+                setDisplayedOwnersData(filterContacts(allOwnersData));
+                break;
+            case 'Tenants':
+                setDisplayedTenantsData(filterContacts(allTenantsData));
+                break;
+            case 'Maintenance':
+                setDisplayedMaintenanceData(filterContacts(allMaintenanceData));
+                break;
+            default:
+                break;
+        }
+    }, [searchTerm, contactsTab, allOwnersData, allTenantsData, allMaintenanceData]);
+
     const handleAddContact = () => {
         navigate('/addContacts');
     };
 
     const handleSetSelectedCard = (selectedData, index) => {
-        if (contactsTab === 'Owner') {
-            navigate('/ownerContactDetails', {
-                state: {
-                    dataDetails: ownersData,
-                    tab: contactsTab,
-                    selectedData: selectedData,
-                    index: index,
-                    viewData: ownersData,
-                },
-            });
-        } else if (contactsTab === 'Tenants') {
-            navigate('/tenantContactDetails', {
-                state: {
-                    dataDetails: tenantsData,
-                    tab: contactsTab,
-                    selectedData: selectedData,
-                    index: index,
-                    viewData: tenantsData,
-                },
-            });
-        } else if (contactsTab === 'Maintenance') {
-            navigate('/maintenanceContactDetails', {
-                state: {
-                    dataDetails: maintenanceData,
-                    tab: contactsTab,
-                    selectedData: selectedData,
-                    index: index,
-                    viewData: maintenanceData,
-                },
-            });
+        let dataDetails;
+        switch (contactsTab) {
+            case 'Owner':
+                dataDetails = displayedOwnersData;
+                break;
+            case 'Tenants':
+                dataDetails = displayedTenantsData;
+                break;
+            case 'Maintenance':
+                dataDetails = displayedMaintenanceData;
+                break;
+            default:
+                break;
         }
+
+        navigate(`/${contactsTab.toLowerCase()}ContactDetails`, {
+            state: {
+                dataDetails,
+                tab: contactsTab,
+                selectedData,
+                index,
+                viewData: dataDetails,
+            },
+        });
+    };
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
     };
 
     return (
@@ -221,6 +243,7 @@ const PMContacts = (props) => {
                                     </InputAdornment>
                                 ),
                             }}
+                            onChange={handleSearchChange}
                         />
                     </Stack>
                     <div className="contacts-detail-container">
@@ -273,54 +296,37 @@ const PMContacts = (props) => {
                                 />
                                 {contactsTab === 'Owner' ? (
                                     <>
-                                        {ownersData.map((owner, index) => {
-                                            return (
-                                                <OwnerContactsCard
-                                                    data={owner}
-                                                    key={index}
-                                                    index={index}
-                                                    selected={
-                                                        handleSetSelectedCard
-                                                    }
-                                                    dataDetails={
-                                                        ownersData.length
-                                                        // ownerDataDetails.length
-                                                    }
-                                                />
-                                            );
-                                        })}
+                                        {displayedOwnersData.map((owner, index) => (
+                                            <OwnerContactsCard
+                                                data={owner}
+                                                key={index}
+                                                index={index}
+                                                selected={handleSetSelectedCard}
+                                                dataDetails={displayedOwnersData.length}
+                                            />
+                                        ))}
                                     </>
                                 ) : contactsTab === 'Tenants' ? (
                                     <>
-                                        {tenantsData.map(
-                                            (tenant, index) => {
-                                                return (
-                                                    <TenantContactsCard
-                                                        data={tenant}
-                                                        key={index}
-                                                        index={index}
-                                                        selected={
-                                                            handleSetSelectedCard
-                                                        }
-                                                    />
-                                                );
-                                            }
-                                        )}
+                                        {displayedTenantsData.map((tenant, index) => (
+                                            <TenantContactsCard
+                                                data={tenant}
+                                                key={index}
+                                                index={index}
+                                                selected={handleSetSelectedCard}
+                                            />
+                                        ))}
                                     </>
                                 ) : (
                                     <>
-                                        {maintenanceData.map((maint, index) => {
-                                            return (
-                                                <MaintenanceContactsCard
-                                                    data={maint}
-                                                    key={index}
-                                                    index={index}
-                                                    selected={
-                                                        handleSetSelectedCard
-                                                    }
-                                                />
-                                            );
-                                        })}
+                                        {displayedMaintenanceData.map((maint, index) => (
+                                            <MaintenanceContactsCard
+                                                data={maint}
+                                                key={index}
+                                                index={index}
+                                                selected={handleSetSelectedCard}
+                                            />
+                                        ))}
                                     </>
                                 )}
                             </div>
@@ -339,7 +345,6 @@ const OwnerContactsCard = (props) => {
     const index = props.index;
 
     const handleSelection = () => {
-        console.log(index);
         handleSetSelectedCard(owner, index);
     };
 
@@ -366,7 +371,6 @@ const OwnerContactsCard = (props) => {
                                 ${owner.contact_first_name? owner.contact_first_name : '<FIRST_NAME>'}
                                 ${owner.contact_last_name? owner.contact_last_name : '<LAST_NAME>'}
                             `}
-                            {/* {owner.contact_first_name} {owner.contact_last_name} */}
                         </Typography>
                         <Button>
                             <Message
@@ -379,7 +383,6 @@ const OwnerContactsCard = (props) => {
                     </Stack>
                     <Typography
                         sx={{
-                            // color: theme.typography.common.blue,
                             fontSize: '14px',
                             fontWeight: theme.typography.common.fontWeight,
                         }}
@@ -414,7 +417,6 @@ const TenantContactsCard = (props) => {
     const index = props.index;
 
     const handleSelection = () => {
-        console.log(index);
         handleSetSelectedCard(tenant, index);
     };
 
@@ -437,7 +439,6 @@ const TenantContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {/* {tenant.contact_first_name} {tenant.contact_last_name} */}
                             {`
                                 ${tenant.contact_first_name? tenant.contact_first_name : '<FIRST_NAME>'}
                                 ${tenant.contact_last_name? tenant.contact_last_name : '<LAST_NAME>'}
@@ -466,7 +467,6 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {/* {tenant.contact_email} */}
                         {tenant.contact_email? tenant.contact_email : '<EMAIL>'}
                     </Typography>
                     <Typography
@@ -475,10 +475,6 @@ const TenantContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {/* {tenant.contact_phone_number.indexOf('(') > -1
-                            ? tenant.contact_phone_number
-                            : formattedPhoneNumber(tenant.contact_phone_number)} */}
-                        {/* {formattedPhoneNumber(tenant.tenant_phone_number)} */}
                         {
                             tenant.contact_phone_number
                                 ? (tenant.contact_phone_number.indexOf('(') > -1
@@ -520,8 +516,6 @@ const MaintenanceContactsCard = (props) => {
                                 fontWeight: theme.typography.common.fontWeight,
                             }}
                         >
-                            {/* {business.contact_first_name}{' '}
-                            {business.contact_last_name} */}
                             {`
                                 ${business.contact_first_name? business.contact_first_name : '<FIRST_NAME>'}
                                 ${business.contact_last_name? business.contact_last_name : '<LAST_NAME>'}
@@ -550,7 +544,6 @@ const MaintenanceContactsCard = (props) => {
                             fontSize: '14px',
                         }}
                     >
-                        {/* {formattedPhoneNumber(business.contact_phone_number)} */}
                         {
                             business.contact_phone_number
                                 ? (business.contact_phone_number.indexOf('(') > -1
