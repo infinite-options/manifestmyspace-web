@@ -75,6 +75,12 @@ const PersonalInfo = () => {
     setFirstName(event.target.value);
   };
 
+  const us_states = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
+
   const handleLastNameChange = (event) => {
     setLastName(event.target.value);
   };
@@ -406,11 +412,8 @@ const PersonalInfo = () => {
                   fullWidth
                   className={classes.select}
                 >
-                  <MenuItem value={1}>CA</MenuItem>
-                  <MenuItem value={2}>TX</MenuItem>
-                  <MenuItem value={3}>FL</MenuItem>
-                  <MenuItem value={4}>NY</MenuItem>
-                  <MenuItem value={5}>IL</MenuItem>
+                  {us_states.map((val,index)=> <MenuItem value={val}>{val}</MenuItem> )  }
+
                 </Select>
               </Stack>
             </Grid>
