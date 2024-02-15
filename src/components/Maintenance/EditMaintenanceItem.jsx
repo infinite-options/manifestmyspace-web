@@ -138,6 +138,8 @@ export default function EditMaintenanceItem(){
     // };
     const handlePriorityChange = (priority) => {
         setToggleAlignment(priority);
+        setToggleGroupValue(priority);
+        setPriority(priority);
     
         // Update styles for all toggle buttons based on the selected priority
         const buttons = document.querySelectorAll('.MuiToggleButton-root');
@@ -474,8 +476,8 @@ export default function EditMaintenanceItem(){
                                     <ToggleButtonGroup
                                         exclusive
                                         fullWidth
-                                        // value={testPriority1}
-                                        value={toggleAlignment}
+                                        value={testPriority1}
+                                        // value={toggleAlignment}
                                         // onChange={handlePriorityChange}
                                         onChange={(event, value) => handlePriorityChange(value)}
                                         aria-label="Priority"
@@ -546,8 +548,8 @@ export default function EditMaintenanceItem(){
                                                     borderLeftColor: 'white',
                                                 },
                                             }}
-                                            onClick={() => handlePriorityChange("Low")}
-                                            isSelected={toggleAlignment === "Low"}
+                                            onClick={() => handlePriorityChange("Medium")}
+                                            isSelected={toggleAlignment === "Medium"}
                                             >
                                             Medium
                                         </ToggleButton>
@@ -576,8 +578,8 @@ export default function EditMaintenanceItem(){
                                                     borderLeftColor: 'white',
                                                 },
                                             }}
-                                            onClick={() => handlePriorityChange("Low")}
-                                            isSelected={toggleAlignment === "Low"}
+                                            onClick={() => handlePriorityChange("High")}
+                                            isSelected={toggleAlignment === "High"}
                                             >
                                             High
                                         </ToggleButton>
