@@ -57,7 +57,7 @@ export default function AddListing({}){
     const { state } = useLocation();
     let { index, propertyList } = state;
     // const propertyData = location.state.item;
-    const propertyData = propertyList[index];
+    const [propertyData, setPropertyData] = useState(propertyList[index]);
     const page = location.state.page;
     const propertyId = location.state.propertyId;
     const { user, selectedRole, selectRole, Name } = useUser();
@@ -121,9 +121,9 @@ export default function AddListing({}){
     //     console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
     // }, [newUtilitiesPaidBy]);
 
-    // useEffect(() => {
-    //     console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
-    // }, [mappedUtilitiesPaidBy]);
+    useEffect(() => {
+        console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    }, [mappedUtilitiesPaidBy]);
 
     const utilitiesMap = new Map([
         ['050-000001', 'electricity'],
@@ -510,7 +510,7 @@ export default function AddListing({}){
                 console.log("Error posting data:", error)
             }
             setShowSpinner(false);
-            navigate("/propertyDetail", { state: { index, propertyList }});
+            
         }
         const postUtilitiesData = async () => {
             // setShowSpinner(true);
@@ -591,12 +591,28 @@ export default function AddListing({}){
             }
         }
 
+        const autoUpdate = async () => {
+            const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+                const updatedJson = await updateResponse.json();
+                const updatedProperty = updatedJson.result[0];  
+                propertyList = propertyList.map(property => {
+                    if(property.property_uid === updatedProperty.property_uid)
+                        return { ...property, ...updatedProperty};
+                    return property;
+                });
+            console.log("ROHIT - updatedPropertyList - ", propertyList);
+            setPropertyData(propertyList[index])
+            
+        }
+
         putData();        
         if (page === "create_listing"){
             postUtilitiesData();
         } else if (page === "edit_listing"){
             putUtilitiesData();
-        }            
+        }
+        autoUpdate();
+        navigate("/propertyDetail", { state: { index, propertyList }});
     }
 
 
