@@ -88,6 +88,7 @@ import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigat
 import TenantProperty from "./Property/TenantProperty";
 import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
 import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
+import PropertyManagementRequest from "./Maintenance/Manager/PropertyManagementRequest.jsx";
 
 import EditProfileSettings from "./Settings/EditProfileSettings";
 import EditProfileSettingsManager from "./Settings/EditProfileSettingsManager";
@@ -285,6 +286,7 @@ function Main() {
             <Route path="managerContactDetails" element={<ManagerContactDetails />} />
             <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
             <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
+            <Route path="propertyManagementRequest" element={<PropertyManagementRequest />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
