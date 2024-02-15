@@ -404,7 +404,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                             </ToggleButton>
                             <ToggleButton 
                                 key={"High"}
-                                value={"Medium"}
+                                value={"High"}
                                 sx={{
                                     backgroundColor: theme.palette.priority.high,
                                     borderRadius: '20px',
