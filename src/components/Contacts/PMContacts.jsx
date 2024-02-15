@@ -216,36 +216,38 @@ const PMContacts = (props) => {
                         </Box>
                     </Stack>
                     <Stack
-                        justifyContent="center"
-                        alignItems="center"
-                        sx={{ padding: '0px 0px 15px 15px' }}
-                    >
-                        <TextField
-                            variant="filled"
-                            label="Search by"
-                            fullWidth
-                            sx={{
-                                border: '1px solid',
-                                borderRadius: 10,
-                            }}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment
-                                        position="end"
-                                        sx={{
-                                            color: theme.typography.common.blue,
-                                            fontSize:
-                                                theme.typography.smallFont,
-                                            paddingLeft: '5px',
-                                        }}
-                                    >
-                                        <Search />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            onChange={handleSearchChange}
-                        />
-                    </Stack>
+    justifyContent="center"
+    alignItems="center"
+    sx={{ padding: '15px' }} // Adjust padding here
+>
+    <TextField
+        variant="filled"
+        label="Search by"
+        fullWidth
+        sx={{
+            borderRadius: '10px', // Set borderRadius directly on TextField
+            '& .MuiFilledInput-root': {
+                borderRadius: '10px', // Ensure filled input is also rounded
+            },
+        }}
+        InputProps={{
+            endAdornment: (
+                <InputAdornment
+                    position="end"
+                    sx={{
+                        color: theme.typography.common.blue,
+                        fontSize: theme.typography.smallFont,
+                        paddingLeft: '5px',
+                    }}
+                >
+                    <Search />
+                </InputAdornment>
+            ),
+        }}
+        onChange={handleSearchChange}
+    />
+</Stack>
+
                     <div className="contacts-detail-container">
                         <div className="contacts-detail-navbar-box">
                             <div className="contacts-detail-navbar">
