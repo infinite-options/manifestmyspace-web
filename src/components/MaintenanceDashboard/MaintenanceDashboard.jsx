@@ -122,7 +122,6 @@ export default function MaintenanceDashboard(){
 
                         case "PAID":
                             setPaidCount(item.num)
-                            console.log("item.maintenance_request_cost", item.maintenance_request_cost)
                             break;
 
                         default: 

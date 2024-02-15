@@ -35,6 +35,7 @@ import IconButton from '@mui/material/IconButton';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from '@mui/icons-material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function EditProperty({}){
     const { state } = useLocation();
@@ -225,7 +226,7 @@ export default function EditProperty({}){
     );
 
 
-    const handleClick = (event) => {
+    const handleAddUtilityButtonClick = (event) => {
         setAddUtilityAnchorElement(event.currentTarget);
     };
 
@@ -1089,8 +1090,17 @@ export default function EditProperty({}){
                                         </Fragment>
                                     ))}
                                     <Grid item xs={12}>
-                                        <Button variant="outlined" onClick={handleClick}>
-                                            Add Utility
+                                        <Button 
+                                            variant="outlined"
+                                            onClick={handleAddUtilityButtonClick}
+                                            sx={{
+                                                backgroundColor: "#3D5CAC",
+                                                fontWeight: theme.typography.primary.fontWeight, 
+                                                fontSize:theme.typography.smallFont,
+                                                textTransform: 'none',
+                                            }}
+                                        >
+                                            Add Utility <ArrowDropDownIcon />
                                         </Button>
                                         <Menu
                                             anchorEl={addUtilityAnchorElement}

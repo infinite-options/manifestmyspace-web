@@ -4,15 +4,17 @@ import {
     Grid,
 } from "@mui/material";
 import theme from '../../../theme/theme';
+import { useNavigate } from "react-router-dom"
 
 export default function TenantProfileLink(props){
     let allAdultTenants = "Tenant - ";
+    let navigate = useNavigate();
 
     if (props.maintenanceItem) {
+        let profile = props.maintenanceItem;
         try {
             let tenant_adult_occupants = Array.isArray(JSON.parse(props.maintenanceItem.tenant_adult_occupants)) ?
                                          JSON.parse(props.maintenanceItem.tenant_adult_occupants) : [];
-            
             if (tenant_adult_occupants.length > 0) {
                 tenant_adult_occupants.forEach((tenant, index) => {
                     const name = tenant.name || "Unknown";
@@ -51,6 +53,10 @@ export default function TenantProfileLink(props){
                 display: 'flex',
                 width: "100%",
             }}
+            onClick={() => navigate(`/profile/${props.maintenanceItem.tenant_uid}`, {state: {
+                maintenanceItem: props.maintenanceItem,
+                profile: "Tenant",
+            }})}
         >
             <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                 {allAdultTenants}

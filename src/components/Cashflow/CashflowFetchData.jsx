@@ -30,15 +30,13 @@ function getExpenseList(data){
 function getPast12MonthsCashflow(data, month, year){
     var pastTwelveMonths = []
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
-    console.log(data)
-    console.log(month, year)
 
     var currentMonth = month
     var currentYear = year
 
     // create a loop that goes back 12 months
     for (var i = 0; i < 12; i++){
-        console.log(currentMonth, currentYear)
+        // console.log(currentMonth, currentYear)
         
         // let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
         // let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
@@ -62,12 +60,12 @@ function getPast12MonthsCashflow(data, month, year){
         if (currentMonth === "January"){
             currentMonth = "December"
             currentYear = (parseInt(currentYear) - 1).toString()
-            console.log(currentYear)
+            // console.log(currentYear)
         } else{
             currentMonth = months[months.indexOf(currentMonth) - 1]
         }
     }
-    console.log(pastTwelveMonths)
+    // console.log(pastTwelveMonths)
 
     pastTwelveMonths.reverse()
 
@@ -77,11 +75,6 @@ function getPast12MonthsCashflow(data, month, year){
 function getNext12MonthsCashflow(data, month, year){
     var nextTwelveMonths = []
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
-    console.log(data)
-
-    console.log(data)
-    console.log(month, year)
-
     var currentMonth = month
     var currentYear = year
 
@@ -113,7 +106,7 @@ function getNext12MonthsCashflow(data, month, year){
             currentMonth = months[months.indexOf(currentMonth) + 1]
         }
     }
-    console.log(nextTwelveMonths)
+    // console.log(nextTwelveMonths)
     return nextTwelveMonths
 }
 

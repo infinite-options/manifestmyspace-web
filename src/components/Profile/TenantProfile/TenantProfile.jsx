@@ -7,6 +7,7 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import settingsIcon from "../../../images/Setting_fill.png";
+
 const theme = createTheme({
     palette: {
         background: {

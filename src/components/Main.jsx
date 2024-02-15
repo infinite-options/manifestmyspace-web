@@ -163,6 +163,7 @@ import PropertyContract from "./Notifications/PropertyContract";
 import TenantLease from "./Applications/TenantLease";
 import PMQuotesList from "./Property/PMQuotesList"
 import LandingPage from "./Onboarding/LandingPage";
+import PublicProfile from "./Profile/PublicProfile";
 
 function Main() {
   return (
@@ -342,6 +343,7 @@ function Main() {
             <Route path="pmNotifications" element={<PMNotifications />} />
             <Route path="poNotifications" element={<PONotifications />} />
             <Route path="propertyContract" element={<PropertyContract />} />
+            <Route path="profile/:id" element={<PublicProfile />} />
             
           </Route>
         </Routes>
