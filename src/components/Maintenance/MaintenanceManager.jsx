@@ -295,13 +295,13 @@ export default function MaintenanceManager(){
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Box
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%', // Take up full screen width
-                minHeight: '100vh', // Set the Box height to full height
-                marginTop: theme.spacing(2), // Set the margin to 20px
-            }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%', // Take up full screen width
+                    minHeight: '100vh', // Set the Box height to full height
+                    marginTop: theme.spacing(2), // Set the margin to 20px
+                }}
             >
                 <Paper
                     style={{
@@ -395,16 +395,6 @@ export default function MaintenanceManager(){
                         margin: "20px",
                     }}>
                         {colorStatus.map((item, index) => {
-                            // construct mapping key if it doesn't exist
-                            // var mappingKey = ""
-                            // if (item.mapping === "SCHEDULED") { // a known key with color mapping
-                            //     mappingKey = "SCHEDULED" // a mapped key to the maintenanceData object
-                            // } else if (item.mapping == "PAID"){
-                            //     mappingKey = "PAID"
-                            // } else{
-                            //     mappingKey = item.mapping
-                            // }
-
                             let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []

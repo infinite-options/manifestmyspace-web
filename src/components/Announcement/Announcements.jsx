@@ -134,10 +134,10 @@ export default function Announcements() {
                     <div className="announcement-view">
                         <div className="announcement-view-icon">
                             <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2.375" y="4.75" width="14.25" height="11.875" rx="2" stroke="#3D5CAC" stroke-width="2" />
+                                <rect x="2.375" y="4.75" width="14.25" height="11.875" rx="2" stroke="#3D5CAC" strokeWidth="2" />
                                 <path d="M2.375 7.91667C2.375 6.828 2.375 6.28367 2.58125 5.86542C2.77598 5.47056 3.09556 5.15098 3.49042 4.95625C3.90867 4.75 4.453 4.75 5.54167 4.75H13.4583C14.547 4.75 15.0913 4.75 15.5096 4.95625C15.9044 5.15098 16.224 5.47056 16.4187 5.86542C16.625 6.28367 16.625 6.828 16.625 7.91667V7.91667H2.375V7.91667Z" fill="#3D5CAC" />
-                                <path d="M5.54169 2.375L5.54169 4.75" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
-                                <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
+                                <path d="M5.54169 2.375L5.54169 4.75" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                                <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </div>
                         <div className="announcement-view-text">
@@ -153,16 +153,6 @@ export default function Announcements() {
                         </div>
                     </div>
                 </div>
-                {/* <div className="announcement-list-container">
-                    {announcementData.length > 0 ? (
-                        announcementData.map((announcement, i) =>
-                            <div key={i}>
-                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                    <AnnouncementCard data={announcement} role={getProfileId}/>
-                                </Box>
-                            </div>
-                        )) : "No announcements"}
-                </div> */}
                 <div className="announcement-view-text">
                            Sent
                 </div>

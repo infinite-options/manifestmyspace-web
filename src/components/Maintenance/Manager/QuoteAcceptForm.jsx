@@ -529,7 +529,7 @@ export default function QuoteAcceptForm(){
                         </Grid>
 
                     ) : (
-                        <p> {maintenanceQuotes[currentQuoteIndex]?.quote_business_id} {maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid} {maintenanceQuotes[currentQuoteIndex]?.quote_status}</p>
+                        <Typography> {maintenanceQuotes[currentQuoteIndex]?.quote_business_id} {maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid} {maintenanceQuotes[currentQuoteIndex]?.quote_status}</Typography>
                     )
                 }
                 </Stack>

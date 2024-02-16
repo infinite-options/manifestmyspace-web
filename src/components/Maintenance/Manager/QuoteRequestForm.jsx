@@ -10,8 +10,6 @@ import {
     Slider,
     Stack,
     Button,
-
-
     Grid,
     TextField,
     MenuItem,
@@ -34,7 +32,6 @@ import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
 export default function QuoteRequestForm(){
 
-    console.log("QuoteRequestFormPage")
     
     const location = useLocation();
     const navigate = useNavigate();
