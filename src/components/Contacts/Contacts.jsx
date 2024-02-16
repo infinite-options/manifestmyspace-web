@@ -248,13 +248,13 @@ const Contacts = (props) => {
                                     <path
                                         d="M9 2L9 16"
                                         stroke="#160449"
-                                        stroke-width="3"
+                                        strokeWidth="3"
                                         stroke-linecap="round"
                                     />
                                     <path
                                         d="M16 9L2 9"
                                         stroke="#160449"
-                                        stroke-width="3"
+                                        strokeWidth="3"
                                         stroke-linecap="round"
                                     />
                                 </svg>

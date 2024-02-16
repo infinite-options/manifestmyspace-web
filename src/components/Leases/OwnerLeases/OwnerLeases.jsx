@@ -135,10 +135,10 @@ function OwnerLeases(props) {
                             marginRight: '2px',
                         }}>
                             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3.125" y="6.25" width="18.75" height="15.625" rx="2" stroke="#3D5CAC" stroke-width="2" />
+                                <rect x="3.125" y="6.25" width="18.75" height="15.625" rx="2" stroke="#3D5CAC" strokeWidth="2" />
                                 <path d="M3.125 10.25C3.125 8.36438 3.125 7.42157 3.71079 6.83579C4.29657 6.25 5.23938 6.25 7.125 6.25H17.875C19.7606 6.25 20.7034 6.25 21.2892 6.83579C21.875 7.42157 21.875 8.36438 21.875 10.25V10.4167H3.125V10.25Z" fill="#3D5CAC" />
-                                <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
-                                <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
+                                <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                                <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </Box>
                         <Box>
@@ -178,7 +178,7 @@ function OwnerLeases(props) {
                     }}
                         expandIcon={
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" stroke-width="2.5" />
+                                <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" strokeWidth="2.5" />
                             </svg>
                         }>
                         <Box>
@@ -353,16 +353,16 @@ function LeaseComponent(props) {
     function getLeaseStatusIcon(status) {
         const moveoutIcon =
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>;
         const renewIcon =
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" />
+                <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" />
             </svg>;
         const nullIcon =
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="1" y="1" width="18" height="18" rx="4" stroke="#3D5CAC" stroke-width="2" />
+                <rect x="1" y="1" width="18" height="18" rx="4" stroke="#3D5CAC" strokeWidth="2" />
             </svg>;
         let outputIcon;
         switch (status) {

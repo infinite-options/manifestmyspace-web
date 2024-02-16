@@ -11,6 +11,8 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 import CreateIcon from '@mui/icons-material/Create';
 
+import QuotesTable from "./MaintenanceComponents/QuotesTable";
+
 
 function getInitialImages(requestData, currentIndex) {
   try {
@@ -143,6 +145,85 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
     completionStatus = "no"
     // console.log(completionStatus)
   }
+
+//   function displayQuotes(maintenanceItem) {
+//     // If a quote hasn't been accepted yet, show all the quotes that have been requested.
+//     // If a quote has been accepted, show the details of that one and just the prices of the others.
+  
+//     let isAcceptedQuote = maintenanceQuotes.some(quote => quote.quote_status === "ACCEPTED");
+//     let allRequestedQuotes = maintenanceQuotes.every(quote => quote.quote_status === "REQUESTED");
+  
+//     if (isAcceptedQuote && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.maintenance_request_status !== "PAID") {
+//       let acceptedQuote = maintenanceQuotes.find(quote => quote.quote_status === "ACCEPTED");
+//       let remainingQuotes = maintenanceQuotes.filter(quote => quote.quote_status !== "ACCEPTED");
+  
+//       return (
+//         <Grid item xs={12} sx={{ paddingTop: "10px" }}>
+//           <div>
+//             <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px" }}>
+//               <Typography
+//                 sx={{
+//                   color: "#000000",
+//                   fontWeight: theme.typography.secondary.fontWeight,
+//                   fontSize: theme.typography.largeFont,
+//                 }}
+//               >
+//                 <u>{acceptedQuote.quote_business_id}</u> quoted ${acceptedQuote.quote_total_estimate} for this request.
+//               </Typography>
+//             </Paper>
+//           </div>
+//           <div>
+//             <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px" }}>
+//               <Typography
+//                 sx={{
+//                   color: "#000000",
+//                   fontWeight: theme.typography.secondary.fontWeight,
+//                   fontSize: theme.typography.largeFont,
+//                 }}
+//               >
+//                 Other quotes requested:
+//               </Typography>
+//               {remainingQuotes.map((quote, index) => (
+//                 <Typography
+//                   key={index}
+//                   sx={{
+//                     color: "#000000",
+//                     fontWeight: theme.typography.secondary.fontWeight,
+//                     fontSize: theme.typography.largeFont,
+//                   }}
+//                 >
+//                   <u>{quote.quote_business_id}</u> quoted ${quote.quote_total_estimate}.
+//                 </Typography>
+//               ))}
+//             </Paper>
+//           </div>
+//         </Grid>
+//       );
+//     } else if (allRequestedQuotes && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.maintenance_request_status !== "PAID") {
+//       return (
+//         <React.Fragment>
+//           {maintenanceQuotes.map((quote, index) => (
+//             <Grid item xs={12} sx={{ paddingTop: "10px" }} key={index}>
+//               <div>
+//                 <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px" }}>
+//                   <Typography
+//                     sx={{
+//                       color: "#000000",
+//                       fontWeight: theme.typography.secondary.fontWeight,
+//                       fontSize: theme.typography.largeFont,
+//                     }}
+//                   >
+//                     A quote from <u>{quote.quote_business_id}</u> has been requested.
+//                   </Typography>
+//                 </Paper>
+//               </div>
+//             </Grid>
+//           ))}
+//         </React.Fragment>
+//       );
+//     }
+//   }
+  
   
 
   useEffect(() => {
@@ -281,7 +362,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 padding: "0px"
               }}
             >
-              <div
+              <Box
                 style={{
                   // paddingLeft: "10px",
                   alignContent: "left",
@@ -289,15 +370,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   alignItems: "left",
                 }}
               >
-                 {/* <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                    paddingBottom: "10px",
-                  }}
-                > */}
-              {/* {data?.maintenance_priority} Priority */}
 
               <Stack alignItems="center" justifyContent="center" sx={{ paddingBottom: "0px" }}>
                 <Card
@@ -340,9 +412,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                       
                         <CreateIcon sx={{
                             color: "#FFFFFF",
-                            // color: "red",
-                            // backgroundColor: "yellow",
-                            // margin:"5px",
                             marginLeft: "auto",
                             fontSize: "18px"
                         }} 
@@ -351,12 +420,9 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                       
                     </Typography>
 
-                    {/*  */}
                   </CardContent>
                 </Card>
               </Stack>
-
-             {/* </Typography> */}
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -419,66 +485,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 >
                   Issue Description: {data?.maintenance_desc}
                 </Typography>
-                {data.maintenance_request_status === "PROCESSING" ? (
-                    <Typography
-                        sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.mediumFont,
-                        paddingBottom: "10px",
-                        }}
-                    >
-                        {data?.business_name} is processing this request.
-                    </Typography>
-                ) : null}
-                {/* {console.log(maintenanceQuotes)} */}
                 <Grid container>
-                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                            {maintenanceQuotes.length > 0 ? (
-                                <Typography
-                                    sx={{
-                                    color: theme.typography.secondary.white,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.mediumFont,
-                                    paddingBottom: "10px",
-                                    }}
-                                >
-                                    {maintenanceQuotes.length} quote(s) for this request.
-                                </Typography>
-                            ) : null}
-                    </Grid>
-                    {maintenanceQuotes.map((quote, index) => 
-                        <Grid item xs={12} sx={{paddingTop: "10px"}} key={index}>
-                            <div>
-                                <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px"}}>
-                                    {quote.quote_status === "SENT" ? (
-                                        <Typography
-                                            sx={{
-                                            color: "#000000",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.largeFont,
-                                            }}
-                                        >
-                                            <u>{quote.quote_business_id}</u> quoted ${quote.quote_total_estimate} for this request.
-                                        </Typography>  
-                                    ) : null}
-                                    {quote.quote_status === "REQUESTED" ? (
-                                        <Typography
-                                            sx={{
-                                            color: "#000000",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.largeFont,
-                                            }}
-                                        >
-                                            A quote from <u>{quote.quote_business_id}</u> has been requested.
-                                        </Typography>  
-                                    ) : null}
-                                </Paper>
-                            </div>
-                        </Grid>
-                    )}
+                    <QuotesTable maintenanceItem={data} maintenanceQuotes={maintenanceQuotes}/>
                 </Grid>
-              </div>
+              </Box>
             </CardContent>
           </Card>
         </Stack>
