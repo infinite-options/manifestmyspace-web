@@ -914,7 +914,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    {/* <Grid item xs={12}>
                                         <Button
                                             variant="outlined" 
                                             sx={{
@@ -931,7 +931,47 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 {item.property_available_to_rent !== 1 ? "Create Listing" : "Edit Listing"}
                                             </Typography>
                                         </Button>
-                                    </Grid>
+                                    </Grid> */}
+                                    {item.property_available_to_rent !== 1 && (
+                                        <Grid item xs={12}>
+                                            <Button
+                                                variant="outlined" 
+                                                sx={{
+                                                    background: '#3D5CAC',
+                                                    color: theme.palette.background.default,
+                                                    cursor: "pointer",
+                                                    textTransform: "none",
+                                                }}
+                                                size="small"
+                                                onClick={() => {navigate('/addListing', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"create_listing"}})}}
+                                            >
+                                                <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
+                                                <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                    {"Create Listing"}
+                                                </Typography>
+                                            </Button>
+                                        </Grid>
+                                    )}
+                                    {item.property_available_to_rent === 1 && (
+                                        <Grid item xs={12}>
+                                            <Button
+                                                variant="outlined" 
+                                                sx={{
+                                                    background: '#3D5CAC',
+                                                    color: theme.palette.background.default,
+                                                    cursor: "pointer",
+                                                    textTransform: "none",
+                                                }}
+                                                size="small"
+                                                onClick={() => {navigate('/addListing', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"edit_listing"}})}}
+                                            >
+                                                <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
+                                                <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                    {"Edit Listing"}
+                                                </Typography>
+                                            </Button>
+                                        </Grid>
+                                    )}
                                 </Grid>
                             </div>
                         </CardContent>
