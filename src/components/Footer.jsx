@@ -7,12 +7,13 @@ import theme from '../theme/theme';
 import Home_fill from '../images/Home_fill.png';
 import Bell_fill from '../images/Bell_fill.png';
 import User_fill from '../images/User_fill.png';
+import dark_User_fill from '../images/User_fill_dark.png';
 import comment_fill from '../images/comment_fill.png';
 
 export function Footer() {
     const navigate = useNavigate();
-    const { selectedRole, isLoggedIn } = useUser(); // Access the user object from UserContext
-
+    const { selectedRole, isLoggedIn, getProfileId } = useUser(); // Access the user object from UserContext
+    let xxx=undefined
     // Define a function to get the home button navigation based on the selected role
     const getHomeButtonNav = () => {
         // console.log("selectedRole ",selectedRole);
@@ -105,10 +106,12 @@ export function Footer() {
               </Grid>
               <Grid item xs={3}>
                   <img
-                    src={User_fill}
+                    src={getProfileId() ? User_fill : dark_User_fill }
                     alt="User Icon"
                     style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
-                    onClick={()=>{navigate(getProfileButtonNav())}}
+                    onClick={()=>{if (getProfileId())
+                                    navigate(getProfileButtonNav())}}
+                    
                   />
               </Grid>
               <Grid item xs={3}>
