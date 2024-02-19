@@ -488,7 +488,7 @@ export default function AddListing({}){
     //                     return { ...property, ...updatedProperty};
     //                 return property;
     //             });
-    //         console.log("ROHIT - updatedPropertyList - ", propertyList);
+    //         console.log("updatedPropertyList - ", propertyList);
     //         setPropertyData(propertyList[index])
             
     //     }
@@ -646,7 +646,7 @@ export default function AddListing({}){
                         return { ...property, ...updatedProperty};
                     return property;
                 });
-            console.log("ROHIT - updatedPropertyList - ", propertyList);
+            // console.log("updatedPropertyList - ", propertyList);
             setPropertyData(propertyList[index])
             
         }
@@ -660,12 +660,12 @@ export default function AddListing({}){
         }
 
         try {
-            console.log("ROHIT - promises added - ", promises_added);
+            // console.log("promises added - ", promises_added);
             await Promise.all(promises)
-            console.log("All Changes saved to Database", promises)
+            console.log("All Changes saved to the Database", promises)
             await autoUpdate();
 
-            console.log("ROHIT - propertyList after autoUpdate - ", propertyList);
+            console.log("propertyList after autoUpdate - ", propertyList);
             navigate("/propertyDetail", { state: { index, propertyList }});
             
         } catch (error) {
