@@ -131,7 +131,7 @@ export default function PropertyDetail({}){
                             borderBottom: 0,
                             width: '75%',
                         }}>
-                            <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyData={propertyList} contracts={contractsForProperty}/>
+                            <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} contracts={contractsForProperty}/>
                         </Box>
                     </Stack>
                 </Paper>

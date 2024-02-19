@@ -90,8 +90,8 @@ function OwnerDocuments() {
                         }}
                             onClick={() => navigateTo('/ownerUploadDocuments')}>
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 2L9 16" stroke="#160449" stroke-width="3" stroke-linecap="round" />
-                                <path d="M16 9L2 9" stroke="#160449" stroke-width="3" stroke-linecap="round" />
+                                <path d="M9 2L9 16" stroke="#160449" strokeWidth="3" stroke-linecap="round" />
+                                <path d="M16 9L2 9" stroke="#160449" strokeWidth="3" stroke-linecap="round" />
                             </svg>
                         </Box>
                     </Box>
@@ -113,7 +113,7 @@ function OwnerDocuments() {
                                 marginRight: '2px',
                             }}>
                                 <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'top' }}>
-                                    <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" stroke-width="2.5" stroke-linecap="round" />
+                                    <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" />
                                 </svg>
                             </Box>
                             <Box>

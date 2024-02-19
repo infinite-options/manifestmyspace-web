@@ -43,9 +43,9 @@ export function RentTitle(props) {
             </Box>
             <Box>
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'inline-block' }}>
-                    <circle cx="10.0833" cy="10.0833" r="6.41667" stroke="#3D5CAC" stroke-width="2" />
-                    <path d="M10.0833 7.33337C9.7222 7.33337 9.3646 7.4045 9.03095 7.54271C8.69731 7.68091 8.39415 7.88347 8.13879 8.13883C7.88343 8.39419 7.68087 8.69735 7.54267 9.03099C7.40446 9.36464 7.33333 9.72224 7.33333 10.0834" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
-                    <path d="M18.3333 18.3334L15.5833 15.5834" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
+                    <circle cx="10.0833" cy="10.0833" r="6.41667" stroke="#3D5CAC" strokeWidth="2" />
+                    <path d="M10.0833 7.33337C9.7222 7.33337 9.3646 7.4045 9.03095 7.54271C8.69731 7.68091 8.39415 7.88347 8.13879 8.13883C7.88343 8.39419 7.68087 8.69735 7.54267 9.03099C7.40446 9.36464 7.33333 9.72224 7.33333 10.0834" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                    <path d="M18.3333 18.3334L15.5833 15.5834" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
                 </svg>
             </Box>
         </Box>
@@ -93,10 +93,10 @@ export function CalendarIcon(props) {
             alignItems: 'center',
         }}>
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3.125" y="6.25" width="18.75" height="15.625" rx="2" stroke="#3D5CAC" stroke-width="2" />
+                <rect x="3.125" y="6.25" width="18.75" height="15.625" rx="2" stroke="#3D5CAC" strokeWidth="2" />
                 <path d="M3.125 10.25C3.125 8.36438 3.125 7.42157 3.71079 6.83579C4.29657 6.25 5.23938 6.25 7.125 6.25H17.875C19.7606 6.25 20.7034 6.25 21.2892 6.83579C21.875 7.42157 21.875 8.36438 21.875 10.25V10.4167H3.125V10.25Z" fill="#3D5CAC" />
-                <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
-                <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
+                <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
             </svg>
         </Box>
 
@@ -236,7 +236,7 @@ export function RentAccordion(props) {
             <AccordionSummary
                 expandIcon={
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" stroke-width="2.5" />
+                        <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" strokeWidth="2.5" />
                     </svg>
                 }
             >

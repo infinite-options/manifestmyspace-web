@@ -390,7 +390,18 @@ export function MaintenanceRequestDetail(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData} maintenanceQuotes={filteredQuotes} currentTabValue={value}
+                                                <MaintenanceRequestNavigator 
+                                                    requestIndex={maintenanceRequestIndex} 
+                                                    backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} 
+                                                    forward_active_status={value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex} 
+                                                    updateRequestIndex={handleMaintenaceRequestIndexChange} 
+                                                    requestData={allData[item.mapping]} 
+                                                    status={status} 
+                                                    color={item.color} 
+                                                    item={item} 
+                                                    allData={allData} 
+                                                    maintenanceQuotes={filteredQuotes} 
+                                                    currentTabValue={value}
                                                     tabs={tabs}
                                                 />
                                             )
