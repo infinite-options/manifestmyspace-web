@@ -22,7 +22,8 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
-
+import CancelButton from "../MaintenanceComponents/CancelButton";
+import CompleteButton from "../MaintenanceComponents/CompletedButton";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
@@ -35,6 +36,8 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState("");
 
     function handleNavigate(){
         console.log("navigate to Rescheduling Maintenance")
@@ -45,19 +48,6 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                 navigateParams
             }
         })
-    }
-
-    async function handleCancel(id){
-        let response = CancelTicket(id, setShowSpinner);
-        console.log("handleCancel", response)
-        if (response){
-            console.log("Ticket Cancelled")
-            alert("Ticket Cancelled")
-            navigate(maintenanceRoutingBasedOnSelectedRole())
-        } else{
-            console.log("Ticket Not Cancelled")
-            alert("Error: Ticket Not Cancelled")
-        }
     }
 
     const handleSubmit = () => {
@@ -119,19 +109,6 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
         changeMaintenanceQuoteStatus()
     }
 
-    async function handleComplete(id){
-        let response = CompleteTicket(id, setShowSpinner);
-        console.log("handleComplete", response);
-        if (response){
-            console.log("Ticket Completed")
-            alert("Ticket Completed")
-            navigate(maintenanceRoutingBasedOnSelectedRole())
-        } else{
-            console.log("Ticket Not Completed")
-            alert("Error: Ticket Not Completed")
-        }
-    }
-
     return(
         <Box 
             sx={{
@@ -174,51 +151,8 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
-                    >
-                        <CloseIcon sx={{color: "#3D5CAC"}}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Cancel Ticket
-                        </Typography>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%"
-                        }}
-                        onClick={() => handleSubmit()}
-                    >
-                        <CheckIcon sx={{color: "#3D5CAC"}}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Complete Ticket
-                        </Typography>
-                    </Button>
-                </Grid>
+                <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
         </Box>
     )

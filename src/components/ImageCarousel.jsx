@@ -31,7 +31,7 @@ function ImageCarousel(props) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    '@media screen and (max-width: 600px)': {
+                    '@media screen and (maxWidth: 600px)': {
                         width: '20%',
                     },
                 }}
@@ -82,7 +82,7 @@ function ImageCarousel(props) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    '@media screen and (max-width: 600px)': {
+                    '@media screen and (maxWidth: 600px)': {
                         width: '20%',
                     },
                 
