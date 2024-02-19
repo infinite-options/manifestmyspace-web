@@ -176,6 +176,7 @@ export function MaintenanceRequestDetail(){
         })
     }, [maintenanceRequestIndex, status])
 
+
     useEffect(() => {
         if (maintenanceQuotes && maintenanceItemsForStatus[maintenanceRequestIndex]){
             const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)

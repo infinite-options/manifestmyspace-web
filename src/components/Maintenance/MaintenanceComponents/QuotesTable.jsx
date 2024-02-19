@@ -20,6 +20,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
         
         if (oneAcceptedQuote){
             let acceptedQuote = maintenanceQuotes.find(quote => quote.quote_status === "ACCEPTED") // get the accepted quote (should just be one)
+            let otherQuotes = maintenanceQuotes.filter(quote => quote.quote_status !== "ACCEPTED") // get all other quotes
             console.log("acceptedQuote", acceptedQuote)
             return (
                 <Grid item xs={12}>
@@ -56,7 +57,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
                                 <Typography sx={tableText}> {acceptedQuote.quote_created_date} </Typography>
                             </TableCell>
                             <TableCell>
-                                <Typography sx={tableText}> {acceptedQuote.quote_pm_notes} </Typography>
+                                <Typography sx={tableText}> {acceptedQuote.quote_notes} </Typography>
                             </TableCell>
                         </TableRow>
                     </Table>
@@ -71,9 +72,27 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Table>
-                                    <TableBody>
-                                    
-                                    </TableBody>
+                                    {otherQuotes.map((quote, index) => (
+                                        
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography sx={tableText}> {quote.quote_business_id} </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography sx={tableText}> {quote.quote_total_estimate ? "$" + quote.quote_total_estimate : "Not Provided"} </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography sx={tableText}> {quote.quote_status} </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography sx={tableText}> {quote.quote_created_date} </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography sx={tableText}> {quote.quote_notes} </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        
+                                    ))}
                                 </Table>
                             </AccordionDetails>
                         </Accordion>
