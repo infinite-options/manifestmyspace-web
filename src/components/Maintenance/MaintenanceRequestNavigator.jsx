@@ -37,15 +37,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
-  // const [propertyId, setPropertyId] = useState("200-000029")
   
-  // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
 
   function navigateToEditMaintenanceItem(testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID){
-    // console.log("navigateToAddMaintenanceItem")
-    console.log("testTitle>>",(testTitle))
-    console.log("testCost>>",(testCost))
     navigate('/editMaintenanceItem', {state: {testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID, month, year}})
   }
 
@@ -414,7 +409,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   Issue Description: {data?.maintenance_desc}
                 </Typography>
                 <Grid container>
-                    <QuotesTable maintenanceItem={data} maintenanceQuotes={maintenanceQuotes}/>
+                    {console.log("maintenanceQuotes", maintenanceQuotes)}
+                    <QuotesTable maintenanceItem={data} maintenanceQuotesForItem={maintenanceQuotes}/>
                 </Grid>
               </Box>
             </CardContent>

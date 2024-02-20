@@ -226,21 +226,21 @@ export function MaintenanceOwner(){
         setFilterPropertyList([]);
     }
 
-    useEffect(() => {
-        const profileId = getProfileId()
-        maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
-        const getMaintenanceItemQuotes = async () => {
-            setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
-            const data = await response.json()
-            // console.log(data.maintenanceQuotes);
-            const quotes = data.maintenanceQuotes.result
-            // console.log("quotes from maintenanceQuotes",  quotes)
-            setMaintenanceItemQuotes(quotes)
-            setShowSpinner(false);
-        }
-        getMaintenanceItemQuotes()  
-    }, [])
+    // useEffect(() => {
+    //     const profileId = getProfileId()
+    //     maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+    //     const getMaintenanceItemQuotes = async () => {
+    //         setShowSpinner(true);
+    //         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
+    //         const data = await response.json()
+    //         // console.log(data.maintenanceQuotes);
+    //         const quotes = data.maintenanceQuotes.result
+    //         // console.log("quotes from maintenanceQuotes",  quotes)
+    //         setMaintenanceItemQuotes(quotes)
+    //         setShowSpinner(false);
+    //     }
+    //     getMaintenanceItemQuotes()  
+    // }, [])
 
     return(
         <ThemeProvider theme={theme}>

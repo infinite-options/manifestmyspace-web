@@ -413,7 +413,7 @@ export default function MaintenanceManager(){
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={newDataObject}
                                     maintenanceRequestsCount={filteredArray}
-                                    maintenanceItemQuotes={maintenanceItemQuotes}
+                                    // maintenanceItemQuotes={maintenanceItemQuotes}
                                 />
                             );
                         })}

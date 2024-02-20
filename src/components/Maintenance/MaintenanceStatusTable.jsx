@@ -42,7 +42,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                 status,
                 maintenanceItemsForStatus,
                 allMaintenanceData,
-                maintenanceItemQuotes,
+                // maintenanceItemQuotes,
             }
         })
     }

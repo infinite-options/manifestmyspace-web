@@ -1,17 +1,17 @@
 import {Grid, Accordion, AccordionSummary, AccordionDetails, Box, Typography, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
+export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem}){
     // maintenanceQuotes is a state variable that is set in the grandparent component
     // maintenanceItem is a prop that is passed from the parent component
-    let oneAcceptedQuote = maintenanceQuotes.some(quote => quote.quote_status === "ACCEPTED") // check that there is exactly one quote that has been accepted
+    let oneAcceptedQuote = maintenanceQuotesForItem.some(quote => quote.quote_status === "ACCEPTED") // check that there is exactly one quote that has been accepted
 
     // let allRequestedQuotes = maintenanceQuotes.(quote => quote.quote_status === "REQUESTED") // check that there is exactly one quote that has been accepted
 
     let request_status = maintenanceItem.maintenance_request_status
     let status = maintenanceItem.maintenance_status
 
-    console.log("QuotesTable maintenanceQuotes", maintenanceQuotes)
+    console.log("QuotesTable maintenanceQuotesForItem", maintenanceQuotesForItem)
 
     let tableText = {color: "#FFFFFF", fontWeight: 500, fontSize: "16px"}
 
@@ -19,12 +19,13 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
     if (request_status !== "NEW"){
         
         if (oneAcceptedQuote){
-            let acceptedQuote = maintenanceQuotes.find(quote => quote.quote_status === "ACCEPTED") // get the accepted quote (should just be one)
-            let otherQuotes = maintenanceQuotes.filter(quote => quote.quote_status !== "ACCEPTED") // get all other quotes
+            let acceptedQuote = maintenanceQuotesForItem.find(quote => quote.quote_status === "ACCEPTED") // get the accepted quote (should just be one)
+            let otherQuotes = maintenanceQuotesForItem.filter(quote => quote.quote_status !== "ACCEPTED") // get all other quotes
             console.log("acceptedQuote", acceptedQuote)
             return (
                 <Grid item xs={12}>
                     <Typography sx={{color: "#FFFFFF", fontWeight: 800, fontSize: "22px"}}>Quotes Table</Typography>
+                    <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -65,6 +66,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
                         <Accordion
                         sx={{
                             boxShadow: "none",
+                            backgroundColor: "transparent",
                         }}
                         >
                             <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
@@ -104,7 +106,8 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
             return (
                 <Grid item xs={12}>
                      <Typography sx={{color: "#FFFFFF", fontWeight: 800, fontSize: "22px"}}>Quotes Table</Typography>
-                    {maintenanceQuotes.length > 0 ? (
+                     <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
+                    {maintenanceQuotesForItem.length > 0 ? (
                          <TableHead>
                          <TableRow>
                              <TableCell>
@@ -125,7 +128,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
                          </TableRow>
                      </TableHead>
                     ) : null}
-                    {maintenanceQuotes.map((quote, index) => (
+                    {maintenanceQuotesForItem.map((quote, index) => (
                         <TableRow key={index}>
                             <TableCell>
                                 <Typography sx={tableText}> {quote.quote_business_id} </Typography>
@@ -145,7 +148,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
                         </TableRow>
                     ))}
     
-                    {maintenanceQuotes.length === 0 ? <Typography sx={tableText}> No quotes have been submitted </Typography> : null}
+                    {maintenanceQuotesForItem.length === 0 ? <Typography sx={tableText}> No quotes have been submitted </Typography> : null}
                 </Grid>
             )
         }
@@ -153,6 +156,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotes}){
         return (
             <Grid item xs={12}>
                 <Typography sx={{color: "#FFFFFF", fontWeight: 800, fontSize: "22px"}}>Quotes Table</Typography>
+                <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
                 <Typography sx={tableText}> No quotes have been requested yet. </Typography>
             </Grid>
         )
