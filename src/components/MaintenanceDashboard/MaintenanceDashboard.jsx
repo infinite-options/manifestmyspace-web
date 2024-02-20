@@ -77,6 +77,8 @@ export default function MaintenanceDashboard(){
 
 
     useEffect(() => {
+        if (!getProfileId())
+            navigate('/PrivateprofileName')
         console.log("Maintenance Worker Dashboard useEffect")
         console.log(user.businesses.MAINTENANCE.business_uid)
 

@@ -146,6 +146,8 @@ function ManagerDashboard() {
     // USE EFFECT gets all the data
     useEffect(() => {
         // const dataObject = {};
+        if (!getProfileId())
+            navigate('/PrivateprofileName')
         const fetchData = async () => {
             // console.log("in useEffect")
             // console.log("PROFILE ID: ", getProfileId())
