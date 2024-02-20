@@ -163,7 +163,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             direction="column"
             justifyContent="center"
             alignItems="center"
-            // width= "100%" // Take up full screen width
             spacing={2}
         >
             <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>

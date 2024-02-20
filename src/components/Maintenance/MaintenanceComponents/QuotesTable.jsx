@@ -6,12 +6,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
     // maintenanceItem is a prop that is passed from the parent component
     let oneAcceptedQuote = maintenanceQuotesForItem.some(quote => quote.quote_status === "ACCEPTED") // check that there is exactly one quote that has been accepted
 
-    // let allRequestedQuotes = maintenanceQuotes.(quote => quote.quote_status === "REQUESTED") // check that there is exactly one quote that has been accepted
-
     let request_status = maintenanceItem.maintenance_request_status
     let status = maintenanceItem.maintenance_status
 
-    console.log("QuotesTable maintenanceQuotesForItem", maintenanceQuotesForItem)
 
     let tableText = {color: "#FFFFFF", fontWeight: 500, fontSize: "16px"}
 
