@@ -409,7 +409,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   Issue Description: {data?.maintenance_desc}
                 </Typography>
                 <Grid container>
-                    {console.log("maintenanceQuotes", maintenanceQuotes)}
                     <QuotesTable maintenanceItem={data} maintenanceQuotesForItem={maintenanceQuotes}/>
                 </Grid>
               </Box>

@@ -142,19 +142,6 @@ function ManagerDashboard() {
       setMatrixData(sortedData);
     };
 
-    // let propsForPropertyRentWidget = {
-    //     rentData: data,
-    //     unpaidRentStatusCount: totalPropertiesCount,
-    //     profile: "manager",
-    // }
-
-    // const renderColorfulLegendText = (value, entry) => {
-    //     const { color } = entry;
-    //     const status = data.find(item => item.fill === color)?.rent_status;
-    //     const num = data.find(item => item.fill === color)?.number;
-    //     return <span style={{color: '#160449', fontFamily:'Source Sans Pro', fontSize:'18px' }}>{num} {status}</span>;
-    // };
-    
 
     // USE EFFECT gets all the data
     useEffect(() => {

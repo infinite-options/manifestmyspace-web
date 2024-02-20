@@ -41,29 +41,21 @@ export default function OwnerDashboard() {
     ];
 
     
-    // USE EFFECT gets all the data
     useEffect(() => {
         const dataObject = {};
         const fetchData = async () => {
-            // console.log("in useEffect")
-            // console.log("PROFILE ID: ", getProfileId())
-            
             setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/110-000003`)
             const jsonData = await response.json()
             
-
             // MAINTENANCE Status
             setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
-   
+
             // RENT Status
             setRentStatus(jsonData.RentStatus.result);
             
             // LEASE Status
             setLeaseStatus(jsonData.LeaseStatus.result);
-            
-
             setShowSpinner(false);
         }
         fetchData();
@@ -92,9 +84,6 @@ export default function OwnerDashboard() {
                         {/* <LeaseWidget selectedRole={"OWNER"}/> */}
                         <LeaseWidget leaseData={leaseStatus}/>
                     </div>
-
-
-
 
                     <div className="bottom-buttons">
                         <Button

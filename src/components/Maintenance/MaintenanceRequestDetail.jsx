@@ -180,7 +180,6 @@ export function MaintenanceRequestDetail(){
 
     useEffect(() => {
         const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
-        console.log("for this maintenance request", maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid, "quotesFilteredById", quotesFilteredById)
         quotesFilteredById.sort((a, b) => { 
             if(a.quote_status === "SENT"){
                 return -1
@@ -400,8 +399,6 @@ export function MaintenanceRequestDetail(){
                                                 paddingBottom: "0px"
 
                                         }}>
-                                            {console.log("maintenanceQuotes", maintenanceQuotes)}
-                                            {console.log("filteredQuotes", filteredQuotes)}
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
                                                 <MaintenanceRequestNavigator 
                                                     requestIndex={maintenanceRequestIndex} 

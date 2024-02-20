@@ -87,11 +87,8 @@ export function MaintenanceOwner(){
     let navigate = useNavigate();
     const { user, getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
-    // const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusO
-
-    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
     const [showSelectMonth, setShowSelectMonth] = useState(false);
     const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -103,6 +100,7 @@ export function MaintenanceOwner(){
     const businessId = user.businesses.MAINTENANCE.business_uid;
 
     const propertyIdFromPropertyDetail = location.state?.propertyId || null;
+    let profileId = getProfileId()
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
@@ -178,7 +176,6 @@ export function MaintenanceOwner(){
     
         // Filtering by property
         if (filterPropertyList?.length > 0){
-            //filteredArray = filteredArray.filter(item => filterPropertyList.includes(item.property_address));
             filteredArray = filteredArray.filter(item => {
                 for (const filterItem of filterPropertyList){
                     if (filterItem.property_uid === item.property_id && filterItem.checked){
@@ -189,7 +186,6 @@ export function MaintenanceOwner(){
             })
         }
     
-        //setDisplayMaintenanceData(filteredArray);
         return filteredArray
     }
 
@@ -226,21 +222,10 @@ export function MaintenanceOwner(){
         setFilterPropertyList([]);
     }
 
-    // useEffect(() => {
-    //     const profileId = getProfileId()
-    //     maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
-    //     const getMaintenanceItemQuotes = async () => {
-    //         setShowSpinner(true);
-    //         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
-    //         const data = await response.json()
-    //         // console.log(data.maintenanceQuotes);
-    //         const quotes = data.maintenanceQuotes.result
-    //         // console.log("quotes from maintenanceQuotes",  quotes)
-    //         setMaintenanceItemQuotes(quotes)
-    //         setShowSpinner(false);
-    //     }
-    //     getMaintenanceItemQuotes()  
-    // }, [])
+    useEffect(() => {
+        maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+    }, [])
+
 
     return(
         <ThemeProvider theme={theme}>
@@ -355,7 +340,7 @@ export function MaintenanceOwner(){
                             let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
-
+                            
                             let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList)
 
                             return (
@@ -366,7 +351,7 @@ export function MaintenanceOwner(){
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={maintenanceData}
                                     maintenanceRequestsCount={maintenanceArray}
-                                    maintenanceItemQuotes={maintenanceItemQuotes}
+                                    // maintenanceItemQuotes={maintenanceItemQuotes}
                                 />
                             );
                         })}
