@@ -44,7 +44,7 @@ export default function EditProperty({}){
     // const propertyData = location.state.item
     // const propertyId = location.state.propertyId;
     let { index, propertyList } = state;
-    const propertyData = propertyList[index];
+    const [propertyData, setPropertyData] = useState(propertyList[index]);
     // console.log("Property Id", propertyId)
     console.log("Property Data in Edit Property", propertyData)
     const { user, selectedRole, selectRole, Name } = useUser();
@@ -206,8 +206,7 @@ export default function EditProperty({}){
         // setMappedUtilitiesPaidBy(utilities);
 
         setNewUtilitiesPaidBy(prevState => ({
-            ...prevState,
-            [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+            ...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState)
         }));
     };
 
@@ -280,14 +279,16 @@ export default function EditProperty({}){
         setListed(event.target.checked);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("handleSubmit")
         const formData = new FormData();
-        const utilitiesFormData = new FormData();
-        const addedUtilitiesFormData = new FormData();
+        const utilitiesFormData = new FormData();        
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+        const promises = []
+        const promises_added = [] // debug
 
         formData.append("property_uid", propertyData.property_uid)
         formData.append('property_address', address);
@@ -331,6 +332,7 @@ export default function EditProperty({}){
         console.log("----- addedUtilitiesJSONString");
         console.log(addedUtilitiesJSONString);
 
+        const addedUtilitiesFormData = new FormData();
         addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
         addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
         
@@ -366,16 +368,64 @@ export default function EditProperty({}){
 
         const putData = async () => {
             setShowSpinner(true);
-            try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
-                // const response = await fetch("http://localhost:4000/properties", {
-                    method: "PUT",
-                    body: formData
-                })
-                const data = await response.json();
-                console.log("data", data)
+            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
+                method: "PUT",
+                body: formData
+            }));
+            promises_added.push("putData");
+            
+            setShowSpinner(false);
+    
+            
+            // navigate("/propertyDetail", { state: { index, propertyList }});
+        }
+        const updateUtilitiesData = async () => {
+            setShowSpinner(true);
+
+            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                method: "PUT",
+                body: utilitiesFormData
+            }));
+            promises_added.push("putUtilitiesData - PUT");
+            
+            setShowSpinner(false);
+
+
+            const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
+            console.log("----- addedUtilitiesJSONString");
+            console.log(addedUtilitiesJSONString);
+
+            const addedUtilitiesFormData = new FormData();
+            addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
+            addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
+
+            const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
+            if(numberOfAddedUtilities > 0){
+                promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                    method: "POST",
+                    body: addedUtilitiesFormData
+                }));
+                promises_added.push("putUtilitiesData - POST");
+
                 
-                const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+                setShowSpinner(false);
+            }
+        }
+        const postUtilitiesData = async () => {
+            setShowSpinner(true);
+
+            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                method: "POST",
+                body: utilitiesFormData
+            }));
+            promises_added.push("postUtilitiesData");
+            
+            setShowSpinner(false);
+        }
+
+        const autoUpdate = async () => {
+            const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+            // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
                 const updatedJson = await updateResponse.json();
                 const updatedProperty = updatedJson.result[0];  
                 propertyList = propertyList.map(property => {
@@ -383,96 +433,35 @@ export default function EditProperty({}){
                         return { ...property, ...updatedProperty};
                     return property;
                 });
+            // console.log("updatedPropertyList - ", propertyList);
+            setPropertyData(propertyList[index])
+            
+        }
 
-            } catch(error){
-                console.log("Error posting data:", error)
-            }
-            setShowSpinner(false);
-            navigate("/propertyDetail", { state: { index, propertyList }});
-        }
-        const updateUtilitiesData = async () => {
-            // setShowSpinner(true);
-            try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
-                    method: "PUT",
-                    body: utilitiesFormData
-                })
-                // const response = await fetch("http://localhost:4000/utilities",{ 
-                //     method: "PUT",
-                //     body: utilitiesFormData
-                // })
-                const data = await response.json();
-                console.log("data", data)
-                if (data.code === 200){
-                    navigate(-1);
-                    // should navigate to the listing page
-                }
-            } catch(error){
-                console.log("Error posting data:", error)
-            }
-            setShowSpinner(false);
-
-            const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
-            if(numberOfAddedUtilities > 0){
-                try{
-                    const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
-                        method: "POST",
-                        body: addedUtilitiesFormData
-                    })
-                    // const response = await fetch("http://localhost:4000/utilities",{
-                    //     method: "POST",
-                    //     body: addedUtilitiesFormData
-                    // })
-                    const data = await response.json();
-                    console.log("data", data)
-                    if (data.code === 200){
-                        navigate(-1);
-                        // should navigate to the listing page
-                    }
-                } catch(error){
-                    console.log("Error posting data:", error)
-                }
-                setShowSpinner(false);
-            }
-        }
-        const postUtilitiesData = async () => {
-            // setShowSpinner(true);
-            try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
-                    method: "POST",
-                    body: utilitiesFormData
-                })
-                // const response = await fetch("http://localhost:4000/utilities",{
-                //     method: "POST",
-                //     body: utilitiesFormData
-                // })
-                const data = await response.json();
-                console.log("data", data)
-                if (data.code === 200){
-                    navigate(-1);
-                    // should navigate to the listing page
-                }
-            } catch(error){
-                console.log("Error posting data:", error)
-            }
-            setShowSpinner(false);
-        }
         putData();
         if(isDefaultUtilities){
             postUtilitiesData();
         } else{
             updateUtilitiesData();
         }
+
+        try {
+            // console.log("promises added - ", promises_added);
+            await Promise.all(promises)
+            console.log("All Changes saved to the Database", promises)
+            await autoUpdate();
+
+            console.log("propertyList after autoUpdate - ", propertyList);
+            navigate("/propertyDetail", { state: { index, propertyList }});
+            
+        } catch (error) {
+            console.error("Error:", error);
+        }
         
-    }
+    }  
 
-
-    // const capitalizeFirstChar = (utility) => {
-    //     return utility.charAt(0).toUpperCase() + utility.slice(1);
-    // }
-
-    const capitalizeFirstChar = (utility) => {
-        const formattedUtility = utility.replace(/_/g, ' '); // Replace underscores with spaces
+    const formatUtilityName = (utility) => {
+        const formattedUtility = utility.replace(/_/g, ' '); 
         return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
     };
 
@@ -1062,7 +1051,7 @@ export default function EditProperty({}){
                                         <Fragment key={utility}>
                                             <Grid item xs={6}>
                                                 <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                {capitalizeFirstChar(utility)}
+                                                {formatUtilityName(utility)}
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={6}>
@@ -1109,7 +1098,7 @@ export default function EditProperty({}){
                                         >
                                             {keysNotInUtilitiesMap.map((utility, index) => (
                                                 <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
-                                                    {capitalizeFirstChar(utility)}
+                                                    {formatUtilityName(utility)}
                                                 </MenuItem>
                                             ))}
                                         </Menu>
