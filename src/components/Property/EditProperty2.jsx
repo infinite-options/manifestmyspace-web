@@ -43,7 +43,7 @@ export default function EditProperty({}){
     const { getProfileId } = useUser();
     // const propertyData = location.state.item
     // const propertyId = location.state.propertyId;
-    let { index, propertyList } = state;
+    let { index, propertyList, page } = state;    
     const [propertyData, setPropertyData] = useState(propertyList[index]);
     // console.log("Property Id", propertyId)
     console.log("Property Data in Edit Property", propertyData)
@@ -83,7 +83,7 @@ export default function EditProperty({}){
     const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
     const [unitAmenities, setUnitAmenities] = useState(propertyData.property_amenities_unit);
     const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
-    const [page, setPage] = useState("Edit");
+    // const [page, setPage] = useState("Edit");
 
     useEffect(() => {
         console.log("deletedImageList - ", deletedImageList);
@@ -310,7 +310,9 @@ export default function EditProperty({}){
         formData.append('property_featured', 0);
         formData.append('property_description', description);
         formData.append('property_notes', notes);
-        formData.append('property_available_to_rent', isListed ? 1 : 0);
+        if(page=== "add_listing" || page === "edit_listing"){
+            formData.append('property_available_to_rent', isListed ? 1 : 0);
+        }
         formData.append('property_value', propertyValue);
         formData.append('property_value_year', assessmentYear);
         formData.append('property_active_date', activeDate);
@@ -543,9 +545,24 @@ export default function EditProperty({}){
                                 justifyContent="center"
                                 alignItems="center"
                             >
-                                <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                    Edit Property
-                                </Typography>
+                                { page === "edit_property" && (
+                                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                        Edit Property
+                                    </Typography>
+                                )}
+
+                                { page === "add_listing" && (
+                                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                        Create Listing
+                                    </Typography>
+                                )}
+
+                                { page === "edit_listing" && (
+                                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                                        Edit Listing
+                                    </Typography>
+                                )}
+                                
                             </Box>
                             <Box position="absolute" right={0}>
                                 <Button onClick={() => handleBackButton()}>
@@ -890,6 +907,24 @@ export default function EditProperty({}){
                                             onChange={(e) => setNotes(e.target.value)}
                                             value={notes}
                                         />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        {page === "add_listing" || page === "edit_listing" ?
+                                        <Stack
+                                            direction="column"
+                                            justifyContent="left"
+                                            padding="15px"
+                                            width="85%"
+                                        >
+                                            <FormControlLabel control={
+                                                <Checkbox
+                                                    checked={isListed}
+                                                    onChange={handleListedChange}
+                                                />}
+                                                label="Available to rent"
+                                            />
+                                        </Stack>
+                                        :<div></div>}
                                     </Grid>
                                 </Grid>
                             </Box>
@@ -1262,11 +1297,26 @@ export default function EditProperty({}){
                         <Grid container>
                             <Grid item xs={12}>
                                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
+                                
                                 <Button variant="contained" type="submit" form="editPropertyForm"  sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}>
-                                    <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                            Update Property
-                                    </Typography>
+                                    { page === "edit_property" && (
+                                        <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                Update Property
+                                        </Typography>
+                                    )}
+                                    { page === "add_listing" && (
+                                        <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                Create Listing
+                                        </Typography>
+                                    )}
+                                    { page === "edit_listing" && (
+                                        <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                Update Listing
+                                        </Typography>
+                                    )}
                                 </Button>
+                                
+                                
                             </Grid>
                         </Grid>
                         </Box>

@@ -669,7 +669,7 @@ export default function AddListing({}){
             navigate("/propertyDetail", { state: { index, propertyList }});
             
         } catch (error) {
-            console.error("Error making payments:", error);
+            console.error("Error:", error);
         }
 
 
