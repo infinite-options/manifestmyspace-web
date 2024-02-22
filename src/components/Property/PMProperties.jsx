@@ -339,7 +339,7 @@ export default function PMProperties({}) {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
             width: "100%", // Occupy full width with 25px margins on each side
-            maxWidth: "800px", // You can set a max-width if needed
+            maxWidth: "800px", // You can set a maxWidth if needed
           }}
         >
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>

@@ -73,6 +73,7 @@ export function MaintenanceRequestDetail(){
     const location = useLocation();
     const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
     let navigate = useNavigate();
+    let profileId = getProfileId();
 
     const [fromProperty, setFromProperty] = useState(location.state.fromProperty || false);
 
@@ -147,7 +148,7 @@ export function MaintenanceRequestDetail(){
     const [status, setStatus] = useState(location.state.status);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
     // const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
-    const [maintenanceQuotes, setMaintenanceQuotes] = useState(location.state.maintenanceItemQuotes);    
+    const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);    
     const [filteredQuotes, setFilteredQuotes] = useState([]);
     const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === status));
     const [month, setMonth] = useState(new Date().getMonth());
@@ -176,21 +177,30 @@ export function MaintenanceRequestDetail(){
         })
     }, [maintenanceRequestIndex, status])
 
+
     useEffect(() => {
-        if (maintenanceQuotes && maintenanceItemsForStatus[maintenanceRequestIndex]){
-            const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
-            quotesFilteredById.sort((a, b) => { 
-                if(a.quote_status === "SENT"){
-                    return -1
-                } else if (b.quote_status === "SENT"){
-                    return 1
-                } else {
-                    return 0
-                }
-            })
-            setFilteredQuotes(quotesFilteredById)
+        const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
+        quotesFilteredById.sort((a, b) => { 
+            if(a.quote_status === "SENT"){
+                return -1
+            } else if (b.quote_status === "SENT"){
+                return 1
+            } else {
+                return 0
+            }
+        })
+        setFilteredQuotes(quotesFilteredById)
+    }, [maintenanceRequestIndex])
+
+    useEffect(() => {
+        const getMaintenanceItemQuotes = async () => {
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
+            const data = await response.json()
+            const quotes = data.maintenanceQuotes.result
+            setMaintenanceQuotes(quotes)
         }
-    }, [maintenanceRequestIndex, maintenanceQuotes])
+        getMaintenanceItemQuotes()
+    },[])
     
     const allData = location.state.allMaintenanceData;
 
@@ -390,7 +400,18 @@ export function MaintenanceRequestDetail(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                <MaintenanceRequestNavigator requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData} maintenanceQuotes={filteredQuotes} currentTabValue={value}
+                                                <MaintenanceRequestNavigator 
+                                                    requestIndex={maintenanceRequestIndex} 
+                                                    backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} 
+                                                    forward_active_status={value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex} 
+                                                    updateRequestIndex={handleMaintenaceRequestIndexChange} 
+                                                    requestData={allData[item.mapping]} 
+                                                    status={status} 
+                                                    color={item.color} 
+                                                    item={item} 
+                                                    allData={allData} 
+                                                    maintenanceQuotes={filteredQuotes} 
+                                                    currentTabValue={value}
                                                     tabs={tabs}
                                                 />
                                             )

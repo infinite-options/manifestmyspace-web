@@ -5,13 +5,6 @@ import {
     Paper,
     Button,
     ThemeProvider, 
-    OutlinedInput,
-    InputLabel,
-    MenuItem,
-    FormControl,
-    Select,
-    ListItemText,
-    Checkbox,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -153,6 +146,7 @@ export default function MaintenanceManager(){
     }
 
     function handleFilter(maintenanceArray, month, year, filterPropertyList){
+        console.log("maintenanceArray", maintenanceArray)
         var filteredArray = [];
 
         // Filtering by date
@@ -212,21 +206,6 @@ export default function MaintenanceManager(){
         setFilterPropertyList([]);
     }
 
-    useEffect(() => {
-        const profileId = getProfileId()
-        // maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
-        const getMaintenanceItemQuotes = async () => {
-            setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`)
-            const data = await response.json()
-            // console.log(data.maintenanceQuotes);
-            const quotes = data.maintenanceQuotes.result
-            // console.log("quotes from maintenanceQuotes",  quotes)
-            setMaintenanceItemQuotes(quotes)
-            setShowSpinner(false);
-        }
-        getMaintenanceItemQuotes()  
-    }, [])
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
@@ -295,13 +274,13 @@ export default function MaintenanceManager(){
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Box
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%', // Take up full screen width
-                minHeight: '100vh', // Set the Box height to full height
-                marginTop: theme.spacing(2), // Set the margin to 20px
-            }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%', // Take up full screen width
+                    minHeight: '100vh', // Set the Box height to full height
+                    marginTop: theme.spacing(2), // Set the margin to 20px
+                }}
             >
                 <Paper
                     style={{
@@ -395,16 +374,6 @@ export default function MaintenanceManager(){
                         margin: "20px",
                     }}>
                         {colorStatus.map((item, index) => {
-                            // construct mapping key if it doesn't exist
-                            // var mappingKey = ""
-                            // if (item.mapping === "SCHEDULED") { // a known key with color mapping
-                            //     mappingKey = "SCHEDULED" // a mapped key to the maintenanceData object
-                            // } else if (item.mapping == "PAID"){
-                            //     mappingKey = "PAID"
-                            // } else{
-                            //     mappingKey = item.mapping
-                            // }
-
                             let mappingKey = item.mapping
 
                             let maintenanceArray = maintenanceData[mappingKey]|| []
@@ -423,7 +392,7 @@ export default function MaintenanceManager(){
                                     maintenanceItemsForStatus={filteredArray}
                                     allMaintenanceData={newDataObject}
                                     maintenanceRequestsCount={filteredArray}
-                                    maintenanceItemQuotes={maintenanceItemQuotes}
+                                    // maintenanceItemQuotes={maintenanceItemQuotes}
                                 />
                             );
                         })}

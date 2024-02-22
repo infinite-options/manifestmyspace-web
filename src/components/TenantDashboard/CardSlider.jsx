@@ -150,7 +150,7 @@ export default function CardSlider(props) {
                         onClick={() => leftClicked()}
                     >
                         <svg width={buttonSize} height={buttonSize} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.75 7.5L11.25 15L18.75 22.5" stroke="#160449" stroke-width="4" />
+                            <path d="M18.75 7.5L11.25 15L18.75 22.5" stroke="#160449" strokeWidth="4" />
                         </svg>
                     </Box>
                     <Box sx={{
@@ -162,7 +162,7 @@ export default function CardSlider(props) {
                         onClick={() => rightClicked()}
                     >
                         <svg width={buttonSize} height={buttonSize} viewBox="0 0 29 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.25 22.5L18.75 15L11.25 7.5" stroke="#160449" stroke-width="4" />
+                            <path d="M11.25 22.5L18.75 15L11.25 7.5" stroke="#160449" strokeWidth="4" />
                         </svg>
                     </Box>
                 </Box>

@@ -72,8 +72,8 @@ function SelectProperty(props) {
                 </Box>
                 <Box onClick={() => handleClose()}>
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
-                        <path d="M11.25 3.75L3.75 11.25" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M3.75 3.75L11.25 11.25" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M11.25 3.75L3.75 11.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3.75 3.75L11.25 11.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </Box>
             </Box>
@@ -97,9 +97,9 @@ function SelectProperty(props) {
                 </Box>
                 <Box>
                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
-                        <circle cx="10.0834" cy="10.0833" r="6.41667" stroke="#3D5CAC" stroke-width="2" />
-                        <path d="M10.0833 7.33333C9.72218 7.33333 9.36458 7.40446 9.03093 7.54266C8.69729 7.68086 8.39413 7.88342 8.13877 8.13878C7.88341 8.39415 7.68084 8.6973 7.54264 9.03095C7.40444 9.36459 7.33331 9.72219 7.33331 10.0833" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
-                        <path d="M18.3333 18.3333L15.5833 15.5833" stroke="#3D5CAC" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="10.0834" cy="10.0833" r="6.41667" stroke="#3D5CAC" strokeWidth="2" />
+                        <path d="M10.0833 7.33333C9.72218 7.33333 9.36458 7.40446 9.03093 7.54266C8.69729 7.68086 8.39413 7.88342 8.13877 8.13878C7.88341 8.39415 7.68084 8.6973 7.54264 9.03095C7.40444 9.36459 7.33331 9.72219 7.33331 10.0833" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                        <path d="M18.3333 18.3333L15.5833 15.5833" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
                     </svg>
                 </Box>
             </Box>

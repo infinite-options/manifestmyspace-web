@@ -47,11 +47,12 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => app.lease_status!=="REJECTED"?app.lease_status!=="REFUSED"?"#778DC5":"#874499":"#A52A2A";
 
-export default function PropertyNavigator({currentIndex, setCurrentIndex, propertyData, contracts, props}){
+export default function PropertyNavigator({currentIndex, setCurrentIndex, propertyList, contracts, props}){    
     const navigate = useNavigate();
     const { getProfileId, isManager, roleName, selectedRole } = useUser();
     // console.log(currentIndex)
-    const item = propertyData[currentIndex];
+    const [propertyData, setPropertyData] = useState(propertyList);
+    const [item, setItem] = useState(propertyData[currentIndex]);
     const [currentId, setCurrentId] = useState(item.property_uid);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
@@ -71,25 +72,48 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
     // console.log(propertyId)
 
+    function getPropertyList(data) {
+        const propertyList = data["Property"].result;
+        const applications = data["Applications"].result;
+        const appsMap = new Map();
+        applications.forEach(a => {
+            const appsByProperty = appsMap.get(a.property_uid) || []
+            appsByProperty.push(a);
+            appsMap.set(a.property_uid, appsByProperty);
+        });
+        return propertyList.map(p => {
+            p.applications = appsMap.get(p.property_uid) || [];
+            p.applicationsCount = [...p.applications].filter(a => a.lease_status === "NEW").length;
+            return p;
+        })
+        }
+
+    const refreshPropertyData = async () => {            
+        try {
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+            if(!response.ok){
+                console.log("Error fetching property data")
+            }
+            const propertyResponse = await response.json();
+            // console.log("propertyResponse", propertyResponse.result)
+            const propertyList = getPropertyList(propertyResponse)            
+            setProperty(propertyList[currentIndex])
+            setPropertyData(propertyList)
+            setItem(propertyList[currentIndex])
+        } catch (error){
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        refreshPropertyData();
+    }, [])
+
     useEffect(() => {
         // console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
 
-        const refreshPropertyData = async () => {
-            try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
-                if(!response.ok){
-                    console.log("Error fetching property data")
-                }
-                const propertyResponse = await response.json();
-                // console.log("propertyResponse", propertyResponse.result)
-                const property = propertyResponse.result
-                // console.log(property)
-                setProperty(propertyData[currentIndex])
-            } catch (error){
-                console.log(error);
-            }
-        }
+        
 
         const getContractsForOwner = async () => {
             try {
@@ -143,18 +167,6 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     }, [currentIndex, propertyId]);
 
     useEffect(() => {
-        // const getMaintenanceReqForProperty = async () => {
-        //     try{
-        //         const maintenanceReqForProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${propertyId}`)
-        //         const maintenanceReqForPropertyData = await maintenanceReqForProperty.json();
-        //         const data = maintenanceReqForPropertyData.result
-        //         setMaintenanceReqData(data);
-        //         // console.log("--debug-- maintenanceReqForPropertyData", data)
-        //     } catch (error){
-        //         console.log(error);
-        //     }
-        // }
-        // getMaintenanceReqForProperty();
         maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
     }, [currentIndex, propertyId])
 
@@ -186,9 +198,9 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         } else if (row.row.maintenance_request_status === "NEW"){
             status = "NEW REQUEST"
         }
-        console.log("status", status)
-        console.log("maintenanceReqData[status]", maintenanceReqData[status])
-        console.log("maintenanceReqData[status].maintenance_items", maintenanceReqData[status].maintenance_items)
+        // console.log("status", status)
+        // console.log("maintenanceReqData[status]", maintenanceReqData[status])
+        // console.log("maintenanceReqData[status].maintenance_items", maintenanceReqData[status].maintenance_items)
         //let maintenanceIndex = maintenanceReqData[status].maintenance_items.findIndex(item => item.maintenance_request_uid === row.id)
         try {
             navigate('/maintenance/detail', {state: { 

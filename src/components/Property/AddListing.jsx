@@ -117,9 +117,9 @@ export default function AddListing({}){
     const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});    
     const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
-    // useEffect(() => {
-    //     console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
-    // }, [newUtilitiesPaidBy]);
+    useEffect(() => {
+        console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+    }, [newUtilitiesPaidBy]);
 
     useEffect(() => {
         console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
@@ -201,101 +201,6 @@ export default function AddListing({}){
         
     }, []);
     
-    // useEffect(() => {
-    //     let utilitiesInUIDForm = {};
-        
-    //     if (utilitiesObject){
-    //         console.log("*******HERE*******")
-    //         for (const utility of utilitiesObject) {
-    //             console.log( utility.utility_type_id, utility.utility_payer_id );
-    //             utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
-                
-    //         }
-    //         console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
-    //         setUtilitiesPaidBy(utilitiesInUIDForm) 
-    //     }
-        
-    // }, []);
-
-    
-    
-    
-    // useEffect(()=> {
-    //     console.log("AddListing - utilitiesPaidBy");
-    //     console.log("   ", utilitiesPaidBy);
-    //     console.log("AddListing - utilitiesPaidBy JSON string");
-    //     console.log("   ", JSON.stringify(utilitiesPaidBy));
-
-    //     //mapped utilities
-    //     // console.log("AddListing - Mapped Utilities and entities - ");
-    //     // console.log("   ", JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy)));
-
-    //     //mapped utilities
-    //     // const mappedUtilities2 = mapUIDsToUtilities(utilitiesPaidBy)
-    //     // console.log(" - utilitiesPaidBy useEffect - Mapped UIDs to Utilities");
-    //     // console.log("   ", mappedUtilities2);
-    //     // setMappedUtilitiesPaidBy(mappedUtilities2);
-
-    //     // setMappedUtilitiesPaidBy(mapUIDsToUtilities(utilitiesPaidBy));
-        
-    // },[utilitiesPaidBy]);
-
-    // useEffect(()=> {
-    //     console.log("AddListing - mappedUtilitiesPaidBy useEffect");
-    //     console.log("   ", mappedUtilitiesPaidBy);
-        
-    // },[mappedUtilitiesPaidBy]);
-
-
-   
-
-   
-    
-
-    const listOfUtilities =[
-        "Electricity",
-        "Water", 
-        "Gas", 
-        "Trash",
-        "Sewer", 
-        "Internet", 
-        "Cable", 
-        "HOA Dues", 
-        "Security system",
-        "Pest control",
-        "Gardener", 
-        "Maintenance",
-    ]
-
-    // const utilitiesValueToNameMap = {
-    //     "electricity" : "Electricity",
-    //     "water" : "Water", 
-    //     "gas" : "Gas", 
-    //     "trash" : "Trash",
-    //     "sewer" : "Sewer", 
-    //     "internet" : "Internet", 
-    //     "cable" : "Cable", 
-    //     "hoa_dues" : "HOA Dues", 
-    //     "security_system" : "Security system",
-    //     "pest_control" : "Pest control",
-    //     "gardener" : "Gardener", 
-    //     "maintenance" : "Maintenance",
-    // }
-
-    // const utilitiesNameToValueMap = {
-    //     "Electricity": "electricity",
-    //     "Water": "water",
-    //     "Gas": "gas",
-    //     "Trash": "trash",
-    //     "Sewer": "sewer",
-    //     "Internet": "internet",
-    //     "Cable": "cable",
-    //     "HOA Dues": "hoa_dues",
-    //     "Security system": "security_system",
-    //     "Pest control": "pest_control",
-    //     "Gardener": "gardener",
-    //     "Maintenance": "maintenance",
-    //   };
 
     const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
         const mappedResults = {};
@@ -312,22 +217,6 @@ export default function AddListing({}){
         return mappedResults;
       };
 
-    
-
-    
-
-    // const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState(mapUIDsToUtilities(utilitiesPaidBy));
-    // const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState(mapUIDsToUtilities(utilitiesInUIDForm));
-    
-    
-    // const test = {
-    //     "050-000001":"050-000041",
-    //     "050-000004":"050-000043",
-    //     "050-000002":"050-000043",
-    //     "050-000006":"050-000043",
-    //     "050-000003":"050-000043",
-    // }
-
     const handleUtilityChange = (utility, entity) => {
         
         const utilityObject = {[utility]: `${entity}`}
@@ -341,8 +230,7 @@ export default function AddListing({}){
         // setUtilitiesPaidBy(utilities);
         // setMappedUtilitiesPaidBy(utilities);
         setNewUtilitiesPaidBy(prevState => ({
-            ...prevState,
-            [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+            ...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState)
         }));
     };
 
@@ -408,7 +296,214 @@ export default function AddListing({}){
         navigate(-1);
     }
 
-    const handleSubmit = (event) => {
+    // const handleSubmit = (event) => {
+        
+    //     event.preventDefault();
+    //     console.log("handleSubmit")
+    //     const formData = new FormData();
+    //     const utilitiesFormData = new FormData();
+    //     const currentDate = new Date();
+    //     const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+ 
+
+    //     formData.append('property_uid', propertyData.property_uid)
+    //     // formData.append('property_owner_id', ownerId);
+    //     formData.append('property_available_to_rent', 1);
+    //     formData.append('property_active_date', formattedDate);
+    //     formData.append('property_address', address);
+    //     formData.append('property_unit', unit);
+    //     formData.append('property_city', city);
+    //     formData.append('property_state', propertyState);
+    //     formData.append('property_zip', zip);
+    //     formData.append('property_type', propertyType);
+    //     formData.append('property_num_beds', bedrooms);
+    //     formData.append('property_num_baths', bathrooms);
+    //     formData.append('property_area', squareFootage);
+    //     formData.append('property_listed_rent', rent);
+    //     formData.append('property_deposit', deposit);
+    //     formData.append('property_pets_allowed', petsAllowed ? 1 : 0);
+    //     formData.append('property_deposit_for_rent', depositForRent ? 1 : 0);
+    //     formData.append('property_taxes', taxes? taxes : "null");
+    //     formData.append('property_mortgages', mortgages? mortgages : "null");
+    //     formData.append('property_insurance', insurance? insurance : "null");
+    //     formData.append('property_featured', 0);
+    //     formData.append('property_description', description);
+    //     formData.append('property_notes', notes);
+    //     formData.append('property_available_to_rent', isListed ? 1 : 0);
+    //     formData.append('property_amenities_community', communityAmenities);
+    //     formData.append('property_amenities_unit', apartmentAmenities);
+    //     formData.append('property_amenities_nearby', nearbyAmenities);
+        
+    //     //utilities data
+    //     // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
+    //     const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+    //     console.log("----- Submitted uitilitiesPaidBy JSON string");
+    //     console.log(utilitiesJSONString);
+    //    // formData.append('property_utilities', utilitiesJSONString)
+
+
+    //     const files = selectedImageList;
+    //     let i = 0;
+    //     for (const file of selectedImageList) {
+    //         // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+    //         let key = `img_${i++}`;
+    //         if (file.file !== null) {
+    //             // newProperty[key] = file.file;
+    //             formData.append(key, file.file)
+    //         } else {
+    //             // newProperty[key] = file.image;
+    //             formData.append(key, file.image)
+    //         }
+    //         if(file.coverPhoto) {
+    //             formData.append('img_favorite', key)
+    //         }
+    //     }
+
+    //     if(deletedImageList.length > 0){
+    //         formData.append('deleted_images', JSON.stringify(deletedImageList))
+    //     }
+
+    //     utilitiesFormData.append('property_uid', propertyData.property_uid);
+    //     utilitiesFormData.append('property_utility', utilitiesJSONString);
+
+    //     for (let [key, value] of formData.entries()) {
+    //         console.log(key, value);    
+    //     }
+
+    //     const putData = async () => {
+    //         setShowSpinner(true);
+    //         try{
+    //             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
+    //                 method: "PUT",
+    //                 body: formData
+    //             })
+    //             // const response = await fetch("http://localhost:4000/properties",{
+    //             //     method: "PUT",
+    //             //     body: formData
+    //             // })
+    //             const data = await response.json();
+    //             console.log("properties put data", data)
+                
+    //             const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+    //             const updatedJson = await updateResponse.json();
+    //             const updatedProperty = updatedJson.result[0];  
+    //             propertyList = propertyList.map(property => {
+    //                 if(property.property_uid === updatedProperty.property_uid)
+    //                     return { ...property, ...updatedProperty};
+    //                 return property;
+    //             });
+
+
+    //         } catch(error){
+    //             console.log("Error posting data:", error)
+    //         }
+    //         setShowSpinner(false);
+            
+    //     }
+    //     const postUtilitiesData = async () => {
+    //         // setShowSpinner(true);
+    //         try{
+    //             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+    //                 method: "POST",
+    //                 body: utilitiesFormData
+    //             })
+    //             // const response = await fetch("http://localhost:4000/utilities",{
+    //             //     method: "POST",
+    //             //     body: utilitiesFormData
+    //             // })
+    //             const data = await response.json();
+    //             console.log("data", data)
+    //             if (data.code === 200){
+    //                 navigate(-1);
+    //                 // should navigate to the listing page
+    //             }
+    //         } catch(error){
+    //             console.log("Error posting data:", error)
+    //         }
+    //         setShowSpinner(false);
+    //     }
+
+
+    //     const putUtilitiesData = async () => {
+    //         // setShowSpinner(true);
+    //         try{
+    //             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+    //                 method: "PUT",
+    //                 body: utilitiesFormData
+    //             })
+    //             // const response = await fetch("http://localhost:4000/utilities",{
+    //             //     method: "PUT",
+    //             //     body: utilitiesFormData
+    //             // })
+    //             const data = await response.json();
+    //             console.log("data", data)
+    //             if (data.code === 200){
+    //                 navigate(-1);
+    //                 // should navigate to the listing page
+    //             }
+    //         } catch(error){
+    //             console.log("Error posting data:", error)
+    //         }
+    //         setShowSpinner(false);
+
+
+    //         const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
+    //         console.log("----- addedUtilitiesJSONString");
+    //         console.log(addedUtilitiesJSONString);
+
+    //         const addedUtilitiesFormData = new FormData();
+    //         addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
+    //         addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
+
+    //         const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
+    //         if(numberOfAddedUtilities > 0){
+    //             try{
+    //                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+    //                     method: "POST",
+    //                     body: addedUtilitiesFormData
+    //                 })
+    //                 // const response = await fetch("http://localhost:4000/utilities",{
+    //                 //     method: "POST",
+    //                 //     body: addedUtilitiesFormData
+    //                 // })
+    //                 const data = await response.json();
+    //                 console.log("data", data)
+    //                 if (data.code === 200){
+    //                     navigate(-1);
+    //                     // should navigate to the listing page
+    //                 }
+    //             } catch(error){
+    //                 console.log("Error posting data:", error)
+    //             }
+    //             setShowSpinner(false);
+    //         }
+    //     }
+
+    //     const autoUpdate = async () => {
+    //         const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+    //             const updatedJson = await updateResponse.json();
+    //             const updatedProperty = updatedJson.result[0];  
+    //             propertyList = propertyList.map(property => {
+    //                 if(property.property_uid === updatedProperty.property_uid)
+    //                     return { ...property, ...updatedProperty};
+    //                 return property;
+    //             });
+    //         console.log("updatedPropertyList - ", propertyList);
+    //         setPropertyData(propertyList[index])
+            
+    //     }
+
+    //     putData();        
+    //     if (page === "create_listing"){
+    //         postUtilitiesData();
+    //     } else if (page === "edit_listing"){
+    //         putUtilitiesData();
+    //     }
+    //     autoUpdate();
+    //     navigate("/propertyDetail", { state: { index, propertyList }});
+    // }
+
+    const handleSubmit = async (event) => {
         
         event.preventDefault();
         console.log("handleSubmit")
@@ -416,6 +511,8 @@ export default function AddListing({}){
         const utilitiesFormData = new FormData();
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const promises = []
+        const promises_added = [] // debug
  
 
         formData.append('property_uid', propertyData.property_uid)
@@ -484,78 +581,37 @@ export default function AddListing({}){
 
         const putData = async () => {
             setShowSpinner(true);
-            try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
-                    method: "PUT",
-                    body: formData
-                })
-                // const response = await fetch("http://localhost:4000/properties",{
-                //     method: "PUT",
-                //     body: formData
-                // })
-                const data = await response.json();
-                console.log("properties put data", data)
-                
-                const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
-                const updatedJson = await updateResponse.json();
-                const updatedProperty = updatedJson.result[0];  
-                propertyList = propertyList.map(property => {
-                    if(property.property_uid === updatedProperty.property_uid)
-                        return { ...property, ...updatedProperty};
-                    return property;
-                });
-
-
-            } catch(error){
-                console.log("Error posting data:", error)
-            }
+            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
+                method: "PUT",
+                body: formData
+            }));
+            promises_added.push("putData");
+            
             setShowSpinner(false);
             
         }
         const postUtilitiesData = async () => {
-            // setShowSpinner(true);
-            try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
-                    method: "POST",
-                    body: utilitiesFormData
-                })
-                // const response = await fetch("http://localhost:4000/utilities",{
-                //     method: "POST",
-                //     body: utilitiesFormData
-                // })
-                const data = await response.json();
-                console.log("data", data)
-                if (data.code === 200){
-                    navigate(-1);
-                    // should navigate to the listing page
-                }
-            } catch(error){
-                console.log("Error posting data:", error)
-            }
+            setShowSpinner(true);
+
+            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                method: "POST",
+                body: utilitiesFormData
+            }));
+            promises_added.push("postUtilitiesData");
+            
             setShowSpinner(false);
         }
 
 
         const putUtilitiesData = async () => {
-            // setShowSpinner(true);
-            try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
-                    method: "PUT",
-                    body: utilitiesFormData
-                })
-                // const response = await fetch("http://localhost:4000/utilities",{
-                //     method: "PUT",
-                //     body: utilitiesFormData
-                // })
-                const data = await response.json();
-                console.log("data", data)
-                if (data.code === 200){
-                    navigate(-1);
-                    // should navigate to the listing page
-                }
-            } catch(error){
-                console.log("Error posting data:", error)
-            }
+            setShowSpinner(true);
+
+            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                method: "PUT",
+                body: utilitiesFormData
+            }));
+            promises_added.push("putUtilitiesData - PUT");
+            
             setShowSpinner(false);
 
 
@@ -569,30 +625,20 @@ export default function AddListing({}){
 
             const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
             if(numberOfAddedUtilities > 0){
-                try{
-                    const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
-                        method: "POST",
-                        body: addedUtilitiesFormData
-                    })
-                    // const response = await fetch("http://localhost:4000/utilities",{
-                    //     method: "POST",
-                    //     body: addedUtilitiesFormData
-                    // })
-                    const data = await response.json();
-                    console.log("data", data)
-                    if (data.code === 200){
-                        navigate(-1);
-                        // should navigate to the listing page
-                    }
-                } catch(error){
-                    console.log("Error posting data:", error)
-                }
+                promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                    method: "POST",
+                    body: addedUtilitiesFormData
+                }));
+                promises_added.push("putUtilitiesData - POST");
+
+                
                 setShowSpinner(false);
             }
         }
 
         const autoUpdate = async () => {
             const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+            // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
                 const updatedJson = await updateResponse.json();
                 const updatedProperty = updatedJson.result[0];  
                 propertyList = propertyList.map(property => {
@@ -600,28 +646,38 @@ export default function AddListing({}){
                         return { ...property, ...updatedProperty};
                     return property;
                 });
-            console.log("ROHIT - updatedPropertyList - ", propertyList);
+            // console.log("updatedPropertyList - ", propertyList);
             setPropertyData(propertyList[index])
             
         }
 
+        
         putData();        
         if (page === "create_listing"){
             postUtilitiesData();
         } else if (page === "edit_listing"){
             putUtilitiesData();
         }
-        autoUpdate();
-        navigate("/propertyDetail", { state: { index, propertyList }});
+
+        try {
+            // console.log("promises added - ", promises_added);
+            await Promise.all(promises)
+            console.log("All Changes saved to the Database", promises)
+            await autoUpdate();
+
+            console.log("propertyList after autoUpdate - ", propertyList);
+            navigate("/propertyDetail", { state: { index, propertyList }});
+            
+        } catch (error) {
+            console.error("Error making payments:", error);
+        }
+
+
+        
     }
-
-
-    // const capitalizeFirstChar = (utility) => {
-    //     return utility.charAt(0).toUpperCase() + utility.slice(1);
-    // }
     
-    const capitalizeFirstChar = (utility) => {
-        const formattedUtility = utility.replace(/_/g, ' '); // Replace underscores with spaces
+    const formatUtilityName = (utility) => {
+        const formattedUtility = utility.replace(/_/g, ' '); 
         return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
     };
 
@@ -1160,7 +1216,7 @@ export default function AddListing({}){
                                                 <Fragment key={utility}>
                                                     <Grid item xs={6}>
                                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                        {capitalizeFirstChar(utility)}
+                                                        {formatUtilityName(utility)}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={6}>
@@ -1193,7 +1249,7 @@ export default function AddListing({}){
                                                 <Fragment key={utility}>
                                                     <Grid item xs={6}>
                                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                                        {capitalizeFirstChar(utility)}
+                                                        {formatUtilityName(utility)}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={6}>
@@ -1292,7 +1348,7 @@ export default function AddListing({}){
                                 >
                                     {keysNotInUtilitiesMap.map((utility, index) => (
                                         <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
-                                            {capitalizeFirstChar(utility)}
+                                            {formatUtilityName(utility)}
                                         </MenuItem>
                                     ))}
                                 </Menu>

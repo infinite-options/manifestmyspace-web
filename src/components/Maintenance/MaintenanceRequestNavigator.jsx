@@ -11,6 +11,8 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 import CreateIcon from '@mui/icons-material/Create';
 
+import QuotesTable from "./MaintenanceComponents/QuotesTable";
+
 
 function getInitialImages(requestData, currentIndex) {
   try {
@@ -35,15 +37,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
   
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
-  // const [propertyId, setPropertyId] = useState("200-000029")
   
-  // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
 
   function navigateToEditMaintenanceItem(testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID){
-    // console.log("navigateToAddMaintenanceItem")
-    console.log("testTitle>>",(testTitle))
-    console.log("testCost>>",(testCost))
     navigate('/editMaintenanceItem', {state: {testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID, month, year}})
   }
 
@@ -163,32 +160,38 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         }}
       >
         <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          // width= "100%" // Take up full screen width
-          spacing={2}
-        >
-          <Button onClick={handlePreviousCard} disabled={backward_active_status}>
-            <ArrowBackIcon />
-          </Button>
-          <Stack
             direction="column"
             justifyContent="center"
             alignItems="center"
-            // width= "100%" // Take up full screen width
             spacing={2}
-          >
+        >
             <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
               {item.status}
             </Typography>
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {currentIndex + 1} of {requestData.length}
-            </Typography>
-          </Stack>
-          <Button onClick={handleNextCard} disabled={forward_active_status}>
-            <ArrowForwardIcon />
-          </Button>
+            <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+            >
+            <Button onClick={handlePreviousCard} disabled={backward_active_status}>
+                <ArrowBackIcon />
+            </Button>
+            <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                width="100px"
+            >
+                <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+                {currentIndex + 1} of {requestData.length}
+                </Typography>
+            </Stack>
+            <Button onClick={handleNextCard} disabled={forward_active_status}>
+                <ArrowForwardIcon />
+            </Button>
+            </Stack>
         </Stack>
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card
@@ -229,11 +232,11 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   sx={{
                     elevation: "0",
                     boxShadow: "none",
-                    maxWidth: "500px",
+                    maxWidth: "800px",
                     minWidth: "300px",
-                    maxHeight: "500px",
+                    maxHeight: "800px",
                     minHeight: "100px",
-                    height: "300px",
+                    height: "500px",
                     objectFit: "cover",
                     center: "true",
                     alignContent: "center",
@@ -281,7 +284,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 padding: "0px"
               }}
             >
-              <div
+              <Box
                 style={{
                   // paddingLeft: "10px",
                   alignContent: "left",
@@ -289,15 +292,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                   alignItems: "left",
                 }}
               >
-                 {/* <Typography
-                  sx={{
-                    color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                    paddingBottom: "10px",
-                  }}
-                > */}
-              {/* {data?.maintenance_priority} Priority */}
 
               <Stack alignItems="center" justifyContent="center" sx={{ paddingBottom: "0px" }}>
                 <Card
@@ -340,9 +334,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                       
                         <CreateIcon sx={{
                             color: "#FFFFFF",
-                            // color: "red",
-                            // backgroundColor: "yellow",
-                            // margin:"5px",
                             marginLeft: "auto",
                             fontSize: "18px"
                         }} 
@@ -351,12 +342,9 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                       
                     </Typography>
 
-                    {/*  */}
                   </CardContent>
                 </Card>
               </Stack>
-
-             {/* </Typography> */}
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
@@ -419,66 +407,10 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 >
                   Issue Description: {data?.maintenance_desc}
                 </Typography>
-                {data.maintenance_request_status === "PROCESSING" ? (
-                    <Typography
-                        sx={{
-                        color: theme.typography.secondary.white,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.mediumFont,
-                        paddingBottom: "10px",
-                        }}
-                    >
-                        {data?.business_name} is processing this request.
-                    </Typography>
-                ) : null}
-                {/* {console.log(maintenanceQuotes)} */}
                 <Grid container>
-                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                            {maintenanceQuotes.length > 0 ? (
-                                <Typography
-                                    sx={{
-                                    color: theme.typography.secondary.white,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.mediumFont,
-                                    paddingBottom: "10px",
-                                    }}
-                                >
-                                    {maintenanceQuotes.length} quote(s) for this request.
-                                </Typography>
-                            ) : null}
-                    </Grid>
-                    {maintenanceQuotes.map((quote, index) => 
-                        <Grid item xs={12} sx={{paddingTop: "10px"}} key={index}>
-                            <div>
-                                <Paper elevation={3} sx={{ paddingLeft: "10px", paddingRight: "10px"}}>
-                                    {quote.quote_status === "SENT" ? (
-                                        <Typography
-                                            sx={{
-                                            color: "#000000",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.largeFont,
-                                            }}
-                                        >
-                                            <u>{quote.quote_business_id}</u> quoted ${quote.quote_total_estimate} for this request.
-                                        </Typography>  
-                                    ) : null}
-                                    {quote.quote_status === "REQUESTED" ? (
-                                        <Typography
-                                            sx={{
-                                            color: "#000000",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.largeFont,
-                                            }}
-                                        >
-                                            A quote from <u>{quote.quote_business_id}</u> has been requested.
-                                        </Typography>  
-                                    ) : null}
-                                </Paper>
-                            </div>
-                        </Grid>
-                    )}
+                    <QuotesTable maintenanceItem={data} maintenanceQuotesForItem={maintenanceQuotes}/>
                 </Grid>
-              </div>
+              </Box>
             </CardContent>
           </Card>
         </Stack>
