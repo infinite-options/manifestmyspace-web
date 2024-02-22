@@ -116,7 +116,10 @@ function TenantDashboard(props) {
     }
 
     useEffect(() => {
+        if (!getProfileId())
+            navigate('/PrivateprofileName')
         const getTenantData = async () => {
+            try{
             setShowSpinner(true);
             const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
             const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
@@ -164,6 +167,11 @@ function TenantDashboard(props) {
             setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
             setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
             // console.log(propertyData[0])
+
+        } catch (error) {
+            // Handle errors here
+            console.error("Error fetching tenant data:", error);
+        }
         }
         getTenantData();
     }, [])

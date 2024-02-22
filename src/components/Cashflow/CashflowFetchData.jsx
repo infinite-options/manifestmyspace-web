@@ -81,8 +81,6 @@ function getNext12MonthsCashflow(data, month, year){
     // create a loop that goes forward 12 months and if 
 
     for (var i = 0; i < 12; i++){
-        console.log(currentMonth, currentYear)
-
         let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
         let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
 

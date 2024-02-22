@@ -76,8 +76,8 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
-                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                {/* <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/> */}
             </Grid>
         </Box>
     )
