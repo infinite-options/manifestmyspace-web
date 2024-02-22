@@ -947,10 +947,7 @@ useEffect(() => {
 
 
 useEffect(()=> {
-    console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
-    // let JSONstring = JSON.stringify(defaultContractFees);
-    // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
-    
+    console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);    
 }, [contractAssignedContacts]);
 
 
@@ -1283,12 +1280,12 @@ useEffect(() => {
             setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
         }
 
-        //get default contract fees for manager
-        // const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
-        // const data2 = await businessProfileResult.json();
-        // const businessProfileData = data2["result"][0];
-        // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
-        // setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
+        // get default contract fees for manager
+        const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
+        const data2 = await businessProfileResult.json();
+        const businessProfileData = data2["result"][0];
+        console.log("Business Services Fees", businessProfileData["business_services_fees"]);
+        setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
         };
     
         fetchData();
@@ -1314,8 +1311,8 @@ const getFormattedFeeFrequency = (frequency) => {
         case "weekly":
             freq =  "Weekly";
             break;
-        case "bi_weekly":
-            freq =  "Biweekly";
+        case "bi-weekly":
+            freq =  "Bi-weekly";
             break;
         case "monthly":
             freq =  "Monthly";

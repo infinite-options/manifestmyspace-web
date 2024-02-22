@@ -167,18 +167,6 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     }, [currentIndex, propertyId]);
 
     useEffect(() => {
-        // const getMaintenanceReqForProperty = async () => {
-        //     try{
-        //         const maintenanceReqForProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${propertyId}`)
-        //         const maintenanceReqForPropertyData = await maintenanceReqForProperty.json();
-        //         const data = maintenanceReqForPropertyData.result
-        //         setMaintenanceReqData(data);
-        //         // console.log("--debug-- maintenanceReqForPropertyData", data)
-        //     } catch (error){
-        //         console.log(error);
-        //     }
-        // }
-        // getMaintenanceReqForProperty();
         maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
     }, [currentIndex, propertyId])
 
@@ -210,9 +198,9 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         } else if (row.row.maintenance_request_status === "NEW"){
             status = "NEW REQUEST"
         }
-        console.log("status", status)
-        console.log("maintenanceReqData[status]", maintenanceReqData[status])
-        console.log("maintenanceReqData[status].maintenance_items", maintenanceReqData[status].maintenance_items)
+        // console.log("status", status)
+        // console.log("maintenanceReqData[status]", maintenanceReqData[status])
+        // console.log("maintenanceReqData[status].maintenance_items", maintenanceReqData[status].maintenance_items)
         //let maintenanceIndex = maintenanceReqData[status].maintenance_items.findIndex(item => item.maintenance_request_uid === row.id)
         try {
             navigate('/maintenance/detail', {state: { 
@@ -615,7 +603,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                             >
                                                 ${(item.property_value/item.property_area).toFixed(2)}
                                         </Typography>
-                                    </Grid>
+                                    </Grid>                                    
                                     <Grid item xs={4}>
                                         <Button
                                             variant="outlined" 
@@ -626,10 +614,11 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 textTransform: "none",
                                             }}
                                             size="small"
-                                            onClick={() => {navigate('/editProperty', 
+                                            onClick={() => {navigate('/editProperty2', 
                                                 { state: {
                                                     index: currentIndex,
-                                                    propertyList: propertyData 
+                                                    propertyList: propertyData,
+                                                    page: 'edit_property' 
                                                 }}
                                             )}}
                                         >
@@ -937,25 +926,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
-                                    </Grid>
-                                    {/* <Grid item xs={12}>
-                                        <Button
-                                            variant="outlined" 
-                                            sx={{
-                                                background: '#3D5CAC',
-                                                color: theme.palette.background.default,
-                                                cursor: "pointer",
-                                                textTransform: "none",
-                                            }}
-                                            size="small"
-                                            onClick={() => {navigate('/addListing', {state:{ currentId, item, index: currentIndex, propertyList: propertyData}})}}
-                                        >
-                                            <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
-                                            <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
-                                                {item.property_available_to_rent !== 1 ? "Create Listing" : "Edit Listing"}
-                                            </Typography>
-                                        </Button>
-                                    </Grid> */}
+                                    </Grid>                                                                        
                                     {item.property_available_to_rent !== 1 && (
                                         <Grid item xs={12}>
                                             <Button
@@ -967,7 +938,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     textTransform: "none",
                                                 }}
                                                 size="small"
-                                                onClick={() => {navigate('/addListing', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"create_listing"}})}}
+                                                onClick={() => {navigate('/editProperty2', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"add_listing"}})}}
                                             >
                                                 <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                                 <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -976,7 +947,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                             </Button>
                                         </Grid>
                                     )}
-                                    {item.property_available_to_rent === 1 && (
+                                    {selectedRole == "MANAGER" && item.property_available_to_rent === 1 && (
                                         <Grid item xs={12}>
                                             <Button
                                                 variant="outlined" 
@@ -987,7 +958,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     textTransform: "none",
                                                 }}
                                                 size="small"
-                                                onClick={() => {navigate('/addListing', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"edit_listing"}})}}
+                                                onClick={() => {navigate('/editProperty2', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"edit_listing"}})}}
                                             >
                                                 <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                                 <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>

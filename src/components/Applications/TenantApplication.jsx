@@ -866,7 +866,7 @@ export default function TenantApplication(){
                                 </>                                        
                             ))}
                         </Grid>
-                        {status && status !== "WITHDRAWN" ? (
+                        {status && status !== "WITHDRAWN" && status !== "REFUSED" ? (
                             null
                           ) : (
                             <>
