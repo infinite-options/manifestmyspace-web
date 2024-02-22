@@ -68,7 +68,8 @@ const PropertyInfo = (props) => {
         } else if (status === "REJECTED"){
             setButtonColor("#490404")
         } else if (status === "REFUSED"){
-            setButtonColor("#CB8E8E")
+            // setButtonColor("#CB8E8E")
+            setButtonColor("#3D5CAC")            
         } else if (status === "ACTIVE"){
             setButtonColor("#412591")
         }
@@ -123,7 +124,7 @@ const PropertyInfo = (props) => {
     }
 
     function renderCorrectButtonText() {
-        if (status === "" || status === "WITHDRAWN" || status === "ENDED") { 
+        if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED") { 
             return 'Apply Now';
         } else if (status === "NEW") {
             return 'View Application';            
@@ -139,7 +140,7 @@ const PropertyInfo = (props) => {
     }
 
     function navigateToCorrectPage(){
-        if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED") {
+        if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED") {
             navigate('/tenantApplication', {state: { property: property, status: status, lease: lease }})
         } else if (status === "TENANT APPROVED" || status === "PROCESSING"){
             navigate('/tenantLeases', {state: { property: property, status: status, lease: lease }})
