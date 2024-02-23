@@ -277,42 +277,46 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                   alignItems: "left",
                 }}
               >
-                 <Typography
-                  sx={{
+                <Typography
+                    sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
-                  }}
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    }}
                 >
-                  {data?.maintenance_title} - {data?.maintenance_request_uid}
+                    {data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_priority} Priority
+                  { data !== undefined ? (data.maintenance_title!==undefined ? "Title: " + data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+            
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
-                  }}
+                  }} 
                   underline="always"
                 >
-                {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
+                  <u>{data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}</u>
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -322,8 +326,8 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -334,8 +338,8 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -347,7 +351,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                     overflowWrap: "break-word",
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                   }}
                 >
                   {/* {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null} */}

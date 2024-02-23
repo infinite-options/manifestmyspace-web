@@ -34,6 +34,7 @@ import RescheduleMaintenance from "./Manager/RescheduleMaintenance";
 import CompleteMaintenance from "./Manager/CompleteMaintenance";
 import PaidMaintenance from "./Manager/PaidMaintenance";
 import { useUser } from "../../contexts/UserContext";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 export function CustomTabPanel(props) {
@@ -74,6 +75,7 @@ export function MaintenanceRequestDetail(){
     const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
     let navigate = useNavigate();
     let profileId = getProfileId();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [fromProperty, setFromProperty] = useState(location.state.fromProperty || false);
 
@@ -376,7 +378,11 @@ export function MaintenanceRequestDetail(){
                                                     padding: '0px',
                                                 }}
                                                 label={
-                                                    <Typography sx={{color: theme.typography.primary.grey, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                    <Typography sx={{
+                                                        color: theme.typography.primary.grey, 
+                                                        fontWeight: theme.typography.secondary.fontWeight, 
+                                                        fontSize: isMobile ? 8 : theme.typography.smallFont,
+                                                    }}>
                                                         {title}
                                                     </Typography>
                                                 }
@@ -389,6 +395,8 @@ export function MaintenanceRequestDetail(){
                                 <div key={index}>
                                     <CustomTabPanel key={index} value={value} index={index} style={{
                                         backgroundColor: item.color,
+                                        borderBottomRightRadius: "10px",
+                                        borderBottomLeftRadius: "10px",
                                     }}>
                                         <Grid
                                             sx={{

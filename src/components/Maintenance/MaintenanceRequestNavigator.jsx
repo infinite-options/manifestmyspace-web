@@ -157,6 +157,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
           marginTop: theme.spacing(2), // Set the margin to 20px
           // backgroundColor: '#3D5CAC80',
           backgroundColor: color,
+          borderRadius: "10px"
         }}
       >
         <Stack
@@ -233,14 +234,13 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                     elevation: "0",
                     boxShadow: "none",
                     maxWidth: "800px",
-                    minWidth: "300px",
-                    maxHeight: "800px",
+                    minWidth: "100px",
+                    maxHeight: "600px",
                     minHeight: "100px",
-                    height: "500px",
                     objectFit: "cover",
                     center: "true",
                     alignContent: "center",
-                    justifyContent: "center",
+                    justifyContent: "center",   
                   }}
                 />
               </div>
@@ -293,31 +293,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 }}
               >
 
-              <Stack alignItems="center" justifyContent="center" sx={{ paddingBottom: "0px" }}>
-                <Card
-                  sx={{
-                    backgroundColor: color,
-                    // backgroundColor: "blue",
-                    boxShadow: "none",
-                    elevation: "0",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "0px"
-                  }}
-                >
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      paddingBottom: "0px",
-                    }}
-                  >
+              {/* <Stack alignItems="center" justifyContent="center" sx={{ paddingBottom: "0px" }}> */}
+              <Stack direction="row">
                     {/* Priority Typography with Button */}
                     <Typography
                       sx={{
@@ -331,45 +308,43 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                       }}
                     >
                       {data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority
-                      
-                        <CreateIcon sx={{
+                    </Typography>
+                    <CreateIcon 
+                        sx={{
                             color: "#FFFFFF",
                             marginLeft: "auto",
-                            fontSize: "18px"
-                        }} 
-                         
-                        onClick={() => navigateToEditMaintenanceItem(data?.maintenance_desc, data?.property_address, data?.maintenance_request_type, estimatedCost, data.maintenance_title, data.maintenance_priority, completionStatus, data.maintenance_request_uid, data.maintenance_property_id )}/>  
-                      
-                    </Typography>
-
-                  </CardContent>
-                </Card>
+                            fontSize: "18px",
+                            padding: "15px"
+                        }}      
+                        onClick={() => navigateToEditMaintenanceItem(data?.maintenance_desc, data?.property_address, data?.maintenance_request_type, estimatedCost, data.maintenance_title, data.maintenance_priority, completionStatus, data.maintenance_request_uid, data.maintenance_property_id )}
+                    />  
               </Stack>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontWeight: theme.typography.primary.fontWeight,
                     fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
-                  }} underline="always"
+                  }} 
+                  underline="always"
                 >
-                    {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
-            </Typography>
+                  <u>{data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}</u>
+                </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontWeight: theme.typography.primary.fontWeight,
                     fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
-                  { data !== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+                  { data !== undefined ? (data.maintenance_title!==undefined ? "Title: " + data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
             
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontWeight: theme.typography.primary.fontWeight,
                     fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
@@ -400,12 +375,12 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontWeight: theme.typography.light.fontWeight,
                     fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
-                  Issue Description: {data?.maintenance_desc}
+                  {data?.maintenance_desc}
                 </Typography>
                 <Grid container>
                     <QuotesTable maintenanceItem={data} maintenanceQuotesForItem={maintenanceQuotes}/>

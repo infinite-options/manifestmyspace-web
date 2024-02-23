@@ -50,10 +50,19 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
     return(
         <ThemeProvider theme={theme}>
             <Accordion
-            sx={{
-                backgroundColor: color,
-                boxShadow: 'none',
-            }}>
+                sx={{
+                    backgroundColor: color,
+                    boxShadow: 'none',
+                    '&:first-of-type .MuiAccordionSummary-root': {
+                        borderTopLeftRadius: '10px',
+                        borderTopRightRadius: '10px',
+                    },
+                    '&:last-of-type .MuiAccordionDetails-root': {
+                        borderBottomLeftRadius: '10px',
+                        borderBottomRightRadius: '10px',
+                    },
+                }}
+            >
             <AccordionSummary 
                 sx={{
                     flexDirection: 'row', // Changed this from 'row-reverse'
@@ -78,6 +87,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     position: "sticky",
                     paddingTop: "5px",
                     paddingLeft: "15px",
+                    borderRadius: "10px",
                 }}>
                     <p>{status}</p>
                         <span style={{ float: "right", alignContent: "center", alignItems: "center" }}>{maintenanceItemsForStatus ? maintenanceItemsForStatus.length : ( maintenanceRequestsCount ? maintenanceRequestsCount : 0 )}</span>

@@ -279,14 +279,15 @@ export default function MaintenanceManager(){
                     justifyContent: 'center',
                     width: '100%', // Take up full screen width
                     minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    // marginTop: theme.spacing(2), // Set the margin to 20px
+                    marginTop: "25px",
                 }}
             >
                 <Paper
                     style={{
                         padding: theme.spacing(2),
                         backgroundColor: theme.palette.primary.main,
-                        width: '85%', // Occupy full width with 25px margins on each side
+                        width: '95%', // Occupy full width with 25px margins on each side
                         [theme.breakpoints.down('sm')]: {
                             width: '80%',
                         },
@@ -294,6 +295,7 @@ export default function MaintenanceManager(){
                             width: '50%',
                         },
                         paddingTop: '10px',
+                        borderRadius: "10px",
                     }}
                 >
                     <Stack
@@ -370,8 +372,8 @@ export default function MaintenanceManager(){
                             </Typography>
                         </Box>
                     <div style={{
-                        borderRadius: "10px",
-                        margin: "20px",
+                        borderRadius: "20px",
+                        margin: "10px",
                     }}>
                         {colorStatus.map((item, index) => {
                             let mappingKey = item.mapping

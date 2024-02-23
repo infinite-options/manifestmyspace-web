@@ -25,7 +25,7 @@ export default function ManagerProfileLink(props){
                 textTransform: "none",
                 paddingRight: "10px",
                 borderRadius: "10px",
-                paddingLeft: "30px",
+                paddingLeft: "10px",
                 display: 'flex',
                 width: "100%",
             }}
