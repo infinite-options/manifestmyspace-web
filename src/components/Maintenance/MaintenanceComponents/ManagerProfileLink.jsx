@@ -15,7 +15,7 @@ export default function ManagerProfileLink(props){
         <Grid item xs={12} sx={{
             alignItems: "center",
             justifyContent: "center",
-            paddingLeft: "40px",
+            // paddingLeft: "40px",
         }}>
         <Button
             variant="contained"

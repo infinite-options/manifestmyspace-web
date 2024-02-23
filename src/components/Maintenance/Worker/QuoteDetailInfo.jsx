@@ -150,10 +150,6 @@ export default function QuoteDetailInfo({maintenanceItem}){
     console.log(maintenanceItem.quote_services_expenses)
     const costData = JSON.parse(maintenanceItem?.quote_services_expenses); //failing here in some cases
 
-    // console.log(costData)
-    // console.log(costData.parts)
-    // console.log(costData.labor)
-
     const [parts, setParts] = useState(costData?.parts || [{hours: 0, rate: 0, description: ""}]);
     const [labor, setLabor] = useState(costData?.labor || [{part: "", cost: 0, quantity: ""}]);
 
@@ -165,9 +161,6 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     useEffect(() => {
         console.log("QuotesSubmittedAction01", maintenanceItem)
-
-        // console.log("expenses", maintenanceItem.quote_services_expenses)
-        //console.log("quote_event_type", maintenanceItem.quote_event_type)
 
         const parseServicesExpenses = (expenses) => {
             let servicesObject = JSON.parse(expenses)
@@ -199,8 +192,6 @@ export default function QuoteDetailInfo({maintenanceItem}){
         alignItems="center"
         sx={{
             paddingBottom: "20px",
-            paddingLeft: "10px",
-            paddingRight: "10px",
         }}
     >
 
@@ -217,6 +208,11 @@ export default function QuoteDetailInfo({maintenanceItem}){
         <PartsTableReadOnly parts={parts} setParts={setParts}/>
 
         <Grid container direction="column" rowSpacing={2} paddingTop={"20px"}>
+            <Grid item xs={12}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
+                    Quote Total: ${estimatedCost}
+                </Typography>
+            </Grid>
             <Grid item xs={12}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
                     Estimated Time: {maintenanceItem.quote_event_type}

@@ -288,7 +288,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                     width: "100%",
                     }}
                 >
-                    {data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority
+                    <b>{data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority</b>
                 </Typography>
                 <Typography
                   sx={{

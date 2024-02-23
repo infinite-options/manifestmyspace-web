@@ -579,7 +579,7 @@ export default function AddMaintenanceItem(){
 
                                 {/* Submit Button */}
                                 <Grid item xs={12}>
-                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#9EAED6"}}>
+                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC"}}>
                                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                                 Add Maintenance
                                         </Typography>

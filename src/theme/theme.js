@@ -118,6 +118,7 @@ const theme = createTheme({
       pink: "#F5B7B6",
       mustardYellow: alpha("#FF8A00", 0.35),
       lightYellow: "#FFC319",
+      white: "#FFFFFF"
     },
     custom: {
       blue: "#3D5CAC80",
@@ -139,6 +140,16 @@ const theme = createTheme({
   },
 
   typography: {
+    maintenance: {
+        secondary: {
+          fontWeight: 500,
+          color: "#FFFFFF",
+        },
+        primary: {
+          fontWeight: 700,
+          color: "#FFFFFF",
+        }
+    },
     common: {
       fontWeight: 700, // Custom font weight
       blue: "#3D5CAC", // Custom font color (e.g., red)

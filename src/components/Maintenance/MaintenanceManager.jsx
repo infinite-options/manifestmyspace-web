@@ -146,9 +146,7 @@ export default function MaintenanceManager(){
     }
 
     function handleFilter(maintenanceArray, month, year, filterPropertyList){
-        console.log("maintenanceArray", maintenanceArray)
         var filteredArray = [];
-
         // Filtering by date
         if (month && year){
             const filterFormatDate = convertToStandardFormat(month, year);

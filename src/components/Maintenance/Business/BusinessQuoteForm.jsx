@@ -167,6 +167,8 @@ export default function BusinessQuoteForm({acceptBool}){
     const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState('');
     const [jobType, setJobType] = useState("");
+    const [selectedImageList, setSelectedImageList] = useState([])
+
 
     const [partsObject, setPartsObject] = useState([{
             part: "",
@@ -651,6 +653,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         Add Document
                                                     </Typography>
                                                 </Button>
+                                            </Grid>
+                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                                 <Button

@@ -1,5 +1,6 @@
 import {Grid, Accordion, AccordionSummary, AccordionDetails, Box, Typography, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useState } from 'react';
 
 export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem}){
     // maintenanceQuotes is a state variable that is set in the grandparent component
@@ -9,88 +10,99 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
     let request_status = maintenanceItem.maintenance_request_status
     let status = maintenanceItem.maintenance_status
 
+    let tableText = {color: "#FFFFFF", fontWeight: 500, fontSize: "18px"}
+    let tableHeader = {color: "#FFFFFF", fontWeight: 700, fontSize: "18px"}
+    let tableCell = {padding: "0px", margin: "0px"}
 
-    let tableText = {color: "#FFFFFF", fontWeight: 500, fontSize: "16px"}
+    const [expanded, setExpanded] = useState(false);
 
+    const handleChange = () => {
+        setExpanded(!expanded);
+    };
 
     if (request_status !== "NEW"){
         
         if (oneAcceptedQuote){
             let acceptedQuote = maintenanceQuotesForItem.find(quote => quote.quote_status === "ACCEPTED") // get the accepted quote (should just be one)
             let otherQuotes = maintenanceQuotesForItem.filter(quote => quote.quote_status !== "ACCEPTED") // get all other quotes
-            console.log("acceptedQuote", acceptedQuote)
+
             return (
                 <Grid item xs={12}>
-                    <Typography sx={{color: "#FFFFFF", fontWeight: 800, fontSize: "22px"}}>Quotes Table</Typography>
+                    {console.log("One Accepted Quote and Other Quotes", acceptedQuote, otherQuotes)}
+                    <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
                     <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
-                    <Table>
+                    <Table sx={{padding: "0px"}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell>
-                                    <Typography sx={tableText}> Business Id </Typography>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableHeader}> Business ID</Typography>
                                 </TableCell>
-                                <TableCell>
-                                    <Typography sx={tableText}> Quote Amount </Typography>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableHeader}> Quote Amount </Typography>
                                 </TableCell>
-                                <TableCell>
-                                    <Typography sx={tableText}> Quote Status </Typography>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableHeader}> Quote Status </Typography>
                                 </TableCell>
-                                <TableCell>
-                                    <Typography sx={tableText}> Quote Date </Typography>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableHeader}> Quote Date </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableHeader}> Quote Notes </Typography>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
-                    {/* {acceptedQuotes.map((quote, index) => ( */}
                         <TableRow>
-                            <TableCell>
+                            <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_business_id} </Typography>
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_total_estimate ? "$" + acceptedQuote.quote_total_estimate : "Not Provided"} </Typography>
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_status} </Typography>
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_created_date} </Typography>
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_notes} </Typography>
                             </TableCell>
                         </TableRow>
                     </Table>
-                    {/* ))} */}
                         <Accordion
-                        sx={{
-                            boxShadow: "none",
-                            backgroundColor: "transparent",
-                        }}
+                            sx={{
+                                boxShadow: "none",
+                                backgroundColor: "transparent",
+                                padding: expanded ? "0px 0px" : "0px",
+                                margin: "0px",
+                                minHeight: "flex",
+                            }}
+                            expanded={expanded} 
+                            onChange={handleChange}
                         >
-                            <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+                            <AccordionSummary sx={{color: "#FFFFFF", fontWeight: 700, fontSize: "18px", padding: expanded ? "0px 0px" : "0px", margin: "0px", flexDirection: "row-reverse", minHeight: "flex"}} expandIcon={<ExpandMoreIcon sx={{color: "#FFFFFF", minHeight: "flex"}} />} onClick={(e) => e.stopPropagation()}>
                                 All other quotes
                             </AccordionSummary>
-                            <AccordionDetails>
-                                <Table>
+                            <AccordionDetails sx={{padding: "0px"}}>
+                                <Table sx={{padding: "0px"}}>
                                     {otherQuotes.map((quote, index) => (
-                                        
-                                        <TableRow>
-                                            <TableCell>
+                                        <TableRow key={index}>
+                                            <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_business_id} </Typography>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_total_estimate ? "$" + quote.quote_total_estimate : "Not Provided"} </Typography>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_status} </Typography>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_created_date} </Typography>
                                             </TableCell>
-                                            <TableCell>
-                                                <Typography sx={tableText}> {quote.quote_notes} </Typography>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.quote_notes ? quote.quote_notes: "No notes provided"} </Typography>
                                             </TableCell>
-                                        </TableRow>
-                                        
+                                        </TableRow> 
                                     ))}
                                 </Table>
                             </AccordionDetails>
@@ -102,49 +114,51 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
         else {
             return (
                 <Grid item xs={12}>
-                     <Typography sx={{color: "#FFFFFF", fontWeight: 800, fontSize: "22px"}}>Quotes Table</Typography>
+                    {console.log("Not Accepted Quotes Yet", maintenanceQuotesForItem)}
+                     <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
                      <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
-                    {maintenanceQuotesForItem.length > 0 ? (
-                         <TableHead>
-                         <TableRow>
-                             <TableCell>
-                                <Typography sx={tableText}> Business ID</Typography>
-                             </TableCell>
-                             <TableCell>
-                                <Typography sx={tableText}> Quote Amount </Typography>
-                             </TableCell>
-                             <TableCell>
-                                <Typography sx={tableText}> Quote Status </Typography>
-                             </TableCell>
-                             <TableCell>
-                                <Typography sx={tableText}> Quote Date </Typography>
-                             </TableCell>
-                             <TableCell>
-                                <Typography sx={tableText}> Quote Notes </Typography>
-                             </TableCell>
-                         </TableRow>
-                     </TableHead>
-                    ) : null}
-                    {maintenanceQuotesForItem.map((quote, index) => (
-                        <TableRow key={index}>
-                            <TableCell>
-                                <Typography sx={tableText}> {quote.quote_business_id} </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography sx={tableText}> {quote.quote_total_estimate ? quote.quote_total_estimate : "Not Provided"} </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography sx={tableText}> {quote.quote_status} </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography sx={tableText}> {quote.quote_created_date} </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography sx={tableText}> {quote.quote_pm_notes} </Typography>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-    
+                    <Table sx={{padding: "0px"}}>
+                        {maintenanceQuotesForItem.length > 0 ? (
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableText}> Business ID</Typography>
+                                    </TableCell>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableText}> Quote Amount </Typography>
+                                    </TableCell>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableText}> Quote Status </Typography>
+                                    </TableCell>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableText}> Quote Date </Typography>
+                                    </TableCell>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableText}> Quote Notes </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                        ) : null}
+                        {maintenanceQuotesForItem.map((quote, index) => (
+                            <TableRow key={index}>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.quote_business_id} </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.quote_total_estimate ? quote.quote_total_estimate : "Not Provided"} </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.quote_status} </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.quote_created_date} </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.quote_pm_notes} </Typography>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </Table>
                     {maintenanceQuotesForItem.length === 0 ? <Typography sx={tableText}> No quotes have been submitted </Typography> : null}
                 </Grid>
             )
@@ -152,7 +166,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
     } else{
         return (
             <Grid item xs={12}>
-                <Typography sx={{color: "#FFFFFF", fontWeight: 800, fontSize: "22px"}}>Quotes Table</Typography>
+                <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
                 <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
                 <Typography sx={tableText}> No quotes have been requested yet. </Typography>
             </Grid>
