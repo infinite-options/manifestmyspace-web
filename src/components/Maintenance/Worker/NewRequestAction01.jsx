@@ -22,11 +22,13 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
+import RequestMoreInfo from "../Worker/RequestMoreInfo";
 
 
 
 export default function QuotesRequestedAction01({maintenanceItem}){
     const navigate = useNavigate();
+    const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
 
     console.log("NewRequestAction", maintenanceItem)
 
@@ -34,17 +36,6 @@ export default function QuotesRequestedAction01({maintenanceItem}){
     if(maintenanceItem.quote_services_expenses){
         expense = maintenanceItem.quote_services_expenses[0];
     }
-
-   // let notes = 
-    // function handleNavigateToQuotesRequested(){
-
-    //     console.log("NewRequestAction", maintenanceItem)
-    //     navigate("/quoteRequest", {
-    //         state:{
-    //             maintenanceItem
-    //         }
-    //     });
-    // }
 
     function declineQuote(id){
 
@@ -114,13 +105,13 @@ export default function QuotesRequestedAction01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-//                        onClick={() => handleDecline(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => setShowRequestMoreInfo(true)}
                     >   
-                       
-                        <Typography sx={{color: "#3D5CAC",  fontSize:theme.typography.smallFont}}>
+                       <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
                             Request more info
                         </Typography>
                     </Button>
+                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                 </Grid> 
                 <Grid item xs={4} sx={{
                     alignItems: "center",

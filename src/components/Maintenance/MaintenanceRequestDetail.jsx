@@ -34,6 +34,7 @@ import RescheduleMaintenance from "./Manager/RescheduleMaintenance";
 import CompleteMaintenance from "./Manager/CompleteMaintenance";
 import PaidMaintenance from "./Manager/PaidMaintenance";
 import { useUser } from "../../contexts/UserContext";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 export function CustomTabPanel(props) {
@@ -74,8 +75,9 @@ export function MaintenanceRequestDetail(){
     const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
     let navigate = useNavigate();
     let profileId = getProfileId();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [fromProperty, setFromProperty] = useState(location.state.fromProperty || false);
+    const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
@@ -100,16 +102,7 @@ export function MaintenanceRequestDetail(){
         }
     }
     let [areTabsGrey, setAreTabsGrey]= useState([0,0,0,0,0,0]);
-    /*
-        let [areTabsGrey, setAreTabsGrey]= useState([
-        allData['NEW REQUEST'].length,
-        allData['QUOTES REQUESTED'].length,
-        allData['QUOTES ACCEPTED'].length,
-        allData['QUOTES SCHEDULED'].length,
-        allData['COMPLETED'].length,
-        allData['PAID'].length,
-    ].map(i=> i>0? 1: 0));
-    */
+
     let [tabs, setTabs]=useState({})
     function greyOutTab(key, maintenanceData, color){
         let greyColor = "#D9D9D9"
@@ -164,7 +157,7 @@ export function MaintenanceRequestDetail(){
             allData,
             filteredQuotes,
         })
-        let j=colorStatus.map((item, index) => {
+        let j = colorStatus.map((item, index) => {
             let key= item.mapping
             let isGrey= allData[key].length > 0 ? 0 : 1;  
             let temp= areTabsGrey;
@@ -179,7 +172,7 @@ export function MaintenanceRequestDetail(){
 
 
     useEffect(() => {
-        const quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
+        var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
         quotesFilteredById.sort((a, b) => { 
             if(a.quote_status === "SENT"){
                 return -1
@@ -189,8 +182,23 @@ export function MaintenanceRequestDetail(){
                 return 0
             }
         })
-        setFilteredQuotes(quotesFilteredById)
-    }, [maintenanceRequestIndex])
+        // deduplicate these if they come from the same buiness id
+
+        const uniqueQuotes = [];
+        const uniqueKeys = new Set();
+
+        quotesFilteredById.forEach((quote, index) => {
+            let key = quote.quote_business_id + quote.maintenance_quote_uid + quote.quote_maintenance_request_id
+            if (!uniqueKeys.has(key)) {
+                uniqueKeys.add(key);
+                uniqueQuotes.push(quote);
+            }
+        });
+
+        // if quote_business_id, maintenance_quote_uid, and quote_maintenance_request_id
+
+        setFilteredQuotes(uniqueQuotes)
+    }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus])
 
     useEffect(() => {
         const getMaintenanceItemQuotes = async () => {
@@ -376,7 +384,11 @@ export function MaintenanceRequestDetail(){
                                                     padding: '0px',
                                                 }}
                                                 label={
-                                                    <Typography sx={{color: theme.typography.primary.grey, fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
+                                                    <Typography sx={{
+                                                        color: theme.typography.primary.grey, 
+                                                        fontWeight: theme.typography.secondary.fontWeight, 
+                                                        fontSize: isMobile ? 8 : theme.typography.smallFont,
+                                                    }}>
                                                         {title}
                                                     </Typography>
                                                 }
@@ -389,6 +401,8 @@ export function MaintenanceRequestDetail(){
                                 <div key={index}>
                                     <CustomTabPanel key={index} value={value} index={index} style={{
                                         backgroundColor: item.color,
+                                        borderBottomRightRadius: "10px",
+                                        borderBottomLeftRadius: "10px",
                                     }}>
                                         <Grid
                                             sx={{

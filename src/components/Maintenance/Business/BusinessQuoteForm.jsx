@@ -34,6 +34,8 @@ import { Select } from "@material-ui/core";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import ImageCarousel from "../../ImageCarousel";
+import dataURItoBlob from '../../utils/dataURItoBlob';
 
 function CostPartsTable({parts, setParts}){
 
@@ -166,6 +168,8 @@ export default function BusinessQuoteForm({acceptBool}){
     const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState('');
     const [jobType, setJobType] = useState("");
+    const [selectedImageList, setSelectedImageList] = useState([])
+
 
     const [partsObject, setPartsObject] = useState([{
             part: "",
@@ -331,6 +335,25 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_created_date", formatDateToCustomString())
                 formData.append("quote_earliest_availability", convertToDateTime(availabilityDate, availabilityTime))
 
+                for (let i = 0; i < selectedImageList.length; i++) {
+                    try {
+                        let key = i === 0 ? "img_cover" : `img_${i-1}`;
+        
+                        if(selectedImageList[i]?.image?.startsWith("data:image")){
+                            const imageBlob = dataURItoBlob(selectedImageList[i].image);
+                            formData.append(key, imageBlob)
+                        } else {
+                            formData.append(key, selectedImageList[i])
+                        }
+                    } catch (error) {
+                        console.log("Error uploading images", error)
+                    }
+                }
+        
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);    
+                }
+
             } else if (status === "REFUSED"){
                 formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
                 formData.append("quote_maintenance_request_id", maintenanceItem?.quote_maintenance_request_id); // 800-xxx
@@ -380,7 +403,7 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
     useEffect(() => {
-        let imageArray = JSON.parse(maintenanceItem?.quote_maintenance_images)
+        let imageArray = JSON.parse(maintenanceItem?.maintenance_images) // quote_maintenance_images not returning anything
         setDisplayImages(imageArray)
     }, [])
 
@@ -439,17 +462,17 @@ export default function BusinessQuoteForm({acceptBool}){
                                 </Typography>
                             </Button>
                         </Box>
-                        <Box position="absolute" right={10}>
+                        {/* <Box position="absolute" right={10}>
                             <Button onClick={() => navigateToAddMaintenanceItem()}>
                                 <ArrowForwardIcon sx={{color: "#3D5CAC", fontSize: "30px", margin:'5px'}}/>
                             </Button>
-                        </Box>
+                        </Box> */}
                     </Stack>
                             <Card
                                 sx={{
                                     backgroundColor: "#FFFFFF",
                                     borderRadius: "10px",
-                                    width: "85%",
+                                    width: "90%",
                                     height: "100%",
                                     padding: "10px",
                                     margin: "10px",
@@ -457,9 +480,6 @@ export default function BusinessQuoteForm({acceptBool}){
                                     minWidth: "300px"
                                 }}>
                                 <Grid container
-                                    // alignContent="center"
-                                    // justifyContent="center"
-                                    // alignItems="center"
                                     direction="column"
                                 >
                                     <Grid item xs={12}>
@@ -469,24 +489,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                             </Typography>
                                         </Grid>
                                     </Grid>
+                                    <ImageCarousel images={displayImages}/>
                                     <Grid item xs={12}>
                                         <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                            {numImages() > 0 ? 
-                                                (
-                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
-                                                    displayImages.map((image, index) => (
-                                                        <Grid item key={index} sx={{paddingLeft: "0px", paddingTop: "0px"}}>
-                                                            <img 
-                                                                src={image} 
-                                                                alt={`Image ${index}`} 
-                                                                style={{ width: '50px', height: '50px' }} 
-                                                            />
-                                                        </Grid>
-                                                    ))
-                                                    : 
-                                                    null
-                                                )
-                                            : null }
                                             <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
                                                 { numImages() > 0 ? numImages() + " Images" : "No Images" }
                                             </Typography>
@@ -668,6 +673,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         Add Document
                                                     </Typography>
                                                 </Button>
+                                            </Grid>
+                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                                 <Button
