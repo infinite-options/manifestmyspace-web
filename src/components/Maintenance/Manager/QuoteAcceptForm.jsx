@@ -61,7 +61,7 @@ export default function QuoteAcceptForm(){
 
     useEffect(() => {
         const currentQuote = maintenanceQuotes[currentQuoteIndex];
-        // console.log("Viewing currentquote:", currentQuote)
+        console.log("Viewing currentquote:", currentQuote)
         if(currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
             const parseServicesExpenses = (expenses) => {
                 let servicesObject = JSON.parse(expenses)
@@ -114,15 +114,15 @@ export default function QuoteAcceptForm(){
     }
 
 
-    const handleSubmit = () => {
-        console.log("handleSubmit")
+    const handleSubmit = (quoteStatusParam) => {
+        console.log("handleSubmit", quoteStatusParam)
         
-        const changeMaintenanceQuoteStatus = async () => {
+        const changeMaintenanceQuoteStatus = async (quoteStatusParam) => {
             setShowSpinner(true);
             var formData = new FormData();
 
             formData.append("maintenance_quote_uid", maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid);
-            formData.append("quote_status", "ACCEPTED");
+            formData.append("quote_status", quoteStatusParam);
 
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
@@ -134,7 +134,7 @@ export default function QuoteAcceptForm(){
                 if (response.status === 200) {
                     console.log("success")
                     // navigate("/maintenance")
-                    navigate(maintenanceRoutingBasedOnSelectedRole())
+                    navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                 }
             } catch (error){
                 console.log("error", error)
@@ -142,7 +142,7 @@ export default function QuoteAcceptForm(){
             setShowSpinner(false);
         }
 
-        changeMaintenanceQuoteStatus()
+        changeMaintenanceQuoteStatus(quoteStatusParam)
     }
 
     function displayQuoteDetails(quote_expenses){
@@ -362,7 +362,7 @@ export default function QuoteAcceptForm(){
                                         display: 'flex',
                                         width: "100%",
                                     }}
-                                    onClick={() => handleSubmit()}
+                                    onClick={() => handleSubmit("ACCEPTED")}
                                     >
                                     <Typography sx={{
                                         color: "#160449",

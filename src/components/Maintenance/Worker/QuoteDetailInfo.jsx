@@ -147,8 +147,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
     // console.log(maintenanceItem.quote_services_expenses)
     const costData = JSON.parse(maintenanceItem?.quote_services_expenses); //failing here in some cases
 
-    const [parts, setParts] = useState(costData?.parts || [{hours: 0, rate: 0, description: ""}]);
-    const [labor, setLabor] = useState(costData?.labor || [{part: "", cost: 0, quantity: ""}]);
+    const [parts, setParts] = useState([]);
+    const [labor, setLabor] = useState([]);
 
     const [estimatedCost, setEstimatedCost] = useState(0);
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
@@ -170,6 +170,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
             setEstimatedCost(servicesObject?.total_estimate + partsCost)
         }
+        setParts(costData?.parts || [{hours: 0, rate: 0, description: ""}])
+        setLabor(costData?.labor || [{part: "", cost: 0, quantity: ""}])
         try{
             parseServicesExpenses(maintenanceItem?.quote_services_expenses)
             let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
@@ -198,8 +200,26 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     Maintenance Quote Images
                 </Typography>
             </Grid>
+            <Grid item xs={12}>
+                {quoteImages.length > 0 ? 
+                    (
+                        Array.isArray(quoteImages) && quoteImages.length > 0 ? 
+                        quoteImages.map((image, index) => (
+                            <Grid item key={index}>
+                                <img 
+                                    src={image} 
+                                    alt={`Image ${index}`} 
+                                    style={{ width: '125px', height: '125px' }} 
+                                />
+                            </Grid>
+                        ))
+                        : 
+                        null
+                    )
+                : null }
+            </Grid>
         </Grid>
-         <Grid container spacing={2} justifyContent="center" direction="row">
+         {/* <Grid container spacing={2} justifyContent="center" direction="row">
         {quoteImages.length > 0 ? 
                 (
                     Array.isArray(quoteImages) && quoteImages.length > 0 ? 
@@ -216,7 +236,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     null
                 )
             : null }
-        </Grid>
+        </Grid> */}
         <Grid container direction="column" rowSpacing={2}>
             <Grid item xs={12}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>

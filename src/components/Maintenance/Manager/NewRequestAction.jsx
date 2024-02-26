@@ -41,7 +41,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [message, setMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
 
-    console.log("maintenanceItem NewRequestAction", maintenanceItem)
+    // console.log("maintenanceItem NewRequestAction", maintenanceItem)
 
     function handleNavigateToQuotesRequested(){
         navigate("/quoteRequest", {

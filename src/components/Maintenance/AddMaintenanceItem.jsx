@@ -196,6 +196,7 @@ export default function AddMaintenanceItem(){
         formData.append("maintenance_request_type", issue);
         formData.append("maintenance_request_created_by", getProfileId());  // problem is here it was 600-000003, changed it 600-000012
         formData.append("maintenance_priority", priority);
+        formData.append("maintenance_estimated_cost", cost)
         formData.append("maintenance_can_reschedule", 1);
         formData.append("maintenance_assigned_business", null);
         formData.append("maintenance_assigned_worker", null);
@@ -251,7 +252,8 @@ export default function AddMaintenanceItem(){
         setCost('')
         setTitle('')
         setDescription('')
-        navigate(maintenanceRoutingBasedOnSelectedRole())
+        console.log("[DEBUG] rounting to /<role>Maintenance with state refersh: true")
+        navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
     }
 
 
@@ -441,6 +443,9 @@ export default function AddMaintenanceItem(){
                                                 borderLeftColor: "white !important", // Set the left border color on hover
                                                 borderLeftWidth: "5px !important",   // Ensure the left border width is 5px on hover
                                             },
+                                            '& .MuiToggleButtonGroup-grouped:nth-of-type(2).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type': {
+                                                borderLeftColor: 'transparent !important',
+                                            },
                                             // padding: "10px",
                                             display: "flex",
                                         }}
@@ -498,7 +503,13 @@ export default function AddMaintenanceItem(){
                                                     borderLeftWidth: "5px !important",
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
-                                                    borderLeftColor: 'white',
+                                                    borderLeftColor: toggleAlignment === "Medium" ? 'white' : theme.palette.priority.high,
+                                                },
+                                                // '&.Mui-selected + .MuiToggleButton-root': {
+                                                //     borderLeftColor: toggleAlignment === "Medium" ? 'white' : theme.palette.priority.high,
+                                                // },
+                                                '&.selected + .MuiToggleButton-root': {
+                                                    borderLeftColor: 'transparent',
                                                 },
                                             }}
                                             onClick={() => handlePriorityChange("Medium")}

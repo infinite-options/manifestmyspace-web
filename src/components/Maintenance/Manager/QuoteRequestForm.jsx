@@ -150,7 +150,7 @@ export default function QuoteRequestForm(){
                 if (response.status === 200) {
                     console.log("success");
                     changeMaintenanceRequestStatus();
-                    navigate(maintenanceRoutingBasedOnSelectedRole());
+                    navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}});
                 } else {
                     console.error(`Request failed with status: ${response.status}`);
                 }
@@ -355,7 +355,7 @@ export default function QuoteRequestForm(){
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            Estimated Cost: <b>{maintenanceItem.maintenance_desc}</b>
+                                            Estimated Cost: <b>${maintenanceItem.maintenance_estimated_cost}</b>
                                         </Typography>
                                     </Grid>
                             </Card>

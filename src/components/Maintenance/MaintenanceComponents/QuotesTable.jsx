@@ -46,9 +46,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableHeader}> Date </Typography>
                                 </TableCell>
-                                <TableCell sx={tableCell}>
+                                {/* <TableCell sx={tableCell}>
                                     <Typography sx={tableHeader}> Notes </Typography>
-                                </TableCell>
+                                </TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableRow>
@@ -64,9 +64,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_created_date} </Typography>
                             </TableCell>
-                            <TableCell sx={tableCell}>
+                            {/* <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_notes} </Typography>
-                            </TableCell>
+                            </TableCell> */}
                         </TableRow>
                     </Table>
                         <Accordion
@@ -99,9 +99,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                             <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_created_date} </Typography>
                                             </TableCell>
-                                            <TableCell sx={tableCell}>
+                                            {/* <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_notes ? quote.quote_notes: "No notes provided"} </Typography>
-                                            </TableCell>
+                                            </TableCell> */}
                                         </TableRow> 
                                     ))}
                                 </Table>
@@ -132,9 +132,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                     <TableCell sx={tableCell}>
                                         <Typography sx={tableText}> Date </Typography>
                                     </TableCell>
-                                    <TableCell sx={tableCell}>
+                                    {/* <TableCell sx={tableCell}>
                                         <Typography sx={tableText}> Notes </Typography>
-                                    </TableCell>
+                                    </TableCell> */}
                                 </TableRow>
                             </TableHead>
                         ) : null}
@@ -152,9 +152,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableText}> {quote.quote_created_date} </Typography>
                                 </TableCell>
-                                <TableCell sx={tableCell}>
+                                {/* <TableCell sx={tableCell}>
                                     <Typography sx={tableText}> {quote.quote_pm_notes} </Typography>
-                                </TableCell>
+                                </TableCell> */}
                             </TableRow>
                         ))}
                     </Table>
