@@ -118,7 +118,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     const role = roleName()
     if (role === "Property Manager"){
       return "/managerMaintenance"
-    } else if (role === "Property Owner"){ // when this is called 
+    } else if (role === "Property Owner"){ 
       return "/ownerMaintenance"
     } else if (role === "Maintenance"){
       return "/workerMaintenance"

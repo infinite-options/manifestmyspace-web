@@ -81,6 +81,7 @@ export default function QuoteRequestForm(){
         }); 
     }
 
+
     const handleSubmit = () => {
         console.log("handleSubmit")
         console.log("need to implement navigation")
@@ -102,10 +103,10 @@ export default function QuoteRequestForm(){
         }
 
         let maintenanceContactIds = [];
-            for (let contact of maintenanceContacts) {
-                console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
-                maintenanceContactIds.push(contact.business_uid);
-            }
+        for (let contact of maintenanceContacts) {
+            console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
+            maintenanceContactIds.push(contact.business_uid);
+        }
 
 
         const submitQuoteRequest = async (contact) => {
@@ -114,11 +115,13 @@ export default function QuoteRequestForm(){
         
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid);
             formData.append("quote_pm_notes", additionalInfo);
+            formData.append("quote_maintenance_contacts", [contact]);
+            // formData.append("quote_maintenance_images", additionalInfo);
         
             for (let i = 0; i < selectedImageList.length; i++) {
                 try {
                     let key = i === 0 ? "img_cover" : `img_${i-1}`;
-    
+                    console.log("uploading images, image key: ", key)
                     if(selectedImageList[i]?.image?.startsWith("data:image")){
                         const imageBlob = dataURItoBlob(selectedImageList[i]);
                         formData.append(key, imageBlob)
@@ -129,10 +132,10 @@ export default function QuoteRequestForm(){
                     console.log("Error uploading images", error)
                 }
             }
-        
-            
-        
-            formData.append("quote_maintenance_contacts", [contact]);
+
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);    
+            }
         
             try {
                 console.log("right before call");
@@ -212,6 +215,10 @@ export default function QuoteRequestForm(){
         setDisplayImages(imageArray)
 
     }, [])
+
+    useEffect(() => {
+        console.log("selectedImageList", selectedImageList)
+    }, [selectedImageList])
 
     return (
         <Box

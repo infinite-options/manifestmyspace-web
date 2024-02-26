@@ -35,6 +35,7 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "../../ImageCarousel";
+import dataURItoBlob from '../../utils/dataURItoBlob';
 
 function CostPartsTable({parts, setParts}){
 
@@ -333,6 +334,25 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_total_estimate", String(computeTotalEstimate()));
                 formData.append("quote_created_date", formatDateToCustomString())
                 formData.append("quote_earliest_availability", convertToDateTime(availabilityDate, availabilityTime))
+
+                for (let i = 0; i < selectedImageList.length; i++) {
+                    try {
+                        let key = i === 0 ? "img_cover" : `img_${i-1}`;
+        
+                        if(selectedImageList[i]?.image?.startsWith("data:image")){
+                            const imageBlob = dataURItoBlob(selectedImageList[i].image);
+                            formData.append(key, imageBlob)
+                        } else {
+                            formData.append(key, selectedImageList[i])
+                        }
+                    } catch (error) {
+                        console.log("Error uploading images", error)
+                    }
+                }
+        
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);    
+                }
 
             } else if (status === "REFUSED"){
                 formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx

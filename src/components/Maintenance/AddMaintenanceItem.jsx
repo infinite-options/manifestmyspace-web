@@ -348,6 +348,7 @@ export default function AddMaintenanceItem(){
                                                     },
                                                 },
                                             }}
+                                            value={property}
                                         >
                                             {properties.map((property) => (
                                                 <MenuItem key={property.property_uid} value={property.property_uid}>{property.property_address} {property?.property_unit}</MenuItem>
@@ -371,7 +372,7 @@ export default function AddMaintenanceItem(){
                                         size="small" 
                                     >
                                         {/* <InputLabel>Select Issue Category</InputLabel> */}
-                                        <Select onChange={handleIssueChange}>
+                                        <Select onChange={handleIssueChange} value={issue}>
                                             <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
                                             <MenuItem value={"Electrical"}>Electrical</MenuItem>
                                             <MenuItem value={"Appliance"}>Appliance</MenuItem>
@@ -433,14 +434,15 @@ export default function AddMaintenanceItem(){
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
-                                            '& .MuiToggleButton-root.Mui-selected': {
-                                                // backgroundColor: 'transparent', // Selected background color
-                                                color: 'white', // Selected text color
+                                            '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': {
+                                                borderLeftWidth: "5px !important", // Match the left border width of the first button
                                             },
-                                            '&.Mui-selected + .MuiToggleButton-root': {
-                                                // borderLeftColor: 'white',
+                                            '& .MuiToggleButtonGroup-grouped:not(:first-of-type):hover': {
+                                                borderLeftColor: "white !important", // Set the left border color on hover
+                                                borderLeftWidth: "5px !important",   // Ensure the left border width is 5px on hover
                                             },
-                                            padding: "10px",
+                                            // padding: "10px",
+                                            display: "flex",
                                         }}
                                     >
                                         <ToggleButton 
@@ -452,22 +454,24 @@ export default function AddMaintenanceItem(){
                                                 borderRadius: '20px',
                                                 color: 'white',
                                                 marginRight: "10px",
-                                                borderWidth: "3px",
+                                                borderWidth: "5px",
                                                 borderColor: theme.palette.priority.low,
                                                 '&.Mui-selected': {
                                                     borderColor: "white",
                                                     color: "white",
-                                                    backgroundColor: theme.palette.priority.low,
-                                                    borderWidth: "3px"  // Ensure consistent border width
+                                                    backgroundColor: darken(theme.palette.priority.low, 0.3),
+                                                    borderWidth: "5px"  // Ensure consistent border width
                                                 },
                                                 '&:hover': {
                                                     borderColor: "white",
-                                                    backgroundColor: darken(theme.palette.priority.low, 0.3),
+                                                    backgroundColor: darken(theme.palette.priority.low, 0.1),
+                                                    borderWidth: "5px",  // Ensure consistent border width
+                                                    borderLeftWidth: "5px !important",
                                                 },
                                             }}
                                             onClick={() => handlePriorityChange("Low")}
-                                            isSelected={toggleAlignment === "Low"}
-                                            >
+                                            selected={toggleAlignment === "Low"}
+                                        >
                                             Low
                                         </ToggleButton>
                                         <ToggleButton 
@@ -479,28 +483,26 @@ export default function AddMaintenanceItem(){
                                                 borderRadius: '20px',
                                                 color: 'white',
                                                 marginRight: "10px",
-                                                borderWidth: "3px",
+                                                borderWidth: "5px",
                                                 borderColor: theme.palette.priority.medium,
                                                 '&.Mui-selected': {
                                                     borderColor: "white",
                                                     color: "white",
-                                                    backgroundColor: theme.palette.priority.medium,
-                                                    borderWidth: "3px",  // Ensure consistent border width
-                                                    // borderLeftWidth: "3px",
+                                                    backgroundColor: darken(theme.palette.priority.medium, 0.3),
+                                                    borderWidth: "5px",  // Ensure consistent border width
                                                 },
                                                 '&:hover': {
-                                                    // borderLeftColor: 'white',
-                                                    // borderLeftWidth: "3px",
+                                                    borderWidth: "5px",  // Ensure consistent border width
                                                     borderColor: "white",
-                                                    backgroundColor: darken(theme.palette.priority.medium, 0.3),
+                                                    backgroundColor: darken(theme.palette.priority.medium, 0.1),
+                                                    borderLeftWidth: "5px !important",
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',
-                                                    // borderRightWidth: "3px",
                                                 },
                                             }}
                                             onClick={() => handlePriorityChange("Medium")}
-                                            isSelected={toggleAlignment === "Medium"}
+                                            selected={toggleAlignment === "Medium"}
                                             >
                                             Medium
                                         </ToggleButton>
@@ -513,28 +515,27 @@ export default function AddMaintenanceItem(){
                                                 borderRadius: '20px',
                                                 color: 'white',
                                                 marginRight: "10px",
-                                                borderWidth: "3px",
+                                                borderWidth: "5px",
                                                 borderColor: theme.palette.priority.high,
                                                 '&.Mui-selected': {
                                                     borderColor: "white",
                                                     color: "white",
-                                                    backgroundColor: theme.palette.priority.high,
-                                                    borderWidth: "3px",  // Ensure consistent border width
-                                                    borderLeftWidth: "3px",
+                                                    backgroundColor: darken(theme.palette.priority.high, 0.3),
+                                                    borderWidth: "5px",  // Ensure consistent border width
                                                 },
                                                 '&:hover': {
                                                     borderLeftColor: 'white',
-                                                    // borderLeftWidth: "3px",
+                                                    borderWidth: "5px",  // Ensure consistent border width
                                                     borderColor: "white",
-                                                    backgroundColor: darken(theme.palette.priority.high, 0.3),
+                                                    backgroundColor: darken(theme.palette.priority.high, 0.1),
+                                                    borderLeftWidth: "5px !important",
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
-                                                    borderLeftColor: 'white',
-                                                    
+                                                    borderLeftColor: 'white',                                                    
                                                 },
                                             }}
                                             onClick={() => handlePriorityChange("High")}
-                                            isSelected={toggleAlignment === "High"}
+                                            selected={toggleAlignment === "High"}
                                             >
                                             High
                                         </ToggleButton>
@@ -565,7 +566,7 @@ export default function AddMaintenanceItem(){
                                         Already Completed?
                                     </Typography>
                                     <FormControl component="fieldset">
-                                        <RadioGroup column onChange={handleCompletedChange}>
+                                        <RadioGroup column onChange={handleCompletedChange} >
                                             <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                             <FormControlLabel value="no" control={<Radio />} label="No" />
                                         </RadioGroup>
@@ -580,7 +581,7 @@ export default function AddMaintenanceItem(){
                                 {/* Submit Button */}
                                 <Grid item xs={12}>
                                     <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC"}}>
-                                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                                 Add Maintenance
                                         </Typography>
                                         <input type="file" hidden/>

@@ -22,10 +22,7 @@ import documentIcon from "./../Business/Subtract.png"
 
 function LaborTableReadOnly({labor, setLabor}){
 
-
-    console.log("labor in LaborTable", labor)
     const calculateTotal = (hours, cost) => {
-        console.log("calculateTotal", hours, cost)
         return parseInt(hours) * parseInt(cost)
     }
 
@@ -38,17 +35,17 @@ function LaborTableReadOnly({labor, setLabor}){
                 </Typography>
             </Grid> */}
             <Grid item xs={4}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     # of Hours
                 </Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Charge / Hour
                 </Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Total
                 </Typography>
             </Grid>
@@ -92,22 +89,22 @@ function PartsTableReadOnly({parts, setParts}){
         <>
         <Grid container sx={{paddingTop: "10px"}}>
             <Grid item xs={4}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Parts
                 </Typography>
             </Grid>
             <Grid item xs={3}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Cost
                 </Typography>
             </Grid>
             <Grid item xs={1}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Qty
                 </Typography>
             </Grid>
             <Grid item xs={4}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Total
                 </Typography>
             </Grid>
@@ -147,7 +144,7 @@ function PartsTableReadOnly({parts, setParts}){
 }
 
 export default function QuoteDetailInfo({maintenanceItem}){
-    console.log(maintenanceItem.quote_services_expenses)
+    // console.log(maintenanceItem.quote_services_expenses)
     const costData = JSON.parse(maintenanceItem?.quote_services_expenses); //failing here in some cases
 
     const [parts, setParts] = useState(costData?.parts || [{hours: 0, rate: 0, description: ""}]);
@@ -158,16 +155,14 @@ export default function QuoteDetailInfo({maintenanceItem}){
     const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState("");
     const [earliestAvailability, setEarliestAvailability] = useState("");
+    const [quoteImages, setQuoteImages] = useState([])
 
     useEffect(() => {
-        console.log("QuotesSubmittedAction01", maintenanceItem)
-
         const parseServicesExpenses = (expenses) => {
             let servicesObject = JSON.parse(expenses)
-            console.log(servicesObject)
             var partsCost = 0
             for (const item in servicesObject?.parts){
-                partsCost += parseInt(servicesObject.parts[item].cost)
+                partsCost += parseInt(servicesObject.parts[item].cost) * parseInt(servicesObject.parts[item].quantity)
             }
 
             setEstimatedLaborCost(servicesObject?.total_estimate)
@@ -177,27 +172,54 @@ export default function QuoteDetailInfo({maintenanceItem}){
         }
         try{
             parseServicesExpenses(maintenanceItem?.quote_services_expenses)
+            let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
+            setQuoteImages(quoteImageArray);
             setEstimatedTime(maintenanceItem.quote_event_type)
             setEarliestAvailability(maintenanceItem.quote_earliest_availability)
         } catch (error){
             console.log("error", error)
+            setQuoteImages([]);
         }
 
     }, [maintenanceItem])
 
     return (
         <Stack
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        sx={{
-            paddingBottom: "20px",
-        }}
-    >
-
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+                paddingBottom: "20px",
+            }}
+        >   
         <Grid container direction="column" rowSpacing={2}>
             <Grid item xs={12}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                    Maintenance Quote Images
+                </Typography>
+            </Grid>
+        </Grid>
+         <Grid container spacing={2} justifyContent="center" direction="row">
+        {quoteImages.length > 0 ? 
+                (
+                    Array.isArray(quoteImages) && quoteImages.length > 0 ? 
+                    quoteImages.map((image, index) => (
+                        <Grid item key={index}>
+                            <img 
+                                src={image} 
+                                alt={`Image ${index}`} 
+                                style={{ width: '125px', height: '125px' }} 
+                            />
+                        </Grid>
+                    ))
+                    : 
+                    null
+                )
+            : null }
+        </Grid>
+        <Grid container direction="column" rowSpacing={2}>
+            <Grid item xs={12}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>
                     Estimate
                 </Typography>
             </Grid>
@@ -209,19 +231,17 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
         <Grid container direction="column" rowSpacing={2} paddingTop={"20px"}>
             <Grid item xs={12}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "18px"}}>
                     Quote Total: ${estimatedCost}
                 </Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     Estimated Time: {maintenanceItem.quote_event_type}
                 </Typography>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     Earliest Availability: {maintenanceItem.quote_earliest_availability}
                 </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{paddingLeft: '0px'}}>
                 <Box 
                     display="flex" 
                     flexDirection="row" 
@@ -236,23 +256,23 @@ export default function QuoteDetailInfo({maintenanceItem}){
                         sx={{
                             color: theme.palette.text.primary,
                             fontWeight: theme.typography.medium.fontWeight,
-                            fontSize: theme.typography.pxToRem(14),  // Example size, adjust as needed
+                            fontSize: "18px",  // Example size, adjust as needed
                             fontFamily: 'Source Sans Pro',
-                            marginLeft: 2,  // Optionally add some spacing between the checkbox and the text
+                            // marginLeft: 2,  // Optionally add some spacing between the checkbox and the text
                         }}
                     >
                         Diagnostic fees included or extra
                     </Typography>
                 </Box>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                 <Button sx={{
                     color: "#3D5CAC",
                     textTransform: "none",
                     margin: "1px",
                 }}>
                     <img src={documentIcon} style={{width: '20px', height: '25px', margin:'0px', paddingRight: "15px"}}/>
-                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                         View Document
                     </Typography>
                 </Button>

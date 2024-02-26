@@ -30,7 +30,6 @@ import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
 
 export default function QuoteAcceptForm(){
 
-    console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -38,10 +37,11 @@ export default function QuoteAcceptForm(){
     const maintenanceItem = location.state.maintenanceItem;
     const navigationParams = location.state.navigateParams
     // const quotes = location.state.quotes
-    console.log("navigationParams", navigationParams)
+    // console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
+    const [quoteImages, setQuoteImages] = useState([])
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [maintenanceQuotes, setMaintenanceQuotes] = useState(location.state.quotes)
     const [showSpinner, setShowSpinner] = useState(false);
@@ -61,14 +61,10 @@ export default function QuoteAcceptForm(){
 
     useEffect(() => {
         const currentQuote = maintenanceQuotes[currentQuoteIndex];
-        console.log("currentQuote", currentQuote)
+        // console.log("Viewing currentquote:", currentQuote)
         if(currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
             const parseServicesExpenses = (expenses) => {
                 let servicesObject = JSON.parse(expenses)
-                console.log(servicesObject)
-                // Object.keys(servicesObject).forEach(([key, value])=> {
-                //     console.log(key, value)
-                // })
                 var partsCost = 0
                 for (const item in servicesObject.parts){
                     partsCost += parseInt(servicesObject.parts[item].cost)
@@ -76,14 +72,7 @@ export default function QuoteAcceptForm(){
     
                 setEstimatedLaborCost(servicesObject.total_estimate)
                 setEstimatedPartsCost(partsCost)
-    
                 setEstimatedTotalCost(servicesObject.total_estimate + partsCost)
-    
-                // let total = 0;
-                // expenses.forEach(expense => {
-                //     total += expense.expense_cost
-                // })
-                // return total;
             }
             
             parseServicesExpenses(currentQuote.quote_services_expenses)
@@ -94,24 +83,24 @@ export default function QuoteAcceptForm(){
     }, [currentQuoteIndex, maintenanceQuotes])
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
+        // console.log("handleBackButton")
         let maintenance_request_index = navigationParams.maintenanceRequestIndex
         let status = navigationParams.status
         let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
         let allMaintenanceData = navigationParams.allData
         let maintenanceQuotes = navigationParams.maintenanceQuotes
 
-        console.log("-----navigationParams-----")
-        console.log("maintenance_request_index", maintenance_request_index)
-        console.log("status", status)
-        console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        console.log("allMaintenanceData", allMaintenanceData)
-        console.log("--------------------------")
+        // console.log("-----navigationParams-----")
+        // console.log("maintenance_request_index", maintenance_request_index)
+        // console.log("status", status)
+        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+        // console.log("allMaintenanceData", allMaintenanceData)
+        // console.log("--------------------------")
 
         navigate("/maintenance/detail", {
             state: {
@@ -173,8 +162,17 @@ export default function QuoteAcceptForm(){
     }
 
     useEffect(() => {
-        let imageArray = JSON.parse(maintenanceItem?.maintenance_images)
-        setDisplayImages(imageArray)
+        try {
+            let imageArray = JSON.parse(maintenanceItem?.maintenance_images || '[]');
+            let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
+            setDisplayImages(imageArray);
+            setQuoteImages(quoteImageArray);
+        } catch (error) {
+            console.error("Error parsing image arrays:", error);
+            // Handle the error as needed, e.g., set default values or show an error message
+            setDisplayImages([]);
+            setQuoteImages([]);
+        }
     }, [])
 
     return (
@@ -233,13 +231,6 @@ export default function QuoteAcceptForm(){
                         </Button>
                     </Box>
                 </Stack>
-                    {/* <Grid container spacing={3}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
-                        direction="column"
-                     >
-                        <Grid item xs={12}> */}
                 <Card
                     sx={{
                         backgroundColor: "#C06A6A",
@@ -354,9 +345,11 @@ export default function QuoteAcceptForm(){
                             <Box alignContent="center"
                                 justifyContent="center"
                                 alignItems="center">
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                {/* <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}> */}
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>
                                         Quote Sent from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                                 </Typography>
+                                
                             </Box>
                             <QuoteDetailInfo maintenanceItem={maintenanceQuotes[currentQuoteIndex]}/>
                             <Button

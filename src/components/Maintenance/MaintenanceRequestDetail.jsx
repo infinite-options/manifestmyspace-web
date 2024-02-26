@@ -157,7 +157,7 @@ export function MaintenanceRequestDetail(){
             allData,
             filteredQuotes,
         })
-        let j=colorStatus.map((item, index) => {
+        let j = colorStatus.map((item, index) => {
             let key= item.mapping
             let isGrey= allData[key].length > 0 ? 0 : 1;  
             let temp= areTabsGrey;

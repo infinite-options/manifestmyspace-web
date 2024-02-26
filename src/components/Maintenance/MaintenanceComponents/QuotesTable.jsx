@@ -35,19 +35,19 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={tableCell}>
-                                    <Typography sx={tableHeader}> Business ID</Typography>
+                                    <Typography sx={tableHeader}> ID </Typography>
                                 </TableCell>
                                 <TableCell sx={tableCell}>
-                                    <Typography sx={tableHeader}> Quote Amount </Typography>
+                                    <Typography sx={tableHeader}> Amount </Typography>
                                 </TableCell>
                                 <TableCell sx={tableCell}>
-                                    <Typography sx={tableHeader}> Quote Status </Typography>
+                                    <Typography sx={tableHeader}> Status </Typography>
                                 </TableCell>
                                 <TableCell sx={tableCell}>
-                                    <Typography sx={tableHeader}> Quote Date </Typography>
+                                    <Typography sx={tableHeader}> Date </Typography>
                                 </TableCell>
                                 <TableCell sx={tableCell}>
-                                    <Typography sx={tableHeader}> Quote Notes </Typography>
+                                    <Typography sx={tableHeader}> Notes </Typography>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -114,7 +114,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
         else {
             return (
                 <Grid item xs={12}>
-                    {console.log("Not Accepted Quotes Yet", maintenanceQuotesForItem)}
                      <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
                      <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
                     <Table sx={{padding: "0px"}}>
@@ -122,19 +121,19 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Business ID</Typography>
+                                        <Typography sx={tableText}> ID </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Quote Amount </Typography>
+                                        <Typography sx={tableText}> Amount </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Quote Status </Typography>
+                                        <Typography sx={tableText}> Status </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Quote Date </Typography>
+                                        <Typography sx={tableText}> Date </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Quote Notes </Typography>
+                                        <Typography sx={tableText}> Notes </Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
