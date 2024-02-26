@@ -339,7 +339,7 @@ export default function QuoteAcceptForm(){
                         </Button>
                     </Grid>
                 </Grid>
-                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT") ? (
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="CANCELLED") ? (
                         <Stack direction="column" display="flex" spacing={2} padding="20px">
                             <Box alignContent="center"
                                 justifyContent="center"
@@ -351,46 +351,59 @@ export default function QuoteAcceptForm(){
                                 
                             </Box>
                             <QuoteDetailInfo maintenanceItem={maintenanceQuotes[currentQuoteIndex]}/>
-                            <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        backgroundColor: "#9EAED6",
-                                        textTransform: "none",
-                                        borderRadius: "10px",
-                                        display: 'flex',
-                                        width: "100%",
-                                    }}
-                                    onClick={() => handleSubmit("ACCEPTED")}
-                                    >
-                                    <Typography sx={{
-                                        color: "#160449",
-                                        fontWeight: theme.typography.primary.fontWeight, 
-                                        fontSize: "14px"
-                                    }}>
-                                        Accept Quote
-                                    </Typography>
-                            </Button>
-                            <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        backgroundColor: "#CB8E8E",
-                                        textTransform: "none",
-                                        borderRadius: "10px",
-                                        display: 'flex',
-                                        width: "100%",
-                                    }}
-                                    onClick={() => handleSubmit("CANCELLED")}
-                                    >
-                                    <Typography sx={{
-                                        color: "#160449",
-                                        fontWeight: theme.typography.primary.fontWeight, 
-                                        fontSize: "14px"
-                                    }}>
-                                        Decline Quote
-                                    </Typography>
-                                </Button>
+                            {maintenanceQuotes[currentQuoteIndex]?.quote_status!=="CANCELLED" ? (
+                                <>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            backgroundColor: "#9EAED6",
+                                            textTransform: "none",
+                                            borderRadius: "10px",
+                                            display: 'flex',
+                                            width: "100%",
+                                        }}
+                                        onClick={() => handleSubmit("ACCEPTED")}
+                                        >
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px"
+                                        }}>
+                                            Accept Quote
+                                        </Typography>
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            backgroundColor: "#CB8E8E",
+                                            textTransform: "none",
+                                            borderRadius: "10px",
+                                            display: 'flex',
+                                            width: "100%",
+                                        }}
+                                        onClick={() => handleSubmit("CANCELLED")}
+                                        >
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px"
+                                        }}>
+                                            Decline Quote
+                                        </Typography>
+                                    </Button>
+                                </>) : (
+                                    <Box alignContent="center" justifyContent="center" alignItems="center">
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "20px"
+                                        }}>
+                                            Cancelled
+                                        </Typography>
+                                    </Box>
+                                )}
                         </Stack>
                     ): maintenanceQuotes[currentQuoteIndex]?.quote_status==="REQUESTED" ? (
                             <Grid container spacing={3}

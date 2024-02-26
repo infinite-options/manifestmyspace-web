@@ -37,7 +37,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
     const [estimateLaborTime, setEstimateLaborTime] = useState(0);
 
-    console.log("CompleteMaintenance01", maintenanceItem)
+    // console.log("CompleteMaintenance01", maintenanceItem)
 
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
@@ -52,7 +52,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
 
     async function handleCancel(id){
         let response = CancelTicket(id);
-        console.log("handleCancel", response)
+        // console.log("handleCancel", response)
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
@@ -64,13 +64,13 @@ export default function CompleteMaintenance01({maintenanceItem}){
     }
 
     function handleMarkPaid(id){
-        console.log("Mark Paid Not Implemented", id)
+        // console.log("Mark Paid Not Implemented", id)
         alert("Mark Paid Not Implemented")
     }
 
     async function handleComplete(id){
         let response = CompleteTicket(id);
-        console.log("handleComplete", response);
+        // console.log("handleComplete", response);
         if (response){
             console.log("Ticket Completed")
             alert("Ticket Completed")
@@ -99,7 +99,7 @@ export default function CompleteMaintenance01({maintenanceItem}){
 
     function computeTotalCost(estimate){
         let costObject = JSON.parse(estimate)
-        console.log(costObject)
+        // console.log(costObject)
         let laborTotal = 0;
         let partsTotal = 0;
         let laborTime = 0;

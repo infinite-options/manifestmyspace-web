@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom"
 export default function ManagerProfileLink(props){
     let business_name = props.maintenanceItem?.business_name || "Business Name Not Available";
     let navigate = useNavigate();
-    console.log("ManagerProfileLink business name", business_name)
 
     return (
         <Grid item xs={12} sx={{
