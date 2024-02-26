@@ -65,7 +65,7 @@ function getPast12MonthsCashflow(data, month, year) {
       currentMonth = months[months.indexOf(currentMonth) - 1];
     }
   }
-  // console.log(pastTwelveMonths)
+  console.log("Past 12 months: ", pastTwelveMonths);
 
   pastTwelveMonths.reverse();
 
@@ -106,6 +106,52 @@ function getNext12MonthsCashflow(data, month, year) {
   }
   // console.log(nextTwelveMonths)
   return nextTwelveMonths;
+}
+
+function getPast12MonthsExpectedCashflow(data, month, year) {
+  console.log("In getPast12MonthsExpectedCashflow: ", data, month, year);
+  var pastTwelveMonths = [];
+  let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  var currentMonth = month;
+  var currentYear = year;
+
+  // create a loop that goes back 12 months
+  for (var i = 0; i < 12; i++) {
+    // console.log(currentMonth, currentYear)
+
+    let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear);
+    let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
+    let currentMonthRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
+    let currentMonthExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
+
+    console.log("expectedMonthRevenue", expectedMonthRevenue);
+    console.log("expectedMonthExpense", expectedMonthExpense);
+    console.log("currentMonthRevenue", currentMonthRevenue);
+    console.log("currentMonthExpense", currentMonthExpense);
+
+    pastTwelveMonths.push({
+      month: currentMonth,
+      year: currentYear,
+      expected_cashflow: expectedMonthRevenue - expectedMonthExpense,
+      cashflow: currentMonthRevenue - currentMonthExpense,
+      monthYear: currentMonth.slice(0, 3) + " " + currentYear.slice(2, 4),
+      // "expected_revenue": expectedMonthRevenue,
+      // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
+    });
+    if (currentMonth === "January") {
+      currentMonth = "December";
+      currentYear = (parseInt(currentYear) - 1).toString();
+      // console.log(currentYear)
+    } else {
+      currentMonth = months[months.indexOf(currentMonth) - 1];
+    }
+  }
+  console.log("Past 12 months: ", pastTwelveMonths);
+
+  pastTwelveMonths.reverse();
+
+  return pastTwelveMonths;
 }
 
 function getRevenueByMonth(data) {
@@ -294,6 +340,7 @@ function getTotalExpenseByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedRevenueByMonthYear(data, month, year) {
+  console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let revenueItems = data.response_revenue_by_month.result.filter((item) => item.cf_month === month && item.cf_year === year);
   let totalRevenue = revenueItems.reduce((acc, item) => {
     return acc + parseFloat(item["sum(pur_amount_due)"] ? item["sum(pur_amount_due)"] : 0.0);
@@ -314,6 +361,7 @@ export {
   getTotalRevenueByType,
   getTotalExpenseByType,
   getPast12MonthsCashflow,
+  getPast12MonthsExpectedCashflow,
   revenueCashflowByMonth,
   getRevenueList,
   getExpenseList,

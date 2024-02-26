@@ -13,6 +13,7 @@ import {
   getTotalRevenueByMonthYear,
   getTotalExpenseByMonthYear,
   getPast12MonthsCashflow,
+  getPast12MonthsExpectedCashflow,
   getTotalExpectedRevenueByMonthYear,
   getTotalExpectedExpenseByMonthYear,
 } from "../../Cashflow/CashflowFetchData";
@@ -50,7 +51,9 @@ function CashflowWidget() {
         let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear);
         let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
 
-        let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
+        console.log("Before last 12 months call");
+        // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
+        let last12months = getPast12MonthsExpectedCashflow(data, currentMonth, currentYear);
 
         setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
         setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
@@ -111,13 +114,13 @@ function CashflowWidget() {
               </Typography>
             </Box>
             <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Revenue</Typography>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, ml: 4 }}> Revenue</Typography>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
                 ${totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
               </Typography>
             </Box>
             <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Expenses</Typography>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, ml: 4 }}> Expenses</Typography>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
                 ${totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00"}
               </Typography>
