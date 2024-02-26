@@ -61,7 +61,6 @@ export default function QuoteAcceptForm(){
 
     useEffect(() => {
         const currentQuote = maintenanceQuotes[currentQuoteIndex];
-        console.log("Viewing currentquote:", currentQuote)
         if(currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
             const parseServicesExpenses = (expenses) => {
                 let servicesObject = JSON.parse(expenses)

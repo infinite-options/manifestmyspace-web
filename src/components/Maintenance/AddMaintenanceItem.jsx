@@ -436,16 +436,19 @@ export default function AddMaintenanceItem(){
                                         aria-label="Priority"
                                         size="small"
                                         sx={{
-                                            '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': {
-                                                borderLeftWidth: "5px !important", // Match the left border width of the first button
-                                            },
-                                            '& .MuiToggleButtonGroup-grouped:not(:first-of-type):hover': {
-                                                borderLeftColor: "white !important", // Set the left border color on hover
-                                                borderLeftWidth: "5px !important",   // Ensure the left border width is 5px on hover
-                                            },
-                                            '& .MuiToggleButtonGroup-grouped:nth-of-type(2).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type': {
-                                                borderLeftColor: 'transparent !important',
-                                            },
+                                            // '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': {
+                                            //     borderLeftWidth: "5px !important", // Match the left border width of the first button
+                                            // },
+                                            // '& .MuiToggleButtonGroup-grouped:not(:first-of-type):hover': {
+                                            //     borderLeftColor: "white !important", // Set the left border color on hover
+                                            //     borderLeftWidth: "5px !important",   // Ensure the left border width is 5px on hover
+                                            // },
+                                            // '& .MuiToggleButtonGroup-grouped:nth-of-type(1).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type': {
+                                            //     borderLeftColor: 'transparent !important',
+                                            // },
+                                            // '& .MuiToggleButtonGroup-grouped:nth-of-type(1).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type:hover': {
+                                            //     borderLeftColor: 'transparent !important',
+                                            // },
                                             // padding: "10px",
                                             display: "flex",
                                         }}
@@ -465,13 +468,19 @@ export default function AddMaintenanceItem(){
                                                     borderColor: "white",
                                                     color: "white",
                                                     backgroundColor: darken(theme.palette.priority.low, 0.3),
-                                                    borderWidth: "5px"  // Ensure consistent border width
+                                                    borderWidth: "5px",  // Ensure consistent border width
+                                                    borderLeftWidth: "5px !important",
+                                                    borderLeftColor: 'white !important',
                                                 },
                                                 '&:hover': {
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.low, 0.1),
                                                     borderWidth: "5px",  // Ensure consistent border width
                                                     borderLeftWidth: "5px !important",
+                                                    borderLeftColor: 'white !important',
+                                                },
+                                                '&.Mui-selected + .MuiToggleButton-root': {
+                                                    borderLeftColor: 'white',                                                    
                                                 },
                                             }}
                                             onClick={() => handlePriorityChange("Low")}
@@ -495,21 +504,18 @@ export default function AddMaintenanceItem(){
                                                     color: "white",
                                                     backgroundColor: darken(theme.palette.priority.medium, 0.3),
                                                     borderWidth: "5px",  // Ensure consistent border width
+                                                    borderLeftWidth: "5px !important",
+                                                    borderLeftColor: 'white !important',
                                                 },
                                                 '&:hover': {
+                                                    borderLeftColor: 'white !important',
                                                     borderWidth: "5px",  // Ensure consistent border width
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.medium, 0.1),
                                                     borderLeftWidth: "5px !important",
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
-                                                    borderLeftColor: toggleAlignment === "Medium" ? 'white' : theme.palette.priority.high,
-                                                },
-                                                // '&.Mui-selected + .MuiToggleButton-root': {
-                                                //     borderLeftColor: toggleAlignment === "Medium" ? 'white' : theme.palette.priority.high,
-                                                // },
-                                                '&.selected + .MuiToggleButton-root': {
-                                                    borderLeftColor: 'transparent',
+                                                    borderLeftColor: 'white',                                                    
                                                 },
                                             }}
                                             onClick={() => handlePriorityChange("Medium")}
@@ -533,13 +539,17 @@ export default function AddMaintenanceItem(){
                                                     color: "white",
                                                     backgroundColor: darken(theme.palette.priority.high, 0.3),
                                                     borderWidth: "5px",  // Ensure consistent border width
+                                                    borderLeftWidth: "5px !important",
+                                                    borderLeftColor: 'white !important',
                                                 },
                                                 '&:hover': {
-                                                    borderLeftColor: 'white',
+                                                    borderLeftColor: 'white !important',
                                                     borderWidth: "5px",  // Ensure consistent border width
                                                     borderColor: "white",
                                                     backgroundColor: darken(theme.palette.priority.high, 0.1),
                                                     borderLeftWidth: "5px !important",
+                                                    
+                                                    
                                                 },
                                                 '&.Mui-selected + .MuiToggleButton-root': {
                                                     borderLeftColor: 'white',                                                    

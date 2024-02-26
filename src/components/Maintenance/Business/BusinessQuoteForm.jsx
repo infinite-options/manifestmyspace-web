@@ -40,7 +40,6 @@ import dataURItoBlob from '../../utils/dataURItoBlob';
 function CostPartsTable({parts, setParts}){
 
     function addRow(){
-        console.log("addRow")
         let newPart = {
             part: "",
             quantity: "",
@@ -50,28 +49,24 @@ function CostPartsTable({parts, setParts}){
     }
 
     function handlePartChange(event, index){
-        console.log("handlePartChange", event.target.value)
         let newParts = [...parts]
         newParts[index].part = event.target.value
         setParts(newParts)
     }
 
     function handleQuantityChange(event, index){
-        console.log("handleQuantityChange", event.target.value)
         let newParts = [...parts]
         newParts[index].quantity = event.target.value
         setParts(newParts)
     }
 
     function handleCostChange(event, index){
-        console.log("handleCostChange", event.target.value)
         let newParts = [...parts]
         newParts[index].cost = event.target.value
         setParts(newParts)
     }
 
     function deleteRow(index){
-        console.log("deleteRow", index)
         let newParts = [...parts]
         newParts.splice(index, 1)
         setParts(newParts)
@@ -361,8 +356,6 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_status", status);
             }
             
-            // print out formData 
-            console.log("trying to print form data")
             for (var pair of formData.entries()) {
                 console.log(pair[0]+ ' => ' + pair[1]); 
             }
@@ -388,7 +381,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
-        navigate("/workerMaintenance")
+        navigate("/workerMaintenance", {state: {refresh: true}})
     }
 
     function numImages(){
