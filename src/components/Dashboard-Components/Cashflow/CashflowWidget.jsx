@@ -13,21 +13,23 @@ import { fetchCashflow, getTotalExpenseByMonthYear, getPast12MonthsCashflow, get
 export default function CashflowWidget(props) {
   const navigate = useNavigate();
   let date = new Date();
-  let cashflowStatusData = props.cashflowData;
-  let cashflowRevenue = cashflowStatusData[0]?.amount;
-  let cashflowExpense = cashflowStatusData[1]?.amount;
-  let cashflow = cashflowRevenue - cashflowExpense;
-  console.log("Cashflow data available: ", cashflowStatusData);
-  console.log("Cashflow data available: ", cashflowStatusData[0]);
-  console.log("Cashflow data available: ", cashflowStatusData[0]?.cf_month);
-  console.log("Cashflow Revenue: ", cashflowRevenue);
-  console.log("Cashflow Expense: ", cashflowExpense);
-
   let currentYear = date.getFullYear().toString();
   let currentMonth = date.toLocaleString("default", { month: "long" });
-
+  console.log("Current month:", currentMonth, currentYear);
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
+
+  let cashflowStatusData = props.cashflowData;
+  //   console.log("Cashflow data available: ", cashflowStatusData);
+  //   console.log("Cashflow data available: ", cashflowStatusData[0]);
+  //   console.log("Cashflow data available: ", cashflowStatusData[0]?.cf_month);
+
+  let cashflowRevenue = 0;
+  let cashflowExpense = 0;
+  let cashflow = cashflowRevenue - cashflowExpense;
+
+  console.log("Cashflow Revenue: ", cashflowRevenue);
+  console.log("Cashflow Expense: ", cashflowExpense);
 
   const { user, getProfileId } = useUser();
   const profileId = getProfileId();
@@ -39,25 +41,30 @@ export default function CashflowWidget(props) {
   const [last12Months, setLast12Months] = useState([]);
   const [cashflowData, setCashflowData] = useState(null);
 
-  //   useEffect(() => {
-  //     fetchCashflow(profileId)
-  //       .then((data) => {
-  //         setCashflowData(data);
-  //         console.log("Returned Data: ", data);
-  //         let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
-  //         let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
-  //         let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
-  //         console.log("currentMonthYearRevenue: ", currentMonthYearRevenue);
-  //         console.log("currentMonthYearExpense: ", currentMonthYearExpense);
-  //         console.log("last12months: ", last12months);
-  //         setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
-  //         setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
-  //         setLast12Months(last12months);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching cashflow data:", error);
-  //       });
-  //   }, []);
+  // Loop throught each item to find the current month
+  console.log("Current month ", currentMonth);
+  console.log(cashflowStatusData);
+  //   let currentMonthData = cashflowStatusData.filter((item) => item.cf_month === currentMonth && item.cf_year === currentYear);
+
+  cashflowStatusData.forEach((item) => {
+    // console.log("Cashflow item: ", item);
+    // console.log("Cashflow month ", item.cf_month);
+    // console.log("Cashflow amount ", item.amount);
+    // console.log("Cashflow purchase type ", item.pur_cf_type);
+
+    if (item.cf_month === currentMonth && item.cf_year === currentYear) {
+      if (item.pur_cf_type === "revenue") {
+        cashflowRevenue = item.amount;
+      } else if (item.pur_cf_type === "expense") {
+        cashflowExpense = item.amount;
+      }
+    }
+
+    cashflow = cashflowRevenue - cashflowExpense;
+    // console.log("Cashflow Revenue: ", cashflowRevenue);
+    // console.log("Cashflow Expense: ", cashflowExpense);
+    // console.log("Cashflow: ", cashflowRevenue - cashflowExpense);
+  });
 
   return (
     <ThemeProvider theme={theme}>

@@ -11,8 +11,8 @@ async function fetchCashflow(userProfileId) {
   try {
     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-    const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowSimplified/${userProfileId}`);
+    const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
+    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowSimplified/${userProfileId}`);
     console.log("Endpoint Data: ", cashflow.data);
     // console.log("Specific Data: ", cashflow.data.response_revenue_by_month_by_type);
     // console.log("Specific Data []: ", cashflow.data.response_revenue_by_month_by_type.result[1].purchase_type);
