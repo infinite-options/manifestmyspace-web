@@ -173,11 +173,11 @@ function ManagerDashboard() {
   }, []);
 
   // Confirm data has been received.  Comment out before publishing
-  console.log("maintenanceStatusData: ", maintenanceStatusData);
-  console.log("rentStatus: ", rentStatus);
-  console.log("leaseStatus: ", leaseStatus);
-  console.log("happiness matrix: ", "Not sure what data to display here");
-  console.log("contractRequests: ", contractRequests);
+  // console.log("maintenanceStatusData: ", maintenanceStatusData);
+  // console.log("rentStatus: ", rentStatus);
+  // console.log("leaseStatus: ", leaseStatus);
+  // console.log("happiness matrix: ", "Not sure what data to display here");
+  // console.log("contractRequests: ", contractRequests);
 
   return (
     <ThemeProvider theme={theme}>

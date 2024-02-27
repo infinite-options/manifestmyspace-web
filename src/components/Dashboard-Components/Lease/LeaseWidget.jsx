@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../../contexts/UserContext.jsx";
 // import { useLocation, useNavigate } from "react-router-dom";
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import { Chart } from "react-google-charts";
@@ -10,11 +11,16 @@ import { Button, Box, ThemeProvider } from "@mui/material";
 
 export default function LeaseWidget(props) {
   const navigate = useNavigate();
+  const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
+
+  console.log("Role: ", user);
+  console.log("Selected Role: ", selectedRole);
+
   let date = new Date();
   let moveoutsInSixWeeks = 0;
   let leaseStatusData = props.leaseData;
-  let selectedRole = props.selectedRole;
-  console.log("Selected Role via props is: ", selectedRole);
+  //   let selectedRole = props.selectedRole;
+  //   console.log("Selected Role via props is: ", selectedRole);
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
@@ -53,19 +59,19 @@ export default function LeaseWidget(props) {
 
   leaseStatus = leaseStatusDictionary;
 
-  function routingWithSelectedRole() {
-    // console.log("routingWithSelectedRole selectedRole", selectedRole)
-    if (selectedRole == "MANAGER") {
-      return "/PMLeases";
-    } else if (selectedRole == "OWNER") {
-      return "/ownerLeases";
-    }
-  }
+  //   function routingWithSelectedRole() {
+  //     // console.log("routingWithSelectedRole selectedRole", selectedRole)
+  //     if (selectedRole == "MANAGER") {
+  //       return "/PMLeases";
+  //     } else if (selectedRole == "OWNER") {
+  //       return "/ownerLeases";
+  //     }
+  //   }
 
   return (
     <ThemeProvider theme={theme}>
       {/* LEASES WIDGET */}
-      <div className="mt-widget-expiry" onClick={() => navigate(routingWithSelectedRole())}>
+      <div className="mt-widget-expiry" onClick={() => navigate(leaseRoutingBasedOnSelectedRole())}>
         {/* <div className="mt-expiry-container"> */}
         <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
         <div className="months-and-moveouts">
