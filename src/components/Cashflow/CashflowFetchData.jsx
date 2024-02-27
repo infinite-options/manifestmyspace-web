@@ -327,7 +327,7 @@ function getTotalRevenueByMonthYear(data, month, year) {
   let totalRevenue = revenueItems.reduce((acc, item) => {
     return acc + parseFloat(item["sum(total_paid)"] ? item["sum(total_paid)"] : 0.0);
   }, 0.0);
-  console.log("total Revenue: ", totalRevenue);
+  // console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
   return totalRevenue;
 }
 

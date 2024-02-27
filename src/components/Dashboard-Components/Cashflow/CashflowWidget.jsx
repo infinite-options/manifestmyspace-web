@@ -24,8 +24,8 @@ function CashflowWidget() {
   let date = new Date();
   let currentMonth = date.toLocaleString("default", { month: "long" });
   let currentYear = date.getFullYear().toString();
-  console.log("Crrrent Month: ", currentMonth);
-  console.log("Current Year: ", currentYear);
+  // console.log("Cashflow Widget Current Month: ", currentMonth);
+  // console.log("Cashflow Widget Current Year: ", currentYear);
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -43,7 +43,7 @@ function CashflowWidget() {
   useEffect(() => {
     fetchCashflow(profileId)
       .then((data) => {
-        console.log("Back in Widget: ", data);
+        // console.log("Back in Widget: ", data);
         setCashflowData(data);
         let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
         let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
@@ -67,11 +67,12 @@ function CashflowWidget() {
       });
   }, []);
 
-  console.log("TotalRevenueByMonth: ", totalRevenueByMonth);
-  console.log("TotalExpenseByMonth: ", totalExpenseByMonth);
-  console.log("ExpectedTotalRevenueByMonth: ", expectedRevenueByMonth);
-  console.log("ExpectedTotalExpenseByMonth: ", expectedExpenseByMonth);
-  console.log("Last12Months: ", last12Months);
+  // Confirm data has been received.  Comment out before publishing
+  // console.log("TotalRevenueByMonth: ", totalRevenueByMonth);
+  // console.log("TotalExpenseByMonth: ", totalExpenseByMonth);
+  // console.log("ExpectedTotalRevenueByMonth: ", expectedRevenueByMonth);
+  // console.log("ExpectedTotalExpenseByMonth: ", expectedExpenseByMonth);
+  // console.log("Last12Months: ", last12Months);
 
   return (
     <ThemeProvider theme={theme}>

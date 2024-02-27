@@ -4,26 +4,28 @@ import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Co
 import theme from "../../theme/theme";
 import { Stack, Typography } from "@mui/material";
 
+// THIS IS A DUPLICATE OF OwnerCashflowGraph.  See if there is a way to combine these 2 pages
 const DashboardChart = (props) => {
   // I want props.revenueCashflowByMonth to be sorted in order of month and year
 
   const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
   const activeButton = props.activeButton;
-  console.log("Input data to graph: ", data);
-  console.log("Active button: ", activeButton);
+  // console.log("Input data to graph: ", data);
+  // console.log("Active button: ", activeButton);
+
   // const selectedProperty = props.selectedProperty;
   // find max and min of data
   const max = Math.max.apply(
     Math,
     data.map(function (o) {
-      console.log("max: ", o.cashflow);
+      // console.log("max: ", o.cashflow);
       return o.cashflow;
     })
   );
   const min = Math.min.apply(
     Math,
     data.map(function (o) {
-      console.log("min: ", o.cashflow);
+      // console.log("min: ", o.cashflow);
       return o.cashflow;
     })
   );
