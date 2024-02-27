@@ -339,7 +339,7 @@ export default function QuoteAcceptForm(){
                         </Button>
                     </Grid>
                 </Grid>
-                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="CANCELLED") ? (
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED") ? (
                         <Stack direction="column" display="flex" spacing={2} padding="20px">
                             <Box alignContent="center"
                                 justifyContent="center"
@@ -351,7 +351,7 @@ export default function QuoteAcceptForm(){
                                 
                             </Box>
                             <QuoteDetailInfo maintenanceItem={maintenanceQuotes[currentQuoteIndex]}/>
-                            {maintenanceQuotes[currentQuoteIndex]?.quote_status!=="CANCELLED" ? (
+                            {maintenanceQuotes[currentQuoteIndex]?.quote_status!=="REJECTED" ? (
                                 <>
                                     <Button
                                         variant="contained"
@@ -383,7 +383,7 @@ export default function QuoteAcceptForm(){
                                             display: 'flex',
                                             width: "100%",
                                         }}
-                                        onClick={() => handleSubmit("CANCELLED")}
+                                        onClick={() => handleSubmit("REJECTED")}
                                         >
                                         <Typography sx={{
                                             color: "#160449",
@@ -400,7 +400,7 @@ export default function QuoteAcceptForm(){
                                             fontWeight: theme.typography.primary.fontWeight, 
                                             fontSize: "20px"
                                         }}>
-                                            Cancelled
+                                            Rejected
                                         </Typography>
                                     </Box>
                                 )}
