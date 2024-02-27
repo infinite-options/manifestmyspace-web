@@ -80,7 +80,7 @@ export default function QuoteRequestForm(){
     }
 
 
-    const handleSubmit = () => {
+    const handleSubmit = () => { // TODO FIX ME
         // console.log("handleSubmit")
         // console.log("need to implement navigation")
 
@@ -100,6 +100,7 @@ export default function QuoteRequestForm(){
             setShowSpinner(false);
         }
 
+        // Creates a list of business_uids from the maintenanceContacts set.
         let maintenanceContactIds = [];
         for (let contact of maintenanceContacts) {
             // console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
@@ -107,13 +108,13 @@ export default function QuoteRequestForm(){
         }
 
 
-        const submitQuoteRequest = async (contact) => {
+        const submitQuoteRequest = async (maintenanceContactIds) => {
             setShowSpinner(true);
             const formData = new FormData();
         
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid);
             formData.append("quote_pm_notes", additionalInfo);
-            formData.append("quote_maintenance_contacts", [contact]);
+            formData.append("quote_maintenance_contacts", maintenanceContactIds); // maintenanceContactIds
             // formData.append("quote_maintenance_images", additionalInfo);
         
             for (let i = 0; i < selectedImageList.length; i++) {
@@ -165,8 +166,8 @@ export default function QuoteRequestForm(){
         
  
         
-        for (let contact of maintenanceContactIds)
-        submitQuoteRequest(contact);       
+        // for (let contact of maintenanceContactIds)
+        submitQuoteRequest(maintenanceContactIds);
     }
 
     
