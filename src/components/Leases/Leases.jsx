@@ -1,20 +1,20 @@
 import { Accordion, AccordionDetails, AccordionSummary, Modal, Box } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import SelectProperty from "../SelectProperty";
-
-import { useUser } from "../../../contexts/UserContext";
+import SelectProperty from "./SelectProperty";
+import AllOwnerIcon from "./AllOwnerIcon.png";
+import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function OwnerLeases(props) {
-  const { getProfileId } = useUser();
-  // Select Property Tab
+export default function Leases(props) {
+  console.log("In Leases");
+  const { getProfileId, selectedRole } = useUser();
+  console.log("Selected Role: ", selectedRole);
 
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-  const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
   const handleClose = () => {
     setOpen(false);
   };
@@ -22,73 +22,61 @@ function OwnerLeases(props) {
     setOpen(true);
   };
 
+  const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
   const [moveoutCount, setMoveoutCount] = useState(0);
   const [leaseDate, setLeaseDate] = useState([]);
-  const [propertyList, setPropertyList] = useState([]);
-
-  function getMoveoutNum(leases) {
-    let num = 0;
-    for (let i = 0; i < leases.length; i++) {
-      const lease = leases[i];
-      if (lease.lease_renew_status === "MOVING") {
-        num++;
-      }
-    }
-    return num;
-  }
-
-  async function fetchData() {
-    setShowSpinner(true);
-    // const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/110-000003`)
-    const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`);
-
-    // console.log(res.data['Lease_Details'].result);
-    const fetchData = res.data["Lease_Details"].result;
-    console.log("leases fetchData", fetchData);
-
-    // Parse lease_end strings to Date objects
-    fetchData.forEach((obj) => {
-      obj.lease_end = new Date(obj.lease_end);
-    });
-
-    // Sort the array by lease_end Date objects
-    fetchData.sort((a, b) => a.lease_end - b.lease_end);
-
-    // Convert the Date objects back to the original string format
-    fetchData.forEach((obj) => {
-      const year = obj.lease_end.getFullYear();
-      const month = String(obj.lease_end.getMonth() + 1).padStart(2, "0");
-      const day = String(obj.lease_end.getDate()).padStart(2, "0");
-      obj.lease_end = `${year}-${month}-${day}`;
-    });
-    console.log("leases sorted FetchData", fetchData);
-
-    const leases = new Map([]);
-    let moveoutNum = 0;
-    fetchData.forEach((lease) => {
-      const date = lease.lease_end.slice(0, 7);
-      if (leases.get(date) === undefined) {
-        leases.set(date, [lease]);
-      } else {
-        const arr = leases.get(date);
-        arr.push(lease);
-        leases.set(date, arr);
-        moveoutNum += getMoveoutNum(arr);
-      }
-    });
-
-    // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/110-000003`)
-    const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertyDashboardByOwner/${getProfileId()}`);
-    const propertyData = await response.json();
-
-    setPropertyList([...propertyData["Property_Dashboard"].result]);
-    setLeaseDate(leases);
-    setMoveoutCount(moveoutNum);
-    setShowSpinner(false);
-  }
 
   useEffect(() => {
-    fetchData();
+    function getMoveoutNum(leases) {
+      let num = 0;
+      for (let i = 0; i < leases.length; i++) {
+        const lease = leases[i];
+        if (lease.lease_renew_status === "MOVING") {
+          num++;
+        }
+      }
+      return num;
+    }
+    setShowSpinner(true);
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
+      // console.log(res.data['Lease Details'].result);
+      const fetchData = res.data["Lease_Details"].result;
+      console.log("leases fetchData", fetchData);
+
+      // Parse lease_end strings to Date objects
+      fetchData.forEach((obj) => {
+        obj.lease_end = new Date(obj.lease_end);
+      });
+
+      // Sort the array by lease_end Date objects
+      fetchData.sort((a, b) => a.lease_end - b.lease_end);
+
+      // Convert the Date objects back to the original string format
+      fetchData.forEach((obj) => {
+        const year = obj.lease_end.getFullYear();
+        const month = String(obj.lease_end.getMonth() + 1).padStart(2, "0");
+        const day = String(obj.lease_end.getDate()).padStart(2, "0");
+        obj.lease_end = `${year}-${month}-${day}`;
+      });
+      console.log("leases sorted FetchData", fetchData);
+
+      const leases = new Map([]);
+      let moveoutNum = 0;
+      fetchData.forEach((lease) => {
+        const date = lease.lease_end.slice(0, 7);
+        if (leases.get(date) === undefined) {
+          leases.set(date, [lease]);
+        } else {
+          const arr = leases.get(date);
+          arr.push(lease);
+          leases.set(date, arr);
+          moveoutNum += getMoveoutNum(arr);
+        }
+      });
+      setLeaseDate(leases);
+      setMoveoutCount(moveoutNum);
+      setShowSpinner(false);
+    });
   }, []);
 
   return (
@@ -125,6 +113,7 @@ function OwnerLeases(props) {
             alignItems: "center",
             justifyContent: "space-between",
             fontWeight: "bold",
+            marginTop: "10px",
           }}
         >
           <Box
@@ -136,6 +125,7 @@ function OwnerLeases(props) {
           >
             <Box
               sx={{
+                display: "flex",
                 alignItems: "center",
                 marginRight: "2px",
               }}
@@ -152,6 +142,30 @@ function OwnerLeases(props) {
             </Box>
             <Box>Next 1 Year</Box>
           </Box>
+          {selectedRole === "MANAGER" && (
+            <div>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "2px",
+                  }}
+                >
+                  <img src={AllOwnerIcon} alt="Owner Icon" style={{ width: "22px", height: "22px" }} />
+                </Box>
+
+                <Box>All Owners</Box>
+              </Box>
+            </div>
+          )}
+
           <Box
             sx={{
               display: "flex",
@@ -161,6 +175,7 @@ function OwnerLeases(props) {
           >
             <Box
               sx={{
+                display: "flex",
                 alignItems: "center",
                 marginRight: "2px",
               }}
@@ -174,7 +189,7 @@ function OwnerLeases(props) {
                 />
               </svg>
             </Box>
-            <Box onClick={handleOpen}>Select Property</Box>
+            <Box onClick={handleOpen}>Property</Box>
           </Box>
         </Box>
         <Accordion
@@ -249,7 +264,7 @@ function OwnerLeases(props) {
           } else if (Number(currentMonth + 1) === Number(endMonth + 1)) {
             tabColor = "#FFC614";
           }
-          return <LeaseMonth key={i} data={[date, leases]} propertyList={propertyList} style={[tabColor]} />;
+          return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} />;
         })}
       </Box>
       <Modal
@@ -344,16 +359,16 @@ function LeaseMonth(props) {
         }}
       >
         {leaseData.map((lease, i) => (
-          <LeaseComponent key={i} data={lease} propertyList={props.propertyList} />
+          <LeaseComponent key={i} data={lease} />
         ))}
       </Box>
     </Box>
   );
 }
-
 function LeaseComponent(props) {
   const leaseData = props.data;
-  const { getProfileId } = useUser();
+  const navigate = useNavigate();
+
   function getLeaseStatusText(status) {
     switch (status) {
       case "MOVING":
@@ -395,18 +410,6 @@ function LeaseComponent(props) {
     }
     return outputIcon;
   }
-  const navigate = useNavigate();
-
-  function handlePropertyDetailNavigation(index, propertyList, maintenanceData) {
-    console.log("handlePropertyDetailNavigation");
-    navigate(`/propertyDetail`, { state: { index, propertyList, maintenanceData } });
-  }
-
-  // Adding data to link to the Property Detail Page
-  const [propertyList, setPropertyList] = useState(props.propertyList);
-  const [displayedItems, setDisplayedItems] = useState(props.propertyList);
-  const [maintenanceData, setMaintenanceData] = useState([]);
-
   return (
     <Box
       sx={{
@@ -420,16 +423,15 @@ function LeaseComponent(props) {
           marginLeft: "0px",
           marginRight: "auto",
         }}
+        onClick={() => {
+          navigate("/viewLease", {
+            state: {
+              lease_id: leaseData.lease_uid,
+            },
+          });
+        }}
       >
         <Box
-          onClick={() => {
-            // handleStripePayment()
-            let indx = displayedItems.findIndex((p) => p.property_id === leaseData.lease_property_id);
-            console.log(displayedItems);
-            handlePropertyDetailNavigation(indx, propertyList, maintenanceData);
-          }}
-          //   onClick={() => handlePropertyDetailNavigation(props.leaseData.lease_property_Id, props.index, props.propertyList, props.maintenanceData)}
-
           sx={{
             fontWeight: "bold",
             borderBottomStyle: "solid",
@@ -437,7 +439,7 @@ function LeaseComponent(props) {
             width: "fit-content",
           }}
         >
-          {`${leaseData.property_address}  ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
+          {`${leaseData.property_address} ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
         </Box>
         <Box>
           {leaseData.lease_end}: {getLeaseStatusText(leaseData.lease_renew_status)}
@@ -454,5 +456,3 @@ function LeaseComponent(props) {
     </Box>
   );
 }
-
-export default OwnerLeases;

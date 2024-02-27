@@ -40,6 +40,7 @@ const ViewLease = (props) => {
 
   const [showSpinner, setShowSpinner] = useState(false);
   const { getProfileId, selectedRole } = useUser();
+  console.log("Selected Role: ", selectedRole);
 
   function formatDate(date) {
     var d = new Date(date),
@@ -647,37 +648,40 @@ const ViewLease = (props) => {
                             </TableRow> */}
             </TableBody>
           </Table>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ paddingTop: "15px" }}>
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{
-                color: theme.typography.common.blue,
-                fontWeight: theme.typography.common.fontWeight,
-                backgroundColor: theme.palette.custom.pink,
-                margin: "10px",
-              }}
-              // onClick={handleEndLease}
-              onClick={() => setEndLeaseDialogOpen(true)}
-            >
-              End Lease
-            </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{
-                color: theme.typography.common.blue,
-                fontWeight: theme.typography.common.fontWeight,
-                backgroundColor: theme.palette.custom.blue,
-                margin: "10px",
-              }}
-              onClick={() => {
-                handleRenewLease(leaseData);
-              }}
-            >
-              Renew Lease
-            </Button>
-          </Stack>
+
+          {selectedRole === "MANAGER" && (
+            <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ paddingTop: "15px" }}>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  backgroundColor: theme.palette.custom.pink,
+                  margin: "10px",
+                }}
+                // onClick={handleEndLease}
+                onClick={() => setEndLeaseDialogOpen(true)}
+              >
+                End Lease
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  backgroundColor: theme.palette.custom.blue,
+                  margin: "10px",
+                }}
+                onClick={() => {
+                  handleRenewLease(leaseData);
+                }}
+              >
+                Renew Lease
+              </Button>
+            </Stack>
+          )}
         </Paper>
       </Box>
       <Dialog open={endLeaseDialogOpen} onClose={closeEndLeaseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
