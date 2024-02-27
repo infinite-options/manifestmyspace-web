@@ -3,7 +3,7 @@ import { Typography, Grid, Box, Stack, ThemeProvider } from "@mui/material";
 import "../../../css/cashflow.css";
 import { useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
-import MixedChart from "../../Graphs/OwnerCashflowGraph";
+import DashboardChart from "../../Graphs/OwnerDashboardGraph";
 import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
@@ -144,7 +144,7 @@ function CashflowWidget() {
             </Box>
           </Grid>
           <Grid item xs={6}>
-            <MixedChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
+            <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
           </Grid>
         </Grid>
       </div>
