@@ -33,6 +33,7 @@ export default function OwnerProfileLink(props){
                 backgroundColor: "#D6D5DA",
                 textTransform: "none",
                 paddingRight: "0px",
+                paddingLeft: "0px",
                 borderRadius: "10px",
                 display: 'flex',
                 width: "100%",

@@ -86,7 +86,6 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
-                    {maintenanceItem?.quote_status !== "REFUSED" ? (
                     <Box
                         variant="contained"
                         disableElevation
@@ -100,15 +99,18 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                             borderRadius: "10px",
                             paddingLeft: "10px",
                             display: 'flex',
-                            width: "95%",
+                            width: "flex",
                         }}
                     >
-                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
-                    </Box>) : (
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
-                            Quote Refused
-                        </Typography>  
-                    )}
+                        {maintenanceItem?.quote_status !== "REFUSED" ? (
+                            <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
+                        ) : (
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
+                                Quote Refused
+                            </Typography>  
+                            
+                        )}
+                    </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
@@ -129,7 +131,7 @@ export default function QuotesSubmittedAction01({maintenanceItem}){
                             paddingTop: "10px",
                             paddingBottom: "10px",
                             display: 'flex',
-                            width: "95%",
+                            width: "flex",
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import {
     Box,
+    Grid,
+    Stack,
+    Button
 } from '@mui/material';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -17,89 +20,81 @@ function ImageCarousel(props) {
     // console.log("IMAGE LINK:", images[2]);
 
     return (
-        <>
-            <Box
-                sx={{
-                    width: '10%',
-                    height: '150px',
-                    backgroundColor: '#F2F2F2',
-                    backgroundImage: currentImageIndex > 0? `url(${images[currentImageIndex - 1]})` : ``,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'right',
-                    backgroundRepeat: 'no-repeat',
-                    opacity: '0.7',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    '@media screen and (maxWidth: 600px)': {
-                        width: '20%',
-                    },
-                }}
-                onClick={ ()=> {
-                        setCurrentImageIndex(currentImageIndex > 0? currentImageIndex - 1 : 0)
-                    }                    
-                }
-            >
-                <ArrowBackIosIcon
-                    sx={{
-                        fontWeight: 'bold',
-                    }}
-                />
+        <Grid container justifyContent="center">
+            <Stack direction="column" spacing={2}>
+                <Stack direction="row" spacing={2}>
+                    <Button onClick={ ()=> setCurrentImageIndex(currentImageIndex > 0? currentImageIndex - 1 : 0)}>
+                        <ArrowBackIosIcon
+                            sx={{
+                                fontWeight: 'bold',
+                            }}                 
+                        />
+                    </Button>
+                    <Box
+                        sx={{
+                            width: '10%',
+                            height: '150px',
+                            backgroundColor: '#FFFFFF',
+                            backgroundImage: currentImageIndex > 0? `url(${images[currentImageIndex - 1]})` : ``,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'right',
+                            backgroundRepeat: 'no-repeat',
+                            opacity: '0.7',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            '@media screen and (maxWidth: 600px)': {
+                                width: '20%',
+                            },
+                            marginRight: "10px"
+                        }}
+                    />
+                    <Box
+                        sx={{
+                            height: '150px',
+                            backgroundColor: 'black',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                        >
+                            <img src={images[currentImageIndex]} alt="Property Img" style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                            }} />
 
-            </Box>
-            <Box
-                sx={{
-                    
-                    height: '150px',
-                    backgroundColor: 'black',
-                }}
-            >
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: '100%',
-                    }}
-                >
-                    <img src={images[currentImageIndex]} alt="Property Img" style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain',
-                    }} />
-
-                </Box>
-                
-            </Box>
-            <Box
-                sx={{
-                    width: '10%',
-                    height: '150px',
-                    backgroundColor: '#F2F2F2',
-                    backgroundImage: currentImageIndex < images.length - 1? `url(${images[currentImageIndex + 1]})` : ``,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'left',
-                    backgroundRepeat: 'no-repeat',
-                    opacity: '0.7',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    '@media screen and (maxWidth: 600px)': {
-                        width: '20%',
-                    },
-                
-                }}
-                onClick={ ()=> {
-                    setCurrentImageIndex(currentImageIndex < images.length - 1? currentImageIndex + 1 : images.length - 1);
-                }                    
-            }
-            >
-                <ArrowForwardIosIcon
-                    sx={{
-                        fontWeight: 'bold',
-                    }}
-                />
-
-            </Box>
-        </>
+                        </Box>
+                        
+                    </Box>
+                    <Box
+                        sx={{
+                            width: '10%',
+                            height: '150px',
+                            backgroundColor: '#FFFFFF',
+                            backgroundImage: currentImageIndex < images.length - 1? `url(${images[currentImageIndex + 1]})` : ``,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'left',
+                            backgroundRepeat: 'no-repeat',
+                            opacity: '0.7',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            '@media screen and (maxWidth: 600px)': {
+                                width: '20%',
+                            },
+                            marginLeft: "10px"
+                        }}
+                    />
+                    <Button onClick={ ()=> setCurrentImageIndex(currentImageIndex < images.length - 1? currentImageIndex + 1 : images.length - 1)}>
+                        <ArrowForwardIosIcon sx={{fontWeight: 'bold'}}/>
+                    </Button>
+                </Stack>
+            </Stack>
+        </Grid>
     );
 }
 

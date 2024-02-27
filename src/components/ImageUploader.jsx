@@ -142,22 +142,6 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                 }}
                             >
                                 <Grid item xs={2} key={index}>
-                                    {/* <img
-                                        src={page==="Edit" ?
-                                         (image === undefined || image === null ? image : image) : image}
-                                        alt="new"
-                                        key={index}
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            height: '100%',
-                                            width: '100%',
-                                            marginRight: '5px',
-                                            marginBottom: '5px',
-                                            borderRadius: '7px',
-                                        }}
-                                    /> */}
                                     {file.file === null ? (
                                     <img
                                         key={Date.now()}

@@ -108,23 +108,22 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         alignItems: "center",
                         justifyContent: "center",
                     }}>
-                        <Button
-                    variant="contained"
-                    disableElevation
-                    sx={{
-                        backgroundColor: "#D6D5DA",
-                        textTransform: "none",
-                        borderRadius: "10px",
-                        width: "100%",
-                    }} 
-                    onClick={() => setShowRequestMoreInfo(true)}
-                >
-                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Request More Info
-                    </Typography>
-                </Button>
-                <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
-                        
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            borderRadius: "10px",
+                            width: "100%",
+                        }} 
+                        onClick={() => setShowRequestMoreInfo(true)}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Request More Info
+                        </Typography>
+                    </Button>
+                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                 </Grid>
            
                 <Grid item xs={6} sx={{
