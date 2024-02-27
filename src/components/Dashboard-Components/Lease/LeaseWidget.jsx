@@ -71,7 +71,7 @@ export default function LeaseWidget(props) {
   return (
     <ThemeProvider theme={theme}>
       {/* LEASES WIDGET */}
-      <div className="mt-widget-expiry" onClick={() => navigate(leaseRoutingBasedOnSelectedRole())}>
+      <div className="mt-widget-expiry" onClick={() => navigate("/Leases")}>
         {/* <div className="mt-expiry-container"> */}
         <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
         <div className="months-and-moveouts">
