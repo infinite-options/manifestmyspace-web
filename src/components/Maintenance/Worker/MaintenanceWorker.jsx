@@ -28,8 +28,9 @@ export default function MaintenanceWorker(){
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusMM;
     const [showSpinner, setShowSpinner] = useState(false);
+    const [refresh, setRefresh] = useState(false || location.state?.refresh)
+    
     const newDataObject = {};
-
     newDataObject["REQUESTED"] = [];
     newDataObject["SUBMITTED"] = [];
     newDataObject["ACCEPTED"] = [];
@@ -50,7 +51,7 @@ export default function MaintenanceWorker(){
 
     useEffect(() => {
         if (maintenanceData){
-            console.log("maintenanceData", maintenanceData)
+            // console.log("maintenanceData", maintenanceData)
 
             const propertyList = [];
             const priorityList = [];
@@ -77,7 +78,7 @@ export default function MaintenanceWorker(){
 
             setFilterPriorityList(priorityList);
             
-            console.log("filterPropertyList", propertyList)
+            // console.log("filterPropertyList", propertyList)
             setFilterPropertyList(propertyList);
         }
     }, [maintenanceData])
@@ -173,13 +174,13 @@ export default function MaintenanceWorker(){
 
 
     useEffect(() => {
-        // console.log("Maintenance useEffect")
+        console.log("[DEBUG] refresh:", refresh)
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
             const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData1 = await maintenanceRequests1.json()
-            console.log("maintenanceRequestsData1", maintenanceRequestsData1)
+            // console.log("maintenanceRequestsData1", maintenanceRequestsData1)
             
             let array1 = maintenanceRequestsData1.result.REQUESTED?.maintenance_items ??[];
             let array2 = maintenanceRequestsData1.result.SUBMITTED?.maintenance_items ?? [];
@@ -196,7 +197,7 @@ export default function MaintenanceWorker(){
             dataObject["PAID"] = [...array6];
 
             
-            console.log("dataObject from new api call", dataObject)
+            // console.log("dataObject from new api call", dataObject)
             setMaintenanceData(prevData => ({
                 ...prevData, 
                 ...dataObject
@@ -208,7 +209,8 @@ export default function MaintenanceWorker(){
             setShowSpinner(false);
         }
         getMaintenanceData();
-    }, [])
+        setRefresh(false);
+    }, [refresh])
 
 
 

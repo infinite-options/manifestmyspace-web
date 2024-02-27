@@ -60,7 +60,6 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate(maintenanceRoutingBasedOnSelectedRole())
                 } else{
                     console.log("error setting status")
                 }
@@ -90,7 +89,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 if (response.status === 200) {
                     console.log("success")
                     changeMaintenanceRequestStatus()
-                    navigate("/maintenance"); 
+                    navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                 } else{
                     console.log("error setting status")
                 }

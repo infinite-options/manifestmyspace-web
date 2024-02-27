@@ -28,6 +28,7 @@ export default function MaintenanceManager(){
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusPMO
+    const [refresh, setRefresh] = useState(false || location.state?.refresh)
 
     const newDataObject = {};
     newDataObject["NEW REQUEST"] = [];
@@ -210,6 +211,7 @@ export default function MaintenanceManager(){
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
+            console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
             // console.log("maintenanceRequestsData", maintenanceRequestsData)
@@ -259,7 +261,8 @@ export default function MaintenanceManager(){
             setShowSpinner(false);
         }
         getMaintenanceData();
-    }, [])
+        setRefresh(false);
+    }, [refresh])
 
 
 
