@@ -40,7 +40,6 @@ import dataURItoBlob from '../../utils/dataURItoBlob';
 function CostPartsTable({parts, setParts}){
 
     function addRow(){
-        console.log("addRow")
         let newPart = {
             part: "",
             quantity: "",
@@ -50,28 +49,24 @@ function CostPartsTable({parts, setParts}){
     }
 
     function handlePartChange(event, index){
-        console.log("handlePartChange", event.target.value)
         let newParts = [...parts]
         newParts[index].part = event.target.value
         setParts(newParts)
     }
 
     function handleQuantityChange(event, index){
-        console.log("handleQuantityChange", event.target.value)
         let newParts = [...parts]
         newParts[index].quantity = event.target.value
         setParts(newParts)
     }
 
     function handleCostChange(event, index){
-        console.log("handleCostChange", event.target.value)
         let newParts = [...parts]
         newParts[index].cost = event.target.value
         setParts(newParts)
     }
 
     function deleteRow(index){
-        console.log("deleteRow", index)
         let newParts = [...parts]
         newParts.splice(index, 1)
         setParts(newParts)
@@ -210,17 +205,13 @@ export default function BusinessQuoteForm({acceptBool}){
 
 
     function formatDateToCustomString() {
-        const date = new Date(2000, 3, 23);
+        const date = new Date(); // Get the current date
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
         const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-      
-        return `${month}-${day}-${year} ${hours}:${minutes}:${seconds}`;
-      }
-    
+        
+        return `${month}-${day}-${year}`;
+    }
 
     const handleCheckChange = (event) => {
         // console.log("handleCheckChange", event.target.checked)
@@ -361,8 +352,6 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_status", status);
             }
             
-            // print out formData 
-            console.log("trying to print form data")
             for (var pair of formData.entries()) {
                 console.log(pair[0]+ ' => ' + pair[1]); 
             }
@@ -388,7 +377,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
-        navigate("/workerMaintenance")
+        navigate("/workerMaintenance", {state: {refresh: true}})
     }
 
     function numImages(){

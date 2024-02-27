@@ -18,6 +18,7 @@ export default function CompleteButton(props){
     let setMessage = props.setMessage;
 
     async function handleComplete(id){
+        console.log("[DEBUG] handleComplete", id);
         CompleteTicket(id).then(response => {
             console.log("handleComplete", response);
             if (response){

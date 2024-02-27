@@ -30,7 +30,7 @@ export default function QuotesRequestedAction01({maintenanceItem}){
     const navigate = useNavigate();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
 
-    console.log("NewRequestAction", maintenanceItem)
+    // console.log("NewRequestAction", maintenanceItem)
 
     let expense;
     if(maintenanceItem.quote_services_expenses){

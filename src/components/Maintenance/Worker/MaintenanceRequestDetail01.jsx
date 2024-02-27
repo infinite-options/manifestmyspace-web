@@ -136,7 +136,7 @@ export default function MaintenanceRequestDetail01(){
         // console.log("status value", status)
         colorStatus.find((item, index) => {
             if(item.status === status){
-                console.log("status", item.status, "===", status)
+                // console.log("status", item.status, "===", status)
                 setValue(index);
             }
         })
@@ -186,7 +186,7 @@ export default function MaintenanceRequestDetail01(){
             if(i >= 0){
                 
                 let requestType= colorStatus[i].mapping.toUpperCase();
-                console.log(allData)
+                // console.log(allData)
                 let j= allData[requestType].length-1
                 setValue(i);
                 setMaintenanceRequestIndex(j)
