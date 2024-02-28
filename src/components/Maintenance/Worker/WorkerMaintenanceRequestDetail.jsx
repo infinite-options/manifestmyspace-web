@@ -21,15 +21,14 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import RequestCard from '../MaintenanceRequestCard';
-import MaintenanceRequestNavigator01 from "./MaintenanceRequestNavigator01";
+import MaintenanceRequestNavigator01 from "./WorkerMaintenanceRequestNavigator";
 import AddIcon from '@mui/icons-material/Add';
 import PaidMaintenance01 from "./PaidMaintenance01";
-import QuotesRequestAction01 from "./QuotesRequestAction01";
-import QuotesAccepted01 from "./QuotesAccepted01";
-import ScheduleMaintenance01 from "./ScheduleMaintenance01";
+import WorkerQuotesAccepted from "./WorkerQuotesAccepted";
+import WorkerScheduledMaintenance from "./WorkerScheduledMaintenance";
 import CompleteMaintenance01 from "./CompleteMaintenance01";
-import QuotesRequestedAction01 from "./NewRequestAction01";
-import QuotesSubmittedAction01 from "./QuotesRequestAction01";
+import WorkerQuotesRequestedAction from "./WorkerQuotesRequestedAction";
+import WorkerQuotesSubmittedAction from "./WorkerQuotesSubmittedAction";
 
 
 
@@ -66,7 +65,7 @@ function a11yProps(index) {
   }
 
 
-export default function MaintenanceRequestDetail01(){
+export default function WorkerMaintenanceRequestDetail(){
     const location = useLocation();
     let navigate = useNavigate();
 
@@ -363,19 +362,19 @@ export default function MaintenanceRequestDetail01(){
                                 }}
                             >
                                 {colorStatus[value]?.mapping === "REQUESTED" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
-                                    <QuotesRequestedAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerQuotesRequestedAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null 
                                 }
                                 {colorStatus[value]?.mapping === "SUBMITTED" ?
-                                    <QuotesSubmittedAction01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerQuotesSubmittedAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
                                  {colorStatus[value]?.mapping === "ACCEPTED" ?
-                                    <QuotesAccepted01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerQuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
                                 {colorStatus[value]?.mapping === "SCHEDULED" ?
-                                    <ScheduleMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerScheduledMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
                                 {colorStatus[value]?.mapping === "FINISHED" ?
@@ -393,4 +392,4 @@ export default function MaintenanceRequestDetail01(){
             </Box>
         </ThemeProvider>
     )
-}
+}   

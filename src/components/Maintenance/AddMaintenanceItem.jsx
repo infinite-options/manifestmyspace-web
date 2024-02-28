@@ -25,10 +25,9 @@ import {
 } from "@mui/material";
 
 import { darken } from '@mui/system';
-
-
+import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -42,7 +41,6 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function AddMaintenanceItem(){
-    const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [propertyId, setPropertyId] = useState('')
@@ -58,6 +56,8 @@ export default function AddMaintenanceItem(){
     const [description, setDescription] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+    const [imageOverLimit, setImageOverLimit] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const profileId = getProfileId(); 
 
@@ -111,14 +111,6 @@ export default function AddMaintenanceItem(){
         setDescription(event.target.value);
     };
 
-    // const handlePriorityChange = (event, newToggleGroupValue) => {
-    //     console.log("handlePriorityChange", event.target.value)
-    //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
-    //     setPriority(event.target.value)
-    //     // setToggleGroupValue(newToggleGroupValue);
-    //     // setToggleAlignment(newToggleGroupValue);
-    // };
-
     const handlePriorityChange = (priority) => {
         setToggleAlignment(priority);
         setToggleGroupValue(priority);
@@ -139,18 +131,36 @@ export default function AddMaintenanceItem(){
         });
     };
 
-    
-
-
-    // const handlePriorityChange = (value) => {
-    //     setToggleGroupValue(value);
-    //     setToggleAlignment(value);
-    // };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
         // console.log("handleToggleGroupChange", newToggleGroupValue)
         setCompleted(event.target.value)
     };
+
+    function checkImageSizes(selectedImageList) {
+        const MAX_SIZE = 500 * 1024; // 500 KB in bytes
+        for (let i = 0; i < selectedImageList.length; i++) {
+            const image = selectedImageList[i];
+            console.log(image, image.file.size)
+            if (image.file.size > MAX_SIZE) {
+                // Remove the image from the array or handle the error
+                console.log("Image is too large. It has been removed.")
+                setImageOverLimit(true)
+                setShowErrorMessage(true);
+                selectedImageList.splice(i, 1);
+                i--; // Adjust the index since we removed an item
+            } else {
+                console.log("image size:", image.file.size, "is less than", MAX_SIZE)
+            }
+        }
+    }
+
+    useEffect(() => {
+        console.log("running useEffect checkImageSizes")
+
+        checkImageSizes(selectedImageList);
+        
+    }, [selectedImageList])
 
     const handleBackButton = () => {
         console.log("handleBackButton")
@@ -176,7 +186,6 @@ export default function AddMaintenanceItem(){
         getProperties();
 
     }, [])
-
 
 
     const handleSubmit = (event) => {
@@ -596,12 +605,22 @@ export default function AddMaintenanceItem(){
 
                                 {/* File Upload Field */}
                                 <Grid item xs={12}>
+                                    {showErrorMessage ? (
+                                        <Stack direction="row">
+                                            <Typography sx={{ color: 'red' }}>
+                                                Image is too large. It has been removed.
+                                            </Typography>
+                                            <Button onClick={() => {setShowErrorMessage(false); setImageOverLimit(false);}} sx={{padding: "0px"}}>
+                                                <CloseIcon sx={{color: 'red'}}/>
+                                            </Button>
+                                        </Stack>
+                                    ): <Typography></Typography>}
                                     <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                                 </Grid>
 
                                 {/* Submit Button */}
                                 <Grid item xs={12}>
-                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC"}}>
+                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: imageOverLimit ? "#B0B0B0" : "#3D5CAC", pointerEvents: imageOverLimit ? "none" : "auto"}}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                                 Add Maintenance
                                         </Typography>

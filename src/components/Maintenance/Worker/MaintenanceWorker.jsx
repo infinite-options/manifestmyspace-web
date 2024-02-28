@@ -25,7 +25,6 @@ export default function MaintenanceWorker(){
     let navigate = useNavigate();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
-    const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusMM;
     const [showSpinner, setShowSpinner] = useState(false);
     const [refresh, setRefresh] = useState(false || location.state?.refresh)

@@ -224,7 +224,7 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
     const handleTimeChange = (event) => {
-        // console.log("handleTimeChange", event.target.value)
+        console.log("handleTimeChange", event.target.value)
         setAvailabilityTime(event.target.value);
     }
 
@@ -266,7 +266,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
     function convertToDateTime(date, time){
 
-        var dateArray = date.split("/")
+        var dateArray = date.split("-")
         var timeArray = time.split(":")
 
         var year = dateArray[2]
@@ -275,34 +275,13 @@ export default function BusinessQuoteForm({acceptBool}){
 
         var hour = timeArray[0]
         var minute = timeArray[1]
-        var second = timeArray[2]
+        var second = timeArray[2] || "00"
 
         var dateTimeString = `${month}-${day}-${year} ${hour}:${minute}:${second}`
         return dateTimeString
-
     }
 
     function handleBackButton(){
-        // console.log("handleBackButton")
-        // let maintenance_request_index = navigationParams.maintenanceRequestIndex
-        // let status = navigationParams.status
-        // let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
-        // let allMaintenanceData = navigationParams.allData
-        // console.log("-----navigationParams-----")
-        // console.log("maintenance_request_index", maintenance_request_index)
-        // console.log("status", status)
-        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        // console.log("allMaintenanceData", allMaintenanceData)
-        // console.log("--------------------------")
-
-        // navigate("/maintenance/detail", {
-        //     state: {
-        //         maintenance_request_index,
-        //         status,
-        //         maintenanceItemsForStatus,
-        //         allMaintenanceData,
-        //     }
-        // }); 
         navigate(-1)
     }
 
@@ -611,6 +590,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     onChange={handleTimeChange}
                                                     placeholder="HH:MM:SS"
                                                 />
+                                                <Button onClick={()=> convertToDateTime(availabilityDate, availabilityTime)}>
+                                                    Test DateTime Convert
+                                                </Button>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>

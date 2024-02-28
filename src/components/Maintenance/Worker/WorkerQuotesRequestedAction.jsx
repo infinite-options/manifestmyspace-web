@@ -22,11 +22,11 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
-import RequestMoreInfo from "../Worker/RequestMoreInfo";
+import RequestMoreInfo from "./RequestMoreInfo";
 
 
 
-export default function QuotesRequestedAction01({maintenanceItem}){
+export default function WorkerQuotesRequestedAction({maintenanceItem}){
     const navigate = useNavigate();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
 

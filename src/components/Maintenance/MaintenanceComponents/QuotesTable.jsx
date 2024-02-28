@@ -1,6 +1,7 @@
 import {Grid, Accordion, AccordionSummary, AccordionDetails, Box, Typography, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useState } from 'react';
+import { First } from 'react-bootstrap/esm/PageItem';
 
 export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem}){
     // maintenanceQuotes is a state variable that is set in the grandparent component
@@ -19,6 +20,14 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
     const handleChange = () => {
         setExpanded(!expanded);
     };
+    
+
+    // sort maintenanceQuotesForItem so that the accepted quote is First, then the sent quotes and then the rejected and cancelled quotes.
+    maintenanceQuotesForItem.sort((a, b) => {
+        const order = ["FINISHED", "SCHEDULED", "ACCEPTED", "REQUESTED", "SENT", "REJECTED", "CANCELLED", undefined];
+        return order.indexOf(a.quote_status) - order.indexOf(b.quote_status);
+    });
+    
 
     if (request_status !== "NEW"){
         
@@ -132,9 +141,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                     <TableCell sx={tableCell}>
                                         <Typography sx={tableText}> Date </Typography>
                                     </TableCell>
-                                    {/* <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Notes </Typography>
-                                    </TableCell> */}
                                 </TableRow>
                             </TableHead>
                         ) : null}
@@ -152,9 +158,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableText}> {quote.quote_created_date} </Typography>
                                 </TableCell>
-                                {/* <TableCell sx={tableCell}>
-                                    <Typography sx={tableText}> {quote.quote_pm_notes} </Typography>
-                                </TableCell> */}
                             </TableRow>
                         ))}
                     </Table>
