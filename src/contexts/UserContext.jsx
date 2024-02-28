@@ -126,7 +126,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 
   const paymentRoutingBasedOnSelectedRole = () => {
     const role = roleName();
-    if (role === "Property Manager") {
+    if (role === "Manager") {
       return "/payments";
     }
     // } else if (role === "Property Owner"){
@@ -156,9 +156,9 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     // console.log("routingWithSelectedRole selectedRole", selectedRole)
     const role = roleName();
     if (role === "Manager") {
-      return "/PMProperties";
+      return "/properties";
     } else if (role === "Owner") {
-      return "/Properties";
+      return "/properties";
     }
   };
 
