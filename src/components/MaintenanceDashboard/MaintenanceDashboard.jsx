@@ -93,14 +93,12 @@ export default function MaintenanceDashboard(){
                 });
                 
                 const data = await response.json();
-                console.log('[DEBUG] Maintenance Worker Dashboard Data:', data)
                 set_api_data(data);
 
                 
                 for (const item of data.CurrentActivities.result) {
                     switch(item.maintenance_status) {
                         case "REQUESTED":
-                            console.log("REQUESTED COUNT", item.num)
                             setQuoteRequestedCount(item.num) 
                             break;
 
