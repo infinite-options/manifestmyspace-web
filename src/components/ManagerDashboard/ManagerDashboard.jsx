@@ -192,13 +192,12 @@ function ManagerDashboard() {
             {!loading && */}
       <div className="mt-widgest-main">
         <div className="mt-container">
-          <MaintenanceWidget selectedRole={"MANAGER"} maintenanceData={maintenanceStatusData} />
-          <PropertyRentWidget profile={"MANAGER"} rentData={rentStatus} />
+          <MaintenanceWidget maintenanceData={maintenanceStatusData} />
+          <PropertyRentWidget rentData={rentStatus} />
         </div>
 
         <div className="mt-container">
-          {/* <LeaseWidget selectedRole={"OWNER"}/> */}
-          <LeaseWidget selectedRole={"MANAGER"} leaseData={leaseStatus} />
+          <LeaseWidget leaseData={leaseStatus} />
         </div>
 
         <br />
