@@ -24,13 +24,15 @@ import CompleteTicket from "../../utils/CompleteTicket";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
-import ManagerProfileLink from "../../Maintenance/MaintenanceComponents/ManagerProfileLink";
+import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 
 
-export default function QuotesSubmittedAction01({maintenanceItem}){
+export default function WorkerQuotesSubmittedAction({maintenanceItem}){
     
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+
+    console.log(maintenanceItem)
 
 
     function handleNavigateToQuotesRequested(){

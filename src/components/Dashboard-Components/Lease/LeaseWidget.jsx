@@ -11,16 +11,14 @@ import { Button, Box, ThemeProvider } from "@mui/material";
 
 export default function LeaseWidget(props) {
   const navigate = useNavigate();
-  const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
+  // const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
-  console.log("Role: ", user);
-  console.log("Selected Role: ", selectedRole);
+  // console.log("Role: ", user);
+  // console.log("Selected Role: ", selectedRole);
 
   let date = new Date();
   let moveoutsInSixWeeks = 0;
   let leaseStatusData = props.leaseData;
-  //   let selectedRole = props.selectedRole;
-  //   console.log("Selected Role via props is: ", selectedRole);
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
@@ -58,15 +56,6 @@ export default function LeaseWidget(props) {
   });
 
   leaseStatus = leaseStatusDictionary;
-
-  //   function routingWithSelectedRole() {
-  //     // console.log("routingWithSelectedRole selectedRole", selectedRole)
-  //     if (selectedRole == "MANAGER") {
-  //       return "/PMLeases";
-  //     } else if (selectedRole == "OWNER") {
-  //       return "/ownerLeases";
-  //     }
-  //   }
 
   return (
     <ThemeProvider theme={theme}>

@@ -116,11 +116,11 @@ export function MaintenanceRequestDetail(){
 
     function getColorStatusBasedOnSelectedRole(){
         const role = roleName()
-        // console.log("role", role)   
+        console.log("role", role)   
 
-        if (role === "Property Manager"){
+        if (role === "Manager"){
             return theme.colorStatusPMO
-        } else if (role === "Property Owner"){
+        } else if (role === "Owner"){
             return theme.colorStatusO
         } else if (role === "Maintenance"){
             return theme.colorStatusMM
@@ -134,6 +134,9 @@ export function MaintenanceRequestDetail(){
     }
 
     const colorStatus = getColorStatusBasedOnSelectedRole()
+
+    console.log("[DEBUG] colorStatus", colorStatus)
+    console.log("[DEBUG] location.state", location.state)
 
    
 

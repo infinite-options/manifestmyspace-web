@@ -1,3 +1,4 @@
+
 import { 
     ThemeProvider, 
     Typography,
@@ -21,65 +22,73 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import CalendarToday from "@mui/icons-material/CalendarToday";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import QuoteDetailInfo from "./QuoteDetailInfo";
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 
-export default function ScheduleMaintenance01({maintenanceItem}){
-    
-    const location = useLocation();
+export default function WorkerQuotesAccepted({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
+    console.log("QuotesAccepted maintenanceItem", maintenanceItem)
 
-    function handleNavigate(){
-        console.log("navigate to Rescheduling Maintenance")
-        navigate("/scheduleMaintenance", {
+
+    function handleNavigateToQuotesRequested(){
+
+        console.log("NewRequestAction", maintenanceItem)
+        navigate("/quoterequest", {
             state:{
                 maintenanceItem
             }
-        })
+        });
     }
 
-    async function handleReSchedule(id){
-        console.log("reschedule not implemented yet")
-        alert("RESCHEDULE NOT IMPLEMENTED YET")
-
+    async function handleCancel(id){ // Change
+        let response = CancelTicket(id, setShowSpinner);
+        console.log("handleCancel", response)
+        if (response){
+            console.log("Ticket Cancelled")
+            alert("Ticket Cancelled")
+            navigate('/workerMaintenance')
+        } else{
+            console.log("Ticket Not Cancelled")
+            alert("Error: Ticket Not Cancelled")
+        }
     }
 
-    async function handleComplete(id){
+    async function handleScheduleChange(id){
 
+        console.log("handleScheduleChange", id)
 
-        const changeMaintenanceQuoteStatus = async () => {
+        const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
-            var formData = new FormData();
-
-            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-            formData.append("quote_status", "FINISHED");
-
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
-                    body: formData,
-                });            
-                let responseData = await response.json();
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                        "maintenance_request_status": "SCHEDULED",
+                        "maintenance_scheduled_date": "10/30/2023",
+                        "maintenance_scheduled_time": "10:00:00"
+
+                    })
+                });
+
+                const responseData = await response.json();
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    let response = CompleteTicket(id, setShowSpinner);
-                    console.log("handleComplete", response);
-                    if (response){
-                        console.log("Ticket Completed")
-                        alert("Ticket Completed")
-                        navigate(maintenanceRoutingBasedOnSelectedRole())
-                    } else{
-                        console.log("Ticket Not Completed")
-                        alert("Error: Ticket Not Completed")
-                    }
+                    changeQuoteStatus()
+                } else{
+                    console.log("error setting status")
                 }
             } catch (error){
                 console.log("error", error)
@@ -87,9 +96,70 @@ export default function ScheduleMaintenance01({maintenanceItem}){
             setShowSpinner(false);
         }
 
-        changeMaintenanceQuoteStatus();
+        const changeQuoteStatus = async () => {
+            setShowSpinner(true);
+            var formData = new FormData();
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_status", "SCHEDULED");
+            try {
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                    method: 'PUT',
+                    body: formData
+                });
+                const responseData = await response.json();
+                console.log(responseData)
+                if (responseData.code === 200){
+                    console.log("Ticket Status Changed")
+                    alert("Ticket Status Changed to SCHEDULED")
+                    navigate('/workerMaintenance')
+                }
+            } catch(error){
+                console.log("error", error)
+            }
+            setShowSpinner(false);
+        }
+        changeMaintenanceRequestStatus()
     }
 
+    async function handleComplete(id){
+        let response = CompleteTicket(id, setShowSpinner);
+        console.log("handleComplete", response);
+        if (response){
+            console.log("Ticket Completed")
+            alert("Ticket Completed")
+            navigate(maintenanceRoutingBasedOnSelectedRole())
+        } else{
+            console.log("Ticket Not Completed")
+            alert("Error: Ticket Not Completed")
+        }
+    }
+
+    async function handleScheduleStatusChange(){
+        setShowSpinner(true);
+        try {
+            //make this form data
+            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
+                    "maintenance_request_status": "SCHEDULED"
+                })
+            });
+            const responseData = await response.json();
+            console.log(responseData)
+            if (responseData.code === 200){
+                console.log("Ticket Status Changed")
+                alert("Ticket Status Changed")
+                navigate(maintenanceRoutingBasedOnSelectedRole())
+            }
+        } catch (error){
+            console.log("error", error)
+        }
+        setShowSpinner(false);
+    }
 
     return(
         <Box 
@@ -107,8 +177,7 @@ export default function ScheduleMaintenance01({maintenanceItem}){
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                
+              <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <ManagerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
@@ -132,7 +201,6 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                     >
                         <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
                     </Box>
-                    
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
@@ -157,9 +225,9 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem.quote_notes}
+                            {maintenanceItem?.quote_notes}
                         </Typography>
-                       </Box>
+                    </Box>
                 </Grid>
                 <Grid item xs={6} sx={{
                     alignItems: "center",
@@ -175,14 +243,11 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleReSchedule(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
                     >   
-                         <CalendarToday sx={{
-                            color: "#3D5CAC",
-                            paddingRight: "10%"
-                        }}/>
+                        <CloseIcon sx={{color: "#3D5CAC"}}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                           Reschedule
+                           Withdraw Quote
                         </Typography>
                     </Button>
                 </Grid> 
@@ -200,11 +265,14 @@ export default function ScheduleMaintenance01({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => handleScheduleChange(maintenanceItem.maintenance_request_uid)}
                     >   
-                       <CheckIcon sx={{color: "#3D5CAC"}}/>
+                        <CalendarTodayIcon sx={{
+                            color: "#3D5CAC",
+                            paddingRight: "10%"
+                        }}/>
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Complete Ticket
+                            Schedule
                         </Typography>
                     </Button>
                 </Grid> 

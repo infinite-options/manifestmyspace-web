@@ -45,7 +45,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const roleName = (role = selectedRole) => {
     switch (role) {
       case "MANAGER":
-        return "Property Manager";
+        return "Manager";
       case "MAINTENANCE":
         return "Maintenance";
       case "PM_EMPLOYEE":
@@ -53,7 +53,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
       case "MAINT_EMPLOYEE":
         return "Maintenance Employee";
       case "OWNER":
-        return "Property Owner";
+        return "Owner";
       default:
         return "Tenant";
     }
@@ -109,9 +109,9 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 
   const maintenanceRoutingBasedOnSelectedRole = () => {
     const role = roleName();
-    if (role === "Property Manager") {
+    if (role === "Manager") {
       return "/managerMaintenance";
-    } else if (role === "Property Owner") {
+    } else if (role === "Owner") {
       return "/ownerMaintenance";
     } else if (role === "Maintenance") {
       return "/workerMaintenance";
@@ -126,7 +126,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 
   const paymentRoutingBasedOnSelectedRole = () => {
     const role = roleName();
-    if (role === "Property Manager") {
+    if (role === "Manager") {
       return "/payments";
     }
     // } else if (role === "Property Owner"){
@@ -145,10 +145,20 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const leaseRoutingBasedOnSelectedRole = () => {
     // console.log("routingWithSelectedRole selectedRole", selectedRole)
     const role = roleName();
-    if (role === "Property Manager") {
-      return "/PMLeases";
-    } else if (role === "Property Owner") {
-      return "/ownerLeases";
+    if (role === "Manager") {
+      return "/Leases";
+    } else if (role === "Owner") {
+      return "/Leases";
+    }
+  };
+
+  const propertyRoutingBasedOnSelectedRole = () => {
+    // console.log("routingWithSelectedRole selectedRole", selectedRole)
+    const role = roleName();
+    if (role === "Manager") {
+      return "/properties";
+    } else if (role === "Owner") {
+      return "/properties";
     }
   };
 
@@ -176,6 +186,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         maintenanceRoutingBasedOnSelectedRole,
         paymentRoutingBasedOnSelectedRole,
         leaseRoutingBasedOnSelectedRole,
+        propertyRoutingBasedOnSelectedRole,
       }}
     >
       {children}
