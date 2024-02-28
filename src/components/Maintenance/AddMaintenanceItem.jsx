@@ -138,27 +138,29 @@ export default function AddMaintenanceItem(){
     };
 
     function checkImageSizes(selectedImageList) {
-        const MAX_SIZE = 500 * 1024; // 500 KB in bytes
-        for (let i = 0; i < selectedImageList.length; i++) {
-            const image = selectedImageList[i];
-            console.log(image, image.file.size)
-            if (image.file.size > MAX_SIZE) {
-                // Remove the image from the array or handle the error
-                console.log("Image is too large. It has been removed.")
-                setImageOverLimit(true)
-                setShowErrorMessage(true);
-                selectedImageList.splice(i, 1);
-                i--; // Adjust the index since we removed an item
-            } else {
-                console.log("image size:", image.file.size, "is less than", MAX_SIZE)
-            }
+        const MAX_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
+
+        
+        const sumImageSizes = selectedImageList.reduce((acc, image) => {
+            return acc + image.file.size;
+        }, 0)
+
+        if (sumImageSizes > MAX_SIZE) {
+            setImageOverLimit(true)
+            setShowErrorMessage(true);
+        } else{
+            setImageOverLimit(false)
+            setShowErrorMessage(false);
         }
     }
+
+    // Should be 5MB max limit for all images
 
     useEffect(() => {
         console.log("running useEffect checkImageSizes")
 
         checkImageSizes(selectedImageList);
+        // I want checkImageSizes to run everytime selectedImageList changes
         
     }, [selectedImageList])
 
@@ -171,7 +173,7 @@ export default function AddMaintenanceItem(){
         console.log(user.owner_id)
 
         const getProperties = async () => {
-            setShowSpinner(true);
+            // setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
             const propertyData = await response.json();
@@ -180,7 +182,7 @@ export default function AddMaintenanceItem(){
             console.log("properties", propertyData)
             // setProperties(properties)
             setProperties([...propertyData["Property"].result]);
-            setShowSpinner(false);
+            // setShowSpinner(false);
         }
 
         getProperties();
@@ -444,23 +446,7 @@ export default function AddMaintenanceItem(){
                                         // onClick={selectingPriority}
                                         aria-label="Priority"
                                         size="small"
-                                        sx={{
-                                            // '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': {
-                                            //     borderLeftWidth: "5px !important", // Match the left border width of the first button
-                                            // },
-                                            // '& .MuiToggleButtonGroup-grouped:not(:first-of-type):hover': {
-                                            //     borderLeftColor: "white !important", // Set the left border color on hover
-                                            //     borderLeftWidth: "5px !important",   // Ensure the left border width is 5px on hover
-                                            // },
-                                            // '& .MuiToggleButtonGroup-grouped:nth-of-type(1).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type': {
-                                            //     borderLeftColor: 'transparent !important',
-                                            // },
-                                            // '& .MuiToggleButtonGroup-grouped:nth-of-type(1).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type:hover': {
-                                            //     borderLeftColor: 'transparent !important',
-                                            // },
-                                            // padding: "10px",
-                                            display: "flex",
-                                        }}
+                                        sx={{display: "flex"}}
                                     >
                                         <ToggleButton 
                                             // value="Low"
@@ -607,12 +593,9 @@ export default function AddMaintenanceItem(){
                                 <Grid item xs={12}>
                                     {showErrorMessage ? (
                                         <Stack direction="row">
-                                            <Typography sx={{ color: 'red' }}>
-                                                Image is too large. It has been removed.
+                                            <Typography sx={{ color: 'red', fontSize: "16px" }}>
+                                                Total size of images must be less than 5MB. Please remove an image.
                                             </Typography>
-                                            <Button onClick={() => {setShowErrorMessage(false); setImageOverLimit(false);}} sx={{padding: "0px"}}>
-                                                <CloseIcon sx={{color: 'red'}}/>
-                                            </Button>
                                         </Stack>
                                     ): <Typography></Typography>}
                                     <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>

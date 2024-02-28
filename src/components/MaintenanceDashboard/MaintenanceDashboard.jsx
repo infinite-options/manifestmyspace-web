@@ -93,12 +93,14 @@ export default function MaintenanceDashboard(){
                 });
                 
                 const data = await response.json();
+                console.log('[DEBUG] Maintenance Worker Dashboard Data:', data)
                 set_api_data(data);
 
                 
                 for (const item of data.CurrentActivities.result) {
                     switch(item.maintenance_status) {
-                        case "REQUESTED": 
+                        case "REQUESTED":
+                            console.log("REQUESTED COUNT", item.num)
                             setQuoteRequestedCount(item.num) 
                             break;
 
@@ -133,7 +135,7 @@ export default function MaintenanceDashboard(){
                 }
 
                 setLoading(false);
-            } catch(error){
+            } catch(error) {
                 console.log("Error getting maintenance worker dashboard data: ", error)
             }
             setShowSpinner(false);
@@ -374,7 +376,7 @@ export default function MaintenanceDashboard(){
                                     },
                                     paddingTop: '10px',
                                 }}>
-                                    <MaintenanceWorkerDashboardWidget dashboard_data= {api_data}/>
+                                    <MaintenanceWorkerDashboardWidget dashboard_data={api_data}/>
                                 </Paper>
                             </Box>
                         </Grid>
