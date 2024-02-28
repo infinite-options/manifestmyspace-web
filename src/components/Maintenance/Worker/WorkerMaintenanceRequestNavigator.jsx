@@ -22,7 +22,7 @@ async function getInitialImages(requestData, currentIndex) {
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator01({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
+export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");

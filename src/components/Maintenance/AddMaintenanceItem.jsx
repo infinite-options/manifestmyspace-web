@@ -25,10 +25,9 @@ import {
 } from "@mui/material";
 
 import { darken } from '@mui/system';
-
-
+import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -42,7 +41,6 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function AddMaintenanceItem(){
-    const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [propertyId, setPropertyId] = useState('')
@@ -58,6 +56,8 @@ export default function AddMaintenanceItem(){
     const [description, setDescription] = useState('');
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+    const [imageOverLimit, setImageOverLimit] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const profileId = getProfileId(); 
 
@@ -111,14 +111,6 @@ export default function AddMaintenanceItem(){
         setDescription(event.target.value);
     };
 
-    // const handlePriorityChange = (event, newToggleGroupValue) => {
-    //     console.log("handlePriorityChange", event.target.value)
-    //     // console.log("handleToggleGroupChange", newToggleGsroupValue)
-    //     setPriority(event.target.value)
-    //     // setToggleGroupValue(newToggleGroupValue);
-    //     // setToggleAlignment(newToggleGroupValue);
-    // };
-
     const handlePriorityChange = (priority) => {
         setToggleAlignment(priority);
         setToggleGroupValue(priority);
@@ -139,18 +131,38 @@ export default function AddMaintenanceItem(){
         });
     };
 
-    
-
-
-    // const handlePriorityChange = (value) => {
-    //     setToggleGroupValue(value);
-    //     setToggleAlignment(value);
-    // };
 
     const handleCompletedChange = (event, newToggleGroupValue) => {
         // console.log("handleToggleGroupChange", newToggleGroupValue)
         setCompleted(event.target.value)
     };
+
+    function checkImageSizes(selectedImageList) {
+        const MAX_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
+
+        
+        const sumImageSizes = selectedImageList.reduce((acc, image) => {
+            return acc + image.file.size;
+        }, 0)
+
+        if (sumImageSizes > MAX_SIZE) {
+            setImageOverLimit(true)
+            setShowErrorMessage(true);
+        } else{
+            setImageOverLimit(false)
+            setShowErrorMessage(false);
+        }
+    }
+
+    // Should be 5MB max limit for all images
+
+    useEffect(() => {
+        console.log("running useEffect checkImageSizes")
+
+        checkImageSizes(selectedImageList);
+        // I want checkImageSizes to run everytime selectedImageList changes
+        
+    }, [selectedImageList])
 
     const handleBackButton = () => {
         console.log("handleBackButton")
@@ -161,7 +173,7 @@ export default function AddMaintenanceItem(){
         console.log(user.owner_id)
 
         const getProperties = async () => {
-            setShowSpinner(true);
+            // setShowSpinner(true);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
             const propertyData = await response.json();
@@ -170,13 +182,12 @@ export default function AddMaintenanceItem(){
             console.log("properties", propertyData)
             // setProperties(properties)
             setProperties([...propertyData["Property"].result]);
-            setShowSpinner(false);
+            // setShowSpinner(false);
         }
 
         getProperties();
 
     }, [])
-
 
 
     const handleSubmit = (event) => {
@@ -435,23 +446,7 @@ export default function AddMaintenanceItem(){
                                         // onClick={selectingPriority}
                                         aria-label="Priority"
                                         size="small"
-                                        sx={{
-                                            // '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': {
-                                            //     borderLeftWidth: "5px !important", // Match the left border width of the first button
-                                            // },
-                                            // '& .MuiToggleButtonGroup-grouped:not(:first-of-type):hover': {
-                                            //     borderLeftColor: "white !important", // Set the left border color on hover
-                                            //     borderLeftWidth: "5px !important",   // Ensure the left border width is 5px on hover
-                                            // },
-                                            // '& .MuiToggleButtonGroup-grouped:nth-of-type(1).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type': {
-                                            //     borderLeftColor: 'transparent !important',
-                                            // },
-                                            // '& .MuiToggleButtonGroup-grouped:nth-of-type(1).Mui-selected + .MuiToggleButtonGroup-grouped:last-of-type:hover': {
-                                            //     borderLeftColor: 'transparent !important',
-                                            // },
-                                            // padding: "10px",
-                                            display: "flex",
-                                        }}
+                                        sx={{display: "flex"}}
                                     >
                                         <ToggleButton 
                                             // value="Low"
@@ -596,12 +591,19 @@ export default function AddMaintenanceItem(){
 
                                 {/* File Upload Field */}
                                 <Grid item xs={12}>
+                                    {showErrorMessage ? (
+                                        <Stack direction="row">
+                                            <Typography sx={{ color: 'red', fontSize: "16px" }}>
+                                                Total size of images must be less than 5MB. Please remove an image.
+                                            </Typography>
+                                        </Stack>
+                                    ): <Typography></Typography>}
                                     <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                                 </Grid>
 
                                 {/* Submit Button */}
                                 <Grid item xs={12}>
-                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC"}}>
+                                    <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: imageOverLimit ? "#B0B0B0" : "#3D5CAC", pointerEvents: imageOverLimit ? "none" : "auto"}}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                                 Add Maintenance
                                         </Typography>

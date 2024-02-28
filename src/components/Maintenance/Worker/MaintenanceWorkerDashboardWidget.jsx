@@ -52,7 +52,7 @@ export default function     MaintenanceWorkerDashboardWidget(props){
             let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
             let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ??[];
             let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
-           
+
             dataObject["REQUESTED"] = [...array1];
             dataObject["SUBMITTED"] = [...array2];
             dataObject["ACCEPTED"] = [...array3];

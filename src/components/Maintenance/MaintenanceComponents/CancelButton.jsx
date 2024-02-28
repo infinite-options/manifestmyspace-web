@@ -17,6 +17,8 @@ export default function CancelButton(props){
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
 
+    console.log("CancelButton maintenanceItem", maintenanceItem)
+
     function handleCancel(id){
         let response = CancelTicket(id);
         console.log("handleCancel", response)

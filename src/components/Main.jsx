@@ -133,8 +133,8 @@ import SelectRole from "./Onboarding/SelectRole";
 import BusinessQuoteForm from "./Maintenance/Business/BusinessQuoteForm";
 import BusinessInvoiceForm from "./Maintenance/Business/BusinessInvoiceForm";
 
-import Maintenance01 from "./Maintenance/Worker/MaintenanceWorker";
-import MaintenanceRequestDetail01 from "./Maintenance/Worker/MaintenanceRequestDetail01";
+import WorkerMaintenance from "./Maintenance/Worker/MaintenanceWorker";
+import WorkerMaintenanceRequestDetail from "./Maintenance/Worker/WorkerMaintenanceRequestDetail";
 
 import ProfileName from "./Onboarding/ProfileName";
 import ProfileInfo from "./Onboarding/ProfileInfo";
@@ -316,11 +316,16 @@ function Main() {
             <Route path="rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route path="payMaintenance" element={<PayMaintenanceForm />} />
 
+            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
+            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
+            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm/>} />
+            <Route path="workerMaintenance" element={<WorkerMaintenance />} />
+            <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
             <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
             <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
-            <Route path="workerMaintenance" element={<Maintenance01 />} />
-            <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
+            {/* <Route path="workerMaintenance" element={<Maintenance01 />} />
+            <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} /> */}
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
             <Route path="pmQuotesList" element={<PMQuotesList />} />

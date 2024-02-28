@@ -26,9 +26,10 @@ export default function MaintenanceManager(){
     const { user, getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
-    const [propertyId, setPropertyId] = useState("200-000029")
+    const [propertyId, setPropertyId] = useState("")
     const colorStatus = theme.colorStatusPMO
     const [refresh, setRefresh] = useState(false || location.state?.refresh)
+    
 
     const newDataObject = {};
     newDataObject["NEW REQUEST"] = [];
@@ -55,7 +56,7 @@ export default function MaintenanceManager(){
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
-        navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
+        navigate('/addMaintenanceItem')
     }
     
     function dedupeQuotes(array){

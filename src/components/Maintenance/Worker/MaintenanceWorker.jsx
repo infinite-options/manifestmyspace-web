@@ -25,7 +25,6 @@ export default function MaintenanceWorker(){
     let navigate = useNavigate();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
-    const [propertyId, setPropertyId] = useState("200-000029")
     const colorStatus = theme.colorStatusMM;
     const [showSpinner, setShowSpinner] = useState(false);
     const [refresh, setRefresh] = useState(false || location.state?.refresh)
@@ -71,10 +70,10 @@ export default function MaintenanceWorker(){
                 }
             }
             
-            priorityList.push({"priority":"High","checked": true});
-            priorityList.push({"priority":"Medium","checked": true});
-            priorityList.push({"priority":"Low","checked": true});
-            priorityList.push({"priority":"","checked": true});
+            priorityList.push({"priority": "High", "checked": true});
+            priorityList.push({"priority": "Medium", "checked": true});
+            priorityList.push({"priority": "Low", "checked": true});
+            priorityList.push({"priority": "", "checked": true});
 
             setFilterPriorityList(priorityList);
             
@@ -178,16 +177,16 @@ export default function MaintenanceWorker(){
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
-            const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
-            const maintenanceRequestsData1 = await maintenanceRequests1.json()
-            // console.log("maintenanceRequestsData1", maintenanceRequestsData1)
+            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
+            const maintenanceRequestsData = await maintenanceRequests.json()
+            // console.log("maintenanceRequestsData", maintenanceRequestsData)
             
-            let array1 = maintenanceRequestsData1.result.REQUESTED?.maintenance_items ??[];
-            let array2 = maintenanceRequestsData1.result.SUBMITTED?.maintenance_items ?? [];
-            let array3 = maintenanceRequestsData1.result.ACCEPTED?.maintenance_items ??[];
-            let array4 = maintenanceRequestsData1.result.SCHEDULED?.maintenance_items ?? [];
-            let array5 = maintenanceRequestsData1.result.FINISHED?.maintenance_items ??[];
-            let array6 = maintenanceRequestsData1.result.PAID?.maintenance_items ?? [];
+            let array1 = maintenanceRequestsData.result.REQUESTED?.maintenance_items ??[];
+            let array2 = maintenanceRequestsData.result.SUBMITTED?.maintenance_items ?? [];
+            let array3 = maintenanceRequestsData.result.ACCEPTED?.maintenance_items ??[];
+            let array4 = maintenanceRequestsData.result.SCHEDULED?.maintenance_items ?? [];
+            let array5 = maintenanceRequestsData.result.FINISHED?.maintenance_items ??[];
+            let array6 = maintenanceRequestsData.result.PAID?.maintenance_items ?? [];
            
             dataObject["REQUESTED"] = [...array1];
             dataObject["SUBMITTED"] = [...array2];

@@ -139,6 +139,7 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                     height: '75px',
                                     width: '75px',
                                     marginRight: '10px',
+                                    border: '20px solid #f0f0f0', // Adjust the color as needed
                                 }}
                             >
                                 <Grid item xs={2} key={index}>
@@ -182,8 +183,9 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                      <Box
                                         sx={{
                                             position: 'relative',
-                                            top: "-5px",
-                                            left: "40px",
+                                            // top: "-5px",
+                                            top: "-25px", // Adjusted for the 25px border
+                                            left: "62px",
                                             zIndex: 1,
                                         }}
                                     >
@@ -196,8 +198,9 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                     <Box
                                         sx={{
                                             position: 'relative',
-                                            top: "0px",
-                                            right: "7px",
+                                            // top: "0px",
+                                            top: "26px", // Adjusted for the 25px border
+                                            right: "28px",
                                             zIndex: 2,
                                         }}
                                     >
