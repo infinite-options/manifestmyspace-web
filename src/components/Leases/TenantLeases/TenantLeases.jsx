@@ -237,7 +237,7 @@ function TenantLeases(props) {
                                 Move In Date
                             </Typography>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                {lease.lease_end}
+                                {"<MOVE-IN_DATE>"}
                             </Typography>
                         </CenteringBox>
                     </Grid>
