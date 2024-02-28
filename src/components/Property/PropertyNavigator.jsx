@@ -138,7 +138,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
             }
         }
         getContractsForOwner();
-        refreshPropertyData();
+        // refreshPropertyData();
     }, [currentIndex, propertyId])
 
     //const [propertyId, setPropertyId] = useState('200-000028')

@@ -23,6 +23,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
 import DescriptionIcon from "@mui/icons-material/Description";
 import DeleteIcon from '@mui/icons-material/Delete';
+import InputAdornment from '@mui/material/InputAdornment';
+// import { createTheme } from '@mui/material/styles';
+import defaultHouseImage from "../Property/defaultHouseImage.png"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,6 +46,17 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
+// const materialTheme = createTheme({
+//   overrides: {
+//     MuiFormControl: {
+//       root: {
+//         border: "1px solid red",
+//         height: '20px',
+//       }
+//     }
+//   }
+// });
 
 const initialFees = (property, application) => {
   const fees = [];
@@ -81,13 +95,13 @@ const initialFees = (property, application) => {
       id: fees.length + 1,
       fee_name: "",
       fee_type: "$",
-      frequency: "",
+      frequency: "Monthly",
       charge: "",
-      due_by: "",
-      late_by: "",
+      due_by: 1,
+      late_by: 2,
       late_fee: "",
       perDay_late_fee: "",
-      available_topay: "",
+      available_topay: 1,
     });
   }
   return fees;
@@ -117,11 +131,23 @@ const TenantLease = () => {
   console.log("# of Occupants", noOfOccupants)
     
   const [fees, setFees] = useState(initialFees(property, application));
-
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
+  const [showMissingFieldsPrompt, setShowMissingFieldsPrompt] = useState(false);
+
+  let propertyImage;
+  if (property.property_favorite_image !== null) {
+    propertyImage = property.property_favorite_image;
+  } else if (property.property_images === null || property.property_images === "[]") {
+    propertyImage = defaultHouseImage;
+  } else {
+    const images = JSON.parse(property.property_images);
+    propertyImage = images.length > 0 ? images[0] : defaultHouseImage;
+  }
+
+
   
   const addFeeRow = () => {
     setFees((prev) => [
@@ -130,13 +156,13 @@ const TenantLease = () => {
         id: prev.length + 1,
         fee_name: "",
         fee_type: "$",
-        frequency: "",
+        frequency: "Monthly",
         charge: "",
-        due_by: "",
-        late_by: "",
+        due_by: 1,
+        late_by: 2,
         late_fee: "",
         perDay_late_fee: "",
-        available_topay: "",
+        available_topay: 1,
       },
     ]);
   };
@@ -146,19 +172,56 @@ const TenantLease = () => {
     list.splice(index - 1, 1);
     setFees(list);
   }
-  const handleFeeChange = (e, index) => {
-    console.log("handleFeeChange", e, index)
+  const handleFeeChange = (e, index) => {    
     const { name, value } = e.target;
+    console.log("handleFeeChange", name, value, typeof value)
     const list = [...fees];
-    list[index - 1][name] = value;
+    
+    if(name === "due_by" || name === "late_by" || name === "available_topay"){
+
+      if (typeof parseInt(value) === 'number' && !isNaN(parseInt(value))) {        
+        list[index - 1][name] = parseInt(value);
+      }else{
+        list[index - 1][name] = null;
+      }
+    }else{
+      list[index - 1][name] = value;
+    }
     setFees(list);
   };
   const handleFrequencyChange = (e, index) => {
     const value = e.target.value;
     let list = [...fees];
     list[index - 1].frequency = value;
+    list[index - 1].available_topay = null;
+    list[index - 1].due_by = null;
+    list[index - 1].late_by = null;
     setFees(list);
   };
+  const handleDueByChange = (e, index) => {    
+    const value = e.target.value;    
+    let list = [...fees];
+    list[index - 1].due_by = daytoValueMap.get(value);
+    setFees(list);
+    
+  };
+
+  const handleLateByChange = (e, index) => {    
+    const value = e.target.value;
+    let list = [...fees];
+    // list[index - 1].late_by = daytoValueMap.get(value);
+    list[index - 1].late_by = value;
+    setFees(list);
+  };
+
+  const handleAvailableToPayChange = (e, index) => {    
+    const value = e.target.value;
+    let list = [...fees];
+    // list[index - 1].available_topay = daytoValueMap.get(value);
+    list[index - 1].available_topay = value;
+    setFees(list);
+  };
+
   const handleStartDateChange = (v) => {
     setStartDate(v);
     if (endDate < v) setEndDate(v);
@@ -190,6 +253,138 @@ const TenantLease = () => {
   // const handleAvailableToPayChange = (e) => {
   //   setAvailableToPay(e.target.value);
   // };
+
+  const dayOptionsForWeekly = [
+    { value: "monday", label: "Monday" },
+    { value: "tuesday", label: "Tuesday" },
+    { value: "wednesday", label: "Wednesday" },
+    { value: "thursday", label: "Thursday" },
+    { value: "friday", label: "Friday" },
+    { value: "saturday", label: "Saturday" },
+    { value: "sunday", label: "Sunday" },
+  ];
+
+  const dayOptionsForBiWeekly = [
+    { value: "monday", label: "Monday" },
+    { value: "tuesday", label: "Tuesday" },
+    { value: "wednesday", label: "Wednesday" },
+    { value: "thursday", label: "Thursday" },
+    { value: "friday", label: "Friday" },
+    { value: "saturday", label: "Saturday" },
+    { value: "sunday", label: "Sunday" },
+    { value: "monday-week-2", label: "Monday - week 2" },
+    { value: "tuesday-week-2", label: "Tuesday - week 2" },
+    { value: "wednesday-week-2", label: "Wednesday - week 2" },
+    { value: "thursday-week-2", label: "Thursday - week 2" },
+    { value: "friday-week-2", label: "Friday - week 2" },
+    { value: "saturday-week-2", label: "Saturday - week 2" },
+    { value: "sunday-week-2", label: "Sunday - week 2" },
+  ];
+  
+  const lateByOptionsForWeekly = [
+    { value: 1, label: "1st day after due date" },
+    { value: 2, label: "2nd day after due date" },
+    { value: 3, label: "3rd day after due date" },
+    { value: 4, label: "4th day after due date" },
+    { value: 5, label: "5th day after due date" },
+    { value: 6, label: "6th day after due date" },
+    { value: 7, label: "7th day after due date" },
+  ];
+
+  const lateByOptionsForBiWeekly = [
+    { value: 1, label: "1st day after due date" },
+    { value: 2, label: "2nd day after due date" },
+    { value: 3, label: "3rd day after due date" },
+    { value: 4, label: "4th day after due date" },
+    { value: 5, label: "5th day after due date" },
+    { value: 6, label: "6th day after due date" },
+    { value: 7, label: "7th day after due date" },
+    { value: 8, label: "8th day after due date" },
+    { value: 9, label: "9th day after due date" },
+    { value: 10, label: "10th day after due date" },
+    { value: 11, label: "11th day after due date" },
+    { value: 12, label: "12th day after due date" },
+    { value: 13, label: "13th day after due date" },
+    { value: 14, label: "14th day after due date" },
+  ];
+
+  const availableToPayOptionsForWeekly = [
+    { value: 1, label: "1 day before due date" },
+    { value: 2, label: "2 days before due date" },
+    { value: 3, label: "3 days before due date" },
+    { value: 4, label: "4 days before due date" },
+    { value: 5, label: "5 days before due date" },
+    { value: 6, label: "6 days before due date" },
+    { value: 7, label: "7 days before due date" },
+  ];
+  
+  const availableToPayOptionsForBiWeekly = [
+    { value: 1, label: "1 day before due date" },
+    { value: 2, label: "2 days before due date" },
+    { value: 3, label: "3 days before due date" },
+    { value: 4, label: "4 days before due date" },
+    { value: 5, label: "5 days before due date" },
+    { value: 6, label: "6 days before due date" },
+    { value: 7, label: "7 days before due date" },
+    { value: 8, label: "8 days before due date" },
+    { value: 9, label: "9 days before due date" },
+    { value: 10, label: "10 days before due date" },
+    { value: 11, label: "11 days before due date" },
+    { value: 12, label: "12 days before due date" },
+    { value: 13, label: "13 days before due date" },
+    { value: 14, label: "14 days before due date" },
+  ];
+
+
+  const daytoValueMap = new Map([
+    ['monday', 0],
+    ['tuesday', 1],
+    ['wednesday', 2],
+    ['thursday', 3],
+    ['friday', 4],
+    ['saturday', 5],
+    ['sunday', 6],
+    ['monday-week-2', 7],
+    ['tuesday-week-2', 8],
+    ['wednesday-week-2', 9],
+    ['thursday-week-2', 10],
+    ['friday-week-2', 11],
+    ['saturday-week-2', 12],
+    ['sunday-week-2', 13],
+]);
+
+const valueToDayMap = new Map(Array.from(daytoValueMap, ([key, value]) => [value, key]));
+
+
+const checkRequiredFields = () => {
+  let retVal = true;
+  fees.map((fee) => {
+    if (fee.fee_name === "" ||
+        fee.charge === "" ||
+        fee.frequency === "" ||
+        fee.due_by === null ||
+        fee.late_by === null ||
+        fee.late_fee === "" ||
+        fee.available_topay === null ||
+        fee.perDay_late_fee === ""
+    ){
+      retVal = false;
+    }    
+  });
+  return retVal;
+}
+
+const getDateAdornmentString = (d) => {
+  if(d === null || d === 0) return '';
+  if (d > 3 && d < 21) return 'th';
+  switch (d % 10) {
+    case 1:  return "st";
+    case 2:  return "nd";
+    case 3:  return "rd";
+    default: return "th";
+  }
+};
+
   
   const handleRemoveFile = (index) => {
     setLeaseFiles(prevFiles => {
@@ -220,6 +415,11 @@ const TenantLease = () => {
   };
 
   const handleCreateLease = async () => {
+    setShowMissingFieldsPrompt(false);    
+    if(!checkRequiredFields()){
+      setShowMissingFieldsPrompt(true);
+      return;
+    }
     setShowSpinner(true);
 
     const leaseApplicationFormData = new FormData();
@@ -368,7 +568,7 @@ const TenantLease = () => {
             }}
           >
             <img
-              src={JSON.parse(property.property_images)[0]}
+              src={propertyImage}
               alt="Property Img"
               style={{
                 width: "130px",
@@ -523,7 +723,7 @@ const TenantLease = () => {
             </Stack>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Stack>
+            <Stack spcaing={-2} m={2}>
               <Typography
                 sx={{
                   color: theme.typography.propertyPage.color,
@@ -535,36 +735,54 @@ const TenantLease = () => {
                 {"Move In Date"}
               </Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={moveInDate}
-                  minDate={dayjs()}
-                  onChange={handleMoveInDateChange}
-                  slots={{
-                    openPickerIcon: CalendarIcon,
-                  }}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      style: {
-                        width: "100%",
-                        fontSize: 12,
-                        backgroundColor: "#F2F2F2 !important",
-                        borderRadius: "10px !important",
+                {/* <ThemeProvider theme={materialTheme}> */}
+                  <DatePicker
+                    value={moveInDate}
+                    minDate={dayjs()}
+                    onChange={handleMoveInDateChange}                                                        
+                    slots={{
+                      openPickerIcon: CalendarIcon,
+                    }}
+                    slotProps={{
+                      inputProps: {                        
+                        style: {                          
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          height: '30px',
+                          borderRadius: '20px',                          
+                        },
                       },
-                    },
-                  }}
-                />
+                      textField: {
+                        size: "small",
+                        variant: "standard",
+                        style: {
+                          height: '30px important',
+                          width: "100%",
+                          fontSize: '20px',
+                          marginTop: '0px',
+                          padding: '5px',
+                          // backgroundColor: "#F2F2F2 !important",
+                          // borderRadius: "10px !important",                          
+                          backgroundColor: "#D6D5DA",
+                          borderRadius: '10px',
+                          height: '30px',
+                        },
+                      },
+                    }}
+                  />
+                {/* </ThemeProvider> */}
               </LocalizationProvider>
             </Stack>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Stack>
+            <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
                   color: theme.typography.propertyPage.color,
                   fontFamily: "Source Sans Pro",
                   fontWeight: theme.typography.common.fontWeight,
                   fontSize: theme.typography.smallFont,
+                  
                 }}
               >
                 {"# of Occupants"}
@@ -576,14 +794,16 @@ const TenantLease = () => {
                 variant="filled"
                 fullWidth
                 placeholder="Number"
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "15px",
-                  },
-                }}
+                className={classes.root}
+                
+                // sx={{
+                //   "& .MuiFormControl-root": {
+                //     backgroundColor: "#D6D5DA",
+                //     borderRadius: 10,
+                //     height: 40,
+                //     paddingBottom: "15px",
+                //   },
+                // }}
               />
             </Stack>
           </Grid>
@@ -598,7 +818,7 @@ const TenantLease = () => {
                 rowSpacing={1}
                 columnSpacing={{ xs: 1, sm: 2, md: 3 }}
               >
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
@@ -608,8 +828,8 @@ const TenantLease = () => {
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {"Fee Name"}
-                    </Typography>
+                      {"Fee Name "}<span style={{ color: 'red',}}>*</span>
+                    </Typography>                    
                     <TextField
                       name="fee_name"
                       value={row.fee_name}
@@ -620,7 +840,7 @@ const TenantLease = () => {
                     />
                   </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
@@ -630,7 +850,7 @@ const TenantLease = () => {
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {"Charge"}
+                      {"Charge "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
                     <TextField
                       name="charge"
@@ -642,7 +862,7 @@ const TenantLease = () => {
                     />
                   </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
@@ -653,7 +873,7 @@ const TenantLease = () => {
                         paddingBottom: 5,
                       }}
                     >
-                      {"Frequency"}
+                      {"Frequency "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
                     <Select
                       value={row.frequency}
@@ -664,12 +884,14 @@ const TenantLease = () => {
                       className={classes.select}
                     >
                       <MenuItem value="One-time">One-time</MenuItem>
+                      <MenuItem value="Weekly">Weekly</MenuItem>
+                      <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
                       <MenuItem value="Monthly">Monthly</MenuItem>
-                      <MenuItem value="Annually">Annually</MenuItem>
+                      {/* <MenuItem value="Annually">Annually</MenuItem> */}
                     </Select>
                   </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
@@ -677,43 +899,175 @@ const TenantLease = () => {
                         fontFamily: "Source Sans Pro",
                         fontWeight: theme.typography.common.fontWeight,
                         fontSize: theme.typography.smallFont,
+                        // paddingBottom: '10px',
                       }}
                     >
-                      {"Due By"}
+                      {"Due By "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
-                    <TextField
-                      name="due_by"
-                      value={row.due_by}
-                      variant="filled"
-                      fullWidth
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                    />
+                    {
+                      row.frequency === "Monthly" && (
+                        <TextField
+                          name="due_by"
+                          value={row.due_by !== null && row.due_by !== ""? row.due_by : ""}
+                          variant="filled"
+                          fullWidth
+                          className={classes.root}
+                          onChange={(e) => handleFeeChange(e, row.id)}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="start">{getDateAdornmentString(row.due_by)}</InputAdornment>,
+                          }}
+                        />
+                      )
+                    }
+                    {
+                      (row.frequency === "Weekly" || row.frequency === "Bi-Weekly") && (
+                        <Box
+                          sx={{
+                            paddingTop: '10px',
+                          }}
+                        >
+                          <Select
+                            name="due_by"                      
+                            value={row.due_by !== null? valueToDayMap.get(row.due_by) : ""}                      
+                            size="small"
+                            fullWidth
+                            onChange={(e) => handleDueByChange(e, row.id, "weekly")}                      
+                            placeholder="Select Due By Day"
+                            className={classes.select}
+                            sx={{
+                              margin: 'auto',
+                            }}                      
+                          >                      
+                            {row.frequency && row.frequency === "Weekly" && dayOptionsForWeekly.map((day) => (
+                              <MenuItem key={day.value} value={day.value}>
+                                {day.label}
+                              </MenuItem>
+                            ))}
+                            {row.frequency && row.frequency === "Bi-Weekly" && dayOptionsForBiWeekly.map((day) => (
+                              <MenuItem key={day.value} value={day.value}>
+                                {day.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </Box>
+                      )
+                    }
                   </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
                         color: theme.typography.propertyPage.color,
                         fontFamily: "Source Sans Pro",
                         fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
+                        fontSize: theme.typography.smallFont,                        
                       }}
                     >
-                      {"Late By"}
+                      {"Available To Pay "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
-                    <TextField
-                      name="late_by"
-                      value={row.late_by}
-                      variant="filled"
-                      fullWidth
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                    />
+                    {
+                      row.frequency === "Monthly" && (
+                        <TextField
+                          name="available_topay"
+                          value={row.available_topay}
+                          variant="filled"
+                          fullWidth
+                          className={classes.root}
+                          onChange={(e) => handleFeeChange(e, row.id)}
+                        />
+                      )
+                    }
+                    {
+                      (row.frequency === "Weekly" || row.frequency === "Bi-Weekly") && (
+                        <Box
+                          sx={{
+                            paddingTop: '10px',
+
+                          }}
+                        >
+                          <Select
+                            name="available_topay"                      
+                            value={row.available_topay !== null? row.available_topay : ""}                      
+                            size="small"
+                            fullWidth
+                            onChange={(e) => handleAvailableToPayChange(e, row.id, "weekly")}                      
+                            placeholder="Select Available to Pay By Day"
+                            className={classes.select}                      
+                          >                      
+                            {row.frequency && row.frequency === "Weekly" && availableToPayOptionsForWeekly.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                            {row.frequency && row.frequency === "Bi-Weekly" && availableToPayOptionsForBiWeekly.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}        
+                          </Select>
+                        </Box>
+                      )
+                    }
                   </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
+                  <Stack spacing={-2} m={2}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.propertyPage.color,
+                        fontFamily: "Source Sans Pro",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,                        
+                      }}
+                    >
+                      {"Late By "}<span style={{ color: 'red',}}>*</span>
+                    </Typography>
+                    {
+                      row.frequency === "Monthly" && (
+                        <TextField
+                          name="late_by"
+                          value={row.late_by}
+                          variant="filled"
+                          fullWidth
+                          className={classes.root}
+                          onChange={(e) => handleFeeChange(e, row.id)}
+                        />
+                      )
+                    }
+                    {
+                      (row.frequency === "Weekly" || row.frequency === "Bi-Weekly") && (
+                        <Box
+                          sx={{
+                            paddingTop: '10px',
+                          }}
+                        >
+                          <Select
+                            name="late_by"                      
+                            value={row.late_by !== null? row.late_by : ""}                      
+                            size="small"
+                            fullWidth
+                            onChange={(e) => handleLateByChange(e, row.id, "weekly")}                      
+                            placeholder="Select Late By Day"
+                            className={classes.select}                      
+                          >                      
+                            {row.frequency && row.frequency === "Weekly" && lateByOptionsForWeekly.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                            {row.frequency && row.frequency === "Bi-Weekly" && lateByOptionsForBiWeekly.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}                      
+                          </Select>
+                        </Box>
+                      )
+                    }
+                  </Stack>
+                </Grid>
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
@@ -723,7 +1077,7 @@ const TenantLease = () => {
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {"Late Fee"}
+                      {"Late Fee "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
                     <TextField
                       name="late_fee"
@@ -735,7 +1089,9 @@ const TenantLease = () => {
                     />
                   </Stack>
                 </Grid>
-                <Grid item xs={4}>
+                
+                
+                <Grid item xs={6}>
                   <Stack spacing={-2} m={2}>
                     <Typography
                       sx={{
@@ -745,30 +1101,7 @@ const TenantLease = () => {
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {"Available To Pay"}
-                    </Typography>
-                    <TextField
-                      name="available_topay"
-                      value={row.available_topay}
-                      variant="filled"
-                      fullWidth
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                    />
-                  </Stack>
-                </Grid>
-                <Grid item xs={4}></Grid>
-                <Grid item xs={4}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Per Day Late Fee"}
+                      {"Late Fee Per Day "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
                     <TextField
                       name="perDay_late_fee"
@@ -969,6 +1302,19 @@ const TenantLease = () => {
                 />
               </Box>
             </Box>
+          </Grid>
+          <Grid item xs={12}>
+
+            {showMissingFieldsPrompt && (
+              <Box
+                  sx={{
+                      color: 'red',
+                      fontSize: '13px',
+                  }}
+              >
+                Please fill out all required fields.
+              </Box>
+            )}
           </Grid>
           <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
             <Button
