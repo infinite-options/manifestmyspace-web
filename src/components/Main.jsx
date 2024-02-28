@@ -13,6 +13,7 @@ import Cashflow from "./Cashflow/Cashflow";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
+import Leases from "./Leases/Leases";
 import { PropertyListings } from "./Property/PropertyListings";
 
 import Announcements from "./Announcement/Announcements";
@@ -24,13 +25,11 @@ import TenantLeases from "./Leases/TenantLeases/TenantLeases";
 
 import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
 import OwnerUploadDocuments from "./Documents/OwnerDocuments/OwnerUploadDocuments";
-import OwnerLeases from "./Leases/OwnerLeases/OwnerLeases";
 import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
 import OwnerRent from "./Rent/OwnerRent/OwnerRent";
 
 import PMProfile from "./Profile/PMProfile/PMProfile";
 import PMProfileEdit from "./Profile/PMProfile/PMProfileEdit";
-import PMLeases from "./Leases/PMLeases/PMLeases";
 import PMContracts from "./Contracts/PMContracts/PMContracts";
 import ManagementContractDetails from "./Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
@@ -51,9 +50,6 @@ import SettingsManager from "./Settings/SettingsManager";
 import SettingsTenant from "./Settings/SettingsTenant";
 import SettingsMaintenance from "./Settings/SettingsMaintenance";
 
-
-
-
 import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
@@ -65,8 +61,8 @@ import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
 // import TenantContactDetails from "./Contacts/TenantContactDetails";
 import TenantContactDetails from "./Contacts/ContactDetails/TenantContactDetails";
-import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetails"; 
-import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails"; 
+import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetails";
+import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails";
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
@@ -161,15 +157,13 @@ import TenantApplicationNav from "./Applications/TenantApplicationNav";
 import PONotifications from "./Notifications/PONotifications";
 import PropertyContract from "./Notifications/PropertyContract";
 import TenantLease from "./Applications/TenantLease";
-import PMQuotesList from "./Property/PMQuotesList"
+import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
 function Main() {
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box
         sx={{
           flex: "1", // Allow content to take remaining space
@@ -179,7 +173,7 @@ function Main() {
         <Header />
         <Routes>
           {/* Public Routes */}
-            <Route path="/" element={<PublicRoutes />}>
+          <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="newUser" element={<NewUser />} />
@@ -210,14 +204,13 @@ function Main() {
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
             <Route path="leaseDocument" element={<LeasePDF />} />
-
+            <Route path="Leases" element={<Leases />} />
 
             <Route path="PrivateprofileName" element={<ProfileName />} />
             <Route path="PrivateprofileInfo" element={<ProfileInfo />} />
             <Route path="PrivatepersonalInfo" element={<PersonalInfo />} />
             <Route path="PrivateprofilePayment" element={<ProfilePayment />} />
             <Route path="PrivateonboardingRouter" element={<OnboardingRouter />} />
-
 
             <Route path="maintenanceProfile" element={<MaintenanceProfile />} />
 
@@ -226,7 +219,6 @@ function Main() {
             <Route path="ownerDocuments" element={<OwnerDocuments />} />
             <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
             <Route path="ownerUploadDocuments" element={<OwnerUploadDocuments />} />
-            <Route path="ownerLeases" element={<OwnerLeases />} />
             <Route path="ownerRent" element={<OwnerRent />} />
             <Route path="ownerRentDetail" element={<OwnerRentDetail />} />
 
@@ -239,7 +231,6 @@ function Main() {
 
             <Route path="pmProfile" element={<PMProfile />} />
             <Route path="pmProfileEdit" element={<PMProfileEdit />} />
-            <Route path="pmLeases" element={<PMLeases />} />
             <Route path="pmContracts" element={<PMContracts />} />
             <Route path="managementContractDetails" element={<ManagementContractDetails />} />
             <Route path="pmDocuments" element={<PMDocuments />} />
@@ -269,12 +260,12 @@ function Main() {
             <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
             <Route path="changePasswordSettingsManager" element={<ChangePasswordSettingsManager />} />
             <Route path="changePasswordSettingsTenant" element={<ChangePasswordSettingsTenant />} />
-            <Route path="changePasswordSettingsMaintenance" element={<ChangePasswordSettingsMaintenance />} />            
+            <Route path="changePasswordSettingsMaintenance" element={<ChangePasswordSettingsMaintenance />} />
             <Route path="addCardSettings" element={<AddCard />} />
             <Route path="cardDetailsSettings" element={<CardDetailsSettings />} />
-            <Route path="cardDetailsSettingsManager" element={<CardDetailsSettingsManager />} />            
+            <Route path="cardDetailsSettingsManager" element={<CardDetailsSettingsManager />} />
             <Route path="cardDetailsSettingsTenant" element={<CardDetailsSettingsTenant />} />
-            <Route path="cardDetailsSettingsMaintenance" element={<CardDetailsSettingsMaintenance />} />            
+            <Route path="cardDetailsSettingsMaintenance" element={<CardDetailsSettingsMaintenance />} />
 
             <Route path="propertyInfo" element={<PropertyInfo />} />
             <Route path="contacts" element={<Contacts />} />
@@ -307,7 +298,7 @@ function Main() {
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
-            <Route path="PMProperties" element={<PMProperties />} /> 
+            <Route path="PMProperties" element={<PMProperties />} />
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
@@ -317,7 +308,7 @@ function Main() {
             <Route path="settingsManagerACH5" element={<SettingsACH5 />} />
 
             <Route path="poContracts" element={<POContracts />} />
-            <Route path="managerDashboard" element={<ManagerDashboard/>} />
+            <Route path="managerDashboard" element={<ManagerDashboard />} />
 
             <Route path="quoteAccept" element={<QuoteAcceptForm />} />
             <Route path="quoteRequest" element={<QuoteRequestForm />} />
@@ -330,9 +321,14 @@ function Main() {
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm/>} />
             <Route path="workerMaintenance" element={<WorkerMaintenance />} />
             <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
+            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
+            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
+            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
+            <Route path="workerMaintenance" element={<Maintenance01 />} />
+            <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
-            <Route path="pmQuotesList" element={<PMQuotesList/>}/>
+            <Route path="pmQuotesList" element={<PMQuotesList />} />
             <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
             <Route path="requestQuotes" element={<RequestQuotes />} />
             <Route path="viewDocument" element={<ViewDocument />} />
@@ -344,7 +340,6 @@ function Main() {
             <Route path="poNotifications" element={<PONotifications />} />
             <Route path="propertyContract" element={<PropertyContract />} />
             <Route path="profile/:id" element={<PublicProfile />} />
-            
           </Route>
         </Routes>
         <Footer />
