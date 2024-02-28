@@ -69,14 +69,12 @@ export default function OwnerDashboard() {
       <div className="mt-widget-main">
         <CashflowWidget />
         <div className="mt-container">
-          <MaintenanceWidget selectedRole={"OWNER"} maintenanceData={maintenanceStatusData} />
+          <MaintenanceWidget maintenanceData={maintenanceStatusData} />
           <PropertyRentWidget rentData={rentStatus} />
         </div>
 
         <div className="mt-container">
-          {/* <LeaseWidget selectedRole={"OWNER"}/> */}
-          {/* <LeaseWidget leaseData={leaseStatus} /> */}
-          <LeaseWidget selectedRole={"OWNER"} leaseData={leaseStatus} />
+          <LeaseWidget leaseData={leaseStatus} />
         </div>
 
         <div className="bottom-buttons">
