@@ -9,7 +9,7 @@ export default function PropertyRentWidget(props) {
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
   // console.log("Role: ", user);
-  console.log("Selected Role: ", selectedRole);
+  // console.log("Selected Role: ", selectedRole);
 
   let rentStatusData = props.rentData;
 

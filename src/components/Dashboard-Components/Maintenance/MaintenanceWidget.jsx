@@ -9,7 +9,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
   // console.log("Role: ", user);
-  console.log("Selected Role: ", selectedRole);
+  // console.log("Selected Role: ", selectedRole);
 
   const [maintenanceRequestCounts, setMaintenanceRequestCounts] = useState({});
   const colorStatus = selectColorStatus();

@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import RequestMoreInfo from "../Worker/RequestMoreInfo";
 import AlertMessage from "../AlertMessage";
 import Scheduler from "../../utils/Scheduler";

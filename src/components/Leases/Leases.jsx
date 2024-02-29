@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 export default function Leases(props) {
   console.log("In Leases");
   const { getProfileId, selectedRole } = useUser();
-  console.log("Selected Role: ", selectedRole);
+  // console.log("Selected Role: ", selectedRole);
 
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
