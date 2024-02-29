@@ -20,6 +20,7 @@ async function fetchCashflow(userProfileId) {
 }
 
 function getRevenueList(data) {
+  console.log("getRevenueList: ", data.response_revenue.result);
   return data.response_revenue.result;
 }
 
@@ -321,9 +322,9 @@ function getTotalExpenseByType(data, month, year, expected) {
 }
 
 function getTotalRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
   let revenueItems = data.response_revenue_by_month.result.filter((item) => item.cf_month === month && item.cf_year === year);
-  console.log("After filter revenueItems: ", revenueItems);
+  // console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems.reduce((acc, item) => {
     return acc + parseFloat(item["sum(total_paid)"] ? item["sum(total_paid)"] : 0.0);
   }, 0.0);
@@ -340,7 +341,7 @@ function getTotalExpenseByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let revenueItems = data.response_revenue_by_month.result.filter((item) => item.cf_month === month && item.cf_year === year);
   let totalRevenue = revenueItems.reduce((acc, item) => {
     return acc + parseFloat(item["sum(pur_amount_due)"] ? item["sum(pur_amount_due)"] : 0.0);
