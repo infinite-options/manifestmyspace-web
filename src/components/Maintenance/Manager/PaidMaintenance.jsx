@@ -18,7 +18,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";

@@ -25,12 +25,16 @@ import CompleteTicket from "../../utils/CompleteTicket";
 import QuoteDetailInfo from "./QuoteDetailInfo";
 import routingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
-import ManagerProfileLink from "../../Maintenance/MaintenanceComponents/ManagerProfileLink";
+import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
+import Backdrop from "@mui/material/Backdrop"; 
+import CircularProgress from "@mui/material/CircularProgress";
+import WorkerQuoteView from "../MaintenanceComponents/WorkerQuoteView";
 
 
-export default function PaidMaintenance01({maintenanceItem}){
+export default function WorkerPaidMaintenance({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+    const [showSpinner, setShowSpinner] = useState(false);
 
 
     function handleNavigateToQuotesRequested(){
@@ -78,41 +82,48 @@ export default function PaidMaintenance01({maintenanceItem}){
         <Box 
             sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
             }}
         >
-              <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                
-                <ManagerProfileLink maintenanceItem={maintenanceItem}/>
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Box
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            flexDirection: "column",
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "10px",
-                            display: 'flex',
-                            width: "95%",
-                        }}
-                    >
-                        {maintenanceItem?.quote_services_expenses !== undefined ? (
-                            <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                  
-                        ) : null }
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={showSpinner}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <WorkerQuoteView maintenanceItem={maintenanceItem}/>
+            <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
+            
+            <ManagerProfileLink maintenanceItem={maintenanceItem}/>
+            <Grid item xs={12} sx={{
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
+                <Box
+                    variant="contained"
+                    disableElevation
+                    sx={{
+                        flexDirection: "column",
+                        backgroundColor: "#D6D5DA",
+                        textTransform: "none",
+                        paddingRight: "10px",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                        borderRadius: "10px",
+                        paddingLeft: "10px",
+                        display: 'flex',
+                        width: "95%",
+                    }}
+                >
+                    {maintenanceItem?.quote_services_expenses !== undefined ? (
+                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>                  
+                    ) : null }
 
-                    </Box>
-                </Grid>
+                </Box>
+            </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -138,7 +149,7 @@ export default function PaidMaintenance01({maintenanceItem}){
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                             {maintenanceItem?.quote_notes ? maintenanceItem.quote_notes  : ""} 
                         </Typography>
-                       </Box>
+                        </Box>
                 </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
@@ -205,7 +216,7 @@ export default function PaidMaintenance01({maintenanceItem}){
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                             {maintenanceItem?.quote_notes ? maintenanceItem?.quote_notes : "No Quote Notes"}
                         </Typography>
-                       </Box>
+                        </Box>
                 </Grid>
             </Grid>
         </Box>

@@ -23,7 +23,7 @@ import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
 import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";

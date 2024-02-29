@@ -21,15 +21,14 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import RequestCard from '../MaintenanceRequestCard';
-import MaintenanceRequestNavigator01 from "./WorkerMaintenanceRequestNavigator";
+import WorkerMaintenanceRequestNavigator from "./WorkerMaintenanceRequestNavigator";
 import AddIcon from '@mui/icons-material/Add';
-import PaidMaintenance01 from "./PaidMaintenance01";
+import WorkerPaidMaintenance from "./WorkerPaidMaintenance";
 import WorkerQuotesAccepted from "./WorkerQuotesAccepted";
 import WorkerScheduledMaintenance from "./WorkerScheduledMaintenance";
-import CompleteMaintenance01 from "./CompleteMaintenance01";
+import WorkerFinishedMaintenance from "./WorkerFinishedMaintenance";
 import WorkerQuotesRequestedAction from "./WorkerQuotesRequestedAction";
 import WorkerQuotesSubmittedAction from "./WorkerQuotesSubmittedAction";
-
 
 
 function CustomTabPanel(props) {
@@ -99,35 +98,15 @@ export default function WorkerMaintenanceRequestDetail(){
         }
     }
 
-    // const colorStatus = [
-    //     {'color': '#B62C2A', 'status': 'New Requests', 'mapping': 'NEW'},
-    //     {'color': '#BC6666', 'status': 'Quotes Requested', 'mapping': 'PROCESSING'}, // #D4736D
-    //     {'color': '#DEA19C', 'status': 'Quotes Accepted', 'mapping': 'CANCELLED'}, 
-    //     {'color': '#92A9CB', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
-    //     {'color': '#6788B3', 'status': 'Completed', 'mapping': 'COMPLETED'},
-    //     {'color': '#173C8D', 'status': 'Paid', 'mapping': 'INFO'}
-    // ]
-
     const colorStatus = theme.colorStatusMM
 
-    // console.log("Maintenance Request Detail", location.state.numOfRequests)
-    // console.log("index", location.state.maintenance_request_index)
-    // console.log("status", location.state.status)
-    // console.log("maintenanceDataForStatus", location.state.maintenanceItemsForStatus)
-    // console.log("allData", location.state.allMaintenanceData)
-
-    // const requestData = location.state.numOfRequests;
-    // const maintenanceRequestIndex = location.state.maintenance_request_index;
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    // const status = location.state.status;
     const [status, setStatus] = useState(location.state.status);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const maintenanceItemsForStatus = location.state.maintenanceItemsForStatus;
     const allData = location.state.allMaintenanceData;
-
-    // console.log(maintenanceRequestIndex, status, maintenanceItemsForStatus, allData)
 
 
     useEffect(() => {
@@ -344,7 +323,7 @@ export default function WorkerMaintenanceRequestDetail(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                <MaintenanceRequestNavigator01 requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}  currentTabValue={value}
+                                                <WorkerMaintenanceRequestNavigator requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}  currentTabValue={value}
                                                     tabs={tabs}
                                                 />
 
@@ -378,11 +357,11 @@ export default function WorkerMaintenanceRequestDetail(){
                                     : null
                                 }
                                 {colorStatus[value]?.mapping === "FINISHED" ?
-                                    <CompleteMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerFinishedMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
                                     : null
                                 }
                                 {colorStatus[value]?.mapping === "PAID" ?
-                                    <PaidMaintenance01 maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/> 
+                                    <WorkerPaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/> 
                                     : null
                                 } 
                             </Box>

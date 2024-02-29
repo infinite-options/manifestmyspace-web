@@ -145,7 +145,19 @@ function PartsTableReadOnly({parts, setParts}){
 
 export default function QuoteDetailInfo({maintenanceItem}){
     // console.log(maintenanceItem.quote_services_expenses)
-    const costData = JSON.parse(maintenanceItem?.quote_services_expenses); //failing here in some cases
+    let costData;
+
+    try {
+        if (maintenanceItem?.quote_services_expenses) {
+            costData = JSON.parse(maintenanceItem.quote_services_expenses);
+        } else {
+            throw new Error('quote_services_expenses is undefined');
+        }
+    } catch (error) {
+        console.error('Error parsing quote_services_expenses:', error);
+        // Handle the error or set a default value for costData
+        costData = {}; // Set a default value if needed
+    } //failing here in some cases
 
     const [parts, setParts] = useState([]);
     const [labor, setLabor] = useState([]);
@@ -176,7 +188,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
             parseServicesExpenses(maintenanceItem?.quote_services_expenses)
             let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
             setQuoteImages(quoteImageArray);
-            setEstimatedTime(maintenanceItem.quote_event_type)
+            setEstimatedTime(maintenanceItem?.quote_event_type)
             setEarliestAvailability(maintenanceItem.quote_earliest_availability)
         } catch (error){
             console.log("error", error)
@@ -237,7 +249,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     Quote Total: ${estimatedCost}
                 </Typography>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
-                    Estimated Time: {maintenanceItem.quote_event_type}
+                    Estimated Time: {maintenanceItem?.quote_event_type}
                 </Typography>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     Earliest Availability: {maintenanceItem.quote_earliest_availability}

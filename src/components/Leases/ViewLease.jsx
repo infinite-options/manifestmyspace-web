@@ -40,7 +40,7 @@ const ViewLease = (props) => {
 
   const [showSpinner, setShowSpinner] = useState(false);
   const { getProfileId, selectedRole } = useUser();
-  console.log("Selected Role: ", selectedRole);
+  // console.log("Selected Role: ", selectedRole);
 
   function formatDate(date) {
     var d = new Date(date),

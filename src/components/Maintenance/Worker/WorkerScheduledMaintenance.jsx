@@ -28,6 +28,9 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
+import WorkerQuoteView from "../MaintenanceComponents/WorkerQuoteView";
+import RescheduleButton from "../MaintenanceComponents/RescheduleButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 
 export default function WorkerScheduledMaintenance({maintenanceItem}){
     
@@ -95,7 +98,7 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
         <Box 
             sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
@@ -107,107 +110,10 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                
-                <ManagerProfileLink maintenanceItem={maintenanceItem}/>
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Box
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            flexDirection: "column",
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "10px",
-                            display: 'flex',
-                            width: "95%",
-                        }}
-                    >
-                        <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
-                    </Box>
-                    
-                </Grid>
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                        Notes
-                    </Typography>
-                    <Box
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            paddingRight: "10px",
-                            borderRadius: "10px",
-                            paddingLeft: "10px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                            display: 'flex',
-                            width: "95%",
-                        }}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {maintenanceItem.quote_notes}
-                        </Typography>
-                       </Box>
-                </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleReSchedule(maintenanceItem.maintenance_request_uid)}
-                    >   
-                         <CalendarToday sx={{
-                            color: "#3D5CAC",
-                            paddingRight: "10%"
-                        }}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                           Reschedule
-                        </Typography>
-                    </Button>
-                </Grid> 
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            backgroundColor: "#FFFFFF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleComplete(maintenanceItem.maintenance_request_uid)}
-                    >   
-                       <CheckIcon sx={{color: "#3D5CAC"}}/>
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Complete Ticket
-                        </Typography>
-                    </Button>
-                </Grid> 
+            <WorkerQuoteView maintenanceItem={maintenanceItem}/>
+            <Grid container direction="row" columnSpacing={6} rowSpacing={6} sx={{paddingTop: "15px"}}>
+                <RescheduleButton maintenanceItem={maintenanceItem}/>
+                <CompleteButton maintenanceItem={maintenanceItem}/>
             </Grid>
         </Box>
     )
