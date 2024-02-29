@@ -32,6 +32,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { set } from "date-fns";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import { useUser } from "../../../contexts/UserContext";
 
 function LaborTable({labor, setLabor}){
 
@@ -146,7 +147,7 @@ function LaborTable({labor, setLabor}){
                             onChange={(e) => setLaborDescription(e.target.value)}
                         />) : (
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            {laborItem.description}
+                            {laborItem.description === "" ? "Labor" : laborItem.description}
                         </Typography>
                         )}
                     </Grid>
@@ -438,7 +439,11 @@ export default function BusinessInvoiceForm(){
 
     const navigate = useNavigate();
     const location = useLocation();
+    const { getProfileId } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
+    const [editMode, setEditMode] = useState(location.state?.edit || false);
+    const [profileInfo, setProfileInfo] = useState({});
+    const [paymentMethods, setPaymentMethods] = useState([]);
 
     const maintenanceItem = location.state.maintenanceItem;
 
@@ -470,6 +475,49 @@ export default function BusinessInvoiceForm(){
     const handleDiagnosticToggle = () => {
         setDiagnosticToggle(!diagnosticToggle);
     }
+
+    const createPaymentMethodList = (businessProfileObject) => {
+        let paymentMethods = [];
+        paymentMethods.push({
+            method: "Venmo",
+            account: businessProfileObject.venmo ? businessProfileObject.venmo : "Not Provided"
+        })
+        paymentMethods.push({
+            method: "Cash App",
+            account: businessProfileObject.cash_app ? businessProfileObject.cash_app : "Not Provided"
+        })
+        paymentMethods.push({
+            method: "PayPal",
+            account: businessProfileObject.paypal ? businessProfileObject.paypal : "Not Provided"
+        })
+        paymentMethods.push({
+            method: "Zelle",
+            account: businessProfileObject.business_zelle ? businessProfileObject.business_zelle : "Not Provided"
+        })
+
+        setPaymentMethods(paymentMethods)
+    
+    }
+
+    useEffect(() => {
+        const getMaintenanceProfileInfo = async () => {
+            setShowSpinner(true);
+            try {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${getProfileId()}`, {
+                    method: 'GET',
+                })
+                const responseData = await response.json();
+                console.log("[DEBUG] Business Profile:", responseData.result[0]);
+                createPaymentMethodList(responseData.result[0])
+                setProfileInfo(responseData.result[0])
+            } catch (error){
+                console.log("error", error)
+            }
+            setShowSpinner(false);
+        }
+        // console.log("running get maintenance profile info")
+        getMaintenanceProfileInfo()
+    },[])
 
     useEffect(() => {
         let partsTotal = 0
@@ -532,22 +580,6 @@ export default function BusinessInvoiceForm(){
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills", {
                     method: 'POST',
                     body: formData,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
-                    // body: JSON.stringify({
-                    //     "bill_description": "Invoice from " + maintenanceItem.business_name,
-                    //     "bill_created_by": maintenanceItem.quote_business_id,
-                    //     "bill_utility_type": "maintenance",
-                    //     "bill_amount": total,
-                    //     "bill_split": "Uniform",
-                    //     "bill_property_id": [{
-                    //         "property_uid": maintenanceItem.property_id,
-                    //     }],
-                    //     "bill_docs": [],
-                    //     "bill_notes": notes,
-                    //     "bill_maintenance_quote_id": maintenanceItem.maintenance_quote_uid
-                    // })
                 });
 
                 const responseData = await response.json();
@@ -608,21 +640,11 @@ export default function BusinessInvoiceForm(){
                             paddingRight: "10px",
                         }}
                     >
-                        <Stack
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="center"
-                            sx={{
-                                paddingTop: "20px",
-                                paddingBottom: "20px",
-                                paddingLeft: "0px",
-                                paddingRight: "0px",
-                            }}
-                        >   
-                            <Typography variant="h4" sx={{ paddingBottom: "20px" }}>
+                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                            <Typography sx={{paddingBottom: "20px", color: "#000000", fontWeight: 800, fontSize: "36px"}}>
                                 Invoice
                             </Typography>
-                            <Box >
+                            <Box sx={{ position: 'absolute', right: 0 }}>
                                 <Button sx={{
                                     color: "#3D5CAC",
                                     textTransform: "none",
@@ -632,7 +654,7 @@ export default function BusinessInvoiceForm(){
                                     <CloseIcon/>
                                 </Button>
                             </Box>   
-                        </Stack>
+                        </Box>
 
                         <Grid container direction="column" rowSpacing={2}>
                             <Grid item xs={12}>
@@ -721,18 +743,16 @@ export default function BusinessInvoiceForm(){
                                     Payment Methods
                                 </Typography>
                                 <Grid container direction="row" spacing={2} alignContent="center">
-                                    <Grid item xs={4}>
-                                        Venmo
-                                    </Grid>
-                                    <Grid item xs={8}>
-                                        @abbeyRoad1969
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        Apple Pay
-                                    </Grid>
-                                    <Grid item xs={8}>
-                                        abbeyroad1969@gmail.com
-                                    </Grid>
+                                    {paymentMethods.map((method) => (
+                                        <>
+                                            <Grid item xs={4}>
+                                                {method.method}
+                                            </Grid>
+                                            <Grid item xs={8}>
+                                                {method.account}
+                                            </Grid>
+                                        </>                                    
+                                    ))}
                                 </Grid>
                             </Grid>
                             <Grid item xs={12}>

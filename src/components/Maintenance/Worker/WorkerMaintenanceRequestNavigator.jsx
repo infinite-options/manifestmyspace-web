@@ -40,20 +40,10 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
     };
     
     fetchImages();
-}, [currentIndex]);
-
-
-  // console.log("RequestNavigator");
-  // console.log("requestIndex", requestIndex);
-  // console.log("requestData", requestData);
-  // console.log("currentIndex", currentIndex);
-  // console.log("color", color);
-  // console.log("item", item);
-  // console.log("allData", allData);
+  }, [currentIndex]);
 
   const maxSteps = images.length;
 
-  // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => {
@@ -73,8 +63,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
   };
 
   const handlePreviousCard = () => {
-
-
     setCurrentIndex((prevIndex) => {
       let newIndex = (prevIndex - 1);
       if(prevIndex > 0){

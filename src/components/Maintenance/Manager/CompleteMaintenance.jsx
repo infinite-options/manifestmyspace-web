@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import { useUser } from "../../../contexts/UserContext";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
