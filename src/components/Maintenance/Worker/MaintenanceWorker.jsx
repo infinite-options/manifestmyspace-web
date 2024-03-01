@@ -13,7 +13,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SelectMonthComponent from '../../SelectMonthComponent';
 import SelectPropertyFilter from '../../SelectPropertyFilter/SelectPropertyFilter';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
+import MaintenanceStatusTable01 from "./WorkerMaintenanceStatusTable";
 import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilter";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 

@@ -149,7 +149,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     try {
         if (maintenanceItem?.quote_services_expenses) {
-            costData = JSON.parse(maintenanceItem.quote_services_expenses);
+            costData = JSON.parse(maintenanceItem?.quote_services_expenses);
         } else {
             throw new Error('quote_services_expenses is undefined');
         }

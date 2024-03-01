@@ -57,7 +57,6 @@ export default function AddMaintenanceItem(){
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [imageOverLimit, setImageOverLimit] = useState(false);
-    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const profileId = getProfileId(); 
 
@@ -137,32 +136,32 @@ export default function AddMaintenanceItem(){
         setCompleted(event.target.value)
     };
 
-    function checkImageSizes(selectedImageList) {
-        const MAX_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
+    // function checkImageSizes(selectedImageList) {
+    //     const MAX_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
 
         
-        const sumImageSizes = selectedImageList.reduce((acc, image) => {
-            return acc + image.file.size;
-        }, 0)
+    //     const sumImageSizes = selectedImageList.reduce((acc, image) => {
+    //         return acc + image.file.size;
+    //     }, 0)
 
-        if (sumImageSizes > MAX_SIZE) {
-            setImageOverLimit(true)
-            setShowErrorMessage(true);
-        } else{
-            setImageOverLimit(false)
-            setShowErrorMessage(false);
-        }
-    }
+    //     if (sumImageSizes > MAX_SIZE) {
+    //         setImageOverLimit(true)
+    //         setShowErrorMessage(true);
+    //     } else{
+    //         setImageOverLimit(false)
+    //         setShowErrorMessage(false);
+    //     }
+    // }
 
     // Should be 5MB max limit for all images
 
-    useEffect(() => {
-        console.log("running useEffect checkImageSizes")
+    // useEffect(() => {
+    //     console.log("running useEffect checkImageSizes")
 
-        checkImageSizes(selectedImageList);
-        // I want checkImageSizes to run everytime selectedImageList changes
+    //     checkImageSizes(selectedImageList);
+    //     // I want checkImageSizes to run everytime selectedImageList changes
         
-    }, [selectedImageList])
+    // }, [selectedImageList])
 
     const handleBackButton = () => {
         console.log("handleBackButton")
@@ -591,13 +590,6 @@ export default function AddMaintenanceItem(){
 
                                 {/* File Upload Field */}
                                 <Grid item xs={12}>
-                                    {showErrorMessage ? (
-                                        <Stack direction="row">
-                                            <Typography sx={{ color: 'red', fontSize: "16px" }}>
-                                                Total size of images must be less than 5MB. Please remove an image.
-                                            </Typography>
-                                        </Stack>
-                                    ): <Typography></Typography>}
                                     <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                                 </Grid>
 

@@ -456,15 +456,15 @@ export function MaintenanceRequestDetail(){
                                     : null
                                 }
                                 {colorStatus[value]?.status === "Scheduled" ?    
-                                    <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
                                 {colorStatus[value]?.status === "Completed" ?
-                                    <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/>
+                                    <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/>
                                     : null
                                 }
                                 {colorStatus[value]?.status === "Paid" ?
-                                    <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams}/> 
+                                    <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes}/> 
                                     : null
                                 }
                             </Box>

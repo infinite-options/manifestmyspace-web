@@ -38,9 +38,31 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export default function ImageUploader({selectedImageList, setSelectedImageList, setDeletedImageList, page}){
 
-    // useEffect(() =>{
-    //     console.log("selectedImageList - ", selectedImageList);
-    // }, [selectedImageList]);
+    const [imageOverLimit, setImageOverLimit] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+    useEffect(() => {
+        if(selectedImageList.length > 0){
+            checkImageSizes(selectedImageList);
+        }
+    }, [selectedImageList]);
+
+    function checkImageSizes(selectedImageList) {
+        const MAX_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
+
+        
+        const sumImageSizes = selectedImageList.reduce((acc, image) => {
+            return acc + image.file.size;
+        }, 0)
+
+        if (sumImageSizes > MAX_SIZE) {
+            setImageOverLimit(true)
+            setShowErrorMessage(true);
+        } else{
+            setImageOverLimit(false)
+            setShowErrorMessage(false);
+        }
+    }
 
     const readImage = (file) => {
         const reader = new FileReader();
@@ -90,151 +112,160 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
     };
 
     return (
-        <Container fixed sx={{
-            backgroundColor: 'white',
-            borderColor: 'black',
-            borderRadius: '7px',
-            borderStyle: 'dashed',
-            borderColor: theme.typography.common.blue,
-        }}>
-            
-            {selectedImageList.length === 0 && (            
-                <Box
-                    justifyContent="center"
-                    alignItems="center"
-                    display="flex"
-                    padding={10}
-                >
-
-                    <Button
-                        component="label"
+        <>
+            {showErrorMessage ? (
+                <Stack direction="row">
+                    <Typography sx={{ color: 'red', fontSize: "16px" }}>
+                        Total size of images must be less than 5MB. Please remove an image.
+                    </Typography>
+                </Stack>
+            ): <Typography></Typography>}
+            <Container fixed sx={{
+                backgroundColor: 'white',
+                borderColor: 'black',
+                borderRadius: '7px',
+                borderStyle: 'dashed',
+                borderColor: theme.typography.common.blue,
+            }}>
+                
+                {selectedImageList.length === 0 && (            
+                    <Box
+                        justifyContent="center"
+                        alignItems="center"
+                        display="flex"
+                        padding={10}
                     >
-                        <input
-                            type="file" 
-                            accept="image/*" 
-                            multiple
-                            hidden 
-                            onChange={addFile}
-                        />
-                        <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
-                        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                            Add Pictures
-                        </Typography>
-                        </Button>
-                </Box>
-            )} 
-            {selectedImageList.length > 0 && (
-                <Box
-                    justifyContent="center"
-                    alignItems="center"
-                    display="flex"
-                    padding={10}
-                >
-                    <Grid container>
-                        {selectedImageList.map((file, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    position: 'relative',
-                                    height: '75px',
-                                    width: '75px',
-                                    marginRight: '10px',
-                                    border: '20px solid #f0f0f0', // Adjust the color as needed
-                                }}
-                            >
-                                <Grid item xs={2} key={index}>
-                                    {file.file === null ? (
-                                    <img
-                                        key={Date.now()}
-                                        // src={file.image}
-                                        src={`${file.image}?${Date.now()}`}
-                                        alt="property_image"
-                                        style={{ 
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            height: '100%',
-                                            width: '100%',
-                                            marginRight: '5px',
-                                            marginBottom: '5px',
-                                            borderRadius: '7px',
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                    ) : (
-                                    <img
-                                        key={Date.now()}
-                                        src={file.image}
-                                        alt="property_image"
-                                        style={{ 
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            height: '100%',
-                                            width: '100%',
-                                            marginRight: '5px',
-                                            marginBottom: '5px',
-                                            borderRadius: '7px',
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                    )}
-                                    
-                                     <Box
-                                        sx={{
-                                            position: 'relative',
-                                            // top: "-5px",
-                                            top: "-25px", // Adjusted for the 25px border
-                                            left: "62px",
-                                            zIndex: 1,
-                                        }}
-                                    >
-                                        <IconButton 
-                                            onClick={() => deleteImage(file)}
-                                        >
-                                            <CloseIcon color="error" />
-                                        </IconButton>
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            position: 'relative',
-                                            // top: "0px",
-                                            top: "26px", // Adjusted for the 25px border
-                                            right: "28px",
-                                            zIndex: 2,
-                                        }}
-                                    >
-                                        <IconButton onClick={() => favoriteImage(file)}>
-                                            {selectedImageList[index].coverPhoto === true ? (
-                                                <FavoriteIcon color="primary" sx={{
-                                                    color: theme.typography.propertyPage.color,
-                                                }}/>
-                                            ) : (
-                                                <FavoriteBorderIcon color="black"/>
-                                            )}
-                                        </IconButton>
-                                    </Box>
-                                </Grid>
-                            </Box>
-                        ))}
-                        <Grid item xs={2}>
-                            <Button
-                                component="label"
-                            >
-                                <input
-                                    type="file" 
-                                    accept="image/*" 
-                                    multiple
-                                    hidden 
-                                    onChange={addFile}
-                                />
-                                <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "75px", marginRight: "10px"}}/>
+
+                        <Button
+                            component="label"
+                        >
+                            <input
+                                type="file" 
+                                accept="image/*" 
+                                multiple
+                                hidden 
+                                onChange={addFile}
+                            />
+                            <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "30px", marginRight: "10px"}}/>
+                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                Add Pictures
+                            </Typography>
                             </Button>
+                    </Box>
+                )} 
+                {selectedImageList.length > 0 && (
+                    <Box
+                        justifyContent="center"
+                        alignItems="center"
+                        display="flex"
+                        padding={10}
+                    >
+                        <Grid container>
+                            {selectedImageList.map((file, index) => (
+                                <Box
+                                    key={index}
+                                    sx={{
+                                        position: 'relative',
+                                        height: '75px',
+                                        width: '75px',
+                                        marginRight: '10px',
+                                        border: '20px solid #f0f0f0', // Adjust the color as needed
+                                    }}
+                                >
+                                    <Grid item xs={2} key={index}>
+                                        {file.file === null ? (
+                                        <img
+                                            key={Date.now()}
+                                            // src={file.image}
+                                            src={`${file.image}?${Date.now()}`}
+                                            alt="property_image"
+                                            style={{ 
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                height: '100%',
+                                                width: '100%',
+                                                marginRight: '5px',
+                                                marginBottom: '5px',
+                                                borderRadius: '7px',
+                                                objectFit: "cover",
+                                            }}
+                                        />
+                                        ) : (
+                                        <img
+                                            key={Date.now()}
+                                            src={file.image}
+                                            alt="property_image"
+                                            style={{ 
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                height: '100%',
+                                                width: '100%',
+                                                marginRight: '5px',
+                                                marginBottom: '5px',
+                                                borderRadius: '7px',
+                                                objectFit: "cover",
+                                            }}
+                                        />
+                                        )}
+                                        
+                                        <Box
+                                            sx={{
+                                                position: 'relative',
+                                                // top: "-5px",
+                                                top: "-25px", // Adjusted for the 25px border
+                                                left: "62px",
+                                                zIndex: 1,
+                                            }}
+                                        >
+                                            <IconButton 
+                                                onClick={() => deleteImage(file)}
+                                            >
+                                                <CloseIcon color="error" />
+                                            </IconButton>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                position: 'relative',
+                                                // top: "0px",
+                                                top: "26px", // Adjusted for the 25px border
+                                                right: "28px",
+                                                zIndex: 2,
+                                            }}
+                                        >
+                                            <IconButton onClick={() => favoriteImage(file)}>
+                                                {selectedImageList[index].coverPhoto === true ? (
+                                                    <FavoriteIcon color="primary" sx={{
+                                                        color: theme.typography.propertyPage.color,
+                                                    }}/>
+                                                ) : (
+                                                    <FavoriteBorderIcon color="black"/>
+                                                )}
+                                            </IconButton>
+                                        </Box>
+                                    </Grid>
+                                </Box>
+                            ))}
+                            <Grid item xs={2}>
+                                <Button
+                                    component="label"
+                                >
+                                    <input
+                                        type="file" 
+                                        accept="image/*" 
+                                        multiple
+                                        hidden 
+                                        onChange={addFile}
+                                    />
+                                    <AddPhotoAlternateIcon sx={{color: theme.typography.common.blue, fontSize: "75px", marginRight: "10px"}}/>
+                                </Button>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
-            )}
-        </Container>
+                    </Box>
+                )}
+            </Container>
+        </>
     )
 
 }
