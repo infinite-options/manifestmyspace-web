@@ -105,7 +105,7 @@ export default function WorkerMaintenanceRequestDetail(){
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
-    const maintenanceItemsForStatus = location.state.maintenanceItemsForStatus;
+    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
     const allData = location.state.allMaintenanceData;
 
 

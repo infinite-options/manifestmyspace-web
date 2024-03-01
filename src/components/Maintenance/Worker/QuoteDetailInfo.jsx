@@ -26,49 +26,51 @@ function LaborTableReadOnly({labor, setLabor}){
         return parseInt(hours) * parseInt(cost)
     }
 
+    console.log("labor", labor  )
+
     return (
         <>
         <Grid container sx={{paddingTop: "10px"}}>
-            {/* <Grid item xs={3}>
+            <Grid item xs={3}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                     Title
                 </Typography>
-            </Grid> */}
-            <Grid item xs={4}>
+            </Grid>
+            <Grid item xs={3}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     # of Hours
                 </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Charge / Hour
                 </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Total
                 </Typography>
             </Grid>
             {labor && labor.map((laborItem, index) => (
                 <Grid container key={index}>
-                    {/* <Grid item xs={3}>
+                    <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            {laborItem.description}
+                            {laborItem.description ? laborItem.description : "Labor"}
                         </Typography>
-                    </Grid> */}
-                    <Grid item xs={4}>
+                    </Grid>
+                    <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                             {laborItem.hours}
                         </Typography>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            ${laborItem.rate}
+                            ${laborItem.charge || laborItem.rate}
                         </Typography>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            ${calculateTotal(laborItem.hours, laborItem.rate)}
+                            ${calculateTotal(laborItem.hours, laborItem.charge || laborItem.rate)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -81,6 +83,7 @@ function LaborTableReadOnly({labor, setLabor}){
 
 function PartsTableReadOnly({parts, setParts}){
 
+    console.log("parts", parts)
 
     const calculateTotal = (qty, cost) => {
         return parseInt(qty) * parseInt(cost)
@@ -88,9 +91,14 @@ function PartsTableReadOnly({parts, setParts}){
     return (
         <>
         <Grid container sx={{paddingTop: "10px"}}>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Parts
+                </Typography>
+            </Grid>
+            <Grid item xs={3}>
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                    Qty
                 </Typography>
             </Grid>
             <Grid item xs={3}>
@@ -98,26 +106,21 @@ function PartsTableReadOnly({parts, setParts}){
                     Cost
                 </Typography>
             </Grid>
-            <Grid item xs={1}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                    Qty
-                </Typography>
-            </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                     Total
                 </Typography>
             </Grid>
             {parts && parts.map((part, index) => (
                 <Grid container key={index}>
-                    {/* <Grid item xs={3}>
-                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            {laborItem.description}
-                        </Typography>
-                    </Grid> */}
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                             {part.part}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            {part.quantity}
                         </Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -125,12 +128,7 @@ function PartsTableReadOnly({parts, setParts}){
                             ${part.cost}
                         </Typography>
                     </Grid>
-                    <Grid item xs={1}>
-                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            {part.quantity}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                             ${calculateTotal(part.quantity, part.cost)}
                         </Typography>
@@ -149,9 +147,10 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     try {
         if (maintenanceItem?.quote_services_expenses) {
-            costData = JSON.parse(maintenanceItem.quote_services_expenses);
+            costData = JSON.parse(maintenanceItem?.quote_services_expenses);
         } else {
-            throw new Error('quote_services_expenses is undefined');
+            // throw new Error('quote_services_expenses is undefined');
+            costData = {}; // Set a default value if needed
         }
     } catch (error) {
         console.error('Error parsing quote_services_expenses:', error);
@@ -172,15 +171,22 @@ export default function QuoteDetailInfo({maintenanceItem}){
     useEffect(() => {
         const parseServicesExpenses = (expenses) => {
             let servicesObject = JSON.parse(expenses)
+            // console.log("servicesObject", servicesObject)
             var partsCost = 0
+            var laborCost = 0
             for (const item in servicesObject?.parts){
                 partsCost += parseInt(servicesObject.parts[item].cost) * parseInt(servicesObject.parts[item].quantity)
             }
 
-            setEstimatedLaborCost(servicesObject?.total_estimate)
+            for (const item in servicesObject?.labor){
+                laborCost += parseInt(servicesObject.labor[item].hours) * parseInt(servicesObject.labor[item].charge || servicesObject.labor[item].rate)
+            }
+
+
+            setEstimatedLaborCost(laborCost)
             setEstimatedPartsCost(partsCost)
 
-            setEstimatedCost(servicesObject?.total_estimate + partsCost)
+            setEstimatedCost(laborCost + partsCost)
         }
         setParts(costData?.parts || [{hours: 0, rate: 0, description: ""}])
         setLabor(costData?.labor || [{part: "", cost: 0, quantity: ""}])
@@ -203,14 +209,21 @@ export default function QuoteDetailInfo({maintenanceItem}){
             justifyContent="center"
             alignItems="center"
             sx={{
-                paddingBottom: "20px",
+                paddingBottom: "5px",
             }}
         >   
         <Grid container direction="column" rowSpacing={2}>
             <Grid item xs={12}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                    Maintenance Quote Details
+                </Typography>
+            </Grid>
+            <Grid item xs={12}>
+                {quoteImages.length > 0  ? (
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
                     Maintenance Quote Images
                 </Typography>
+                ) : null}
             </Grid>
             <Grid item xs={12}>
                 {quoteImages.length > 0 ? 
