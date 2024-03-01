@@ -28,7 +28,7 @@ import { useUser } from "../../../contexts/UserContext";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-import WorkerQuoteView from "../MaintenanceComponents/WorkerQuoteView";
+import WorkerQuoteView from "./../MaintenanceComponents/WorkerQuoteView";
 
 
 export default function WorkerPaidMaintenance({maintenanceItem}){

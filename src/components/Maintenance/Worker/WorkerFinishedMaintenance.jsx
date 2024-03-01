@@ -90,8 +90,8 @@ export default function WorkerFinishedMaintenance({maintenanceItem}){
             }}
         >
             {/* We need to display the invoice here */}
-            <WorkerInvoiceView maintenanceItem={maintenanceItem}/>
             <WorkerQuoteView maintenanceItem={maintenanceItem}/>
+            <WorkerInvoiceView maintenanceItem={maintenanceItem}/>
             <Grid container direction="row" columnSpacing={6} rowSpacing={6} sx={{paddingTop: "15px"}}>
                 <MarkPaidButton maintenanceItem={maintenanceItem}/>
                 <CreateOrEditInvoiceButton maintenanceItem={maintenanceItem}/>

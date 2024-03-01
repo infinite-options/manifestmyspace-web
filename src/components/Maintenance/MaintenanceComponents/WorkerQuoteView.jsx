@@ -38,7 +38,7 @@ export default function WorkerQuoteView({maintenanceItem}){
                         textTransform: "none",
                         paddingRight: "10px",
                         paddingTop: "10px",
-                        paddingBottom: "10px",
+                        // paddingBottom: "10px",
                         borderRadius: "10px",
                         paddingLeft: "10px",
                         display: 'flex',
@@ -76,7 +76,6 @@ export default function WorkerQuoteView({maintenanceItem}){
                     }}
                 >
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        {/* {console.log("[DEBUG]", maintenanceItem?.quote_notes)} */}
                         {maintenanceItem?.quote_notes === "" || maintenanceItem?.quote_notes === undefined || maintenanceItem?.quote_notes === null ? "No Notes" : maintenanceItem.quote_notes}
                     </Typography>
                 </Box>
