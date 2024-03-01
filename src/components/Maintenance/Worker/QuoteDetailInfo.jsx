@@ -151,7 +151,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
         if (maintenanceItem?.quote_services_expenses) {
             costData = JSON.parse(maintenanceItem?.quote_services_expenses);
         } else {
-            throw new Error('quote_services_expenses is undefined');
+            // throw new Error('quote_services_expenses is undefined');
+            costData = {}; // Set a default value if needed
         }
     } catch (error) {
         console.error('Error parsing quote_services_expenses:', error);
@@ -209,8 +210,15 @@ export default function QuoteDetailInfo({maintenanceItem}){
         <Grid container direction="column" rowSpacing={2}>
             <Grid item xs={12}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                    Maintenance Quote Details
+                </Typography>
+            </Grid>
+            <Grid item xs={12}>
+                {quoteImages.length > 0  ? (
+                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
                     Maintenance Quote Images
                 </Typography>
+                ) : null}
             </Grid>
             <Grid item xs={12}>
                 {quoteImages.length > 0 ? 

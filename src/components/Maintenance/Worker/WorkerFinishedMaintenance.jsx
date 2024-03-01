@@ -40,6 +40,8 @@ export default function WorkerFinishedMaintenance({maintenanceItem}){
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
     const [estimateLaborTime, setEstimateLaborTime] = useState(0);
 
+    console.log("maintenanceItem in Finished Maintenance", maintenanceItem)
+
     function computeTotalCost(estimate){
         let costObject = JSON.parse(estimate)
         // console.log(costObject)
@@ -66,7 +68,7 @@ export default function WorkerFinishedMaintenance({maintenanceItem}){
     }
 
     useEffect(() => {
-        computeTotalCost(maintenanceItem.quote_services_expenses)
+        computeTotalCost(maintenanceItem?.quote_services_expenses)
     },[maintenanceItem])
 
     function displayDueDate(dateStr){

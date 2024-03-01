@@ -135,33 +135,7 @@ export default function AddMaintenanceItem(){
         // console.log("handleToggleGroupChange", newToggleGroupValue)
         setCompleted(event.target.value)
     };
-
-    // function checkImageSizes(selectedImageList) {
-    //     const MAX_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
-
-        
-    //     const sumImageSizes = selectedImageList.reduce((acc, image) => {
-    //         return acc + image.file.size;
-    //     }, 0)
-
-    //     if (sumImageSizes > MAX_SIZE) {
-    //         setImageOverLimit(true)
-    //         setShowErrorMessage(true);
-    //     } else{
-    //         setImageOverLimit(false)
-    //         setShowErrorMessage(false);
-    //     }
-    // }
-
-    // Should be 5MB max limit for all images
-
-    // useEffect(() => {
-    //     console.log("running useEffect checkImageSizes")
-
-    //     checkImageSizes(selectedImageList);
-    //     // I want checkImageSizes to run everytime selectedImageList changes
-        
-    // }, [selectedImageList])
+    
 
     const handleBackButton = () => {
         console.log("handleBackButton")

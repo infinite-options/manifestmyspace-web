@@ -28,7 +28,7 @@ export default function CancelButton(props){
             console.log("handleCancel quotes", quotes)
             for (let i = 0; i < quotes.length; i++){
                 console.log("handleCancel quotes[i]", quotes[i])
-                CancelQuote(quotes[i].quote_uid);
+                CancelQuote(quotes[i].maintenance_quote_uid);
             }
         }
         let response = CancelTicket(id);
