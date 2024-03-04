@@ -151,7 +151,7 @@ function ContractCard(props) {
                 {/* Centered image container */}
                 <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
                     <img
-                        src={contract.business_photo_url}
+                        src={contract.owner_photo_url}
                         alt="Business Photo"
                         style={{
                             borderRadius: '50%',
@@ -178,16 +178,16 @@ function ContractCard(props) {
             {/* Remaining content of ContractCard component */}
             {/* Lines below the first line with increased space */}
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.business_name}`}
+                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.business_email}
+                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.owner_email}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.business_phone_number}
+                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.owner_phone_number}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Beds:</span> {contract.property_num_beds}   <span style={{ fontWeight: "bold", marginLeft: '15px' }}>Baths:</span> {contract.property_num_baths}
