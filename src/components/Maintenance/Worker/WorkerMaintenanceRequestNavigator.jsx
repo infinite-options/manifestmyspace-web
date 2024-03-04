@@ -64,20 +64,20 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => {
-      let newIndex = (prevIndex - 1);
-      if(prevIndex > 0){
-        let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-        updateRequestIndex(newIndex, {changeTab:'noChange'})
-        return newIndex;
-      }
-      else{
-        if (newIndex === -1){
-          newIndex = 0
+        let newIndex = (prevIndex - 1);
+        if(prevIndex > 0){
+            let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+            updateRequestIndex(newIndex, {changeTab:'noChange'})
+            return newIndex;
         }
-        updateRequestIndex(newIndex, {changeTab:'backward'});
-        return newIndex;
-      }
-  });
+        else{
+            if (newIndex === -1){
+                newIndex = 1
+            }
+            updateRequestIndex(newIndex, {changeTab:'backward'});
+            return newIndex;
+        }
+    });
   };
 
   const handleNext = () => {
@@ -86,10 +86,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStepChange = (step) => {
-    setActiveStep(step);
   };
 
   function formatDate(date) {
@@ -109,10 +105,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const data = requestData[currentIndex];
 
-  
-  // console.log("requestData", requestData)
-  // console.log("data", data)
-
    useEffect(() => {
     if(data){
       formatDate(data.maintenance_request_created_date);
@@ -131,6 +123,9 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
           backgroundColor: color,
         }}
       >
+        <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+            {item.status}
+        </Typography>        
         <Stack
           direction="row"
           justifyContent="center"
@@ -138,32 +133,29 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
           // width= "100%" // Take up full screen width
           spacing={2}
         >
-          <Button onClick={handlePreviousCard} disabled={backward_active_status}>
-            <ArrowBackIcon />
-          </Button>
-          <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            // width= "100%" // Take up full screen width
-            spacing={1}
-          >
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {item.status}
-            </Typography>
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {currentIndex + 1} of {requestData.length}
-            </Typography>
-          </Stack>
-          <Button onClick={handleNextCard} disabled={forward_active_status}>
-            <ArrowForwardIcon />
-          </Button>
+            <Button onClick={handlePreviousCard} disabled={backward_active_status}>
+                <ArrowBackIcon />
+            </Button>
+            <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                // width= "100%" // Take up full screen width
+                spacing={1}
+            >
+                <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    {currentIndex + 1} of {requestData.length}
+                </Typography>
+            </Stack>
+            <Button onClick={handleNextCard} disabled={forward_active_status}>
+                <ArrowForwardIcon />
+            </Button>
         </Stack>
         <Stack
          justifyContent="center"
          alignItems="center">
         <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"}
+              { data !== undefined ? (data.maintenance_title !== undefined ? data.maintenance_title : "No Data") : "No data"}
         </Typography>
         </Stack>
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>

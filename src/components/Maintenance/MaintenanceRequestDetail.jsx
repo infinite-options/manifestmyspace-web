@@ -101,9 +101,9 @@ export function MaintenanceRequestDetail(){
             return true;
         }
     }
-    let [areTabsGrey, setAreTabsGrey]= useState([0,0,0,0,0,0]);
+    let [areTabsGrey, setAreTabsGrey] = useState([0,0,0,0,0,0]);
 
-    let [tabs, setTabs]=useState({})
+    let [tabs, setTabs] = useState({})
     function greyOutTab(key, maintenanceData, color){
         let greyColor = "#D9D9D9"
         if(maintenanceData[key]){
@@ -130,7 +130,7 @@ export function MaintenanceRequestDetail(){
             return theme.colorStatusMM
         } else if (role === "Tenant"){
             return theme.colorStatusTenant
-        }     
+        }
     }
 
     const colorStatus = getColorStatusBasedOnSelectedRole()
@@ -150,9 +150,9 @@ export function MaintenanceRequestDetail(){
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
+    const allData = location.state.allMaintenanceData;
 
     useEffect(() => {
-
         setNavParams({
             maintenanceRequestIndex,
             status,
@@ -160,15 +160,22 @@ export function MaintenanceRequestDetail(){
             allData,
             filteredQuotes,
         })
+        colorStatus.find((item, index) => {
+            if(item.status === status){
+                // console.log("status", item.status, "===", status)
+                setValue(index);
+            }
+        })
         let j = colorStatus.map((item, index) => {
-            let key= item.mapping
-            let isGrey= allData[key].length > 0 ? 0 : 1;  
-            let temp= areTabsGrey;
-            setAreTabsGrey(prev =>{ 
+            let key = item.mapping
+            let isGrey = allData[key].length > 0 ? 0 : 1;  
+            let temp = areTabsGrey;
+            setAreTabsGrey(prev => { 
                 temp[index]= isGrey;
-            return temp;});
-            let firstTab = areTabsGrey.indexOf(0)
-            let lastTab = areTabsGrey.lastIndexOf(0);
+                return temp;
+            });
+            let firstTab = temp.indexOf(0)
+            let lastTab = temp.lastIndexOf(0);
             setTabs({firstTab, lastTab});
         })
     }, [maintenanceRequestIndex, status])
@@ -213,26 +220,17 @@ export function MaintenanceRequestDetail(){
         getMaintenanceItemQuotes()
     },[])
     
-    const allData = location.state.allMaintenanceData;
 
     useEffect(() => {
         colorStatus.find((item, index) => {
             if(item.mapping === status){
-                // console.log("status", item.status, "at", index, "===", status)
                 setValue(index);
             }
         })
     }, [status, fromProperty])
 
-    useEffect(() => {
-        colorStatus.find((item, index) => {
-            if(item.mapping === status){
-                setValue(index);
-            }
-        })
-    }, [status])
-
     const handleChange = (event, newValue) => {
+        console.log("handleChange", newValue, colorStatus[newValue].status, colorStatus[newValue].mapping.toUpperCase())
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
@@ -241,7 +239,7 @@ export function MaintenanceRequestDetail(){
         setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
     };
 
-    const handleMaintenaceRequestIndexChange = (index, direction, prevTabLastIndex) => {
+    const handleMaintenaceRequestIndexChange = (index, direction) => {
         setMaintenanceRequestIndex(index);
     
         if (direction.changeTab === 'forward') {
@@ -284,7 +282,7 @@ export function MaintenanceRequestDetail(){
           id: `full-width-tab-${index}`,
           'aria-controls': `full-width-tabpanel-${index}`,
         };
-      }
+    }
       
     return(
         <ThemeProvider theme={theme}>

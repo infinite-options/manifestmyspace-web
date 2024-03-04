@@ -26,8 +26,6 @@ function LaborTableReadOnly({labor, setLabor}){
         return parseInt(hours) * parseInt(cost)
     }
 
-    console.log("labor", labor  )
-
     return (
         <>
         <Grid container sx={{paddingTop: "10px"}}>
@@ -82,8 +80,6 @@ function LaborTableReadOnly({labor, setLabor}){
 }
 
 function PartsTableReadOnly({parts, setParts}){
-
-    console.log("parts", parts)
 
     const calculateTotal = (qty, cost) => {
         return parseInt(qty) * parseInt(cost)

@@ -78,7 +78,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
 
     const handleNextCard = () => {
-        
         setCurrentIndex((prevIndex) => {
             let newIndex = (prevIndex + 1);
             if(prevIndex < requestData.length-1){
@@ -97,20 +96,20 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
     const handlePreviousCard = () => {
         setCurrentIndex((prevIndex) => {
-        let newIndex = (prevIndex - 1);
-        if(prevIndex > 0){
-            let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-            updateRequestIndex(newIndex, {changeTab:'noChange'})
-            return newIndex;
-        }
-        else {
-            if (newIndex === -1){
-            newIndex = 1
+            let newIndex = (prevIndex - 1);
+            if(prevIndex > 0){
+                let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+                updateRequestIndex(newIndex, {changeTab:'noChange'})
+                return newIndex;
             }
-            updateRequestIndex(newIndex, {changeTab:'backward'});
-            return newIndex;
-        }
-    });
+            else {
+                if (newIndex === -1){
+                    newIndex = 1
+                }
+                updateRequestIndex(newIndex, {changeTab:'backward'});
+                return newIndex;
+            }
+        });
     };
 
     const handleNext = () => {
@@ -119,10 +118,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleStepChange = (step) => {
-        setActiveStep(step);
     };
 
     function formatDate(date) {
