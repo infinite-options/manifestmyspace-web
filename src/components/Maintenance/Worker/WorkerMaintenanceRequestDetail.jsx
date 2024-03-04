@@ -67,6 +67,16 @@ function a11yProps(index) {
 export default function WorkerMaintenanceRequestDetail(){
     const location = useLocation();
     let navigate = useNavigate();
+    const colorStatus = theme.colorStatusMM
+
+    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
+    const [status, setStatus] = useState(location.state.status);
+    const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
+    const [month, setMonth] = useState(new Date().getMonth());
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
+    const allData = location.state.allMaintenanceData;
+
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
@@ -98,17 +108,6 @@ export default function WorkerMaintenanceRequestDetail(){
         }
     }
 
-    const colorStatus = theme.colorStatusMM
-
-    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    const [status, setStatus] = useState(location.state.status);
-    const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
-    const [month, setMonth] = useState(new Date().getMonth());
-    const [year, setYear] = useState(new Date().getFullYear());
-    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    const allData = location.state.allMaintenanceData;
-
-
     useEffect(() => {
         // console.log("useEffect")
         // console.log("status value", status)
@@ -118,83 +117,75 @@ export default function WorkerMaintenanceRequestDetail(){
                 setValue(index);
             }
         })
-        let j=colorStatus.map((item, index) => {
+        let j = colorStatus.map((item, index) => {
             let key= item.mapping
             let isGrey= allData[key].length > 0 ? 0 : 1;  
             let temp= areTabsGrey;
-            setAreTabsGrey(prev =>{ 
+            setAreTabsGrey(prev => { 
                 temp[index]= isGrey;
-            return temp;});
-            let firstTab = areTabsGrey.indexOf(0)
-            let lastTab = areTabsGrey.lastIndexOf(0);
+                return temp;
+            });
+            let firstTab = temp.indexOf(0)
+            let lastTab = temp.lastIndexOf(0);
             setTabs({firstTab, lastTab});
         })
 
-    }, [status])
+    }, [maintenanceRequestIndex, status])
+
 
     const handleChange = (event, newValue) => {
+        console.log("handleChange", newValue, colorStatus[newValue].status, colorStatus[newValue].mapping.toUpperCase())
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
+        const newStatus = colorStatus[newValue].mapping;
+        const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
+        setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
     };
 
-    const handleMaintenaceRequestIndexChange = (index, direction, prevTabLastIndex) => {
-        setMaintenanceRequestIndex(index);  
-        if (direction.changeTab==='forward'){
-            let i= value+1;
-              
-            while(areTabsGrey[i]===1 ){
-            i++;
-            if (i>5)
-            break;}
+    const handleMaintenaceRequestIndexChange = (index, direction) => {
+        setMaintenanceRequestIndex(index);
     
-            if(i<=5)
-            {setValue(i);
-            setMaintenanceRequestIndex(0);}
-         }
-        
-         if (direction.changeTab==='backward'){
-            let i= value-1;
-            
-            while(areTabsGrey[i]===1 ){
-            i--;
-            if (i<0)
-            break;}
+        if (direction.changeTab === 'forward') {
+            let i = value + 1;
     
-            if(i >= 0){
-                
-                let requestType= colorStatus[i].mapping.toUpperCase();
-                // console.log(allData)
-                let j= allData[requestType].length-1
-                setValue(i);
-                setMaintenanceRequestIndex(j)
+            while (areTabsGrey[i] === 1) {
+                i++;
+                if (i > 5) break;
             }
-         }  
-    }
+    
+            if (i <= 5) {
+                handleChange(null, i); // Re-use handleChange to ensure consistent state update
+            }
+        } else if (direction.changeTab === 'backward') {
+            let i = value - 1;
+            console.log("[DEBUG] tab backwards", i, areTabsGrey[i])
+    
+            while (areTabsGrey[i] === 1) {
+                i--;
+                if (i < 0) break;
+            }
 
-    // useEffect(() => {
-    //     console.log(maintenanceRequestIndex, "requestIndexChange MaintenanceRequestDetail useEffect")
-    // }, [maintenanceRequestIndex])
-
-    // console.log("all data MaintenanceRequestDetail", location.state.allData);
+            console.log("[DEBUG] tab backwards i-- because areTabsGrey", i, areTabsGrey[i], colorStatus[i].mapping.toUpperCase())
+    
+            if (i >= 0) {
+                let requestType = colorStatus[i].mapping.toUpperCase();
+                let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
+                console.log("[DEBUG] tab backwards", requestType, lastIndex)
+                console.log("[DEBUG] tab backwards", i, areTabsGrey[i])
+                setValue(i); // Change tab
+                setStatus(colorStatus[i].status)
+                setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array
+                setMaintenanceItemsForStatus(allData[requestType] || []);
+            }
+        }
+    };
 
     function a11yProps(index) {
         return {
           id: `full-width-tab-${index}`,
           'aria-controls': `full-width-tabpanel-${index}`,
         };
-      }
-
-    const handleNext = () => {
-        if (value < 5){
-            setValue(value + 1);
-        }
-    }
-
-    const handleBack = () => {
-        if (value > 0){
-            setValue(value - 1);
-        }
     }
 
     return(
@@ -242,11 +233,6 @@ export default function WorkerMaintenanceRequestDetail(){
                                 Maintenance Quote
                             </Typography>
                         </Box>
-                        {/* <Box position="absolute" right={30}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
-                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
-                            </Button>
-                        </Box> */}
                     </Stack>
                     <Stack
                         sx={{
@@ -323,13 +309,20 @@ export default function WorkerMaintenanceRequestDetail(){
 
                                         }}>
                                             {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
-                                                <WorkerMaintenanceRequestNavigator requestIndex={maintenanceRequestIndex } backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} forward_active_status={  value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex  } updateRequestIndex={handleMaintenaceRequestIndexChange} requestData={allData[item.mapping]} status={status} color={item.color} item={item} allData={allData}  currentTabValue={value}
+                                                <WorkerMaintenanceRequestNavigator 
+                                                    requestIndex={maintenanceRequestIndex} 
+                                                    backward_active_status={maintenanceRequestIndex=== 0 && value===tabs.firstTab} 
+                                                    forward_active_status={value===tabs.lastTab && allData[item.mapping].length-1 === maintenanceRequestIndex} 
+                                                    updateRequestIndex={handleMaintenaceRequestIndexChange} 
+                                                    requestData={allData[item.mapping]} 
+                                                    status={status} 
+                                                    color={item.color} 
+                                                    item={item} 
+                                                    allData={allData}
+                                                    currentTabValue={value}
                                                     tabs={tabs}
                                                 />
-
-                                            
-                            )
-                            :null}
+                                            ) : null}
                                         </Grid>
                                     </CustomTabPanel>
                                 </div>

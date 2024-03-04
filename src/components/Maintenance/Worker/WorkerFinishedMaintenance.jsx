@@ -24,7 +24,6 @@ import CompleteTicket from "../../utils/CompleteTicket";
 import { AttachMoney } from "@mui/icons-material";
 import { set } from "date-fns";
 import QuoteDetailInfo from "./QuoteDetailInfo";
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 import WorkerQuoteView from "../MaintenanceComponents/WorkerQuoteView";
@@ -39,8 +38,6 @@ export default function WorkerFinishedMaintenance({maintenanceItem}){
     const [estimatedPartsCost, setEstimatedPartsCost] = useState(0);
     const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
     const [estimateLaborTime, setEstimateLaborTime] = useState(0);
-
-    console.log("maintenanceItem in Finished Maintenance", maintenanceItem)
 
     function computeTotalCost(estimate){
         let costObject = JSON.parse(estimate)

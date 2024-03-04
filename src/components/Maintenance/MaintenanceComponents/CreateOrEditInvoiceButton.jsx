@@ -22,8 +22,6 @@ export default function CreateOrEditInvoiceButton({maintenanceItem}){
     let location = useLocation();
     let navigate = useNavigate();
 
-    console.log("[DEBUG] maintenanceItem from CreateOrEditInvoiceButton: ", maintenanceItem)
-
     const handleNavigateToInvoice = () => {
         navigate("/businessInvoiceForm", {
             state:{
