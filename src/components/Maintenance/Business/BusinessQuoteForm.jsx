@@ -604,6 +604,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                                     backgroundColor: "#F2F2F2 !important",
                                                                     borderRadius: "10px !important",
                                                                 },
+                                                                label: "Date"
                                                             },
                                                         }}
                                                     />
@@ -629,7 +630,8 @@ export default function BusinessQuoteForm({acceptBool}){
                                                                     fontSize: 12,
                                                                     backgroundColor: "#F2F2F2 !important",
                                                                     borderRadius: "10px !important",
-                                                                },                                                                
+                                                                },
+                                                                label: 'Time (select AM or PM)'                                                                
                                                             } 
                                                         }}                                                        
                                                         views={['hours', 'minutes']}
