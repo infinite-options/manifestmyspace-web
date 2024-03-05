@@ -500,23 +500,21 @@ useEffect(() => {
     // for (let [key, value] of leaseApplicationFormData.entries()) {
     //   console.log(key, value);
     // }
-
     
-    //rohit
-    // await fetch(
-    //   `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
-    //   {
-    //     method: "PUT",
-    //     body: leaseApplicationFormData
-    //   }
-    // );
     await fetch(
-      `http://localhost:4000/leaseApplication`,      
+      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
       {
         method: "PUT",
         body: leaseApplicationFormData
       }
     );
+    // await fetch(
+    //   `http://localhost:4000/leaseApplication`,      
+    //   {
+    //     method: "PUT",
+    //     body: leaseApplicationFormData
+    //   }
+    // );
     await fetch(
       `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
       {
