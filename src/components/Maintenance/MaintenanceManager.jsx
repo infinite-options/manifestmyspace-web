@@ -212,7 +212,7 @@ export default function MaintenanceManager(){
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
-            console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
+            // console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
             // console.log("maintenanceRequestsData", maintenanceRequestsData)

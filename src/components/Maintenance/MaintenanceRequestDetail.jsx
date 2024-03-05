@@ -134,10 +134,6 @@ export function MaintenanceRequestDetail(){
     }
 
     const colorStatus = getColorStatusBasedOnSelectedRole()
-
-    console.log("[DEBUG] colorStatus", colorStatus)
-    console.log("[DEBUG] location.state", location.state)
-
    
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);

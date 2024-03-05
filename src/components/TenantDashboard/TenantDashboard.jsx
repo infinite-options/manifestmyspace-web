@@ -38,17 +38,10 @@ import CircleIcon from '@mui/icons-material/Circle';
 function TenantDashboard(props) {
   
   const navigate = useNavigate();
+  const location = useLocation();
   const [showSpinner, setShowSpinner] = useState(false);
 
-  const [paymentData, setPaymentData] = useState({
-    // currency: "usd",
-    // customer_uid: "100-000125",
-    // business_code: "IOTEST",
-    // item_uid: "320-000054",
-    // payment_summary: {
-    //   total: "0.0",
-    // },
-  });
+  const [paymentData, setPaymentData] = useState({});
 
   const { getProfileId } = useUser();
 
@@ -61,18 +54,15 @@ function TenantDashboard(props) {
   const [propertyAddr, setPropertyAddr] = useState();
   const [propertyId, setPropertyId] = useState("")
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
-  // const [balance, setBalance] = useState("0.00");
   const [total, setTotal] = useState("0.00");
 
   const [anchorEl, setAnchorEl] = useState(null);
   
   const [userLeases, setUserLeases] = useState(null)
   const [selectedLease, setSelectedLease] = useState(null)
+  const [refresh, setRefresh] = useState(false || location.state?.refresh)
 
   const open = Boolean(anchorEl);
-//   const handleOpen = (event) => {
-//     setAnchorEl(event.currentTarget);
-//   };
 
   const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -83,7 +73,7 @@ function TenantDashboard(props) {
 
   const { user } = useUser();
 
-  let automatic_navigation_handler =(propertyData)=>{
+  let automatic_navigation_handler = (propertyData) => {
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
       if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
         navigate("/listings");
@@ -122,63 +112,72 @@ function TenantDashboard(props) {
         if (!getProfileId())
             navigate('/PrivateprofileName')
         const getTenantData = async () => {
+<<<<<<< HEAD
             try{
             setShowSpinner(true);
             const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
             // const tenantRequests = await fetch(`http://localhost:4000/dashboard/${getProfileId()}`);
             const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
             const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`)
+=======
+            try {
+                setShowSpinner(true);
+                const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+                const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+                const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`)
+>>>>>>> master
 
-            const tenantRequestsData = await tenantRequests.json()  
-            const leaseData = await leaseResponse.json()
-            const propertyResponseData = await propertyResponse.json();
+                const tenantRequestsData = await tenantRequests.json()  
+                const leaseData = await leaseResponse.json()
+                const propertyResponseData = await propertyResponse.json();
 
-            // setUserLeases(propertyResponseData.Tenant_Leases.result)
-            setUserLeases(propertyResponseData.Tenant_Leases.result)
+                setUserLeases(propertyResponseData.Tenant_Leases.result)
 
-            let propertyData = tenantRequestsData?.property?.result;
-            let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
-            let announcementsData = tenantRequestsData?.announcements?.result;
-            const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
+                let propertyData = tenantRequestsData?.property?.result;
+                let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
+                let announcementsData = tenantRequestsData?.announcements?.result;
+                const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
 
-        // sort propertyData by lease_status so that active lease is first
-            propertyData.sort((a, b) => {
-                if (a.lease_status === "ACTIVE") {
-                    return -1;
+                // sort propertyData by lease_status so that active lease is first
+                propertyData.sort((a, b) => {
+                    if (a.lease_status === "ACTIVE") {
+                        return -1;
+                    }
+                    if (b.lease_status === "ACTIVE") {
+                        return 1;
+                    }
+                    return 0;
+                });
+
+                if(!propertyData || propertyData.length === 0 || allNonActiveLease){
+                    navigate("/listings")
                 }
-                if (b.lease_status === "ACTIVE") {
-                    return 1;
+
+                setPropertyData(propertyData || []);
+                setAllMaintenanceRequests(maintenanceRequestsData)
+                setMaintenanceRequests(maintenanceRequestsData || []);
+                setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
+
+                let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
+                setPropertyAddr(propertyAddress);
+                setFirstName(user.first_name)
+                setShowSpinner(false);
+                setTotal(propertyData[0] !== undefined ? propertyData[0].balance : "0.00") 
+
+                if (location.state?.propertyId){
+                    let navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId)
+                    setSelectedProperty(navPropertyData)
+                    setPropertyAddr(navPropertyData.property_address + " " + navPropertyData.property_unit);
+                } else {
+                    setSelectedProperty(propertyData[0] !== undefined ? propertyData[0] : null)
                 }
-                return 0;
-            });
-
-            if(!propertyData || propertyData.length === 0){
-                navigate("/listings")
+            } catch (error) {
+                console.error("Error fetching tenant data:", error);
             }
-            if (allNonActiveLease) {
-                navigate('/listings');
-            }
-
-            setPropertyData(propertyData || []);
-            setAllMaintenanceRequests(maintenanceRequestsData)
-            setMaintenanceRequests(maintenanceRequestsData || []);
-            setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
-
-            let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
-            setPropertyAddr(propertyAddress);
-            setFirstName(user.first_name)
-            setShowSpinner(false);
-            setTotal(propertyData[0]!==undefined ? propertyData[0].balance : "0.00")
-            setSelectedProperty(propertyData[0]!==undefined ? propertyData[0] : null)
-            // console.log(propertyData[0])
-
-        } catch (error) {
-            // Handle errors here
-            console.error("Error fetching tenant data:", error);
-        }
         }
         getTenantData();
-    }, [])
+        setRefresh(false);
+    }, [refresh])
 
     useEffect(() => {
         if (userLeases){
@@ -189,7 +188,7 @@ function TenantDashboard(props) {
             let filteredMaintenanceItems = allMaintenanceRequests.filter(request => request.property_uid === selectedProperty.property_uid)
             setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems))
         }
-    },[userLeases, selectedProperty]);
+    }, [userLeases, selectedProperty]);
 
     function sortMaintenanceRequests(maintenanceDataArray){
         const statusSortPriority = {
@@ -209,8 +208,6 @@ function TenantDashboard(props) {
     fontWeight: "600",
     fontSize: "10px",
   };
-
-  const location = useLocation();
 
   function handleTenantMaintenanceNavigate() {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address)
@@ -272,13 +269,8 @@ function TenantDashboard(props) {
       </Backdrop>
       <Grid container sx={{
           paddingBottom: "10px",
-          // paddingLeft: "20px",
-        //   paddingRight: "20px",
-        //   backgroundColor: "#F2F2F2",
-        //   borderRadius: "10px",
           marginTop: "7px",
           marginBottom: "7px",
-        //   boxShadow: "0px 2px 4px #00000040",
         }}>
             <Grid item xs={12}>
             <Box
@@ -497,7 +489,7 @@ function TenantDashboard(props) {
                             marginLeft: "5px",
                             marginTop: "10px",
                         }}
-                        onClick={() => navigate("/tenantMaintenance")}
+                        // onClick={() => navigate("/tenantMaintenance")}
                     >
                         Maintenance ({maintenanceRequests.length})
                     </Box>
