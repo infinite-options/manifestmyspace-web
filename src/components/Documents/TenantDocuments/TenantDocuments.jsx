@@ -17,11 +17,9 @@ function TenantDoucments() {
     const propertyAddress = location.state.propertyAddr;
    
     useEffect(() => {
-    //    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/350-000040`)  
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)  
     .then((res) => {
-                // console.log(res.data);
                 setDocumentsData(res.data.Documents.result);
                 setShowSpinner(false);
             });
@@ -43,12 +41,6 @@ function TenantDoucments() {
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Stack 
-                // sx={{
-                //     display: 'flex',
-                //     flexDirection: 'row',
-                //     justifyContent: 'space-between',
-                //     color: '#160449',
-                // }}
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
@@ -196,7 +188,7 @@ function TenantDoucments() {
                 </Box>
                 {documentsData.map((document) => {
                     const docs = JSON.parse(document.tenant_documents);
-                    console.log("Docs "+docs)
+                    // console.log("Docs "+docs)
                     return (
                         <>
                             {docs.map((doc) => (

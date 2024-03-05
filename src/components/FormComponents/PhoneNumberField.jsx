@@ -15,7 +15,6 @@ export default function PhoneNumberField(props){
 
 
     const handlePhoneNumberChange = (event) => {
-        console.log(event)
         let number = event.target.value;
         var formattedNumber = "";
         for (let i = 0; i < event.target.value.length; i++) {
@@ -31,7 +30,6 @@ export default function PhoneNumberField(props){
             }
             formattedNumber += event.target.value[i];
         }
-        console.log(formattedNumber);
         setPhoneNumber(formattedNumber);
     };
 

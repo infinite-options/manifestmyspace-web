@@ -79,8 +79,6 @@ export default function MaintenanceDashboard(){
     useEffect(() => {
         if (!getProfileId())
             navigate('/PrivateprofileName')
-        console.log("Maintenance Worker Dashboard useEffect")
-        console.log(user.businesses.MAINTENANCE.business_uid)
 
         const getMaintenanceWorkerDashboardData = async () => {
             setShowSpinner(true);
@@ -215,6 +213,7 @@ export default function MaintenanceDashboard(){
                                             display: 'flex',
                                             justifyContent: 'center',
                                             marginTop: theme.spacing(2), // Set the margin to 20px
+                                            position: 'relative',
                                         }}
                                     >
                                         <RadialBarChart 
@@ -223,15 +222,38 @@ export default function MaintenanceDashboard(){
                                             // cx='50%'
                                             // cy='50%'
                                             innerRadius="10%" 
-                                            outerRadius="80%" 
+                                            outerRadius="100%" 
                                             data={data.reverse()} 
                                             startAngle={90} 
-                                            endAngle={-180}  
+                                            endAngle={-180} // -180
                                         >
-                                            <RadialBar minAngle={15} background clockWise={true} dataKey='count'>
-                                                <LabelList dataKey="name" position="outsideStart" fill="#000"/>
-                                            </RadialBar>
+                                            <RadialBar minAngle={15} background clockWise={true} dataKey='count'/>
                                         </RadialBarChart>
+                                        <Legend
+                                                iconSize={20}
+                                                layout="vertical"
+                                                verticalAlign="middle"
+                                                align="right"
+                                                alignItems="right"
+                                                justifyContent="space-between"
+                                                wrapperStyle={{ 
+                                                    position: 'absolute', 
+                                                    left: '95px', 
+                                                    top: '60px',
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    gap: '20px'
+                                                }}
+                                                margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
+                                                payload={
+                                                    data.map(item => ({
+                                                        value: item.name,
+                                                        type: 'square',
+                                                        id: item.name,
+                                                        color: item.fill, // Assuming 'fill' is a property in your data array that specifies the color
+                                                    })).reverse()
+                                                }
+                                            />
                                     </Box>
                                 </Paper>
                             </Box>

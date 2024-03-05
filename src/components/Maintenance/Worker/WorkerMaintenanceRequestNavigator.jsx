@@ -279,7 +279,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                   }}
                 >
                   { data !== undefined ? (data.maintenance_title!==undefined ? "Title: " + data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
-            
                 </Typography>
                 <Typography
                   sx={{
@@ -301,7 +300,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                   }}
                 >
                   Reported: {formattedDate} | Open: {numOpenRequestDays} days
-                  {/* Reported: {data?.maintenance_request_created_date} | Open : Days */}
                 </Typography>
                 <Typography
                   sx={{
@@ -312,8 +310,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                   }}
                 >
                   Issue Notes: {data!==undefined ? (data.maintenance_desc===null ? "None" : data.maintenance_desc) : ""}
-                  {/* Estimated Cost: */}
-                   {/* {data.maintenance_estimated_cost ? "$" + data.maintenance_estimated_cost : "Not reported"} */}
                 </Typography>
                 <Typography
                   sx={{
@@ -325,7 +321,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 >
                 Manager Notes:  {data!==undefined ? (data.quote_pm_notes===null ? "None" : data.quote_pm_notes) : "None"}
                 </Typography>
-                {/* {data.maintenance} */}
                 <Typography
                   sx={{
                     overflowWrap: "break-word",
