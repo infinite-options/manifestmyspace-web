@@ -21,16 +21,15 @@ import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelTicket from "../../utils/CancelTicket";
 import CompleteTicket from "../../utils/CompleteTicket";
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
-export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
+export default function ScheduleMaintenance({maintenanceItem, navigateParams, quotes}){
     
     const location = useLocation();
     const navigate = useNavigate();
@@ -151,7 +150,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams}){
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
         </Box>

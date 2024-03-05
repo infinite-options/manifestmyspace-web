@@ -4,7 +4,8 @@ import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Co
 import theme from "../../theme/theme";
 import { Stack, Typography } from "@mui/material";
 
-const MixedChart = (props) => {
+// THIS IS A DUPLICATE OF OwnerCashflowGraph.  See if there is a way to combine these 2 pages
+const DashboardChart = (props) => {
   // I want props.revenueCashflowByMonth to be sorted in order of month and year
 
   const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
@@ -78,10 +79,10 @@ const MixedChart = (props) => {
           <Line
             yAxisId="left"
             type="monotone"
-            dataKey={activeButton === "ExpectedCashflow" ? "expectedRevenue" : "revenue"}
+            dataKey={activeButton === "ExpectedCashflow" ? "expectedRevenue" : "expected_cashflow"}
             stroke={theme.palette.primary.mustardYellow}
             strokeWidth={5}
-            name="Revenue"
+            name="Expected Cash Flow"
             dot={{ stroke: theme.palette.primary.mustardYellow }}
           />
         </ComposedChart>
@@ -90,4 +91,4 @@ const MixedChart = (props) => {
   );
 };
 
-export default MixedChart;
+export default DashboardChart;

@@ -18,7 +18,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     setSelectedRole(role);
     setCookie("selectedRole", role);
   };
-  const isBusiness = () => { 
+  const isBusiness = () => {
     return selectedRole === "MANAGER" || selectedRole === "MAINTENANCE";
   };
   const isManager = () => {
@@ -40,12 +40,12 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 
   const isOwner = () => {
     return selectedRole === "OWNER";
-  }
+  };
 
   const roleName = (role = selectedRole) => {
     switch (role) {
       case "MANAGER":
-        return "Property Manager";
+        return "Manager";
       case "MAINTENANCE":
         return "Maintenance";
       case "PM_EMPLOYEE":
@@ -53,7 +53,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
       case "MAINT_EMPLOYEE":
         return "Maintenance Employee";
       case "OWNER":
-        return "Property Owner";
+        return "Owner";
       default:
         return "Tenant";
     }
@@ -70,18 +70,12 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       newBusinesses = {
         ...prevUser.businesses,
-        MANAGEMENT: updateBusinessSection(
-          prevUser.businesses?.MANAGEMENT,
-          profileUidObj
-        ),
+        MANAGEMENT: updateBusinessSection(prevUser.businesses?.MANAGEMENT, profileUidObj),
       };
     } else {
       newBusinesses = {
         ...prevUser.businesses,
-        MAINTENANCE: updateBusinessSection(
-          prevUser.businesses?.MAINTENANCE,
-          profileUidObj
-        ),
+        MAINTENANCE: updateBusinessSection(prevUser.businesses?.MAINTENANCE, profileUidObj),
       };
     }
     return {
@@ -97,17 +91,16 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;
   const getProfileId = () => {
-    
     const profileId = isManagement()
-    ? getBusiness(user, "MANAGEMENT")
-    : isMaintenance()
-    ? getBusiness(user, "MAINTENANCE")
-    : selectedRole === "TENANT"
-    ? user.tenant_id
-    : user.owner_id;
+      ? getBusiness(user, "MANAGEMENT")
+      : isMaintenance()
+      ? getBusiness(user, "MAINTENANCE")
+      : selectedRole === "TENANT"
+      ? user.tenant_id
+      : user.owner_id;
 
-    return profileId
-  }
+    return profileId;
+  };
   const logout = () => {
     cookiesObj.remove("user");
     cookiesObj.remove("token");
@@ -115,26 +108,26 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const maintenanceRoutingBasedOnSelectedRole = () => {
-    const role = roleName()
-    if (role === "Property Manager"){
-      return "/managerMaintenance"
-    } else if (role === "Property Owner"){ // when this is called 
-      return "/ownerMaintenance"
-    } else if (role === "Maintenance"){
-      return "/workerMaintenance"
-    } else if (role === "PM Employee"){
-      return "/managerMaintenance"
-    } else if (role === "Maintenance Employee"){
-      return "/workerMaintenance"
-    } else if (role === "Tenant"){
-      return "/tenantMaintenance"
-    }     
-  }
+    const role = roleName();
+    if (role === "Manager") {
+      return "/managerMaintenance";
+    } else if (role === "Owner") {
+      return "/ownerMaintenance";
+    } else if (role === "Maintenance") {
+      return "/workerMaintenance";
+    } else if (role === "PM Employee") {
+      return "/managerMaintenance";
+    } else if (role === "Maintenance Employee") {
+      return "/workerMaintenance";
+    } else if (role === "Tenant") {
+      return "/tenantMaintenance";
+    }
+  };
 
   const paymentRoutingBasedOnSelectedRole = () => {
-    const role = roleName()
-    if (role === "Property Manager"){
-      return "/payments"
+    const role = roleName();
+    if (role === "Manager") {
+      return "/payments";
     }
     // } else if (role === "Property Owner"){
     //   return "/ownerMaintenance"
@@ -144,10 +137,30 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     //   return "/managerMaintenance"
     // } else if (role === "Maintenance Employee"){
     //   return "/workerMaintenance"
-    else if (role === "Tenant"){
-      return "/payments"
-    }     
-  }
+    else if (role === "Tenant") {
+      return "/payments";
+    }
+  };
+
+  const leaseRoutingBasedOnSelectedRole = () => {
+    // console.log("routingWithSelectedRole selectedRole", selectedRole)
+    const role = roleName();
+    if (role === "Manager") {
+      return "/Leases";
+    } else if (role === "Owner") {
+      return "/Leases";
+    }
+  };
+
+  const propertyRoutingBasedOnSelectedRole = () => {
+    // console.log("routingWithSelectedRole selectedRole", selectedRole)
+    const role = roleName();
+    if (role === "Manager") {
+      return "/properties";
+    } else if (role === "Owner") {
+      return "/properties";
+    }
+  };
 
   return (
     <UserContext.Provider
@@ -172,6 +185,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         logout,
         maintenanceRoutingBasedOnSelectedRole,
         paymentRoutingBasedOnSelectedRole,
+        leaseRoutingBasedOnSelectedRole,
+        propertyRoutingBasedOnSelectedRole,
       }}
     >
       {children}

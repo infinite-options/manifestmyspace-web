@@ -21,8 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import { useUser } from "../../../contexts/UserContext";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
@@ -84,7 +83,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
         </Box>

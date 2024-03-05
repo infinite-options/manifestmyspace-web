@@ -21,9 +21,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
@@ -60,7 +59,6 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    navigate(maintenanceRoutingBasedOnSelectedRole())
                 } else{
                     console.log("error setting status")
                 }
@@ -90,7 +88,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 if (response.status === 200) {
                     console.log("success")
                     changeMaintenanceRequestStatus()
-                    navigate("/maintenance"); 
+                    navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                 } else{
                     console.log("error setting status")
                 }
@@ -167,7 +165,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                         </Typography>
                     </Button>
                 </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
         </Box>

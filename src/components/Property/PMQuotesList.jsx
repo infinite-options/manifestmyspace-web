@@ -4,7 +4,6 @@ import {
     Box,
     Tabs,
     Tab,
-    Paper,
     Card,
     CardHeader,
     Slider,
@@ -24,37 +23,29 @@ import { useUser } from "../../contexts/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop"; 
 
-
-export default function PMQuotesList({}){
+export default function PMQuotesList({}) {
     let navigate = useNavigate();
     const location = useLocation();
-    const property_endpoint_resp=location.state.property_endpoint_resp
-    const { getProfileId} = useUser();
+    const property_endpoint_resp = location.state.property_endpoint_resp
+    const { getProfileId } = useUser();
     const [contractRequests, setContractRequests] = useState([]);
     const [properties, setProperties] = useState([]);
     const [refresh, setRefresh] = useState(false)
     const [showSpinner, setShowSpinner] = useState(false);
 
     useEffect(() => {
-        
         const getContractsForPM = async () => {
             setShowSpinner(true);
             try {
                 const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-                
                 const contractsResponse = await response.json();
-                
                 const contractsData = contractsResponse.result.filter(contract => contract.contract_status !== "ACTIVE")
-                // 
-                console.log("contractsResponse", contractsData)
                 setContractRequests(contractsData)
                 setShowSpinner(false);
-            }
-            catch (error){
+            } catch (error) {
                 console.log(error);
             }
         }
-        // NewPMRequests
 
         const getProperties = async () => {
             setShowSpinner(true);
@@ -62,17 +53,14 @@ export default function PMQuotesList({}){
                 console.log(property_endpoint_resp)
                 setProperties(property_endpoint_resp.Property.result)
                 setContractRequests(property_endpoint_resp.NewPMRequests.result)
-                setShowSpinner(false);         
+                setShowSpinner(false);
             } catch (error) {
                 console.log(error)
             }
         }
 
-        // getContractsForPM();
         getProperties();
-
     }, [refresh]);
-
 
     return (
         <ThemeProvider theme={theme}>
@@ -82,82 +70,117 @@ export default function PMQuotesList({}){
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Box
+            <Stack
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
                 sx={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%", // Take up full screen width
-                minHeight: "100vh", // Set the Box height to full height
-                marginTop: theme.spacing(2), // Set the margin to 20px
+                    width: "100%", // Take up full screen width
+                    minHeight: "100vh", // Set the Box height to full height
+                    marginTop: theme.spacing(2), // Set the margin to 20px
                 }}
             >
-                <Paper
+                <Stack
                     sx={{
-                        margin: "10px",
-                        padding: theme.spacing(2),
-                        backgroundColor: theme.palette.primary.main,
+                        backgroundColor: "#fff",
                         width: "100%", // Occupy full width with 25px margins on each side
                         maxWidth: "800px", // You can set a maxWidth if needed
+                        textAlign: "center", // Center align text
                     }}
+                    spacing={2}
+                    p={2}
                 >
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative", paddingBottom: "25px" }}>
-                        <Box sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}>
-                            <Typography
-                                sx={{
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: theme.typography.largeFont,
-                                }}
-                            >
-                                All Property Management Requests
-                            </Typography>
-                        </Box>
-                    </Stack>
-                    {contractRequests.map((contract, index) => {
-                            return (            
-                                <ContractCard contract={contract} property_endpoint_resp={property_endpoint_resp}/>
-                            )
-                        })}
-                </Paper>
-            </Box>
+                    <Typography
+                        sx={{
+                            color: "#160449",
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: theme.typography.largeFont,
+                        }}
+                    >
+                        All Property Management Requests
+                    </Typography>
+                    {contractRequests.map((contract, index) => (
+                        <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} />
+                    ))}
+                </Stack>
+            </Stack>
         </ThemeProvider>
     )
 }
 
-function ContractCard(props){
+function ContractCard(props) {
     let navigate = useNavigate();
 
     const contract = props.contract;
-    const property_endpoint_resp= props.property_endpoint_resp
-    // const property = props.property;
-    // console.log(contract)
+    const property_endpoint_resp = props.property_endpoint_resp;
+
     return (
-        <Box sx={{
+        <Box
+            sx={{
                 backgroundColor: '#D6D5DA',
                 borderRadius: '10px',
-                padding: '5px',
-                marginBottom: '10px',
-                fontSize: '13px',
+                padding: '10px', // Increased padding for more space
+                marginBottom: '20px', // Increased margin between cards
+                fontSize: '11px',
+                cursor: 'pointer',
+                position: 'relative', // Added to handle image positioning
             }}
             onClick={() => navigate('/managementContractDetails', {
                 state: {
-                    contract_uid: contract.contract_uid, 
-                    contract_business_id: contract.business_id, 
+                    contract_uid: contract.contract_uid,
+                    contract_business_id: contract.business_id,
                     contract_property_id: contract.property_id,
                     contractUID: contract.contract_uid,
                     property_endpoint_resp
-                }})
-            }
+                },
+            })}
         >
-            {/* <h2>{contract.contract_uid}</h2> */}
-            <h2>{contract.contract_status}</h2>
-            <h3>{contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}</h3>
-            <p>Beds: {contract.property_num_beds}</p> 
-            <p>Baths: {contract.property_num_baths}</p>
+            <Grid container alignItems="center">
+                {/* Empty left corner */}
+                <Grid item xs={3}></Grid>
+                {/* Centered image container */}
+                <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <img
+                        src={contract.business_photo_url}
+                        alt="Business Photo"
+                        style={{
+                            borderRadius: '50%',
+                            width: '40px',
+                            height: '40px',
+                            objectFit: 'cover',
+                        }}
+                    />
+                </Grid>
+                {/* Left corner with contract status */}
+                <Grid item xs={3} sx={{ textAlign: 'right', marginLeft: '-5px' }}>
+                    <Typography
+                        sx={{
+                            color: "#3D5CAC",
+                            fontWeight: "bold",
+                            fontSize: '20px',
+                            marginLeft: '5px', // Move the status slightly to the right
+                        }}
+                    >
+                        {contract.contract_status}
+                    </Typography>
+                </Grid>
+            </Grid>
+            {/* Lines below the first line with increased space */}
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop:'5px' }}>
+                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.business_name}`}
+            </Typography>
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.business_email}
+            </Typography>
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
+            </Typography>
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.business_phone_number}
+            </Typography>
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Beds:</span> {contract.property_num_beds}   <span style={{ fontWeight: "bold", marginLeft: '15px' }}>Baths:</span> {contract.property_num_baths}
+            </Typography>
         </Box>
-    )
+    );
 }

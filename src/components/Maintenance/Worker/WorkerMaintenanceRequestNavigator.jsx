@@ -22,7 +22,7 @@ async function getInitialImages(requestData, currentIndex) {
   return [maintenanceRequestImage];
 }
 
-export default function MaintenanceRequestNavigator01({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
+export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -40,20 +40,10 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
     };
     
     fetchImages();
-}, [currentIndex]);
-
-
-  // console.log("RequestNavigator");
-  // console.log("requestIndex", requestIndex);
-  // console.log("requestData", requestData);
-  // console.log("currentIndex", currentIndex);
-  // console.log("color", color);
-  // console.log("item", item);
-  // console.log("allData", allData);
+  }, [currentIndex]);
 
   const maxSteps = images.length;
 
-  // console.log("maxSteps", maxSteps);
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => {
@@ -73,23 +63,21 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
   };
 
   const handlePreviousCard = () => {
-
-
     setCurrentIndex((prevIndex) => {
-      let newIndex = (prevIndex - 1);
-      if(prevIndex > 0){
-        let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-        updateRequestIndex(newIndex, {changeTab:'noChange'})
-        return newIndex;
-      }
-      else{
-        if (newIndex === -1){
-          newIndex = 0
+        let newIndex = (prevIndex - 1);
+        if(prevIndex > 0){
+            let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
+            updateRequestIndex(newIndex, {changeTab:'noChange'})
+            return newIndex;
         }
-        updateRequestIndex(newIndex, {changeTab:'backward'});
-        return newIndex;
-      }
-  });
+        else{
+            if (newIndex === -1){
+                newIndex = 1
+            }
+            updateRequestIndex(newIndex, {changeTab:'backward'});
+            return newIndex;
+        }
+    });
   };
 
   const handleNext = () => {
@@ -98,10 +86,6 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStepChange = (step) => {
-    setActiveStep(step);
   };
 
   function formatDate(date) {
@@ -121,10 +105,6 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
 
   const data = requestData[currentIndex];
 
-  
-  // console.log("requestData", requestData)
-  // console.log("data", data)
-
    useEffect(() => {
     if(data){
       formatDate(data.maintenance_request_created_date);
@@ -143,6 +123,9 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
           backgroundColor: color,
         }}
       >
+        <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+            {item.status}
+        </Typography>        
         <Stack
           direction="row"
           justifyContent="center"
@@ -150,32 +133,29 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
           // width= "100%" // Take up full screen width
           spacing={2}
         >
-          <Button onClick={handlePreviousCard} disabled={backward_active_status}>
-            <ArrowBackIcon />
-          </Button>
-          <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            // width= "100%" // Take up full screen width
-            spacing={1}
-          >
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {item.status}
-            </Typography>
-            <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {currentIndex + 1} of {requestData.length}
-            </Typography>
-          </Stack>
-          <Button onClick={handleNextCard} disabled={forward_active_status}>
-            <ArrowForwardIcon />
-          </Button>
+            <Button onClick={handlePreviousCard} disabled={backward_active_status}>
+                <ArrowBackIcon />
+            </Button>
+            <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                // width= "100%" // Take up full screen width
+                spacing={1}
+            >
+                <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    {currentIndex + 1} of {requestData.length}
+                </Typography>
+            </Stack>
+            <Button onClick={handleNextCard} disabled={forward_active_status}>
+                <ArrowForwardIcon />
+            </Button>
         </Stack>
         <Stack
          justifyContent="center"
          alignItems="center">
         <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              { data!== undefined ? (data.maintenance_title!==undefined ? data.maintenance_title :"No Data") : "No data"}
+              { data !== undefined ? (data.maintenance_title !== undefined ? data.maintenance_title : "No Data") : "No data"}
         </Typography>
         </Stack>
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
@@ -277,42 +257,46 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                   alignItems: "left",
                 }}
               >
-                 <Typography
-                  sx={{
+                <Typography
+                    sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
-                  }}
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    }}
                 >
-                  {data?.maintenance_title} - {data?.maintenance_request_uid}
+                    <b>{data?.maintenance_priority.toUpperCase()[0] + data?.maintenance_priority.slice(1)} Priority</b>
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
-                  {data?.maintenance_priority} Priority
+                  { data !== undefined ? (data.maintenance_title!==undefined ? "Title: " + data.maintenance_title :"No Data") : "No data"} - {data?.maintenance_request_uid}
+            
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
-                  }}
+                  }} 
                   underline="always"
                 >
-                {data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}
+                  <u>{data?.property_address}, {data?.property_city} {data?.property_state} {data?.property_zip}</u>
                 </Typography>
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -322,8 +306,8 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -334,8 +318,8 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                 <Typography
                   sx={{
                     color: theme.typography.secondary.white,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
                     paddingBottom: "10px",
                   }}
                 >
@@ -347,7 +331,7 @@ export default function MaintenanceRequestNavigator01({ requestIndex, backward_a
                     overflowWrap: "break-word",
                     color: theme.typography.secondary.white,
                     fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
+                    fontSize: theme.typography.mediumFont,
                   }}
                 >
                   {/* {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null} */}

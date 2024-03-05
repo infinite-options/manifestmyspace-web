@@ -34,11 +34,12 @@ import { Select } from "@material-ui/core";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import ImageCarousel from "../../ImageCarousel";
+import dataURItoBlob from '../../utils/dataURItoBlob';
 
 function CostPartsTable({parts, setParts}){
 
     function addRow(){
-        console.log("addRow")
         let newPart = {
             part: "",
             quantity: "",
@@ -48,28 +49,24 @@ function CostPartsTable({parts, setParts}){
     }
 
     function handlePartChange(event, index){
-        console.log("handlePartChange", event.target.value)
         let newParts = [...parts]
         newParts[index].part = event.target.value
         setParts(newParts)
     }
 
     function handleQuantityChange(event, index){
-        console.log("handleQuantityChange", event.target.value)
         let newParts = [...parts]
         newParts[index].quantity = event.target.value
         setParts(newParts)
     }
 
     function handleCostChange(event, index){
-        console.log("handleCostChange", event.target.value)
         let newParts = [...parts]
         newParts[index].cost = event.target.value
         setParts(newParts)
     }
 
     function deleteRow(index){
-        console.log("deleteRow", index)
         let newParts = [...parts]
         newParts.splice(index, 1)
         setParts(newParts)
@@ -166,6 +163,8 @@ export default function BusinessQuoteForm({acceptBool}){
     const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState('');
     const [jobType, setJobType] = useState("");
+    const [selectedImageList, setSelectedImageList] = useState([])
+
 
     const [partsObject, setPartsObject] = useState([{
             part: "",
@@ -206,17 +205,13 @@ export default function BusinessQuoteForm({acceptBool}){
 
 
     function formatDateToCustomString() {
-        const date = new Date(2000, 3, 23);
+        const date = new Date(); // Get the current date
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
         const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-      
-        return `${month}-${day}-${year} ${hours}:${minutes}:${seconds}`;
-      }
-    
+        
+        return `${month}-${day}-${year}`;
+    }
 
     const handleCheckChange = (event) => {
         // console.log("handleCheckChange", event.target.checked)
@@ -229,7 +224,7 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
     const handleTimeChange = (event) => {
-        // console.log("handleTimeChange", event.target.value)
+        console.log("handleTimeChange", event.target.value)
         setAvailabilityTime(event.target.value);
     }
 
@@ -271,7 +266,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
     function convertToDateTime(date, time){
 
-        var dateArray = date.split("/")
+        var dateArray = date.split("-")
         var timeArray = time.split(":")
 
         var year = dateArray[2]
@@ -280,34 +275,13 @@ export default function BusinessQuoteForm({acceptBool}){
 
         var hour = timeArray[0]
         var minute = timeArray[1]
-        var second = timeArray[2]
+        var second = timeArray[2] || "00"
 
         var dateTimeString = `${month}-${day}-${year} ${hour}:${minute}:${second}`
         return dateTimeString
-
     }
 
     function handleBackButton(){
-        // console.log("handleBackButton")
-        // let maintenance_request_index = navigationParams.maintenanceRequestIndex
-        // let status = navigationParams.status
-        // let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
-        // let allMaintenanceData = navigationParams.allData
-        // console.log("-----navigationParams-----")
-        // console.log("maintenance_request_index", maintenance_request_index)
-        // console.log("status", status)
-        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        // console.log("allMaintenanceData", allMaintenanceData)
-        // console.log("--------------------------")
-
-        // navigate("/maintenance/detail", {
-        //     state: {
-        //         maintenance_request_index,
-        //         status,
-        //         maintenanceItemsForStatus,
-        //         allMaintenanceData,
-        //     }
-        // }); 
         navigate(-1)
     }
 
@@ -331,6 +305,25 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_created_date", formatDateToCustomString())
                 formData.append("quote_earliest_availability", convertToDateTime(availabilityDate, availabilityTime))
 
+                for (let i = 0; i < selectedImageList.length; i++) {
+                    try {
+                        let key = i === 0 ? "img_cover" : `img_${i-1}`;
+        
+                        if(selectedImageList[i]?.image?.startsWith("data:image")){
+                            const imageBlob = dataURItoBlob(selectedImageList[i].image);
+                            formData.append(key, imageBlob)
+                        } else {
+                            formData.append(key, selectedImageList[i])
+                        }
+                    } catch (error) {
+                        console.log("Error uploading images", error)
+                    }
+                }
+        
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);    
+                }
+
             } else if (status === "REFUSED"){
                 formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
                 formData.append("quote_maintenance_request_id", maintenanceItem?.quote_maintenance_request_id); // 800-xxx
@@ -338,8 +331,6 @@ export default function BusinessQuoteForm({acceptBool}){
                 formData.append("quote_status", status);
             }
             
-            // print out formData 
-            console.log("trying to print form data")
             for (var pair of formData.entries()) {
                 console.log(pair[0]+ ' => ' + pair[1]); 
             }
@@ -365,7 +356,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
-        navigate("/workerMaintenance")
+        navigate("/workerMaintenance", {state: {refresh: true}})
     }
 
     function numImages(){
@@ -380,7 +371,7 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
     useEffect(() => {
-        let imageArray = JSON.parse(maintenanceItem?.quote_maintenance_images)
+        let imageArray = JSON.parse(maintenanceItem?.maintenance_images) // quote_maintenance_images not returning anything
         setDisplayImages(imageArray)
     }, [])
 
@@ -439,17 +430,17 @@ export default function BusinessQuoteForm({acceptBool}){
                                 </Typography>
                             </Button>
                         </Box>
-                        <Box position="absolute" right={10}>
+                        {/* <Box position="absolute" right={10}>
                             <Button onClick={() => navigateToAddMaintenanceItem()}>
                                 <ArrowForwardIcon sx={{color: "#3D5CAC", fontSize: "30px", margin:'5px'}}/>
                             </Button>
-                        </Box>
+                        </Box> */}
                     </Stack>
                             <Card
                                 sx={{
                                     backgroundColor: "#FFFFFF",
                                     borderRadius: "10px",
-                                    width: "85%",
+                                    width: "90%",
                                     height: "100%",
                                     padding: "10px",
                                     margin: "10px",
@@ -457,9 +448,6 @@ export default function BusinessQuoteForm({acceptBool}){
                                     minWidth: "300px"
                                 }}>
                                 <Grid container
-                                    // alignContent="center"
-                                    // justifyContent="center"
-                                    // alignItems="center"
                                     direction="column"
                                 >
                                     <Grid item xs={12}>
@@ -469,24 +457,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                             </Typography>
                                         </Grid>
                                     </Grid>
+                                    <ImageCarousel images={displayImages}/>
                                     <Grid item xs={12}>
                                         <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                            {numImages() > 0 ? 
-                                                (
-                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
-                                                    displayImages.map((image, index) => (
-                                                        <Grid item key={index} sx={{paddingLeft: "0px", paddingTop: "0px"}}>
-                                                            <img 
-                                                                src={image} 
-                                                                alt={`Image ${index}`} 
-                                                                style={{ width: '50px', height: '50px' }} 
-                                                            />
-                                                        </Grid>
-                                                    ))
-                                                    : 
-                                                    null
-                                                )
-                                            : null }
                                             <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
                                                 { numImages() > 0 ? numImages() + " Images" : "No Images" }
                                             </Typography>
@@ -617,6 +590,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     onChange={handleTimeChange}
                                                     placeholder="HH:MM:SS"
                                                 />
+                                                <Button onClick={()=> convertToDateTime(availabilityDate, availabilityTime)}>
+                                                    Test DateTime Convert
+                                                </Button>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
@@ -668,6 +644,9 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         Add Document
                                                     </Typography>
                                                 </Button>
+                                            </Grid>
+                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                                 <Button

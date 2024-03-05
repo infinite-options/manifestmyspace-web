@@ -4,8 +4,9 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    Checkbox,
-    TextField
+    Stack,
+    TextField,
+    Box
 } from '@mui/material';
 import { useEffect, useState } from "react";
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -59,43 +60,46 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
       };
     return (
         <Dialog open={showRequestMoreInfo} onClose={() => setShowRequestMoreInfo(false)} maxWidth="lg">
-            <Backdrop
-                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={showSpinner}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-            <DialogTitle>
-                <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                    Request More Info About?
-                </Typography>
-                <Button sx={{ 
-                    textTransform: 'capitalize',
-                    position: 'absolute',
-                    right: 1,
-                    top: 1,
-                    color: (theme) => theme.palette.grey[500]
-                }} 
-                    onClick={() => setShowRequestMoreInfo(false)}
+                <Backdrop
+                    sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={showSpinner}
                 >
-                    <CloseIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
-                </Button>
-            </DialogTitle>
-            <DialogContent>
-               
-            <TextField name="pmNotes" value={pmNotes} onChange={handleChange1} placeholder=""  fullWidth ></TextField>        
-                   
-            <Button 
-                variant="contained"
-                sx={{
-                    background: '#3D5CAC',
-                    color: theme.palette.background.default,
-                    width: `60%`,
-                    height: `10%`,
-                    left: `20%`,
-                    top: `20%`,
-                    borderRadius: '10px 10px 10px 10px'
-                }} onClick={handleSendNotes}>Send</Button>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+                <DialogTitle>
+                    <Stack direction="column" spacing={3}>
+                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                            Request More Info
+                        </Typography>
+                        <Button sx={{ 
+                            textTransform: 'capitalize',
+                            position: 'absolute',
+                            right: 1,
+                            top: 1,
+                            color: (theme) => theme.palette.grey[500]
+                        }} 
+                            onClick={() => setShowRequestMoreInfo(false)}
+                        >
+                            <CloseIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
+                        </Button>
+                    </Stack>
+                </DialogTitle>
+            <DialogContent> 
+                <Stack direction="column" spacing={3}>
+                    <TextField name="pmNotes" value={pmNotes} onChange={handleChange1} placeholder="" fullWidth sx={{paddingTop: "10px"}}/>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            background: '#3D5CAC',
+                            color: theme.palette.background.default,
+                            width: `60%`,
+                            height: `10%`,
+                            left: `20%`,
+                            top: `20%`,
+                            borderRadius: '10px 10px 10px 10px'
+                        }} onClick={handleSendNotes}>Send
+                    </Button>
+                </Stack>
             </DialogContent>
         </Dialog>
     )

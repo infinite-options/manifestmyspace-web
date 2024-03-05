@@ -1,40 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-Typography,
-Box,
-Stack,
-Paper,
-Button,
-ThemeProvider,
-Form,
-TextField,
-ToggleButton,
-ToggleButtonGroup,
-FormControl,
-InputLabel,
-MenuItem,
-Select,
-Grid,
-Input,
-Container,
-Radio,
-FormLabel,
-FormControlLabel,
-RadioGroup,
-UploadFile,
-InputAdornment,
-InputBase,
-IconButton,
-CardMedia,
-CardContent,
-CardActions,
-ListItemText,
-ListItem,
-List,
-Avatar,
-Badge,
-} from "@mui/material";
+import {Typography, Box, Stack, Paper, Button, ThemeProvider, Form, TextField, ToggleButton, ToggleButtonGroup, FormControl, InputLabel,
+MenuItem, Select, Grid, Input, Container, Radio, FormLabel, FormControlLabel, RadioGroup, UploadFile, InputAdornment, InputBase, IconButton,
+CardMedia, CardContent, CardActions, ListItemText, ListItem, List, Avatar, Badge,} from "@mui/material";
 
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
@@ -119,6 +87,7 @@ const SearchBar = ({ propertyList, setFilteredItems }) => {
         "NO MANAGER": "No Manager",
     };
 
+
     function getPaymentStatusColor(paymentStatus) {
     if (paymentStatus === null || paymentStatus === undefined) {
         return paymentStatusColorMap["Vacant"];
@@ -163,7 +132,11 @@ export default function PropertyList({}) {
     const [contracts, setContracts] = useState([]);
     const [activeContracts, setActiveContracts] = useState([]);
     const profileId = getProfileId();
-
+    const [citySortOrder, setCitySortOrder] = useState("asc");
+    const [stateSortOrder, setStateSortOrder] = useState("asc");
+    const [addressSortOrder, setAddressSortOrder] = useState("asc");
+    const [statusSortOrder, setStatusSortOrder] = useState("asc");
+    const [zipSortOrder, setZipSortOrder] = useState("asc");
     // console.log("getProfileId information", getProfileId());
 
     function numberOfMaintenanceItems(maintenanceItems){
@@ -209,6 +182,51 @@ export default function PropertyList({}) {
         }
         getContractsForOwner();
     }, []);
+
+    function sortByCity() {
+        let items = [...displayedItems];
+        items.sort((property1, property2) => property1.property_city.localeCompare(property2.property_city));
+        setDisplayedItems(citySortOrder === "asc" ? items : items.reverse());
+        setCitySortOrder(citySortOrder === "asc" ? "desc" : "asc");
+    }
+    
+    function sortByAddress() {
+        let items = [...displayedItems];
+        items.sort((property1, property2) => property1.property_address.localeCompare(property2.property_address));
+        setDisplayedItems(addressSortOrder === "asc" ? items : items.reverse());
+        setAddressSortOrder(addressSortOrder === "asc" ? "desc" : "asc");
+    }
+
+    
+    function sortByState() {
+        let items = [...displayedItems];
+        items.sort((property1, property2) => property1.property_state.localeCompare(property2.property_state));
+        setDisplayedItems(stateSortOrder === "asc" ? items : items.reverse());
+        setStateSortOrder(stateSortOrder === "asc" ? "desc" : "asc");
+    }
+
+
+    function sortByZip() {
+        let items = [...displayedItems];
+        items.sort((property1, property2) => property1.property_zip-property2.property_zip);
+        setDisplayedItems(zipSortOrder === "asc" ? items : items.reverse());
+        setZipSortOrder(zipSortOrder === "asc" ? "desc" : "asc");
+    }
+    
+    function sortByStatus() {
+        let items = [...displayedItems];
+        items.sort((property1, property2) => {
+            if (property1.rent_status === "NO MANAGER") {
+                return -1; // Property1 comes first
+            } else if (property2.rent_status === "NO MANAGER") {
+                return 1; // Property2 comes first
+            } else {
+                return property1.rent_status.localeCompare(property2.rent_status);
+            }
+        });
+        setDisplayedItems(statusSortOrder === "asc" ? items : items.reverse());
+        setStatusSortOrder(statusSortOrder === "asc" ? "desc" : "asc");
+    }
 
     function handlePropertyDetailNavigation(property, index, propertyList) {
 
@@ -325,8 +343,39 @@ export default function PropertyList({}) {
                 <AddIcon onClick={() => navigate("/addProperty")} sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
                 </Button>
             </Stack>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
+                {/* New Buttons */}
+                <Typography> Sort by</Typography>
+                <Button onClick={sortByZip} color="inherit">
+                  Zip
+                </Button>
+                <Button onClick={sortByState}  color="inherit">
+                  State
+                </Button>
+                <Button onClick={sortByAddress}  color="inherit">
+                  Address
+                </Button>
+                <Button onClick={sortByCity} color="inherit">
+                  City
+                </Button>
+                <Button onClick={sortByStatus} color="inherit">
+                  Rent Status
+                </Button>
+                <Box sx={{ flex: 1 }} />
+                <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  ></Typography>
+                </Box>      
+            </Stack>
             <Box sx={{ padding: "10px" }}>
                 <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
+                
+                
                 <List>
                 {displayedItems.map((property, index) => (
                     <ListItem

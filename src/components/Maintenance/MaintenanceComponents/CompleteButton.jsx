@@ -10,7 +10,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router-dom";
 
 export default function CompleteButton(props){
-    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+    const { maintenanceRoutingBasedOnSelectedRole, selectedRole} = useUser();
     let navigate = useNavigate();
 
     let maintenanceItem = props.maintenanceItem;
@@ -18,6 +18,7 @@ export default function CompleteButton(props){
     let setMessage = props.setMessage;
 
     async function handleComplete(id){
+        console.log("[DEBUG] handleComplete", id);
         CompleteTicket(id).then(response => {
             console.log("handleComplete", response);
             if (response){
@@ -56,7 +57,7 @@ export default function CompleteButton(props){
             >
                 <CheckIcon sx={{color: "#3D5CAC"}}/>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                    Complete Ticket
+                    {selectedRole === "MAINTENANCE" || selectedRole === "MAINT_EMPLOYEE" ? "Mark Finished" : "Complete Ticket"}
                 </Typography>
             </Button>
         </Grid>

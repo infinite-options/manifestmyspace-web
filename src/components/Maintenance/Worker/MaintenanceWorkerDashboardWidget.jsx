@@ -5,7 +5,7 @@ import theme from "../../../theme/theme";
 import { useUser } from "../../../contexts/UserContext";
 import Status from "../../Templates/Status";
 import { Typography, Box, Grid } from "@mui/material";
-import MaintenanceStatusTable01 from "./MaintenanceStatusTable01";
+import WorkerMaintenanceStatusTable from "./WorkerMaintenanceStatusTable";
 
 import { InputBase, Paper, IconButton, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -52,7 +52,7 @@ export default function     MaintenanceWorkerDashboardWidget(props){
             let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
             let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ??[];
             let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
-           
+
             dataObject["REQUESTED"] = [...array1];
             dataObject["SUBMITTED"] = [...array2];
             dataObject["ACCEPTED"] = [...array3];
@@ -152,9 +152,10 @@ export default function     MaintenanceWorkerDashboardWidget(props){
                         let maintenanceArray = maintenanceRequests[mappingKey]|| []
 
                         let filteredArray = handleFilter(query, maintenanceRequests[mappingKey])
+                        // console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
 
                         return (
-                            <MaintenanceStatusTable01
+                            <WorkerMaintenanceStatusTable
                                 key={index}
                                 status={item.status}
                                 color={item.color}

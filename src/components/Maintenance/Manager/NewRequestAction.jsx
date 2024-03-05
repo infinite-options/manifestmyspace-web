@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
 import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompletedButton";
+import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import RequestMoreInfo from "../Worker/RequestMoreInfo";
 import AlertMessage from "../AlertMessage";
 import Scheduler from "../../utils/Scheduler";
@@ -31,7 +31,7 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 
-export default function NewRequestAction({maintenanceItem, navigateParams}){
+export default function NewRequestAction({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showScheduler, setShowScheduler] = useState(false);
@@ -41,7 +41,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
     const [message, setMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
 
-    console.log("maintenanceItem NewRequestAction", maintenanceItem)
+    // console.log("maintenanceItem NewRequestAction", maintenanceItem)
 
     function handleNavigateToQuotesRequested(){
         navigate("/quoteRequest", {
@@ -108,23 +108,22 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         alignItems: "center",
                         justifyContent: "center",
                     }}>
-                        <Button
-                    variant="contained"
-                    disableElevation
-                    sx={{
-                        backgroundColor: "#D6D5DA",
-                        textTransform: "none",
-                        borderRadius: "10px",
-                        width: "100%",
-                    }} 
-                    onClick={() => setShowRequestMoreInfo(true)}
-                >
-                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                        Request More Info
-                    </Typography>
-                </Button>
-                <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
-                        
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#D6D5DA",
+                            textTransform: "none",
+                            borderRadius: "10px",
+                            width: "100%",
+                        }} 
+                        onClick={() => setShowRequestMoreInfo(true)}
+                    >
+                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            Request More Info
+                        </Typography>
+                    </Button>
+                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                 </Grid>
            
                 <Grid item xs={6} sx={{
@@ -172,7 +171,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams}){
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />

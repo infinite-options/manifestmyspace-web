@@ -6,6 +6,7 @@ import {
 import theme from '../../../theme/theme';
 import { useUser } from "../../../contexts/UserContext"
 import CancelTicket from "../../utils/CancelTicket";
+import CancelQuote from "../../utils/CancelQuote";
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from "react-router-dom";
 
@@ -16,8 +17,20 @@ export default function CancelButton(props){
     let maintenanceItem = props.maintenanceItem;
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
+    let quotes = props.quotes;
 
-    function handleCancel(id){
+    console.log("CancelButton quotes", quotes)
+
+    console.log("CancelButton maintenanceItem", maintenanceItem)
+
+    function handleCancel(id, quotes){
+        if (quotes && quotes.length > 0){
+            console.log("handleCancel quotes", quotes)
+            for (let i = 0; i < quotes.length; i++){
+                console.log("handleCancel quotes[i]", quotes[i])
+                CancelQuote(quotes[i].maintenance_quote_uid);
+            }
+        }
         let response = CancelTicket(id);
         console.log("handleCancel", response)
         if (response){
@@ -49,7 +62,7 @@ export default function CancelButton(props){
                     display: 'flex',
                     width: "100%",
                 }}
-                onClick={() => handleCancel(maintenanceItem.maintenance_request_uid)}
+                onClick={() => handleCancel(maintenanceItem.maintenance_request_uid, quotes)}
             >   
                 <CloseIcon sx={{color: "#3D5CAC"}}/>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

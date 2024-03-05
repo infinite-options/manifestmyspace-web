@@ -9,13 +9,12 @@ import { useNavigate } from "react-router-dom"
 export default function ManagerProfileLink(props){
     let business_name = props.maintenanceItem?.business_name || "Business Name Not Available";
     let navigate = useNavigate();
-    console.log("ManagerProfileLink business name", business_name)
 
     return (
         <Grid item xs={12} sx={{
             alignItems: "center",
             justifyContent: "center",
-            paddingLeft: "40px",
+            // paddingLeft: "40px",
         }}>
         <Button
             variant="contained"
@@ -25,7 +24,7 @@ export default function ManagerProfileLink(props){
                 textTransform: "none",
                 paddingRight: "10px",
                 borderRadius: "10px",
-                paddingLeft: "30px",
+                paddingLeft: "10px",
                 display: 'flex',
                 width: "100%",
             }}

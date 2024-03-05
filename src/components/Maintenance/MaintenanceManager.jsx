@@ -26,8 +26,10 @@ export default function MaintenanceManager(){
     const { user, getProfileId } = useUser();
     const [maintenanceData, setMaintenanceData] = useState({});
     const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
-    const [propertyId, setPropertyId] = useState("200-000029")
+    const [propertyId, setPropertyId] = useState("")
     const colorStatus = theme.colorStatusPMO
+    const [refresh, setRefresh] = useState(false || location.state?.refresh)
+    
 
     const newDataObject = {};
     newDataObject["NEW REQUEST"] = [];
@@ -54,7 +56,7 @@ export default function MaintenanceManager(){
 
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
-        navigate('/addMaintenanceItem', {state: {month, year, propertyId}})
+        navigate('/addMaintenanceItem')
     }
     
     function dedupeQuotes(array){
@@ -146,9 +148,7 @@ export default function MaintenanceManager(){
     }
 
     function handleFilter(maintenanceArray, month, year, filterPropertyList){
-        console.log("maintenanceArray", maintenanceArray)
         var filteredArray = [];
-
         // Filtering by date
         if (month && year){
             const filterFormatDate = convertToStandardFormat(month, year);
@@ -212,6 +212,7 @@ export default function MaintenanceManager(){
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);
+            console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
             const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
             const maintenanceRequestsData = await maintenanceRequests.json()
             // console.log("maintenanceRequestsData", maintenanceRequestsData)
@@ -261,7 +262,8 @@ export default function MaintenanceManager(){
             setShowSpinner(false);
         }
         getMaintenanceData();
-    }, [])
+        setRefresh(false);
+    }, [refresh])
 
 
 
@@ -279,14 +281,15 @@ export default function MaintenanceManager(){
                     justifyContent: 'center',
                     width: '100%', // Take up full screen width
                     minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    // marginTop: theme.spacing(2), // Set the margin to 20px
+                    marginTop: "25px",
                 }}
             >
                 <Paper
                     style={{
                         padding: theme.spacing(2),
                         backgroundColor: theme.palette.primary.main,
-                        width: '85%', // Occupy full width with 25px margins on each side
+                        width: '95%', // Occupy full width with 25px margins on each side
                         [theme.breakpoints.down('sm')]: {
                             width: '80%',
                         },
@@ -294,6 +297,7 @@ export default function MaintenanceManager(){
                             width: '50%',
                         },
                         paddingTop: '10px',
+                        borderRadius: "10px",
                     }}
                 >
                     <Stack
@@ -370,8 +374,8 @@ export default function MaintenanceManager(){
                             </Typography>
                         </Box>
                     <div style={{
-                        borderRadius: "10px",
-                        margin: "20px",
+                        borderRadius: "20px",
+                        margin: "10px",
                     }}>
                         {colorStatus.map((item, index) => {
                             let mappingKey = item.mapping

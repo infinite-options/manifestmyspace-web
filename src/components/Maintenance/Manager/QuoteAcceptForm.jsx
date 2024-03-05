@@ -22,14 +22,13 @@ import ImageUploader from "../../ImageUploader";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
 
 export default function QuoteAcceptForm(){
 
-    console.log("QuoteAcceptForm")
     const navigate = useNavigate();
     const location = useLocation();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -37,10 +36,11 @@ export default function QuoteAcceptForm(){
     const maintenanceItem = location.state.maintenanceItem;
     const navigationParams = location.state.navigateParams
     // const quotes = location.state.quotes
-    console.log("navigationParams", navigationParams)
+    // console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
+    const [quoteImages, setQuoteImages] = useState([])
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [maintenanceQuotes, setMaintenanceQuotes] = useState(location.state.quotes)
     const [showSpinner, setShowSpinner] = useState(false);
@@ -60,14 +60,9 @@ export default function QuoteAcceptForm(){
 
     useEffect(() => {
         const currentQuote = maintenanceQuotes[currentQuoteIndex];
-        console.log("currentQuote", currentQuote)
         if(currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
             const parseServicesExpenses = (expenses) => {
                 let servicesObject = JSON.parse(expenses)
-                console.log(servicesObject)
-                // Object.keys(servicesObject).forEach(([key, value])=> {
-                //     console.log(key, value)
-                // })
                 var partsCost = 0
                 for (const item in servicesObject.parts){
                     partsCost += parseInt(servicesObject.parts[item].cost)
@@ -75,14 +70,7 @@ export default function QuoteAcceptForm(){
     
                 setEstimatedLaborCost(servicesObject.total_estimate)
                 setEstimatedPartsCost(partsCost)
-    
                 setEstimatedTotalCost(servicesObject.total_estimate + partsCost)
-    
-                // let total = 0;
-                // expenses.forEach(expense => {
-                //     total += expense.expense_cost
-                // })
-                // return total;
             }
             
             parseServicesExpenses(currentQuote.quote_services_expenses)
@@ -93,24 +81,24 @@ export default function QuoteAcceptForm(){
     }, [currentQuoteIndex, maintenanceQuotes])
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
+        // console.log("handleBackButton")
         let maintenance_request_index = navigationParams.maintenanceRequestIndex
         let status = navigationParams.status
         let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
         let allMaintenanceData = navigationParams.allData
         let maintenanceQuotes = navigationParams.maintenanceQuotes
 
-        console.log("-----navigationParams-----")
-        console.log("maintenance_request_index", maintenance_request_index)
-        console.log("status", status)
-        console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        console.log("allMaintenanceData", allMaintenanceData)
-        console.log("--------------------------")
+        // console.log("-----navigationParams-----")
+        // console.log("maintenance_request_index", maintenance_request_index)
+        // console.log("status", status)
+        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+        // console.log("allMaintenanceData", allMaintenanceData)
+        // console.log("--------------------------")
 
         navigate("/maintenance/detail", {
             state: {
@@ -124,15 +112,15 @@ export default function QuoteAcceptForm(){
     }
 
 
-    const handleSubmit = () => {
-        console.log("handleSubmit")
+    const handleSubmit = (quoteStatusParam) => {
+        console.log("handleSubmit", quoteStatusParam)
         
-        const changeMaintenanceQuoteStatus = async () => {
+        const changeMaintenanceQuoteStatus = async (quoteStatusParam) => {
             setShowSpinner(true);
             var formData = new FormData();
 
             formData.append("maintenance_quote_uid", maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid);
-            formData.append("quote_status", "ACCEPTED");
+            formData.append("quote_status", quoteStatusParam);
 
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
@@ -144,7 +132,7 @@ export default function QuoteAcceptForm(){
                 if (response.status === 200) {
                     console.log("success")
                     // navigate("/maintenance")
-                    navigate(maintenanceRoutingBasedOnSelectedRole())
+                    navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                 }
             } catch (error){
                 console.log("error", error)
@@ -152,7 +140,7 @@ export default function QuoteAcceptForm(){
             setShowSpinner(false);
         }
 
-        changeMaintenanceQuoteStatus()
+        changeMaintenanceQuoteStatus(quoteStatusParam)
     }
 
     function displayQuoteDetails(quote_expenses){
@@ -172,8 +160,17 @@ export default function QuoteAcceptForm(){
     }
 
     useEffect(() => {
-        let imageArray = JSON.parse(maintenanceItem?.maintenance_images)
-        setDisplayImages(imageArray)
+        try {
+            let imageArray = JSON.parse(maintenanceItem?.maintenance_images || '[]');
+            let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
+            setDisplayImages(imageArray);
+            setQuoteImages(quoteImageArray);
+        } catch (error) {
+            console.error("Error parsing image arrays:", error);
+            // Handle the error as needed, e.g., set default values or show an error message
+            setDisplayImages([]);
+            setQuoteImages([]);
+        }
     }, [])
 
     return (
@@ -202,7 +199,7 @@ export default function QuoteAcceptForm(){
                     paddingBottom: '30px',
                 }}
             >
-                    <Stack
+                <Stack
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
@@ -212,272 +209,201 @@ export default function QuoteAcceptForm(){
                         paddingRight: "0px",
                     }}
                 >
-                    <Stack
+                    <Box position="absolute" left={30}>
+                        <Button onClick={() => handleBackButton()}>
+                            <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                        </Button>
+                    </Box>
+                    <Box
                         direction="row"
                         justifyContent="center"
                         alignItems="center"
-                        sx={{
-                            paddingBottom: "20px",
-                            paddingLeft: "0px",
-                            paddingRight: "0px",
-                        }}
                     >
-                        <Box position="absolute" left={30}>
-                            <Button onClick={() => handleBackButton()}>
-                                <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
-                            </Button>
-                        </Box>
-                        <Box
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
-                                Maintenance
-                            </Typography>
-                        </Box>
-                        <Box position="absolute" right={30}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
-                                <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
-                            </Button>
-                        </Box>
-                    </Stack>
-                    <Grid container spacing={3}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
-                        direction="column"
-                     >
-                        <Grid item xs={12}>
-                        <Card
-                                sx={{
-                                    backgroundColor: "#C06A6A",
-                                    borderRadius: "10px",
-                                    width: "85%",
-                                    height: "100%",
-                                    padding: "10px",
-                                    margin: "10px",
-                                    paddingTop: "25px"
-                                }}>
+                        <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+                            Maintenance
+                        </Typography>
+                    </Box>
+                    <Box position="absolute" right={30}>
+                        <Button onClick={() => navigateToAddMaintenanceItem()}>
+                            <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
+                        </Button>
+                    </Box>
+                </Stack>
+                <Card
+                    sx={{
+                        backgroundColor: "#C06A6A",
+                        borderRadius: "10px",
+                        padding: "10px",
+                        margin: "10px",
+                        paddingTop: "25px",
+                        display: "flex",
+                        flexDirection: "column",
+                    }}>
 
-                                    <Grid item xs={12}>
-                                        <Grid container spacing={2} justifyContent="center">
-                                            {numImages() > 0 ? 
-                                                (
-                                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
-                                                    displayImages.map((image, index) => (
-                                                        <Grid item key={index}>
-                                                            <img 
-                                                                src={image} 
-                                                                alt={`Image ${index}`} 
-                                                                style={{ width: '50px', height: '50px' }} 
-                                                            />
-                                                        </Grid>
-                                                    ))
-                                                    : 
-                                                    null
-                                                )
-                                            : null }
+                    <Grid item xs={12}>
+                        <Grid container spacing={2} justifyContent="center" direction="row">
+                            {numImages() > 0 ? 
+                                (
+                                    Array.isArray(displayImages) && displayImages.length > 0 ? 
+                                    displayImages.map((image, index) => (
+                                        <Grid item key={index}>
+                                            <img 
+                                                src={image} 
+                                                alt={`Image ${index}`} 
+                                                style={{ width: '125px', height: '125px' }} 
+                                            />
                                         </Grid>
-                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            { numImages() > 0 ? numImages() + " Images" : "No Images" }
-                                        </Typography>
-                                    </Grid>
-                                     <Grid item xs={12}>
-                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
-                                        </Typography>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <u>{maintenanceItem?.property_address}, {maintenanceItem?.property_city} {maintenanceItem?.property_state} {maintenanceItem?.property_zip}</u>
-                                        </Typography>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem?.maintenance_title}</b>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            <b>{maintenanceItem?.maintenance_desc}</b>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            Estimated Cost: <b>{maintenanceItem?.maintenance_desc}</b>
-                                        </Typography>
-                                    </Grid>
-                                {/* {Object.entries(maintenanceItem).map(([key, value], index) => (
-                                        <Grid item xs={12}>
-                                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                                <b>{key} : {value}</b>
-                                            </Typography>
-                                        </Grid>
-                                    )
-                                )} */}
-                            </Card>
+                                    ))
+                                    : 
+                                    null
+                                )
+                            : null }
                         </Grid>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            { numImages() > 0 ? numImages() + " Images" : "No Images" }
+                        </Typography>
                     </Grid>
-                    <Grid container spacing={0}
-                        alignContent="center"
-                        justifyContent="center"
-                        alignItems="center"
-                        direction="column"
-                        sx={{
-                            backgroundColor: "#C06A6A",
-                        }}
-                    > 
                         <Grid item xs={12}>
-                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                <b>Viewing Quotes {currentQuoteIndex + 1} of {maintenanceQuotes?.length}</b>
-                            </Typography>
-                        </Grid>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
+                        </Typography>
                     </Grid>
-                    <Grid container spacing={0}>
-                        <Grid item xs={2}>
-                            <Button 
-                                onClick={handlePreviousQuote} 
-                                disabled={currentQuoteIndex == 0}
-                                style={{
-                                    color: 'grey',            // change text/icon color if desired
-                                    width: '100%',             // to make the button fill the Grid item's width
-                                    height: '100%'             // to make the button fill the Grid item's height
-                                }}
-                            >
-                                <ArrowBackIcon/>
-                            </Button>
-                        </Grid>
-                        <Grid item xs={8}>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Button 
-                                onClick={handleNextQuote} 
-                                disabled={currentQuoteIndex == maintenanceQuotes?.length}
-                                style={{
-                                    color: 'grey',            // change text/icon color if desired
-                                    width: '100%',             // to make the button fill the Grid item's width
-                                    height: '100%'             // to make the button fill the Grid item's height
-                                }}
-                            >
-                                <ArrowForwardIcon />
-                            </Button>
-                        </Grid>
+
+                    <Grid item xs={12}>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            <u>{maintenanceItem?.property_address}, {maintenanceItem?.property_city} {maintenanceItem?.property_state} {maintenanceItem?.property_zip}</u>
+                        </Typography>
                     </Grid>
-                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT")?(
-    
-                        <Grid container spacing={3}
-                            alignContent="center"
-                            justifyContent="center"
-                            alignItems="center"
-                            direction="column"
+
+                    <Grid item xs={12}>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            <b>{maintenanceItem?.maintenance_title}</b>
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            <b>{maintenanceItem?.maintenance_desc}</b>
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            Estimated Cost: <b>{maintenanceItem?.maintenance_desc}</b>
+                        </Typography>
+                    </Grid>
+                </Card>
+
+                <Grid container spacing={0}
+                    alignContent="center"
+                    justifyContent="center"
+                    alignItems="center"
+                    direction="column"
+                    display="flex"
+                    sx={{
+                        backgroundColor: "#C06A6A",
+                    }}
+                > 
+                    <Grid item xs={12}>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                            <b>Viewing Quotes {currentQuoteIndex + 1} of {maintenanceQuotes?.length}</b>
+                        </Typography>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={0}>
+                    <Grid item xs={2}>
+                        <Button 
+                            onClick={handlePreviousQuote} 
+                            disabled={currentQuoteIndex == 0}
+                            style={{
+                                color: 'grey',            // change text/icon color if desired
+                                width: '100%',             // to make the button fill the Grid item's width
+                                height: '100%'             // to make the button fill the Grid item's height
+                            }}
                         >
-                            
-                            <Grid item xs={12}>
-                                {/* {currentQuote.maintenanceContact ? currentQuote.maintenanceContact : currentQuote.quote_status + " from business id:" + currentQuote.quote_business_id} */}
-                                {/* {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business name: " + maintenanceQuotes[currentQuoteIndex]?.quote_business_name : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id} */}
-                                {maintenanceQuotes[currentQuoteIndex]?.quote_status ? maintenanceQuotes[currentQuoteIndex]?.quote_status + " from business id: " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id : "no quote status found for " + maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                    Quote
+                            <ArrowBackIcon/>
+                        </Button>
+                    </Grid>
+                    <Grid item xs={8}>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button 
+                            onClick={handleNextQuote} 
+                            disabled={currentQuoteIndex == maintenanceQuotes?.length}
+                            style={{
+                                color: 'grey',            // change text/icon color if desired
+                                width: '100%',             // to make the button fill the Grid item's width
+                                height: '100%'             // to make the button fill the Grid item's height
+                            }}
+                        >
+                            <ArrowForwardIcon />
+                        </Button>
+                    </Grid>
+                </Grid>
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED") ? (
+                        <Stack direction="column" display="flex" spacing={2} padding="20px">
+                            <Box alignContent="center"
+                                justifyContent="center"
+                                alignItems="center">
+                                {/* <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}> */}
+                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>
+                                        Quote Sent from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                                 </Typography>
-                                <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                    {/* <TextField
-                                        multiline
-                                        rows={10}
-                                        value={currentQuote?.quote_services_expenses}
-                                        variant="outlined"
-                                        fullWidth
-                                        InputProps={{
-                                        readOnly: true,
-                                        style: { backgroundColor: 'white' }
+                                
+                            </Box>
+                            <QuoteDetailInfo maintenanceItem={maintenanceQuotes[currentQuoteIndex]}/>
+                            {maintenanceQuotes[currentQuoteIndex]?.quote_status!=="REJECTED" ? (
+                                <>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            backgroundColor: "#9EAED6",
+                                            textTransform: "none",
+                                            borderRadius: "10px",
+                                            display: 'flex',
+                                            width: "100%",
                                         }}
-                                    /> */}
-
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                                Estimated Total: ${estimatedTotalCost}
-                                </Typography>
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Estimated Labor Cost: ${estimatedLaborCost}
-                                </Typography>
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Estimated Parts Cost: ${estimatedPartsCost}
-                                </Typography>
-
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Estimated Time: {estimatedTime}
-                                </Typography>
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                Earliest Availability: {earliestAvailability}
-                                </Typography>  
-                                </Container>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                    Notes
-                                </Typography>
-                                <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                    <TextField
-                                        multiline
-                                        rows={10}
-                                        value={maintenanceQuotes[currentQuoteIndex]?.quote_notes}
-                                        variant="outlined"
-                                        fullWidth
-                                        InputProps={{
-                                        readOnly: true,
-                                        style: { backgroundColor: 'white' }
+                                        onClick={() => handleSubmit("ACCEPTED")}
+                                        >
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px"
+                                        }}>
+                                            Accept Quote
+                                        </Typography>
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            backgroundColor: "#CB8E8E",
+                                            textTransform: "none",
+                                            borderRadius: "10px",
+                                            display: 'flex',
+                                            width: "100%",
                                         }}
-                                    />
-                                </Container>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        backgroundColor: "#CB8E8E",
-                                        textTransform: "none",
-                                        borderRadius: "10px",
-                                        display: 'flex',
-                                        width: "100%",
-                                    }}
-                                    onClick={() => handleSubmit("CANCELLED")}
-                                    >
-                                    <Typography sx={{
-                                        color: "#160449",
-                                        fontWeight: theme.typography.primary.fontWeight, 
-                                        fontSize: "14px"
-                                    }}>
-                                        Decline Quote
-                                    </Typography>
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        backgroundColor: "#9EAED6",
-                                        textTransform: "none",
-                                        borderRadius: "10px",
-                                        display: 'flex',
-                                        width: "100%",
-                                    }}
-                                    onClick={() => handleSubmit()}
-                                    >
-                                    <Typography sx={{
-                                        color: "#160449",
-                                        fontWeight: theme.typography.primary.fontWeight, 
-                                        fontSize: "14px"
-                                    }}>
-                                        Accept Quote
-                                    </Typography>
-                                </Button>
-                            </Grid>
-                        </Grid>
+                                        onClick={() => handleSubmit("REJECTED")}
+                                        >
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "14px"
+                                        }}>
+                                            Decline Quote
+                                        </Typography>
+                                    </Button>
+                                </>) : (
+                                    <Box alignContent="center" justifyContent="center" alignItems="center">
+                                        <Typography sx={{
+                                            color: "#160449",
+                                            fontWeight: theme.typography.primary.fontWeight, 
+                                            fontSize: "20px"
+                                        }}>
+                                            Rejected
+                                        </Typography>
+                                    </Box>
+                                )}
+                        </Stack>
                     ): maintenanceQuotes[currentQuoteIndex]?.quote_status==="REQUESTED" ? (
                             <Grid container spacing={3}
                                 alignContent="center"
@@ -532,7 +458,6 @@ export default function QuoteAcceptForm(){
                         <Typography> {maintenanceQuotes[currentQuoteIndex]?.quote_business_id} {maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid} {maintenanceQuotes[currentQuoteIndex]?.quote_status}</Typography>
                     )
                 }
-                </Stack>
             </Paper>
         </Box>
     )

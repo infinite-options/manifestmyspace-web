@@ -24,7 +24,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import dataURItoBlob from "../../utils/dataURItoBlob";
 import userIcon from "./User_fill.png"
-import RoutingBasedOnSelectedRole from "../MaintenanceRoutingUtiltity";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
@@ -54,19 +53,17 @@ export default function QuoteRequestForm(){
     const [showSpinner, setShowSpinner] = useState(false);
 
     const handleMaintenanceChange = (event) => {
-        console.log("handleStateChange", event.target.value);
-        
-            setMaintenanceContacts((prevContacts) => new Set([...prevContacts, event.target.value]));
-        
+        // console.log("handleStateChange", event.target.value);
+        setMaintenanceContacts((prevContacts) => new Set([...prevContacts, event.target.value]));
     };
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
+        // console.log("handleBackButton")
         let maintenance_request_index = navigationParams.maintenanceRequestIndex
         let status = navigationParams.status
         let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
@@ -81,9 +78,10 @@ export default function QuoteRequestForm(){
         }); 
     }
 
-    const handleSubmit = () => {
-        console.log("handleSubmit")
-        console.log("need to implement navigation")
+
+    const handleSubmit = () => { // TODO FIX ME
+        // console.log("handleSubmit")
+        // console.log("need to implement navigation")
 
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
@@ -101,24 +99,27 @@ export default function QuoteRequestForm(){
             setShowSpinner(false);
         }
 
+        // Creates a list of business_uids from the maintenanceContacts set.
         let maintenanceContactIds = [];
-            for (let contact of maintenanceContacts) {
-                console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
-                maintenanceContactIds.push(contact.business_uid);
-            }
+        for (let contact of maintenanceContacts) {
+            // console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
+            maintenanceContactIds.push(contact.business_uid);
+        }
 
 
-        const submitQuoteRequest = async (contact) => {
+        const submitQuoteRequest = async (maintenanceContactIds) => {
             setShowSpinner(true);
             const formData = new FormData();
         
             formData.append("quote_maintenance_request_id", maintenanceItem.maintenance_request_uid);
             formData.append("quote_pm_notes", additionalInfo);
+            formData.append("quote_maintenance_contacts", maintenanceContactIds); // maintenanceContactIds
+            // formData.append("quote_maintenance_images", additionalInfo);
         
             for (let i = 0; i < selectedImageList.length; i++) {
                 try {
                     let key = i === 0 ? "img_cover" : `img_${i-1}`;
-    
+                    console.log("uploading images, image key: ", key)
                     if(selectedImageList[i]?.image?.startsWith("data:image")){
                         const imageBlob = dataURItoBlob(selectedImageList[i]);
                         formData.append(key, imageBlob)
@@ -129,25 +130,25 @@ export default function QuoteRequestForm(){
                     console.log("Error uploading images", error)
                 }
             }
-        
-            
-        
-            formData.append("quote_maintenance_contacts", [contact]);
+
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);    
+            }
         
             try {
-                console.log("right before call");
+                // console.log("right before call");
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quotes", {
                     method: 'POST',
                     body: formData,
                 });
         
                 const responseData = await response.json();
-                console.log("responseData", responseData);
+                // console.log("responseData", responseData);
         
                 if (response.status === 200) {
-                    console.log("success");
+                    // console.log("success");
                     changeMaintenanceRequestStatus();
-                    navigate(maintenanceRoutingBasedOnSelectedRole());
+                    navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}});
                 } else {
                     console.error(`Request failed with status: ${response.status}`);
                 }
@@ -155,17 +156,17 @@ export default function QuoteRequestForm(){
                 console.log("An error occurred while submitting the quote:", error);
             }
         
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
+            // for (let [key, value] of formData.entries()) {
+            //     console.log(key, value);
+            // }
         
             setShowSpinner(false);
         };
         
  
         
-        for (let contact of maintenanceContactIds)
-        submitQuoteRequest(contact);       
+        // for (let contact of maintenanceContactIds)
+        submitQuoteRequest(maintenanceContactIds);
     }
 
     
@@ -193,14 +194,14 @@ export default function QuoteRequestForm(){
     }
 
     useEffect(() => {
-        console.log("get all maintenance workers")
+        // console.log("get all maintenance workers")
 
         const getMaintenanceWorkers = async () => {
             setShowSpinner(true);
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsMaintenance")
             const data = await response.json()
             const workers = data.Maintenance_Contacts.result
-            console.log("workers",  workers)
+            // console.log("workers",  workers)
             //workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
             setContactList(workers)
             setShowSpinner(false);
@@ -212,6 +213,10 @@ export default function QuoteRequestForm(){
         setDisplayImages(imageArray)
 
     }, [])
+
+    // useEffect(() => {
+    //     console.log("selectedImageList", selectedImageList)
+    // }, [selectedImageList])
 
     return (
         <Box
@@ -348,7 +353,7 @@ export default function QuoteRequestForm(){
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                            Estimated Cost: <b>{maintenanceItem.maintenance_desc}</b>
+                                            Estimated Cost: <b>${maintenanceItem.maintenance_estimated_cost}</b>
                                         </Typography>
                                     </Grid>
                             </Card>
