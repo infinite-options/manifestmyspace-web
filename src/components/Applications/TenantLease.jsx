@@ -26,6 +26,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InputAdornment from '@mui/material/InputAdornment';
 // import { createTheme } from '@mui/material/styles';
 import defaultHouseImage from "../Property/defaultHouseImage.png"
+import { isValidDate } from "../../utils/dates"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,16 +48,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const materialTheme = createTheme({
-//   overrides: {
-//     MuiFormControl: {
-//       root: {
-//         border: "1px solid red",
-//         height: '20px',
-//       }
-//     }
-//   }
-// });
 
 const initialFees = (property, application) => {
   const fees = [];
@@ -98,6 +89,7 @@ const initialFees = (property, application) => {
       frequency: "Monthly",
       charge: "",
       due_by: 1,
+      due_by_date: "",
       late_by: 2,
       late_fee: "",
       perDay_late_fee: "",
@@ -114,13 +106,11 @@ const TenantLease = () => {
   const { state } = useLocation();
   const { application, property } = state;
   
-  console.log("DEBUG:", application)
+  console.log("DEBUG:", application);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [startDate, setStartDate] = useState(dayjs());
-  const [endDate, setEndDate] = useState(
-    dayjs().add(1, "year").subtract(1, "day")
-  );
-  const [moveInDate, setMoveInDate] = useState(dayjs());
+  const [startDate, setStartDate] = useState(application.lease_start? dayjs(application.lease_start) : dayjs());
+  const [endDate, setEndDate] = useState(application.lease_end? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
+  const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
 
   const [noOfOccupants, setNoOfOccupants] = useState(
     JSON.parse(application.lease_adults).length +
@@ -130,12 +120,15 @@ const TenantLease = () => {
 
   console.log("# of Occupants", noOfOccupants)
     
-  const [fees, setFees] = useState(initialFees(property, application));
+  // const [fees, setFees] = useState(initialFees(property, application));
+  const [fees, setFees] = useState([]);
+  
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   const [showMissingFieldsPrompt, setShowMissingFieldsPrompt] = useState(false);
+  const [showInvalidDueDatePrompt, setShowInvalidDueDatePrompt] = useState(false);
 
   let propertyImage;
   if (property.property_favorite_image !== null) {
@@ -146,6 +139,25 @@ const TenantLease = () => {
     const images = JSON.parse(property.property_images);
     propertyImage = images.length > 0 ? images[0] : defaultHouseImage;
   }
+  
+  useEffect(() => {    
+    let feesList = [];
+    if(application?.lease_status === "PROCESSING"){
+      // getLeaseFees();
+      feesList = JSON.parse(application.lease_fees);            
+
+    }else if(application?.lease_status === "NEW"){
+      feesList = initialFees(property, application)
+    }
+
+    let i = 0
+    feesList.forEach((fee) => {
+      fee.id = i + 1;
+      i += 1;
+    });
+    
+    setFees(feesList);    
+  }, []);
 
 
   
@@ -193,9 +205,15 @@ const TenantLease = () => {
     const value = e.target.value;
     let list = [...fees];
     list[index - 1].frequency = value;
-    list[index - 1].available_topay = null;
-    list[index - 1].due_by = null;
-    list[index - 1].late_by = null;
+    list[index - 1].available_topay = 1;
+    if(value === "One-time"){
+      list[index - 1].due_by = null;
+      list[index - 1].due_by_date = "";
+    }else{
+      list[index - 1].due_by = 1;
+      list[index - 1].due_by_date = null;
+    }    
+    list[index - 1].late_by = 2;
     setFees(list);
   };
   const handleDueByChange = (e, index) => {    
@@ -253,6 +271,13 @@ const TenantLease = () => {
   // const handleAvailableToPayChange = (e) => {
   //   setAvailableToPay(e.target.value);
   // };
+  const handleDueByDateChange = (v, index) => {
+    // setEndDate(v);
+    console.log("ROHIT - v, index - ", v.format('MM-DD-YYYY'), index);
+    const list = [...fees];
+    list[index - 1].due_by_date = v.format('MM-DD-YYYY');
+    setFees(list);
+  };
 
   const dayOptionsForWeekly = [
     { value: "monday", label: "Monday" },
@@ -362,7 +387,7 @@ const checkRequiredFields = () => {
     if (fee.fee_name === "" ||
         fee.charge === "" ||
         fee.frequency === "" ||
-        fee.due_by === null ||
+        (fee.due_by === null && (fee.due_by_date === null || !isValidDate(fee.due_by_date))) ||
         fee.late_by === null ||
         fee.late_fee === "" ||
         fee.available_topay === null ||
@@ -385,6 +410,21 @@ const getDateAdornmentString = (d) => {
   }
 };
 
+useEffect(() => {
+  let isValid = true;
+  fees.forEach(fee => {
+    if(fee.frequency === "One-time" || fee.frequency === "Annually"){
+      if(fee.due_by_date === null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)){
+        isValid = false;
+      }
+    }        
+  });
+  if(isValid){
+    setShowInvalidDueDatePrompt(false);
+  }else{
+    setShowInvalidDueDatePrompt(true);
+  }
+}, [fees]);
   
   const handleRemoveFile = (index) => {
     setLeaseFiles(prevFiles => {
@@ -461,8 +501,17 @@ const getDateAdornmentString = (d) => {
     //   console.log(key, value);
     // }
 
+    
+    //rohit
+    // await fetch(
+    //   `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
+    //   {
+    //     method: "PUT",
+    //     body: leaseApplicationFormData
+    //   }
+    // );
     await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
+      `http://localhost:4000/leaseApplication`,      
       {
         method: "PUT",
         body: leaseApplicationFormData
@@ -503,7 +552,7 @@ const getDateAdornmentString = (d) => {
         sx={{
           backgroundColor: "#F2F2F2",
           borderRadius: "10px",
-          margin: "25px",
+          margin: "10px",
           padding: "15px",
           fontFamily: "Source Sans Pro",
         }}
@@ -734,8 +783,7 @@ const getDateAdornmentString = (d) => {
               >
                 {"Move In Date"}
               </Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                {/* <ThemeProvider theme={materialTheme}> */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>                
                   <DatePicker
                     value={moveInDate}
                     minDate={dayjs()}
@@ -743,34 +791,19 @@ const getDateAdornmentString = (d) => {
                     slots={{
                       openPickerIcon: CalendarIcon,
                     }}
+                    variant="desktop"
                     slotProps={{
-                      inputProps: {                        
-                        style: {                          
-                          paddingTop: 0,
-                          paddingBottom: 0,
-                          height: '30px',
-                          borderRadius: '20px',                          
-                        },
-                      },
                       textField: {
                         size: "small",
-                        variant: "standard",
                         style: {
-                          height: '30px important',
                           width: "100%",
-                          fontSize: '20px',
-                          marginTop: '0px',
-                          padding: '5px',
-                          // backgroundColor: "#F2F2F2 !important",
-                          // borderRadius: "10px !important",                          
-                          backgroundColor: "#D6D5DA",
-                          borderRadius: '10px',
-                          height: '30px',
+                          fontSize: 12,
+                          backgroundColor: "#F2F2F2 !important",
+                          borderRadius: "10px !important",
                         },
                       },
                     }}
-                  />
-                {/* </ThemeProvider> */}
+                  />                
               </LocalizationProvider>
             </Stack>
           </Grid>
@@ -887,7 +920,7 @@ const getDateAdornmentString = (d) => {
                       <MenuItem value="Weekly">Weekly</MenuItem>
                       <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
                       <MenuItem value="Monthly">Monthly</MenuItem>
-                      {/* <MenuItem value="Annually">Annually</MenuItem> */}
+                      <MenuItem value="Annually">Annually</MenuItem>
                     </Select>
                   </Stack>
                 </Grid>
@@ -917,6 +950,31 @@ const getDateAdornmentString = (d) => {
                             endAdornment: <InputAdornment position="start">{getDateAdornmentString(row.due_by)}</InputAdornment>,
                           }}
                         />
+                      )
+                    }
+                    {
+                      (row.frequency === "One-time" || row.frequency === "Annually") && (                                                
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            value={row.due_by_date !== null && row.due_by_date !== ""? dayjs(row.due_by_date) : dayjs()}
+                            minDate={dayjs()}
+                            onChange={(v) => handleDueByDateChange(v, row.id)}
+                            slots={{
+                              openPickerIcon: CalendarIcon,
+                            }}
+                            slotProps={{
+                              textField: {
+                                size: "small",
+                                style: {
+                                  width: "100%",
+                                  fontSize: 12,
+                                  backgroundColor: "#F2F2F2 !important",
+                                  borderRadius: "10px !important",
+                                },
+                              },
+                            }}
+                          />
+                        </LocalizationProvider>                        
                       )
                     }
                     {
@@ -967,7 +1025,7 @@ const getDateAdornmentString = (d) => {
                       {"Available To Pay "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
                     {
-                      row.frequency === "Monthly" && (
+                      (row.frequency === "Monthly"  || row.frequency === "One-time"  || row.frequency === "Annually") && (
                         <TextField
                           name="available_topay"
                           value={row.available_topay}
@@ -975,6 +1033,9 @@ const getDateAdornmentString = (d) => {
                           fullWidth
                           className={classes.root}
                           onChange={(e) => handleFeeChange(e, row.id)}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="start">days before</InputAdornment>,
+                          }}
                         />
                       )
                     }
@@ -1024,7 +1085,7 @@ const getDateAdornmentString = (d) => {
                       {"Late By "}<span style={{ color: 'red',}}>*</span>
                     </Typography>
                     {
-                      row.frequency === "Monthly" && (
+                      (row.frequency === "Monthly"  || row.frequency === "One-time"  || row.frequency === "Annually") && (
                         <TextField
                           name="late_by"
                           value={row.late_by}
@@ -1032,6 +1093,9 @@ const getDateAdornmentString = (d) => {
                           fullWidth
                           className={classes.root}
                           onChange={(e) => handleFeeChange(e, row.id)}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="start">days after</InputAdornment>,
+                          }}
                         />
                       )
                     }
@@ -1314,6 +1378,16 @@ const getDateAdornmentString = (d) => {
               >
                 Please fill out all required fields.
               </Box>
+            )}
+            {showInvalidDueDatePrompt && (
+                    <Box
+                        sx={{
+                            color: 'red',
+                            fontSize: '13px',
+                        }}
+                    >
+                        Please enter valid due dates in "MM-DD-YYYY" format for all fees.
+                    </Box>
             )}
           </Grid>
           <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>

@@ -90,7 +90,8 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
 
     const refreshPropertyData = async () => {            
         try {
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`); 
+            // const response = await fetch(`http://localhost:4000/properties/${getProfileId()}`);
             if(!response.ok){
                 console.log("Error fetching property data")
             }

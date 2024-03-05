@@ -24,9 +24,9 @@ const TenantApplicationNav = () => {
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
-//   useEffect(() => {
-//     console.log("application - ", application);
-// }, [application]);
+  useEffect(() => {
+    console.log("ROHIT - application - ", application);
+  }, [application]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(
     JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]')
@@ -86,7 +86,11 @@ const TenantApplicationNav = () => {
     navigate("/managerDashboard");
   };
   const handleCreateLease = () =>
-    navigate("/tenantLease", { state: { application, property } });
+    navigate("/tenantLease", { state: { page: "create_lease", application, property } });
+
+  const handleEditLease = () => {    
+    navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
+  }
   useEffect(() => {
     const currApp = applications[currentIndex];
     setApplication(currApp);
@@ -788,6 +792,23 @@ const TenantApplicationNav = () => {
                           {"Reject Tenant"}
                         </Button>
                       )}
+                      {application.lease_status === "PROCESSING" && (
+                        <Button
+                          onClick={handleEditLease}
+                          sx={{
+                            backgroundColor: "#9EAED6",
+                            color: "#160449",
+                            textTransform: "none",
+                            width: "120px",
+                            "&:hover, &:focus, &:active": {
+                              backgroundColor: "#9EAED6",
+                            },
+                          }}
+                        >
+                          {"Edit Lease"}
+                        </Button>
+                    )}
+                    {application.lease_status !== "PROCESSING" && (
                       <Button
                         onClick={handleCreateLease}
                         sx={{
@@ -802,6 +823,7 @@ const TenantApplicationNav = () => {
                       >
                         {"New Lease"}
                       </Button>
+                    )}
                     </Stack>
                   </Box>
                 </Box>
