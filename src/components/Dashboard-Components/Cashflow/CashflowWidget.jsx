@@ -51,7 +51,6 @@ function CashflowWidget() {
         let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear);
         let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
 
-        console.log("Before last 12 months call");
         // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
         let last12months = getPast12MonthsExpectedCashflow(data, currentMonth, currentYear);
 

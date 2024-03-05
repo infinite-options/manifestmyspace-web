@@ -12,7 +12,7 @@ async function fetchCashflow(userProfileId) {
     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
     const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-    console.log("Endpoint returns: ", cashflow.data);
+    // console.log("Endpoint returns: ", cashflow.data);
     return cashflow.data;
   } catch (error) {
     console.error("Error fetching cashflow data:", error);
@@ -109,7 +109,7 @@ function getNext12MonthsCashflow(data, month, year) {
 }
 
 function getPast12MonthsExpectedCashflow(data, month, year) {
-  console.log("In getPast12MonthsExpectedCashflow: ", data, month, year);
+  // console.log("In getPast12MonthsExpectedCashflow: ", data, month, year);
   var pastTwelveMonths = [];
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -125,10 +125,10 @@ function getPast12MonthsExpectedCashflow(data, month, year) {
     let currentMonthRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
     let currentMonthExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
 
-    console.log("expectedMonthRevenue", expectedMonthRevenue);
-    console.log("expectedMonthExpense", expectedMonthExpense);
-    console.log("currentMonthRevenue", currentMonthRevenue);
-    console.log("currentMonthExpense", currentMonthExpense);
+    // console.log("expectedMonthRevenue", expectedMonthRevenue);
+    // console.log("expectedMonthExpense", expectedMonthExpense);
+    // console.log("currentMonthRevenue", currentMonthRevenue);
+    // console.log("currentMonthExpense", currentMonthExpense);
 
     pastTwelveMonths.push({
       month: currentMonth,
@@ -147,7 +147,7 @@ function getPast12MonthsExpectedCashflow(data, month, year) {
       currentMonth = months[months.indexOf(currentMonth) - 1];
     }
   }
-  console.log("Past 12 months: ", pastTwelveMonths);
+  // console.log("Past 12 months: ", pastTwelveMonths);
 
   pastTwelveMonths.reverse();
 
@@ -321,9 +321,9 @@ function getTotalExpenseByType(data, month, year, expected) {
 }
 
 function getTotalRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
   let revenueItems = data.response_revenue_by_month.result.filter((item) => item.cf_month === month && item.cf_year === year);
-  console.log("After filter revenueItems: ", revenueItems);
+  // console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems.reduce((acc, item) => {
     return acc + parseFloat(item["sum(total_paid)"] ? item["sum(total_paid)"] : 0.0);
   }, 0.0);
@@ -340,7 +340,7 @@ function getTotalExpenseByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let revenueItems = data.response_revenue_by_month.result.filter((item) => item.cf_month === month && item.cf_year === year);
   let totalRevenue = revenueItems.reduce((acc, item) => {
     return acc + parseFloat(item["sum(pur_amount_due)"] ? item["sum(pur_amount_due)"] : 0.0);

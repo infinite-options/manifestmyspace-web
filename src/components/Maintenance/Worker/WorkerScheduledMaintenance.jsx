@@ -37,6 +37,8 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState("");
 
     function handleNavigate(){
         console.log("navigate to Rescheduling Maintenance")
@@ -53,44 +55,44 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
 
     }
 
-    async function handleComplete(id){
+    // async function handleComplete(id){
 
 
-        const changeMaintenanceQuoteStatus = async () => {
-            setShowSpinner(true);
-            var formData = new FormData();
+    //     const changeMaintenanceQuoteStatus = async () => {
+    //         setShowSpinner(true);
+    //         var formData = new FormData();
 
-            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-            formData.append("quote_status", "FINISHED");
+    //         formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+    //         formData.append("quote_status", "FINISHED");
 
-            try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
-                    method: 'PUT',
-                    body: formData,
-                });            
-                let responseData = await response.json();
-                console.log(responseData);
-                if (response.status === 200) {
-                    console.log("success")
-                    let response = CompleteTicket(id, setShowSpinner);
-                    console.log("handleComplete", response);
-                    if (response){
-                        console.log("Ticket Completed")
-                        alert("Ticket Completed")
-                        navigate(maintenanceRoutingBasedOnSelectedRole())
-                    } else{
-                        console.log("Ticket Not Completed")
-                        alert("Error: Ticket Not Completed")
-                    }
-                }
-            } catch (error){
-                console.log("error", error)
-            }
-            setShowSpinner(false);
-        }
+    //         try {
+    //             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+    //                 method: 'PUT',
+    //                 body: formData,
+    //             });            
+    //             let responseData = await response.json();
+    //             console.log(responseData);
+    //             if (response.status === 200) {
+    //                 console.log("success")
+    //                 let response = CompleteTicket(id, setShowSpinner);
+    //                 console.log("handleComplete", response);
+    //                 if (response){
+    //                     console.log("Ticket Completed")
+    //                     alert("Ticket Completed")
+    //                     navigate(maintenanceRoutingBasedOnSelectedRole())
+    //                 } else{
+    //                     console.log("Ticket Not Completed")
+    //                     alert("Error: Ticket Not Completed")
+    //                 }
+    //             }
+    //         } catch (error){
+    //             console.log("error", error)
+    //         }
+    //         setShowSpinner(false);
+    //     }
 
-        changeMaintenanceQuoteStatus();
-    }
+    //     changeMaintenanceQuoteStatus();
+    // }
 
 
     return(
@@ -112,7 +114,7 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
             <WorkerQuoteView maintenanceItem={maintenanceItem}/>
             <Grid container direction="row" columnSpacing={6} rowSpacing={6} sx={{paddingTop: "15px"}}>
                 <RescheduleButton maintenanceItem={maintenanceItem}/>
-                <CompleteButton maintenanceItem={maintenanceItem}/>
+                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
         </Box>
     )

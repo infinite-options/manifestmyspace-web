@@ -18,7 +18,7 @@ import {
 
 import { useEffect, useState } from "react";
 import theme from '../../../theme/theme';
-import documentIcon from "./../Business/Subtract.png"
+import documentIcon from "./../Business/documentIcon.png"
 
 function LaborTableReadOnly({labor, setLabor}){
 
@@ -264,7 +264,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     Earliest Availability: {maintenanceItem.quote_earliest_availability}
                 </Typography>
             </Grid>
-            <Grid item xs={12} sx={{paddingLeft: '0px'}}>
+            <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                 <Box 
                     display="flex" 
                     flexDirection="row" 
@@ -273,7 +273,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 >
                     <Checkbox
                         checked={true}
-                        paddingLeft="0px"
+                        sx={{paddingLeft: "0px"}}
                     />
                     <Typography
                         sx={{

@@ -159,20 +159,15 @@ export default function WorkerMaintenanceRequestDetail(){
             }
         } else if (direction.changeTab === 'backward') {
             let i = value - 1;
-            console.log("[DEBUG] tab backwards", i, areTabsGrey[i])
     
             while (areTabsGrey[i] === 1) {
                 i--;
                 if (i < 0) break;
             }
-
-            console.log("[DEBUG] tab backwards i-- because areTabsGrey", i, areTabsGrey[i], colorStatus[i].mapping.toUpperCase())
     
             if (i >= 0) {
                 let requestType = colorStatus[i].mapping.toUpperCase();
                 let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
-                console.log("[DEBUG] tab backwards", requestType, lastIndex)
-                console.log("[DEBUG] tab backwards", i, areTabsGrey[i])
                 setValue(i); // Change tab
                 setStatus(colorStatus[i].status)
                 setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array

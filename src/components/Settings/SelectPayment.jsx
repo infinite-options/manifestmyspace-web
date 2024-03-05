@@ -71,11 +71,11 @@ export default function SelectPayment(props) {
     const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
     // const [maintenanceItem, setMaintenanceItem] = useState(location.state.paymentData.maintenanceItem);
     const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
-    console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData)
-    console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids)
-    console.log("--debug-- location.state", location.state)
+    // console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData)
+    // console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids)
+    // console.log("--debug-- location.state", location.state)
     // console.log("--debug-- maintenanceItem", maintenanceItem)
-    console.log("---debug--- selectedItems", selectedItems)
+    // console.log("---debug--- selectedItems", selectedItems)
     const [convenience_fee, setFee] = useState(0);
     const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
     const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
@@ -223,7 +223,7 @@ export default function SelectPayment(props) {
                 console.log("All payments made successfully", promises)
                 for (const item of selectedItems) {
                     // PUT to update maintenance request status to "COMPLETED"
-                    console.log("--DEBUG-- maintenanceItem.purchase_uid === item.purchase_uid", item.purchase_uid)
+                    // console.log("--DEBUG-- maintenanceItem.purchase_uid === item.purchase_uid", item.purchase_uid)
                     if(item.quote_id !== null){
                         const updateMaintenanceRequestStatus = (quote_id) => {
                             const formData = new FormData();

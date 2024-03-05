@@ -173,7 +173,6 @@ export default function MaintenanceWorker(){
 
 
     useEffect(() => {
-        console.log("[DEBUG] refresh:", refresh)
         const dataObject = {};
         const getMaintenanceData = async () => {
             setShowSpinner(true);

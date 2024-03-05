@@ -24,15 +24,17 @@ import { useEffect, useState } from "react";
 import { Form, useLocation, useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import theme from '../../../theme/theme';
 import ImageUploader from "../../ImageUploader";
-import documentIcon from "./Subtract.png"
+import documentIcon from "./documentIcon.png"
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { set } from "date-fns";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../../contexts/UserContext";
+import DocumentUploader from "../../DocumentUploader";
 
 function LaborTable({labor, setLabor}){
 
@@ -207,7 +209,7 @@ function LaborTable({labor, setLabor}){
                             }}
                                 onClick={() => deleteRow(index)}
                             >
-                                <CloseIcon/>
+                                <DeleteIcon fontSize="small"/>
                             </Button>
                         )}
                     </Grid>
@@ -407,7 +409,7 @@ function PartsTable({parts, setParts}){
                                 }}
                                     onClick={() => deleteRow(index)}
                                 >
-                                    <CloseIcon/>
+                                    <DeleteIcon fontSize="small"/>
                                 </Button>
                             )}
                         </Grid>
@@ -444,6 +446,7 @@ export default function BusinessInvoiceForm(){
     const [editMode, setEditMode] = useState(location.state?.edit || false);
     const [profileInfo, setProfileInfo] = useState({});
     const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedDocumentList, setSelectedDocumentList] = useState([])
 
     const maintenanceItem = location.state.maintenanceItem;
 
@@ -507,7 +510,7 @@ export default function BusinessInvoiceForm(){
                     method: 'GET',
                 })
                 const responseData = await response.json();
-                console.log("[DEBUG] Business Profile:", responseData.result[0]);
+                // console.log("[DEBUG] Business Profile:", responseData.result[0]);
                 createPaymentMethodList(responseData.result[0])
                 setProfileInfo(responseData.result[0])
             } catch (error){
@@ -783,15 +786,10 @@ export default function BusinessInvoiceForm(){
                                 <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button sx={{
-                                    color: "#3D5CAC",
-                                    textTransform: "none",
-                                }}>
-                                    <img src={documentIcon} style={{width: '20px', height: '25px', margin:'5px'}}/>
-                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                        Attach Documents
-                                    </Typography>
-                                </Button>
+                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    Add Documents
+                                </Typography>
+                                <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button
