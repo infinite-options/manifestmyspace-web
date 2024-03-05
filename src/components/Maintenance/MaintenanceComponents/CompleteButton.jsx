@@ -22,15 +22,6 @@ export default function CompleteButton(props){
 
     async function handleComplete(id, quotes){
         console.log("handleComplete id", id)
-        // if (quotes && quotes.length > 0){
-        //     console.log("handleComplete quotes", quotes)
-        //     for (let i = 0; i < quotes.length; i++){
-        //         console.log("handleComplete quotes[i]", quotes[i])
-        //         if (quotes[i].quote_status === "SCHEDULED"){
-        //             FinishQuote(quotes[i].maintenance_quote_uid);
-        //         }
-        //     }
-        // }
 
         FinishQuote(maintenanceItem.maintenance_quote_uid)
 

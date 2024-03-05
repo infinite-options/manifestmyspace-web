@@ -186,14 +186,16 @@ export default function WorkerMaintenanceRequestDetail(){
     return(
         <ThemeProvider theme={theme}>
             <Box
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                // alignItems: 'center',
-                width: '100%', // Take up full screen width
-                minHeight: '100vh', // Set the Box height to full height
-                marginTop: theme.spacing(2), // Set the margin to 20px
-            }}
+                style={{
+                    // display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    width: '100%', // Take up full screen width
+                    // maxWidth: '60%',
+                    minHeight: '100vh', // Set the Box height to full height
+                    marginTop: theme.spacing(2), // Set the margin to 20px
+                }}
             >
                 <Paper
                     style={{

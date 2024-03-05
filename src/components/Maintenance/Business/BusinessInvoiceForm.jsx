@@ -520,7 +520,7 @@ export default function BusinessInvoiceForm(){
         }
         // console.log("running get maintenance profile info")
         getMaintenanceProfileInfo()
-    },[])
+    }, [])
 
     useEffect(() => {
         let partsTotal = 0
@@ -561,7 +561,38 @@ export default function BusinessInvoiceForm(){
             }
             setShowSpinner(false);
         }
+        const uploadBillDocuments = async () => {
+            // Get the current date and time
+            const currentDatetime = new Date();
 
+            // Format the date and time
+            const formattedDatetime = 
+                (currentDatetime.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                currentDatetime.getDate().toString().padStart(2, '0') + '-' +
+                currentDatetime.getFullYear() + ' ' +
+                currentDatetime.getHours().toString().padStart(2, '0') + ':' +
+                currentDatetime.getMinutes().toString().padStart(2, '0') + ':' +
+                currentDatetime.getSeconds().toString().padStart(2, '0');
+            try {
+                var formData = new FormData();
+                formData.append("document_type", "pdf");
+                formData.append("document_date_created", formattedDatetime);
+                formData.append("document_property", maintenanceItem.property_id);
+
+                for (let i = 0; i < selectedDocumentList.length; i++){
+                    formData.append("document_file", selectedDocumentList[i]);
+                    formData.append("document_title", selectedDocumentList[i].name);
+                }
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`, {
+                    method: 'POST',
+                    body: formData,
+                })
+                // const responseData = await response.json();
+            } catch (error) {
+                console.log("error", error)
+            }
+
+        }
         const createBill = async () => {
             setShowSpinner(true);
             try {
@@ -589,6 +620,7 @@ export default function BusinessInvoiceForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
+                    uploadBillDocuments()
                     navigate("/workerMaintenance")
                 } else{
                     console.log("error setting status")

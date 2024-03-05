@@ -3,7 +3,6 @@ import { useUser } from "../../contexts/UserContext";
 
 function AnnouncementCard(props) {
     const { user, selectedRole, selectRole, Name } = useUser();
-    console.log("Select role: "+selectedRole)
     const data = props.data;
 
     const handleAnnouncements = (data) => {

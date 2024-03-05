@@ -47,21 +47,7 @@ export default function DocumentUploader({selectedDocumentList, setSelectedDocum
     const deleteDocument = (index) => {
         const newSelectedDocumentList = selectedDocumentList.filter((document, i) => i !== index);
         setSelectedDocumentList(newSelectedDocumentList);
-        // setDeletedImageList([...deletedImageList, selectedDocumentList[index].id]);
     }
-
-    // const handleRemoveFile = (index) => {
-    //     setLeaseFiles(prevFiles => {
-    //         const filesArray = Array.from(prevFiles);
-    //         filesArray.splice(index, 1);
-    //         return filesArray;
-    //     });
-    //     setLeaseFileTypes(prevTypes => {
-    //         const typesArray = [...prevTypes];
-    //         typesArray.splice(index, 1);
-    //         return typesArray;
-    //     });
-    //   };
 
     return (
         <>
@@ -112,7 +98,7 @@ export default function DocumentUploader({selectedDocumentList, setSelectedDocum
                                     >
                                         <Box
                                             sx={{
-                                                width: '50%', // Adjust the width as needed
+                                                width: '90%', // Adjust the width as needed
                                                 padding: '8px', // Adjust the padding as needed
                                             }}
                                         >

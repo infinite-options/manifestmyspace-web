@@ -13,7 +13,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SelectMonthComponent from '../../SelectMonthComponent';
 import SelectPropertyFilter from '../../SelectPropertyFilter/SelectPropertyFilter';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import MaintenanceStatusTable01 from "./WorkerMaintenanceStatusTable";
+import WorkerMaintenanceStatusTable from "./WorkerMaintenanceStatusTable";
 import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilter";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
@@ -225,6 +225,7 @@ export default function MaintenanceWorker(){
                 display: 'flex',
                 justifyContent: 'center',
                 width: '100%', // Take up full screen width
+                // maxWidth: '60%',
                 minHeight: '100%', // Set the Box height to full height
                 marginTop: theme.spacing(2), // Set the margin to 20px
             }}
@@ -348,7 +349,7 @@ export default function MaintenanceWorker(){
                             }
 
                             return (
-                                <MaintenanceStatusTable01
+                                <WorkerMaintenanceStatusTable
                                     key={index}
                                     status={item.status}
                                     color={item.color}

@@ -191,7 +191,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
             let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
             setQuoteImages(quoteImageArray);
             setEstimatedTime(maintenanceItem?.quote_event_type)
-            setEarliestAvailability(maintenanceItem.quote_earliest_availability)
+            setEarliestAvailability(maintenanceItem?.quote_earliest_availability)
         } catch (error){
             console.log("error", error)
             setQuoteImages([]);
