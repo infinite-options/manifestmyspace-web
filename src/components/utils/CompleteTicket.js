@@ -13,7 +13,7 @@ export default async function CompleteTicket(maintenance_request_uid, setShowSpi
         });
 
         if (response.code === 200) {
-            return response;
+            return true;
         }
     } catch (error){
         console.log("error", error)

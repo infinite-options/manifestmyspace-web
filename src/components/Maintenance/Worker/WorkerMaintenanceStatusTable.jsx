@@ -22,7 +22,7 @@ import theme from '../../../theme/theme';
 
 
 
-export default function MaintenanceStatusTable01({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
+export default function WorkerMaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
     const location = useLocation();
     let navigate = useNavigate();
 

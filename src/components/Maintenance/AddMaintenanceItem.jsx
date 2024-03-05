@@ -236,7 +236,6 @@ export default function AddMaintenanceItem(){
         setCost('')
         setTitle('')
         setDescription('')
-        console.log("[DEBUG] rounting to /<role>Maintenance with state refersh: true")
         navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
     }
 

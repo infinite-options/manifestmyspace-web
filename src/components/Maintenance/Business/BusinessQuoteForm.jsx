@@ -27,7 +27,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import refundIcon from './../../Property/refundIcon.png';
-import documentIcon from './Subtract.png'
+import documentIcon from './documentIcon.png'
 import maintenanceRequestImage from "./../maintenanceRequest.png";
 import xIcon from './Close_round.png'
 import { Select } from "@material-ui/core";

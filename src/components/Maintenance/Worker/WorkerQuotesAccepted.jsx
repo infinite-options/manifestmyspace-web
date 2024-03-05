@@ -34,8 +34,6 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
-    console.log("QuotesAccepted maintenanceItem", maintenanceItem)
-
 
     function handleNavigateToQuotesRequested(){
 
