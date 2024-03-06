@@ -52,7 +52,7 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
 
         
         const sumImageSizes = selectedImageList.reduce((acc, image) => {
-            return acc + image.file.size;
+            return acc + (image.file?.size ?? 0);
         }, 0)
 
         if (sumImageSizes > MAX_SIZE) {
