@@ -114,16 +114,26 @@ function ContractCard(props) {
     const contract = props.contract;
     const property_endpoint_resp = props.property_endpoint_resp;
 
+    // Define a dictionary to map contract_status to text color
+    const statusTextColorMap = {
+        REJECTED: "#A52A2A",
+        REFUSED: "#A52A2A",
+        SENT: "#0CAA25",
+    };
+
+    // Determine text color based on contract_status or use default blue
+    const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
+
     return (
         <Box
             sx={{
                 backgroundColor: '#D6D5DA',
                 borderRadius: '10px',
-                padding: '10px', // Increased padding for more space
-                marginBottom: '20px', // Increased margin between cards
+                padding: '10px',
+                marginBottom: '20px',
                 fontSize: '11px',
                 cursor: 'pointer',
-                position: 'relative', // Added to handle image positioning
+                position: 'relative',
             }}
             onClick={() => navigate('/managementContractDetails', {
                 state: {
@@ -141,7 +151,7 @@ function ContractCard(props) {
                 {/* Centered image container */}
                 <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
                     <img
-                        src={contract.business_photo_url}
+                        src={contract.owner_photo_url}
                         alt="Business Photo"
                         style={{
                             borderRadius: '50%',
@@ -155,7 +165,7 @@ function ContractCard(props) {
                 <Grid item xs={3} sx={{ textAlign: 'right', marginLeft: '-5px' }}>
                     <Typography
                         sx={{
-                            color: "#3D5CAC",
+                            color: textColor, // Set the text color dynamically
                             fontWeight: "bold",
                             fontSize: '20px',
                             marginLeft: '5px', // Move the status slightly to the right
@@ -165,18 +175,19 @@ function ContractCard(props) {
                     </Typography>
                 </Grid>
             </Grid>
+            {/* Remaining content of ContractCard component */}
             {/* Lines below the first line with increased space */}
-            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop:'5px' }}>
-                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.business_name}`}
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.business_email}
+                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.owner_email}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.business_phone_number}
+                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.owner_phone_number}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Beds:</span> {contract.property_num_beds}   <span style={{ fontWeight: "bold", marginLeft: '15px' }}>Baths:</span> {contract.property_num_baths}
