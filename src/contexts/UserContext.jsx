@@ -162,6 +162,24 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     }
   };
 
+  const dashboardRoutingBasedOnSelectedRole = () => {
+    console.log("dashboardRoutingBasedOnSelectedRole selectedRole", selectedRole)
+    const role = roleName();
+    if (role === "Manager") {
+      return "/managerDashboard";
+    } else if (role === "Owner") {
+      return "/ownerDashboard";
+    } else if (role === "Maintenance") {
+      return "/maintenanceDashboard";
+    } else if (role === "PM Employee") {
+      return "/managerDashboard";
+    } else if (role === "Maintenance Employee") {
+      return "/maintenanceDashboard";
+    } else if (role === "Tenant") {
+      return "/tenantDashboard";
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -187,6 +205,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         paymentRoutingBasedOnSelectedRole,
         leaseRoutingBasedOnSelectedRole,
         propertyRoutingBasedOnSelectedRole,
+        dashboardRoutingBasedOnSelectedRole,
       }}
     >
       {children}

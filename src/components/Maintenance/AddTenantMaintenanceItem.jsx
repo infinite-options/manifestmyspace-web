@@ -43,7 +43,7 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){
     const location = useLocation();
     let navigate = useNavigate();
-    const { getProfileId } = useUser();
+    const { user, getProfileId, dashboardRoutingBasedOnSelectedRole } = useUser();
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [property, setProperty] = useState(location.state.propertyData);
     const [issue, setIssue] = useState('');
@@ -187,6 +187,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         setTitle('')
         setDescription('')
         navigate('/tenantDashboard');
+        navigate(dashboardRoutingBasedOnSelectedRole(), {state: {refresh: true, propertyId: property.property_uid}})
     }
 
     

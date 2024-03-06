@@ -24,15 +24,17 @@ import { useEffect, useState } from "react";
 import { Form, useLocation, useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import theme from '../../../theme/theme';
 import ImageUploader from "../../ImageUploader";
-import documentIcon from "./Subtract.png"
+import documentIcon from "./documentIcon.png"
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { set } from "date-fns";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../../contexts/UserContext";
+import DocumentUploader from "../../DocumentUploader";
 
 function LaborTable({labor, setLabor}){
 
@@ -207,7 +209,7 @@ function LaborTable({labor, setLabor}){
                             }}
                                 onClick={() => deleteRow(index)}
                             >
-                                <CloseIcon/>
+                                <DeleteIcon fontSize="small"/>
                             </Button>
                         )}
                     </Grid>
@@ -407,7 +409,7 @@ function PartsTable({parts, setParts}){
                                 }}
                                     onClick={() => deleteRow(index)}
                                 >
-                                    <CloseIcon/>
+                                    <DeleteIcon fontSize="small"/>
                                 </Button>
                             )}
                         </Grid>
@@ -444,6 +446,7 @@ export default function BusinessInvoiceForm(){
     const [editMode, setEditMode] = useState(location.state?.edit || false);
     const [profileInfo, setProfileInfo] = useState({});
     const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedDocumentList, setSelectedDocumentList] = useState([])
 
     const maintenanceItem = location.state.maintenanceItem;
 
@@ -507,7 +510,7 @@ export default function BusinessInvoiceForm(){
                     method: 'GET',
                 })
                 const responseData = await response.json();
-                console.log("[DEBUG] Business Profile:", responseData.result[0]);
+                // console.log("[DEBUG] Business Profile:", responseData.result[0]);
                 createPaymentMethodList(responseData.result[0])
                 setProfileInfo(responseData.result[0])
             } catch (error){
@@ -517,7 +520,7 @@ export default function BusinessInvoiceForm(){
         }
         // console.log("running get maintenance profile info")
         getMaintenanceProfileInfo()
-    },[])
+    }, [])
 
     useEffect(() => {
         let partsTotal = 0
@@ -558,7 +561,38 @@ export default function BusinessInvoiceForm(){
             }
             setShowSpinner(false);
         }
+        const uploadBillDocuments = async () => {
+            // Get the current date and time
+            const currentDatetime = new Date();
 
+            // Format the date and time
+            const formattedDatetime = 
+                (currentDatetime.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                currentDatetime.getDate().toString().padStart(2, '0') + '-' +
+                currentDatetime.getFullYear() + ' ' +
+                currentDatetime.getHours().toString().padStart(2, '0') + ':' +
+                currentDatetime.getMinutes().toString().padStart(2, '0') + ':' +
+                currentDatetime.getSeconds().toString().padStart(2, '0');
+            try {
+                var formData = new FormData();
+                formData.append("document_type", "pdf");
+                formData.append("document_date_created", formattedDatetime);
+                formData.append("document_property", maintenanceItem.property_id);
+
+                for (let i = 0; i < selectedDocumentList.length; i++){
+                    formData.append("document_file", selectedDocumentList[i]);
+                    formData.append("document_title", selectedDocumentList[i].name);
+                }
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`, {
+                    method: 'POST',
+                    body: formData,
+                })
+                // const responseData = await response.json();
+            } catch (error) {
+                console.log("error", error)
+            }
+
+        }
         const createBill = async () => {
             setShowSpinner(true);
             try {
@@ -586,6 +620,7 @@ export default function BusinessInvoiceForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
+                    uploadBillDocuments()
                     navigate("/workerMaintenance")
                 } else{
                     console.log("error setting status")
@@ -783,15 +818,10 @@ export default function BusinessInvoiceForm(){
                                 <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button sx={{
-                                    color: "#3D5CAC",
-                                    textTransform: "none",
-                                }}>
-                                    <img src={documentIcon} style={{width: '20px', height: '25px', margin:'5px'}}/>
-                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                        Attach Documents
-                                    </Typography>
-                                </Button>
+                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    Add Documents
+                                </Typography>
+                                <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button
