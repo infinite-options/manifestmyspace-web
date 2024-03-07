@@ -234,12 +234,13 @@ export default function PropertyList({}) {
         navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
     }
 
-    function getBadgeContent(index) {
-        return propertyList?.[index]?.num_open_maintenace_req ?? 0;
+    
+    function getBadgeContent(property) {
+        return property?.num_open_maintenace_req ?? 0;
     }
 
-    function getNoOfApplications(index) {
-        return propertyList?.[index]?.applicationsCount || 0;
+    function getNoOfApplications(property) {
+        return property.applicationsCount ?? 0;
     }
 
     function getCoverPhoto(property) {
@@ -471,8 +472,8 @@ export default function PropertyList({}) {
                         <Badge
                         overlap="circular"
                         color="success"
-                        badgeContent={getNoOfApplications(index)}
-                        invisible={!getNoOfApplications(index)}
+                        badgeContent={getNoOfApplications(property)}
+                        invisible={!getNoOfApplications(property)}
                         anchorOrigin={{
                             vertical: "top",
                             horizontal: "right",
@@ -503,7 +504,7 @@ export default function PropertyList({}) {
                     <Badge
                         overlap="circular"
                         color="error"
-                        badgeContent={getBadgeContent(index)}
+                        badgeContent={getBadgeContent(property)}
                         anchorOrigin={{
                         vertical: "top",
                         horizontal: "right",
