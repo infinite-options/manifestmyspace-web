@@ -163,7 +163,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const dashboardRoutingBasedOnSelectedRole = () => {
-    console.log("dashboardRoutingBasedOnSelectedRole selectedRole", selectedRole)
+    // console.log("dashboardRoutingBasedOnSelectedRole selectedRole", selectedRole)
     const role = roleName();
     if (role === "Manager") {
       return "/managerDashboard";
@@ -178,7 +178,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     } else if (role === "Tenant") {
       return "/tenantDashboard";
     }
-  }
+  };
 
   return (
     <UserContext.Provider

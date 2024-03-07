@@ -39,7 +39,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
 
   function selectColorStatus() {
     // console.log("selectColorStatus selectedRole", selectedRole)
-    if (selectedRole === "MANAGER") {
+    if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       return theme.colorStatusPMO;
     } else if (selectedRole === "OWNER") {
       return theme.colorStatusO;

@@ -18,6 +18,7 @@ function Header() {
   const [cookie, setCookie] = useCookies(["user"]);
   const cookiesData = cookie["user"];
   const userRoles = user ? cookiesData.role.split(",") : [];
+  // console.log(userRoles);
 
   const navigate = useNavigate();
 
@@ -26,8 +27,10 @@ function Header() {
   const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen);
 
   const handleButtonClick = (role) => {
+    // console.log("In handleButtonClick: ", role);
     selectRole(role);
     const { dashboardUrl } = roleMap[role];
+    // console.log("Dashboard URL: ", dashboardUrl);
     navigate(dashboardUrl);
   };
 
@@ -65,25 +68,25 @@ function Header() {
                   flexGrow: 1,
                 }}
               >
-                  {userRoles.map((role) => (
-                    <Button
-                      key={role}
-                      color="inherit"
-                      style={{
-                        fontWeight: selectedRole === role ? 800 : 300,
-                        fontSize: "18px",
-                        fontFamily: "Source Sans 3, sans-serif",
-                        margin: "0 2px",
-                        textTransform: "none",
-                      }}
-                      id={role}
-                      onClick={() => {
-                        handleButtonClick(role);
-                      }}
-                    >
-                      {selectedRole === role ? <u>{roleName(role)}</u> : roleName(role)}
-                    </Button>
-                  ))}
+                {userRoles.map((role) => (
+                  <Button
+                    key={role}
+                    color="inherit"
+                    style={{
+                      fontWeight: selectedRole === role ? 800 : 300,
+                      fontSize: "18px",
+                      fontFamily: "Source Sans 3, sans-serif",
+                      margin: "0 2px",
+                      textTransform: "none",
+                    }}
+                    id={role}
+                    onClick={() => {
+                      handleButtonClick(role);
+                    }}
+                  >
+                    {selectedRole === role ? <u>{roleName(role)}</u> : roleName(role)}
+                  </Button>
+                ))}
               </Toolbar>
             </AppBar>
           </>
