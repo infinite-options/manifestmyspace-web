@@ -177,44 +177,46 @@ const TenantLease = () => {
   };
 
   const deleteFeeRow = (index) => {
-    const list = [...fees];
-    list.splice(index - 1, 1);
+    console.log("deleteFeeRow - index  - ", index);
+    const list = [...fees];    
+    list.splice(index, 1);    
     setFees(list);
   }
   const handleFeeChange = (e, index) => {    
     const { name, value } = e.target;
     const list = [...fees];
+    // let index = list.findIndex(fee => fee.id === fee_id)
     if(name === "due_by" || name === "late_by" || name === "available_topay"){
 
       if (typeof parseInt(value) === 'number' && !isNaN(parseInt(value))) {        
-        list[index - 1][name] = parseInt(value);
+        list[index][name] = parseInt(value);
       }else{
-        list[index - 1][name] = null;
+        list[index][name] = null;
       }
     }else{
-      list[index - 1][name] = value;
+      list[index][name] = value;
     }
     setFees(list);
   };
   const handleFrequencyChange = (e, index) => {
     const value = e.target.value;
-    let list = [...fees];
-    list[index - 1].frequency = value;
-    list[index - 1].available_topay = 1;
+    let list = [...fees];    
+    list[index].frequency = value;
+    list[index].available_topay = 1;
     if(value === "One-time"){
-      list[index - 1].due_by = null;
-      list[index - 1].due_by_date = "";
+      list[index].due_by = null;
+      list[index].due_by_date = "";
     }else{
-      list[index - 1].due_by = 1;
-      list[index - 1].due_by_date = null;
+      list[index].due_by = 1;
+      list[index].due_by_date = null;
     }    
-    list[index - 1].late_by = 2;
+    list[index].late_by = 2;
     setFees(list);
   };
   const handleDueByChange = (e, index) => {    
     const value = e.target.value;    
-    let list = [...fees];
-    list[index - 1].due_by = daytoValueMap.get(value);
+    let list = [...fees];    
+    list[index].due_by = daytoValueMap.get(value);
     setFees(list);
 
   };
@@ -222,16 +224,22 @@ const TenantLease = () => {
   const handleLateByChange = (e, index) => {    
     const value = e.target.value;
     let list = [...fees];
-    // list[index - 1].late_by = daytoValueMap.get(value);
-    list[index - 1].late_by = value;
+    // list[index].late_by = daytoValueMap.get(value);
+    list[index].late_by = value;
     setFees(list);
   };
 
   const handleAvailableToPayChange = (e, index) => {    
     const value = e.target.value;
     let list = [...fees];
-    // list[index - 1].available_topay = daytoValueMap.get(value);
-    list[index - 1].available_topay = value;
+    // list[index].available_topay = daytoValueMap.get(value);
+    list[index].available_topay = value;
+    setFees(list);
+  };
+  const handleDueByDateChange = (v, index) => {    
+    console.log("handleDueByDateChange - v, index - ", v.format('MM-DD-YYYY'), index);
+    const list = [...fees];    
+    list[index].due_by_date = v.format('MM-DD-YYYY');
     setFees(list);
   };
   const handleStartDateChange = (v) => {
@@ -265,12 +273,7 @@ const TenantLease = () => {
   // const handleAvailableToPayChange = (e) => {
   //   setAvailableToPay(e.target.value);
   // };
-  const handleDueByDateChange = (v, index) => {    
-    console.log("handleDueByDateChange - v, index - ", v.format('MM-DD-YYYY'), index);
-    const list = [...fees];
-    list[index - 1].due_by_date = v.format('MM-DD-YYYY');
-    setFees(list);
-  };
+  
 
   const dayOptionsForWeekly = [
     { value: "monday", label: "Monday" },
@@ -502,6 +505,7 @@ const TenantLease = () => {
     //     body: leaseApplicationFormData
     //   }
     // );
+    
     await fetch(
       `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
       {
@@ -843,7 +847,7 @@ const TenantLease = () => {
             <hr />
           </Grid>
           {console.log("Fees right before we loop through it", fees)}
-          {fees.map((row) => (
+          {fees.map((row, index) => (
             <Grid item xs={12} key={row.id}>
               <Grid
                 container
@@ -868,7 +872,7 @@ const TenantLease = () => {
                       variant="filled"
                       fullWidth
                       className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
+                      onChange={(e) => handleFeeChange(e, index)}
                     />
                   </Stack>
                 </Grid>
@@ -890,7 +894,7 @@ const TenantLease = () => {
                       variant="filled"
                       fullWidth
                       className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
+                      onChange={(e) => handleFeeChange(e, index)}
                     />
                   </Stack>
                 </Grid>
@@ -911,7 +915,7 @@ const TenantLease = () => {
                       value={row.frequency}
                       size="small"
                       fullWidth
-                      onChange={(e) => handleFrequencyChange(e, row.id)}
+                      onChange={(e) => handleFrequencyChange(e, index)}
                       placeholder="Select frequency"
                       className={classes.select}
                     >
@@ -943,7 +947,7 @@ const TenantLease = () => {
                           variant="filled"
                           fullWidth
                           className={classes.root}
-                          onChange={(e) => handleFeeChange(e, row.id)}
+                          onChange={(e) => handleFeeChange(e, index)}
                           InputProps={{
                             endAdornment: <InputAdornment position="start">{getDateAdornmentString(row.due_by)}</InputAdornment>,
                           }}
@@ -956,7 +960,7 @@ const TenantLease = () => {
                           <DatePicker
                             value={row.due_by_date !== null && row.due_by_date !== ""? dayjs(row.due_by_date) : dayjs()}
                             minDate={dayjs()}
-                            onChange={(v) => handleDueByDateChange(v, row.id)}
+                            onChange={(v) => handleDueByDateChange(v, index)}
                             slots={{
                               openPickerIcon: CalendarIcon,
                             }}
@@ -987,7 +991,7 @@ const TenantLease = () => {
                             value={row.due_by !== null? valueToDayMap.get(row.due_by) : ""}                      
                             size="small"
                             fullWidth
-                            onChange={(e) => handleDueByChange(e, row.id, "weekly")}                      
+                            onChange={(e) => handleDueByChange(e, index)}                      
                             placeholder="Select Due By Day"
                             className={classes.select}
                             sx={{
@@ -1030,7 +1034,7 @@ const TenantLease = () => {
                           variant="filled"
                           fullWidth
                           className={classes.root}
-                          onChange={(e) => handleFeeChange(e, row.id)}
+                          onChange={(e) => handleFeeChange(e, index)}
                           InputProps={{
                             endAdornment: <InputAdornment position="start">days before</InputAdornment>,
                           }}
@@ -1050,7 +1054,7 @@ const TenantLease = () => {
                             value={row.available_topay !== null? row.available_topay : ""}                      
                             size="small"
                             fullWidth
-                            onChange={(e) => handleAvailableToPayChange(e, row.id, "weekly")}                      
+                            onChange={(e) => handleAvailableToPayChange(e, index)}                      
                             placeholder="Select Available to Pay By Day"
                             className={classes.select}                      
                           >                      
@@ -1090,7 +1094,7 @@ const TenantLease = () => {
                           variant="filled"
                           fullWidth
                           className={classes.root}
-                          onChange={(e) => handleFeeChange(e, row.id)}
+                          onChange={(e) => handleFeeChange(e, index)}
                           InputProps={{
                             endAdornment: <InputAdornment position="start">days after</InputAdornment>,
                           }}
@@ -1109,7 +1113,7 @@ const TenantLease = () => {
                             value={row.late_by !== null? row.late_by : ""}                      
                             size="small"
                             fullWidth
-                            onChange={(e) => handleLateByChange(e, row.id, "weekly")}                      
+                            onChange={(e) => handleLateByChange(e, index)}                      
                             placeholder="Select Late By Day"
                             className={classes.select}                      
                           >                      
@@ -1147,7 +1151,7 @@ const TenantLease = () => {
                       variant="filled"
                       fullWidth
                       className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
+                      onChange={(e) => handleFeeChange(e, index)}
                     />
                   </Stack>
                 </Grid>                
@@ -1169,7 +1173,7 @@ const TenantLease = () => {
                       variant="filled"
                       fullWidth
                       className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
+                      onChange={(e) => handleFeeChange(e, index)}
                     />
                   </Stack>
                 </Grid>
@@ -1180,7 +1184,7 @@ const TenantLease = () => {
                         justifyContent: "flex-start",
                         }}
                     >
-                        <Button onClick={() => deleteFeeRow(row.id)}
+                        <Button onClick={() => deleteFeeRow(index)}
                             sx={{
                                 textTransform: "none",
                                 backgroundColor: "#CB8E8E",
@@ -1190,33 +1194,7 @@ const TenantLease = () => {
                         </Button>
                     </Box>
                 </Grid>
-              </Grid>
-              {/* {row.id === fees.length ? (
-                <Stack
-                  direction="row"
-                  sx={{
-                    display: "flex",
-                  }}
-                >
-                <Box
-                    sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    }}
-                >
-                    <Button onClick={deleteFeeRow(row.id)}
-                        sx={{
-                            textTransform: "none",
-                            backgroundColor: "#9EAED6",
-                            color: "#160449"
-                        }}>
-                        Delete Fee
-                    </Button>
-                </Box>
-                </Stack>
-              ) : (
-                <hr />
-              )} */}
+              </Grid>              
             </Grid>
           ))}
             <Grid item xs={12}>

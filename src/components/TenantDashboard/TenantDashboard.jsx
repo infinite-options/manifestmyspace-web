@@ -84,7 +84,8 @@ function TenantDashboard(props) {
         return (
             <>
                 {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null /* blue */}
-                {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null /* orange */}                
+                {lease_status === "WITHDRAWN" ? (<CircleIcon fontSize="small" sx={{ color: "#FAA364", paddingRight: "10px" }}/>) : null /* pale orange */}                
+                {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#F56700", paddingRight: "10px" }}/>) : null /* orange */}                
                 {lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }}/>) : null /* yellow */}
                 {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null /* green */}
                 {lease_status === "REJECTED" ? (<CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }}/>) : null /* red */}                
@@ -97,8 +98,8 @@ function TenantDashboard(props) {
 
         const statusColorMapping = {
             "ACTIVE": "#3D5CAC",
-            "REFUSED": "#FF8832",
-            "WITHDRAWN": "#FF8832",
+            "REFUSED": "#F56700",
+            "WITHDRAWN": "#FAA364",
             "NEW": "#FAD102",
             "PROCESSING": "#00D100",
             "REJECTED": "#FA0202",
@@ -106,6 +107,20 @@ function TenantDashboard(props) {
         }
         // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
         return status ? statusColorMapping[status] : "#ddd"
+    }
+
+    function sortPropertyData(propertyDataArray){
+        const sortOrder = {            
+            "NEW": 0,
+            "PROCESSING": 1,
+            "REJECTED": 2,
+            "ACTIVE": 3,            
+            "WITHDRAWN": 4,
+            "REFUSED": 5,
+            "ENDED": 6,
+        };
+        let sortedProperties = propertyDataArray.sort((a,b) => sortOrder[a.lease_status] - sortOrder[b.lease_status]);        
+        return sortedProperties;
     }
 
     useEffect(() => {
@@ -130,37 +145,44 @@ function TenantDashboard(props) {
                 const allNonActiveLease = propertyData.every(item => item.lease_status !== "ACTIVE");
 
                 // sort propertyData by lease_status so that active lease is first
-                propertyData.sort((a, b) => {
-                    if (a.lease_status === "ACTIVE") {
-                        return -1;
-                    }
-                    if (b.lease_status === "ACTIVE") {
-                        return 1;
-                    }
-                    return 0;
-                });
+                // propertyData.sort((a, b) => {
+                //     if (a.lease_status === "ACTIVE") {
+                //         return -1;
+                //     }
+                //     if (b.lease_status === "ACTIVE") {
+                //         return 1;
+                //     }
+                //     return 0;
+                // });
 
                 if(!propertyData || propertyData.length === 0 || allNonActiveLease){
                     navigate("/listings")
                 }
 
-                setPropertyData(propertyData || []);
+
+                setPropertyData(propertyData? sortPropertyData(propertyData) : []);
                 setAllMaintenanceRequests(maintenanceRequestsData)
                 setMaintenanceRequests(maintenanceRequestsData || []);
                 setAnnouncementsData(announcementsData || ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5']);
 
-                let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
+                const activePropertyIndex = propertyData.findIndex(property => property.lease_status === "ACTIVE");
+                // let propertyAddress = propertyData[0]!==undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data"
+                let propertyAddress = activePropertyIndex !== -1 ? propertyData[activePropertyIndex].property_address + " " + propertyData[activePropertyIndex].property_unit : "No Data"
                 setPropertyAddr(propertyAddress);
                 setFirstName(user.first_name)
                 setShowSpinner(false);
-                setTotal(propertyData[0] !== undefined ? propertyData[0].balance : "0.00") 
+                // setTotal(propertyData[0] !== undefined ? propertyData[0].balance : "0.00")
+                setTotal(activePropertyIndex !== -1 ? propertyData[activePropertyIndex].balance : "0.00") 
 
                 if (location.state?.propertyId){
                     let navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId)
                     setSelectedProperty(navPropertyData)
                     setPropertyAddr(navPropertyData.property_address + " " + navPropertyData.property_unit);
                 } else {
-                    setSelectedProperty(propertyData[0] !== undefined ? propertyData[0] : null)
+                    // setSelectedProperty(propertyData[0] !== undefined ? propertyData[0] : null)
+                    const activePropertyIndex = propertyData.findIndex(property => property.lease_status === "ACTIVE");
+                    const selectedProperty = activePropertyIndex !== -1 ? propertyData[activePropertyIndex] : null;
+                    setSelectedProperty(selectedProperty);
                 }
             } catch (error) {
                 console.error("Error fetching tenant data:", error);
@@ -328,7 +350,8 @@ function TenantDashboard(props) {
                             }}
                         >
                             <Typography>
-                                {propertyAddr}
+                                {/* {propertyAddr} */}
+                                {selectedProperty?.property_address? selectedProperty.property_address : "<PROPERTY_ADDRESS>" }
                             </Typography>
                             <KeyboardArrowDownIcon 
                                 sx={{alignItem: "center"}}
