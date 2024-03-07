@@ -561,9 +561,10 @@ export default function Payments(props) {
                 30 Day Payment History
               </Typography>
             </Stack>
+
             <Stack sx={{ paddingTop: "10px" }}>
               <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={2}>
+                <Grid item xs={1}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -575,7 +576,7 @@ export default function Payments(props) {
                     Date
                   </Typography>
                 </Grid>
-                <Grid item xs={4} alignItems="center">
+                <Grid item xs={3} alignItems="center">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -587,7 +588,34 @@ export default function Payments(props) {
                     Description
                   </Typography>
                 </Grid>
+
                 <Grid item xs={3} alignItems="center">
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.medium.fontWeight,
+                      fontSize: theme.typography.mediumFont,
+                      fontFamily: "Source Sans Pro",
+                    }}
+                  >
+                    Address
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={1} alignItems="center">
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.medium.fontWeight,
+                      fontSize: theme.typography.mediumFont,
+                      fontFamily: "Source Sans Pro",
+                    }}
+                  >
+                    Unit
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={2} alignItems="center">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -599,7 +627,7 @@ export default function Payments(props) {
                     Method
                   </Typography>
                 </Grid>
-                <Grid item xs={3} alignItems="center">
+                <Grid item xs={2} alignItems="center">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -617,7 +645,7 @@ export default function Payments(props) {
               {paidItems.length > 0 &&
                 paidItems.map((item, index) => (
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index} sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
-                    <Grid item xs={2} alignItems="center">
+                    <Grid item xs={1} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -629,7 +657,7 @@ export default function Payments(props) {
                         {formatDate(item.payment_date)}
                       </Typography>
                     </Grid>
-                    <Grid item xs={4} alignItems="center">
+                    <Grid item xs={3} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -641,7 +669,34 @@ export default function Payments(props) {
                         {item.pur_description}
                       </Typography>
                     </Grid>
+
                     <Grid item xs={3} alignItems="center">
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.medium.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                          fontFamily: "Source Sans Pro",
+                        }}
+                      >
+                        {item.property_address}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={1} alignItems="center">
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.medium.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                          fontFamily: "Source Sans Pro",
+                        }}
+                      >
+                        {item.property_unit}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={2} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -653,7 +708,7 @@ export default function Payments(props) {
                         {item.payment_type}
                       </Typography>
                     </Grid>
-                    <Grid item xs={3} alignItems="right">
+                    <Grid item xs={2} alignItems="right">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -669,8 +724,8 @@ export default function Payments(props) {
                 ))}
               <Divider light />
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-                <Grid item xs={2} alignItems="center"></Grid>
-                <Grid item xs={4} alignItems="center">
+                <Grid item xs={1} alignItems="center"></Grid>
+                <Grid item xs={9} alignItems="center">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -682,8 +737,8 @@ export default function Payments(props) {
                     Total Paid
                   </Typography>
                 </Grid>
-                <Grid item xs={3} alignItems="center"></Grid>
-                <Grid item xs={3} alignItems="right">
+
+                <Grid item xs={2} alignItems="right">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
