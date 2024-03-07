@@ -194,7 +194,7 @@ function TenantProfile() {
                             </TextBox>
 
                             <TextBox fontSize={'16px'} fontWeight={'bold'} decoration={'underline'}>
-                                {profileData?.tenant_email}
+                                {profileData?.tenant_email? profileData?.tenant_email : "-"}
                             </TextBox>
                             
                             <TextBox fontSize={'12px'}>
@@ -202,7 +202,7 @@ function TenantProfile() {
                             </TextBox>
 
                             <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                {profileData?.tenant_phone_number}
+                                {profileData?.tenant_phone_number? profileData?.tenant_phone_number : "-"}
                             </TextBox>
                             
                         </FlexBox>
@@ -229,7 +229,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_current_salary ?? 100000}
+                                        {profileData?.tenant_current_salary ? profileData.tenant_current_salary : "-"}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -243,7 +243,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_current_job_company ?? "Infinite Options"}
+                                        {profileData?.tenant_current_job_company ? profileData.tenant_current_job_company : "-"}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -257,7 +257,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_address ?? '123ABC Dr' }
+                                        {profileData?.tenant_address ? profileData.tenant_address : '-' }
                                     </Box>
                                     <Box sx={{
                                     display: 'inline-block',
@@ -275,7 +275,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {`${profileData?.tenant_city}/${profileData?.tenant_state}`}
+                                        {`${profileData?.tenant_city? profileData?.tenant_city : "- "}/${profileData?.tenant_state? profileData?.tenant_state : " -"}`}
                                     </Box>
 
                                     <Box sx={{
@@ -382,7 +382,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_salary_frequency ?? 123456}
+                                        {profileData?.tenant_salary_frequency ? profileData.tenant_salary_frequency : '-'}                                                                                
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -396,7 +396,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_current_job_title ?? 'UI/UX Designer'  }
+                                        {profileData?.tenant_current_job_title ? profileData.tenant_current_job_title : "-"}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -410,7 +410,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_unit}
+                                        {profileData?.tenant_unit? profileData.tenant_unit : "-"}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '13px',
@@ -424,7 +424,7 @@ function TenantProfile() {
                                         color: '#160449',
                                         marginBottom: '7px', 
                                     }}>
-                                        {profileData?.tenant_zip}
+                                        {profileData?.tenant_zip? profileData.tenant_zip : "-"}
                                     </Box>
                                 </Box>
                             </FlexBox>

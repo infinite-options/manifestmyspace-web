@@ -83,11 +83,12 @@ function TenantDashboard(props) {
     const showLeaseStatusIndicator = (lease_status) => {
         return (
             <>
-                {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null}
-                {lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null}
-                {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null}
-                {lease_status === "DECLINED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
-                {lease_status === "REFUSED" ? (<CircleIcon fontSize="small" sx={{ color: "#CB8E8E", paddingRight: "10px" }}/>) : null}
+                {lease_status === "ACTIVE" ? (<CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }}/>) : null /* blue */}
+                {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? (<CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }}/>) : null /* orange */}                
+                {lease_status === "NEW" ? (<CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }}/>) : null /* yellow */}
+                {lease_status === "PROCESSING" ? (<CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }}/>) : null /* green */}
+                {lease_status === "REJECTED" ? (<CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }}/>) : null /* red */}                
+                {lease_status === "ENDED" ? (<CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }}/>) : null /* black */}                
             </>
         )
     }
@@ -95,11 +96,13 @@ function TenantDashboard(props) {
     const returnLeaseStatusColor = (status) => {
 
         const statusColorMapping = {
-            "ACTIVE": "#00D100",
-            "NEW": "#3D5CAC",
-            "PROCESSING": "#FF8832",
-            "DECLINED": "#CB8E8E",
-            "REFUSED": "#CB8E8E"
+            "ACTIVE": "#3D5CAC",
+            "REFUSED": "#FF8832",
+            "WITHDRAWN": "#FF8832",
+            "NEW": "#FAD102",
+            "PROCESSING": "#00D100",
+            "REJECTED": "#FA0202",
+            "ENDED": "#000000"
         }
         // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
         return status ? statusColorMapping[status] : "#ddd"
