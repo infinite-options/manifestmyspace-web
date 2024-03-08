@@ -181,7 +181,7 @@ export default function SelectPayment(props) {
     // Check if paymentMethod is true
     if (paymentMethod) {
       // If paymentMethod is true, proceed with payment confirmation and make payments
-      console.log("Check if payment went through and then add Covnenience Fee Purchase to Purchase Table here");
+      console.log("Check if payment went through and then add Covnenience Fee Purchase to Purchase Table here", convenience_fee);
     } else {
       // If paymentMethod is not true, handle the case accordingly
       console.log("Payment method is not selected. Please select a payment method.");
