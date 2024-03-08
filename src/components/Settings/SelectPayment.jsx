@@ -167,8 +167,8 @@ export default function SelectPayment(props) {
         });
     }
   }
-  const submit = async ({ paymentIntent, paymentMethod }) => {
-    console.log("in submit in SelectPayment.jsx");
+  const submit = async ({ paymentIntent, paymentMethod, convenience_fee }) => {
+    console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
     // TODO: navigate to correct dashboard based on role
     // navigate("/tenantDashboard");
@@ -177,7 +177,16 @@ export default function SelectPayment(props) {
 
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
-    console.log("Check if payment went throught and then add Covnenience Fee Purchase to Purchase Table here");
+
+    // Check if paymentMethod is true
+    if (paymentMethod) {
+      // If paymentMethod is true, proceed with payment confirmation and make payments
+      console.log("Check if payment went through and then add Covnenience Fee Purchase to Purchase Table here");
+    } else {
+      // If paymentMethod is not true, handle the case accordingly
+      console.log("Payment method is not selected. Please select a payment method.");
+      // You may want to display an error message or take some other action here
+    }
 
     const makePayments = async () => {
       setShowSpinner(true);
