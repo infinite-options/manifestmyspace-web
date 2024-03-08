@@ -118,6 +118,11 @@ const TenantLease = () => {
   console.log("# of Occupants", noOfOccupants)
     
   const [fees, setFees] = useState([]);
+  const [deletedFees, setDeletedFees] = useState([]);
+
+  useEffect(() => {
+    console.log("ROHIT - deletedFees - ", deletedFees);
+  }, [deletedFees]);
 
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
@@ -178,7 +183,9 @@ const TenantLease = () => {
 
   const deleteFeeRow = (index) => {
     console.log("deleteFeeRow - index  - ", index);
-    const list = [...fees];    
+    const list = [...fees];
+    let deletedFee = list[index].leaseFees_uid
+    setDeletedFees(prevState => [...prevState, deletedFee])    
     list.splice(index, 1);    
     setFees(list);
   }
@@ -466,6 +473,9 @@ const TenantLease = () => {
     leaseApplicationFormData.append("lease_start", startDate.format('MM-DD-YYYY'));
     leaseApplicationFormData.append("lease_end", endDate.format('MM-DD-YYYY'));
     leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+    if(deletedFees.length > 0){
+      leaseApplicationFormData.append("deleted_lease_fees", JSON.stringify(deletedFees));
+    }    
     leaseApplicationFormData.append("lease_move_in_date", moveInDate.format('MM-DD-YYYY'));
     // leaseApplicationFormData.append("documents", leaseFiles);
 
@@ -498,21 +508,23 @@ const TenantLease = () => {
     //   console.log(key, value);
     // }
 
+    //rohit
+    await fetch(
+      `http://localhost:4000/leaseApplication`,      
+      {
+        method: "PUT",
+        body: leaseApplicationFormData
+      }
+    );
+    
     // await fetch(
-    //   `http://localhost:4000/leaseApplication`,      
+    //   `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
     //   {
     //     method: "PUT",
     //     body: leaseApplicationFormData
     //   }
     // );
     
-    await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,      
-      {
-        method: "PUT",
-        body: leaseApplicationFormData
-      }
-    );
     await fetch(
       `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
       {

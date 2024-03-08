@@ -24,6 +24,11 @@ function PMNotifications(props) {
 
     const [showSpinner, setShowSpinner] = useState(false);
 
+    function sortAnnouncementData(announcementDataArray){        
+        let sortedAnnouncements = announcementDataArray.sort((a,b) => parseInt(b.announcement_uid.split('-')[1]) - parseInt(a.announcement_uid.split('-')[1]));        
+        return sortedAnnouncements;
+    }
+
     useEffect(() => {
         console.log("New Owner Inquiry UseEffect");
         
@@ -33,11 +38,13 @@ function PMNotifications(props) {
             // const response = await fetch(`http://localhost:4000/announcements/600-000003`);
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000051`);
             const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
-            const announcementData = await response.json();
+            const announcementResponse = await response.json();
+            const announcementData = announcementResponse["received"]["result"]
 
-            console.log(announcementData);
+            // console.log(announcementData);
             
-            setAnnouncements(announcementData["received"]["result"]);
+            setAnnouncements(announcementData? sortAnnouncementData(announcementData) : []);
+            
             
             
             // const testData = [
@@ -195,7 +202,9 @@ function AnnouncementCard(props){
                             }}
                         >
                         {/* { propertyDisplayValue =   property.property_unit+" "+property.property_address+" "+property.property_city+" "+property.property_state+" "+property.property_zip}  */}
-                        {announcement.announcement_title}
+                        {announcement.announcement_msg}
+                        {","}
+                        {announcement.announcement_uid}
                         </Box>
                     </Box>
     );
