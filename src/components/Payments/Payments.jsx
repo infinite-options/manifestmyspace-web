@@ -196,7 +196,7 @@ export default function Payments(props) {
         },
       };
 
-      console.log(updatedPaymentData);
+      console.log("Updated Payment Data: ", updatedPaymentData);
 
       //const stripe = await stripePromise;
       const response = await fetch(API_CALL, {
