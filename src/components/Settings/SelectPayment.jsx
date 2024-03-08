@@ -190,7 +190,7 @@ export default function SelectPayment(props) {
 
     const makePayments = async () => {
       setShowSpinner(true);
-      const makePayment = (purchase_uid) =>
+      const makePayment = (purchase_uid, pur_amount_due) =>
         fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
           method: "POST",
           headers: {
@@ -198,7 +198,7 @@ export default function SelectPayment(props) {
           },
           body: JSON.stringify({
             pay_purchase_id: purchase_uid,
-            pay_amount: totalBalance,
+            pay_amount: pur_amount_due,
             // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
             payment_notes: paymentData.business_code,
             pay_charge_id: "stripe transaction key",
@@ -211,7 +211,8 @@ export default function SelectPayment(props) {
         });
       const promises = [];
       for (const item of purchaseUIDs) {
-        promises.push(makePayment(item.purchase_uid));
+        console.log("Before makePayment 2", item.purchase_uid, item.pur_amount_due);
+        promises.push(makePayment(item.purchase_uid, item.pur_amount_due));
         // console.log("--debug-- maintenanceItem.purchase_uid", maintenanceItem.purchase_uid, "item.purchase_uid", item.purchase_uid)
       }
       try {
