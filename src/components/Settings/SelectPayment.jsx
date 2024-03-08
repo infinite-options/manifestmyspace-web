@@ -80,6 +80,7 @@ export default function SelectPayment(props) {
   const [convenience_fee, setFee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
   const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
+  console.log("---debug--- convenience_fee", convenience_fee);
 
   useEffect(() => {
     console.log("Current Total Balance is: ", balance);
@@ -88,7 +89,11 @@ export default function SelectPayment(props) {
     console.log("Total Balance made up of: ", purchaseUIDs);
     console.log("1st Purchase Item is: ", purchaseUIDs[0]);
     console.log("1st Purchase UID is: ", purchaseUIDs[0].purchase_uid);
-  }, [balance, convenience_fee]);
+  }, []);
+
+  useEffect(() => {
+    console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
+  }, [convenience_fee]);
 
   const [stripePayment, setStripePayment] = useState(false);
   const [applePay, setApplePay] = useState(false);
@@ -167,7 +172,8 @@ export default function SelectPayment(props) {
         });
     }
   }
-  const submit = async ({ paymentIntent, paymentMethod, convenience_fee }) => {
+
+  const submit = async ({ paymentIntent, paymentMethod }) => {
     console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
     // TODO: navigate to correct dashboard based on role
@@ -278,15 +284,19 @@ export default function SelectPayment(props) {
   }
 
   function update_fee(e) {
+    console.log("--debug update_fee -->", selectedMethod);
     if (e.target.value === "Bank Transfer") setFee(Math.min(balance * 0.008, 5));
     else if (e.target.value === "Credit Card") setFee(balance * 0.03);
     else setFee(0);
+    console.log("Convenience Fee set to: ", convenience_fee);
     setTotalBalance(balance + convenience_fee);
+    console.log("Total Balance is: ", totalBalance, balance, convenience_fee);
   }
 
   const handleChange = (event) => {
+    console.log("--debug selectedMethod 1-->", event.target.value);
     setSelectedMethod(event.target.value);
-    console.log("--debug selectedMethod -->", selectedMethod);
+    console.log("--debug selectedMethod 2 -->", selectedMethod); // For some reason this is showing the PREVIOUS selectedMethod.  Likely due to Set method not updating instantly
     update_fee(event);
   };
 
@@ -321,7 +331,7 @@ export default function SelectPayment(props) {
 
     let response = await fetch(url);
     const responseData = await response.json();
-    // console.log("--DEBUG-- response data from Stripe", responseData);
+    console.log("--DEBUG-- response data from Stripe", responseData);
     // setStripeResponse(responseData);
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
