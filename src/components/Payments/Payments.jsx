@@ -319,7 +319,7 @@ export default function Payments(props) {
                     }}
                     onClick={() => {
                       paymentData.business_code = paymentNotes;
-                      console.log(paymentData);
+                      console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                       navigate("/selectPayment", {
                         state: { paymentData, total, selectedItems: selectedItems },
                       });

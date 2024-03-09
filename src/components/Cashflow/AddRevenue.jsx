@@ -10,7 +10,7 @@ import { post, put } from "../utils/api";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop"; 
+import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 10,
       height: 30,
       marginBlock: 10,
-      paddingBottom: '15px', // Add this line for vertically center alignment
+      paddingBottom: "15px", // Add this line for vertically center alignment
       "&:hover, &:focus, &:active": {
         backgroundColor: "#F2F2F2", // Change background color on hover, focus and active states
       },
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddRevenue = (props) => {
+  console.log("In Add Revenue");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -50,7 +51,7 @@ const AddRevenue = (props) => {
   const [partialAmount, setPartialAmount] = useState(null);
 
   const handleCheckboxChange = (option) => {
-    console.log(option)
+    console.log(option);
     if (option === "already_paid") {
       setIsCheckedOne(!isCheckedOne);
       setIsCheckedTwo(false);
@@ -64,14 +65,14 @@ const AddRevenue = (props) => {
 
   useEffect(() => {
     if (payable === "Property Manager") {
-      console.log("Set purPayerId to", selectedProperty.business_uid)
-      setPurPayerId(selectedProperty.business_uid)
+      console.log("Set purPayerId to", selectedProperty.business_uid);
+      setPurPayerId(selectedProperty.business_uid);
     } else if (payable === "Tenant") {
-      console.log("Set purPayerId to", selectedProperty.tenant_uid)
-      setPurPayerId(selectedProperty.tenant_uid)
+      console.log("Set purPayerId to", selectedProperty.tenant_uid);
+      setPurPayerId(selectedProperty.tenant_uid);
     } else if (payable === "Owner") {
-      console.log("Set purPayerId to", selectedProperty.owner_uid)
-      setPurPayerId(selectedProperty.owner_uid)
+      console.log("Set purPayerId to", selectedProperty.owner_uid);
+      setPurPayerId(selectedProperty.owner_uid);
     }
   }, [payable, selectedProperty]);
 
@@ -92,7 +93,7 @@ const AddRevenue = (props) => {
   };
   const handlePartialAmountChange = (event) => {
     setPartialAmount(event.target.value);
-  }
+  };
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
@@ -113,63 +114,61 @@ const AddRevenue = (props) => {
     } else {
       return "UNPAID";
     }
-  }
+  };
   const handleAddRevenue = async () => {
     console.log("amount ", selectedProperty);
     let data = {
-      "pur_property_id": selectedProperty.property_uid,
-      "purchase_type": category,
-      "pur_cf_type": "revenue",
-      "purchase_date": date,
-      "pur_due_date": date,
-      "pur_amount_due": Number(amount),
-      "purchase_status": determinePurchaseStatus(),
-      "pur_notes": "This is just a note",
-      "pur_description": description,
-      "pur_receiver": getProfileId(),
-      "pur_initiator": getProfileId(),
-      "pur_payer": purPayerId,
-      "pur_notes": notes,
+      pur_property_id: selectedProperty.property_uid,
+      purchase_type: category,
+      pur_cf_type: "revenue",
+      purchase_date: date,
+      pur_due_date: date,
+      pur_amount_due: Number(amount),
+      purchase_status: determinePurchaseStatus(),
+      pur_notes: "This is just a note",
+      pur_description: description,
+      pur_receiver: getProfileId(),
+      pur_initiator: getProfileId(),
+      pur_payer: purPayerId,
+      pur_notes: notes,
     };
 
-    if (determinePurchaseStatus() === "PARTIALLY PAID"){
-      data["partial_amount"] = Number(partialAmount)
+    if (determinePurchaseStatus() === "PARTIALLY PAID") {
+      data["partial_amount"] = Number(partialAmount);
     }
-    
+
     let config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
-      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addRevenue',
-      headers: { 
-        'Content-Type': 'application/json'
+      url: "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addRevenue",
+      headers: {
+        "Content-Type": "application/json",
       },
-      data: JSON.stringify(data)
+      data: JSON.stringify(data),
     };
     setShowSpinner(true);
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      setShowSpinner(false);
-    })
-    .catch((error) => {
-      console.log(error);
-      setShowSpinner(false);
-    });
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        setShowSpinner(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setShowSpinner(false);
+      });
 
     let currentDate = new Date();
     let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     let currentYear = currentDate.getFullYear().toString();
-    
-    navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+
+    navigate("/cashflow", { state: { month: currentMonth, year: currentYear } });
   };
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={showSpinner}
-        >
-            <CircularProgress color="inherit" />
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color="inherit" />
         </Backdrop>
         <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}></PropertyListData>
         <Box
@@ -254,50 +253,52 @@ const AddRevenue = (props) => {
                 variant="filled"
                 className={classes.root}
                 fullWidth
-                inputProps={{ 
-                  autoComplete: 'off'
+                inputProps={{
+                  autoComplete: "off",
                 }}
                 placeholder="$"
                 type="number"
                 value={amount}
-                onChange={handleAmountChange}>
-              </TextField>
+                onChange={handleAmountChange}
+              ></TextField>
             </Stack>
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Payment Date</Typography>
-              <TextField
-                className={classes.root}
-                type="date"
-                variant="filled"
-                fullWidth
-                placeholder="mm/dd/yyyy"
-                value={date}
-                onChange={handleDateChange}>
-              </TextField>
+              <TextField className={classes.root} type="date" variant="filled" fullWidth placeholder="mm/dd/yyyy" value={date} onChange={handleDateChange}></TextField>
               {/* <FormControlLabel control={<Checkbox checked={isChecked} onChange={handlePaidCheckboxChange} sx={{ color: theme.typography.common.blue }} />} label="Already Received" sx={{ color: theme.typography.common.blue }} /> */}
             </Stack>
 
             <Stack direction="row" spacing={-2}>
-              <FormControlLabel control={<Checkbox checked={isCheckedOne} onChange={() => handleCheckboxChange("already_paid")} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
-              <FormControlLabel control={<Checkbox checked={isCheckedTwo} onChange={() => handleCheckboxChange("partially_paid")} sx={{ color: theme.typography.common.blue }} />} label="Partially Paid" sx={{ color: theme.typography.common.blue }} />
+              <FormControlLabel
+                control={<Checkbox checked={isCheckedOne} onChange={() => handleCheckboxChange("already_paid")} sx={{ color: theme.typography.common.blue }} />}
+                label="Already Paid"
+                sx={{ color: theme.typography.common.blue }}
+              />
+              <FormControlLabel
+                control={<Checkbox checked={isCheckedTwo} onChange={() => handleCheckboxChange("partially_paid")} sx={{ color: theme.typography.common.blue }} />}
+                label="Partially Paid"
+                sx={{ color: theme.typography.common.blue }}
+              />
             </Stack>
 
-            {isCheckedTwo ? <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Partial Payment Amount</Typography>
-              <TextField
-                variant="filled"
-                fullWidth
-                inputProps={{ 
-                  autoComplete: 'off'
-                }}
-                placeholder="$"
-                type="number"
-                value={partialAmount}
-                className={classes.root}
-                onChange={handlePartialAmountChange}>
-              </TextField>
-            </Stack> : null }
+            {isCheckedTwo ? (
+              <Stack spacing={-2}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Partial Payment Amount</Typography>
+                <TextField
+                  variant="filled"
+                  fullWidth
+                  inputProps={{
+                    autoComplete: "off",
+                  }}
+                  placeholder="$"
+                  type="number"
+                  value={partialAmount}
+                  className={classes.root}
+                  onChange={handlePartialAmountChange}
+                ></TextField>
+              </Stack>
+            ) : null}
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
@@ -315,14 +316,14 @@ const AddRevenue = (props) => {
               <TextField
                 className={classes.root}
                 variant="filled"
-                inputProps={{ 
-                  autoComplete: 'off'
+                inputProps={{
+                  autoComplete: "off",
                 }}
                 fullWidth
                 placeholder="Add Description"
                 value={description}
-                onChange={handleDescriptionChange}>
-              </TextField>
+                onChange={handleDescriptionChange}
+              ></TextField>
             </Stack>
 
             <Stack spacing={-2}>
@@ -330,14 +331,14 @@ const AddRevenue = (props) => {
               <TextField
                 className={classes.root}
                 variant="filled"
-                inputProps={{ 
-                  autoComplete: 'off'
+                inputProps={{
+                  autoComplete: "off",
                 }}
                 fullWidth
                 placeholder="Add Notes"
                 value={notes}
-                onChange={handleNotesChange}>
-              </TextField>
+                onChange={handleNotesChange}
+              ></TextField>
             </Stack>
 
             <Box

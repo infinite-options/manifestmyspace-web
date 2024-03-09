@@ -1,24 +1,33 @@
-// React & Utility Imports
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider } from "@mui/material";
-
-// Stripe Imports
+import {
+  Paper,
+  Radio,
+  RadioGroup,
+  Button,
+  Box,
+  Stack,
+  ThemeProvider,
+  Checkbox,
+  Typography,
+  TextField,
+  FormControlLabel,
+  AccordionDetails,
+  Grid,
+  FormControl,
+  Divider,
+} from "@mui/material";
 import StripeFeesDialog from "./StripeFeesDialog";
 import StripePayment from "./StripePayment";
+import handleAddRevenue from "../Cashflow/AddRevenue";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-
-// Program Imports
 import theme from "../../theme/theme";
-import { useUser } from "../../contexts/UserContext";
-
-// Payment Icons
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
+import { useLocation, useNavigate } from "react-router-dom";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import AddIcon from "@mui/icons-material/Add";
+import { alpha, makeStyles } from "@material-ui/core/styles";
 import PayPal from "../../images/PayPal.png";
 import Zelle from "../../images/Zelle.png";
 import Venmo from "../../images/Venmo.png";
@@ -27,6 +36,11 @@ import CreditCardIcon from "../../images/ion_card.png";
 import BankIcon from "../../images/mdi_bank.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
+import { useUser } from "../../contexts/UserContext";
+import axios from "axios";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
 }));
-
 export default function SelectPayment(props) {
   const location = useLocation();
   const classes = useStyles();
@@ -59,42 +72,35 @@ export default function SelectPayment(props) {
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
   // const [maintenanceItem, setMaintenanceItem] = useState(location.state.paymentData.maintenanceItem);
   const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
-  const [convenience_fee, setFee] = useState(0);
-  const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
-  const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
-
-  //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
-  console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
-  console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
-  console.log("--debug-- location.state", location.state);
+  //   console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT", paymentData);
+  //   console.log("DEBUG PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
+  //   console.log("--debug-- location.state", location.state);
   //   console.log("--debug-- maintenanceItem", maintenanceItem)
   //   console.log("---debug--- purchaseUIDs", purchaseUIDs);
   //   console.log("---debug--- selectedItems", selectedItems);
-  console.log("---debug--- convenience_fee", convenience_fee);
+  const [convenience_fee, setFee] = useState(0);
+  const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
+  const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
+  //   console.log("---debug--- convenience_fee", convenience_fee);
 
-  // Just Console Logs
-  //   useEffect(() => {
-  //     // setTotalBalance(balance + convenience_fee);
-  //     console.log("Current Total Balance is: ", balance);
-  //     console.log("Current Convenience Fee is: ", convenience_fee);
-  //     console.log("Total Balance made up of: ", purchaseUIDs);
-  //     console.log("1st Purchase Item is: ", purchaseUIDs[0]);
-  //     console.log("1st Purchase UID is: ", purchaseUIDs[0].purchase_uid);
-  //   }, []);
+  useEffect(() => {
+    console.log("Current Total Balance is: ", balance);
+    console.log("Current Convenience Fee is: ", convenience_fee);
+    setTotalBalance(balance + convenience_fee);
+    console.log("Total Balance made up of: ", purchaseUIDs);
+    console.log("1st Purchase Item is: ", purchaseUIDs[0]);
+    console.log("1st Purchase UID is: ", purchaseUIDs[0].purchase_uid);
+  }, []);
 
-  //  This will update everytime the convenience fee changes
   useEffect(() => {
     console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
   }, [convenience_fee]);
 
-  useEffect(() => {
-    console.log("In new UseEffect Current Balance is: ", totalBalance);
-  }, [totalBalance]);
-
   const [stripePayment, setStripePayment] = useState(false);
-  const [stripeResponse, setStripeResponse] = useState(null);
   const [applePay, setApplePay] = useState(false);
   const [paymentConfirm, setPaymentConfirm] = useState(false);
+
+  const [stripeResponse, setStripeResponse] = useState(null);
 
   useEffect(() => {
     console.log("stripe payment", stripePayment);
@@ -179,32 +185,113 @@ export default function SelectPayment(props) {
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
-    // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
+    // Check if paymentMethod is true
+    if (paymentMethod) {
+      // If paymentMethod is true, proceed with payment confirmation and make payments
+      console.log("Check if payment went through and then add Covnenience Fee Purchase to Purchase Table here", convenience_fee);
+      let data = {
+        pur_property_id: "200-000001",
+        purchase_type: "Extra Charge",
+        pur_cf_type: "revenue",
+        purchase_date: "03-03-2024",
+        pur_due_date: "03-03-2024",
+        pur_amount_due: 100,
+        purchase_status: "PAID",
+        pur_notes: "This is a Credit Card Fee",
+        pur_description: "This is a Credit Card Fee2",
+        pur_receiver: "110-000003",
+        pur_initiator: "600-000003",
+        pur_payer: "350-000002",
+      };
+      console.log("Data for Add Revenue is: ", data);
 
-    await fetch("http://localhost:4000/makePayment2", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        pay_purchase_id: paymentData.purchase_uids,
-        pay_fee: convenience_fee,
-        pay_total: totalBalance,
-        // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
-        payment_notes: paymentData.business_code,
-        pay_charge_id: "stripe transaction key",
-        payment_type: selectedMethod,
-        payment_verify: "Unverified",
-        paid_by: getProfileId(),
-        payment_intent: paymentIntent,
-        payment_method: paymentMethod,
-      }),
-    });
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addRevenue",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify(data),
+      };
+      setShowSpinner(true);
+      axios
+        .request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          setShowSpinner(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setShowSpinner(false);
+        });
+
+      console.log("Add Revenue complete");
+    } else {
+      // If paymentMethod is not true, handle the case accordingly
+      console.log("Payment method is not selected. Please select a payment method.");
+      // You may want to display an error message or take some other action here
+    }
+
+    const makePayments = async () => {
+      setShowSpinner(true);
+      const makePayment = (purchase_uid, pur_amount_due) =>
+        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pay_purchase_id: purchase_uid,
+            pay_amount: pur_amount_due,
+            // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
+            payment_notes: paymentData.business_code,
+            pay_charge_id: "stripe transaction key",
+            payment_type: selectedMethod,
+            payment_verify: "Unverified",
+            paid_by: getProfileId(),
+            payment_intent: paymentIntent,
+            payment_method: paymentMethod,
+          }),
+        });
+      const promises = [];
+      for (const item of purchaseUIDs) {
+        console.log("Before makePayment 2", item.purchase_uid, item.pur_amount_due);
+        promises.push(makePayment(item.purchase_uid, item.pur_amount_due));
+        // console.log("--debug-- maintenanceItem.purchase_uid", maintenanceItem.purchase_uid, "item.purchase_uid", item.purchase_uid)
+      }
+      try {
+        await Promise.all(promises);
+        console.log("All payments made successfully", promises);
+        for (const item of selectedItems) {
+          // PUT to update maintenance request status to "COMPLETED"
+          // console.log("--DEBUG-- maintenanceItem.purchase_uid === item.purchase_uid", item.purchase_uid)
+          if (item.quote_id !== null) {
+            const updateMaintenanceRequestStatus = (quote_id) => {
+              const formData = new FormData();
+              formData.append("maintenance_quote_uid", quote_id);
+              formData.append("quote_status", "COMPLETED");
+              fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                method: "PUT",
+                body: formData,
+              });
+            };
+            updateMaintenanceRequestStatus(item.quote_id);
+          }
+        }
+        let routingString = paymentRoutingBasedOnSelectedRole();
+        navigate(routingString);
+      } catch (error) {
+        console.error("Error making payments:", error);
+      }
+      setShowSpinner(false);
+    };
+
+    await makePayments();
   };
   //CreditCardHandler
 
   async function bank_transfer_handler() {
-    console.log("In Bank Transfer Handler Function");
     // Set the Content-Type header
     const headers = {
       "Content-Type": "application/json",
@@ -231,26 +318,24 @@ export default function SelectPayment(props) {
       console.error("An error occurred while making the POST request", error);
     }
     setShowSpinner(false);
-    console.log("Completed Bank Transfer Handler Function");
     // navigate
     navigate("/PaymentConfirmation", { state: { paymentData } });
   }
 
   function update_fee(e) {
     console.log("--debug update_fee -->", selectedMethod);
-    let fee = 0;
-    if (e.target.value === "Bank Transfer") {
-      fee = Math.min(balance * 0.008, 5);
-    } else if (e.target.value === "Credit Card") {
-      fee = balance * 0.03;
-    }
-    setFee(fee);
-    setTotalBalance(balance + fee);
+    if (e.target.value === "Bank Transfer") setFee(Math.min(balance * 0.008, 5));
+    else if (e.target.value === "Credit Card") setFee(balance * 0.03);
+    else setFee(0);
+    console.log("Convenience Fee set to: ", convenience_fee);
+    setTotalBalance(balance + convenience_fee);
+    console.log("Total Balance is: ", totalBalance, balance, convenience_fee);
   }
 
   const handleChange = (event) => {
     console.log("--debug selectedMethod 1-->", event.target.value);
     setSelectedMethod(event.target.value);
+    console.log("--debug selectedMethod 2 -->", selectedMethod); // For some reason this is showing the PREVIOUS selectedMethod.  Likely due to Set method not updating instantly
     update_fee(event);
   };
 
@@ -272,7 +357,6 @@ export default function SelectPayment(props) {
     // credit_card_handler(paymentData.business_code);
   };
 
-  // NEED TO UNDERSTAND WHY WE ARE USING t00 keys instead of PM Keys
   const toggleKeys = async () => {
     setShowSpinner(true);
     console.log("inside toggle keys");
