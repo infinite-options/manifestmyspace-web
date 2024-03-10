@@ -180,7 +180,9 @@ export default function SelectPayment(props) {
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
+    setShowSpinner(true);
 
+    // await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
     await fetch("http://localhost:4000/makePayment2", {
       method: "POST",
       headers: {
@@ -200,6 +202,11 @@ export default function SelectPayment(props) {
         payment_method: paymentMethod,
       }),
     });
+
+    let routingString = paymentRoutingBasedOnSelectedRole();
+    navigate(routingString);
+
+    setShowSpinner(false);
   };
   //CreditCardHandler
 
@@ -240,9 +247,9 @@ export default function SelectPayment(props) {
     console.log("--debug update_fee -->", selectedMethod);
     let fee = 0;
     if (e.target.value === "Bank Transfer") {
-      fee = Math.min(balance * 0.008, 5);
+      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
     } else if (e.target.value === "Credit Card") {
-      fee = balance * 0.03;
+      fee = parseFloat((balance * 0.03).toFixed(2));
     }
     setFee(fee);
     setTotalBalance(balance + fee);

@@ -254,6 +254,7 @@ export default function SelectPayment(props) {
             payment_method: paymentMethod,
           }),
         });
+
       const promises = [];
       for (const item of purchaseUIDs) {
         console.log("Before makePayment 2", item.purchase_uid, item.pur_amount_due);
