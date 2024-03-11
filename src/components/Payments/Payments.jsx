@@ -196,7 +196,7 @@ export default function Payments(props) {
         },
       };
 
-      console.log(updatedPaymentData);
+      console.log("Updated Payment Data: ", updatedPaymentData);
 
       //const stripe = await stripePromise;
       const response = await fetch(API_CALL, {
@@ -319,7 +319,7 @@ export default function Payments(props) {
                     }}
                     onClick={() => {
                       paymentData.business_code = paymentNotes;
-                      console.log(paymentData);
+                      console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                       navigate("/selectPayment", {
                         state: { paymentData, total, selectedItems: selectedItems },
                       });
