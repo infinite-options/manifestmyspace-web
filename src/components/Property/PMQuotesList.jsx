@@ -43,24 +43,38 @@ export default function PMQuotesList({}) {
                 setContractRequests(contractsData)
                 setShowSpinner(false);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
-
+    
         const getProperties = async () => {
             setShowSpinner(true);
             try {
-                console.log(property_endpoint_resp)
-                setProperties(property_endpoint_resp.Property.result)
-                setContractRequests(property_endpoint_resp.NewPMRequests.result)
+                console.log(property_endpoint_resp);
+    
+                // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
+                const properties = property_endpoint_resp.Property.result;
+                const newPMRequests = property_endpoint_resp.NewPMRequests.result;
+    
+                // Correct the announcements field for each property
+                properties.forEach(property => {
+                    if (property.announcements) {
+                        property.announcements = property.announcements.replace(/\\"/g, '"');
+                        property.announcements = JSON.parse(property.announcements);
+                    }
+                });
+    
+                setProperties(properties);
+                setContractRequests(newPMRequests);
                 setShowSpinner(false);
             } catch (error) {
-                console.log(error)
+                console.error(error);
             }
         }
-
+    
         getProperties();
     }, [refresh]);
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -123,7 +137,12 @@ function ContractCard(props) {
 
     // Determine text color based on contract_status or use default blue
     const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
-
+    let announcements= JSON.parse(contract.announcements)
+    if (Array.isArray(announcements))
+    announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
+    console.log('Ramin')
+    console.log(announcements)
+    console.log('Ramin')
     return (
         <Box
             sx={{
@@ -177,6 +196,13 @@ function ContractCard(props) {
             </Grid>
             {/* Remaining content of ContractCard component */}
             {/* Lines below the first line with increased space */}
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements[0]?.announcement_title || 'No title'}`}
+            </Typography>
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements[0]?.announcement_msg || 'No message'}`}
+            </Typography>
+
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
             </Typography>
