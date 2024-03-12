@@ -1,5 +1,6 @@
 import { Box } from "@mui/system";
 import { getStatusColor } from "./RentComponents";
+import { Typography } from "@material-ui/core";
 
 export function BackIcon(props) {
 
@@ -18,19 +19,27 @@ export function BackIcon(props) {
 export function RentDetailNavbarTab(props) {
     const color = props.style;
     const update = props.update;
-
+    const title = props.title;
+  
     return (
-        <Box sx={{
-            width: '20%',
-            height: '60px',
-            borderRadius: '10px',
-            boxShadow: '0px 4px 4px #00000040',
-            backgroundColor: color,
+      <Box
+        sx={{
+          width: '20%',
+          height: '60px',
+          borderRadius: '10px',
+          boxShadow: '0px 4px 4px #00000040',
+          backgroundColor: color,
+          display: 'flex', // Added for centering
+          justifyContent: 'center', // Center content horizontally
         }}
-            onClick={() => update()} />
-    )
-}
-
+        onClick={() => update()}
+      >
+        <Typography style={{ color: '#FFFFFF' }}>{title}</Typography>
+      </Box>
+    );
+  }
+  
+  
 const StatusText = (status) => {
     switch (status) {
         case 'UNPAID':
