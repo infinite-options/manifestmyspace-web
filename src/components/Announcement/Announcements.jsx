@@ -10,6 +10,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Box } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
+import Button from "@mui/material/Button";
 
 export default function Announcements() {
     const { getProfileId } = useUser();
@@ -141,6 +142,33 @@ export default function Announcements() {
             </div> */}
             <div className="announcement-menu-container">
                 <Searchbar />
+                <Box
+                    sx={{
+                        width: "100%",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                        paddingRight: "10px",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                    }}
+                >
+                    <Button
+                        onClick={()=>{navigate("/managerCreateAnnouncement")}}
+                        sx={{
+                            backgroundColor: "#3F51B5",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            textTransform: "none",
+                            width: "10%",
+                            "&:hover, &:focus, &:active": {
+                            backgroundColor: "#3F51B5",
+                            },
+                        }}
+                        >              
+                        +
+                    </Button>
+                </Box>
                 <div className="announcement-menu-bar">
                     <div className="announcement-view">
                         <div className="announcement-view-icon">

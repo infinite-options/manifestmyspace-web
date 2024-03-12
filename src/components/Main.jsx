@@ -17,6 +17,7 @@ import Leases from "./Leases/Leases";
 import { PropertyListings } from "./Property/PropertyListings";
 
 import Announcements from "./Announcement/Announcements";
+import ManagerCreateAnnouncement from "./Announcement/ManagerCreateAnnouncement";
 import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
@@ -215,6 +216,7 @@ function Main() {
             <Route path="maintenanceProfile" element={<MaintenanceProfile />} />
 
             <Route path="announcements" element={<Announcements />} />
+            <Route path="managerCreateAnnouncement" element={<ManagerCreateAnnouncement />} />            
             <Route path="ownerProfile" element={<OwnerProfile />} />
             <Route path="ownerDocuments" element={<OwnerDocuments />} />
             <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
