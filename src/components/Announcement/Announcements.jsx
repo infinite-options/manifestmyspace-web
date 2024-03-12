@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 
 export default function Announcements() {
@@ -21,6 +21,8 @@ export default function Announcements() {
 
     const [showAnnouncement, setShowAnnouncement] = useState(false);
     const [annData, setAnnData] = useState("");
+    const location=useLocation()
+    const owner_uid= location?.state?.owner_uid 
 
     const result =[
         {
@@ -73,8 +75,17 @@ export default function Announcements() {
             .then((res) => {
              //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
              setAnnouncementData(res.data);
-             setSentData(res.data.sent.result)
-             setReceivedData(res.data.received.result)
+             let sent_data= res.data.sent.result;
+             if (owner_uid!== undefined){
+                sent_data=sent_data.filter(record=>record.announcement_receiver===owner_uid)
+             }
+             setSentData(sent_data)
+
+             let received_data=res.data.received.result
+             if (owner_uid!== undefined){
+                received_data=received_data.filter(record=>record.announcement_sender===owner_uid)
+             }
+             setReceivedData(received_data)
             
             setShowSpinner(false);
             });
