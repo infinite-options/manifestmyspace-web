@@ -43,6 +43,10 @@ export default function ManagerCreateAnnouncement() {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [propertyAddressesMap, setPropertyAddressesMap] = useState({});
 
+    const promises = []
+    const promises_added = [] // debug
+
+    const [showInvalidAnnouncementPrompt, setShowInvalidAnnouncementPrompt] = useState(false);
 
 
     useEffect(() => {
@@ -151,9 +155,75 @@ export default function ManagerCreateAnnouncement() {
     const { user, selectedRole, selectRole, Name } = useUser();
     
 
-    const handleSubmit = (e) => {
+    const handleSendAnnouncement = async (e) => {
         e.preventDefault();
-        // onSubmit({ title, message });
+        setShowInvalidAnnouncementPrompt(false);
+
+        if(announcementTitle === "" || announcementMessage === "" || selectedUsers.length === 0){
+            setShowInvalidAnnouncementPrompt(true);
+            return;
+        }
+        setShowSpinner(true);
+
+        const sendAnnouncement = async (properties_list, profile_uid) => {
+            console.log("ROHIT - properties_list", properties_list);
+            const property_uids = []
+
+            properties_list.forEach((property) => {
+                property_uids.push(property.property_uid)
+            });
+            console.log("ROHIT - property_uids", property_uids);
+            
+            // promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, //rohit
+            promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    announcement_title: announcementTitle,
+                    announcement_msg: announcementMessage,
+                    announcement_sender: getProfileId(),
+                    announcement_date: new Date().toDateString(),
+                    announcement_properties: property_uids, 
+                    announcement_mode: "LEASE",
+                    announcement_receiver: profile_uid,
+                    announcement_type: ["Text", "Email"],
+                }),
+            }));
+
+            promises_added.push(profile_uid);
+        }
+        
+        if(selectedOption === "tenants_by_name"){
+            selectedUsers.forEach((tenant) => {
+                sendAnnouncement(tenant.properties_list ,tenant.tenant_uid)
+            });
+        } else if(selectedOption === "owners_by_name"){
+            selectedUsers.forEach((owner) => {
+                sendAnnouncement(owner.properties_list ,owner.owner_uid)
+            });
+        } else if(selectedOption === "applicants_by_name"){
+            
+            selectedUsers.forEach((applicant) => {
+                let properties_list = []                
+                properties_list.push(applicant.property_uid)
+                console.log(properties_list);
+                sendAnnouncement(properties_list ,applicant.tenant_uid)
+            });
+        }
+
+        try {
+            console.log("promises added - ", promises_added);
+            await Promise.all(promises)
+            console.log("All Announcements Sent", promises)                        
+            
+        } catch (error) {
+            console.error("Error:", error);
+        }
+
+        setShowSpinner(false);
     };
 
     const handleOptionChange = (event) => {
@@ -170,7 +240,14 @@ export default function ManagerCreateAnnouncement() {
     };
 
     return (
-        <Box className="announcement-container">
+        <Box 
+            className="announcement-container"
+            sx={{
+                display: "flex",
+                flexDirection: "column",                
+                marginBottom: "50px",
+            }}    
+        >
             <Backdrop
                 sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={showSpinner}
@@ -247,7 +324,7 @@ export default function ManagerCreateAnnouncement() {
                 </div>
             </div> */}
             <Box className="announcement-menu-container">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSendAnnouncement}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Typography
@@ -458,6 +535,18 @@ export default function ManagerCreateAnnouncement() {
                                 )
                             }
 
+                        </Grid>
+                        <Grid item xs={12}>
+                            {showInvalidAnnouncementPrompt && (
+                                    <Box
+                                        sx={{
+                                            color: 'red',
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        Please enter all required fields.
+                                    </Box>
+                            )}
                         </Grid>
                         
                         <Grid item xs={12} 
