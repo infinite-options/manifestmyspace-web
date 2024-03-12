@@ -12,6 +12,7 @@ import {
     Grid,
 } from "@mui/material";
 import documentIcon from "../../images/Subtract.png"
+import Bell_fill from '../../images/Bell_fill.png';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
@@ -137,12 +138,10 @@ function ContractCard(props) {
 
     // Determine text color based on contract_status or use default blue
     const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
-    let announcements= JSON.parse(contract.announcements)
+    let announcements = JSON.parse(contract.announcements);
     if (Array.isArray(announcements))
-    announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
-    console.log('Ramin')
-    console.log(announcements)
-    console.log('Ramin')
+        announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
+
     return (
         <Box
             sx={{
@@ -165,9 +164,9 @@ function ContractCard(props) {
             })}
         >
             <Grid container alignItems="center">
-                {/* Empty left corner */}
+                
                 <Grid item xs={3}></Grid>
-                {/* Centered image container */}
+                
                 <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
                     <img
                         src={contract.owner_photo_url}
@@ -180,27 +179,37 @@ function ContractCard(props) {
                         }}
                     />
                 </Grid>
-                {/* Left corner with contract status */}
-                <Grid item xs={3} sx={{ textAlign: 'right', marginLeft: '-5px' }}>
+                
+                <Grid item xs={3} sx={{ textAlign: 'center' }}>
                     <Typography
                         sx={{
-                            color: textColor, // Set the text color dynamically
+                            color: textColor,
                             fontWeight: "bold",
                             fontSize: '20px',
-                            marginLeft: '5px', // Move the status slightly to the right
+                            marginLeft: '5px',
                         }}
                     >
                         {contract.contract_status}
                     </Typography>
+                    {announcements?.length &&
+                    <img
+                        src={Bell_fill}
+                        alt="Bell Icon"
+                        style={{ display: 'block', cursor: 'pointer', marginTop: '5px', marginLeft: '100px', marginRight: '40px' }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/announcements", { state: { owner_uid: contract.owner_uid } });
+                        }}
+                    />}
+                    
                 </Grid>
             </Grid>
-            {/* Remaining content of ContractCard component */}
-            {/* Lines below the first line with increased space */}
+
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements[0]?.announcement_title || 'No title'}`}
+                <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements?.length? announcements[0]?.announcement_title : 'No title'}`}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements[0]?.announcement_msg || 'No message'}`}
+                <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements?.length? announcements[0]?.announcement_msg : 'No message'}`}
             </Typography>
 
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
