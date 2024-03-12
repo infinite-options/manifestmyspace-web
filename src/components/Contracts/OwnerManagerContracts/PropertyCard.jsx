@@ -14,14 +14,19 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 import { isValidDate } from "../../../utils/dates"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers";
+import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg";
+import dayjs from "dayjs";
 
 
 function TextInputField(props) {
     const inputStyle = {
         border: 'none',        
         width: '100%',
+        height:'40px',
         fontFamily: 'inherit',
         fontWeight: 'inherit',
         color: '#3D5CAC',
@@ -220,7 +225,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
-                                            height: '16px',
+                                            height: '40px',
                                         },
                                     }}
                                 />
@@ -248,7 +253,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
-                                            height: '16px',
+                                            height: '40px',
                                         },
                                     }}
                                 /> */}
@@ -258,7 +263,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     onChange={handleFrequencyChange}
                                     sx={{
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                         width: '200px', // Adjust the width as needed
                                         padding: '8px', // Adjust the padding as needed
                                     }}
@@ -316,7 +321,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                             sx: {
                                                 backgroundColor: '#D6D5DA',
                                                 width: '60px',
-                                                height: '20px',
+                                                height: '40px',
                                             },
                                         }}
 
@@ -335,7 +340,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                             }}
                         >
                             <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />} label="Flat Rate" />
-                            <Box sx={{width: '60px', height: '20px',}}>
+                            <Box sx={{width: '60px', height: '40px',}}>
                         </Box>
                             
                         </Box>
@@ -362,8 +367,8 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                         InputProps={{
                                             sx: {
                                                 backgroundColor: '#D6D5DA',
-                                                width: '60px',
-                                                height: '20px',
+                                                width: '100px',
+                                                height: '40px',
                                             },
                                         }}
 
@@ -379,39 +384,18 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         paddingLeft: '20px',
+                                        height:'40px',
                                     }}
                                 >
                                     Applied To
-                                    {/* <TextField
-                                        name="flat-rate"
-                                        value={feeAmount}
-                                        placeholder=""
-                                        label=""
-                                        variant="outlined"
-                                        // sx={{
-                                        //     width: '45px',
-                                        //     height: '3px',
-                                        // }}
 
-                                        InputProps={{
-                                            sx: {
-                                                backgroundColor: '#D6D5DA',
-                                                width: '60px',
-                                                height: '20px',
-                                            },
-                                        }}
-
-                                        onChange={(event) => {
-                                            setFlatRate(event.target.value);
-                                        }}
-                                    /> */}
                                     <Select
                                         value={feeAppliedTo}
                                         label="Applied To"
                                         onChange={handleAppliedToChange}
                                         sx={{
                                             backgroundColor: '#D6D5DA',
-                                            height: '16px',
+                                            height: '40px',
                                             width: '200px', // Adjust the width as needed
                                             padding: '8px', // Adjust the padding as needed
                                         }}
@@ -656,7 +640,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
-                                            height: '16px',
+                                            height: '40px',
                                         },
                                     }}
                                 />
@@ -684,7 +668,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
-                                            height: '16px',
+                                            height: '40px',
                                         },
                                     }}
                                 /> */}
@@ -694,7 +678,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     onChange={handleFrequencyChange}
                                     sx={{
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                         width: '200px', // Adjust the width as needed
                                         padding: '8px', // Adjust the padding as needed
                                     }}
@@ -751,8 +735,8 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                         InputProps={{
                                             sx: {
                                                 backgroundColor: '#D6D5DA',
-                                                width: '60px',
-                                                height: '20px',
+                                                width: '100px',
+                                                height: '40px',
                                             },
                                         }}
 
@@ -771,7 +755,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                             }}
                         >
                             <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />} label="Flat Rate" />
-                            <Box sx={{width: '60px', height: '20px',}}>
+                            <Box sx={{width: '60px', height: '40px',}}>
                         </Box>
                             
                         </Box>
@@ -847,7 +831,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                         onChange={handleAppliedToChange}
                                         sx={{
                                             backgroundColor: '#D6D5DA',
-                                            height: '16px',
+                                            height: '40px',
                                             width: '200px', // Adjust the width as needed
                                             padding: '8px', // Adjust the padding as needed
                                         }}
@@ -885,9 +869,6 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 }
 
 
-
-
-
 const PropertyCard = (props) => {
 const navigate = useNavigate();
 
@@ -895,6 +876,7 @@ const propertyData = props.data;
 const timeDiff = props.timeDifference;
 const contractBusinessID = props.contractBusinessID;
 const contractPropertyID = props.contractPropertyID;
+const today = dayjs(new Date()); // Convert new Date() to Day.js object
 
 console.log("--debug-- PropertyCard props", props)
 
@@ -912,8 +894,8 @@ const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false
 //Contract Details
 const [contractUID, setContractUID] = useState();
 const [contractName, setContractName] = useState("");
-const [contractStartDate, setContractStartDate] = useState("");
-const [contractEndDate, setContractEndDate] = useState("");
+const [contractStartDate, setContractStartDate] = useState(dayjs());
+const [contractEndDate, setContractEndDate] = useState(dayjs());
 const [contractStatus, setContractStatus] = useState("");
 const [contractFees, setContractFees] = useState([]);
 const [defaultContractFees, setDefaultContractFees] = useState([]);
@@ -924,13 +906,8 @@ const [contractFileTypes, setContractFileTypes] = useState([]);
 const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
 const [propertyOwnerName, setPropertyOwnerName] = useState('');
 
-
-
-
-
-
 useEffect(() => {        
-    if(isValidDate(contractStartDate)){
+    if(isValidDate(contractStartDate.format('MM-DD-YYYY'))){
         setShowInvalidStartDatePrompt(false);
     }else{
         setShowInvalidStartDatePrompt(true);
@@ -938,7 +915,7 @@ useEffect(() => {
 }, [contractStartDate]);
 
 useEffect(() => {        
-    if(isValidDate(contractEndDate)){
+    if(isValidDate(contractEndDate.format('MM-DD-YYYY'))){
         setShowInvalidEndDatePrompt(false);
     }else{
         setShowInvalidEndDatePrompt(true);
@@ -950,8 +927,6 @@ useEffect(()=> {
     console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);    
 }, [contractAssignedContacts]);
 
-
-
 useEffect(()=> {
     console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
@@ -962,7 +937,6 @@ useEffect(()=> {
     }
     
 }, [defaultContractFees]);
-
 
 useEffect(()=> {
     console.log("CONTRACT FEES - ", contractFees);
@@ -1061,12 +1035,13 @@ const handleContractNameChange = (event) => {
     setContractName(event.target.value);
 }
 
-const handleStartDateChange = (event) => {
-    setContractStartDate(event.target.value);
+const handleStartDateChange = (v) => {
+    setContractStartDate(v);
+    if (contractEndDate < v) setContractEndDate(v)
 }
 
-const handleEndDateChange = (event) => {
-    setContractEndDate(event.target.value);
+const handleEndDateChange = (v) => {
+    setContractEndDate(v);
 }
 
 // const handleContractFeesChange = (feesList) => {
@@ -1201,8 +1176,8 @@ const handleSendQuoteClick = () => {
     
     formData.append("contract_uid", contractUID);
     formData.append("contract_name", contractName);
-    formData.append("contract_start_date", contractStartDate);
-    formData.append("contract_end_date", contractEndDate);
+    formData.append("contract_start_date", contractStartDate.format('MM-DD-YYYY'));
+    formData.append("contract_end_date", contractEndDate.format('MM-DD-YYYY'));
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
@@ -1266,8 +1241,8 @@ useEffect(() => {
             console.log("CONTRACT - ", contractData);
             // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
             setContractName(contractData["contract_name"]? contractData["contract_name"] : "");
-            setContractStartDate(contractData["contract_start_date"]? contractData["contract_start_date"] : "");
-            setContractEndDate(contractData["contract_end_date"]? contractData["contract_end_date"] : "");
+            setContractStartDate(contractData["contract_start_date"]? dayjs(contractData["contract_start_date"]) : dayjs());
+            setContractEndDate(contractData["contract_end_date"]? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
             setContractStatus(contractData["contract_status"]? contractData["contract_status"] : "");
             setContractAssignedContacts(contractData["contract_assigned_contacts"]? JSON.parse(contractData["contract_assigned_contacts"]) : []);
             setContractFees(contractData["contract_fees"]? JSON.parse(contractData["contract_fees"]) : []);
@@ -1496,7 +1471,7 @@ return (
                     }}
                 >
                     
-                        Expiring: {contractEndDate? contractEndDate : '' }
+                        Expiring: {contractEndDate? contractEndDate.format('MM-DD-YYYY') : dayjs().format('MM-DD-YYYY') }
                 </Box>
             </Box>
         </Box>
@@ -1677,118 +1652,7 @@ return (
                 </Box>
             </Box>
         </Box>
-        {/* <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent:'space-between',
-            }}>
-            <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}>
-                <Box sx={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            paddingBottom: '0px',
-                            color: 'text.darkblue',
-                    }}
-                >
-                    
-                        Tenant:
-                </Box>
-                <Box sx={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            paddingTop: '0px',
-                            color: 'text.darkblue',
-                    }}
-                >
-                    
-                        {propertyData.tenant_first_name? propertyData.tenant_first_name : '<TENANT_FIRST_NAME>' }{' '}
-                        {propertyData.tenant_last_name? propertyData.tenant_last_name : '<TENANT_LAST_NAME>' }
-                </Box>
-            </Box>
-
-            
-            
-        </Box> */}
-        {/* <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent:'space-between',
-            }}>
-
-            <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}>
-                <Box sx={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            paddingBottom: '0px',
-                            color: 'text.darkblue',
-                    }}
-                >
-                    
-                        Owner:
-                </Box>
-                <Box sx={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            paddingTop: '0px',
-                            color: 'text.darkblue',
-                    }}
-                >
-                    
-                    {propertyData.owner_first_name? propertyData.owner_first_name : '<OWNER_FIRST_NAME>' }{' '}
-                    {propertyData.owner_last_name? propertyData.owner_last_name : '<OWNER_LAST_NAME>' }
-                </Box>
-            </Box>
-            
-        </Box> */}
-        {/* <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent:'space-between',
-            }}>
-
-            <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}>
-                <Box sx={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            paddingBottom: '0px',
-                            color: 'text.darkblue',
-                    }}
-                >
-                    
-                        Open Maintenance Tickets: {'<COUNT>'}
-                </Box>
-                <Box sx={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            padding: '5px',
-                            paddingTop: '0px',
-                            color: 'text.darkblue',
-                    }}
-                >
-                    
-                        {'<TICKET>' }
-                </Box>
-            </Box>
-            
-        </Box> */}
-
-
-        {/* Contract Details */}
-        {/* Contract Name */}
+        
         <Box sx={{
                     fontSize: '15px',
                     fontWeight: 'bold',
@@ -1811,39 +1675,81 @@ return (
             width: '100%',
         }}>
             <Box>
-                <Box sx={{
-                        fontSize: '15px',
-                        fontWeight: 'bold',
-                        padding: '5px',
-                        color: '#3D5CAC',
-                    }}
-                >
                 
-                    Start Date *
-                </Box>
-                <TextInputField name="start_date" placeholder="mm-dd-yyyy" value={contractStartDate} onChange={handleStartDateChange}>Start Date</TextInputField>
+
+            <Grid item xs={6} md={6}>
+            <Stack>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"Start Date"}
+              </Typography>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            value={contractStartDate}
+                            minDate={dayjs()}
+                            onChange={handleStartDateChange}
+                            slots={{
+                                openPickerIcon: CalendarIcon,
+                            }}
+                            slotProps={{
+                                textField: {
+                                    size: "small",
+                                    style: {
+                                        width: "100%",
+                                        fontSize: 12,
+                                        backgroundColor: "#F2F2F2 !important",
+                                        borderRadius: "10px !important",
+                                    },
+                                },
+                            }}
+                        />
+                    </LocalizationProvider>
+            </Stack>
+          </Grid>
+
             </Box>
-            <Box>
-                <Box sx={{
-                        fontSize: '15px',
-                        fontWeight: 'bold',
-                        padding: '5px',
-                        color: '#3D5CAC',
-                    }}
-                >
-                
-                    End Date *
-                </Box>
-                <TextInputField 
-                    name="end_date"
-                    placeholder="mm-dd-yyyy"
-                    value={contractEndDate}
-                    onChange={handleEndDateChange}
-                    required
-                >
-                    End Date
-                </TextInputField>                    
-            </Box>
+            
+            <Grid item xs={6} md={6}>
+            <Stack>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"End Date"}
+              </Typography>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            value={contractEndDate}
+                            minDate={dayjs()}
+                            onChange={handleEndDateChange}
+                            slots={{
+                                openPickerIcon: CalendarIcon,
+                            }}
+                            slotProps={{
+                                textField: {
+                                    size: "small",
+                                    style: {
+                                        width: "100%",
+                                        fontSize: 12,
+                                        backgroundColor: "#F2F2F2 !important",
+                                        borderRadius: "10px !important",
+                                    },
+                                },
+                            }}
+                        />
+                    </LocalizationProvider>
+            </Stack>
+          </Grid>
 
         </Box>
         {showInvalidStartDatePrompt && (
@@ -1882,7 +1788,7 @@ return (
                 <Box
                     onClick={handleOpenAddFee}
                 >
-                    <EditIcon  sx={{ fontSize: 16, color: '#3D5CAC'}} />
+                    <EditIcon  sx={{ fontSize: 20, color: '#3D5CAC'}} />
                 </Box>
                 
         </Box>
@@ -1948,7 +1854,7 @@ return (
                                 }}
                                 
                             >
-                                <DeleteIcon  sx={{ fontSize: 14, color: '#3D5CAC'}} />
+                                <DeleteIcon  sx={{ fontSize: 20, color: '#3D5CAC', }} />
                             </Button>
                         </Box>
                     </Box>
@@ -2006,7 +1912,7 @@ return (
                                     <a href={doc.link} target="_blank" rel="noopener noreferrer">
                                         <Box
                                             sx={{
-                                                // height: '16px',
+                                                 height: '40px',
                                                 width: '100%', 
                                                 
                                                 
@@ -2081,7 +1987,7 @@ return (
                                 <Box
                                     sx={{
                                         
-                                        // height: '16px',
+                                        // height: '40px',
                                         width: '50%', // Adjust the width as needed
                                         padding: '8px', // Adjust the padding as needed
                                     }}
@@ -2100,7 +2006,7 @@ return (
                                     required
                                     sx={{
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                         width: '40%', // Adjust the width as needed
                                         padding: '8px', // Adjust the padding as needed
                                     }}
@@ -2197,7 +2103,7 @@ return (
                                 
                                 <Box
                                     sx={{
-                                        // height: '16px',
+                                        // height: '40px',
                                         // width: '100%', 
                                         color: '#3D5CAC',
                                         width: '200px',
@@ -2465,7 +2371,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2482,7 +2388,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2502,7 +2408,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2523,7 +2429,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2640,7 +2546,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2657,7 +2563,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2677,7 +2583,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
@@ -2698,7 +2604,7 @@ return (
                                 InputProps={{
                                     sx: {
                                         backgroundColor: '#D6D5DA',
-                                        height: '16px',
+                                        height: '40px',
                                     },
                                 }}
                             />
