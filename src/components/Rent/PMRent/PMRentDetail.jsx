@@ -133,11 +133,11 @@ function PMRentDetail(props) {
                 display: 'flex',
                 marginTop: '10px',
             }}>
-                <RentDetailNavbarTab style={getStatusColor("UNPAID")} update={() => { setPropertyStatus("UNPAID"); setIndex(0); }} />
-                <RentDetailNavbarTab style={getStatusColor("PAID PARTIALLY")} update={() => { setPropertyStatus("PAID PARTIALLY"); setIndex(0); }} />
-                <RentDetailNavbarTab style={getStatusColor("PAID LATE")} update={() => { setPropertyStatus("PAID LATE"); setIndex(0); }} />
-                <RentDetailNavbarTab style={getStatusColor("PAID")} update={() => { setPropertyStatus("PAID"); setIndex(0); }} />
-                <RentDetailNavbarTab style={getStatusColor("VACANT")} update={() => { setPropertyStatus("VACANT"); setIndex(0); }} />
+                <RentDetailNavbarTab style={getStatusColor("UNPAID")} update={() => { setPropertyStatus("UNPAID"); setIndex(0); } } title={'Unpaid'} />
+                <RentDetailNavbarTab style={getStatusColor("PAID PARTIALLY")} update={() => { setPropertyStatus("PAID PARTIALLY"); setIndex(0); }} title={'Partially Paid'}/>
+                <RentDetailNavbarTab style={getStatusColor("PAID LATE")} update={() => { setPropertyStatus("PAID LATE"); setIndex(0); }} title={'Paid Late'}/>
+                <RentDetailNavbarTab style={getStatusColor("PAID")} update={() => { setPropertyStatus("PAID"); setIndex(0); }} title={'Paid'}/>
+                <RentDetailNavbarTab style={getStatusColor("VACANT")} update={() => { setPropertyStatus("VACANT"); setIndex(0); }} title={'Vacant'}/>
             </Box>
             <RentDetailBody data={[rentDetailsData, propertyID, index, propertyStatus]} updator={[decrementIndex, incrementIndex]} methods={[getProperties]} />
         </MainContainer>
