@@ -155,6 +155,7 @@ export default function PropertyList({}) {
         setShowSpinner(true);
         // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
+        // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
         const propertyData = await response.json();
         const propertyList = getPropertyList(propertyData)
         setPropertyList([...propertyList]);
@@ -234,12 +235,13 @@ export default function PropertyList({}) {
         navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
     }
 
-    function getBadgeContent(index) {
-        return propertyList?.[index]?.num_open_maintenace_req ?? 0;
+    
+    function getBadgeContent(property) {
+        return property?.num_open_maintenace_req ?? 0;
     }
 
-    function getNoOfApplications(index) {
-        return propertyList?.[index]?.applicationsCount || 0;
+    function getNoOfApplications(property) {
+        return property.applicationsCount ?? 0;
     }
 
     function getCoverPhoto(property) {
@@ -469,8 +471,8 @@ export default function PropertyList({}) {
                         <Badge
                         overlap="circular"
                         color="success"
-                        badgeContent={getNoOfApplications(index)}
-                        invisible={!getNoOfApplications(index)}
+                        badgeContent={getNoOfApplications(property)}
+                        invisible={!getNoOfApplications(property)}
                         anchorOrigin={{
                             vertical: "top",
                             horizontal: "right",
@@ -501,7 +503,7 @@ export default function PropertyList({}) {
                     <Badge
                         overlap="circular"
                         color="error"
-                        badgeContent={getBadgeContent(index)}
+                        badgeContent={getBadgeContent(property)}
                         anchorOrigin={{
                         vertical: "top",
                         horizontal: "right",

@@ -20,6 +20,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import OwnerList from "./OwnerList";
 
+// console.log("In Manager Dashboard");
+
 const useStyles = makeStyles({
   button: {
     width: "100%",
@@ -40,6 +42,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
+  // console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId } = useUser();
   const navigate = useNavigate();
@@ -52,6 +55,7 @@ function ManagerDashboard() {
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
+  // console.log("In Manager Dashboard Step 1");
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -64,14 +68,19 @@ function ManagerDashboard() {
     ["paid on time", 36],
   ];
 
+  // console.log("In Manager Dashboard Step 2");
   let [matrixData, setMatrixData] = useState([]);
 
   const setting_matrix_data = (happiness_response) => {
+    // console.log("In Setting Happiness Matrix", happiness_response);
     // Transforming the data
     const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
+      // console.log("In Happiness Matrix before vacancy");
       const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_id === vacancyItem.owner_uid);
+      // console.log("In Happiness Matrix before cashflow");
       const fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
 
+      // console.log("In Happiness Matrix before quarter");
       let quarter;
       if (deltaCashflowItem.delta_cashflow_perc < -50 && vacancyItem.vacancy_perc < -50) {
         quarter = 1;
@@ -83,6 +92,7 @@ function ManagerDashboard() {
         quarter = 4;
       }
 
+      // console.log("In Happiness Matrix before boarder");
       let borderColor;
       switch (quarter) {
         case 1:
@@ -131,14 +141,19 @@ function ManagerDashboard() {
     setMatrixData(sortedData);
   };
 
+  // console.log("In Manager Dashboard Step 3");
+
   // USE EFFECT gets all the data
   useEffect(() => {
     // const dataObject = {};
+    // console.log("In UseEffect");
+    // console.log(getProfileId());
     if (!getProfileId()) navigate("/PrivateprofileName");
+    // console.log("In UseEffect after if");
     const fetchData = async () => {
       // console.log("in useEffect")
       // console.log("PROFILE ID: ", getProfileId())
-
+      // console.log("In UseEffect fetchData");
       setShowSpinner(true);
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
@@ -172,6 +187,7 @@ function ManagerDashboard() {
     fetchData();
   }, []);
 
+  // console.log("In Manager Dashboard Step 4");
   // Confirm data has been received.  Comment out before publishing
   // console.log("maintenanceStatusData: ", maintenanceStatusData);
   // console.log("rentStatus: ", rentStatus);
@@ -316,5 +332,6 @@ function ManagerDashboard() {
     </ThemeProvider>
   );
 }
+// console.log("In Manager Dashboard Step 5");
 
 export default ManagerDashboard;

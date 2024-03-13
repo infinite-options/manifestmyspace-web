@@ -36,6 +36,12 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "../../ImageCarousel";
 import dataURItoBlob from '../../utils/dataURItoBlob';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers";
+import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg"
+import dayjs from "dayjs";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 function CostPartsTable({parts, setParts}){
 
@@ -165,6 +171,9 @@ export default function BusinessQuoteForm({acceptBool}){
     const [jobType, setJobType] = useState("");
     const [selectedImageList, setSelectedImageList] = useState([])
 
+    useEffect(() => {
+        console.log("ROHIT - availabilityTime - ", availabilityTime);
+    }, [availabilityTime]);
 
     const [partsObject, setPartsObject] = useState([{
             part: "",
@@ -278,6 +287,7 @@ export default function BusinessQuoteForm({acceptBool}){
         var second = timeArray[2] || "00"
 
         var dateTimeString = `${month}-${day}-${year} ${hour}:${minute}:${second}`
+        console.log(dateTimeString);
         return dateTimeString
     }
 
@@ -575,21 +585,64 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     Earliest Availability
                                                 </Typography>
                                             </Grid>
-                                            <Grid item xs={6} sx={{paddingTop: "10px"}}>
-                                                <TextField
-                                                    label="Date"
-                                                    size="small"
-                                                    onChange={handleDateChange}
-                                                    placeholder="MM-DD-YYYY"
-                                                />
+                                            <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
+                                                
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DatePicker
+                                                        value={dayjs(availabilityDate)}
+                                                        minDate={dayjs()}
+                                                        onChange={(v) => setAvailabilityDate(v.format("MM-DD-YYYY"))}
+                                                        slots={{
+                                                            openPickerIcon: CalendarIcon,
+                                                        }}
+                                                        slotProps={{
+                                                            textField: {
+                                                                size: "small",
+                                                                style: {
+                                                                    width: "100%",
+                                                                    fontSize: 12,
+                                                                    backgroundColor: "#F2F2F2 !important",
+                                                                    borderRadius: "10px !important",
+                                                                },
+                                                                label: "Date"
+                                                            },
+                                                        }}
+                                                    />
+                                                </LocalizationProvider>
                                             </Grid>
-                                            <Grid item xs={6} sx={{paddingTop: "10px"}}>
-                                                <TextField
+                                            {/* <Grid item xs={0} md={3}>
+
+                                            </Grid> */}
+                                            <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
+                                                {/* <TextField
                                                     label="Time"
                                                     size="small"
                                                     onChange={handleTimeChange}
                                                     placeholder="HH:MM:SS"
-                                                />
+                                                /> */}
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <TimePicker                                                        
+                                                        slotProps={{ 
+                                                            textField: { 
+                                                                size: 'small',
+                                                                style: {
+                                                                    width: "100%",
+                                                                    fontSize: 12,
+                                                                    backgroundColor: "#F2F2F2 !important",
+                                                                    borderRadius: "10px !important",
+                                                                },
+                                                                label: 'Time (select AM or PM)'                                                                
+                                                            } 
+                                                        }}                                                        
+                                                        views={['hours', 'minutes']}
+                                                        
+                                                        value={dayjs(availabilityTime)}
+                                                        onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
+                                                    />
+                                                </LocalizationProvider>
+                                                {/* <Button onClick={()=> convertToDateTime(availabilityDate, availabilityTime)}>
+                                                    Test DateTime Convert
+                                                </Button> */}
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>

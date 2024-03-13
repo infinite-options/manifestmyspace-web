@@ -19,6 +19,11 @@ import { Form, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import backButton from '../Payments/backIcon.png';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 export default function TenantApplication(){
     const location = useLocation();
@@ -45,6 +50,7 @@ export default function TenantApplication(){
     //     console.log("tenantDocuments - ", tenantDocuments);
     // }, [tenantDocuments])
 
+    const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
     function formatDocumentType(type) {
         switch(type){            
@@ -992,7 +998,7 @@ export default function TenantApplication(){
                                         }
     
                                     }}
-                                    onClick={() => handleWithdrawLease()}
+                                    onClick={() => setShowWithdrawLeaseDialog(true)}
                                 >
                                     Withdraw
                                 </Button>
@@ -1000,6 +1006,63 @@ export default function TenantApplication(){
                         </>
                         ) : (
                             null
+                        )}
+                        {showWithdrawLeaseDialog  && (
+                            <Dialog
+                                open={showWithdrawLeaseDialog}
+                                onClose={() => setShowWithdrawLeaseDialog(false)}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >                                
+                                <DialogContent>                                    
+                                    <DialogContentText 
+                                        id="alert-dialog-description"
+                                        sx={{
+
+                                            fontWeight: theme.typography.common.fontWeight,
+                                            paddingTop: "10px",                                                        
+                                        }}
+                                    >
+                                        Are you sure you want to withdraw your application for {property.property_address} {property.property_unit}?
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>                                    
+                                    <Box sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                    }}>
+                                        <Button
+                                            onClick={() => handleWithdrawLease()}
+                                            sx={{
+                                                color:"white",                            
+                                                backgroundColor: "#3D5CAC80",
+                                                ':hover': { 
+                                                    backgroundColor: '#3D5CAC'
+                                                },
+                                                marginRight: '10px',                             
+                                            }}
+                                            autoFocus
+                                        >
+                                            Yes
+                                        </Button>
+                                        <Button 
+                                            onClick={() => setShowWithdrawLeaseDialog(false)}
+                                            sx={{
+                                                color:"white",                            
+                                                backgroundColor: "#3D5CAC80",
+                                                ':hover': { 
+                                                    backgroundColor: '#3D5CAC'
+                                                },
+                                                marginLeft: '10px',                                                          
+                                            }}>
+                                            No
+                                        </Button>
+                                    </Box>
+
+                                </DialogActions>
+                            </Dialog>
                         )}
                     </Grid>
                 </Paper>

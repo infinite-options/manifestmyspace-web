@@ -12,6 +12,7 @@ import {
     Grid,
 } from "@mui/material";
 import documentIcon from "../../images/Subtract.png"
+import Bell_fill from '../../images/Bell_fill.png';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
@@ -43,24 +44,38 @@ export default function PMQuotesList({}) {
                 setContractRequests(contractsData)
                 setShowSpinner(false);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
-
+    
         const getProperties = async () => {
             setShowSpinner(true);
             try {
-                console.log(property_endpoint_resp)
-                setProperties(property_endpoint_resp.Property.result)
-                setContractRequests(property_endpoint_resp.NewPMRequests.result)
+                console.log(property_endpoint_resp);
+    
+                // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
+                const properties = property_endpoint_resp.Property.result;
+                const newPMRequests = property_endpoint_resp.NewPMRequests.result;
+    
+                // Correct the announcements field for each property
+                properties.forEach(property => {
+                    if (property.announcements) {
+                        property.announcements = property.announcements.replace(/\\"/g, '"');
+                        property.announcements = JSON.parse(property.announcements);
+                    }
+                });
+    
+                setProperties(properties);
+                setContractRequests(newPMRequests);
                 setShowSpinner(false);
             } catch (error) {
-                console.log(error)
+                console.error(error);
             }
         }
-
+    
         getProperties();
     }, [refresh]);
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -114,16 +129,29 @@ function ContractCard(props) {
     const contract = props.contract;
     const property_endpoint_resp = props.property_endpoint_resp;
 
+    // Define a dictionary to map contract_status to text color
+    const statusTextColorMap = {
+        REJECTED: "#A52A2A",
+        REFUSED: "#A52A2A",
+        SENT: "#0CAA25",
+    };
+
+    // Determine text color based on contract_status or use default blue
+    const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
+    let announcements = JSON.parse(contract.announcements);
+    if (Array.isArray(announcements))
+        announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
+
     return (
         <Box
             sx={{
                 backgroundColor: '#D6D5DA',
                 borderRadius: '10px',
-                padding: '10px', // Increased padding for more space
-                marginBottom: '20px', // Increased margin between cards
+                padding: '10px',
+                marginBottom: '20px',
                 fontSize: '11px',
                 cursor: 'pointer',
-                position: 'relative', // Added to handle image positioning
+                position: 'relative',
             }}
             onClick={() => navigate('/managementContractDetails', {
                 state: {
@@ -136,12 +164,12 @@ function ContractCard(props) {
             })}
         >
             <Grid container alignItems="center">
-                {/* Empty left corner */}
+                
                 <Grid item xs={3}></Grid>
-                {/* Centered image container */}
+                
                 <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
                     <img
-                        src={contract.business_photo_url}
+                        src={contract.owner_photo_url}
                         alt="Business Photo"
                         style={{
                             borderRadius: '50%',
@@ -151,32 +179,50 @@ function ContractCard(props) {
                         }}
                     />
                 </Grid>
-                {/* Left corner with contract status */}
-                <Grid item xs={3} sx={{ textAlign: 'right', marginLeft: '-5px' }}>
+                
+                <Grid item xs={3} sx={{ textAlign: 'center' }}>
                     <Typography
                         sx={{
-                            color: "#3D5CAC",
+                            color: textColor,
                             fontWeight: "bold",
                             fontSize: '20px',
-                            marginLeft: '5px', // Move the status slightly to the right
+                            marginLeft: '5px',
                         }}
                     >
                         {contract.contract_status}
                     </Typography>
+                    {announcements?.length &&
+                    <img
+                        src={Bell_fill}
+                        alt="Bell Icon"
+                        style={{ display: 'block', cursor: 'pointer', marginTop: '5px', marginLeft: '100px', marginRight: '40px' }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/announcements", { state: { owner_uid: contract.owner_uid } });
+                        }}
+                    />}
+                    
                 </Grid>
             </Grid>
-            {/* Lines below the first line with increased space */}
-            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop:'5px' }}>
-                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.business_name}`}
+
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements?.length? announcements[0]?.announcement_title : 'No title'}`}
+            </Typography>
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements?.length? announcements[0]?.announcement_msg : 'No message'}`}
+            </Typography>
+
+            <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px', marginTop: '5px' }}>
+                <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.business_email}
+                <span style={{ fontWeight: "bold" }}>Email:</span> {contract.owner_email}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
-                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.business_phone_number}
+                <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.owner_phone_number}
             </Typography>
             <Typography sx={{ color: "#160449", fontSize: '11px', marginBottom: '5px' }}>
                 <span style={{ fontWeight: "bold" }}>Beds:</span> {contract.property_num_beds}   <span style={{ fontWeight: "bold", marginLeft: '15px' }}>Baths:</span> {contract.property_num_baths}
