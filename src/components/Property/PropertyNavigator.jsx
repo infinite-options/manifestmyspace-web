@@ -57,11 +57,11 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
     // const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
-    const [activeStep, setActiveStep] = useState(() => {
-        const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
-        
-        return index !== -1 ? index : 0;
-    });
+    // const [activeStep, setActiveStep] = useState(() => {
+    //     const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
+    //     return index !== -1 ? index : 0;
+    // }); 
+    const [activeStep, setActiveStep] = useState(0)
     const [property, setProperty] = useState(propertyData[currentIndex]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
@@ -261,21 +261,25 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
 
     
     const handleNextCard = () => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
-      const nextId = propertyData[currentIndex+1].property_uid
-      setCurrentId(nextId);
-      setImages(JSON.parse(propertyData[currentIndex+1].property_images))
-    //   setActiveStep(0);
-      setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1].property_favorite_image));
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
+        const nextId = propertyData[currentIndex+1].property_uid
+        setCurrentId(nextId);
+        console.log("next card images", JSON.parse(propertyData[currentIndex+1].property_images))
+        setImages(JSON.parse(propertyData[currentIndex+1].property_images)) 
+    //   setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1]));
+        // setActiveStep((prevActiveStep) => (prevActiveStep + 1) % maxSteps)
+        setActiveStep(0)
     };
   
     const handlePreviousCard = () => {
         setCurrentIndex((prevIndex) => (prevIndex - 1 + propertyData.length) % propertyData.length);
         const previousId = propertyData[currentIndex-1].property_uid
         setCurrentId(previousId);
+        console.log("prev card images", JSON.parse(propertyData[currentIndex-1].property_images))
         setImages(JSON.parse(propertyData[currentIndex-1].property_images))
-        // setActiveStep(0);
-        setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
+        // setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1]));
+        // setActiveStep((prevActiveStep) => (prevActiveStep - 1 + maxSteps) % maxSteps)
+        setActiveStep(0)
     };
   
     const handleNext = () => {
