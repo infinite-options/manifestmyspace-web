@@ -116,8 +116,6 @@ export function MaintenanceRequestDetail(){
 
     function getColorStatusBasedOnSelectedRole(){
         const role = roleName()
-        console.log("role", role)   
-
         if (role === "Manager"){
             return theme.colorStatusPMO
         } else if (role === "Owner"){

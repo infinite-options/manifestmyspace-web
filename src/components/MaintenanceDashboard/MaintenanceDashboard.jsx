@@ -217,8 +217,8 @@ export default function MaintenanceDashboard(){
                                         }}
                                     >
                                         <RadialBarChart 
-                                            width={500} 
-                                            height={500} 
+                                            width = {500}
+                                            height = {500}
                                             // cx='50%'
                                             // cy='50%'
                                             innerRadius="10%" 
@@ -230,30 +230,30 @@ export default function MaintenanceDashboard(){
                                             <RadialBar minAngle={15} background clockWise={true} dataKey='count'/>
                                         </RadialBarChart>
                                         <Legend
-                                                iconSize={20}
-                                                layout="vertical"
-                                                verticalAlign="middle"
-                                                align="right"
-                                                alignItems="right"
-                                                justifyContent="space-between"
-                                                wrapperStyle={{ 
-                                                    position: 'absolute', 
-                                                    left: '95px', 
-                                                    top: '60px',
-                                                    display: 'flex', 
-                                                    flexDirection: 'column', 
-                                                    gap: '20px'
-                                                }}
-                                                margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
-                                                payload={
-                                                    data.map(item => ({
-                                                        value: item.name,
-                                                        type: 'square',
-                                                        id: item.name,
-                                                        color: item.fill, // Assuming 'fill' is a property in your data array that specifies the color
-                                                    })).reverse()
-                                                }
-                                            />
+                                            iconSize={20}
+                                            layout="vertical"
+                                            verticalAlign="middle"
+                                            align="right"
+                                            alignItems="right"
+                                            justifyContent="space-between"
+                                            wrapperStyle={{ 
+                                                position: 'absolute', 
+                                                left: '95px', 
+                                                top: '60px',
+                                                display: 'flex', 
+                                                flexDirection: 'column', 
+                                                gap: '20px'
+                                            }}
+                                            margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
+                                            payload={
+                                                data.map(item => ({
+                                                    value: item.name,
+                                                    type: 'square',
+                                                    id: item.name,
+                                                    color: item.fill, // Assuming 'fill' is a property in your data array that specifies the color
+                                                })).reverse()
+                                            }
+                                        />
                                     </Box>
                                 </Paper>
                             </Box>

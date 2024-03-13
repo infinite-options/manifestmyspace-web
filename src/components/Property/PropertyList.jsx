@@ -281,18 +281,18 @@ export default function PropertyList({}) {
         } else {
         return (
             <Typography
-            sx={{
-                color: theme.typography.common.blue,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.smallFont,
-                margin: "0px", // Ensure no margin
-                padding: "0px", // Ensure no padding
-                textAlign: "center", // Ensure text is centered within itself
-                verticalAlign: "middle", // Vertically align text in the middle
-                alignItems: "center", // vertically align items to the center
-            }}
+                sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    margin: "0px", // Ensure no margin
+                    padding: "0px", // Ensure no padding
+                    textAlign: "center", // Ensure text is centered within itself
+                    verticalAlign: "middle", // Vertically align text in the middle
+                    alignItems: "center", // vertically align items to the center
+                }}
             >
-            {property.property_address} <br />
+                {property.property_address} <br />
             {property.property_city + " " + property.property_state + " " + property.property_zip}
             </Typography>
         )
@@ -373,8 +373,6 @@ export default function PropertyList({}) {
             </Stack>
             <Box sx={{ padding: "10px" }}>
                 <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
-                
-                
                 <List>
                 {displayedItems.map((property, index) => (
                     <ListItem
@@ -389,7 +387,7 @@ export default function PropertyList({}) {
                             paddingRight: "10px",
                         }}
                         onClick={() => {
-                            let i=propertyList.findIndex(p=>p.property_uid===property.property_uid)
+                            let i = propertyList.findIndex( p => p.property_uid === property.property_uid)
                             handlePropertyDetailNavigation(property, i, propertyList)
                         }}
                     >
@@ -514,7 +512,7 @@ export default function PropertyList({}) {
                         }}
                     >
                         <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": {backgroundColor: "#d6d5da"}}}>
-                        <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
+                            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
                         </Button>
                     </Badge>
                     </ListItem>

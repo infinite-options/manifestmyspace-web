@@ -737,9 +737,10 @@ function CustomTableRow(props) {
   const navigate = useNavigate();
   return (
     <TableRow onClick={()=>{navigate('/tenantMaintenanceItem',{
-      state: 
-        {color: getStatusColor(status),
-          item:item}
+        state: {
+            color: getStatusColor(status),
+            item: item
+        }
       }
     )}}>
         <TableCell style={tdStyle}>

@@ -590,9 +590,6 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     onChange={handleTimeChange}
                                                     placeholder="HH:MM:SS"
                                                 />
-                                                <Button onClick={()=> convertToDateTime(availabilityDate, availabilityTime)}>
-                                                    Test DateTime Convert
-                                                </Button>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>

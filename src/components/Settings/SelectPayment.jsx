@@ -200,8 +200,13 @@ export default function SelectPayment(props) {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        "pay_purchase_id": purchase_uid,
-                        "pay_amount" : totalBalance,
+                        "pay_purchase_id":[
+                            {
+                                "purchase_uid": purchase_uid,
+                                "pur_amount_due": totalBalance,
+                            }
+                        ],                        
+                        // "pay_amount" : totalBalance,
                         // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
                         "payment_notes": paymentData.business_code,
                         "pay_charge_id" : "stripe transaction key",

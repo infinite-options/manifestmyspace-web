@@ -10,15 +10,6 @@ import {
   CardContent,
   Grid,
   CardMedia,
-  Input,
-  Container,
-  Radio,
-  FormLabel,
-  TableCell,
-  TableRow,
-  TableBody,
-  Table,
-  Divider,
 } from "@mui/material";
 import theme from "../../theme/theme";
 import ReturnButtonIcon from "../Property/refundIcon.png";
@@ -64,47 +55,27 @@ export default function TenantMaintenanceItemDetail() {
     navigate("/tenantDashboard");
   }
 
-  // const images = [
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  // ];
   let images = JSON.parse(item.maintenance_images);
 
-  const statusTimeline = [
-    {
-      message: "Scheduled for [date] [time]",
-      date: "10/10/2021",
-      time: "10:00 AM",
-    },
-    {
-      message: "Assigned to Technician",
-      date: "10/10/2021",
-      time: "10:00 AM",
-    },
-    {
-      message: "Complaint Received",
-      date: "10/10/2021",
-      time: "10:00 AM",
-    },
-  ];
-  const maxSteps = images.length;
+  // const statusTimeline = [
+  //   {
+  //     message: "Scheduled for [date] [time]",
+  //     date: "10/10/2021",
+  //     time: "10:00 AM",
+  //   },
+  //   {
+  //     message: "Assigned to Technician",
+  //     date: "10/10/2021",
+  //     time: "10:00 AM",
+  //   },
+  //   {
+  //     message: "Complaint Received",
+  //     date: "10/10/2021",
+  //     time: "10:00 AM",
+  //   },
+  // ];
 
-  console.log(item);
-  console.log(color);
+  const maxSteps = images.length;
 
   return (
     <Paper
@@ -251,10 +222,10 @@ export default function TenantMaintenanceItemDetail() {
                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item.maintenance_desc}</Typography>
               </Grid>
 
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "20px" }}>Status Timeline</Typography>
-              </Grid>
-              <Grid item xs={12}>
+              </Grid> */}
+              {/* <Grid item xs={12}>
                 <Stack>
                   {statusTimeline.map((status, index) => (
                     <Box
@@ -276,7 +247,7 @@ export default function TenantMaintenanceItemDetail() {
                     </Box>
                   ))}
                 </Stack>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Paper>
         </Box>

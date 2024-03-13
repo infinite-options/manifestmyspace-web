@@ -78,6 +78,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             </TableCell> */}
                         </TableRow>
                     </Table>
+                    {otherQuotes.length === 0 ? null : (
                         <Accordion
                             sx={{
                                 boxShadow: "none",
@@ -116,7 +117,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 </Table>
                             </AccordionDetails>
                         </Accordion>
-
+                    )}
                 </Grid>
             )
         }
