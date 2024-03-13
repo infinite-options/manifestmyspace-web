@@ -158,10 +158,10 @@ function ManagerDashboard() {
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
 
-      const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+      // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
-        const propertiesResponseJSON = await propertiesResponse.json();
+        // const propertiesResponseJSON = await propertiesResponse.json();
 
         // MAINTENANCE Status
         setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
@@ -176,8 +176,9 @@ function ManagerDashboard() {
         setting_matrix_data(jsonData);
 
         // NEW PM REQUESTS
-        set_property_endpoint_resp(propertiesResponseJSON);
-        setContractRequests(propertiesResponseJSON.NewPMRequests.result);
+        set_property_endpoint_resp(jsonData);
+        // setContractRequests(propertiesResponseJSON.NewPMRequests.result);
+        setContractRequests(jsonData.NewPMRequests.result);
       } catch (error) {
         console.error(error);
       }
