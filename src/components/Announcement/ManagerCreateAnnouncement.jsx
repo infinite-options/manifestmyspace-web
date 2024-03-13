@@ -29,14 +29,17 @@ import { useNavigate } from 'react-router-dom';
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import theme from "../../theme/theme";
 import TenantDoucments from "../Documents/TenantDocuments/TenantDocuments";
+import FormGroup from '@mui/material/FormGroup';
 
 export default function ManagerCreateAnnouncement() {
     const { getProfileId } = useUser();
     const [applicantsData, setApplicantsData] = useState([]);
     const [ownersData, setOwnersData] = useState([]);
     const [tenantsData, setTenantsData] = useState([]);
+    const [tenantsByPropertyData, setTenantsByPropertyData] = useState([]);
     const [announcementTitle, setAnnouncementTitle] = useState('');
     const [announcementMessage, setAnnouncementMessage] = useState('');
+    const [announcementTypes, setAnnouncementTypes] = useState({text: false, email: false});
 
     const [selectedOption, setSelectedOption] = useState("tenants_by_name");
 
@@ -73,6 +76,9 @@ export default function ManagerCreateAnnouncement() {
         console.log("ROHIT - propertyAddressesMap - ", propertyAddressesMap);
     }, [propertyAddressesMap]);
 
+    useEffect(() => {
+        console.log("ROHIT - announcementTypes - ", announcementTypes);
+    }, [announcementTypes]);
     
     
     const [showSpinner, setShowSpinner] = useState(false);
@@ -146,8 +152,13 @@ export default function ManagerCreateAnnouncement() {
                 
                 // setTenantsData(tenants)
                 setTenantsData(tenantsWithProperties);
-            
-            setShowSpinner(false);
+
+                const tenantsByProperties = properties
+                    .filter(property => property.tenant_first_name !== null && property.tenant_last_name !== null)
+
+                setTenantsByPropertyData(tenantsByProperties);
+                            
+                setShowSpinner(false);
         });
     }, []);
 
@@ -159,7 +170,7 @@ export default function ManagerCreateAnnouncement() {
         e.preventDefault();
         setShowInvalidAnnouncementPrompt(false);
 
-        if(announcementTitle === "" || announcementMessage === "" || selectedUsers.length === 0){
+        if(announcementTitle === "" || announcementMessage === "" || selectedUsers.length === 0 || (announcementTypes.text === false && announcementTypes.email === false)){
             setShowInvalidAnnouncementPrompt(true);
             return;
         }
@@ -173,6 +184,14 @@ export default function ManagerCreateAnnouncement() {
                 property_uids.push(property.property_uid)
             });
             console.log("ROHIT - property_uids", property_uids);
+            
+            const announcement_types_list = []
+            if(announcementTypes.text){
+                announcement_types_list.push("Text")
+            }
+            if(announcementTypes.email){
+                announcement_types_list.push("Email")
+            }
             
             // promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, //rohit
             promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
@@ -189,29 +208,109 @@ export default function ManagerCreateAnnouncement() {
                     announcement_properties: property_uids, 
                     announcement_mode: "LEASE",
                     announcement_receiver: profile_uid,
-                    announcement_type: ["Text", "Email"],
+                    // announcement_type: ["Text", "Email"],
+                    announcement_type: announcement_types_list,
                 }),
             }));
 
             promises_added.push(profile_uid);
         }
+
+        const sendAnnouncement2 = async (receiverPropertyMapping) => {
+            const announcement_receivers = []
+            const announcement_properties = receiverPropertyMapping;
+            
+            Object.keys(receiverPropertyMapping).forEach((receiver) => {
+                announcement_receivers.push(receiver);
+            });
+
+            console.log("ROHIT - sendAnnouncement2 - announcement_receivers - ", announcement_receivers)
+            console.log("ROHIT - sendAnnouncement2 - announcement_properties - ", announcement_properties)
+
+
+            
+        }
         
         if(selectedOption === "tenants_by_name"){
             selectedUsers.forEach((tenant) => {
-                sendAnnouncement(tenant.properties_list ,tenant.tenant_uid)
+                let properties_list = []                
+                properties_list.push(tenant.properties_list[0])
+                sendAnnouncement(properties_list ,tenant.tenant_uid)
             });
         } else if(selectedOption === "owners_by_name"){
             selectedUsers.forEach((owner) => {
-                sendAnnouncement(owner.properties_list ,owner.owner_uid)
+                let properties_list = []                
+                properties_list.push(owner.properties_list[0])
+                sendAnnouncement(properties_list ,owner.owner_uid)
             });
         } else if(selectedOption === "applicants_by_name"){
             
             selectedUsers.forEach((applicant) => {
                 let properties_list = []                
-                properties_list.push(applicant.property_uid)
+                properties_list.push({property_uid: applicant.property_uid})
                 console.log(properties_list);
                 sendAnnouncement(properties_list ,applicant.tenant_uid)
             });
+        } else if(selectedOption === "tenants_by_property") {            
+            let groupedData = selectedUsers.reduce((acc, obj) => {
+                const tenantUid = obj.tenant_uid;
+                if (!acc[tenantUid]) {
+                    acc[tenantUid] = [];
+                }
+                acc[tenantUid].push(obj);
+                return acc;
+            }, {});
+
+            console.log("ROHIT - groupedData - ",groupedData);
+
+            // simulated data
+            // groupedData = {
+            //     "350-000080": [
+            //         {
+            //             "property_uid": "200-000158",
+            //             "property_available_to_rent": 1,
+            //             "property_active_date": "11-22-2023",
+            //         },
+            //         {
+            //             "property_uid": "200-000100",
+            //             "property_available_to_rent": 1,
+            //             "property_active_date": "2024-01-03",
+            //         },
+            //         {
+            //             "property_uid": "200-000128",
+            //             "property_available_to_rent": 1,
+            //             "property_active_date": "2024-02-16",
+            //         }
+            //     ],
+            //     "350-000081": [
+            //         {
+            //             "property_uid": "200-000125",
+            //             "property_available_to_rent": 1,
+            //             "property_active_date": "11-22-2023",
+            //         },
+            //         {
+            //             "property_uid": "200-000152",
+            //             "property_available_to_rent": 1,
+            //             "property_active_date": "2024-01-03",
+            //         },
+            //         {
+            //             "property_uid": "200-000153",
+            //             "property_available_to_rent": 1,
+            //             "property_active_date": "2024-02-16",
+            //         }
+            //     ]
+            // };
+
+            console.log("ROHIT - groupedData(new) - ",groupedData);
+            const receiverPropertyMapping = {};
+
+            Object.keys(groupedData).forEach((receiver) => {                
+                const properties = groupedData[receiver].map(property => property.property_uid);                
+                receiverPropertyMapping[receiver] = properties;
+            });
+                        
+            console.log("ROHIT - handleSendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
+            sendAnnouncement2(receiverPropertyMapping);
         }
 
         try {
@@ -239,6 +338,27 @@ export default function ManagerCreateAnnouncement() {
         }
     };
 
+    const handleAnnouncementTypeChange = (event) => {
+        console.log("ROHIT - handleAnnouncementTypeChange", event.target.getAttribute('name'))
+        if(event.target.getAttribute('name') === "text"){
+            
+            setAnnouncementTypes((prevState) => {
+                return {
+                    ...prevState,                    
+                    text: !prevState.text                    
+                }                
+            })
+        } else if(event.target.getAttribute('name') === "email"){
+            
+            setAnnouncementTypes((prevState) => {
+                return {
+                    ...prevState,                    
+                    email: !prevState.email
+                }                
+            })
+        }
+    }
+
     return (
         <Box 
             className="announcement-container"
@@ -254,78 +374,39 @@ export default function ManagerCreateAnnouncement() {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Box className="announcement-title">
-                <Box className="announcement-title-icon">
-                    <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="#160449" />
-                    </svg>
-                </Box>
+            <Box 
+                className="announcement-title"
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    width: "100%",
+                }}
+            >                                
                 <div className="announcement-title-text">
                     {"New Announcement"}
-                </div>
-                <div className="announcement-title-emptybox" />
+                </div>                
             </Box>
-            <hr />            
-            {/* <div className="announcement-menu-container">
-                
-                <div className="announcement-menu-bar">
-                    <div className="announcement-view">
-                        <div className="announcement-view-icon">
-                            <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2.375" y="4.75" width="14.25" height="11.875" rx="2" stroke="#3D5CAC" strokeWidth="2" />
-                                <path d="M2.375 7.91667C2.375 6.828 2.375 6.28367 2.58125 5.86542C2.77598 5.47056 3.09556 5.15098 3.49042 4.95625C3.90867 4.75 4.453 4.75 5.54167 4.75H13.4583C14.547 4.75 15.0913 4.75 15.5096 4.95625C15.9044 5.15098 16.224 5.47056 16.4187 5.86542C16.625 6.28367 16.625 6.828 16.625 7.91667V7.91667H2.375V7.91667Z" fill="#3D5CAC" />
-                                <path d="M5.54169 2.375L5.54169 4.75" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
-                                <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
-                            </svg>
-                        </div>
-                        <div className="announcement-view-text">
-                            View Last 30 Days
-                        </div>
-                    </div>
-                    <div className="announcement-readall">
-                        <div className="announcement-readall-text">
-                            Read All
-                        </div>
-                        <div className="announcement-readall-checkbox">
-                            <input type="checkbox" />
-                        </div>
-                    </div>
-                </div>
-                <div className="announcement-view-text">
-                           Sent
-                </div>
-                <div style={{width:"100%", height: "150px", overflow: "auto"}}>
-                 <div className="announcement-list-container">
-                    {sentData.length > 0 ? (
-                        sentData.map((announcement, i) =>
-                            <div key={i}>
-                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                    <AnnouncementCard data={announcement} role={getProfileId}/>
-                                </Box>
-                            </div>
-                        )) : "No announcements"}
-                </div>
-                </div>
-
-                <div className="announcement-view-text">
-                           Received
-                </div>
-                <div style={{width:"100%", height: "150px", overflow: "auto"}}>
-                 <div className="announcement-list-container">
-                    {receivedData.length > 0 ? (
-                        receivedData.map((announcement, i) =>
-                            <div key={i}>
-                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                    <AnnouncementCard data={announcement} role={getProfileId}/>
-                                </Box>
-                            </div>
-                        )) : "No announcements"}
-                </div>
-                </div>
-            </div> */}
+            <hr />                        
             <Box className="announcement-menu-container">
                 <form onSubmit={handleSendAnnouncement}>
                     <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                            <Typography
+                                sx={{
+                                color: "#000000",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Announcement Type
+                            </Typography>
+                            <FormGroup>
+                                
+                                <FormControlLabel name="text" control={<Checkbox />} checked={announcementTypes.text} onChange={(e)=> handleAnnouncementTypeChange(e)} label="Text" />
+                                <FormControlLabel name="email" control={<Checkbox />} checked={announcementTypes.email} onChange={(e)=> handleAnnouncementTypeChange(e)} label="Email" />
+                                
+                            </FormGroup>
+                        </Grid>
                         <Grid item xs={12}>
                             <Typography
                                 sx={{
@@ -382,6 +463,11 @@ export default function ManagerCreateAnnouncement() {
                                     value="applicants_by_name"
                                     control={<Radio />}
                                     label="Applicants By Name"
+                                />
+                                <FormControlLabel
+                                    value="tenants_by_property"
+                                    control={<Radio />}
+                                    label="Tenants By Property"
                                 />
                             </RadioGroup>
                         </Grid>                        
@@ -534,6 +620,35 @@ export default function ManagerCreateAnnouncement() {
                                     </>
                                 )
                             }
+                            {
+                                selectedOption === "tenants_by_property" && (
+                                    <>                                        
+                                        <Box>
+                                            <TableContainer>
+                                                <Table>
+                                                <TableHead>
+                                                    <TableRow>
+                                                    <TableCell>{""}</TableCell>
+                                                    <TableCell>Property</TableCell>
+                                                    <TableCell>Tenant</TableCell>                                                    
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {tenantsByPropertyData.map((property, index) => (
+                                                        <TenantByPropertyRow
+                                                            key={index}
+                                                            property={property}
+                                                            isSelected={selectedUsers.includes(property)}
+                                                            handleCheckboxChange={handleCheckboxChange}
+                                                        />
+                                                    ))}
+                                                </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                        </Box>
+                                    </>
+                                )
+                            }
 
                         </Grid>
                         <Grid item xs={12}>
@@ -595,6 +710,27 @@ function TenantRow({ tenant, isSelected, handleCheckboxChange }) {
                 </Box>
             ))}
         </TableCell> 
+      </TableRow>
+    );
+}
+
+function TenantByPropertyRow({ property, isSelected, handleCheckboxChange }) {
+    const handleChange = (event) => {
+      handleCheckboxChange(property, event.target.checked);
+    };
+  
+    return (
+      <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            checked={isSelected}
+            onChange={handleChange}
+            color="primary"
+            inputProps={{ "aria-label": "select user" }}
+          />
+        </TableCell>
+        <TableCell>{`${property.property_address}, ${property.property_city}, ${property.property_state}`}</TableCell>        
+        <TableCell>{`${property.tenant_first_name} ${property.tenant_last_name}`}</TableCell>        
       </TableRow>
     );
 }
