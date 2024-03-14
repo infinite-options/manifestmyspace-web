@@ -58,9 +58,16 @@ const StatusText = (status) => {
 }
 
 export function RentDetailBody(props) {
-    const [rentDetailsData, propertyID, index, propertyStatus] = props.data;
+    let [rentDetailsData, propertyID, index, propertyStatus] = props.data;
     const [decrementIndex, incrementIndex] = props.updator;
     const [getProperties] = props.methods;
+    const property = getProperties(propertyStatus)[index]
+    
+    const uid=property?.property_uid
+    if (Array.isArray(rentDetailsData))
+    rentDetailsData=rentDetailsData.filter(rent_detail=> rent_detail.property_uid===uid)
+
+
 
     const tableStyle = {
         width: '100%',
@@ -100,6 +107,7 @@ export function RentDetailBody(props) {
         const imageString = data.slice(s, l);
         return imageString;
     }
+
 
     return (
         <Box sx={{
@@ -172,7 +180,7 @@ export function RentDetailBody(props) {
                     }}
                 >
                     {getProperties(propertyStatus).length > 0 ? (
-                        <img src={parseImageData(getProperties(propertyStatus)[index].property_images)} alt="Property Img" style={{
+                        <img src={parseImageData(property.property_images)} alt="Property Img" style={{
                             width: '130px',
                             height: '130px',
                         }} />
@@ -188,7 +196,7 @@ export function RentDetailBody(props) {
                         fontSize: '18px',
                         textDecoration: 'underline',
                     }}>
-                        {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)}
+                        {getProperties(propertyStatus).length > 0 ? (`${property.property_address}, ${(property.property_unit !== null && property.property_unit !== '' ? (property.property_unit + ',') : (''))} ${property.property_city} ${property.property_state} ${property.property_zip}`) : (<></>)}
                     </Box>
                     <Box sx={{
                         marginBottom: '0px',
@@ -196,10 +204,10 @@ export function RentDetailBody(props) {
                         fontSize: '14px',
                     }}>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`$ ${getProperties(propertyStatus)[index].pur_amount_due}`) : (<></>)}
+                            {getProperties(propertyStatus).length > 0 ? (`$ ${property.pur_amount_due}`) : (<></>)}
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(getProperties(propertyStatus)[index].pur_due_date)}`) : (<></>)}
+                            {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(property.pur_due_date)}`) : (<></>)}
                         </Box>
                         <Box>
                             {getProperties(propertyStatus).length > 0 ? (`${getOverdue()} Days Overdue`) : (<></>)}
@@ -234,6 +242,7 @@ export function RentDetailBody(props) {
                         </th>
                         <th style={thStyle}>
                             Amount
+                            
                         </th>
                         <th style={thStyle}>
                             Rent Status
@@ -242,42 +251,43 @@ export function RentDetailBody(props) {
                             Fees
                         </th>
                     </tr>
-                    {rentDetailsData.length > 0 && getProperties(propertyStatus).length > 0 ? (
+                    {rentDetailsData.length > 0  && (
                         rentDetailsData.map((rentDetails, i) => {
-                            const month = rentDetails.cf_month;
-                            const paid = rentDetails.payment_date !== null ? (
-                                formatDate(rentDetails.payment_date) !== '' ? formatDate(rentDetails.payment_date).slice(0, 5) : '-'
-                            ) : '-';
-                            const amount = rentDetails.pay_amount !== null ? '$' + rentDetails.pay_amount : '-';
-                            const payment_status = rentDetails.payment_status;
+                        {/* let month = rentDetails.cf_month;
+                        let paid = rentDetails.payment_date !== null ? (
+                            formatDate(rentDetails.payment_date) !== '' ? formatDate(rentDetails.payment_date).slice(0, 5) : '-'
+                        ) : '-';
+                        let amount = rentDetails.pay_amount !== null ? '$' + rentDetails.pay_amount : '-';
+                        let payment_status = rentDetails.payment_status;
 
-                            const id = rentDetails.property_id;
-                            let fee = '';
-                            for (let i = 0; i < rentDetailsData.length; i++) {
-                                const prop2 = rentDetailsData[i];
-                                if (prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
-                                    fee = '+$' + prop2.pur_amount_due;
-                                }
+                        let id = rentDetails.property_id;
+                        let fee = '';
+                        for (let i = 0; i < rentDetailsData.length; i++) {
+                            const prop2 = rentDetailsData[i];
+                            if (prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
+                                fee = '+$' + prop2.pur_amount_due;
                             }
-                            return (
-                                <>
-                                    {
-                                        (propertyID === id && rentDetails.purchase_type === 'RENT') ? (
-                                            <>
-                                                <PropertyRow data={[month, paid, amount, payment_status, fee]} />
-                                            </>
+                        }  */}
+                        let month = 'February' || rentDetails.cf_month ||'no cf-month';   //These fields need revision
+                        let paid= rentDetails.total_paid || 0
+                        let amount= rentDetails.pur_amount_due || 'pur_amount_due';
+                        let payment_status= rentDetails.purchase_status || 'No purchase_status ';
+                        let fee= rentDetails?.fee || 'No fee';
 
-                                        ) : (
-                                            <></>
-                                        )
-                                    }
-                                </>
-                            )
-                        })
-                    ) : (
-                        <>
-                        </>
-                    )
+                        return (
+                            <>
+                                {
+                                    (
+                                        <>
+                                            <PropertyRow data={{month, paid, amount, payment_status, fee}} />
+                                        </>
+                                    ) 
+                                }
+                            </>
+                        )
+                    })
+
+                    ) 
 
                     }
                 </table>
@@ -286,7 +296,7 @@ export function RentDetailBody(props) {
     )
 }
 function PropertyRow(props) {
-    const [month, paid, amount, status, fees] = props.data;
+    const {month, paid, amount, status, fees} = props.data;
     const tdStyle = {
         textAlign: 'center',
     }
@@ -322,21 +332,21 @@ function PropertyRow(props) {
 
     return (
         <tr>
-            <td style={tdStyle}>
+            <th style={tdStyle}>
                 {getMonthAbbreviation(month)}
-            </td>
-            <td style={tdStyle}>
+            </th>
+            <th style={tdStyle}>
                 {paid}
-            </td>
-            <td style={tdStyle}>
+            </th>
+            <th style={tdStyle}>
                 {amount}
-            </td>
-            <td style={tdStyle}>
+            </th>
+            <th style={tdStyle}>
                 <PropertyStatus data={status} />
-            </td>
-            <td style={tdStyle}>
+            </th>
+            <th style={tdStyle}>
                 {fees}
-            </td>
+            </th>
         </tr>
     );
 }
