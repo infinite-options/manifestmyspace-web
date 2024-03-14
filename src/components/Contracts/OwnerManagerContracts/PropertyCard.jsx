@@ -1183,8 +1183,8 @@ const handleSendQuoteClick = () => {
     formData.append("contract_assigned_contacts", contractContactsJSONString);
     formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
 
-    const endDateIsValid = isValidDate(contractEndDate);
-    if(!isValidDate(contractEndDate) || !isValidDate(contractStartDate)){            
+    const endDateIsValid = isValidDate(contractEndDate.format('MM-DD-YYYY'));
+    if(!isValidDate(contractEndDate.format('MM-DD-YYYY')) || !isValidDate(contractStartDate.format('MM-DD-YYYY'))){            
         return;
     }
 
