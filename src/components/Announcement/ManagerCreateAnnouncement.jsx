@@ -93,18 +93,42 @@ export default function ManagerCreateAnnouncement() {
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
             .then((res) => {
                 const applications = res.data.Applications.result;
-                const applicants = applications
-                    .filter(application => application.lease_status === "NEW" || application.lease_status === "PROCESSING")
-                    .filter(application => application.tenant_first_name !== null && application.tenant_last_name !== null)
-                    .filter((application, index, self) => 
-                        index === self.findIndex(a => 
-                            a.tenant_first_name === application.tenant_first_name && 
-                            a.tenant_last_name === application.tenant_last_name
-                        )
-                    );
-                setApplicantsData(applicants);
+                const properties = res.data.Property.result;                
 
-                const properties = res.data.Property.result;
+                const groupedApplicants = applications.reduce((grouped, applicant) => {
+                    const { tenant_uid } = applicant;
+                    if (!grouped[tenant_uid]) {
+                        grouped[tenant_uid] = [];
+                    }
+                    grouped[tenant_uid].push(applicant);
+                    return grouped;
+                }, {});
+                
+                const applicantsWithProperties = Object.values(groupedApplicants).map(applicantsGroup => {
+                    const tenant_uid = applicantsGroup[0].tenant_uid; 
+                    const tenant_first_name = applicantsGroup[0].tenant_first_name;
+                    const tenant_last_name = applicantsGroup[0].tenant_last_name; 
+                    const applicantProperties = applicantsGroup.flatMap(applicant => {
+                        const applicantProperty = properties.find(property => property.property_uid === applicant.property_uid);
+                        return applicantProperty ? [applicantProperty] : [];
+                    });
+                    const properties_list = applicantProperties.map(property => {
+                        return {
+                            property_uid: property.property_uid,
+                            property_address: property.property_address,
+                            property_unit: property.property_unit,
+                            property_city: property.property_city,
+                            property_state: property.property_state,
+                            // Add more details here as needed
+                        };
+                    });
+                    return { tenant_uid, tenant_first_name, tenant_last_name, properties_list };
+                });
+                
+                const filteredApplicants = applicantsWithProperties.filter(applicant => applicant.properties_list.length > 0);                
+                setApplicantsData(filteredApplicants);
+                
+                
                 const owners = properties
                 .filter((property, index, self) => 
                     index === self.findIndex(a => 
@@ -149,8 +173,7 @@ export default function ManagerCreateAnnouncement() {
                     );
                     return { ...tenant, properties_list: tenantProperties };
                 });
-                
-                // setTenantsData(tenants)
+                                
                 setTenantsData(tenantsWithProperties);
 
                 const tenantsByProperties = properties
@@ -257,26 +280,81 @@ export default function ManagerCreateAnnouncement() {
             }));            
         }
         
-        if(selectedOption === "tenants_by_name"){
-            selectedUsers.forEach((tenant) => {
-                let properties_list = []                
-                properties_list.push(tenant.properties_list[0])
-                sendAnnouncement(properties_list ,tenant.tenant_uid)
-            });
-        } else if(selectedOption === "owners_by_name"){
-            selectedUsers.forEach((owner) => {
-                let properties_list = []                
-                properties_list.push(owner.properties_list[0])
-                sendAnnouncement(properties_list ,owner.owner_uid)
-            });
+        if(selectedOption === "tenants_by_name"){                       
+            let receiverPropertyMapping = selectedUsers.reduce((acc, obj) => {
+                const tenantUid = obj.tenant_uid;
+                const tenantProperties = obj.properties_list.map((property => property.property_uid))
+                if (!acc[tenantUid]) {
+                    acc[tenantUid] = [];
+                }                
+                acc[tenantUid] = tenantProperties;
+                return acc;
+            }, {});     
+
+            console.log("ROHIT - tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+
+            sendAnnouncement2(receiverPropertyMapping);
+            
+        } else if(selectedOption === "owners_by_name"){            
+            let receiverPropertyMapping = selectedUsers.reduce((acc, obj) => {
+                const ownerUid = obj.owner_uid;
+                const ownerProperties = obj.properties_list.map((property => property.property_uid))
+                if (!acc[ownerUid]) {
+                    acc[ownerUid] = [];
+                }                
+                acc[ownerUid] = ownerProperties;
+                return acc;
+            }, {});     
+
+            console.log("ROHIT - owners_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+
+            sendAnnouncement2(receiverPropertyMapping);
+
         } else if(selectedOption === "applicants_by_name"){
             
-            selectedUsers.forEach((applicant) => {
-                let properties_list = []                
-                properties_list.push({property_uid: applicant.property_uid})
-                console.log(properties_list);
-                sendAnnouncement(properties_list ,applicant.tenant_uid)
+            // selectedUsers.forEach((applicant) => {
+            //     let properties_list = []                
+            //     properties_list.push({property_uid: applicant.property_uid})
+            //     console.log(properties_list);
+            //     sendAnnouncement(properties_list ,applicant.tenant_uid)
+            // });
+
+
+            // let receiverPropertyMapping = selectedUsers.reduce((acc, obj) => {
+            //     const applicantUid = obj.tenant_uid;
+            //     const applicantProperties = obj.properties_list.map((property => property.property_uid))
+            //     if (!acc[tenantUid]) {
+            //         acc[tenantUid] = [];
+            //     }                
+            //     acc[tenantUid] = tenantProperties;
+            //     return acc;
+            // }, {});     
+
+            // console.log("ROHIT - tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+
+            let groupedData = selectedUsers.reduce((acc, obj) => {
+                const tenantUid = obj.tenant_uid;
+                if (!acc[tenantUid]) {
+                    acc[tenantUid] = [];
+                }
+                acc[tenantUid].push(obj);
+                return acc;
+            }, {});
+
+            console.log("ROHIT - groupedData - ",groupedData);
+
+            const receiverPropertyMapping = {};
+
+            Object.keys(groupedData).forEach((receiver) => {                
+                const properties = groupedData[receiver][0].properties_list.map(property => property.property_uid);                
+                receiverPropertyMapping[receiver] = properties;
             });
+                        
+            console.log("ROHIT - tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
+
+            sendAnnouncement2(receiverPropertyMapping);
+
+
         } else if(selectedOption === "tenants_by_property") {            
             let groupedData = selectedUsers.reduce((acc, obj) => {
                 const tenantUid = obj.tenant_uid;
@@ -289,7 +367,7 @@ export default function ManagerCreateAnnouncement() {
 
             console.log("ROHIT - groupedData - ",groupedData);
 
-            // simulated data
+            // simulated data - rohit
             // groupedData = {
             //     "350-000080": [
             //         {
@@ -327,7 +405,7 @@ export default function ManagerCreateAnnouncement() {
             //     ]
             // };
 
-            console.log("ROHIT - groupedData(new) - ",groupedData);
+            // console.log("ROHIT - groupedData(new) - ",groupedData);
             const receiverPropertyMapping = {};
 
             Object.keys(groupedData).forEach((receiver) => {                
@@ -335,8 +413,8 @@ export default function ManagerCreateAnnouncement() {
                 receiverPropertyMapping[receiver] = properties;
             });
                         
-            console.log("ROHIT - handleSendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
-            sendAnnouncement2(receiverPropertyMapping);
+            console.log("ROHIT - tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
+            sendAnnouncement2(receiverPropertyMapping); 
         }
 
         try {
@@ -626,7 +704,7 @@ export default function ManagerCreateAnnouncement() {
                                                     <TableRow>
                                                     <TableCell>{""}</TableCell>
                                                     <TableCell>Name</TableCell>
-                                                    <TableCell>Property</TableCell>                                                    
+                                                    <TableCell>Properties</TableCell>                                                    
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
@@ -634,7 +712,7 @@ export default function ManagerCreateAnnouncement() {
                                                         <ApplicantRow
                                                             key={index}
                                                             applicant={applicant}
-                                                            propertyAddressesMap={propertyAddressesMap}
+                                                            // propertyAddressesMap={propertyAddressesMap}
                                                             isSelected={selectedUsers.includes(applicant)}
                                                             handleCheckboxChange={handleCheckboxChange}
                                                         />
@@ -776,8 +854,7 @@ function OwnerRow({ owner, isSelected, handleCheckboxChange }) {
             inputProps={{ "aria-label": "select user" }}
           />
         </TableCell>
-        <TableCell>{`${owner.owner_first_name} ${owner.owner_last_name}`}</TableCell>
-        {/* <TableCell>{`${owner.property_address}, Unit - ${owner.property_unit}, ${owner.property_city}, ${owner.property_state}`}</TableCell> */}
+        <TableCell>{`${owner.owner_first_name} ${owner.owner_last_name}`}</TableCell>        
         <TableCell>
             {owner.properties_list.map((property, index) => (
                 <Box key={index}>
@@ -805,17 +882,13 @@ function ApplicantRow({ applicant, propertyAddressesMap, isSelected, handleCheck
           />
         </TableCell>
         <TableCell>{`${applicant.tenant_first_name} ${applicant.tenant_last_name}`}</TableCell>
-
-        {/* <TableCell>{`${propertyAddressesMap[applicant.property_uid].property_address}, Unit - ${applicant.property_unit}, ${applicant.property_city}, ${applicant.property_state}`}</TableCell> */}
-        <TableCell>{`${applicant.property_uid}`}</TableCell>
         <TableCell>
-            {propertyAddressesMap[applicant.property_uid] ? (
-                `${propertyAddressesMap[applicant.property_uid].property_address}, Unit - ${applicant.property_unit}, ${applicant.property_city}, ${applicant.property_state}`
-            ) : (
-                "Address Not Available"
-            )}
-        </TableCell>
-        {/* Add more table cells for additional user data */}
+            {applicant.properties_list.map((property, index) => (
+                <Box key={index}>
+                {`${property.property_address}, Unit - ${property.property_unit}, ${property.property_city}, ${property.property_state}`}
+                </Box>
+            ))}
+        </TableCell>        
       </TableRow>
     );
 }
