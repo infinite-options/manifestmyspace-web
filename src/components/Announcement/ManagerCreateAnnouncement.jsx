@@ -226,9 +226,35 @@ export default function ManagerCreateAnnouncement() {
 
             console.log("ROHIT - sendAnnouncement2 - announcement_receivers - ", announcement_receivers)
             console.log("ROHIT - sendAnnouncement2 - announcement_properties - ", announcement_properties)
+            console.log("ROHIT - sendAnnouncement2 - announcement_properties - string - ", JSON.stringify(announcement_properties))
 
-
+            const announcement_types_list = []
+            if(announcementTypes.text){
+                announcement_types_list.push("Text")
+            }
+            if(announcementTypes.email){
+                announcement_types_list.push("Email")
+            }
             
+            // promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, //rohit
+            promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    announcement_title: announcementTitle,
+                    announcement_msg: announcementMessage,
+                    announcement_sender: getProfileId(),
+                    announcement_date: new Date().toDateString(),
+                    announcement_properties: JSON.stringify(announcement_properties), 
+                    announcement_mode: "LEASE",
+                    announcement_receiver: announcement_receivers,
+                    // announcement_type: ["Text", "Email"],
+                    announcement_type: announcement_types_list,
+                }),
+            }));            
         }
         
         if(selectedOption === "tenants_by_name"){

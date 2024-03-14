@@ -1,4 +1,7 @@
 export function isValidDate(dateString){
+    if(dateString == null || dateString === ""){
+        return false
+    }    
     const dateParts = dateString.split("-");
     const month = parseInt(dateParts[0]);
     const day = parseInt(dateParts[1]);
