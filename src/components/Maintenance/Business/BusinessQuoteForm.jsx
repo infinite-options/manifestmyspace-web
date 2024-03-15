@@ -323,7 +323,7 @@ export default function BusinessQuoteForm({acceptBool}){
                     formData.append("document_file", selectedDocumentList[i]);
                     formData.append("document_title", selectedDocumentList[i].name);
                 }
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`, {
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`, {
                     method: 'POST',
                     body: formData,
                 })
