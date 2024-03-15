@@ -52,17 +52,18 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     const { getProfileId, isManager, roleName, selectedRole } = useUser();
     // console.log(currentIndex)
     const [propertyData, setPropertyData] = useState(propertyList);
-    const [item, setItem] = useState(propertyData[currentIndex]);
-    const [currentId, setCurrentId] = useState(item.property_uid);
+    // const [item, setItem] = useState(propertyData[currentIndex]);
+    const [property, setProperty] = useState(propertyData[currentIndex]);
+    const [currentId, setCurrentId] = useState(property.property_uid);
     const [maintenanceData, setMaintenanceData] = useState([{}]);
     const [images, setImages] = useState(JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]);
     // const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
-    const [activeStep, setActiveStep] = useState(() => {
-        const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
+    // const [activeStep, setActiveStep] = useState(() => {
+    //     const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
         
-        return index !== -1 ? index : 0;
-    });
-    const [property, setProperty] = useState(propertyData[currentIndex]);
+    //     return index !== -1 ? index : 0;
+    // });
+    const [activeStep, setActiveStep] = useState(0);
     const [showSpinner, setShowSpinner] = useState(false);
     const [contractsData, setContractsData] = useState(contracts)
     const [contractsNewSent, setContractsNewSent] = useState(0)
@@ -100,7 +101,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
             const propertyList = getPropertyList(propertyResponse)            
             setProperty(propertyList[currentIndex])
             setPropertyData(propertyList)
-            setItem(propertyList[currentIndex])
+            // setItem(propertyList[currentIndex])
         } catch (error){
             console.log(error);
         }
@@ -113,8 +114,6 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     useEffect(() => {
         // console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
         setPropertyId(propertyData[currentIndex].property_uid)
-
-        
 
         const getContractsForOwner = async () => {
             try {
@@ -143,17 +142,17 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     }, [currentIndex, propertyId])
 
     //const [propertyId, setPropertyId] = useState('200-000028')
-    const tenant_detail= (item.lease_start && item.tenant_uid)?  `${item.lease_start}: ${item.tenant_first_name} ${item.tenant_last_name}`:
+    const tenant_detail= (property.lease_start && property.tenant_uid)?  `${property.lease_start}: ${property.tenant_first_name} ${property.tenant_last_name}`:
     "No Tenant";
     const [showIconButton, setShowIconButton]= useState(false);
-    const manager_detail= (item.business_uid)?  `${item.business_name}`:     "No Manager"
+    const manager_detail= (property.business_uid)?  `${property.business_name}`:     "No Manager"
     const [arrowButton1_color, set_arrow1_color]=useState(tenant_detail=== "No Tenant" && manager_detail==="No Manager"? theme.typography.common.gray : theme.typography.common.blue)
     
     useEffect(() => {
         const getMaintenanceForProperty = async () => {
             setShowSpinner(true);
             try {
-                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${item.property_uid}`);  
+                const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);  
                 const propertyMaintenanceData = await responseProperty.json();
                 let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
                 propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
@@ -262,21 +261,28 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
 
     
     const handleNextCard = () => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
-      const nextId = propertyData[currentIndex+1].property_uid
-      setCurrentId(nextId);
-      setImages(JSON.parse(propertyData[currentIndex+1].property_images))
-    //   setActiveStep(0);
-      setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1].property_favorite_image));
+    //   setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
+        let nextIndex = (currentIndex + 1) % propertyData.length
+        setCurrentIndex(nextIndex);
+        const nextId = propertyData[nextIndex].property_uid
+        // console.log("next property id", nextId)
+        setCurrentId(nextId);
+        setProperty(propertyData[nextIndex])
+        setImages(JSON.parse(propertyData[nextIndex].property_images))
+        setActiveStep(0);
+    //   setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1].property_favorite_image));
     };
   
     const handlePreviousCard = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + propertyData.length) % propertyData.length);
-        const previousId = propertyData[currentIndex-1].property_uid
+        let previousIndex = (currentIndex - 1 + propertyData.length) % propertyData.length
+        setCurrentIndex(previousIndex);
+        const previousId = propertyData[previousIndex].property_uid
+        // console.log("previous property id", previousId)
         setCurrentId(previousId);
-        setImages(JSON.parse(propertyData[currentIndex-1].property_images))
-        // setActiveStep(0);
-        setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
+        setProperty(propertyData[previousIndex])
+        setImages(JSON.parse(propertyData[previousIndex].property_images))
+        setActiveStep(0);
+        // setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
     };
   
     const handleNext = () => {
@@ -288,12 +294,12 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     };
 
     const handleManagerChange = (index) => {
-        if(item.business_uid) {
+        if(property.business_uid) {
             navigate("/managerDetails", { 
                 state: { 
-                    ownerId: item.owner_uid, 
-                    managerBusinessId: item.business_uid,
-                    managerData: item,
+                    ownerId: property.owner_uid, 
+                    managerBusinessId: property.business_uid,
+                    managerData: property,
                     propertyData: propertyData,
                     index: currentIndex,
                 } 
@@ -306,7 +312,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     };
 
     const handleAppClick = (index) => {
-        navigate("/tenantApplicationNav", { state:{ index: index, property: item } });
+        navigate("/tenantApplicationNav", { state:{ index: index, property: property } });
     };
 
     return(
@@ -394,10 +400,10 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                             }}
                         >
                             <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
-                                {item.property_address} {item.property_unit}, {item.property_city} {item.property_state} {item.property_zip}
+                                {property.property_address} {property.property_unit}, {property.property_city} {property.property_state} {property.property_zip}
                             </Typography>
                             <Typography sx={{color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: theme.typography.propertyPage.fontSize}} paddingBottom="20px">
-                                {item.property_uid}
+                                {property.property_uid}
                             </Typography>
                             <Box
                                 sx={{
@@ -472,13 +478,13 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                             alignItems="center"
                             direction="column"
                             sx={{
-                                backgroundColor: getPaymentStatusColor(item.rent_status),
+                                backgroundColor: getPaymentStatusColor(property.rent_status),
                             }}
                         >   
                             <Grid item xs={12}>
                                 <Box  sx={{color:theme.typography.common.blue}}>
                                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                    <b>Rent Status:</b> {getPaymentStatus(item.rent_status)}
+                                    <b>Rent Status:</b> {getPaymentStatus(property.rent_status)}
                                 </Typography>
                                 </Box>
                             </Grid>
@@ -509,7 +515,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 fontSize:theme.typography.smallFont,
                                             }}
                                         >
-                                            Rent: {item.property_listed_rent ? ("$"+item.property_listed_rent) : "No Rent Listed"}
+                                            Rent: {property.property_listed_rent ? ("$"+property.property_listed_rent) : "No Rent Listed"}
                                         </Typography>
                                         <Typography
                                             sx={{
@@ -519,7 +525,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                 paddingBottom: "10px"
                                             }}
                                         >
-                                            Due: {item.lease_rent_due_by ? (item.lease_rent_due_by) : "No Due Date Listed"}
+                                            Due: {property.lease_rent_due_by ? (property.lease_rent_due_by) : "No Due Date Listed"}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -530,7 +536,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                             onClick={() => navigate('/viewLease',
                                             {
                                                 state:{
-                                                    lease_id : item.lease_uid
+                                                    lease_id : property.lease_uid
                                                 } 
                                             })}
                                         >
@@ -555,7 +561,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                Lease Expiring : {item.lease_end ? item.lease_end : "No Lease"}
+                                                Lease Expiring : {property.lease_end ? property.lease_end : "No Lease"}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -578,7 +584,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                ${item.property_value}
+                                                ${property.property_value}
 
                                         </Typography>
                                     </Grid>
@@ -602,7 +608,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                ${(item.property_value/item.property_area).toFixed(2)}
+                                                ${(property.property_value/property.property_area).toFixed(2)}
                                         </Typography>
                                     </Grid>                                    
                                     <Grid item xs={4}>
@@ -660,7 +666,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                {item.property_type}
+                                                {property.property_type}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={3}>
@@ -683,7 +689,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                            {item.property_area}
+                                            {property.property_area}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={3}>
@@ -706,7 +712,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                {item.property_num_beds}
+                                                {property.property_num_beds}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={3}>
@@ -729,11 +735,11 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                                {item.property_num_baths}
+                                                {property.property_num_baths}
                                         </Typography>
                                     </Grid>
                                     {/* {isManager() && item.applications.length > 0 && */}
-                                    {item.applications.length > 0 &&
+                                    {property.applications.length > 0 &&
                                         <>
                                             <Grid item xs={12}>
                                                 <Typography
@@ -748,7 +754,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     {"Applications"}
                                                 </Typography>
                                             </Grid>
-                                            {item.applications.map((app, index) => 
+                                            {property.applications.map((app, index) => 
                                                 <Grid item xs={6}>
                                                     <Button onClick={()=>handleAppClick(index)} 
                                                         sx={{ backgroundColor: getAppColor(app), 
@@ -910,7 +916,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     paddingRight: "10px"
                                                 }}
                                             >
-                                            {item.business_uid ? "Property Manager" : "Find A Property Manager"}
+                                            {property.business_uid ? "Property Manager" : "Find A Property Manager"}
                                         </Typography>
                                         <Typography
                                                 sx={{
@@ -920,15 +926,15 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     fontSize:theme.typography.smallFont,
                                                 }}
                                             >
-                                            {(item.business_uid)?
-                                            `${item.business_name}`:
+                                            {(property.business_uid)?
+                                            `${property.business_name}`:
                                             "No Manager Selected"}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
                                         <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)}/>
                                     </Grid>                                                                        
-                                    {item.property_available_to_rent !== 1 && (
+                                    {property.property_available_to_rent !== 1 && (
                                         <Grid item xs={12}>
                                             <Button
                                                 variant="outlined" 
@@ -939,7 +945,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     textTransform: "none",
                                                 }}
                                                 size="small"
-                                                onClick={() => {navigate('/editProperty2', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"add_listing"}})}}
+                                                onClick={() => {navigate('/editProperty2', {state:{ currentId, property, index: currentIndex, propertyList: propertyData, page:"add_listing"}})}}
                                             >
                                                 <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                                 <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -948,7 +954,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                             </Button>
                                         </Grid>
                                     )}
-                                    {selectedRole == "MANAGER" && item.property_available_to_rent === 1 && (
+                                    {selectedRole == "MANAGER" && property.property_available_to_rent === 1 && (
                                         <Grid item xs={12}>
                                             <Button
                                                 variant="outlined" 
@@ -959,7 +965,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
                                                     textTransform: "none",
                                                 }}
                                                 size="small"
-                                                onClick={() => {navigate('/editProperty2', {state:{ currentId, item, index: currentIndex, propertyList: propertyData, page:"edit_listing"}})}}
+                                                onClick={() => {navigate('/editProperty2', {state:{ currentId, property, index: currentIndex, propertyList: propertyData, page:"edit_listing"}})}}
                                             >
                                                 <PostAddIcon sx={{color: "#FFFFFF", fontSize: "18px", margin:'5px'}}/>
                                                 <Typography  sx={{textTransform: 'none', color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize:theme.typography.smallFont}}>

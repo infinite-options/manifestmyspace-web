@@ -406,8 +406,8 @@ const TenantLease = () => {
   useEffect(() => {
     let isValid = true;
     fees.forEach(fee => {
-      if(fee.frequency === "One-time" || fee.frequency === "Annually"){
-        if(fee.due_by_date === null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)){
+      if(fee.frequency === "One-time" || fee.frequency === "Annually"){        
+        if(fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)){
           isValid = false;
         }
       }        
