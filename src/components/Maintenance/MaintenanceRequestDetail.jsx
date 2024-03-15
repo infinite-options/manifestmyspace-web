@@ -77,6 +77,8 @@ export function MaintenanceRequestDetail(){
     let profileId = getProfileId();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
+
     const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
 
     function navigateToAddMaintenanceItem(){
@@ -134,6 +136,7 @@ export function MaintenanceRequestDetail(){
     }
 
     const colorStatus = getColorStatusBasedOnSelectedRole()
+    console.log("--DEBUG-- colorStatus", colorStatus)
    
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
@@ -147,6 +150,8 @@ export function MaintenanceRequestDetail(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
     const allData = location.state.allMaintenanceData;
+
+    console.log("--DEBUG-- allData", allData)
 
     useEffect(() => {
         setNavParams({
@@ -164,6 +169,8 @@ export function MaintenanceRequestDetail(){
         })
         let j = colorStatus.map((item, index) => {
             let key = item.mapping
+            console.log("--DEBUG-- key", key)
+            console.log("--DEBUG-- allData keys", Object.keys(allData))
             let isGrey = allData[key].length > 0 ? 0 : 1;  
             let temp = areTabsGrey;
             setAreTabsGrey(prev => { 

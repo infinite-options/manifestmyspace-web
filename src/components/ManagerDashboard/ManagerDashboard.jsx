@@ -151,13 +151,8 @@ function ManagerDashboard() {
     if (!getProfileId()) navigate("/PrivateprofileName");
     // console.log("In UseEffect after if");
     const fetchData = async () => {
-      // console.log("in useEffect")
-      // console.log("PROFILE ID: ", getProfileId())
-      // console.log("In UseEffect fetchData");
       setShowSpinner(true);
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/600-000003`)
-
       const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
@@ -187,25 +182,12 @@ function ManagerDashboard() {
     fetchData();
   }, []);
 
-  // console.log("In Manager Dashboard Step 4");
-  // Confirm data has been received.  Comment out before publishing
-  // console.log("maintenanceStatusData: ", maintenanceStatusData);
-  // console.log("rentStatus: ", rentStatus);
-  // console.log("leaseStatus: ", leaseStatus);
-  // console.log("happiness matrix: ", "Not sure what data to display here");
-  // console.log("contractRequests: ", contractRequests);
 
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      {/* {loading && 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            {loading && <CircularProgress color="inherit" />}
-            </div>    
-        } 
-            {!loading && */}
       <div className="mt-widgest-main">
         <div className="mt-container">
           <MaintenanceWidget maintenanceData={maintenanceStatusData} />

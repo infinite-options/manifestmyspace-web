@@ -20,7 +20,9 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import { DataGrid } from '@mui/x-data-grid';
 import { useUser } from "../../contexts/UserContext";
 
-import { maintenanceDataCollectAndProcess } from '../Maintenance/MaintenanceOwner.jsx';
+
+import { maintenanceOwnerDataCollectAndProcess } from '../Maintenance/MaintenanceOwner.jsx';
+import { maintenanceManagerDataCollectAndProcess } from '../Maintenance/MaintenanceManager.jsx';
 
 const maintenanceColumns = [
     { 
@@ -68,6 +70,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     const [contractsData, setContractsData] = useState(contracts)
     const [contractsNewSent, setContractsNewSent] = useState(0)
     const [maintenanceReqData, setMaintenanceReqData] = useState([{}])
+    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
     const color = theme.palette.form.main
     const maxSteps = images.length;
     const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid)
@@ -153,6 +156,8 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
             setShowSpinner(true);
             try {
                 const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);  
+                // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${property.property_uid}`);  
+                // call maintenanceStatus 
                 const propertyMaintenanceData = await responseProperty.json();
                 let propMaintList = propertyMaintenanceData.MaintenanceProjects?.result || []
                 propMaintList = propMaintList.filter(m => m.maintenance_request_status !== "COMPLETED" && m.maintenance_request_status !== "CANCELLED")
@@ -167,7 +172,15 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
     }, [currentIndex, propertyId]);
 
     useEffect(() => {
-        maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
+        console.log("getProfileID", getProfileId())
+        if (getProfileId().startsWith("600")){
+            // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
+            console.log("Manager ID. and we need to return maintenance that is properly parsed")
+            maintenanceManagerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, setDisplayMaintenanceData, getProfileId())
+
+        } else if (getProfileId().startsWith("200")){
+            maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, getProfileId())
+        }
     }, [currentIndex, propertyId])
 
     function getColorStatusBasedOnSelectedRole(){
@@ -198,10 +211,7 @@ export default function PropertyNavigator({currentIndex, setCurrentIndex, proper
         } else if (row.row.maintenance_request_status === "NEW"){
             status = "NEW REQUEST"
         }
-        // console.log("status", status)
-        // console.log("maintenanceReqData[status]", maintenanceReqData[status])
-        // console.log("maintenanceReqData[status].maintenance_items", maintenanceReqData[status].maintenance_items)
-        //let maintenanceIndex = maintenanceReqData[status].maintenance_items.findIndex(item => item.maintenance_request_uid === row.id)
+        console.log("status", status)
         try {
             navigate('/maintenance/detail', {state: { 
                 maintenance_request_index: maintenanceReqData[status].findIndex(item => item.maintenance_request_uid === row.id),
