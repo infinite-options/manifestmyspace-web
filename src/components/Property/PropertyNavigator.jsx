@@ -97,27 +97,27 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     });
   }
 
-  const refreshPropertyData = async () => {
-    try {
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
-      // const response = await fetch(`http://localhost:4000/properties/${getProfileId()}`);
-      if (!response.ok) {
-        console.log("Error fetching property data");
-      }
-      const propertyResponse = await response.json();
-      // console.log("propertyResponse", propertyResponse.result)
-      const propertyList = getPropertyList(propertyResponse);
-      setProperty(propertyList[currentIndex]);
-      setPropertyData(propertyList);
-      // setItem(propertyList[currentIndex])
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //   const refreshPropertyData = async () => {
+  //     try {
+  //       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+  //       // const response = await fetch(`http://localhost:4000/properties/${getProfileId()}`);
+  //       if (!response.ok) {
+  //         console.log("Error fetching property data");
+  //       }
+  //       const propertyResponse = await response.json();
+  //       // console.log("propertyResponse", propertyResponse.result)
+  //       const propertyList = getPropertyList(propertyResponse);
+  //       setProperty(propertyList[currentIndex]);
+  //       setPropertyData(propertyList);
+  //       // setItem(propertyList[currentIndex])
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    refreshPropertyData();
-  }, []);
+  //   useEffect(() => {
+  //     refreshPropertyData();
+  //   }, []);
 
   useEffect(() => {
     // console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
@@ -226,6 +226,8 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     console.log("row", row);
     console.log("maintenanceReqData", maintenanceReqData);
     console.log("maintenanceData", maintenanceData);
+    console.log("New data: ", property.maintenance);
+    // console.log("New ID: ", property.maintenance);
     console.log(
       "maintenance_request_index",
       maintenanceData.findIndex((item) => item.maintenance_request_uid === row.id)
@@ -275,21 +277,46 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
           }}
           getRowId={(row) => row.maintenance_request_uid}
           pageSizeOptions={[5]}
-          onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            handleOnClickNavigateToMaintenance(row);
+          }}
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
+
+        // <DataGrid
+        //   rows={property.maintenance}
+        //   columns={maintenanceColumns}
+        //   initialState={{
+        //     pagination: {
+        //       paginationModel: {
+        //         pageSize: 5,
+        //       },
+        //     },
+        //   }}
+        //   getRowId={(row) => row.maintenance_request_uid}
+        //   pageSizeOptions={[5]}
+        //   onRowClick={(row) => {
+        //     {
+        //       console.log("List Item Clicked", property, i, propertyList);
+        //     }
+        //     handleOnClickNavigateToMaintenance(row)}}
+        // />
       );
     } else {
       return "No Open Maintenance Tickets";
     }
   }
 
-  function numberOfMaintenanceItems(maintenanceItems) {
-    if (maintenanceItems && maintenanceItems.length > 0) {
-      return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;
-    } else {
-      return 0;
-    }
-  }
+  //   function numberOfMaintenanceItems(maintenanceItems) {
+  //     if (maintenanceItems && maintenanceItems.length > 0) {
+  //       return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;
+  //     } else {
+  //       return 0;
+  //     }
+  //   }
 
   function navigateToMaintenanceAccordion() {
     // console.log("click to maintenance accordion for property")
@@ -810,7 +837,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                       </Typography>
                       <Box onClick={() => navigate("/ownerMaintenance", { state: { propertyId: propertyId } })}>
                         <Badge
-                          badgeContent={numberOfMaintenanceItems(maintenanceData)}
+                          badgeContent={property.maintenanceCount}
                           color="error"
                           sx={{
                             paddingRight: "10px",
