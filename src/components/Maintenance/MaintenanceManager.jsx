@@ -20,45 +20,10 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function MaintenanceManager(){
-    const location = useLocation();
-    let navigate = useNavigate();
-    const { user, getProfileId } = useUser();
-    const [maintenanceData, setMaintenanceData] = useState({});
-    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
-    const [propertyId, setPropertyId] = useState("")
-    const colorStatus = theme.colorStatusPMO
-    const [refresh, setRefresh] = useState(false || location.state?.refresh)
-    
 
-    const newDataObject = {};
-    newDataObject["NEW REQUEST"] = [];
-    newDataObject["QUOTES REQUESTED"] = [];
-    newDataObject["QUOTES ACCEPTED"] = [];
-    newDataObject["SCHEDULED"] = [];
-    newDataObject["COMPLETED"] = [];
-    newDataObject["PAID"] = [];
+export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId){
+    const dataObject = {};
 
-    const [showSelectMonth, setShowSelectMonth] = useState(false);
-    const [showPropertyFilter, setShowPropertyFilter] = useState(false);
-    const [month, setMonth] = useState(null);
-    const [year, setYear] = useState(null);
-    const [showSpinner, setShowSpinner] = useState(false);
-    const [filterPropertyList, setFilterPropertyList] = useState([]);
-    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
-
-    // console.log(user)
-
-    const businessId = user.businesses.MAINTENANCE.business_uid;
-    // console.log(businessId)
-
-    // console.log(getProfileId(), "===", businessId)
-
-    function navigateToAddMaintenanceItem(){
-        // console.log("navigateToAddMaintenanceItem")
-        navigate('/addMaintenanceItem')
-    }
-    
     function dedupeQuotes(array){
         // we want to find all the quotes that have the same maintenance_request_uid
 
@@ -95,14 +60,99 @@ export default function MaintenanceManager(){
                 }
                 dedupeArray.push(mapping[key][0])
             }
-            // else {
-            //     dedupeArray.push(mapping[key][0])
-            // }
         }
-
-        // console.log("dedupeArray", dedupeArray)
         return dedupeArray
     }
+
+    const getMaintenanceData = async () => {
+        setShowSpinner(true);
+        // console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
+        const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${profileId}`) // Change back to ${getProfileId()}
+        const maintenanceRequestsData = await maintenanceRequests.json()
+        // console.log("maintenanceRequestsData", maintenanceRequestsData)
+
+        console.log("maintenanceRequestsData", maintenanceRequestsData)
+
+        let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
+        let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
+        let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
+        let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
+        let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
+        let array6 = maintenanceRequestsData.result["PAID"].maintenance_items
+
+        dataObject["NEW REQUEST"] = [];
+        dataObject["QUOTES REQUESTED"] = [];
+        dataObject["QUOTES ACCEPTED"] = [];
+        dataObject["SCHEDULED"] = [];
+        dataObject["COMPLETED"] = [];
+        dataObject["PAID"] = [];
+
+        for (const item of array1) {
+            // console.log(item.maintenance_request_uid)
+            dataObject["NEW REQUEST"].push(item);
+        }
+        for (const item of array2) {
+            dataObject["QUOTES REQUESTED"].push(item);
+        }
+        for (const item of array3) {
+            dataObject["QUOTES ACCEPTED"].push(item);
+        }
+        for (const item of array4) {
+            dataObject["SCHEDULED"].push(item);
+        }
+        for (const item of array5) {
+            dataObject["COMPLETED"].push(item);
+        }
+        for (const item of array6) {
+            dataObject["PAID"].push(item);
+        }
+
+        setMaintenanceData(prevData => ({
+            ...prevData, 
+            ...dataObject
+        }));
+        setDisplayMaintenanceData(prevData => ({
+            ...prevData,
+            ...dataObject
+        }));
+        setShowSpinner(false);
+    }
+    getMaintenanceData()
+}
+
+export default function MaintenanceManager(){
+    const location = useLocation();
+    let navigate = useNavigate();
+    const { user, getProfileId } = useUser();
+    const [maintenanceData, setMaintenanceData] = useState({});
+    const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+    const [propertyId, setPropertyId] = useState("")
+    const colorStatus = theme.colorStatusPMO
+    const [refresh, setRefresh] = useState(false || location.state?.refresh)
+    
+
+    const newDataObject = {};
+    newDataObject["NEW REQUEST"] = [];
+    newDataObject["QUOTES REQUESTED"] = [];
+    newDataObject["QUOTES ACCEPTED"] = [];
+    newDataObject["SCHEDULED"] = [];
+    newDataObject["COMPLETED"] = [];
+    newDataObject["PAID"] = [];
+
+    const [showSelectMonth, setShowSelectMonth] = useState(false);
+    const [showPropertyFilter, setShowPropertyFilter] = useState(false);
+    const [month, setMonth] = useState(null);
+    const [year, setYear] = useState(null);
+    const [showSpinner, setShowSpinner] = useState(false);
+    const [filterPropertyList, setFilterPropertyList] = useState([]);
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
+
+    const businessId = user.businesses.MAINTENANCE.business_uid;
+
+    function navigateToAddMaintenanceItem(){
+        navigate('/addMaintenanceItem')
+    }
+    
 
     useEffect(() => {
         if (maintenanceData){
@@ -209,59 +259,9 @@ export default function MaintenanceManager(){
 
     useEffect(() => {
         // console.log("Maintenance useEffect")
-        const dataObject = {};
-        const getMaintenanceData = async () => {
-            setShowSpinner(true);
-            // console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
-            const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`) // Change back to ${getProfileId()}
-            const maintenanceRequestsData = await maintenanceRequests.json()
-            // console.log("maintenanceRequestsData", maintenanceRequestsData)
-
-            let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items
-            let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
-            let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items
-            let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items
-            let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items
-            let array6 = maintenanceRequestsData.result["PAID"].maintenance_items
-
-            dataObject["NEW REQUEST"] = [];
-            dataObject["QUOTES REQUESTED"] = [];
-            dataObject["QUOTES ACCEPTED"] = [];
-            dataObject["SCHEDULED"] = [];
-            dataObject["COMPLETED"] = [];
-            dataObject["PAID"] = [];
-
-            for (const item of array1) {
-                // console.log(item.maintenance_request_uid)
-                dataObject["NEW REQUEST"].push(item);
-            }
-            for (const item of array2) {
-                dataObject["QUOTES REQUESTED"].push(item);
-            }
-            for (const item of array3) {
-                dataObject["QUOTES ACCEPTED"].push(item);
-            }
-            for (const item of array4) {
-                dataObject["SCHEDULED"].push(item);
-            }
-            for (const item of array5) {
-                dataObject["COMPLETED"].push(item);
-            }
-            for (const item of array6) {
-                dataObject["PAID"].push(item);
-            }
-
-            setMaintenanceData(prevData => ({
-                ...prevData, 
-                ...dataObject
-            }));
-            setDisplayMaintenanceData(prevData => ({
-                ...prevData,
-                ...dataObject
-            }));
-            setShowSpinner(false);
-        }
-        getMaintenanceData();
+        // getMaintenanceData();
+        let profileId = getProfileId()
+        maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId)
         setRefresh(false);
     }, [refresh])
 

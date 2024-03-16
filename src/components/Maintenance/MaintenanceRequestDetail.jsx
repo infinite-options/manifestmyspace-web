@@ -77,6 +77,8 @@ export function MaintenanceRequestDetail(){
     let profileId = getProfileId();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    // console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
+
     const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
 
     function navigateToAddMaintenanceItem(){
@@ -116,7 +118,6 @@ export function MaintenanceRequestDetail(){
 
     function getColorStatusBasedOnSelectedRole(){
         const role = roleName()
-        console.log("role", role)   
 
         if (role === "Manager"){
             return theme.colorStatusPMO
@@ -139,7 +140,6 @@ export function MaintenanceRequestDetail(){
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
     const [status, setStatus] = useState(location.state.status);
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    // const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);    
     const [filteredQuotes, setFilteredQuotes] = useState([]);
     const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === status));
@@ -147,6 +147,7 @@ export function MaintenanceRequestDetail(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [navParams, setNavParams] = useState({})
     const allData = location.state.allMaintenanceData;
+
 
     useEffect(() => {
         setNavParams({
@@ -178,6 +179,7 @@ export function MaintenanceRequestDetail(){
 
 
     useEffect(() => {
+        console.log("--DEBUG-- in useeffect for quotes", maintenanceRequestIndex, maintenanceItemsForStatus, maintenanceQuotes)
         var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid)
         quotesFilteredById.sort((a, b) => { 
             if(a.quote_status === "SENT"){
@@ -226,7 +228,6 @@ export function MaintenanceRequestDetail(){
     }, [status, fromProperty])
 
     const handleChange = (event, newValue) => {
-        console.log("handleChange", newValue, colorStatus[newValue].status, colorStatus[newValue].mapping.toUpperCase())
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);

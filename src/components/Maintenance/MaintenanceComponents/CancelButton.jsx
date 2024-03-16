@@ -19,15 +19,9 @@ export default function CancelButton(props){
     let setMessage = props.setMessage;
     let quotes = props.quotes;
 
-    console.log("CancelButton quotes", quotes)
-
-    console.log("CancelButton maintenanceItem", maintenanceItem)
-
     function handleCancel(id, quotes){
         if (quotes && quotes.length > 0){
-            console.log("handleCancel quotes", quotes)
             for (let i = 0; i < quotes.length; i++){
-                console.log("handleCancel quotes[i]", quotes[i])
                 CancelQuote(quotes[i].maintenance_quote_uid);
             }
         }
