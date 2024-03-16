@@ -137,17 +137,21 @@ function getPaymentStatus(paymentStatus) {
   }
 }
 
+// This function maps the applications and maintenance items into the Property List
 function getPropertyList(data) {
   const propertyList = data["Property"].result;
   const applications = data["Applications"].result;
   const maintenance = data["MaintenanceRequests"].result;
-  console.log(maintenance);
+  //   const newContracts = data["NewPMRequests"].result;
+  //   console.log(maintenance);
+
   const appsMap = new Map();
   applications.forEach((a) => {
     const appsByProperty = appsMap.get(a.property_uid) || [];
     appsByProperty.push(a);
     appsMap.set(a.property_uid, appsByProperty);
   });
+
   const maintMap = new Map();
   maintenance.forEach((m) => {
     // console.log("before", m);
@@ -156,12 +160,24 @@ function getPropertyList(data) {
     // console.log("after", maintByProperty);
     maintMap.set(m.maintenance_property_id, maintByProperty);
   });
-  console.log(maintMap);
+
+  //   const contractsMap = new Map();
+  //   newContracts.forEach((c) => {
+  //     // console.log("before", m);
+  //     const contractsByProperty = maintMap.get(c.property_id) || [];
+  //     contractsByProperty.push(c);
+  //     // console.log("after", maintByProperty);
+  //     contractsMap.set(c.property_id, contractsByProperty);
+  //   });
+
+  //   console.log(maintMap);
   return propertyList.map((p) => {
     p.applications = appsMap.get(p.property_uid) || [];
     p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
     p.maintenance = maintMap.get(p.property_uid) || [];
-    p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW").length;
+    p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
+    // p.newContracts = contractsMap.get(p.property_uid) || [];
+    // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
     // console.log("P:", p);
     // console.log("P:", p.applications);
     // console.log("P:", p.applicationsCount);
@@ -278,7 +294,7 @@ export default function PropertyList({}) {
     setStatusSortOrder(statusSortOrder === "asc" ? "desc" : "asc");
   }
 
-  function handlePropertyDetailNavigation(property, index, propertyList) {
+  function handlePropertyDetailNavigation(index, propertyList) {
     console.log("In Property List >> Index: ", index);
     console.log("In Property List >> propertyList: ", propertyList);
     // console.log("theoretically property", property)
@@ -448,7 +464,7 @@ export default function PropertyList({}) {
                     {
                       console.log("List Item Clicked", property, i, propertyList);
                     }
-                    handlePropertyDetailNavigation(property, i, propertyList);
+                    handlePropertyDetailNavigation(i, propertyList);
                   }}
                 >
                   <Avatar

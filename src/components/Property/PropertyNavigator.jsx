@@ -48,12 +48,15 @@ const maintenanceColumns = [
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
-export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
+// export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
+export default function PropertyNavigator({ index, propertyList, contracts, props }) {
   console.log("In Property Navigator");
   const navigate = useNavigate();
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
-  // console.log(currentIndex)
+
   const [propertyData, setPropertyData] = useState(propertyList);
+  const [currentIndex, setCurrentIndex] = useState(index);
+  // console.log(currentIndex);
   // const [item, setItem] = useState(propertyData[currentIndex]);
   const [property, setProperty] = useState(propertyData[currentIndex]);
   const [currentId, setCurrentId] = useState(property.property_uid);
