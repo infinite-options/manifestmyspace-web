@@ -161,8 +161,8 @@ export default function PropertyList({}) {
   const [displayedItems, setDisplayedItems] = useState([]);
   // const [maintenanceData, setMaintenanceData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contracts, setContracts] = useState([]);
-  const [activeContracts, setActiveContracts] = useState([]);
+  //   const [contracts, setContracts] = useState([]);
+  //   const [activeContracts, setActiveContracts] = useState([]);
   const profileId = getProfileId();
   const [citySortOrder, setCitySortOrder] = useState("asc");
   const [stateSortOrder, setStateSortOrder] = useState("asc");
@@ -190,7 +190,7 @@ export default function PropertyList({}) {
       // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
       const propertyData = await response.json();
       const propertyList = getPropertyList(propertyData);
-      console.log("Property List: ", propertyList);
+      console.log("In Property List >> Property List: ", propertyList);
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
       setShowSpinner(false);
@@ -198,22 +198,22 @@ export default function PropertyList({}) {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const getContractsForOwner = async () => {
-      try {
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
-        if (!response.ok) {
-          console.log("Error fetching contracts data");
-        }
-        const contractsResponse = await response.json();
-        // console.log("contractsResponse", contractsResponse.result)
-        setContracts(contractsResponse.result);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getContractsForOwner();
-  }, []);
+  //   useEffect(() => {
+  //     const getContractsForOwner = async () => {
+  //       try {
+  //         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+  //         if (!response.ok) {
+  //           console.log("Error fetching contracts data");
+  //         }
+  //         const contractsResponse = await response.json();
+  //         // console.log("contractsResponse", contractsResponse.result)
+  //         setContracts(contractsResponse.result);
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     };
+  //     getContractsForOwner();
+  //   }, []);
 
   function sortByCity() {
     let items = [...displayedItems];
@@ -259,9 +259,12 @@ export default function PropertyList({}) {
   }
 
   function handlePropertyDetailNavigation(property, index, propertyList) {
+    console.log("In Property List >> Index: ", index);
+    console.log("In Property List >> propertyList: ", propertyList);
     // console.log("theoretically property", property)
     // console.log("handlePropertyDetailNavigation");
-    navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
+    // navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
+    navigate(`/propertyDetail`, { state: { index, propertyList } });
   }
 
   function getBadgeContent(property) {
@@ -273,8 +276,8 @@ export default function PropertyList({}) {
   }
 
   function getCoverPhoto(property) {
-    console.log("In getCoverPhoto");
-    console.log(property.property_images);
+    // console.log("In Property List >> In getCoverPhoto");
+    // console.log(property.property_images);
     const imageArray = JSON.parse(property.property_images);
     if (property.property_favorite_image) {
       const index = imageArray.findIndex((image) => image === property.property_favorite_image);
@@ -422,7 +425,7 @@ export default function PropertyList({}) {
                   }}
                 >
                   <Avatar
-                    // src={getCoverPhoto(property)}
+                    // src={getCoverPhoto(property)}  Adding the Date.now forces the cache to refresh the image
                     src={`${getCoverPhoto(property)}?${Date.now()}`}
                     alt="property image"
                     sx={{

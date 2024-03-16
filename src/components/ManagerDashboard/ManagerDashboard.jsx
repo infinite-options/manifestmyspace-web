@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  // console.log("In Manager Dashboard function");
+  console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId } = useUser();
   const navigate = useNavigate();
