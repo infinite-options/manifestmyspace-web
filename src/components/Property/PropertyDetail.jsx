@@ -13,10 +13,11 @@ export default function PropertyDetail({}) {
   console.log("In Property Detail");
   const location = useLocation();
   let navigate = useNavigate();
-  const [contractsForProperty, setContractsForProperty] = useState([]);
-  const propertyList = location.state.propertyList; // need to pass to property navigator
+  //   const [contractsForProperty, setContractsForProperty] = useState([]);
   //   const contracts = location.state.contracts;
-  const [index, setIndex] = useState(location.state.index);
+  const propertyList = location.state.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
+  const index = location.state.index;
+  //   const [index, setIndex] = useState(location.state.index);
 
   // console.log("--debug-- all contracts PropertyDetail", contracts)
 
@@ -115,7 +116,8 @@ export default function PropertyDetail({}) {
               }}
             >
               {/* <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} contracts={contractsForProperty} /> */}
-              <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} />
+              {/* <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} /> */}
+              <PropertyNavigator index={index} propertyList={propertyList} />
             </Box>
           </Stack>
         </Paper>
