@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  // console.log("In Manager Dashboard function");
+  console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId } = useUser();
   const navigate = useNavigate();
@@ -153,10 +153,10 @@ function ManagerDashboard() {
     const fetchData = async () => {
       setShowSpinner(true);
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
-      const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+      // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
-        const propertiesResponseJSON = await propertiesResponse.json();
+        // const propertiesResponseJSON = await propertiesResponse.json();
 
         // MAINTENANCE Status
         setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
@@ -171,8 +171,10 @@ function ManagerDashboard() {
         setting_matrix_data(jsonData);
 
         // NEW PM REQUESTS
-        set_property_endpoint_resp(propertiesResponseJSON);
-        setContractRequests(propertiesResponseJSON.NewPMRequests.result);
+        // set_property_endpoint_resp(propertiesResponseJSON);
+        // setContractRequests(propertiesResponseJSON.NewPMRequests.result);
+        set_property_endpoint_resp(jsonData);
+        setContractRequests(jsonData.NewPMRequests.result);
       } catch (error) {
         console.error(error);
       }
@@ -181,7 +183,6 @@ function ManagerDashboard() {
     };
     fetchData();
   }, []);
-
 
   return (
     <ThemeProvider theme={theme}>

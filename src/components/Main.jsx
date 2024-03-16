@@ -67,7 +67,7 @@ import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceCont
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
-import PMProperties from "./Property/PMProperties";
+// import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
@@ -216,7 +216,7 @@ function Main() {
             <Route path="maintenanceProfile" element={<MaintenanceProfile />} />
 
             <Route path="announcements" element={<Announcements />} />
-            <Route path="managerCreateAnnouncement" element={<ManagerCreateAnnouncement />} />            
+            <Route path="managerCreateAnnouncement" element={<ManagerCreateAnnouncement />} />
             <Route path="ownerProfile" element={<OwnerProfile />} />
             <Route path="ownerDocuments" element={<OwnerDocuments />} />
             <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
@@ -300,7 +300,7 @@ function Main() {
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
-            <Route path="PMProperties" element={<PMProperties />} />
+            {/* <Route path="PMProperties" element={<PMProperties />} /> */}
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
@@ -318,9 +318,9 @@ function Main() {
             <Route path="rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route path="payMaintenance" element={<PayMaintenanceForm />} />
 
-            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
-            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
-            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm/>} />
+            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
+            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
+            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
             <Route path="workerMaintenance" element={<WorkerMaintenance />} />
             <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
             <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
