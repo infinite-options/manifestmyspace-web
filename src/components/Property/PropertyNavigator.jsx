@@ -40,7 +40,7 @@ const maintenanceColumns = [
     flex: 1,
   },
   {
-    field: "maintenance_status",
+    field: "maintenance_request_status",
     headerName: "Status",
     flex: 1,
   },
@@ -221,7 +221,6 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   }
 
   function handleOnClickNavigateToMaintenance(row) {
-    let status = row.row.maintenance_status;
     console.log("handleOnClickNavigateToMaintenance");
     console.log("row", row);
     console.log("maintenanceReqData", maintenanceReqData);
@@ -232,12 +231,19 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
       "maintenance_request_index",
       maintenanceData.findIndex((item) => item.maintenance_request_uid === row.id)
     );
+
+    console.log("Row: ", row);
+    console.log("Row1: ", row.row);
+    console.log("Row2: ", row.row.maintenance_request_status);
+    let status = row.row.maintenance_request_status;
+    console.log("status1", status);
+
     console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
     console.log("allMaintenanceData", maintenanceReqData);
 
-    if (row.row.maintenance_status === "PAID") {
+    if (row.row.maintenance_request_status === "PAID") {
       status = "COMPLETED";
-    } else if (row.row.maintenance_status === "NEW") {
+    } else if (row.row.maintenance_request_status === "NEW") {
       status = "NEW REQUEST";
     }
     console.log("status", status);
@@ -264,9 +270,12 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     // console.log(`colorStatus mapping ${JSON.stringify(colorStatus)}`)
     // console.log(maintenanceData)
     if (maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid) {
+      console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid);
+      console.log("Maintenance data:", maintenanceData);
+      console.log("Passed Data ", property.maintenance);
       return (
         <DataGrid
-          rows={maintenanceData}
+          rows={property.maintenance}
           columns={maintenanceColumns}
           initialState={{
             pagination: {
