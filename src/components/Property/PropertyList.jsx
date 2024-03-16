@@ -140,15 +140,31 @@ function getPaymentStatus(paymentStatus) {
 function getPropertyList(data) {
   const propertyList = data["Property"].result;
   const applications = data["Applications"].result;
+  const maintenance = data["MaintenanceRequests"].result;
+  console.log(maintenance);
   const appsMap = new Map();
   applications.forEach((a) => {
     const appsByProperty = appsMap.get(a.property_uid) || [];
     appsByProperty.push(a);
     appsMap.set(a.property_uid, appsByProperty);
   });
+  const maintMap = new Map();
+  maintenance.forEach((m) => {
+    // console.log("before", m);
+    const maintByProperty = maintMap.get(m.maintenance_property_id) || [];
+    maintByProperty.push(m);
+    // console.log("after", maintByProperty);
+    maintMap.set(m.maintenance_property_id, maintByProperty);
+  });
+  console.log(maintMap);
   return propertyList.map((p) => {
     p.applications = appsMap.get(p.property_uid) || [];
     p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
+    p.maintenance = maintMap.get(p.property_uid) || [];
+    p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW").length;
+    // console.log("P:", p);
+    // console.log("P:", p.applications);
+    // console.log("P:", p.applicationsCount);
     return p;
   });
 }
@@ -184,13 +200,17 @@ export default function PropertyList({}) {
     // console.log("PropertyList useEffect");
     // console.log(propertyList);
     const fetchData = async () => {
+      //   console.log("Profile: ", profileId);
+      //   console.log("GetProfile: ", getProfileId);
       setShowSpinner(true);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`);
       // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
       const propertyData = await response.json();
+      //   console.log("In Property List >> Property Data: ", propertyData);
       const propertyList = getPropertyList(propertyData);
       console.log("In Property List >> Property List: ", propertyList);
+      //   console.log("Testing Property Data", propertyData.Property.result);
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
       setShowSpinner(false);
@@ -271,7 +291,11 @@ export default function PropertyList({}) {
     return property?.num_open_maintenace_req ?? 0;
   }
 
-  function getNoOfApplications(property) {
+  function getNumOfMaintenanceReqs(property) {
+    return property?.maintenanceCount ?? 0;
+  }
+
+  function getNumOfApplications(property) {
     return property.applicationsCount ?? 0;
   }
 
@@ -421,6 +445,9 @@ export default function PropertyList({}) {
                   }}
                   onClick={() => {
                     let i = propertyList.findIndex((p) => p.property_uid === property.property_uid);
+                    {
+                      console.log("List Item Clicked", property, i, propertyList);
+                    }
                     handlePropertyDetailNavigation(property, i, propertyList);
                   }}
                 >
@@ -502,8 +529,8 @@ export default function PropertyList({}) {
                     <Badge
                       overlap="circular"
                       color="success"
-                      badgeContent={getNoOfApplications(property)}
-                      invisible={!getNoOfApplications(property)}
+                      badgeContent={getNumOfApplications(property)}
+                      invisible={!getNumOfApplications(property)}
                       anchorOrigin={{
                         vertical: "top",
                         horizontal: "right",
@@ -534,7 +561,7 @@ export default function PropertyList({}) {
                   <Badge
                     overlap="circular"
                     color="error"
-                    badgeContent={getBadgeContent(property)}
+                    badgeContent={getNumOfMaintenanceReqs(property)}
                     anchorOrigin={{
                       vertical: "top",
                       horizontal: "right",

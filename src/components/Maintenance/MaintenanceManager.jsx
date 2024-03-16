@@ -57,13 +57,14 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
   }
 
   const getMaintenanceData = async () => {
+    // Returns colors and Maintenenace Requests sorted into different catergories
+    console.log("In MaintenanceManager >> getMaintenanceData before endpoint call");
     setShowSpinner(true);
-    // console.log("[DEBUG] About to call maintenanceRequests for refresh:", refresh)
+
     const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
     const maintenanceRequestsData = await maintenanceRequests.json();
-    // console.log("maintenanceRequestsData", maintenanceRequestsData)
 
-    console.log("In maintenanceRequestsData", maintenanceRequestsData);
+    console.log("[DEBUG] Data returned from maintenanceStatus endpoint:", maintenanceRequestsData);
 
     let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
     let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items);
@@ -253,7 +254,7 @@ export default function MaintenanceManager() {
     let profileId = getProfileId();
     maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId);
     setRefresh(false);
-  }, [refresh]);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
