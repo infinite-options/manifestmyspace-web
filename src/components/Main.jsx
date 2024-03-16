@@ -67,7 +67,7 @@ import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceCont
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
-import PMProperties from "./Property/PMProperties";
+// import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";

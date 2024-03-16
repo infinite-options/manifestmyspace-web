@@ -154,6 +154,7 @@ function getPropertyList(data) {
 }
 
 export default function PropertyList({}) {
+  console.log("In Property List");
   let navigate = useNavigate();
   const { getProfileId, isManagement, isOwner } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -272,6 +273,8 @@ export default function PropertyList({}) {
   }
 
   function getCoverPhoto(property) {
+    console.log("In getCoverPhoto");
+    console.log(property.property_images);
     const imageArray = JSON.parse(property.property_images);
     if (property.property_favorite_image) {
       const index = imageArray.findIndex((image) => image === property.property_favorite_image);
