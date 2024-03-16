@@ -14,7 +14,21 @@ function PMRentDetail(props) {
     const [propertyStatus, setPropertyStatus] = useState(location.state.status);
     const [showSpinner, setShowSpinner] = useState(false);
     const rentData = location.state.data;
-
+    const months = {
+        "January": 1,
+        "February": 2,
+        "March": 3,
+        "April": 4,
+        "May": 5,
+        "June": 6,
+        "July": 7,
+        "August": 8,
+        "September": 9,
+        "October": 10,
+        "November": 11,
+        "December": 12
+    };
+    
     const navigate = useNavigate();
 
     const getProperties = (status) => {
@@ -54,20 +68,7 @@ function PMRentDetail(props) {
             // console.log(res.data.RentStatus.result);
             const fetchData = res.data.RentStatus.result;
             fetchData.sort((a, b) => {
-                const months = {
-                    "January": 1,
-                    "February": 2,
-                    "March": 3,
-                    "April": 4,
-                    "May": 5,
-                    "June": 6,
-                    "July": 7,
-                    "August": 8,
-                    "September": 9,
-                    "October": 10,
-                    "November": 11,
-                    "December": 12
-                };
+                
                 const comp1 = b.cf_year - a.cf_year;
                 const comp2 = months[b.cf_month] - months[a.cf_month];
                 return comp1 !== 0 ? comp1 : comp2;

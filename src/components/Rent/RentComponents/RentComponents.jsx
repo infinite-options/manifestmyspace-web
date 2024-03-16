@@ -162,7 +162,7 @@ const propertyRentStatus = [
 ];
 export const getStatusColor = (status) => {
     for (let i = 0; i < propertyRentStatus.length; i++) {
-        if (propertyRentStatus[i].status.toUpperCase() === status.toUpperCase()) {
+        if (propertyRentStatus[i].status?.toUpperCase() === status?.toUpperCase()) {
             return propertyRentStatus[i].color;
         }
     }
