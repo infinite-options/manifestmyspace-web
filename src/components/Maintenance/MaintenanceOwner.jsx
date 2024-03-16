@@ -27,7 +27,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
-export async function maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId){
+export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId){
     const dataObject = {};
 
     const getMaintenanceData = async () => {
@@ -223,7 +223,7 @@ export function MaintenanceOwner(){
     }
 
     useEffect(() => {
-        maintenanceDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
+        maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId)
     }, [])
 
 

@@ -55,9 +55,9 @@ export default function SelectPayment(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
+  console.log("--DEBUG-- paymentData", paymentData)
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
-  // const [maintenanceItem, setMaintenanceItem] = useState(location.state.paymentData.maintenanceItem);
   const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
   const [convenience_fee, setFee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
@@ -67,20 +67,7 @@ export default function SelectPayment(props) {
   console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
   console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
   console.log("--debug-- location.state", location.state);
-  //   console.log("--debug-- maintenanceItem", maintenanceItem)
-  //   console.log("---debug--- purchaseUIDs", purchaseUIDs);
-  //   console.log("---debug--- selectedItems", selectedItems);
   console.log("---debug--- convenience_fee", convenience_fee);
-
-  // Just Console Logs
-  //   useEffect(() => {
-  //     // setTotalBalance(balance + convenience_fee);
-  //     console.log("Current Total Balance is: ", balance);
-  //     console.log("Current Convenience Fee is: ", convenience_fee);
-  //     console.log("Total Balance made up of: ", purchaseUIDs);
-  //     console.log("1st Purchase Item is: ", purchaseUIDs[0]);
-  //     console.log("1st Purchase UID is: ", purchaseUIDs[0].purchase_uid);
-  //   }, []);
 
   //  This will update everytime the convenience fee changes
   useEffect(() => {
@@ -106,10 +93,6 @@ export default function SelectPayment(props) {
     "Bank Transfer": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent",
   };
 
-  // const payment_url={"Credit Card":'http://127.0.0.1:5000/home',
-  // 'Bank Transfer': 'https://127.0.0.1:5000/home'
-  // }
-
   const [stripePromise, setStripePromise] = useState(null);
   //Credit Card Handler
   function credit_card_handler(notes) {
@@ -121,15 +104,6 @@ export default function SelectPayment(props) {
         .post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST")
         .then((result) => {
           console.log("(1 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
-          // setSelectedMethod(result.data.PUBLISHABLE_KEY);
-          //let tempStripePromise = loadStripe(result.data.publicKey);
-
-          // console.log("(1 PaymentDetails) setting state with stripePromise");
-
-          // setStripePromise(tempStripePromise);
-
-          // console.log(tempStripePromise);
-          // console.log("(1 PaymentDetails) stripePromise set!");
           setShowSpinner(false);
         })
         .catch((err) => {
@@ -148,14 +122,6 @@ export default function SelectPayment(props) {
         .then((result) => {
           console.log("(2 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
           setSelectedMethod(result.data.publicKey);
-          // let tempStripePromise = loadStripe(result.data.publicKey);
-
-          // console.log("(2 PaymentDetails) setting state with stripePromise");
-
-          // console.log(tempStripePromise);
-          // setStripePromise(tempStripePromise);
-
-          // console.log("(2 PaymentDetails) stripePromise set!");
           setShowSpinner(false);
         })
         .catch((err) => {
@@ -171,10 +137,6 @@ export default function SelectPayment(props) {
   const submit = async ({ paymentIntent, paymentMethod }) => {
     console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
-    // TODO: navigate to correct dashboard based on role
-    // navigate("/tenantDashboard");
-
-    // console.log("--DEBUG-- in submit in SelectPayment.jsx stripeResponse output", stripeResponse)
 
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
@@ -189,17 +151,16 @@ export default function SelectPayment(props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        pay_purchase_id: paymentData.purchase_uids,
-        pay_fee: convenience_fee,
-        pay_total: totalBalance,
-        // "payment_notes" : "PMTEST", // by default to indicate to backend that this is a test
-        payment_notes: paymentData.business_code,
-        pay_charge_id: "stripe transaction key",
-        payment_type: selectedMethod,
-        payment_verify: "Unverified",
-        paid_by: getProfileId(),
-        payment_intent: paymentIntent,
-        payment_method: paymentMethod,
+        "pay_purchase_id": paymentData.purchase_uids,
+        "pay_fee": convenience_fee,
+        "pay_total": totalBalance,
+        "payment_notes": paymentData.business_code,
+        "pay_charge_id": "stripe transaction key",
+        "payment_type": selectedMethod,
+        "payment_verify": "Unverified",
+        "paid_by": getProfileId(),
+        "payment_intent": paymentIntent,
+        "payment_method": paymentMethod
       }),
     });
 
