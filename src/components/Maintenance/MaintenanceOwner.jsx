@@ -18,8 +18,8 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
 
   const getMaintenanceData = async () => {
     // Returns colors and Maintenenace Requests sorted into different catergories
-    console.log("In MaintenanceManager >> getMaintenanceData before maintenanceStatus endpoint call", profileId);
-    console.log("Profile ID: ", profileId);
+    // console.log("In MaintenanceManager >> getMaintenanceData before maintenanceStatus endpoint call", profileId);
+    // console.log("Profile ID: ", profileId);
     setShowSpinner(true);
     const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/${profileId}`); // Change back to ${getProfileId()}
     const maintenanceRequestsData = await maintenanceRequests.json();
@@ -31,8 +31,6 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
     let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items;
     let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items;
     let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items;
-
-    // console.log("Processing --> ", array3)
 
     dataObject["NEW REQUEST"] = [];
     dataObject["INFO REQUESTED"] = [];
