@@ -27,7 +27,7 @@ import TenantLeases from "./Leases/TenantLeases/TenantLeases";
 import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
 import OwnerUploadDocuments from "./Documents/OwnerDocuments/OwnerUploadDocuments";
 import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
-import OwnerRent from "./Rent/OwnerRent/OwnerRent";
+// import OwnerRent from "./Rent/OwnerRent/OwnerRent";
 
 import PMProfile from "./Profile/PMProfile/PMProfile";
 import PMProfileEdit from "./Profile/PMProfile/PMProfileEdit";
@@ -35,7 +35,7 @@ import PMContracts from "./Contracts/PMContracts/PMContracts";
 import ManagementContractDetails from "./Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
-import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
+// import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 
@@ -221,8 +221,8 @@ function Main() {
             <Route path="ownerDocuments" element={<OwnerDocuments />} />
             <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
             <Route path="ownerUploadDocuments" element={<OwnerUploadDocuments />} />
-            <Route path="ownerRent" element={<OwnerRent />} />
-            <Route path="ownerRentDetail" element={<OwnerRentDetail />} />
+            {/* <Route path="ownerRent" element={<OwnerRent />} /> */}
+            {/* <Route path="ownerRentDetail" element={<OwnerRentDetail />} /> */}
 
             <Route path="tenantDocuments" element={<TenantDocuments />} />
             <Route path="tenantLeases" element={<TenantLeases />} />

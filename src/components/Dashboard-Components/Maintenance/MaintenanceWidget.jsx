@@ -5,6 +5,7 @@ import Status from "../../Templates/Status";
 import theme from "../../../theme/theme";
 
 export default function MaintenanceWidget({ maintenanceData }) {
+  console.log("In MaintenanceWidget");
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
