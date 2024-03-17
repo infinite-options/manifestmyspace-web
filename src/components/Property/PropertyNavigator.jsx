@@ -28,6 +28,8 @@ const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_statu
 // export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
 export default function PropertyNavigator({ index, propertyList, contracts, props }) {
   console.log("In Property Navigator");
+  console.log(index, propertyList);
+  console.log(contracts);
   const navigate = useNavigate();
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
@@ -38,6 +40,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   const [property, setProperty] = useState(propertyData[currentIndex]);
   const [currentId, setCurrentId] = useState(property.property_uid);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
+  console.log("Maintenance Data: ", maintenanceData);
   const [images, setImages] = useState(
     JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]
   );
@@ -52,11 +55,14 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   const [contractsData, setContractsData] = useState(contracts);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
+  console.log("Maintenance Request Data1: ", maintenanceReqData);
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
   const color = theme.palette.form.main;
   const maxSteps = images.length;
   const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid);
+
   // console.log(propertyId)
+  console.log("Maintenance Request Data2: ", maintenanceReqData);
 
   let data = "";
   const role = roleName();
@@ -65,6 +71,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   } else if (role === "Owner") {
     data = "maintenance_request_status";
   }
+  console.log("Role is: ", role, data);
 
   const maintenanceColumns = [
     {
@@ -205,6 +212,10 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
       // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
       // console.log("Manager ID. and we need to return maintenance that is properly parsed")
       maintenanceManagerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, setDisplayMaintenanceData, getProfileId());
+    } else if (getProfileId().startsWith("110")) {
+      // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
+      // console.log("Manager ID. and we need to return maintenance that is properly parsed")
+      maintenanceManagerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, setDisplayMaintenanceData, getProfileId());
     } else if (getProfileId().startsWith("200")) {
       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, getProfileId());
     }
@@ -261,11 +272,11 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
       status = row.row.maintenance_status;
       console.log("Manager status", status);
 
-      if (row.row.maintenance_status === "NEW" || row.row.maintenance_status === "INFO") {
+      if (status === "NEW" || status === "INFO") {
         status = "NEW REQUEST";
-      } else if (row.row.maintenance_status === "PROCESSING") {
+      } else if (status === "PROCESSING") {
         status = "QUOTES REQUESTED";
-      } else if (row.row.maintenance_status === "CANCELLED") {
+      } else if (status === "CANCELLED") {
         status = "COMPLETED";
       }
     }
@@ -275,14 +286,18 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
       status = row.row.maintenance_request_status;
       console.log("Owner status", status);
 
-      // if (row.row.maintenance_request_status === "NEW") {
-      //   status = "NEW REQUEST";
-      // } else if (row.row.maintenance_request_status === "INFO") {
-      //   status = "INFO REQUESTED";
-      // }
+      if (status === "NEW") {
+        status = "NEW REQUEST";
+      } else if (status === "INFO") {
+        status = "INFO REQUESTED";
+      }
     }
 
     console.log("Final status", status);
+    console.log(row.id);
+    console.log(maintenanceReqData[status].findIndex);
+    console.log(maintenanceReqData[status]);
+    console.log(maintenanceReqData);
 
     try {
       navigate("/maintenance/detail", {
@@ -317,8 +332,8 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     // console.log(maintenanceData)
     // if (maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid) {
     if (property.maintenanceCount > 0) {
-      console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid); // Expect this to be undefined since we are not calling the endpoint
-      console.log("Maintenance data:", maintenanceData); // Expect this to be undefined since we are not calling the endpoint
+      // console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid); // Expect this to be undefined since we are not calling the endpoint
+      // console.log("Maintenance data:", maintenanceData); // Expect this to be undefined since we are not calling the endpoint
       console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
       return (
         <DataGrid
