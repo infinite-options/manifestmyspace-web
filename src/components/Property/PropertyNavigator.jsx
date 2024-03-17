@@ -156,39 +156,39 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     tenant_detail === "No Tenant" && manager_detail === "No Manager" ? theme.typography.common.gray : theme.typography.common.blue
   );
 
-  useEffect(() => {
-    const getMaintenanceForProperty = async () => {
-      setShowSpinner(true);
-      try {
-        console.log("About to call maintenanceStatus endpoint Property Navigator");
-        // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);
-        const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
-        // call maintenanceStatus
-        const propertyMaintenanceData = await responseProperty.json();
-        const propertyMaintenanceDataResult = propertyMaintenanceData.result;
-        setMaintenanceReqData(propertyMaintenanceDataResult);
-        const property_uid = property.property_uid;
-        var propertyMaintenanceList = [];
-        Object.keys(propertyMaintenanceDataResult).forEach((status) => {
-          // console.log("propertyMaintenanceDataResult[status]", status, propertyMaintenanceDataResult[status])
-          // console.log("propertyMaintenanceDataResult[status].maintenance_items", status, propertyMaintenanceDataResult[status].maintenance_items)
-          if (status === "COMPLETED" || status === "CANCELLED" || status === "PAID" || status === "0") {
-            delete propertyMaintenanceDataResult[status];
-          } else if (propertyMaintenanceDataResult[status].maintenance_items) {
-            propertyMaintenanceDataResult[status].maintenance_items = propertyMaintenanceDataResult[status].maintenance_items.filter(
-              (item) => item.maintenance_property_id === property_uid
-            );
-            propertyMaintenanceList = propertyMaintenanceList.concat(propertyMaintenanceDataResult[status].maintenance_items);
-          }
-        });
-        setMaintenanceData(propertyMaintenanceList);
-      } catch (error) {
-        console.log(error);
-      }
-      setShowSpinner(false);
-    };
-    getMaintenanceForProperty();
-  }, [currentIndex, propertyId]);
+  //   useEffect(() => {
+  //     const getMaintenanceForProperty = async () => {
+  //       setShowSpinner(true);
+  //       try {
+  //         console.log("About to call maintenanceStatus endpoint Property Navigator");
+  //         // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);
+  //         const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
+  //         // call maintenanceStatus
+  //         const propertyMaintenanceData = await responseProperty.json();
+  //         const propertyMaintenanceDataResult = propertyMaintenanceData.result;
+  //         setMaintenanceReqData(propertyMaintenanceDataResult);
+  //         const property_uid = property.property_uid;
+  //         var propertyMaintenanceList = [];
+  //         Object.keys(propertyMaintenanceDataResult).forEach((status) => {
+  //           // console.log("propertyMaintenanceDataResult[status]", status, propertyMaintenanceDataResult[status])
+  //           // console.log("propertyMaintenanceDataResult[status].maintenance_items", status, propertyMaintenanceDataResult[status].maintenance_items)
+  //           if (status === "COMPLETED" || status === "CANCELLED" || status === "PAID" || status === "0") {
+  //             delete propertyMaintenanceDataResult[status];
+  //           } else if (propertyMaintenanceDataResult[status].maintenance_items) {
+  //             propertyMaintenanceDataResult[status].maintenance_items = propertyMaintenanceDataResult[status].maintenance_items.filter(
+  //               (item) => item.maintenance_property_id === property_uid
+  //             );
+  //             propertyMaintenanceList = propertyMaintenanceList.concat(propertyMaintenanceDataResult[status].maintenance_items);
+  //           }
+  //         });
+  //         setMaintenanceData(propertyMaintenanceList);
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //       setShowSpinner(false);
+  //     };
+  //     getMaintenanceForProperty();
+  //   }, [currentIndex, propertyId]);
 
   useEffect(() => {
     // console.log("getProfileID", getProfileId())
@@ -221,26 +221,40 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   }
 
   function handleOnClickNavigateToMaintenance(row) {
-    let status = row.row.maintenance_status;
     console.log("handleOnClickNavigateToMaintenance");
     console.log("row", row);
-    console.log("maintenanceReqData", maintenanceReqData);
-    console.log("maintenanceData", maintenanceData);
+    // console.log("maintenanceReqData", maintenanceReqData);
+    // console.log("maintenanceData", maintenanceData);
     console.log("New data: ", property.maintenance);
     // console.log("New ID: ", property.maintenance);
+    // console.log(
+    //   "maintenance_request_index",
+    //   maintenanceData.findIndex((item) => item.maintenance_request_uid === row.id)
+    // );
     console.log(
-      "maintenance_request_index",
-      maintenanceData.findIndex((item) => item.maintenance_request_uid === row.id)
+      "maintenance_request_index_new",
+      property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
     );
-    console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
-    console.log("allMaintenanceData", maintenanceReqData);
 
-    if (row.row.maintenance_status === "PAID") {
-      status = "COMPLETED";
-    } else if (row.row.maintenance_status === "NEW") {
+    console.log("Row: ", row);
+    console.log("Row1: ", row.row);
+    console.log("Row2: ", row.row.maintenance_status);
+    let status = row.row.maintenance_status;
+    console.log("status1", status);
+
+    // console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
+    // console.log("allMaintenanceData", maintenanceReqData);
+
+    if (row.row.maintenance_request_status === "NEW" || row.row.maintenance_request_status === "INFO") {
       status = "NEW REQUEST";
+    } else if (row.row.maintenance_request_status === "PROCESSING") {
+      status = "QUOTES REQUESTED";
+    } else if (row.row.maintenance_request_status === "CANCELLED") {
+      status = "COMPLETED";
     }
+
     console.log("status", status);
+
     try {
       navigate("/maintenance/detail", {
         state: {
@@ -250,6 +264,15 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
           allMaintenanceData: maintenanceReqData,
           fromProperty: true,
         },
+        // try {
+        //   navigate("/maintenance/detail", {
+        //     state: {
+        //       maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
+        //       status: status,
+        //       maintenanceItemsForStatus: maintenanceReqData[status],
+        //       allMaintenanceData: maintenanceReqData,
+        //       fromProperty: true,
+        //     },
       });
     } catch (error) {
       console.log(error);
@@ -263,10 +286,14 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     // console.log(`maintenanceData before maintenance table ${JSON.stringify(maintenanceData)}`)
     // console.log(`colorStatus mapping ${JSON.stringify(colorStatus)}`)
     // console.log(maintenanceData)
-    if (maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid) {
+    // if (maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid) {
+    if (property.maintenanceCount > 0) {
+      console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid); // Expect this to be undefined since we are not calling the endpoint
+      console.log("Maintenance data:", maintenanceData); // Expect this to be undefined since we are not calling the endpoint
+      console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
       return (
         <DataGrid
-          rows={maintenanceData}
+          rows={property.maintenance}
           columns={maintenanceColumns}
           initialState={{
             pagination: {

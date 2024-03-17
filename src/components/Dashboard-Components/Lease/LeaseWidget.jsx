@@ -10,6 +10,7 @@ import theme from "../../../theme/theme";
 import { Button, Box, ThemeProvider } from "@mui/material";
 
 export default function LeaseWidget(props) {
+  console.log("In Lease Widget");
   const navigate = useNavigate();
   // const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
