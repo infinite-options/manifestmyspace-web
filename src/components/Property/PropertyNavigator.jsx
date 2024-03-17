@@ -23,29 +23,6 @@ import { useUser } from "../../contexts/UserContext";
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
-const maintenanceColumns = [
-  {
-    field: "maintenance_request_uid",
-    headerName: "UID",
-    flex: 1,
-  },
-  {
-    field: "maintenance_request_created_date",
-    headerName: "Created Date",
-    flex: 1,
-  },
-  {
-    field: "maintenance_title",
-    headerName: "Title",
-    flex: 1,
-  },
-  {
-    field: "maintenance_status",
-    headerName: "Status",
-    flex: 1,
-  },
-];
-
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 // export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
@@ -80,6 +57,38 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   const maxSteps = images.length;
   const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid);
   // console.log(propertyId)
+
+  let data = "";
+  const role = roleName();
+  if (role === "Manager") {
+    data = "maintenance_status";
+  } else if (role === "Owner") {
+    data = "maintenance_request_status";
+  }
+
+  const maintenanceColumns = [
+    {
+      field: "maintenance_request_uid",
+      headerName: "UID",
+      flex: 1,
+    },
+    {
+      field: "maintenance_request_created_date",
+      headerName: "Created Date",
+      flex: 1,
+    },
+    {
+      field: "maintenance_title",
+      headerName: "Title",
+      flex: 1,
+    },
+
+    {
+      field: data,
+      headerName: "Status",
+      flex: 1,
+    },
+  ];
 
   function getPropertyList(data) {
     const propertyList = data["Property"].result;
@@ -202,7 +211,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   }, [currentIndex, propertyId]);
 
   function getColorStatusBasedOnSelectedRole() {
-    const role = roleName();
+    // const role = roleName();
     // console.log("role", role)
 
     if (role === "Manager") {
@@ -221,6 +230,10 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   }
 
   function handleOnClickNavigateToMaintenance(row) {
+    const role = roleName();
+    console.log(role);
+    let status = "NEW REQUEST";
+    console.log("initial Status: ", status);
     console.log("handleOnClickNavigateToMaintenance");
     console.log("row", row);
     // console.log("maintenanceReqData", maintenanceReqData);
@@ -239,21 +252,37 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     console.log("Row: ", row);
     console.log("Row1: ", row.row);
     console.log("Row2: ", row.row.maintenance_status);
-    let status = row.row.maintenance_status;
-    console.log("status1", status);
 
     // console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
     // console.log("allMaintenanceData", maintenanceReqData);
 
-    if (row.row.maintenance_request_status === "NEW" || row.row.maintenance_request_status === "INFO") {
-      status = "NEW REQUEST";
-    } else if (row.row.maintenance_request_status === "PROCESSING") {
-      status = "QUOTES REQUESTED";
-    } else if (row.row.maintenance_request_status === "CANCELLED") {
-      status = "COMPLETED";
+    if (role === "Manager") {
+      // These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
+      status = row.row.maintenance_status;
+      console.log("Manager status", status);
+
+      if (row.row.maintenance_status === "NEW" || row.row.maintenance_status === "INFO") {
+        status = "NEW REQUEST";
+      } else if (row.row.maintenance_status === "PROCESSING") {
+        status = "QUOTES REQUESTED";
+      } else if (row.row.maintenance_status === "CANCELLED") {
+        status = "COMPLETED";
+      }
     }
 
-    console.log("status", status);
+    if (role === "Owner") {
+      // Owner Status
+      status = row.row.maintenance_request_status;
+      console.log("Owner status", status);
+
+      // if (row.row.maintenance_request_status === "NEW") {
+      //   status = "NEW REQUEST";
+      // } else if (row.row.maintenance_request_status === "INFO") {
+      //   status = "INFO REQUESTED";
+      // }
+    }
+
+    console.log("Final status", status);
 
     try {
       navigate("/maintenance/detail", {
