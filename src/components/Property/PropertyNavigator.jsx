@@ -40,7 +40,7 @@ const maintenanceColumns = [
     flex: 1,
   },
   {
-    field: "maintenance_request_status",
+    field: "maintenance_status",
     headerName: "Status",
     flex: 1,
   },
@@ -238,19 +238,23 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
 
     console.log("Row: ", row);
     console.log("Row1: ", row.row);
-    console.log("Row2: ", row.row.maintenance_request_status);
-    let status = row.row.maintenance_request_status;
+    console.log("Row2: ", row.row.maintenance_status);
+    let status = row.row.maintenance_status;
     console.log("status1", status);
 
     // console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
     // console.log("allMaintenanceData", maintenanceReqData);
 
-    if (row.row.maintenance_request_status === "PAID") {
-      status = "COMPLETED";
-    } else if (row.row.maintenance_request_status === "NEW") {
+    if (row.row.maintenance_request_status === "NEW" || row.row.maintenance_request_status === "INFO") {
       status = "NEW REQUEST";
+    } else if (row.row.maintenance_request_status === "PROCESSING") {
+      status = "QUOTES REQUESTED";
+    } else if (row.row.maintenance_request_status === "CANCELLED") {
+      status = "COMPLETED";
     }
+
     console.log("status", status);
+
     try {
       navigate("/maintenance/detail", {
         state: {
@@ -260,6 +264,15 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
           allMaintenanceData: maintenanceReqData,
           fromProperty: true,
         },
+        // try {
+        //   navigate("/maintenance/detail", {
+        //     state: {
+        //       maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
+        //       status: status,
+        //       maintenanceItemsForStatus: maintenanceReqData[status],
+        //       allMaintenanceData: maintenanceReqData,
+        //       fromProperty: true,
+        //     },
       });
     } catch (error) {
       console.log(error);
@@ -275,9 +288,9 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     // console.log(maintenanceData)
     // if (maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid) {
     if (property.maintenanceCount > 0) {
-      console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid);
-      console.log("Maintenance data:", maintenanceData);
-      console.log("Passed Data ", property.maintenance);
+      console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid); // Expect this to be undefined since we are not calling the endpoint
+      console.log("Maintenance data:", maintenanceData); // Expect this to be undefined since we are not calling the endpoint
+      console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
       return (
         <DataGrid
           rows={property.maintenance}
