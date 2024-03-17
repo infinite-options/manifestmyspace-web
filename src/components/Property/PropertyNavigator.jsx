@@ -207,17 +207,18 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   //   }, [currentIndex, propertyId]);
 
   useEffect(() => {
-    // console.log("getProfileID", getProfileId())
-    if (getProfileId().startsWith("600")) {
+    let profileId = getProfileId();
+    console.log("getProfileID", getProfileId());
+    if (profileId.startsWith("600")) {
       // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
       // console.log("Manager ID. and we need to return maintenance that is properly parsed")
-      maintenanceManagerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, setDisplayMaintenanceData, getProfileId());
-    } else if (getProfileId().startsWith("110")) {
+      maintenanceManagerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, setDisplayMaintenanceData, profileId);
+    } else if (profileId.startsWith("110")) {
       // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
       // console.log("Manager ID. and we need to return maintenance that is properly parsed")
-      maintenanceManagerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, setDisplayMaintenanceData, getProfileId());
-    } else if (getProfileId().startsWith("200")) {
-      maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, getProfileId());
+      maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
+    } else if (profileId.startsWith("200")) {
+      maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
     }
   }, [currentIndex, propertyId]);
 
