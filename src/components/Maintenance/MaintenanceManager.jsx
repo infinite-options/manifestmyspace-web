@@ -59,6 +59,7 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
   const getMaintenanceData = async () => {
     // Returns colors and Maintenenace Requests sorted into different catergories
     console.log("In MaintenanceManager >> getMaintenanceData before maintenanceStatus endpoint call");
+    console.log("Profile ID: ", profileId);
     setShowSpinner(true);
 
     const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
