@@ -352,7 +352,7 @@ const PersonalInfo = () => {
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -373,7 +373,7 @@ const PersonalInfo = () => {
               </Stack>
             </Grid>
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -394,7 +394,7 @@ const PersonalInfo = () => {
               </Stack>
             </Grid>
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -418,7 +418,7 @@ const PersonalInfo = () => {
               </Stack>
             </Grid>
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -446,7 +446,7 @@ const PersonalInfo = () => {
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
             <Grid item xs={12}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
