@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function AnnouncementCard(props) {
     const { user, selectedRole, selectRole, Name } = useUser();
     const data = props.data;
+    const {pageToNavigate, navigationParams}=props;
     const isContract=props?.isContract
     const navigate = useNavigate();
 
@@ -28,9 +29,9 @@ function AnnouncementCard(props) {
             <div className="announcement-list-card-options">
                 
                 <div className="announcement-list-card-picture" onClick={(e)=>{
-                    if (isContract){
+                    if (pageToNavigate){
                         e.stopPropagation();
-                        navigate("/propertyContract",{state: {announcementData: data}});
+                        navigate(pageToNavigate,navigationParams);
                     }
                 }}>
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">

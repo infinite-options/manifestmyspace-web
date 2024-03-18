@@ -190,13 +190,26 @@ export default function Announcements() {
                 <div style={{width:"100%", height: "150px", overflow: "auto"}}>
                  <div className="announcement-list-container">
                     {sentData.length > 0 ? (
-                        sentData.map((announcement, i) =>
+                        sentData.map((announcement, i) => {
+                            let pageToNavigate= undefined;
+                            let navigationParams=undefined;
+                            if (announcement.announcement_mode=="CONTRACT"){
+                                pageToNavigate= "/propertyContract"
+                                navigationParams= {state: {announcementData: announcement}}
+                            }
+                            {/* else if (announcement.announcement_mode=="LEASE"){
+                                pageToNavigate= "/viewLease"
+                                navigationParams= { state: { lease_id: property.lease_uid, }}
+                            
+                            } */}
+                            return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                   {announcement.announcement_mode=="CONTRACT"? <AnnouncementCard data={announcement} role={getProfileId} isContract={true} /> :  <AnnouncementCard data={announcement} role={getProfileId}/>}
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
                                 </Box>
-                            </div>
-                        )) : "No announcements"}
+                            </div>)
+                    }
+                    )) : "No announcements"}
                 </div>
                 </div>
 
@@ -206,12 +219,26 @@ export default function Announcements() {
                 <div style={{width:"100%", height: "150px", overflow: "auto"}}>
                  <div className="announcement-list-container">
                     {receivedData.length > 0 ? (
-                        receivedData.map((announcement, i) =>
+                        receivedData.map((announcement, i) =>{
+                            let pageToNavigate= undefined;
+                            let navigationParams=undefined;
+                            if (announcement.announcement_mode=="CONTRACT"){
+                                pageToNavigate= "/propertyContract"
+                                navigationParams= {state: {announcementData: announcement}}
+                            }
+                            {/* else if (announcement.announcement_mode=="LEASE"){
+                                pageToNavigate= "/viewLease"
+                                navigationParams= { state: { lease_id: property.lease_uid, }}
+                            
+                            } */}
+
+                            return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                {announcement.announcement_mode=="CONTRACT"? <AnnouncementCard data={announcement} role={getProfileId} isContract={true} /> :  <AnnouncementCard data={announcement} role={getProfileId}/>}
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
                                 </Box>
-                            </div>
+                            </div>)
+                    }
                         )) : "No announcements"}
                 </div>
                 </div>

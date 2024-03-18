@@ -166,7 +166,6 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
 
   //const [propertyId, setPropertyId] = useState('200-000028')
   const tenant_detail = property.lease_start && property.tenant_uid ? `${property.lease_start}: ${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
-  const [showIconButton, setShowIconButton] = useState(false);
   const manager_detail = property.business_uid ? `${property.business_name}` : "No Manager";
   const [arrowButton1_color, set_arrow1_color] = useState(
     tenant_detail === "No Tenant" && manager_detail === "No Manager" ? theme.typography.common.gray : theme.typography.common.blue
@@ -640,7 +639,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    {showIconButton && (
+                    {property?.lease_uid && (
                       <Button
                         sx={{
                           padding: "0px",

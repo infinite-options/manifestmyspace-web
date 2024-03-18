@@ -268,18 +268,26 @@ export function RentDetailBody(props) {
                                 fee = '+$' + prop2.pur_amount_due;
                             }
                         }  */}
-                        let month = 'February' || rentDetails.cf_month ||'no cf-month';   //These fields need revision
-                        let paid= rentDetails.total_paid || 0
-                        let amount= rentDetails.pur_amount_due || 'pur_amount_due';
-                        let payment_status= rentDetails.purchase_status || 'No purchase_status ';
-                        let fee= rentDetails?.fee || 'No fee';
+                        let month = rentDetails?.cf_month || 0;   //These fields need revision
+                        let payment_date = rentDetails?.payment_date ?? '';
+                        let paid;
+                        if (payment_date === '') {
+                            paid = '-';
+                        } else {
+                            const [payment_month, payment_day] = payment_date.split('-');
+                            paid = `${payment_month}/${payment_day}`;
+                        }
+                        let amount= `\$${rentDetails?.total_paid ?? 0}`;
+                        let rent_status= rentDetails?.purchase_status || 'No rent_status ';
+                        let fees= rentDetails?.total_late_fees ?? 0 ;
+                        let paid_fees= rentDetails?.total_late_fees_paid ?? 0
 
                         return (
                             <>
                                 {
                                     (
                                         <>
-                                            <PropertyRow data={{month, paid, amount, payment_status, fee}} />
+                                            <PropertyRow data={{month, paid, amount, rent_status, fees, paid_fees}} />
                                         </>
                                     ) 
                                 }
@@ -296,36 +304,36 @@ export function RentDetailBody(props) {
     )
 }
 function PropertyRow(props) {
-    const {month, paid, amount, status, fees} = props.data;
+    const {month, paid, amount, rent_status, fees, paid_fees} = props.data;
     const tdStyle = {
         textAlign: 'center',
     }
+    const months = [
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    ];
+    function getMonthAbbreviation(m) {
+        // const monthIndexMap = {
+        //     "January": 0,
+        //     "February": 1,
+        //     "March": 2,
+        //     "April": 3,
+        //     "May": 4,
+        //     "June": 5,
+        //     "July": 6,
+        //     "August": 7,
+        //     "September": 8,
+        //     "October": 9,
+        //     "November": 10,
+        //     "December": 11
+        // };
 
-    function getMonthAbbreviation(monthName) {
-        const monthIndexMap = {
-            "January": 0,
-            "February": 1,
-            "March": 2,
-            "April": 3,
-            "May": 4,
-            "June": 5,
-            "July": 6,
-            "August": 7,
-            "September": 8,
-            "October": 9,
-            "November": 10,
-            "December": 11
-        };
+        
 
-        const months = [
-            "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-        ];
-
-        const index = monthIndexMap[monthName];
-        if (index !== undefined) {
-            return months[index];
+        // const index = monthIndexMap[monthName];
+        if (m !== undefined) {
+            return months[m];
         } else {
-            console.log('ERROR: Month value is', monthName);
+            console.log('ERROR: Month value is', m);
             return "Invalid Month";
         }
     }
@@ -336,13 +344,13 @@ function PropertyRow(props) {
                 {getMonthAbbreviation(month)}
             </th>
             <th style={tdStyle}>
-                {paid}
+                {paid ?? ''}
             </th>
             <th style={tdStyle}>
                 {amount}
             </th>
             <th style={tdStyle}>
-                <PropertyStatus data={status} />
+                <PropertyStatus data={rent_status} />
             </th>
             <th style={tdStyle}>
                 {fees}
@@ -351,8 +359,8 @@ function PropertyRow(props) {
     );
 }
 function PropertyStatus(props) {
-    const status = props.data;
-    const color = status !== null ? getStatusColor(status) : '#FFFFF';
+    const rent_status = props.data;
+    const color = rent_status !== null ? getStatusColor(rent_status) : '#FFFFF';
     return (
         <Box sx={{
             backgroundColor: color,
@@ -360,7 +368,7 @@ function PropertyStatus(props) {
             textAlign: 'left',
             paddingLeft: '5px',
         }}>
-            {StatusText(status)}
+            {StatusText(rent_status)}
         </Box>
     );
 }
