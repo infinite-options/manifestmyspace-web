@@ -195,6 +195,7 @@ export default function PropertyList({}) {
   const [showSpinner, setShowSpinner] = useState(false);
   //   const [contracts, setContracts] = useState([]);
   //   const [activeContracts, setActiveContracts] = useState([]);
+  const [rawPropertyData, setRawPropertyData] = useState([]);
   const profileId = getProfileId();
   const [citySortOrder, setCitySortOrder] = useState("asc");
   const [stateSortOrder, setStateSortOrder] = useState("asc");
@@ -223,10 +224,13 @@ export default function PropertyList({}) {
       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`);
       // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
       const propertyData = await response.json();
-      //   console.log("In Property List >> Property Data: ", propertyData);
+      console.log("In Property List >> Property Data: ", propertyData); // This has Applications, MaintenanceRequests, NewPMRequests and Property info from endpoint
       const propertyList = getPropertyList(propertyData);
-      console.log("In Property List >> Property List: ", propertyList);
-      //   console.log("Testing Property Data", propertyData.Property.result);
+      // console.log("In Property List >> Property List: ", propertyList);
+      // console.log("Testing Property Data", propertyData.Property.result);
+      setRawPropertyData(propertyData);
+      console.log("New Set PM Requests: ", rawPropertyData);
+
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
       setShowSpinner(false);
@@ -410,8 +414,19 @@ export default function PropertyList({}) {
                 All Properties
               </Typography>
             </Box>
-            <Button position="absolute" right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={() => navigate("/addProperty")}>
-              <AddIcon onClick={() => navigate("/addProperty")} sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+            <Button
+              position="absolute"
+              right={0}
+              sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }}
+              onClick={() =>
+                navigate("/addProperty", {
+                  state: {
+                    property_endpoint_resp: rawPropertyData,
+                  },
+                })
+              }
+            >
+              <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
             </Button>
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
