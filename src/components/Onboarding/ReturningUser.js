@@ -19,18 +19,16 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 function ReturningUser() {
-
     const classes = useStyles();
     const navigate = useNavigate();
-
-    return (        
+    console.log("checking for bug");
+    return (       
       <ThemeProvider theme={theme}>
       <Box
           style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-
               width: '100%', // Take up full screen width
               height: '100vh', // Set the Box height to full view height
               justifyContent: 'flex-start', // Align items at the top
