@@ -44,8 +44,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 // Variable Declaration
 export default function AddProperty({}) {
-  console.log("In AddProperty.jsx)");
+  console.log("In AddProperty.jsx");
   const location = useLocation();
+  const { property_endpoint_resp } = location.state;
+  // console.log(property_endpoint_resp);
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { user, selectedRole, selectRole, Name } = useUser();
@@ -354,6 +356,7 @@ export default function AddProperty({}) {
             contract_uid: responseContractUID,
             contract_business_id: getProfileId(),
             contract_property_id: responsePropertyUID,
+            property_endpoint_resp: property_endpoint_resp,
           },
         });
       } catch (error) {
