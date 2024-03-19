@@ -66,7 +66,32 @@ export function RentDetailBody(props) {
     const uid=property?.property_uid
     if (Array.isArray(rentDetailsData))
     rentDetailsData=rentDetailsData.filter(rent_detail=> rent_detail.property_uid===uid)
+    let due_amount=rentDetailsData[rentDetailsData.length-1]?.pur_amount_due ?? 0
+    let due_date;
 
+    try{due_date= rentDetailsData[rentDetailsData.length-1]?.pur_due_date}catch(e){
+        due_date=''
+    }
+
+    function calculateDaysDifference(inputDate) {
+        // Parse the input date string
+        try{
+        const inputDateObj = new Date(inputDate);
+    
+        // Current date
+        const currentDate = new Date();
+    
+        // Calculate the difference in milliseconds
+        const timeDifference = currentDate - inputDateObj;
+    
+        // Convert milliseconds to days
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    
+        return daysDifference;}
+        catch(e){
+            return ''
+        }
+    }
 
 
     const tableStyle = {
@@ -88,15 +113,6 @@ export function RentDetailBody(props) {
         return `${month}/${day}/${year}`;
     }
 
-    function getOverdue() {
-        for (let i = 0; i < rentDetailsData.length; i++) {
-            const rentDetail = rentDetailsData[i];
-            if (rentDetail.property_id === propertyID && rentDetail.purchase_type === 'RENT') {
-                // console.log(rentDetail);
-                return rentDetail.overdue;
-            }
-        }
-    }
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -204,13 +220,13 @@ export function RentDetailBody(props) {
                         fontSize: '14px',
                     }}>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`$ ${property.pur_amount_due}`) : (<></>)}
+                            {`$ ${due_amount}`}
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(property.pur_due_date)}`) : (<></>)}
+                            {(getProperties(propertyStatus).length > 0 ) && (`due ${due_date? due_date.replaceAll('-', '/') : ''}`) }
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`${getOverdue()} Days Overdue`) : (<></>)}
+                            {(getProperties(propertyStatus).length > 0 && ![null, undefined, ''].includes(due_date)) && (`${calculateDaysDifference(due_date)} Days Overdue`) }
                         </Box>
                     </Box>
                 </Box>
@@ -312,24 +328,7 @@ function PropertyRow(props) {
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
     ];
     function getMonthAbbreviation(m) {
-        // const monthIndexMap = {
-        //     "January": 0,
-        //     "February": 1,
-        //     "March": 2,
-        //     "April": 3,
-        //     "May": 4,
-        //     "June": 5,
-        //     "July": 6,
-        //     "August": 7,
-        //     "September": 8,
-        //     "October": 9,
-        //     "November": 10,
-        //     "December": 11
-        // };
-
-        
-
-        // const index = monthIndexMap[monthName];
+       
         if (m !== undefined) {
             return months[m];
         } else {
@@ -352,8 +351,8 @@ function PropertyRow(props) {
             <th style={tdStyle}>
                 <PropertyStatus data={rent_status} />
             </th>
-            <th style={tdStyle}>
-                {fees}
+            <th style={{ ...tdStyle, color: paid_fees < fees ? '#A52A2A' : 'inherit' }}> 
+                {fees || ''}
             </th>
         </tr>
     );
