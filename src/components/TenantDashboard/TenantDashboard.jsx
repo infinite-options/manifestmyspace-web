@@ -31,6 +31,7 @@ function TenantDashboard(props) {
   const [allMaintenanceRequests, setAllMaintenanceRequests] = useState([]);
   const [propertyData, setPropertyData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
   const [announcementsData, setAnnouncementsData] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [propertyAddr, setPropertyAddr] = useState();
@@ -45,6 +46,10 @@ function TenantDashboard(props) {
   const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    console.log("maintenanceRequests - ", maintenanceRequests);
+  }, [maintenanceRequests]);
 
   const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -97,16 +102,18 @@ function TenantDashboard(props) {
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`);
+        const announcementsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
 
         const tenantRequestsData = await tenantRequests.json();
         // const leaseData = await leaseResponse.json();
         const propertyResponseData = await propertyResponse.json();
+        const announcementsResponseData = await announcementsResponse.json();
 
         setUserLeases(propertyResponseData.Tenant_Leases.result);
 
         let propertyData = tenantRequestsData?.property?.result;
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
-        let announcementsData = tenantRequestsData?.announcements?.result;
+        let announcementsReceivedData = announcementsResponseData?.received?.result;        
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
 
         // sort propertyData by lease_status so that active lease is first
@@ -127,7 +134,13 @@ function TenantDashboard(props) {
         setPropertyData(propertyData || []);
         setAllMaintenanceRequests(maintenanceRequestsData);
         setMaintenanceRequests(maintenanceRequestsData || []);
-        setAnnouncementsData(announcementsData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
+
+        // setAnnouncementsData(announcementsData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
+        setAllAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
+        
+
+        
+        
 
         let propertyAddress = propertyData[0] !== undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data";
         setPropertyAddr(propertyAddress);
@@ -150,6 +163,19 @@ function TenantDashboard(props) {
     setRefresh(false);
   }, []); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
 
+  // useEffect(() => {
+  //   let navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
+  //   setSelectedProperty(navPropertyData);
+  // }, [location.state?.propertyId]);
+
+  useEffect(() => {    
+    const navPropertyData = propertyData.find(item => item.property_uid === location.state?.propertyId);
+    
+    if (navPropertyData) {
+      setSelectedProperty(navPropertyData);
+    }
+  }, [location.state?.propertyId, propertyData]);
+
   useEffect(() => {
     if (userLeases) {
       let filteredLease = userLeases.find((lease) => lease.lease_uid === selectedProperty.lease_uid);
@@ -159,6 +185,21 @@ function TenantDashboard(props) {
       let filteredMaintenanceItems = allMaintenanceRequests.filter((request) => request.property_uid === selectedProperty.property_uid);
       setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems));
     }
+    if(allAnnouncementsData){
+      const filteredAnnouncements = allAnnouncementsData.filter(announcement => {
+        // If announcement_properties is an array, check if currentProperty is included
+        if (Array.isArray(announcement.announcement_properties)) {
+            return announcement.announcement_properties.includes(selectedProperty.property_uid);
+        }
+        // If announcement_properties is a string, compare directly with currentProperty
+        return announcement.announcement_properties === selectedProperty.property_uid;            
+      });
+
+      filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));
+  
+      setAnnouncementsData(filteredAnnouncements);
+    }
+    
   }, [userLeases, selectedProperty]);
 
   function sortMaintenanceRequests(maintenanceDataArray) {
@@ -225,7 +266,7 @@ function TenantDashboard(props) {
     <Box
       sx={{
         fontFamily: "Source Sans Pro",
-        padding: "14px",
+        padding: "14px",        
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -494,21 +535,30 @@ function TenantDashboard(props) {
               <Table sx={{ backgroundColor: "#F2F2F2" }}>
                 <TableHead sx={{ backgroundColor: "#F2F2F2" }}>
                   <TableRow sx={{ backgroundColor: "#F2F2F2" }}>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px" }}>Images</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px" }}>Title</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px" }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px" }}>Priority</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px" }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px" }}>Time</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Images</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Title</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Priority</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Created Date</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Scheduled Date</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Scheduled Time</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {maintenanceRequests.map((item, index) => {
+                    let favoriteImage = ""                    
+                    if (item.maintenance_images && (item.maintenance_images).length > 0){
+                      const image_list = JSON.parse(item.maintenance_images)
+                      favoriteImage = image_list.find(url => url.endsWith("img_cover"));
+                    } else{
+                      favoriteImage = PlaceholderImage
+                    }                    
                     const requestData = [
-                      PlaceholderImage,
+                      favoriteImage,
                       item.maintenance_title,
                       item.maintenance_request_status,
                       item.maintenance_priority,
+                      item.maintenance_request_created_date,
                       item.maintenance_scheduled_date,
                       item.maintenance_scheduled_time,
                       item,
@@ -538,7 +588,7 @@ function TenantDashboard(props) {
                   marginTop: "10px",
                 }}
               >
-                Announcement
+                Announcements
               </Box>
               <Box
                 sx={{
@@ -554,7 +604,17 @@ function TenantDashboard(props) {
                 View all ({announcementsData.length})
               </Box>
             </Box>
-            <CardSlider data={announcementsData} />
+            <CardSlider data={announcementsData} />            
+            {/*debug*/}            
+            {/* <Box>
+              {announcementsData.map((announcement, index) => {
+                return (
+                  <>
+                  <Box>{index} - {announcement.announcement_title}</Box>
+                  </>
+                )
+              })}
+            </Box> */}
           </DashboardTab>
           <DashboardTab>
             <Box
@@ -564,10 +624,11 @@ function TenantDashboard(props) {
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: "15px",
+                marginBottom: "20px",
               }}
             >
               <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Grid item xs={6} md ={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <DashboardActionItem
                     icon={<PhoneIcon />}
                     text={"Call Manager"}
@@ -576,16 +637,16 @@ function TenantDashboard(props) {
                     }}
                   />
                 </Grid>
-                <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Grid item xs={6} md ={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <DashboardActionItem
                     icon={<BuildIcon />}
-                    text={"Urgent Maintenance"}
+                    text={"Maintenance"}
                     onClick={() => {
                       handleTenantMaintenanceNavigate();
                     }}
                   />
                 </Grid>
-                <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Grid item xs={6} md ={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <DashboardActionItem
                     icon={<ArticleIcon />}
                     text={"View Lease"}
@@ -594,7 +655,7 @@ function TenantDashboard(props) {
                     }}
                   />
                 </Grid>
-                <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Grid item xs={6} md ={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <DashboardActionItem
                     icon={<ArticleIcon />}
                     text={"Documents"}
@@ -672,7 +733,7 @@ function DashboardTab(props) {
 }
 
 function CustomTableRow(props) {
-  const [image, title, status, priority, date, time, item] = props.data;
+  const [image, title, status, priority, created_date, scheduled_date, scheduled_time, item] = props.data;
 
   const tdStyle = {
     color: "#160449",
@@ -705,6 +766,19 @@ function CustomTableRow(props) {
     // textAlign: "center",
   };
   const navigate = useNavigate();
+
+  function formatTime(time) {     
+    if (time == null || !time.includes(":")){ 
+      return "-";  
+    }  
+    const [hours, minutes] = time.split(":").map(String);    
+    
+    let formattedHours = hours % 12;
+    if (formattedHours === 0) formattedHours = 12;
+    
+    const period = hours >= 12 ? "pm" : "am";    
+    return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  }
   return (
     <TableRow
       onClick={() => {
@@ -713,14 +787,16 @@ function CustomTableRow(props) {
         });
       }}
     >
-      <TableCell style={tdStyle}>
+      <TableCell style={{ ...tdStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={image} alt="Maintenance" style={{ width: "60px", height: "55px" }} />
       </TableCell>
-      <TableCell style={tdStyle}>{title}</TableCell>
-      <TableCell style={statusStyle}>{status}</TableCell>
-      <TableCell style={tdStyle}>{priority}</TableCell>
-      <TableCell style={tdStyle}>{date}</TableCell>
-      <TableCell style={tdStyle}>{time}</TableCell>
+      <TableCell style={{...tdStyle, textAlign: "center",}}>{title}</TableCell>
+      <TableCell style={{...tdStyle, textAlign: "center",}}>{status}</TableCell>
+      <TableCell style={{...tdStyle, textAlign: "center",}}>{priority}</TableCell>
+      <TableCell style={{...tdStyle, textAlign: "center",}}>{created_date? created_date : "-"}</TableCell>
+      <TableCell style={{...tdStyle, textAlign: "center",}}>{scheduled_date? scheduled_date : "-"}</TableCell>
+      <TableCell style={{...tdStyle, textAlign: "center",}}>{scheduled_time? formatTime(scheduled_time) : "-"}</TableCell>
+      {/* <TableCell style={{...tdStyle, textAlign: "center",}}>{scheduled_time? scheduled_time : "-"}</TableCell> */}
     </TableRow>
   );
 }

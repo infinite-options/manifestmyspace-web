@@ -6,45 +6,101 @@ const cardHeight = 120;
 
 export default function CardSlider(props) {
     const buttonSize = 30;
-
-//    const [image, title, status, priority, date, time] = props.data;
   
-    const announcements = props.data;
-    const cards = ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5'];
-    let baseArray = [true];
-    for (let i = 1; i < cards.length; i++) {
-        baseArray.push(false);
-    }
-    const [cardSelection,] = useState(baseArray);
+    // const cardsData = props.data;    
+    
+    // const [cards, setCards] = useState(['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5', 'Card 6', 'Card 7', 'Card 8', 'Card 9', 'Card 10', 'Card 11', 'Card 12', 'Card 13', 'Card 14', 'Card 15']);
+    // let baseArray = [true];
+    // for (let i = 1; i < cardsData.length; i++) {
+    //     baseArray.push(false);
+    // }    
+    // const [cardSelection, setCardSelection] = useState(baseArray);
+    // const [cardIndex, setCardIndex] = useState(0);
+    // const [position, setPosition] = useState((cardWidth * cardSelection.length / 2) - (cardWidth / 2));
+    const [cards, setCards] = useState([]);
+    const [cardSelection, setCardSelection] = useState([]);
     const [cardIndex, setCardIndex] = useState(0);
-    const [position, setPosition] = useState((cardWidth * cardSelection.length / 2) - (cardWidth / 2));
+    const [position, setPosition] = useState(0);
+
+    useEffect(() => {
+        let cardsData = props.data;
+        console.log("CardSlider - cardsData - ", cardsData);
+        setCards(cardsData);
+        let baseArray = [true];
+        for (let i = 1; i < cardsData.length; i++) {
+            baseArray.push(false);
+        }
+        setCardSelection(baseArray);
+        setCardIndex(0);
+        setPosition((cardWidth * baseArray.length / 2) - (cardWidth / 0.75))
+    }, [props.data]);
+
+    
+
+
+    // function leftClicked() {
+    //     if (0 !== cardIndex) {
+    //         for (let i = 0; i < cardSelection.length; i++) {
+    //             if (cardIndex - 1 === i) {
+    //                 cardSelection[i] = true;
+    //             } else {
+    //                 cardSelection[i] = false;
+    //             }
+    //         }
+    //         setCardIndex(cardIndex - 1);
+    //         setPosition(position + cardWidth);
+    //     }
+    // }
+    // function rightClicked() {
+    //     if (cardSelection.length - 1 !== cardIndex) {
+    //         for (let i = 0; i < cardSelection.length; i++) {
+    //             if (cardIndex + 1 === i) {
+    //                 cardSelection[i] = true;
+    //             } else {
+    //                 cardSelection[i] = false;
+    //             }
+    //         }
+    //         setCardIndex(cardIndex + 1);
+    //         setPosition(position - cardWidth);
+    //     }
+    // }
 
     function leftClicked() {
         if (0 !== cardIndex) {
-            for (let i = 0; i < cardSelection.length; i++) {
-                if (cardIndex - 1 === i) {
-                    cardSelection[i] = true;
-                } else {
-                    cardSelection[i] = false;
-                }
+            const newCardSelection = [...cardSelection]; 
+            for (let i = 0; i < newCardSelection.length; i++) {
+                newCardSelection[i] = cardIndex - 1 === i;
             }
+            setCardSelection(newCardSelection); 
             setCardIndex(cardIndex - 1);
             setPosition(position + cardWidth);
         }
     }
+    
     function rightClicked() {
         if (cardSelection.length - 1 !== cardIndex) {
-            for (let i = 0; i < cardSelection.length; i++) {
-                if (cardIndex + 1 === i) {
-                    cardSelection[i] = true;
-                } else {
-                    cardSelection[i] = false;
-                }
+            const newCardSelection = [...cardSelection];
+            for (let i = 0; i < newCardSelection.length; i++) {
+                newCardSelection[i] = cardIndex + 1 === i;
             }
+            setCardSelection(newCardSelection);
             setCardIndex(cardIndex + 1);
             setPosition(position - cardWidth);
         }
     }
+
+    // function rightClicked() {
+    //     let newIndex = cardIndex + 1;
+    //     if (newIndex >= cardSelection.length) {
+    //         newIndex = 0; // Go back to the first card if at the last card
+    //     }
+    
+    //     const newCardSelection = cardSelection.map((_, i) => i === newIndex);
+    //     setCardSelection(newCardSelection);
+    //     setCardIndex(newIndex);
+    //     setPosition(position - cardWidth);
+    // }
+    
 
     return (
         <Box sx={{
@@ -68,7 +124,7 @@ export default function CardSlider(props) {
                     left: position,
                     transition: 'left 0.5s',
                 }}>
-                    {cards.map((contents, i) => (
+                    {cards.map((announcement, i) => (
                         <Card key={i} selection={[cardSelection, i, cardIndex]}>
                             <Box sx={{
                                 display: 'flex',
@@ -86,7 +142,15 @@ export default function CardSlider(props) {
                                     fontSize: '16px',
                                     fontWeight: '800',
                                 }}>
-                                    Alert
+                                    {/* Alert */}
+                                    {i}
+                                </Box>
+                                <Box sx={{
+                                    fontSize: '16px',
+                                    fontWeight: '800',
+                                }}>
+                                    {/* Alert */}
+                                    {announcement.announcement_title}
                                 </Box>
                                 <Box sx={{
                                     marginLeft: '10px',
@@ -96,15 +160,17 @@ export default function CardSlider(props) {
                                         marginTop: '5px',
                                         marginBottom: '5px',
                                     }}>
-                                        From Tenant at Property
+                                        From {announcement.sender_role === "Business" && (announcement.announcement_sender).startsWith('600') ? "Property Manager" : ""}
+                                        {announcement.sender_role === "Owner" ? "Property Owner" : ""}
+                                        {" "}{announcement.sender_first_name}
                                     </Box>
                                     <Box sx={{
                                         fontSize: '14px',
                                     }}>
-                                        Get Notification Via Text Messages
+                                        {announcement.announcement_msg}
                                     </Box>
                                 </Box>
-                                <Box sx={{
+                                {/* <Box sx={{
                                     display: 'flex',
                                     justifyContent: 'center',
                                     marginTop: 'auto',
@@ -122,7 +188,7 @@ export default function CardSlider(props) {
                                     }}>
                                         Update settings 
                                     </Box>
-                                </Box>
+                                </Box> */}
 
                             </Box>
                         </Card>
@@ -176,6 +242,7 @@ function Card(props) {
     const [selected, i, cardIndex] = props.selection;
     const lowOpacity = '0.8';
     const [transparency, setTrasparency] = useState(lowOpacity);
+    const isDoubleWidth = i === 0; // Check if the card is the first one
 
     useEffect(() => {
         setTrasparency(() => (selected[i] ? '1.0' : lowOpacity));
@@ -188,7 +255,7 @@ function Card(props) {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#99ee88',
-            width: cardWidth,
+            width: cardWidth, // Double the width for the first card
             height: cardHeight,
             margin: '2px',
             opacity: transparency,
