@@ -130,7 +130,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
           direction="row"
           justifyContent="center"
           alignItems="center"
-          // width= "100%" // Take up full screen width
           spacing={2}
         >
             <Button onClick={handlePreviousCard} disabled={backward_active_status}>
@@ -140,7 +139,6 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
-                // width= "100%" // Take up full screen width
                 spacing={1}
             >
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
@@ -152,11 +150,12 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
             </Button>
         </Stack>
         <Stack
-         justifyContent="center"
-         alignItems="center">
-        <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-              { data !== undefined ? (data.maintenance_title !== undefined ? data.maintenance_title : "No Data") : "No data"}
-        </Typography>
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
+            { data !== undefined ? (data.maintenance_title !== undefined ? data.maintenance_title : "No Data") : "No data"}
+          </Typography>
         </Stack>
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card

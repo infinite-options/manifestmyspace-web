@@ -26,55 +26,59 @@ export default function MaintenanceWorkerDashboardWidget(props) {
   useEffect(() => {
     const dataObject = {};
     const fetchMaintenanceDashboardData = async () => {
-      // console.log("in useEffect")
       setShowSpinner(true);
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`)
-
-      // const jsonData = await response.json()
       const jsonData = props.dashboard_data;
 
-      // console.log("CurrentActivities", jsonData.CurrentActivities.result)
-      // console.log("WorkOrders", jsonData.WorkOrders.result)
       setWorkOrders(jsonData.WorkOrders.result);
       setCurrentActivities(jsonData.CurrentActivities.result);
       setShowSpinner(false);
     };
 
     const getMaintenanceData = async () => {
-      setShowSpinner(true);
-      console.log("About to call maintenanceStatus endpoint Maintenace Worker Dashboard Widget");
-      const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
-      const maintenanceRequestsData1 = await maintenanceRequests1.json();
+        setShowSpinner(true);
+        console.log("About to call maintenanceStatus endpoint Maintenace Worker Dashboard Widget");
+        const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
+        const maintenanceRequestsData1 = await maintenanceRequests1.json();
 
-      let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
-      let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
-      let array3 = maintenanceRequestsData1.result?.ACCEPTED?.maintenance_items ?? [];
-      let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
-      let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ?? [];
-      let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
+        let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
+        let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
+        let rejectedQuotes = [];
 
-      dataObject["REQUESTED"] = [...array1];
-      dataObject["SUBMITTED"] = [...array2];
-      dataObject["ACCEPTED"] = [...array3];
-      dataObject["SCHEDULED"] = [...array4];
-      dataObject["FINISHED"] = [...array5];
-      dataObject["PAID"] = [...array6];
+        for (let i = 0; i < array2.length; i++) {
+            let item = array2[i];
+            if (item.quote_status === "REJECTED") {
+                rejectedQuotes.push(item);
+                array2.splice(i, 1);
+                i--;
+            }
+        }
+        let array3 = maintenanceRequestsData1.result?.ACCEPTED?.maintenance_items ?? [];
+        let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
+        let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ?? [];
+        let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
 
-      // console.log("dataObject from new api call", dataObject)
-      setMaintenanceRequests((prevData) => ({
-        ...prevData,
-        ...dataObject,
-      }));
-      setShowSpinner(false);
+        dataObject["REQUESTED"] = [...array1];
+        dataObject["SUBMITTED"] = [...array2];
+        dataObject["ACCEPTED"] = [...array3];
+        dataObject["SCHEDULED"] = [...array4];
+        dataObject["FINISHED"] = [...array5];
+        dataObject["PAID"] = [...array6];
+
+        // dataObject["REJECTED"] = [...rejectedQuotes];
+
+        // console.log("dataObject from new api call", dataObject)
+        setMaintenanceRequests((prevData) => ({
+            ...prevData,
+            ...dataObject,
+        }));
+        setShowSpinner(false);
     };
-    getMaintenanceData();
+        getMaintenanceData();
 
-    fetchMaintenanceDashboardData();
+        fetchMaintenanceDashboardData();
   }, []);
 
   function handleFilter(filterString, searchArray) {
-    // console.log("filterString", filterString)
-    // console.log("searchArray", searchArray)
     let filteredArray = [];
     if (filterString === "All" || filterString === "") {
       filteredArray = searchArray;
