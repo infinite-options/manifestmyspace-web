@@ -66,10 +66,10 @@ export function RentDetailBody(props) {
     const uid=property?.property_uid
     if (Array.isArray(rentDetailsData))
     rentDetailsData=rentDetailsData.filter(rent_detail=> rent_detail.property_uid===uid)
-    let due_amount=rentDetailsData[rentDetailsData.length-1]?.pur_amount_due ?? 0
+    let due_amount=rentDetailsData[0]?.pur_amount_due //?? 0
     let due_date;
 
-    try{due_date= rentDetailsData[rentDetailsData.length-1]?.pur_due_date}catch(e){
+    try{due_date= rentDetailsData[0]?.pur_due_date}catch(e){
         due_date=''
     }
 
@@ -212,21 +212,28 @@ export function RentDetailBody(props) {
                         fontSize: '18px',
                         textDecoration: 'underline',
                     }}>
-                        {getProperties(propertyStatus).length > 0 ? (`${property.property_address}, ${(property.property_unit !== null && property.property_unit !== '' ? (property.property_unit + ',') : (''))} ${property.property_city} ${property.property_state} ${property.property_zip}`) : (<></>)}
+                        <div>
+                        {getProperties(propertyStatus).length > 0 && (`${property.property_address}, ${(property.property_unit !== null && property.property_unit !== '' ? (property.property_unit + ',') : (''))} ${property.property_city} ${property.property_state} ${property.property_zip}`) }
+                        </div>
+                        <div>
+                            {`${property?.property_uid}`}
+                        </div>
                     </Box>
+                    
                     <Box sx={{
                         marginBottom: '0px',
                         marginTop: 'auto',
                         fontSize: '14px',
                     }}>
                         <Box>
-                            {`$ ${due_amount}`}
+                            {/* {(getProperties(propertyStatus).length > 0 ) && ( typeof due_amount !== 'number'? `$ ${due_amount}` : 'Vacant')} */}
+                            {(getProperties(propertyStatus).length > 0 ) && ( due_amount === null? 'Vacant' :`$ ${due_amount}` )}
                         </Box>
                         <Box>
-                            {(getProperties(propertyStatus).length > 0 ) && (`due ${due_date? due_date.replaceAll('-', '/') : ''}`) }
+                            {(getProperties(propertyStatus).length > 0 ) && (due_date? `due ${due_date.replaceAll('-', '/')}` : 'No Due Date') }
                         </Box>
                         <Box>
-                            {(getProperties(propertyStatus).length > 0 && ![null, undefined, ''].includes(due_date)) && (`${calculateDaysDifference(due_date)} Days Overdue`) }
+                            {getProperties(propertyStatus).length > 0  && (due_date? (`${calculateDaysDifference(due_date)} Days Overdue`) : 'Not Overdue') }
                         </Box>
                     </Box>
                 </Box>
@@ -330,7 +337,7 @@ function PropertyRow(props) {
     function getMonthAbbreviation(m) {
        
         if (m !== undefined) {
-            return months[m];
+            return months[m-1];
         } else {
             console.log('ERROR: Month value is', m);
             return "Invalid Month";

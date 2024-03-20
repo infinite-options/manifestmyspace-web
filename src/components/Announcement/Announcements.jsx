@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation,} from 'react-router-dom';
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
 
@@ -19,10 +19,13 @@ export default function Announcements() {
     const [receivedData, setReceivedData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const navigate = useNavigate();
-
+    // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
+    const location=useLocation();
+    const owner_uid_filter=location?.state?.owner_uid;
+    //
     const [showAnnouncement, setShowAnnouncement] = useState(false);
     const [annData, setAnnData] = useState("");
-
+    
     const result =[
         {
         "announcement_uid": "020-000223",
@@ -74,9 +77,15 @@ export default function Announcements() {
             .then((res) => {
              //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
              setAnnouncementData(res.data);
-             setSentData(res.data.sent.result)
-             setReceivedData(res.data.received.result)
-            
+             let sent_data=res.data.sent.result
+             let received_data=res.data.received.result 
+             if (owner_uid_filter) // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
+             {  received_data= received_data.filter(record=>record.announcement_sender === owner_uid_filter );
+                sent_data= sent_data.filter(record=>record.announcement_receiver === owner_uid_filter );}
+             setSentData(sent_data)
+             setReceivedData(received_data)
+
+
             setShowSpinner(false);
             });
     }, []);
