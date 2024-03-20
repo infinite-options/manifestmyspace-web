@@ -230,6 +230,9 @@ function ManagerDashboard() {
                 variant="outlined"
                 id="revenue"
                 className={classes.button}
+                style={{
+                  height: "100%",
+                }}
                 onClick={() => {
                   navigate("/payments");
                 }}
@@ -244,6 +247,9 @@ function ManagerDashboard() {
                 variant="outlined"
                 id="revenue"
                 className={classes.button}
+                style={{
+                  height: "100%",
+                }}
                 onClick={() => {
                   navigate("/PMContacts");
                 }}
@@ -257,6 +263,10 @@ function ManagerDashboard() {
                 variant="outlined"
                 id="revenue"
                 className={classes.button}
+                style={{
+                  fontSize: "9px",
+                  height: "100%",
+                }}
                 onClick={() => {
                   navigate("/pmQuotesList", { state: { property_endpoint_resp } });
                 }}
@@ -271,7 +281,7 @@ function ManagerDashboard() {
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#160449",
-                    fontSize: "2rem",
+                    fontSize: "20px",
                     paddingRight: "20px",
                   }}
                 >
@@ -289,6 +299,9 @@ function ManagerDashboard() {
                 variant="outlined"
                 id="revenue"
                 className={classes.button}
+                style={{
+                  height: "100%",
+                }}
                 onClick={() => {
                   navigate("/transactionHistory", { state: { month: "January", year: "2024" } });
                 }}
@@ -302,6 +315,9 @@ function ManagerDashboard() {
                 variant="outlined"
                 id="expense"
                 className={classes.button}
+                style={{
+                  height: "100%",
+                }}
                 onClick={() => {
                   navigate("/pmDocuments");
                 }}
@@ -315,6 +331,10 @@ function ManagerDashboard() {
                 variant="outlined"
                 id="maintenance"
                 className={classes.button}
+                style={{
+                  fontSize: "9px",
+                  height: "100%",
+                }}
                 onClick={() => {
                   navigate("/addMaintenanceItem");
                 }}

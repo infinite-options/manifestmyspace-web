@@ -39,7 +39,7 @@ export default function TenantMaintenanceItemDetail() {
   const color = location.state.color;
   const item = location.state.item;
 
-  console.log(location.state);
+  console.log("ROHIT - location.state - ",location.state);
 
   function openDays(openday){
     return openday;
@@ -61,7 +61,9 @@ export default function TenantMaintenanceItemDetail() {
   };
 
   function closeAddTenantMaintenanceItem() {
-    navigate("/tenantDashboard");
+    // navigate("/tenantDashboard");
+    console.log("ROHIT - item.property_uid - ", item.property_uid);
+    navigate("/tenantDashboard", { state: { propertyId: item.property_uid } })
   }
 
   // const images = [

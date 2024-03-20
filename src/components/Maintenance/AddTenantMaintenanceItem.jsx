@@ -121,7 +121,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         const formData = new FormData();
 
         const currentDate = new Date();
-        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
 
 
         formData.append("maintenance_property_id", property.property_uid);
@@ -131,15 +132,15 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         formData.append("maintenance_request_created_by", getProfileId());
         formData.append("maintenance_priority", toggleAlignment);
         formData.append("maintenance_can_reschedule", 1);
-        formData.append("maintenance_assigned_business", null);
-        formData.append("maintenance_assigned_worker", null);
-        formData.append("maintenance_scheduled_date", null);
-        formData.append("maintenance_scheduled_time", null);
+        // formData.append("maintenance_assigned_business", null);
+        // formData.append("maintenance_assigned_worker", null);
+        // formData.append("maintenance_scheduled_date", null);
+        // formData.append("maintenance_scheduled_time", null);
         formData.append("maintenance_frequency", "One Time");
-        formData.append("maintenance_notes", null);
-        formData.append("maintenance_request_created_date", formattedDate); // Convert to ISO string format
-        formData.append("maintenance_request_closed_date", null);
-        formData.append("maintenance_request_adjustment_date", null);
+        // formData.append("maintenance_notes", null); 
+        formData.append("maintenance_request_created_date", formattedDate);
+        // formData.append("maintenance_request_closed_date", null);
+        // formData.append("maintenance_request_adjustment_date", null);
 
         for (let i = 0; i < selectedImageList.length; i++) {
             try {
@@ -165,10 +166,15 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         const postData = async () => {
             setShowSpinner(true);
             try {
+                
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: "POST",
                     body: formData,
                 })
+                // const response = await fetch("http://localhost:4000/maintenanceRequests", {
+                //     method: "POST",
+                //     body: formData,
+                // })
                 const data = await response.json();
                 console.log("data response", data)
             } catch (err) {
