@@ -317,6 +317,7 @@ export default function AddProperty({}) {
 
       const currentDate = new Date();
       const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+      console.log("Formatted Date: ", formattedDate);
 
       // responsePropertyUID = [responsePropertyUID];  // This doesn't work since it returns the string in single quotes
       responsePropertyUID = '["' + responsePropertyUID + '"]';
