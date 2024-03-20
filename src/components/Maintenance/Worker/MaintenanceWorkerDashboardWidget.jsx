@@ -42,16 +42,16 @@ export default function MaintenanceWorkerDashboardWidget(props) {
 
         let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
         let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
-        let rejectedQuotes = [];
+        // let rejectedQuotes = [];
 
-        for (let i = 0; i < array2.length; i++) {
-            let item = array2[i];
-            if (item.quote_status === "REJECTED") {
-                rejectedQuotes.push(item);
-                array2.splice(i, 1);
-                i--;
-            }
-        }
+        // for (let i = 0; i < array2.length; i++) {
+        //     let item = array2[i];
+        //     if (item.quote_status === "REJECTED") {
+        //         rejectedQuotes.push(item);
+        //         array2.splice(i, 1);
+        //         i--;
+        //     }
+        // }
         let array3 = maintenanceRequestsData1.result?.ACCEPTED?.maintenance_items ?? [];
         let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
         let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ?? [];
