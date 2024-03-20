@@ -57,92 +57,12 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
   }
 
   const getMaintenanceData = async () => {
-    // Returns colors and Maintenenace Requests sorted into different catergories
-    // console.log("In MaintenanceManager >> getMaintenanceData before maintenanceStatus endpoint call");
-    // console.log("Profile ID: ", profileId);
     setShowSpinner(true);
 
     const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
     const maintenanceRequestsData = await maintenanceRequests.json();
 
     console.log("[DEBUG] Data returned from maintenanceStatus endpoint:", maintenanceRequestsData);
-
-    // if (profileId.startsWith("600")) {
-    //   // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
-    //   // console.log("Manager ID. and we need to return maintenance that is properly parsed")
-    //   console.log("Manager selected");
-
-    //   let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
-    //   let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items);
-    //   let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items;
-    //   let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items;
-    //   let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items;
-    //   let array6 = maintenanceRequestsData.result["PAID"].maintenance_items;
-
-    //   dataObject["NEW REQUEST"] = [];
-    //   dataObject["QUOTES REQUESTED"] = [];
-    //   dataObject["QUOTES ACCEPTED"] = [];
-    //   dataObject["SCHEDULED"] = [];
-    //   dataObject["COMPLETED"] = [];
-    //   dataObject["PAID"] = [];
-
-    //   for (const item of array1) {
-    //     // console.log(item.maintenance_request_uid)
-    //     dataObject["NEW REQUEST"].push(item);
-    //   }
-    //   for (const item of array2) {
-    //     dataObject["QUOTES REQUESTED"].push(item);
-    //   }
-    //   for (const item of array3) {
-    //     dataObject["QUOTES ACCEPTED"].push(item);
-    //   }
-    //   for (const item of array4) {
-    //     dataObject["SCHEDULED"].push(item);
-    //   }
-    //   for (const item of array5) {
-    //     dataObject["COMPLETED"].push(item);
-    //   }
-    //   for (const item of array6) {
-    //     dataObject["PAID"].push(item);
-    //   }
-    // } else if (profileId.startsWith("110")) {
-    //   // maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
-    //   // console.log("Manager ID. and we need to return maintenance that is properly parsed")
-    //   console.log("Owner selected");
-    //   let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
-    //   let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items;
-    //   let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items;
-    //   let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items;
-    //   let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items;
-    //   let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items;
-
-    //   dataObject["NEW REQUEST"] = [];
-    //   dataObject["INFO REQUESTED"] = [];
-    //   dataObject["PROCESSING"] = [];
-    //   dataObject["SCHEDULED"] = [];
-    //   dataObject["COMPLETED"] = [];
-    //   dataObject["CANCELLED"] = [];
-
-    //   for (const item of array1) {
-    //     // console.log(item.maintenance_request_uid)
-    //     dataObject["NEW REQUEST"].push(item);
-    //   }
-    //   for (const item of array2) {
-    //     dataObject["INFO REQUESTED"].push(item);
-    //   }
-    //   for (const item of array3) {
-    //     dataObject["PROCESSING"].push(item);
-    //   }
-    //   for (const item of array4) {
-    //     dataObject["SCHEDULED"].push(item);
-    //   }
-    //   for (const item of array5) {
-    //     dataObject["COMPLETED"].push(item);
-    //   }
-    //   for (const item of array6) {
-    //     dataObject["CANCELLED"].push(item);
-    //   }
-    // }
 
     let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
     let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items);
@@ -332,7 +252,7 @@ export default function MaintenanceManager() {
     let profileId = getProfileId();
     maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId);
     setRefresh(false);
-  }, []);
+  }, [refresh]);
 
   return (
     <ThemeProvider theme={theme}>
