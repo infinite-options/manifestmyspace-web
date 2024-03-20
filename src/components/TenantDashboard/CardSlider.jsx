@@ -32,7 +32,7 @@ export default function CardSlider(props) {
         }
         setCardSelection(baseArray);
         setCardIndex(0);
-        setPosition((cardWidth * baseArray.length / 2) - (cardWidth / 2))
+        setPosition((cardWidth * baseArray.length / 2) - (cardWidth / 0.75))
     }, [props.data]);
 
     
@@ -255,7 +255,7 @@ function Card(props) {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#99ee88',
-            width: isDoubleWidth ? cardWidth * 2.5 : cardWidth, // Double the width for the first card
+            width: cardWidth, // Double the width for the first card
             height: cardHeight,
             margin: '2px',
             opacity: transparency,
