@@ -52,43 +52,68 @@ export default function ManagerCreateAnnouncement() {
     const [showInvalidAnnouncementPrompt, setShowInvalidAnnouncementPrompt] = useState(false);
 
 
-    useEffect(() => {
-        console.log("ROHIT - applicantsData - ", applicantsData);
-    }, [applicantsData]);
+    // useEffect(() => {
+    //     console.log("applicantsData - ", applicantsData);
+    // }, [applicantsData]);
 
-    useEffect(() => {
-        console.log("ROHIT - ownersData - ", ownersData);
-    }, [ownersData]);
+    // useEffect(() => {
+    //     console.log("ownersData - ", ownersData);
+    // }, [ownersData]);
 
-    useEffect(() => {
-        console.log("ROHIT - tenantsData - ", tenantsData);
-    }, [tenantsData]);
+    // useEffect(() => {
+    //     console.log("tenantsData - ", tenantsData);
+    // }, [tenantsData]);
 
-    useEffect(() => {
-        console.log("ROHIT - selectedOption - ", selectedOption);
-    }, [selectedOption]);
+    // useEffect(() => {
+    //     console.log("tenantsByPropertyData - ", tenantsByPropertyData);
+    // }, [tenantsByPropertyData]);
 
-    useEffect(() => {
-        console.log("ROHIT - selectedUsers - ", selectedUsers);
-    }, [selectedUsers]);
+    // useEffect(() => {
+    //     console.log("selectedOption - ", selectedOption);
+    // }, [selectedOption]);
 
-    useEffect(() => {
-        console.log("ROHIT - propertyAddressesMap - ", propertyAddressesMap);
-    }, [propertyAddressesMap]);
+    // useEffect(() => {
+    //     console.log("selectedUsers - ", selectedUsers);
+    // }, [selectedUsers]);
 
-    useEffect(() => {
-        console.log("ROHIT - announcementTypes - ", announcementTypes);
-    }, [announcementTypes]);
+    // useEffect(() => {
+    //     console.log("propertyAddressesMap - ", propertyAddressesMap);
+    // }, [propertyAddressesMap]);
+
+    // useEffect(() => {
+    //     console.log("announcementTypes - ", announcementTypes);
+    // }, [announcementTypes]);
     
     
     const [showSpinner, setShowSpinner] = useState(false);
     const navigate = useNavigate();
 
+    const sortPropertiesList = (users) => {
+        const usersWithSortedProperties = users.map(user => {
+            user.properties_list.sort((a, b) => {                
+                const extractNumeric = str => {
+                    const match = str.match(/\d+/);
+                    return match ? parseInt(match[0]) : Infinity;
+                };
+                        
+                const numericA = extractNumeric(a.property_address);
+                const numericB = extractNumeric(b.property_address);
+                
+                if (numericA < numericB) return -1;
+                if (numericA > numericB) return 1;
+                        
+                return a.property_address.localeCompare(b.property_address);
+            });
+            return user;
+        });
+
+        return usersWithSortedProperties;
+
+    }
+
     
     useEffect(() => {
-        setShowSpinner(true);
-        
-
+        setShowSpinner(true);        
 
         axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
             .then((res) => {
@@ -118,15 +143,18 @@ export default function ManagerCreateAnnouncement() {
                             property_address: property.property_address,
                             property_unit: property.property_unit,
                             property_city: property.property_city,
-                            property_state: property.property_state,
-                            // Add more details here as needed
+                            property_state: property.property_state,                            
                         };
                     });
+                    
                     return { tenant_uid, tenant_first_name, tenant_last_name, properties_list };
                 });
                 
-                const filteredApplicants = applicantsWithProperties.filter(applicant => applicant.properties_list.length > 0);                
-                setApplicantsData(filteredApplicants);
+                const filteredApplicants = applicantsWithProperties
+                                                            .filter(applicant => applicant.properties_list.length > 0);
+            
+                const applicantsWithSortedProperties = sortPropertiesList(filteredApplicants)                
+                setApplicantsData(applicantsWithSortedProperties);
                 
                 
                 const owners = properties
@@ -144,7 +172,9 @@ export default function ManagerCreateAnnouncement() {
                     );
                     return { ...owner, properties_list: ownerProperties };
                   });
-                setOwnersData(ownersWithProperties)
+                const ownersWithSortedProperties = sortPropertiesList(ownersWithProperties)                
+                setOwnersData(ownersWithSortedProperties)
+                
 
                 const propertyAddresses = {}
                 properties.forEach((property) => {
@@ -156,7 +186,6 @@ export default function ManagerCreateAnnouncement() {
                                                                 }
                 });
                 setPropertyAddressesMap(propertyAddresses);
-
 
                 const tenants = properties
                 .filter(property => property.tenant_first_name !== null && property.tenant_last_name !== null)
@@ -173,22 +202,38 @@ export default function ManagerCreateAnnouncement() {
                     );
                     return { ...tenant, properties_list: tenantProperties };
                 });
+                const tenantsWithSortedProperties = sortPropertiesList(tenantsWithProperties)
                                 
-                setTenantsData(tenantsWithProperties);
+                setTenantsData(tenantsWithSortedProperties);
 
                 const tenantsByProperties = properties
                     .filter(property => property.tenant_first_name !== null && property.tenant_last_name !== null)
+                    .sort((a, b) => {
+                        const getNumericPart = str => {
+                            const matchA = str.match(/\d+/);
+                            return matchA ? parseInt(matchA[0]) : null;
+                        };
+                        
+                        const numericA = getNumericPart(a.property_address);
+                        const numericB = getNumericPart(b.property_address);
+                                        
+                        if (numericA === null && numericB === null) {                            
+                            return a.property_address.localeCompare(b.property_address);
+                        }
+                                                
+                        if (numericA === null) return -1;
+                        if (numericB === null) return 1;
+                                                
+                        return numericA - numericB;
+                    });
 
-                setTenantsByPropertyData(tenantsByProperties);
-                            
+                setTenantsByPropertyData(tenantsByProperties);                            
                 setShowSpinner(false);
         });
     }, []);
 
-
     const { user, selectedRole, selectRole, Name } = useUser();
     
-
     const handleSendAnnouncement = async (e) => {
         e.preventDefault();
         setShowInvalidAnnouncementPrompt(false);
@@ -199,47 +244,7 @@ export default function ManagerCreateAnnouncement() {
         }
         setShowSpinner(true);
 
-        const sendAnnouncement = async (properties_list, profile_uid) => {
-            console.log("ROHIT - properties_list", properties_list);
-            const property_uids = []
-
-            properties_list.forEach((property) => {
-                property_uids.push(property.property_uid)
-            });
-            console.log("ROHIT - property_uids", property_uids);
-            
-            const announcement_types_list = []
-            if(announcementTypes.text){
-                announcement_types_list.push("Text")
-            }
-            if(announcementTypes.email){
-                announcement_types_list.push("Email")
-            }
-            
-            // promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, //rohit
-            promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    announcement_title: announcementTitle,
-                    announcement_msg: announcementMessage,
-                    announcement_sender: getProfileId(),
-                    announcement_date: new Date().toDateString(),
-                    announcement_properties: property_uids, 
-                    announcement_mode: "LEASE",
-                    announcement_receiver: profile_uid,
-                    // announcement_type: ["Text", "Email"],
-                    announcement_type: announcement_types_list,
-                }),
-            }));
-
-            promises_added.push(profile_uid);
-        }
-
-        const sendAnnouncement2 = async (receiverPropertyMapping) => {
+        const sendAnnouncement = async (receiverPropertyMapping) => {
             const announcement_receivers = []
             const announcement_properties = receiverPropertyMapping;
             
@@ -247,9 +252,9 @@ export default function ManagerCreateAnnouncement() {
                 announcement_receivers.push(receiver);
             });
 
-            console.log("ROHIT - sendAnnouncement2 - announcement_receivers - ", announcement_receivers)
-            console.log("ROHIT - sendAnnouncement2 - announcement_properties - ", announcement_properties)
-            console.log("ROHIT - sendAnnouncement2 - announcement_properties - string - ", JSON.stringify(announcement_properties))
+            // console.log("sendAnnouncement - announcement_receivers - ", announcement_receivers)
+            // console.log("sendAnnouncement - announcement_properties - ", announcement_properties)
+            // console.log("sendAnnouncement - announcement_properties - string - ", JSON.stringify(announcement_properties))
 
             const announcement_types_list = []
             if(announcementTypes.text){
@@ -259,8 +264,8 @@ export default function ManagerCreateAnnouncement() {
                 announcement_types_list.push("Email")
             }
             
-            // promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, //rohit
-            promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
+            promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
+            // promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
             {
                 method: "POST",
                 headers: {
@@ -291,9 +296,8 @@ export default function ManagerCreateAnnouncement() {
                 return acc;
             }, {});     
 
-            console.log("ROHIT - tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
-
-            sendAnnouncement2(receiverPropertyMapping);
+            // console.log("tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+            sendAnnouncement(receiverPropertyMapping);
             
         } else if(selectedOption === "owners_by_name"){            
             let receiverPropertyMapping = selectedUsers.reduce((acc, obj) => {
@@ -306,32 +310,10 @@ export default function ManagerCreateAnnouncement() {
                 return acc;
             }, {});     
 
-            console.log("ROHIT - owners_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+            // console.log("owners_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+            sendAnnouncement(receiverPropertyMapping);
 
-            sendAnnouncement2(receiverPropertyMapping);
-
-        } else if(selectedOption === "applicants_by_name"){
-            
-            // selectedUsers.forEach((applicant) => {
-            //     let properties_list = []                
-            //     properties_list.push({property_uid: applicant.property_uid})
-            //     console.log(properties_list);
-            //     sendAnnouncement(properties_list ,applicant.tenant_uid)
-            // });
-
-
-            // let receiverPropertyMapping = selectedUsers.reduce((acc, obj) => {
-            //     const applicantUid = obj.tenant_uid;
-            //     const applicantProperties = obj.properties_list.map((property => property.property_uid))
-            //     if (!acc[tenantUid]) {
-            //         acc[tenantUid] = [];
-            //     }                
-            //     acc[tenantUid] = tenantProperties;
-            //     return acc;
-            // }, {});     
-
-            // console.log("ROHIT - tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
-
+        } else if(selectedOption === "applicants_by_name"){                                      
             let groupedData = selectedUsers.reduce((acc, obj) => {
                 const tenantUid = obj.tenant_uid;
                 if (!acc[tenantUid]) {
@@ -339,21 +321,15 @@ export default function ManagerCreateAnnouncement() {
                 }
                 acc[tenantUid].push(obj);
                 return acc;
-            }, {});
-
-            console.log("ROHIT - groupedData - ",groupedData);
+            }, {});            
 
             const receiverPropertyMapping = {};
-
             Object.keys(groupedData).forEach((receiver) => {                
                 const properties = groupedData[receiver][0].properties_list.map(property => property.property_uid);                
                 receiverPropertyMapping[receiver] = properties;
-            });
-                        
-            console.log("ROHIT - tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
-
-            sendAnnouncement2(receiverPropertyMapping);
-
+            });                        
+            console.log("applicants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+            sendAnnouncement(receiverPropertyMapping);
 
         } else if(selectedOption === "tenants_by_property") {            
             let groupedData = selectedUsers.reduce((acc, obj) => {
@@ -363,58 +339,16 @@ export default function ManagerCreateAnnouncement() {
                 }
                 acc[tenantUid].push(obj);
                 return acc;
-            }, {});
-
-            console.log("ROHIT - groupedData - ",groupedData);
-
-            // simulated data - rohit
-            // groupedData = {
-            //     "350-000080": [
-            //         {
-            //             "property_uid": "200-000158",
-            //             "property_available_to_rent": 1,
-            //             "property_active_date": "11-22-2023",
-            //         },
-            //         {
-            //             "property_uid": "200-000100",
-            //             "property_available_to_rent": 1,
-            //             "property_active_date": "2024-01-03",
-            //         },
-            //         {
-            //             "property_uid": "200-000128",
-            //             "property_available_to_rent": 1,
-            //             "property_active_date": "2024-02-16",
-            //         }
-            //     ],
-            //     "350-000081": [
-            //         {
-            //             "property_uid": "200-000125",
-            //             "property_available_to_rent": 1,
-            //             "property_active_date": "11-22-2023",
-            //         },
-            //         {
-            //             "property_uid": "200-000152",
-            //             "property_available_to_rent": 1,
-            //             "property_active_date": "2024-01-03",
-            //         },
-            //         {
-            //             "property_uid": "200-000153",
-            //             "property_available_to_rent": 1,
-            //             "property_active_date": "2024-02-16",
-            //         }
-            //     ]
-            // };
-
-            // console.log("ROHIT - groupedData(new) - ",groupedData);
+            }, {});            
+            
             const receiverPropertyMapping = {};
-
             Object.keys(groupedData).forEach((receiver) => {                
                 const properties = groupedData[receiver].map(property => property.property_uid);                
                 receiverPropertyMapping[receiver] = properties;
             });
                         
-            console.log("ROHIT - tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
-            sendAnnouncement2(receiverPropertyMapping); 
+            console.log("tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
+            sendAnnouncement(receiverPropertyMapping); 
         }
 
         try {
@@ -442,18 +376,15 @@ export default function ManagerCreateAnnouncement() {
         }
     };
 
-    const handleAnnouncementTypeChange = (event) => {
-        console.log("ROHIT - handleAnnouncementTypeChange", event.target.getAttribute('name'))
-        if(event.target.getAttribute('name') === "text"){
-            
+    const handleAnnouncementTypeChange = (event) => {        
+        if(event.target.getAttribute('name') === "text"){            
             setAnnouncementTypes((prevState) => {
                 return {
                     ...prevState,                    
                     text: !prevState.text                    
                 }                
             })
-        } else if(event.target.getAttribute('name') === "email"){
-            
+        } else if(event.target.getAttribute('name') === "email"){            
             setAnnouncementTypes((prevState) => {
                 return {
                     ...prevState,                    
@@ -578,27 +509,7 @@ export default function ManagerCreateAnnouncement() {
                         <Grid item xs={12}>
                             {
                                 selectedOption === "tenants_by_name" && (
-                                    <>
-                                        {/* <Box className="announcement-menu-container">
-                                            <Typography
-                                                sx={{
-                                                color: "#000000",
-                                                fontWeight: theme.typography.primary.fontWeight,
-                                                }}
-                                            >
-                                                Tenants
-                                            </Typography>
-                                            <div className="announcement-list-container">
-                                                    {tenantsData.length > 0 ? (
-                                                        tenantsData.map((tenant, index) =>
-                                                            <Box key={index}>
-                                                                <Box>
-                                                                    {tenant.tenant_first_name + " " + tenant.tenant_last_name}
-                                                                </Box>
-                                                            </Box>
-                                                    )) : <></>}
-                                                </div>
-                                        </Box> */}
+                                    <>                                        
                                         <Box>
                                             <TableContainer>
                                                 <Table>
@@ -627,27 +538,7 @@ export default function ManagerCreateAnnouncement() {
                             }
                             {
                                 selectedOption === "owners_by_name" && (
-                                    <>
-                                        {/* <Box className="announcement-menu-container">
-                                            <Typography
-                                                sx={{
-                                                color: "#000000",
-                                                fontWeight: theme.typography.primary.fontWeight,
-                                                }}
-                                            >
-                                                Owners
-                                            </Typography>
-                                            <div className="announcement-list-container">
-                                                    {ownersData.length > 0 ? (
-                                                        ownersData.map((owner, index) =>
-                                                            <Box key={index}>
-                                                                <Box>
-                                                                    {owner.owner_first_name + " " + owner.owner_last_name}
-                                                                </Box>
-                                                            </Box>
-                                                    )) : <></>}
-                                                </div>
-                                        </Box> */}
+                                    <>                                        
                                         <Box>
                                             <TableContainer>
                                                 <Table>
@@ -676,27 +567,7 @@ export default function ManagerCreateAnnouncement() {
                             }
                             {
                                 selectedOption === "applicants_by_name" && (
-                                    <>
-                                        {/* <Box className="announcement-menu-container">
-                                            <Typography
-                                                sx={{
-                                                color: "#000000",
-                                                fontWeight: theme.typography.primary.fontWeight,
-                                                }}
-                                            >
-                                                Applicants
-                                            </Typography>
-                                            <div className="announcement-list-container">
-                                                    {applicantsData.length > 0 ? (
-                                                        applicantsData.map((application, index) =>
-                                                            <Box key={index}>
-                                                                <Box>
-                                                                    {application.tenant_first_name + " " + application.tenant_last_name}
-                                                                </Box>
-                                                            </Box>
-                                                    )) : <></>}
-                                                </div>
-                                        </Box> */}
+                                    <>                                        
                                         <Box>
                                             <TableContainer>
                                                 <Table>
@@ -805,8 +676,7 @@ function TenantRow({ tenant, isSelected, handleCheckboxChange }) {
             inputProps={{ "aria-label": "select user" }}
           />
         </TableCell>
-        <TableCell>{`${tenant.tenant_first_name} ${tenant.tenant_last_name}`}</TableCell>
-        {/* <TableCell>{`${tenant.property_address}, Unit - ${tenant.property_unit}, ${tenant.property_city}, ${tenant.property_state}`}</TableCell>         */}
+        <TableCell>{`${tenant.tenant_first_name} ${tenant.tenant_last_name}`}</TableCell>        
         <TableCell>
             {tenant.properties_list.map((property, index) => (
                 <Box key={index}>
