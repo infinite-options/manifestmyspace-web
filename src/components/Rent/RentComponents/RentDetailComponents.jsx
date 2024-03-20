@@ -58,9 +58,41 @@ const StatusText = (status) => {
 }
 
 export function RentDetailBody(props) {
-    const [rentDetailsData, propertyID, index, propertyStatus] = props.data;
+    let [rentDetailsData, propertyID, index, propertyStatus] = props.data;
     const [decrementIndex, incrementIndex] = props.updator;
     const [getProperties] = props.methods;
+    const property = getProperties(propertyStatus)[index]
+    
+    const uid=property?.property_uid
+    if (Array.isArray(rentDetailsData))
+    rentDetailsData=rentDetailsData.filter(rent_detail=> rent_detail.property_uid===uid)
+    let due_amount=rentDetailsData[rentDetailsData.length-1]?.pur_amount_due ?? 0
+    let due_date;
+
+    try{due_date= rentDetailsData[rentDetailsData.length-1]?.pur_due_date}catch(e){
+        due_date=''
+    }
+
+    function calculateDaysDifference(inputDate) {
+        // Parse the input date string
+        try{
+        const inputDateObj = new Date(inputDate);
+    
+        // Current date
+        const currentDate = new Date();
+    
+        // Calculate the difference in milliseconds
+        const timeDifference = currentDate - inputDateObj;
+    
+        // Convert milliseconds to days
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    
+        return daysDifference;}
+        catch(e){
+            return ''
+        }
+    }
+
 
     const tableStyle = {
         width: '100%',
@@ -81,15 +113,6 @@ export function RentDetailBody(props) {
         return `${month}/${day}/${year}`;
     }
 
-    function getOverdue() {
-        for (let i = 0; i < rentDetailsData.length; i++) {
-            const rentDetail = rentDetailsData[i];
-            if (rentDetail.property_id === propertyID && rentDetail.purchase_type === 'RENT') {
-                // console.log(rentDetail);
-                return rentDetail.overdue;
-            }
-        }
-    }
 
     function parseImageData(data) {
         if (data === undefined) {
@@ -100,6 +123,7 @@ export function RentDetailBody(props) {
         const imageString = data.slice(s, l);
         return imageString;
     }
+
 
     return (
         <Box sx={{
@@ -172,7 +196,7 @@ export function RentDetailBody(props) {
                     }}
                 >
                     {getProperties(propertyStatus).length > 0 ? (
-                        <img src={parseImageData(getProperties(propertyStatus)[index].property_images)} alt="Property Img" style={{
+                        <img src={parseImageData(property.property_images)} alt="Property Img" style={{
                             width: '130px',
                             height: '130px',
                         }} />
@@ -188,7 +212,7 @@ export function RentDetailBody(props) {
                         fontSize: '18px',
                         textDecoration: 'underline',
                     }}>
-                        {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)}
+                        {getProperties(propertyStatus).length > 0 ? (`${property.property_address}, ${(property.property_unit !== null && property.property_unit !== '' ? (property.property_unit + ',') : (''))} ${property.property_city} ${property.property_state} ${property.property_zip}`) : (<></>)}
                     </Box>
                     <Box sx={{
                         marginBottom: '0px',
@@ -196,13 +220,13 @@ export function RentDetailBody(props) {
                         fontSize: '14px',
                     }}>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`$ ${getProperties(propertyStatus)[index].pur_amount_due}`) : (<></>)}
+                            {`$ ${due_amount}`}
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`due ${formatDate(getProperties(propertyStatus)[index].pur_due_date)}`) : (<></>)}
+                            {(getProperties(propertyStatus).length > 0 ) && (`due ${due_date? due_date.replaceAll('-', '/') : ''}`) }
                         </Box>
                         <Box>
-                            {getProperties(propertyStatus).length > 0 ? (`${getOverdue()} Days Overdue`) : (<></>)}
+                            {(getProperties(propertyStatus).length > 0 && ![null, undefined, ''].includes(due_date)) && (`${calculateDaysDifference(due_date)} Days Overdue`) }
                         </Box>
                     </Box>
                 </Box>
@@ -234,6 +258,7 @@ export function RentDetailBody(props) {
                         </th>
                         <th style={thStyle}>
                             Amount
+                            
                         </th>
                         <th style={thStyle}>
                             Rent Status
@@ -242,42 +267,51 @@ export function RentDetailBody(props) {
                             Fees
                         </th>
                     </tr>
-                    {rentDetailsData.length > 0 && getProperties(propertyStatus).length > 0 ? (
+                    {rentDetailsData.length > 0  && (
                         rentDetailsData.map((rentDetails, i) => {
-                            const month = rentDetails.cf_month;
-                            const paid = rentDetails.payment_date !== null ? (
-                                formatDate(rentDetails.payment_date) !== '' ? formatDate(rentDetails.payment_date).slice(0, 5) : '-'
-                            ) : '-';
-                            const amount = rentDetails.pay_amount !== null ? '$' + rentDetails.pay_amount : '-';
-                            const payment_status = rentDetails.payment_status;
+                        {/* let month = rentDetails.cf_month;
+                        let paid = rentDetails.payment_date !== null ? (
+                            formatDate(rentDetails.payment_date) !== '' ? formatDate(rentDetails.payment_date).slice(0, 5) : '-'
+                        ) : '-';
+                        let amount = rentDetails.pay_amount !== null ? '$' + rentDetails.pay_amount : '-';
+                        let payment_status = rentDetails.payment_status;
 
-                            const id = rentDetails.property_id;
-                            let fee = '';
-                            for (let i = 0; i < rentDetailsData.length; i++) {
-                                const prop2 = rentDetailsData[i];
-                                if (prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
-                                    fee = '+$' + prop2.pur_amount_due;
-                                }
+                        let id = rentDetails.property_id;
+                        let fee = '';
+                        for (let i = 0; i < rentDetailsData.length; i++) {
+                            const prop2 = rentDetailsData[i];
+                            if (prop2.purchase_type !== 'RENT' && prop2.property_id === id && prop2.cf_month === month && prop2.cf_year === rentDetails.cf_year) {
+                                fee = '+$' + prop2.pur_amount_due;
                             }
-                            return (
-                                <>
-                                    {
-                                        (propertyID === id && rentDetails.purchase_type === 'RENT') ? (
-                                            <>
-                                                <PropertyRow data={[month, paid, amount, payment_status, fee]} />
-                                            </>
+                        }  */}
+                        let month = rentDetails?.cf_month || 0;   //These fields need revision
+                        let payment_date = rentDetails?.payment_date ?? '';
+                        let paid;
+                        if (payment_date === '') {
+                            paid = '-';
+                        } else {
+                            const [payment_month, payment_day] = payment_date.split('-');
+                            paid = `${payment_month}/${payment_day}`;
+                        }
+                        let amount= `\$${rentDetails?.total_paid ?? 0}`;
+                        let rent_status= rentDetails?.purchase_status || 'No rent_status ';
+                        let fees= rentDetails?.total_late_fees ?? 0 ;
+                        let paid_fees= rentDetails?.total_late_fees_paid ?? 0
 
-                                        ) : (
-                                            <></>
-                                        )
-                                    }
-                                </>
-                            )
-                        })
-                    ) : (
-                        <>
-                        </>
-                    )
+                        return (
+                            <>
+                                {
+                                    (
+                                        <>
+                                            <PropertyRow data={{month, paid, amount, rent_status, fees, paid_fees}} />
+                                        </>
+                                    ) 
+                                }
+                            </>
+                        )
+                    })
+
+                    ) 
 
                     }
                 </table>
@@ -286,63 +320,46 @@ export function RentDetailBody(props) {
     )
 }
 function PropertyRow(props) {
-    const [month, paid, amount, status, fees] = props.data;
+    const {month, paid, amount, rent_status, fees, paid_fees} = props.data;
     const tdStyle = {
         textAlign: 'center',
     }
-
-    function getMonthAbbreviation(monthName) {
-        const monthIndexMap = {
-            "January": 0,
-            "February": 1,
-            "March": 2,
-            "April": 3,
-            "May": 4,
-            "June": 5,
-            "July": 6,
-            "August": 7,
-            "September": 8,
-            "October": 9,
-            "November": 10,
-            "December": 11
-        };
-
-        const months = [
-            "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-        ];
-
-        const index = monthIndexMap[monthName];
-        if (index !== undefined) {
-            return months[index];
+    const months = [
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    ];
+    function getMonthAbbreviation(m) {
+       
+        if (m !== undefined) {
+            return months[m];
         } else {
-            console.log('ERROR: Month value is', monthName);
+            console.log('ERROR: Month value is', m);
             return "Invalid Month";
         }
     }
 
     return (
         <tr>
-            <td style={tdStyle}>
+            <th style={tdStyle}>
                 {getMonthAbbreviation(month)}
-            </td>
-            <td style={tdStyle}>
-                {paid}
-            </td>
-            <td style={tdStyle}>
+            </th>
+            <th style={tdStyle}>
+                {paid ?? ''}
+            </th>
+            <th style={tdStyle}>
                 {amount}
-            </td>
-            <td style={tdStyle}>
-                <PropertyStatus data={status} />
-            </td>
-            <td style={tdStyle}>
-                {fees}
-            </td>
+            </th>
+            <th style={tdStyle}>
+                <PropertyStatus data={rent_status} />
+            </th>
+            <th style={{ ...tdStyle, color: paid_fees < fees ? '#A52A2A' : 'inherit' }}> 
+                {fees || ''}
+            </th>
         </tr>
     );
 }
 function PropertyStatus(props) {
-    const status = props.data;
-    const color = status !== null ? getStatusColor(status) : '#FFFFF';
+    const rent_status = props.data;
+    const color = rent_status !== null ? getStatusColor(rent_status) : '#FFFFF';
     return (
         <Box sx={{
             backgroundColor: color,
@@ -350,7 +367,7 @@ function PropertyStatus(props) {
             textAlign: 'left',
             paddingLeft: '5px',
         }}>
-            {StatusText(status)}
+            {StatusText(rent_status)}
         </Box>
     );
 }

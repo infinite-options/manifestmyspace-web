@@ -78,6 +78,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             </TableCell> */}
                         </TableRow>
                     </Table>
+                    {otherQuotes.length > 0 ? (
                         <Accordion
                             sx={{
                                 boxShadow: "none",
@@ -116,7 +117,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 </Table>
                             </AccordionDetails>
                         </Accordion>
-
+                    ) : (
+                        <Typography sx={tableText}> No other quotes have been submitted </Typography>
+                    )}
                 </Grid>
             )
         }

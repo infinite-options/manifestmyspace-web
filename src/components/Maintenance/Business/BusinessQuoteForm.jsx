@@ -42,6 +42,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg"
 import dayjs from "dayjs";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import DocumentUploader from "../../DocumentUploader";
 
 function CostPartsTable({parts, setParts}){
 
@@ -170,6 +171,7 @@ export default function BusinessQuoteForm({acceptBool}){
     const [notes, setNotes] = useState('');
     const [jobType, setJobType] = useState("");
     const [selectedImageList, setSelectedImageList] = useState([])
+    const [selectedDocumentList, setSelectedDocumentList] = useState([])
 
     useEffect(() => {
         console.log("ROHIT - availabilityTime - ", availabilityTime);
@@ -292,12 +294,49 @@ export default function BusinessQuoteForm({acceptBool}){
     }
 
     function handleBackButton(){
-        navigate(-1)
+        navigate("/maintenanceDashboard", {
+            state: {
+                refresh: true
+            }
+        })
     }
 
 
     const handleSubmit = (status) => {
         console.log("handleSubmit")
+
+        const uploadQuoteDocuments = async () => {
+            // Get the current date and time
+            const currentDatetime = new Date();
+
+            // Format the date and time
+            const formattedDatetime = 
+                (currentDatetime.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                currentDatetime.getDate().toString().padStart(2, '0') + '-' +
+                currentDatetime.getFullYear() + ' ' +
+                currentDatetime.getHours().toString().padStart(2, '0') + ':' +
+                currentDatetime.getMinutes().toString().padStart(2, '0') + ':' +
+                currentDatetime.getSeconds().toString().padStart(2, '0');
+            try {
+                var formData = new FormData();
+                formData.append("document_type", "pdf");
+                formData.append("document_date_created", formattedDatetime);
+                formData.append("document_property", maintenanceItem.property_id);
+
+                for (let i = 0; i < selectedDocumentList.length; i++){
+                    formData.append("document_file", selectedDocumentList[i]);
+                    formData.append("document_title", selectedDocumentList[i].name);
+                }
+                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`, {
+                    method: 'POST',
+                    body: formData,
+                })
+                // const responseData = await response.json();
+            } catch (error) {
+                console.log("error", error)
+            }
+
+        }
 
         const changeQuoteStatus = async (status) => {
             setShowSpinner(true);
@@ -366,6 +405,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
+        uploadQuoteDocuments()
         navigate("/workerMaintenance", {state: {refresh: true}})
     }
 
@@ -684,16 +724,10 @@ export default function BusinessQuoteForm({acceptBool}){
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                                <Button
-                                                    sx={{
-                                                        padding: "0px"
-                                                    }}
-                                                >
-                                                    <img src={documentIcon} style={{width: '18px', height: '25px', margin:'5px'}}/>
-                                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                                        Add Document
-                                                    </Typography>
-                                                </Button>
+                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                                    Add Documents
+                                                </Typography>
+                                                <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/>
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                                 <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>

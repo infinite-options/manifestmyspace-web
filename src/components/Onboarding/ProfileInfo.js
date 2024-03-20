@@ -341,7 +341,7 @@ const ProfileInfo = () => {
   useEffect(() => {
     setEmail(cookiesData?.email ?? '');
     setPhoneNumber(cookiesData?.phoneNumber ?? '');
-    setLocations(prev=>([... prev, {city: cookiesData?.city ?? '', state: cookiesData?.state ?? ''}]) );
+    setLocations(prev=>([... prev, {id: prev.length + 1,city: cookiesData?.city ?? '', state: cookiesData?.state ?? '', miles: cookiesData?.state ?? ''}]) );
     setAddress(cookiesData?.address ?? '');
     setUnit(cookiesData?.unit ?? '');
     setCity(cookiesData?.city ?? '');
@@ -480,7 +480,7 @@ const ProfileInfo = () => {
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -500,7 +500,7 @@ const ProfileInfo = () => {
               </Stack>
             </Grid>
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -520,7 +520,7 @@ const ProfileInfo = () => {
               </Stack>
             </Grid>
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -542,7 +542,7 @@ const ProfileInfo = () => {
               </Stack>
             </Grid>
             <Grid item xs={6}>
-              <Stack spacing={-2} m={2}>
+              <Stack spacing={-2} m={5}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -558,7 +558,7 @@ const ProfileInfo = () => {
           {isBusiness() && (
             <>
               <hr />
-              <Box sx={{ paddingLeft: "30%" }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -577,7 +577,7 @@ const ProfileInfo = () => {
                         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                       >
                         <Grid item xs={6}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -598,7 +598,7 @@ const ProfileInfo = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={6}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -626,7 +626,7 @@ const ProfileInfo = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={6}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -647,7 +647,7 @@ const ProfileInfo = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={6}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -696,7 +696,7 @@ const ProfileInfo = () => {
                         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                       >
                         <Grid item xs={12}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -716,7 +716,7 @@ const ProfileInfo = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -726,7 +726,7 @@ const ProfileInfo = () => {
                               {"# of Hours"}
                             </Typography>
                             <TextField
-                              name="cours"
+                              name="hours"
                               value={row.hours}
                               variant="filled"
                               fullWidth
@@ -736,7 +736,7 @@ const ProfileInfo = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -756,7 +756,7 @@ const ProfileInfo = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
-                          <Stack spacing={-2} m={2}>
+                          <Stack spacing={-2} m={5}>
                             <Typography
                               sx={{
                                 color: theme.typography.common.blue,
@@ -797,7 +797,7 @@ const ProfileInfo = () => {
                     </div>
                   ))}
               <hr />
-              <Box sx={{ paddingLeft: "30%" }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -807,6 +807,7 @@ const ProfileInfo = () => {
                   {"Service Locations"}
                 </Typography>
               </Box>
+              {console.log(locations)}
               {locations.map((row) => (
                 <div key={row.id}>
                   <Grid
@@ -815,7 +816,7 @@ const ProfileInfo = () => {
                     columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                   >
                     <Grid item xs={12}>
-                      <Stack spacing={-2} m={2}>
+                      <Stack spacing={-2} m={5}>
                         <Typography
                           sx={{
                             color: theme.typography.common.blue,
@@ -835,7 +836,7 @@ const ProfileInfo = () => {
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
-                      <Stack spacing={-2} m={2}>
+                      <Stack spacing={-2} m={5}>
                         <Typography
                           sx={{
                             color: theme.typography.common.blue,
@@ -855,7 +856,7 @@ const ProfileInfo = () => {
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
-                      <Stack spacing={-2} m={2}>
+                      <Stack spacing={-2} m={5}>
                         <Typography
                           sx={{
                             color: theme.typography.common.blue,
@@ -875,7 +876,7 @@ const ProfileInfo = () => {
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
-                      <Stack spacing={-2} m={2}>
+                      <Stack spacing={-2} m={5}>
                         <Typography
                           sx={{
                             color: theme.typography.common.blue,
@@ -917,7 +918,7 @@ const ProfileInfo = () => {
               ))}
             </>
           )}
-          <hr />
+          {/* <hr /> */}
           <Grid
             container
             rowSpacing={1}
@@ -925,7 +926,7 @@ const ProfileInfo = () => {
           >
             {isBusiness() ? (
               <Grid item xs={12}>
-                <Stack spacing={-2} m={2}>
+                <Stack spacing={-2} m={5}>
                   <Typography
                     sx={{
                       color: theme.typography.common.blue,
@@ -947,7 +948,7 @@ const ProfileInfo = () => {
             ) : (
               <>
                 <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
+                  <Stack spacing={-2} m={5}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -967,7 +968,7 @@ const ProfileInfo = () => {
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
+                  <Stack spacing={-2} m={5}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,

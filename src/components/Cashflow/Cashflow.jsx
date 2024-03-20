@@ -231,6 +231,7 @@ export default function Cashflow() {
               boxShadow: "none",
             }}
           >
+            {/* This is Revenue Bar underneath the Blue Cashflow box */}
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -261,6 +262,7 @@ export default function Cashflow() {
               boxShadow: "none",
             }}
           >
+            {/* This is Expense Bar underneath the Blue Cashflow box */}
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -272,6 +274,7 @@ export default function Cashflow() {
                 {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
               </Typography>
             </Box>
+
             <AccordionDetails>
               <StatementTable
                 categoryTotalMapping={expenseByType}
@@ -314,6 +317,7 @@ export default function Cashflow() {
               boxShadow: "none",
             }}
           >
+            {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -331,6 +335,7 @@ export default function Cashflow() {
                   : "0.00"}
               </Typography>
             </Box>
+
             <AccordionDetails>
               {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
               <StatementTable
@@ -350,6 +355,7 @@ export default function Cashflow() {
               boxShadow: "none",
             }}
           >
+            {/* This is Expense Bar underneath the Yellow Expected Cashflow box */}
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -367,6 +373,7 @@ export default function Cashflow() {
                   : "0.00"}
               </Typography>
             </Box>
+
             <AccordionDetails>
               <StatementTable
                 categoryTotalMapping={expenseByType}
@@ -379,11 +386,14 @@ export default function Cashflow() {
               />
             </AccordionDetails>
           </Accordion>
+
+          {/* This is where the GRAPH Component starts */}
           <Stack direction="row" justifyContent="center">
             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
               {showChart} Cashflow and Revenue
             </Typography>
           </Stack>
+
           <Stack direction="row" justifyContent="center" height={300}>
             {showChart === "Current" ? (
               <MixedChart revenueCashflowByMonth={last12Months} activeButton={activeButton}></MixedChart>
@@ -391,6 +401,7 @@ export default function Cashflow() {
               <MixedChart revenueCashflowByMonth={next12Months} activeButton={activeButton}></MixedChart>
             )}
           </Stack>
+
           <Stack direction="row" justifyContent="center" textTransform={"none"}>
             <Button onClick={() => setShowChart(showChart === "Current" ? "Expected" : "Current")} variant="outlined">
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
@@ -399,6 +410,7 @@ export default function Cashflow() {
             </Button>
           </Stack>
         </Paper>
+
         <Paper
           style={{
             margin: "2px",
@@ -518,6 +530,7 @@ function SelectMonthComponentTest(props) {
   );
 }
 
+// This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
   const navigate = useNavigate();
 
@@ -579,13 +592,16 @@ function StatementTable(props) {
             </TableRow>
           ) : (
             <TableRow key={index}>
-              <TableCell></TableCell>
+              <TableCell>{item.purchase_uid}</TableCell>
+              <TableCell>{item.pur_property_id}</TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                   {" "}
                   {item.property_address} {item.property_unit}{" "}
                 </Typography>
               </TableCell>
+              <TableCell>{item.pur_notes}</TableCell>
+              <TableCell>{item.pur_description}</TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
               </TableCell>

@@ -89,8 +89,11 @@ export default function Announcements() {
                 console.log(announcement.announcement_title)
                 navigate("/newOwnerInquiry",{state: {announcementData: announcement}});
             }else if(announcement.announcement_mode=="CONTRACT"){
-                console.log(announcement.announcement_title)      
-                navigate("/propertyContract",{state: {announcementData: announcement}});          
+                // console.log(announcement.announcement_title)      
+                // navigate("/propertyContract",{state: {announcementData: announcement}});          
+                setAnnData(announcement)
+                setShowAnnouncement(true)
+
             }else if(announcement.announcement_mode=="LEASE"){
                 console.log(announcement.announcement_title)    
                 setAnnData(announcement)
@@ -164,8 +167,8 @@ export default function Announcements() {
                             <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="2.375" y="4.75" width="14.25" height="11.875" rx="2" stroke="#3D5CAC" strokeWidth="2" />
                                 <path d="M2.375 7.91667C2.375 6.828 2.375 6.28367 2.58125 5.86542C2.77598 5.47056 3.09556 5.15098 3.49042 4.95625C3.90867 4.75 4.453 4.75 5.54167 4.75H13.4583C14.547 4.75 15.0913 4.75 15.5096 4.95625C15.9044 5.15098 16.224 5.47056 16.4187 5.86542C16.625 6.28367 16.625 6.828 16.625 7.91667V7.91667H2.375V7.91667Z" fill="#3D5CAC" />
-                                <path d="M5.54169 2.375L5.54169 4.75" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
-                                <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                                <path d="M5.54169 2.375L5.54169 4.75" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
+                                <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
                             </svg>
                         </div>
                         <div className="announcement-view-text">
@@ -187,13 +190,26 @@ export default function Announcements() {
                 <div style={{width:"100%", height: "150px", overflow: "auto"}}>
                  <div className="announcement-list-container">
                     {sentData.length > 0 ? (
-                        sentData.map((announcement, i) =>
+                        sentData.map((announcement, i) => {
+                            let pageToNavigate= undefined;
+                            let navigationParams=undefined;
+                            if (announcement.announcement_mode=="CONTRACT"){
+                                pageToNavigate= "/propertyContract"
+                                navigationParams= {state: {announcementData: announcement}}
+                            }
+                            {/* else if (announcement.announcement_mode=="LEASE"){
+                                pageToNavigate= "/viewLease"
+                                navigationParams= { state: { lease_id: property.lease_uid, }}
+                            
+                            } */}
+                            return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                    <AnnouncementCard data={announcement} role={getProfileId}/>
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
                                 </Box>
-                            </div>
-                        )) : "No announcements"}
+                            </div>)
+                    }
+                    )) : "No announcements"}
                 </div>
                 </div>
 
@@ -203,12 +219,26 @@ export default function Announcements() {
                 <div style={{width:"100%", height: "150px", overflow: "auto"}}>
                  <div className="announcement-list-container">
                     {receivedData.length > 0 ? (
-                        receivedData.map((announcement, i) =>
+                        receivedData.map((announcement, i) =>{
+                            let pageToNavigate= undefined;
+                            let navigationParams=undefined;
+                            if (announcement.announcement_mode=="CONTRACT"){
+                                pageToNavigate= "/propertyContract"
+                                navigationParams= {state: {announcementData: announcement}}
+                            }
+                            {/* else if (announcement.announcement_mode=="LEASE"){
+                                pageToNavigate= "/viewLease"
+                                navigationParams= { state: { lease_id: property.lease_uid, }}
+                            
+                            } */}
+
+                            return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                    <AnnouncementCard data={announcement} role={getProfileId}/>
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
                                 </Box>
-                            </div>
+                            </div>)
+                    }
                         )) : "No announcements"}
                 </div>
                 </div>
@@ -217,8 +247,13 @@ export default function Announcements() {
             <hr/>
             <SearchFilter/>
              */}
-            <AnnouncementPopUp showAnnouncement={showAnnouncement} setShowAnnouncement={setShowAnnouncement} annData={annData} />
-             <Box sx={{paddingBottom:"10%"}}></Box>
+             <AnnouncementPopUp 
+                showAnnouncement={showAnnouncement} 
+                setShowAnnouncement={setShowAnnouncement} 
+                annData={annData} 
+                sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
+            />
+             <Box sx={{paddingBottom:"10%", width: "100%", marginLeft: "10%", marginRight: "10%"}}></Box>
         </div>
     );
 }

@@ -27,7 +27,7 @@ import TenantLeases from "./Leases/TenantLeases/TenantLeases";
 import OwnerDocuments from "./Documents/OwnerDocuments/OwnerDocuments";
 import OwnerUploadDocuments from "./Documents/OwnerDocuments/OwnerUploadDocuments";
 import OwnerProfile from "./Profile/OwnerProfile/OwnerProfile";
-import OwnerRent from "./Rent/OwnerRent/OwnerRent";
+// import OwnerRent from "./Rent/OwnerRent/OwnerRent";
 
 import PMProfile from "./Profile/PMProfile/PMProfile";
 import PMProfileEdit from "./Profile/PMProfile/PMProfileEdit";
@@ -35,7 +35,7 @@ import PMContracts from "./Contracts/PMContracts/PMContracts";
 import ManagementContractDetails from "./Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMDocuments from "./Documents/PMDocuments/PMDocuments";
 import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
-import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
+// import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 
@@ -67,7 +67,7 @@ import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceCont
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
-import PMProperties from "./Property/PMProperties";
+// import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
@@ -75,7 +75,7 @@ import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
 import EditMaintenanceItem from "./Maintenance/EditMaintenanceItem";
 import { MaintenanceRequestDetail } from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
-import EditProperty from "./Property/EditProperty";
+// import EditProperty from "./Property/EditProperty";
 import EditProperty2 from "./Property/EditProperty2";
 import PropertyDetail from "./Property/PropertyDetail";
 import SearchManager from "./Property/SearchManager";
@@ -216,13 +216,13 @@ function Main() {
             <Route path="maintenanceProfile" element={<MaintenanceProfile />} />
 
             <Route path="announcements" element={<Announcements />} />
-            <Route path="managerCreateAnnouncement" element={<ManagerCreateAnnouncement />} />            
+            <Route path="managerCreateAnnouncement" element={<ManagerCreateAnnouncement />} />
             <Route path="ownerProfile" element={<OwnerProfile />} />
             <Route path="ownerDocuments" element={<OwnerDocuments />} />
             <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
             <Route path="ownerUploadDocuments" element={<OwnerUploadDocuments />} />
-            <Route path="ownerRent" element={<OwnerRent />} />
-            <Route path="ownerRentDetail" element={<OwnerRentDetail />} />
+            {/* <Route path="ownerRent" element={<OwnerRent />} /> */}
+            {/* <Route path="ownerRentDetail" element={<OwnerRentDetail />} /> */}
 
             <Route path="tenantDocuments" element={<TenantDocuments />} />
             <Route path="tenantLeases" element={<TenantLeases />} />
@@ -291,7 +291,7 @@ function Main() {
             <Route path="maintenance/detail" element={<MaintenanceRequestDetail />} />
             <Route path="maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
             <Route path="addProperty" element={<AddProperty />} />
-            <Route path="editProperty" element={<EditProperty />} />
+            {/* <Route path="editProperty" element={<EditProperty />} /> */}
             <Route path="editProperty2" element={<EditProperty2 />} />
             <Route path="propertyDetail" element={<PropertyDetail />} />
             <Route path="searchManager" element={<SearchManager />} />
@@ -300,7 +300,7 @@ function Main() {
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
-            <Route path="PMProperties" element={<PMProperties />} />
+            {/* <Route path="PMProperties" element={<PMProperties />} /> */}
             <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
@@ -318,16 +318,14 @@ function Main() {
             <Route path="rescheduleMaintenance" element={<RescheduleMaintenance />} />
             <Route path="payMaintenance" element={<PayMaintenanceForm />} />
 
-            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false}/>} />
-            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true}/>} />
-            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm/>} />
+            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
+            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
+            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
             <Route path="workerMaintenance" element={<WorkerMaintenance />} />
             <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
             <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
             <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
-            {/* <Route path="workerMaintenance" element={<Maintenance01 />} />
-            <Route path="workerMaintenance/detail" element={<MaintenanceRequestDetail01 />} /> */}
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
             <Route path="pmQuotesList" element={<PMQuotesList />} />

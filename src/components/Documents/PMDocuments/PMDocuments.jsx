@@ -106,10 +106,7 @@ function PMDocuments() {
 
     useEffect(() => {
         setShowSpinner(true);
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`)
-        // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/600-000003`)
-        // axios.get(`http://localhost:4000/documents/${getProfileId()}`) 
-        // axios.get(`http://localhost:4000/documents/600-000003`)
+        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`)
             .then((res) => {
                 // console.log(res.data);
                 // setDocumentsData(res.data.Documents);

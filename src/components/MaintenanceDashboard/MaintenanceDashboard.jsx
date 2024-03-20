@@ -11,7 +11,7 @@ import {
 import { RadialBarChart, RadialBar, Legend, LabelList } from 'recharts';
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
@@ -27,6 +27,7 @@ import MaintenanceWorkerDashboardWidget from "../Maintenance/Worker/MaintenanceW
 
 export default function MaintenanceDashboard(){
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, getProfileId } = useUser(); 
     const [loading, setLoading] = useState(true);
     const [quoteRequestedCount, setQuoteRequestedCount] = useState(0);
@@ -41,6 +42,7 @@ export default function MaintenanceDashboard(){
     const [quotesSubmittedCashflow, setQuotesSubmittedCashflow] = useState(0);
     const [quotesFinishedCashflow, setQuotesFinishedCashflow] = useState(0);
     const [api_data, set_api_data]= useState({});
+    const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
     const data = [
         {
@@ -93,7 +95,8 @@ export default function MaintenanceDashboard(){
                 const data = await response.json();
                 set_api_data(data);
 
-                
+                var rejected_count = 0
+
                 for (const item of data.CurrentActivities.result) {
                     switch(item.maintenance_status) {
                         case "REQUESTED":
@@ -101,8 +104,13 @@ export default function MaintenanceDashboard(){
                             break;
 
                         case "SUBMITTED": 
-                            setSubmittedCount(item.num);
-                            setQuotesSubmittedCashflow(parseInt(item.total_estimate));
+                            // if(item.quote_status === "REJECTED"){
+                            //     console.log("REJECTED quote status for item", item)
+                            //     rejected_count += 1
+                            // } else {
+                                setSubmittedCount(item.num);
+                                setQuotesSubmittedCashflow(parseInt(item.total_estimate));
+                            // }
                             break;
 
                         case "ACCEPTED": 
@@ -137,6 +145,7 @@ export default function MaintenanceDashboard(){
             setShowSpinner(false);
         }
         getMaintenanceWorkerDashboardData()
+        setRefresh(false);
     }, [])
       
 

@@ -84,7 +84,7 @@ function PMContractDetailsList(props) {
     const [timeDiff, setTimeDiff] = useState(null);
 
     useEffect(() => {
-        console.log("Management Contract Details UseEffect");
+        console.log("Management Contract Details UseEffect in PMContract Details");
         
         const fetchData = async () => {
             setShowSpinner(true);

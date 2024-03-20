@@ -248,36 +248,8 @@ export default function TenantMaintenanceItemDetail() {
                   </CardContent>
                 </Card>
               </Grid>
-
               <Grid item xs={12}>
                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item.maintenance_desc}</Typography>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "20px" }}>Status Timeline</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack>
-                  {statusTimeline.map((status, index) => (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row", // This makes the children list vertically
-                        // ... add any other styles you want
-                        alignContent: "center",
-                        borderLeftColor: "#FFFFFF",
-                        borderLeftStyle: "dotted",
-                        paddingBottom: "10px",
-                      }}
-                      key={index}
-                    >
-                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{status.message}</Typography>
-                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                        {status.date} {status.time}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Stack>
               </Grid>
             </Grid>
           </Paper>

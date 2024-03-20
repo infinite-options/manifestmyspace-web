@@ -5,8 +5,11 @@ import { Box } from "@mui/material";
 import { useUser } from "../../../contexts/UserContext.jsx";
 
 export default function PropertyRentWidget(props) {
+  console.log("In Property Rent Widget ");
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
+  // console.log(selectedRole);
+  // console.log(props.rentData);
 
   // console.log("Role: ", user);
   // console.log("Selected Role: ", selectedRole);
@@ -14,6 +17,7 @@ export default function PropertyRentWidget(props) {
   let rentStatusData = props.rentData;
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
+  // console.log(unpaidCount);
   unpaidCount = unpaidCount ? unpaidCount.num : 0;
 
   let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID PARTIALLY") : 0;
@@ -28,8 +32,12 @@ export default function PropertyRentWidget(props) {
   let paidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID") : 0;
   paidCount = paidCount ? paidCount.num : 0;
 
+  let noManagerCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "NO MANAGER") : 0;
+  // console.log(noManagerCount);
+  noManagerCount = noManagerCount ? noManagerCount.num : 0;
+
   // no check if rentSatus does not exist so this could result in a failure
-  let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount;
+  let totalPropertiesCount = unpaidCount + partialPaidCount + paidLateCount + vacantCount + paidCount + noManagerCount;
 
   let data = [
     { rent_status: "not paid", number: unpaidCount, fill: "#A52A2A" },
@@ -38,6 +46,11 @@ export default function PropertyRentWidget(props) {
     { rent_status: "vacant", number: vacantCount, fill: "#160449" },
     { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" },
   ];
+
+  // Add object conditionally only if selectedRole is "OWNER"
+  if (selectedRole === "OWNER") {
+    data.push({ rent_status: "no manager", number: noManagerCount, fill: "#111111" });
+  }
 
   const renderColorfulLegendText = (value, entry) => {
     const { color } = entry;
