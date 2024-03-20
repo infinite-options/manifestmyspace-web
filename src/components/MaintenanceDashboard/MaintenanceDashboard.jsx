@@ -104,13 +104,8 @@ export default function MaintenanceDashboard(){
                             break;
 
                         case "SUBMITTED": 
-                            // if(item.quote_status === "REJECTED"){
-                            //     console.log("REJECTED quote status for item", item)
-                            //     rejected_count += 1
-                            // } else {
-                                setSubmittedCount(item.num);
-                                setQuotesSubmittedCashflow(parseInt(item.total_estimate));
-                            // }
+                            setSubmittedCount(item.num);
+                            setQuotesSubmittedCashflow(parseInt(item.total_estimate));
                             break;
 
                         case "ACCEPTED": 
