@@ -68,8 +68,8 @@ function PMRentDetail(props) {
       // console.log(res.data.RentStatus.result);
       const fetchData = res.data.RentStatus.result;
       fetchData.sort((a, b) => {
-        const comp1 = b.cf_year - a.cf_year;
-        const comp2 = months[b.cf_month] - months[a.cf_month];
+        const comp1 =  b.cf_year - a.cf_year;
+        const comp2 =  b.cf_month - a.cf_month ;
         return comp1 !== 0 ? comp1 : comp2;
       });
       setRentDetailsData(fetchData);
