@@ -240,8 +240,8 @@ export function MaintenanceRequestDetail() {
         // console.log("keysForAllData", keysForAllData)
         // Update the tab and maintenance request index correctly
         setValue(i); // Change tab
+        setStatus(colorStatus[i].status);
         setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array
-        // Optionally, update maintenanceItemsForStatus if your app's state requires it
         setMaintenanceItemsForStatus(allData[requestType] || []);
       }
     }
