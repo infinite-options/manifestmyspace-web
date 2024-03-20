@@ -42,7 +42,7 @@ function TenantLeases(props) {
     const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
     const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
     const [childrenOccupants, setChildrenOccupants] = useState(JSON.parse(lease.lease_children));
-    const [fees, setFees] = useState(lease.fees);
+    const [fees, setFees] = useState(JSON.parse(lease.leaseFees));
 
 
     useEffect(() => {
@@ -334,20 +334,25 @@ function TenantLeases(props) {
                             </CenteringBox>
                         </Grid>
                     </Grid>
-                    {lease.fees && Object.keys(lease.fees).map((key, index) => (
+                    {fees && fees.map((fee, index) => (
                         <Grid container key={index}>
                             <Divider sx={{width: '100%', borderWidth: "1px", borderColor: "#D6D5DA" }}/>
                             <Grid item xs={1}>
                                 <CenteringBox>
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.mediumFont}}>
-                                        {lease.fees[key].fee_name}
+                                        {/* {lease.fees[key].fee_name} */}
+                                        {
+                                            console.log("ROHIT - fee_name - ", fee.fee_name)
+                                        }
+                                        {fee.fee_name}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
                             <Grid item xs={2}>
                                 <CenteringBox>
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].charge} </> : "N/A"}
+                                        {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].charge} </> : "N/A"} */}
+                                        {fee.charge}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
@@ -357,7 +362,8 @@ function TenantLeases(props) {
                                         Frequency
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] ? <> {lease.fees[key].frequency} </> : "N/A"}
+                                        {/* {lease.fees[key] ? <> {lease.fees[key].frequency} </> : "N/A"} */}
+                                        {fee.frequency}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
@@ -367,7 +373,7 @@ function TenantLeases(props) {
                                         Due By
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] && lease.fees[key].due_by ? <> {getDayText(lease.fees[key].due_by)} of the month </> : "N/A"}
+                                        {/* {lease.fees[key] && lease.fees[key].due_by ? <> {getDayText(lease.fees[key].due_by)} of the month </> : "N/A"} */}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
@@ -377,7 +383,7 @@ function TenantLeases(props) {
                                         Late By
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] && lease.fees[key].late_by ? <> {getDayText(lease.fees[key].late_by)} of the month</> : "N/A"}
+                                        {/* {lease.fees[key] && lease.fees[key].late_by ? <> {getDayText(lease.fees[key].late_by)} of the month</> : "N/A"} */}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
@@ -387,7 +393,7 @@ function TenantLeases(props) {
                                         Late Fee
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].late_fee}</> : "N/A"}
+                                        {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].late_fee}</> : "N/A"} */}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
@@ -397,7 +403,7 @@ function TenantLeases(props) {
                                         Per Day Fee
                                     </Typography> */}
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                        {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].perDay_late_fee}</> : "N/A"}
+                                        {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].perDay_late_fee}</> : "N/A"} */}
                                     </Typography>
                                 </CenteringBox>
                             </Grid>
