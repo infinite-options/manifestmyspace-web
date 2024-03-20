@@ -473,21 +473,29 @@ function TenantDashboard(props) {
               >
                 <Box
                   sx={{
-                    marginTop: "5px",
-                    color: "#FFFFFF",
-                  }}
-                >
-                  <AddIcon />
-                </Box>
-                <Button
-                  sx={{
-                    color: "#FFFFFF",
-                    fontSize: "16px",
+                    display: "flex",
+                    flexDirection: "row",
+                    cursor: 'pointer', 
                   }}
                   onClick={() => handleTenantMaintenanceNavigate()}
                 >
-                  <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>New Request</Typography>
-                </Button>
+                  <Box
+                    sx={{
+                      marginTop: "5px",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    <AddIcon />
+                  </Box>
+                  <Button
+                    sx={{
+                      color: "#FFFFFF",
+                      fontSize: "16px",
+                    }}                    
+                  >
+                    <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>New Request</Typography>
+                  </Button>
+                </Box>
               </Box>
             </Box>
             <TableContainer component={Paper} sx={{ maxHeight: 275, backgroundColor: "#F2F2F2" }}>
