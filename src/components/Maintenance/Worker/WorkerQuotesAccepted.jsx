@@ -193,7 +193,6 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                             borderRadius: "10px",
                             paddingLeft: "10px",
                             display: 'flex',
-                            width: "95%",
                         }}
                     >
                         <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
@@ -218,7 +217,6 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                             paddingTop: "10px",
                             paddingBottom: "10px",
                             display: 'flex',
-                            width: "95%",
                         }}
                     >
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>

@@ -544,8 +544,9 @@ function TenantDashboard(props) {
                       </Box>
                     </Box>
                     <TableContainer component={Paper} sx={{ maxHeight: 275, backgroundColor: "#F2F2F2" }}>
-                      <Table sx={{ backgroundColor: "#F2F2F2" }}>
-                        <TableHead sx={{ backgroundColor: "#F2F2F2" }}>
+                      <Table sx={{ backgroundColor: "#F2F2F2"}} stickyHeader>
+                        {/* <TableHead sx={{ backgroundColor: "#F2F2F2" }}> */}
+                <TableHead sx={{ backgroundColor: "#F2F2F2", '& .MuiTableCell-root': { backgroundColor: "#F2F2F2", } }}>
                           <TableRow sx={{ backgroundColor: "#F2F2F2" }}>
                             <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Images</TableCell>
                             <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center", }}>Title</TableCell>
