@@ -42,8 +42,9 @@ export default function MaintenanceWorkerDashboardWidget(props) {
 
         let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
         let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
+        
+        // This removes rejected quotes and adds it to another array.
         // let rejectedQuotes = [];
-
         // for (let i = 0; i < array2.length; i++) {
         //     let item = array2[i];
         //     if (item.quote_status === "REJECTED") {
