@@ -14,11 +14,13 @@ import {
     Checkbox,
     responsiveFontSizes,
 } from "@mui/material";
-
+import EditIcon from '@mui/icons-material/Edit';
 
 import { useEffect, useState } from "react";
 import theme from '../../../theme/theme';
 import documentIcon from "./../Business/documentIcon.png"
+import { useUser } from "../../../contexts/UserContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function LaborTableReadOnly({labor, setLabor}){
 
@@ -138,9 +140,13 @@ function PartsTableReadOnly({parts, setParts}){
 }
 
 export default function QuoteDetailInfo({maintenanceItem}){
-    // console.log(maintenanceItem.quote_services_expenses)
-    let costData;
+    const { roleName } = useUser();
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    let costData;
+    console.log(maintenanceItem)
     try {
         if (maintenanceItem?.quote_services_expenses) {
             costData = JSON.parse(maintenanceItem?.quote_services_expenses);
@@ -209,11 +215,21 @@ export default function QuoteDetailInfo({maintenanceItem}){
             }}
         >   
         <Grid container direction="column" rowSpacing={2}>
-            <Grid item xs={12}>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
-                    Maintenance Quote Details
-                </Typography>
+            <Grid container direction="row">
+                <Grid item xs={11}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                        Maintenance Quote Details
+                    </Typography>
+                </Grid>
+                <Grid item xs={1} sx={{alignItems: "right", justifyContent: "right"}}>
+                    {roleName() == "Manager" ? null : <EditIcon onClick={() => navigate("/businessEditQuoteForm", {state: {maintenanceItem: maintenanceItem}})}/>}
+                </Grid>
             </Grid>
+            <Grid item xs={12}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                        {maintenanceItem?.maintenance_quote_uid}
+                    </Typography>
+                </Grid>
             <Grid item xs={12}>
                 {quoteImages.length > 0  ? (
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>

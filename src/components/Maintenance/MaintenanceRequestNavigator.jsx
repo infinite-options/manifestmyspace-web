@@ -65,8 +65,6 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         navigate('/editMaintenanceItem', {state: {testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID, month, year}})
     }
 
-
-    //   console.log("--debug-- In MaintenanceRequestNavigator now")
     useEffect(() => {
         const initialImages = getInitialImages(requestData, currentIndex);
         setImages(initialImages);

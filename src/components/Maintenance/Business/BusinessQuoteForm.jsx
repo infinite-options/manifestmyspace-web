@@ -151,12 +151,14 @@ function CostPartsTable({parts, setParts}){
 
 // /businessDeclineQuoteForm
 // /businessAcceptQuoteForm
-export default function BusinessQuoteForm({acceptBool}){
+export default function BusinessQuoteForm(props){
 
     const navigate = useNavigate();
     const location = useLocation();
     const { getProfileId } = useUser();
     const maintenanceItem = location.state.maintenanceItem;
+    const acceptBool = props?.acceptBool;
+    const editBool = props?.editBool;
 
     //console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
@@ -174,8 +176,37 @@ export default function BusinessQuoteForm({acceptBool}){
     const [selectedDocumentList, setSelectedDocumentList] = useState([])
 
     useEffect(() => {
-        console.log("ROHIT - availabilityTime - ", availabilityTime);
-    }, [availabilityTime]);
+        console.log("change to availabilityTime", availabilityTime)
+    }, [availabilityTime])
+
+    useEffect(() => {
+        if (editBool) {
+            console.log("editBool", editBool)
+            console.log("maintenanceItem", maintenanceItem)
+            let [date, time] = maintenanceItem.quote_earliest_availability.split(" ")
+            // const [hours, minutes, seconds] = time.split(":");
+            // const ampm = hours >= 12 ? "PM" : "AM";
+            // const convertedHours = hours % 12 || 12;
+            // const convertedHours = (hours % 12 || 12).toString().padStart(2, '0');
+
+
+            // const formattedTime = `${convertedHours}:${minutes}`;
+            // console.log("formattedTime", formattedTime)
+            setAvailabilityDate(date)
+            setNotes(maintenanceItem.quote_notes)
+            
+            setRate(maintenanceItem.quote_rate)
+            setJobType(maintenanceItem.quote_event_type)
+
+            setAvailabilityTime(time)
+            setSelectedImageList(JSON.parse(maintenanceItem.quote_maintenance_images))
+            
+            let quoteServiceExpenses = JSON.parse(maintenanceItem.quote_services_expenses)
+            console.log("quoteServiceExpenses", quoteServiceExpenses)
+
+            // setAvailabilityTime(formattedTime)
+        }            
+    }, [editBool])
 
     const [partsObject, setPartsObject] = useState([{
             part: "",
@@ -480,11 +511,6 @@ export default function BusinessQuoteForm({acceptBool}){
                                 </Typography>
                             </Button>
                         </Box>
-                        {/* <Box position="absolute" right={10}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
-                                <ArrowForwardIcon sx={{color: "#3D5CAC", fontSize: "30px", margin:'5px'}}/>
-                            </Button>
-                        </Box> */}
                     </Stack>
                             <Card
                                 sx={{
@@ -563,7 +589,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                     </Grid>
                                 </Grid>
                                 <Grid container direction="row" spacing={1}>
-                                    {acceptBool ? (
+                                    {acceptBool || editBool ? (
                                         <>
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
@@ -650,16 +676,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                     />
                                                 </LocalizationProvider>
                                             </Grid>
-                                            {/* <Grid item xs={0} md={3}>
-
-                                            </Grid> */}
                                             <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
-                                                {/* <TextField
-                                                    label="Time"
-                                                    size="small"
-                                                    onChange={handleTimeChange}
-                                                    placeholder="HH:MM:SS"
-                                                /> */}
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     <TimePicker                                                        
                                                         slotProps={{ 
@@ -680,9 +697,6 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
                                                     />
                                                 </LocalizationProvider>
-                                                {/* <Button onClick={()=> convertToDateTime(availabilityDate, availabilityTime)}>
-                                                    Test DateTime Convert
-                                                </Button> */}
                                             </Grid>
                                             <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
@@ -702,6 +716,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                             borderColor: '#000000'
                                                         }
                                                     }}
+                                                    value={notes}
                                                     onChange={handleNotesChange}
                                                 />
                                             </Grid>
@@ -751,7 +766,7 @@ export default function BusinessQuoteForm({acceptBool}){
                                                         color: "#FFFFFF",
                                                         textTransform: "none",
                                                     }}>
-                                                        Send Quote
+                                                        {editBool ? "Update Quote" : "Send Quote"}
                                                     </Typography>
                                                 </Button>
                                             </Grid>

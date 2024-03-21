@@ -345,7 +345,7 @@ export default function QuoteAcceptForm(){
                                 alignItems="center">
                                 {/* <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}> */}
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>
-                                        Quote Sent from {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
+                                        Quote Sent from {maintenanceQuotes[currentQuoteIndex]?.maint_business_name} {maintenanceQuotes[currentQuoteIndex]?.quote_business_id}
                                 </Typography>
                                 
                             </Box>
