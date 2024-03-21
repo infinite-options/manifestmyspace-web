@@ -216,7 +216,7 @@ export function RentDetailBody(props) {
                         {getProperties(propertyStatus).length > 0 && (`${property.property_address}, ${(property.property_unit !== null && property.property_unit !== '' ? (property.property_unit + ',') : (''))} ${property.property_city} ${property.property_state} ${property.property_zip}`) }
                         </div>
                         <div>
-                            {`${property?.property_uid}`}
+                            {getProperties(propertyStatus).length > 0 && `${property?.property_uid}`}
                         </div>
                     </Box>
                     
@@ -226,7 +226,6 @@ export function RentDetailBody(props) {
                         fontSize: '14px',
                     }}>
                         <Box>
-                            {/* {(getProperties(propertyStatus).length > 0 ) && ( typeof due_amount !== 'number'? `$ ${due_amount}` : 'Vacant')} */}
                             {(getProperties(propertyStatus).length > 0 ) && ( due_amount === null? 'Vacant' :`$ ${due_amount}` )}
                         </Box>
                         <Box>
