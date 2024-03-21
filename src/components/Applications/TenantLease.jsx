@@ -103,7 +103,6 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
-  
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(application.lease_start? dayjs(application.lease_start) : dayjs());
   const [endDate, setEndDate] = useState(application.lease_end? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
