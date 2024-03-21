@@ -294,6 +294,10 @@ export default function AddProperty({}) {
 
     let responsePropertyUID = null;
     try {
+      // const response = await fetch("http://localhost:4000/properties", {
+      //   method: "POST",
+      //   body: formData,
+      // });
       const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
         method: "POST",
         body: formData,

@@ -24,7 +24,7 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
 
     // sort maintenanceQuotesForItem so that the accepted quote is First, then the sent quotes and then the rejected and cancelled quotes.
     maintenanceQuotesForItem.sort((a, b) => {
-        const order = ["FINISHED", "SCHEDULED", "ACCEPTED", "REQUESTED", "SENT", "REJECTED", "CANCELLED", undefined];
+        const order = ["FINISHED", "SCHEDULED", "ACCEPTED", "SENT", "REQUESTED", "REJECTED", "CANCELLED", undefined];
         return order.indexOf(a.quote_status) - order.indexOf(b.quote_status);
     });
     
@@ -44,6 +44,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={tableCell}>
+                                    <Typography sx={tableHeader}> Business Name </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
                                     <Typography sx={tableHeader}> ID </Typography>
                                 </TableCell>
                                 <TableCell sx={tableCell}>
@@ -55,14 +58,17 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableHeader}> Date </Typography>
                                 </TableCell>
-                                {/* <TableCell sx={tableCell}>
+                                <TableCell sx={tableCell}>
                                     <Typography sx={tableHeader}> Notes </Typography>
-                                </TableCell> */}
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableRow>
                             <TableCell sx={tableCell}>
-                                <Typography sx={tableText}> {acceptedQuote.quote_business_id} </Typography>
+                                <Typography sx={tableText}> {acceptedQuote.maint_business_name}</Typography>
+                            </TableCell>
+                            <TableCell sx={tableCell}>
+                                <Typography sx={tableText}> {acceptedQuote.maint_business_uid} </Typography>
                             </TableCell>
                             <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_total_estimate ? "$" + acceptedQuote.quote_total_estimate : "Not Provided"} </Typography>
@@ -73,9 +79,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_created_date} </Typography>
                             </TableCell>
-                            {/* <TableCell sx={tableCell}>
-                                <Typography sx={tableText}> {acceptedQuote.quote_notes} </Typography>
-                            </TableCell> */}
+                            <TableCell sx={tableCell}>
+                                <Typography sx={tableText}> {acceptedQuote.quote_notes ? acceptedQuote.quote_notes : "No notes provided"} </Typography>
+                            </TableCell>
                         </TableRow>
                     </Table>
                     {otherQuotes.length > 0 ? (
@@ -98,7 +104,10 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                     {otherQuotes.map((quote, index) => (
                                         <TableRow key={index}>
                                             <TableCell sx={tableCell}>
-                                                <Typography sx={tableText}> {quote.quote_business_id} </Typography>
+                                                <Typography sx={tableText}> {quote.maint_business_name} </Typography>
+                                            </TableCell>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.maint_business_uid} </Typography>
                                             </TableCell>
                                             <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_total_estimate ? "$" + quote.quote_total_estimate : "Not Provided"} </Typography>
@@ -109,9 +118,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                             <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_created_date} </Typography>
                                             </TableCell>
-                                            {/* <TableCell sx={tableCell}>
+                                            <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_notes ? quote.quote_notes: "No notes provided"} </Typography>
-                                            </TableCell> */}
+                                            </TableCell>
                                         </TableRow> 
                                     ))}
                                 </Table>
@@ -133,16 +142,22 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> ID </Typography>
+                                        <Typography sx={tableHeader}> Business Name </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Amount </Typography>
+                                        <Typography sx={tableHeader}> ID </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Status </Typography>
+                                        <Typography sx={tableHeader}> Amount </Typography>
                                     </TableCell>
                                     <TableCell sx={tableCell}>
-                                        <Typography sx={tableText}> Date </Typography>
+                                        <Typography sx={tableHeader}> Status </Typography>
+                                    </TableCell>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableHeader}> Date </Typography>
+                                    </TableCell>
+                                    <TableCell sx={tableCell}>
+                                        <Typography sx={tableHeader}> Notes </Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
@@ -150,7 +165,10 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                         {maintenanceQuotesForItem.map((quote, index) => (
                             <TableRow key={index}>
                                 <TableCell sx={tableCell}>
-                                    <Typography sx={tableText}> {quote.quote_business_id} </Typography>
+                                    <Typography sx={tableText}> {quote.maint_business_name}</Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.maint_business_uid} </Typography>
                                 </TableCell>
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableText}> {quote.quote_total_estimate ? quote.quote_total_estimate : "Not Provided"} </Typography>
@@ -160,6 +178,9 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 </TableCell>
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableText}> {quote.quote_created_date} </Typography>
+                                </TableCell>
+                                <TableCell sx={tableCell}>
+                                    <Typography sx={tableText}> {quote.quote_notes ? quote.quote_notes: "No notes provided"} </Typography>
                                 </TableCell>
                             </TableRow>
                         ))}
