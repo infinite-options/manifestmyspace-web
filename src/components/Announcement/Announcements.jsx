@@ -91,6 +91,32 @@ export default function Announcements() {
     }, []);
 
 
+    // Handle Navigation to the Contacts
+
+    const [dataDetails, setDataDetails]= useState({})
+    const fetchContactData = async () => {
+        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        setShowSpinner(true);
+        
+        await axios.get(url)
+            .then((resp) => {
+                const data = resp.data['management_contacts'];
+                setDataDetails(prev => {return {...prev, Tenant:data['tenants'] , Owner: data['owners'], Maintenance: data['maintenance'] }})
+                setShowSpinner(false);
+            })
+            .catch((e) => {
+                console.error(e);
+                setShowSpinner(false);
+            });
+            console.log(dataDetails)
+    };
+
+    useEffect(() => {
+        fetchContactData();
+    }, []);
+
+    // function onClick
+//
     const { user, selectedRole, selectRole, Name } = useUser();
     
     const handleAnnouncements = (announcement) => {
@@ -200,17 +226,24 @@ export default function Announcements() {
                  <div className="announcement-list-container">
                     {sentData.length > 0 ? (
                         sentData.map((announcement, i) => {
-                            let pageToNavigate= undefined;
-                            let navigationParams=undefined;
-                            if (announcement.announcement_mode=="CONTRACT"){
-                                pageToNavigate= "/propertyContract"
-                                navigationParams= {state: {announcementData: announcement}}
+                            let role=announcement?.receiver_role
+                            let pageToNavigate;
+                            let navigationParams;
+                            try{
+                                let indx= dataDetails[role].findIndex(contact=> contact.contact_uid===announcement?.announcement_receiver)
+                                if (indx >=0 )
+                                {pageToNavigate= `/${role.toLowerCase()}ContactDetails`;
+                                navigationParams={state: {
+                                dataDetails:dataDetails[role] ,
+                                tab: role,
+                                index:indx,
+                                viewData: dataDetails[role],
+                            },};}
                             }
-                            {/* else if (announcement.announcement_mode=="LEASE"){
-                                pageToNavigate= "/viewLease"
-                                navigationParams= { state: { lease_id: property.lease_uid, }}
+                            catch(e){
+                                console.log(e)
+                            }
                             
-                            } */}
                             return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
@@ -229,17 +262,23 @@ export default function Announcements() {
                  <div className="announcement-list-container">
                     {receivedData.length > 0 ? (
                         receivedData.map((announcement, i) =>{
-                            let pageToNavigate= undefined;
-                            let navigationParams=undefined;
-                            if (announcement.announcement_mode=="CONTRACT"){
-                                pageToNavigate= "/propertyContract"
-                                navigationParams= {state: {announcementData: announcement}}
+                            let role=announcement?.sender_role
+                            let pageToNavigate;
+                            let navigationParams;
+                            try{
+                                let indx= dataDetails[role].findIndex(contact=> contact.contact_uid===announcement?.announcement_sender)
+                                if (indx>=0){
+                                pageToNavigate= `/${role.toLowerCase()}ContactDetails`;
+                                navigationParams={state: {
+                                dataDetails:dataDetails[role] ,
+                                tab: role,
+                                index:indx,
+                                viewData: dataDetails[role],
+                            },};}
                             }
-                            {/* else if (announcement.announcement_mode=="LEASE"){
-                                pageToNavigate= "/viewLease"
-                                navigationParams= { state: { lease_id: property.lease_uid, }}
-                            
-                            } */}
+                            catch(e){
+                                console.log(e)
+                            }
 
                             return (
                             <div key={i}>
