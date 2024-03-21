@@ -72,7 +72,7 @@ const TenantApplicationNav = () => {
 
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
-    leaseApplicationFormData.append("lease_status", "REJECTED");
+    leaseApplicationFormData.append("lease_status", "RESCIND");
 
     setShowSpinner(true);
     await fetch(
@@ -92,6 +92,24 @@ const TenantApplicationNav = () => {
   const handleEditLease = () => {    
     navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
   }
+
+  const handleWithdrawLease = async () => {
+
+    const leaseApplicationFormData = new FormData();
+    leaseApplicationFormData.append("lease_uid", application.lease_uid);
+    leaseApplicationFormData.append("lease_status", "RESCIND");
+
+    setShowSpinner(true);
+    await fetch(
+      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
+      {
+        method: "PUT",
+        body: leaseApplicationFormData
+      }
+    );
+    setShowSpinner(false);
+    navigate("/managerDashboard");
+  };
 
 
   useEffect(() => {
@@ -796,8 +814,44 @@ const TenantApplicationNav = () => {
                         </Button>
                       )}
                       {application.lease_status === "PROCESSING" && (
+                        <div>
                         <Button
-                          onClick={handleEditLease}
+                            onClick={handleWithdrawLease}
+                            sx={{
+                              backgroundColor: "#CB8E8E",
+                              color: "#160449",
+                              textTransform: "none",
+                              width: "160px", // Adjusted width to accommodate the text on one line
+                              marginRight: "10px", // Add space between buttons
+                              marginRight: "30px", // Add space between buttons
+                              whiteSpace: "nowrap", // Prevent line breaks
+                              "&:hover, &:focus, &:active": {
+                                backgroundColor: "#9EAED6",
+                              },
+                            }}
+                          >
+                            {"Withdraw Lease"}
+                          </Button>
+                          <Button
+                            onClick={handleEditLease}
+                            sx={{
+                              backgroundColor: "#9EAED6",
+                              color: "#160449",
+                              textTransform: "none",
+                              width: "120px",
+                              "&:hover, &:focus, &:active": {
+                                backgroundColor: "#9EAED6",
+                              },
+                            }}
+                          >
+                            {"Edit Lease"}
+                          </Button>
+                          
+                        </div>
+                      )}
+                      {application.lease_status !== "PROCESSING" && (
+                        <Button
+                          onClick={handleCreateLease}
                           sx={{
                             backgroundColor: "#9EAED6",
                             color: "#160449",
@@ -808,9 +862,11 @@ const TenantApplicationNav = () => {
                             },
                           }}
                         >
-                          {"Edit Lease"}
+                          {"New Lease"}
                         </Button>
-                    )}
+                      )}
+
+
                     {application.lease_status !== "PROCESSING" && (
                       <Button
                         onClick={handleCreateLease}
