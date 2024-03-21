@@ -310,7 +310,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     textTransform: "none",
                     margin: "1px",
                 }}>
-                    <img src={documentIcon} style={{width: '20px', height: '25px', margin:'0px', paddingRight: "15px"}}/>
+                    <img src={documentIcon} style={{width: '20px', height: '25px', margin:'0px', paddingLeft: "0px", paddingRight: "15px"}}/>
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                         View Document
                     </Typography>
