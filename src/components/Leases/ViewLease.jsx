@@ -388,7 +388,7 @@ const ViewLease = (props) => {
                       fontSize: "16px",
                     }}
                   >
-                    ${leaseData.property_listed_rent}
+                    {`$${leaseData.property_listed_rent}` || ' NO RENT'}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -407,7 +407,7 @@ const ViewLease = (props) => {
                       fontSize: "16px",
                     }}
                   >
-                    {leaseData.frequency ? leaseData.frequency : "<FREQUENCY>"}
+                    {leaseData.frequency ? leaseData.frequency : "NO FREQUENCY"}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -447,7 +447,7 @@ const ViewLease = (props) => {
                       fontSize: "16px",
                     }}
                   >
-                    ${leaseData.perDay_late_fee}
+                    {`$${leaseData.perDay_late_fee}` ?? 'NO LATE FEE'}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -508,7 +508,7 @@ const ViewLease = (props) => {
                       fontSize: "16px",
                     }}
                   >
-                    {leaseData.lease_move_in_date ? leaseData.lease_move_in_date : "<MOVE-IN-DATE>"}
+                    { leaseData?.lease_move_in_date ?? "NO MOVE-IN DATE"}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -527,7 +527,7 @@ const ViewLease = (props) => {
                       fontSize: "16px",
                     }}
                   >
-                    {leaseData ? countNoOfOccupents(leaseData) : "<NUM-OCCUPANTS>"}
+                    {leaseData ? (countNoOfOccupents(leaseData) || "NO OCCUPANTS"): "NO OCCUPANTS"}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -548,7 +548,7 @@ const ViewLease = (props) => {
                       fontSize: "16px",
                     }}
                   >
-                    {leaseData ? CountNoOfPets(leaseData) : "PETS"}
+                    {leaseData ? (CountNoOfPets(leaseData) || 'NO PETS') : "NO PETS"}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -568,7 +568,7 @@ const ViewLease = (props) => {
                     }}
                   >
                     {/* {leaseData? countNoOfOccupents(leaseData) : "NUM-OCCUPANTS"} */}
-                    {"<NUM_VEHICLES>"}
+                    {leaseData ? (CountNoOfVehicles(leaseData) || "NO VEHICLES"): "NO VEHICLES"}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -770,15 +770,12 @@ function countNoOfOccupents(leaseData) {
 }
 
 function CountNoOfPets(leaseData) {
-  let pets = leaseData.lease_adults ? JSON.parse(leaseData.lease_pets) : [];
-
-  let numPets = 0;
-
-  if (pets) {
-    numPets = pets.length;
-  }
-
-  return numPets;
+  let pets = leaseData.lease_pets ? JSON.parse(leaseData.lease_pets) : [];
+  return pets.length;
+}
+function CountNoOfVehicles(leaseData) {
+  let vehicles = leaseData.lease_vehicles  ? JSON.parse(leaseData.lease_vehicles) : [];
+  return vehicles.length;
 }
 
 function getTenantName(leaseData) {
