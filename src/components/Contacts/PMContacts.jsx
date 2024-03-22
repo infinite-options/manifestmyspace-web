@@ -88,7 +88,7 @@ const PMContacts = (props) => {
             case 'Owner':
                 setDisplayedOwnersData(filterContacts(allOwnersData));
                 break;
-            case 'Tenants':
+            case 'Tenant':
                 setDisplayedTenantsData(filterContacts(allTenantsData));
                 break;
             case 'Maintenance':
@@ -109,7 +109,7 @@ const PMContacts = (props) => {
             case 'Owner':
                 dataDetails = displayedOwnersData;
                 break;
-            case 'Tenants':
+            case 'Tenant':
                 dataDetails = displayedTenantsData;
                 break;
             case 'Maintenance':
@@ -267,9 +267,9 @@ const PMContacts = (props) => {
                                     className="contacts-detail-navbar"
                                     style={{
                                         backgroundColor:
-                                            getStatusColor('Tenants'),
+                                            getStatusColor('Tenant'),
                                     }}
-                                    onClick={() => setContactsTab('Tenants')}
+                                    onClick={() => setContactsTab('Tenant')}
                                 >
                                     <div className="contacts-detail-text">
                                         Tenants
@@ -308,7 +308,7 @@ const PMContacts = (props) => {
                                             />
                                         ))}
                                     </>
-                                ) : contactsTab === 'Tenants' ? (
+                                ) : contactsTab === 'Tenant' ? (
                                     <>
                                         {displayedTenantsData.map((tenant, index) => (
                                             <TenantContactsCard
