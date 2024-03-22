@@ -1,7 +1,7 @@
 const contactsContainer = [
     { tab: 'Owner', color: '#3D5CAC' },
     { tab: 'Managers', color: '#3D5CAC' },
-    { tab: 'Tenants', color: '#160449' },
+    { tab: 'Tenant', color: '#160449' },
     { tab: 'Maintenance', color: '#A52A2A' },
 ];
 const getStatusColor = (tab) => {
