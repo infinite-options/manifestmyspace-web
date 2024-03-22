@@ -864,25 +864,7 @@ const TenantApplicationNav = () => {
                         >
                           {"New Lease"}
                         </Button>
-                      )}
-
-
-                    {application.lease_status !== "PROCESSING" && (
-                      <Button
-                        onClick={handleCreateLease}
-                        sx={{
-                          backgroundColor: "#9EAED6",
-                          color: "#160449",
-                          textTransform: "none",
-                          width: "120px",
-                          "&:hover, &:focus, &:active": {
-                            backgroundColor: "#9EAED6",
-                          },
-                        }}
-                      >
-                        {"New Lease"}
-                      </Button>
-                    )}
+                      )}                    
                     </Stack>
                   </Box>
                 </Box>

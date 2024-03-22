@@ -406,7 +406,7 @@ const PropertyListings = (props) => {
         setShowSpinner(false);
     }
 
-    function sortProperties(leaseData, propertyData) {
+    function sortProperties(leaseData, propertyData) {        
         if (JSON.stringify(leaseData) !== "{}") {
             var activePropertyArray = [];
             const leases = leaseData.Lease_Details.result;

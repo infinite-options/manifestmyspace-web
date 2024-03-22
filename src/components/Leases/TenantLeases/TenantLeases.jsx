@@ -298,7 +298,7 @@ function TenantLeases(props) {
                                 Move In Date
                             </Typography>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize:theme.typography.mediumFont.fontSize}}>
-                                {"<MOVE-IN_DATE>"}
+                                {lease.lease_move_in_date? lease.lease_move_in_date : "No Move In Date"}
                             </Typography>
                         </CenteringBox>
                     </Grid>
@@ -399,20 +399,27 @@ function TenantLeases(props) {
                         <Grid container key={index}>
                             <Divider sx={{width: '100%', borderWidth: "1px", borderColor: "#D6D5DA" }}/>
                             <Grid item xs={1}>
-                                <CenteringBox>
+                                <Box>
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.mediumFont}}>
                                         {/* {lease.fees[key].fee_name} */}                                        
                                         {fee.fee_name}
                                     </Typography>
-                                </CenteringBox>
+                                </Box>
                             </Grid>
                             <Grid item xs={2}>
-                                <CenteringBox>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent: "flex-end",
+                                        paddingRight: "40px",
+                                    }}
+                                >
                                     <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize}}>
                                         {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].charge} </> : "N/A"} */}
                                         {fee.charge}
                                     </Typography>
-                                </CenteringBox>
+                                </Box>
                             </Grid>
                             <Grid item xs={2}>
                                 <CenteringBox>

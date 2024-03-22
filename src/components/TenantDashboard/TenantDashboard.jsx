@@ -101,15 +101,15 @@ function TenantDashboard(props) {
         setShowSpinner(true);
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-        const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`);
+        // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
         const announcementsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
 
         const tenantRequestsData = await tenantRequests.json();
         // const leaseData = await leaseResponse.json();
-        const propertyResponseData = await propertyResponse.json();
+        // const propertyResponseData = await propertyResponse.json(); //removing /listings endpoint call from Tenant Dashboard
         const announcementsResponseData = await announcementsResponse.json();
 
-        setUserLeases(propertyResponseData.Tenant_Leases.result);
+        // setUserLeases(propertyResponseData.Tenant_Leases.result); //removing /listings endpoint call from Tenant Dashboard
 
         let propertyData = tenantRequestsData?.property?.result;
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
@@ -428,7 +428,27 @@ function TenantDashboard(props) {
                           marginLeft: "5px",
                         }}
                       >
-                        <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                          }}
+                        >
+                          {/* <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              color: "#00000080",
+                              padding: "6px",
+                            }}
+                          >
+                            Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"}
+                          </Box> */}
+                          <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>                          
+                          <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px", }}>(Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"})</Box>                                                                              
+                        </Box>                        
                         <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
                         <Box
                           sx={{ fontSize: "15px", fontWeight: "600", color: "#3D5CAC" }}
@@ -444,21 +464,11 @@ function TenantDashboard(props) {
                           display: "flex",
                           flexDirection: "column",
                           alignItem: "center",
+                          justifyContent: "center",
                           marginRight: "20px",
                         }}
                       >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            fontSize: "12px",
-                            fontWeight: "600",
-                            color: "#00000080",
-                            padding: "6px",
-                          }}
-                        >
-                          Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"}
-                        </Box>
+                        
                         <Box
                           sx={{
                             backgroundColor: "#3D5CAC",
