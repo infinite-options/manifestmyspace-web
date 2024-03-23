@@ -2,6 +2,7 @@ import { Box, Button, Typography, Stack, Grid, MenuItem, Menu, Table, TableBody,
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
+import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import Backdrop from "@mui/material/Backdrop";
@@ -43,7 +44,7 @@ function TenantDashboard(props) {
 
   const [userLeases, setUserLeases] = useState(null);
   const [selectedLease, setSelectedLease] = useState(null);
-  const [refresh, setRefresh] = useState(false || location.state?.refresh);
+  // const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
   const open = Boolean(anchorEl);
 
@@ -97,8 +98,8 @@ function TenantDashboard(props) {
   useEffect(() => {
     if (!getProfileId()) navigate("/PrivateprofileName");
     const getTenantData = async () => {
+      setShowSpinner(true);
       try {
-        setShowSpinner(true);
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
@@ -141,7 +142,7 @@ function TenantDashboard(props) {
         let propertyAddress = propertyData[0] !== undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data";
         setPropertyAddr(propertyAddress);
         setFirstName(user.first_name);
-        setShowSpinner(false);
+
         setTotal(propertyData[0] !== undefined ? propertyData[0].balance : "0.00");
 
         if (location.state?.propertyId) {
@@ -154,13 +155,14 @@ function TenantDashboard(props) {
       } catch (error) {
         console.error("Error fetching tenant data:", error);
       }
+      setShowSpinner(false);
     };
     getTenantData();
-    setRefresh(false);
-  }, []); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
+    // setRefresh(false);
+  }, [getProfileId, location.state?.propertyId, navigate, user.first_name]); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
 
   // useEffect(() => {
-  //   let navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
+  //   let navPropertyData = propertyData.find((item) =>  item.property_uid === location.state?.propertyId);
   //   setSelectedProperty(navPropertyData);
   // }, [location.state?.propertyId]);
 
@@ -173,8 +175,8 @@ function TenantDashboard(props) {
   }, [location.state?.propertyId, propertyData]);
 
   useEffect(() => {
-    if (userLeases) {
-      let filteredLease = userLeases.find((lease) => lease.lease_uid === selectedProperty.lease_uid);
+    if (propertyData) {
+      let filteredLease = propertyData.find((lease) => lease.lease_uid === selectedProperty?.lease_uid);
       setSelectedLease(filteredLease);
     }
     if (allMaintenanceRequests) {
@@ -195,7 +197,7 @@ function TenantDashboard(props) {
 
       setAnnouncementsData(filteredAnnouncements);
     }
-  }, [userLeases, selectedProperty]);
+  }, [allAnnouncementsData, allMaintenanceRequests, propertyData, selectedProperty]);
 
   function sortMaintenanceRequests(maintenanceDataArray) {
     const statusSortPriority = {
@@ -232,26 +234,26 @@ function TenantDashboard(props) {
 
   const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
-  const handleStripePayment = async (e) => {
-    setShowSpinner(true);
-    console.log("Stripe Payment");
-    try {
-      //const stripe = await stripePromise;
-      const response = await fetch(API_CALL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paymentData),
-      });
-      const checkoutURL = await response.text();
-      //console.log(response.text());
-      window.location.href = checkoutURL;
-    } catch (error) {
-      console.log(error);
-    }
-    setShowSpinner(false);
-  };
+  // const handleStripePayment = async (e) => {
+  //   setShowSpinner(true);
+  //   console.log("Stripe Payment");
+  //   try {
+  //     //const stripe = await stripePromise;
+  //     const response = await fetch(API_CALL, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(paymentData),
+  //     });
+  //     const checkoutURL = await response.text();
+  //     //console.log(response.text());
+  //     window.location.href = checkoutURL;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   setShowSpinner(false);
+  // };
 
   function NonActiveLeaseDashboardTab({ property, leaseStatus, lease }) {
     return <PropertyCard data={property} status={leaseStatus} leaseData={lease} />;
@@ -572,7 +574,7 @@ function TenantDashboard(props) {
                             favoriteImage = PlaceholderImage;
                           }
                           const requestData = [
-                            favoriteImage,
+                            favoriteImage || defaultMaintenanceImage,
                             item.maintenance_title,
                             item.maintenance_request_status,
                             item.maintenance_priority,

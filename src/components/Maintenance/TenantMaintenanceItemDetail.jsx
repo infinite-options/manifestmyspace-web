@@ -28,8 +28,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
 
 export default function TenantMaintenanceItemDetail() {
+  console.log("In Tenant Maintenance Item Detail");
   // const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
 
@@ -39,9 +41,22 @@ export default function TenantMaintenanceItemDetail() {
   const color = location.state.color;
   const item = location.state.item;
 
+  function openDays(openday) {
+    // Convert maintenance_request_created_date to a Date object
+    const createdDate = new Date(openday);
 
-  function openDays(openday){
-    return openday;
+    // Get the current date
+    const currentDate = new Date();
+
+    // Calculate the difference in milliseconds between the current date and the created date
+    const timeDifferenceMs = currentDate.getTime() - createdDate.getTime();
+
+    // Calculate the difference in days
+    const daysDifference = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
+
+    console.log(`The item was created ${daysDifference} days ago.`);
+
+    return daysDifference;
   }
   // const handleNextCard = () => {
   //     setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
@@ -60,8 +75,8 @@ export default function TenantMaintenanceItemDetail() {
   };
 
   function closeAddTenantMaintenanceItem() {
-    // navigate("/tenantDashboard");    
-    navigate("/tenantDashboard", { state: { propertyId: item.property_uid } })
+    // navigate("/tenantDashboard");
+    navigate("/tenantDashboard", { state: { propertyId: item.property_uid } });
   }
 
   // const images = [
@@ -101,7 +116,8 @@ export default function TenantMaintenanceItemDetail() {
       time: "10:00 AM",
     },
   ];
-  const maxSteps = images.length;
+  // const maxSteps = images.length;
+  const maxSteps = images.length === 0 ? 1 : images.length;
 
   console.log(item);
   console.log(color);
@@ -143,8 +159,7 @@ export default function TenantMaintenanceItemDetail() {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
-                Maintenance Request 
-                  #{item.maintenance_property_id}
+                  Maintenance Request {item.maintenance_request_uid}
                 </Typography>
               </Grid>
 
@@ -153,7 +168,7 @@ export default function TenantMaintenanceItemDetail() {
               </Grid>
 
               <Grid item xs={5}>
-              <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Open: {openDays(item.maintenance_request_created_date)} Days</Typography>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Status: {item.maintenance_request_status}</Typography>
               </Grid>
 
               <Grid item xs={7}>
@@ -163,8 +178,11 @@ export default function TenantMaintenanceItemDetail() {
               </Grid>
 
               <Grid item xs={5}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Open: X Days</Typography>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
+                  Open: {openDays(item.maintenance_request_created_date)} Days
+                </Typography>
               </Grid>
+
               <Grid
                 item
                 xs={12}
@@ -212,7 +230,8 @@ export default function TenantMaintenanceItemDetail() {
                       </Button>
                       <CardMedia
                         component="img"
-                        image={images[activeStep]}
+                        // image={images[activeStep]}
+                        image={images.length > 0 ? images[activeStep] : defaultMaintenanceImage}
                         sx={{
                           elevation: "0",
                           boxShadow: "none",
