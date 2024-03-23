@@ -138,8 +138,8 @@ function TenantLeases(props) {
                 [property.contract_business_id]: [property.property_uid],
               };
           
-            //   await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
-                await fetch(`http://localhost:4000/announcements/${getProfileId()}`, { //rohit
+              await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+                // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -197,8 +197,8 @@ function TenantLeases(props) {
                 [property.contract_business_id]: [property.property_uid],
               };
           
-            //   await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
-                await fetch(`http://localhost:4000/announcements/${getProfileId()}`, { //rohit
+              await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+                // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",

@@ -210,8 +210,8 @@ export default function TenantApplication(){
         };
 
 
-        // const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
-        const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {    //rohit 
+        const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
