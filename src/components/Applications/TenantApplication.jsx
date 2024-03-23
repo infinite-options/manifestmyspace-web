@@ -205,8 +205,13 @@ export default function TenantApplication(){
         // console.log("should call /leases")
         let date = new Date()
 
+        const receiverPropertyMapping = {            
+            [property.contract_business_id]: [property.contract_property_id],
+        };
 
-        const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+
+        // const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {    //rohit 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -216,10 +221,11 @@ export default function TenantApplication(){
                 "announcement_msg" : "You have a new tenant application for your property",
                 "announcement_sender": getProfileId(),
                 "announcement_date": date.toDateString(),
-                "announcement_properties": property.contract_property_id,
+                // "announcement_properties": property.contract_property_id,
+                "announcement_properties": JSON.stringify(receiverPropertyMapping),
                 "announcement_mode": "LEASE",
-                "announcement_receiver": property.contract_business_id,
-                "announcement_type": ["App"]
+                "announcement_receiver": [property.contract_business_id],
+                "announcement_type": ["Text", "Email"]
             })
         })
 

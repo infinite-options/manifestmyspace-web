@@ -500,6 +500,11 @@ const TenantLease = () => {
       method: "PUT",
       body: leaseApplicationFormData,
     });
+
+    const receiverPropertyMapping = {            
+      [application.tenant_uid]: [property.property_uid],
+    };
+
     await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
       method: "POST",
       headers: {
@@ -510,10 +515,11 @@ const TenantLease = () => {
         announcement_msg: "You have a new lease to be approved for your property",
         announcement_sender: getProfileId(),
         announcement_date: new Date().toDateString(),
-        announcement_properties: property.property_uid,
+        // announcement_properties: property.property_uid,
+        announcement_properties: JSON.stringify(receiverPropertyMapping),        
         announcement_mode: "LEASE",
-        announcement_receiver: application.tenant_uid,
-        announcement_type: ["App"],
+        announcement_receiver: [application.tenant_uid],
+        announcement_type: ["Text", "Email"],
       }),
     });
     navigate("/managerDashboard");

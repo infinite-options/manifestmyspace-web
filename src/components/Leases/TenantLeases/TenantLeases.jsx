@@ -130,6 +130,39 @@ function TenantLeases(props) {
     } catch (error) {
       console.log(error);
     }
+
+
+    const sendAnnouncement = async () => {
+        try {
+            const receiverPropertyMapping = {            
+                [property.contract_business_id]: [property.property_uid],
+              };
+          
+            //   await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+                await fetch(`http://localhost:4000/announcements/${getProfileId()}`, { //rohit
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  announcement_title: "Lease Rejected by Tenant",
+                  announcement_msg: `Lease for ${property.property_address}, Unit -${property.property_unit} has been rejected by the Tenant.`,
+                  announcement_sender: getProfileId(),
+                  announcement_date: new Date().toDateString(),
+                  // announcement_properties: property.property_uid,
+                  announcement_properties: JSON.stringify(receiverPropertyMapping),        
+                  announcement_mode: "LEASE",
+                  announcement_receiver: [property.contract_business_id],
+                  announcement_type: ["Text", "Email"],
+                }),
+              });
+          } catch (error) {
+            console.log(error);
+          }
+
+
+    }
+    sendAnnouncement();
   }
 
   async function handleTenantAccept() {
@@ -157,6 +190,38 @@ function TenantLeases(props) {
     } catch (error) {
       console.log(error);
     }
+
+    const sendAnnouncement = async () => {
+        try {
+            const receiverPropertyMapping = {            
+                [property.contract_business_id]: [property.property_uid],
+              };
+          
+            //   await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+                await fetch(`http://localhost:4000/announcements/${getProfileId()}`, { //rohit
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  announcement_title: "Lease Accepted by Tenant",
+                  announcement_msg: `Lease for ${property.property_address}, Unit -${property.propery_unit} has been accepted by the Tenant.`,
+                  announcement_sender: getProfileId(),
+                  announcement_date: new Date().toDateString(),
+                  // announcement_properties: property.property_uid,
+                  announcement_properties: JSON.stringify(receiverPropertyMapping),        
+                  announcement_mode: "LEASE",
+                  announcement_receiver: [property.contract_business_id],
+                  announcement_type: ["Text", "Email"],
+                }),
+              });
+          } catch (error) {
+            console.log(error);
+          }
+
+
+    }
+    sendAnnouncement();
   }
 
   const getDateAdornmentString = (d) => {
