@@ -102,6 +102,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     return profileId;
   };
   const logout = () => {
+    console.log("In logout as ", user);
     cookiesObj.remove("user");
     cookiesObj.remove("token");
     window.location.href = "/";
@@ -214,6 +215,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 };
 
 export const useUser = () => {
+  console.log("In useUser");
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("useUser must be used within a UserProvider");

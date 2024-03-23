@@ -17,8 +17,8 @@ function Header() {
   const { user, selectedRole, selectRole, roleName, isLoggedIn } = useUser();
   const [cookie, setCookie] = useCookies(["user"]);
   const cookiesData = cookie["user"];
-  const userRoles = user ? cookiesData.role.split(",") : [];
-  // console.log(userRoles);
+  const userRoles = user ? cookiesData?.role.split(",") : [];
+  console.log(userRoles);
 
   const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ function Header() {
                   flexGrow: 1,
                 }}
               >
-                {userRoles.map((role) => (
+                {userRoles?.map((role) => (
                   <Button
                     key={role}
                     color="inherit"
