@@ -20,6 +20,7 @@ import { PropertyCard } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
 
 function TenantDashboard(props) {
+  console.log("In Tenant Dashboard");
   const navigate = useNavigate();
   const location = useLocation();
   const [showSpinner, setShowSpinner] = useState(false);
