@@ -20,6 +20,8 @@ export default function LeaseWidget(props) {
   let date = new Date();
   let moveoutsInSixWeeks = 0;
   let leaseStatusData = props.leaseData;
+  let numLeases = 0;
+  // console.log("Data received via props: ", leaseStatusData);
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
@@ -36,6 +38,7 @@ export default function LeaseWidget(props) {
 
   leaseStatusData.forEach((item) => {
     // console.log("Lease item: ", item);
+    numLeases = numLeases + item.num;
     // console.log("Lease end date ", item.lease_end);
     const leaseEndDate = new Date(item.lease_end);
     // console.log("leaseEndDate ", leaseEndDate)
@@ -63,7 +66,7 @@ export default function LeaseWidget(props) {
       {/* LEASES WIDGET */}
       <div className="mt-widget-expiry" onClick={() => navigate("/Leases")}>
         {/* <div className="mt-expiry-container"> */}
-        <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
+        <h2 className="mt-expiry-widget-title"> {numLeases} Leases Expiring in the Next 12 Months </h2>
         <div className="months-and-moveouts">
           <div className="months">
             <div id="first-row">
