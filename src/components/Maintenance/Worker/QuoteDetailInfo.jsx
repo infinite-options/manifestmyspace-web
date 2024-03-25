@@ -21,6 +21,7 @@ import theme from '../../../theme/theme';
 import documentIcon from "./../Business/documentIcon.png"
 import { useUser } from "../../../contexts/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 function LaborTableReadOnly({labor, setLabor}){
 
@@ -253,7 +254,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                         : 
                         null
                     )
-                : null }
+                : "No Images" }
             </Grid>
         </Grid>
         <Grid container direction="column" rowSpacing={2}>
@@ -264,9 +265,25 @@ export default function QuoteDetailInfo({maintenanceItem}){
             </Grid>
         </Grid>
             
-        <LaborTableReadOnly labor={labor} setLabor={setLabor}/>
+        {labor.length > 0 ? <LaborTableReadOnly labor={labor} setLabor={setLabor}/> : (
+            <Grid container sx={{paddingTop: "10px"}}>
+                <Grid item xs={12}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        No Labor
+                    </Typography>
+                </Grid>
+            </Grid>
+        )}
 
-        <PartsTableReadOnly parts={parts} setParts={setParts}/>
+        {parts.length > 0 ? <PartsTableReadOnly parts={parts} setParts={setParts}/> : (
+            <Grid container sx={{paddingTop: "10px"}}>
+                <Grid item xs={12}>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                        No Parts
+                    </Typography>
+                </Grid>
+            </Grid>
+        )}
 
         <Grid container direction="column" rowSpacing={2} paddingTop={"20px"}>
             <Grid item xs={12}>
@@ -274,12 +291,24 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     Quote Total: ${estimatedCost}
                 </Typography>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
-                    Estimated Time: {maintenanceItem?.quote_event_type}
+                    Your Estimated Time: {maintenanceItem?.quote_event_type}
                 </Typography>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
-                    Earliest Availability: {maintenanceItem.quote_earliest_availability}
+                    Your Earliest Availability: {maintenanceItem.quote_earliest_availability}
                 </Typography>
             </Grid>
+            {maintenanceItem?.maintenance_request_status == "SCHEDULED" ? (
+                <Grid item xs={12}>
+                  <Box sx={{paddingTop: "15px", paddingBottom: "15px"}}>
+                      <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                          Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
+                      </Typography>
+                      <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                          Scheduled Time: {dayjs(maintenanceItem?.maintenance_scheduled_time,"HH:mm").format("h:mm A")}
+                      </Typography>
+                  </Box>
+              </Grid>
+            ) : null}
             <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                 <Box 
                     display="flex" 

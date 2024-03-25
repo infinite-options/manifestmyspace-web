@@ -44,7 +44,11 @@ export default function WorkerQuoteView({maintenanceItem}){
                         width: "flex",
                     }}
                 >
+                    {/* contains more quote info */}
+                    
                     <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
+
+
                     {maintenanceItem?.quote_status == "REFUSED" && 
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
                             Quote Refused

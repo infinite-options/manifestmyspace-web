@@ -18,8 +18,6 @@ import {
   Grid,  
 } from '@mui/material';
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers';
 import Scheduler from '../../utils/Scheduler';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -28,80 +26,46 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-
-// function DateTimePicker() {
-//   const [selectedDate, setSelectedDate] = useState(new Date());
-//   const [selectedTime, setSelectedTime] = useState(new Date());
-
-//   const handleDateChange = (newDate) => {
-//     setSelectedDate(newDate);
-//   };
-
-//   const handleTimeChange = (newTime) => {
-//     setSelectedTime(newTime);
-//   };
-
-
-//   return (
-//     <Stack spacing={3}>
-//       <MobileDatePicker
-//         label="Date picker"
-//         inputFormat="MM/dd/yyyy"
-//         value={selectedDate}
-//         onChange={handleDateChange}
-//         renderInput={(params) => <TextField fullWidth {...params} />}
-//       />
-//       <MobileTimePicker
-//         label="Time picker"
-//         value={selectedTime}
-//         onChange={handleTimeChange}
-//         renderInput={(params) => <TextField fullWidth {...params} />}
-//       />
-//     </Stack>
-//   );
-// }
-
-// function DateTimePicker() {
-//     const [selectedDate, handleDateChange] = useState(new Date());
-
-//     console.log('DATE TIME PICKER')
-  
-//     return (
-//       <LocalizationProvider dateAdapter={AdapterDayjs}>
-//         <DesktopDateTimePicker
-//           label="Date & Time"
-//           inputFormat="MM/dd/yyyy hh:mm a"
-//           value={selectedDate}
-//           onChange={handleDateChange}
-//           renderInput={(params) => <TextField {...params} />}
-//         />
-//       </LocalizationProvider>
-//     );
-//   }
-
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers";
+import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg"
+import dayjs from "dayjs";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import DateTimePickerModal from '../../../components/DateTimePicker';
 
 export default function RescheduleMaintenance(){
 
-    console.log("RescheduleMaintenance")
+    // console.log("RescheduleMaintenance")
     const location = useLocation();
     const navigate = useNavigate();
     const maintenanceItem = location.state.maintenanceItem;
+    // console.log("maintenanceItem", maintenanceItem)
     const navigationParams = location.state.navigateParams;
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
     const [showSpinner, setShowSpinner] = useState(false);
-    const [showScheduler, setShowScheduler] = useState(false);
-    const [schedulerDate, setSchedulerDate] = useState();
+    // const [showScheduler, setShowScheduler] = useState(false);
+    // const [schedulerDate, setSchedulerDate] = useState();
+    const [availabilityDate, setAvailabilityDate] = useState(maintenanceItem.maintenance_scheduled_date || '');
+    const [availabilityTime, setAvailabilityTime] = useState(maintenanceItem.maintenance_scheduled_time || '');
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
 
 
-    console.log("RescheduleMaintenance", maintenanceItem)
+
+
+    // console.log("RescheduleMaintenance", maintenanceItem)
 
     const [selectedValue, setSelectedValue] = useState("no");
+
+    useEffect(() => {
+        console.log("availabilityDate", availabilityDate)
+        console.log("availabilityTime", availabilityTime)
+    }, [availabilityDate, availabilityTime])
 
     const handleChange = (value) => {
         console.log("Changing selectedValue to", value)
@@ -115,21 +79,23 @@ export default function RescheduleMaintenance(){
     }, [])
 
 
-    function handleSubmit(){
+    function handleSubmit(availabilityDate, availabilityTime) {
+        console.log("handleSubmit")
+        console.log("availabilityDate", availabilityDate)
+        console.log("availabilityTime", availabilityTime)
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
+            
+            var formData = new FormData();
+            formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_scheduled_date", availabilityDate); // this needs to change for the date and time picker
+            formData.append("maintenance_scheduled_time", availabilityTime); // this needs to change for the date and time picker
+
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "SCHEDULED",
-                        "maintenance_scheduled_date": schedulerDate.format("YYYY-MM-DD"),
-                        "maintenance_scheduled_time": schedulerDate.format("HH:mm:ss")
-                    })
+                    body: formData
                 });
             } catch (error){
                 console.log("error", error)
@@ -146,7 +112,6 @@ export default function RescheduleMaintenance(){
                 allMaintenanceData,
             }
         });
-        setShowScheduler(false);
     }
 
     function numImages(){
@@ -157,19 +122,27 @@ export default function RescheduleMaintenance(){
         }
     }
 
-    function displaySchedulingButton(){
-        if (maintenanceItem && (maintenanceItem.maintenance_scheduled_date !== '' && maintenanceItem.maintenance_scheduled_date !== null) && (maintenanceItem.maintenance_scheduled_time !== '' && maintenanceItem.maintenance_scheduled_time !== null)){
+    function displaySchedulingButton(date, time){
+        if (date && time && date !== "null" && time != "null"){
             return "Reschedule"
         } else{
             return "Schedule"
         }
     }
 
-    function currentScheduledDate(){
-        if (maintenanceItem && (maintenanceItem.maintenance_scheduled_date !== '' && maintenanceItem.maintenance_schedule_date !== null) && (maintenanceItem.maintenance_scheduled_time !== '' && maintenanceItem.maintenance_scheduled_time !== null)){
-            return "Scheduled for " + maintenanceItem.maintenance_scheduled_date + " at " + maintenanceItem.maintenance_scheduled_time
+    function currentScheduledDate(date, time){
+        if (date && time && date !== "null" && time !== "null"){
+            return (
+                <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                    {"Scheduled for " + date + " at " + dayjs(time,"HH:mm").format("h:mm A")}
+                </Typography>
+            )
         } else{
-            return "Not Scheduled"
+            return (
+                <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                    {"Not Scheduled"}
+                </Typography>
+            )
         }
     }
 
@@ -207,13 +180,6 @@ export default function RescheduleMaintenance(){
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Scheduler 
-                show={showScheduler} 
-                setShow={setShowScheduler} 
-                date={schedulerDate} 
-                setDate={setSchedulerDate}
-                handleSubmit={handleSubmit}
-            />
             <Paper
                 style={{
                     margin: '10px',
@@ -332,14 +298,6 @@ export default function RescheduleMaintenance(){
                                             Estimated Cost: <b>{maintenanceItem.maintenance_desc}</b>
                                         </Typography>
                                     </Grid>
-                                {/* {Object.entries(maintenanceItem).map(([key, value], index) => (
-                                        <Grid item xs={12}>
-                                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                                <b>{key} : {value}</b>
-                                            </Typography>
-                                        </Grid>
-                                    )
-                                )} */}
                             </Card>
                         </Grid>
                     </Grid>
@@ -368,14 +326,56 @@ export default function RescheduleMaintenance(){
                     >
                         <Grid item xs={12}>
                             <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                                {currentScheduledDate()}
+                                {currentScheduledDate(availabilityDate, availabilityTime)}
                             </Typography>
                         </Grid>
-                        <Grid item xs={12}>
-                            {/* <DateTimePicker/> */}
+                        <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>                
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    value={dayjs(availabilityDate)}
+                                    minDate={dayjs()}
+                                    onChange={(v) => setAvailabilityDate(v.format("MM-DD-YYYY"))}
+                                    slots={{
+                                        openPickerIcon: CalendarIcon,
+                                    }}
+                                    slotProps={{
+                                        textField: {
+                                            size: "small",
+                                            style: {
+                                                width: "100%",
+                                                fontSize: 12,
+                                                backgroundColor: "#F2F2F2 !important",
+                                                borderRadius: "10px !important",
+                                            },
+                                            label: "Date"
+                                        },
+                                    }}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <TimePicker                                                        
+                                    slotProps={{ 
+                                        textField: { 
+                                            size: 'small',
+                                            style: {
+                                                width: "100%",
+                                                fontSize: 12,
+                                                backgroundColor: "#F2F2F2 !important",
+                                                borderRadius: "10px !important",
+                                            },
+                                            label: 'Time (select AM or PM)'                                                                
+                                        } 
+                                    }}                                                        
+                                    views={['hours', 'minutes']}
+                                    value={dayjs(availabilityTime,"HH:mm")}
+                                    onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
+                                />
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12}>
-                        <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
+                            <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                                 Can Tenant Reschedule?
                             </Typography>
                             <RadioGroup
@@ -427,14 +427,14 @@ export default function RescheduleMaintenance(){
                                     display: 'flex',
                                     width: "100%",
                                 }}
-                                onClick={() => setShowScheduler(true)}
+                                onClick={() => handleSubmit(availabilityDate, availabilityTime)}
                                 >
                                 <Typography sx={{
                                     color: "#160449",
                                     fontWeight: theme.typography.primary.fontWeight, 
                                     fontSize: "14px"
                                 }}>
-                                    {displaySchedulingButton()}
+                                    {displaySchedulingButton(availabilityDate, availabilityTime)}
                                 </Typography>
                             </Button>
                         </Grid>

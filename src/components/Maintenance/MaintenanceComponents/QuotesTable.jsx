@@ -58,9 +58,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableHeader}> Date </Typography>
                                 </TableCell>
-                                <TableCell sx={tableCell}>
-                                    <Typography sx={tableHeader}> Notes </Typography>
-                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableRow>
@@ -78,9 +75,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                             </TableCell>
                             <TableCell sx={tableCell}>
                                 <Typography sx={tableText}> {acceptedQuote.quote_created_date} </Typography>
-                            </TableCell>
-                            <TableCell sx={tableCell}>
-                                <Typography sx={tableText}> {acceptedQuote.quote_notes ? acceptedQuote.quote_notes : "No notes provided"} </Typography>
                             </TableCell>
                         </TableRow>
                     </Table>
@@ -118,9 +112,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                             <TableCell sx={tableCell}>
                                                 <Typography sx={tableText}> {quote.quote_created_date} </Typography>
                                             </TableCell>
-                                            <TableCell sx={tableCell}>
-                                                <Typography sx={tableText}> {quote.quote_notes ? quote.quote_notes: "No notes provided"} </Typography>
-                                            </TableCell>
                                         </TableRow> 
                                     ))}
                                 </Table>
@@ -156,9 +147,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                     <TableCell sx={tableCell}>
                                         <Typography sx={tableHeader}> Date </Typography>
                                     </TableCell>
-                                    <TableCell sx={tableCell}>
-                                        <Typography sx={tableHeader}> Notes </Typography>
-                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                         ) : null}
@@ -178,9 +166,6 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                                 </TableCell>
                                 <TableCell sx={tableCell}>
                                     <Typography sx={tableText}> {quote.quote_created_date} </Typography>
-                                </TableCell>
-                                <TableCell sx={tableCell}>
-                                    <Typography sx={tableText}> {quote.quote_notes ? quote.quote_notes: "No notes provided"} </Typography>
                                 </TableCell>
                             </TableRow>
                         ))}

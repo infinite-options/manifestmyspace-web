@@ -23,7 +23,7 @@ import CancelButton from "../MaintenanceComponents/CancelButton";
 import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import RequestMoreInfo from "../Worker/RequestMoreInfo";
 import AlertMessage from "../AlertMessage";
-import Scheduler from "../../utils/Scheduler";
+import DateTimePickerModal from "../../DateTimePicker";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
@@ -34,9 +34,9 @@ import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfi
 export default function NewRequestAction({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
-    const [showScheduler, setShowScheduler] = useState(false);
     const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
@@ -52,21 +52,18 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
         });
     }
 
-    async function handleSubmit(){
+    async function handleSubmit(date, time){
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
+            const formData = new FormData();
+            formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_scheduled_date", date); // this needs to change for the date and time picker
+            formData.append("maintenance_scheduled_time", time); // this needs to change for the date and time picker
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "SCHEDULED",
-                        "maintenance_scheduled_date": schedulerDate.format("YYYY-MM-DD"),
-                        "maintenance_scheduled_time": schedulerDate.format("HH:mm:ss")
-                    })
+                    body: formData,
                 });
             } catch (error){
                 console.log("error", error)
@@ -74,7 +71,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             setShowSpinner(false);
         }
         await changeMaintenanceRequestStatus();
-        setShowScheduler(false);
+        // setShowScheduler(false);
         navigate(maintenanceRoutingBasedOnSelectedRole())
     }
 
@@ -94,13 +91,6 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Scheduler 
-                show={showScheduler} 
-                setShow={setShowScheduler} 
-                date={schedulerDate} 
-                setDate={setSchedulerDate}
-                handleSubmit={handleSubmit}
-            />
             <Grid container direction="row" columnSpacing={4} rowSpacing={6} >
                 <TenantProfileLink maintenanceItem={maintenanceItem}/>
                 <OwnerProfileLink maintenanceItem={maintenanceItem}/>
@@ -140,7 +130,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => setShowScheduler(true)}
+                        onClick={() => setShowModal(true)}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
                             Schedule Repair
@@ -175,6 +165,14 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
+            <DateTimePickerModal
+                setOpenModal={setShowModal}
+                open={showModal}
+                maintenanceItem={maintenanceItem}
+                date={""}
+                time={""}
+                handleSubmit={handleSubmit}
+            />
         </Box>
     )
 }
