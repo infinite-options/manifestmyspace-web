@@ -731,6 +731,12 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                         color: theme.palette.background.default,
                         cursor: "pointer",
                         textTransform: "none",
+                        whiteSpace: "nowrap", // Ensures text remains on a single line
+                        display: "inline-flex", // Allow button box to adjust to content
+                        alignItems: "center", // Center content vertically
+                        maxWidth: "100%", // Allow button to take full width
+                        width: "auto", // Let the width be determined by the content
+                        padding: "8px 16px", // Add padding around the text
                       }}
                       size="small"
                       onClick={() => {

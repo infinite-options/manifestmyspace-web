@@ -37,12 +37,15 @@ function TenantLeases(props) {
   const [property, setProperty] = useState(location.state.property);
   const [status, setStatus] = useState(location.state.status);
   const [lease, setLease] = useState(location.state.lease);
-
-  const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
-  const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
-  const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
-  const [childrenOccupants, setChildrenOccupants] = useState(JSON.parse(lease.lease_children));
-  const [fees, setFees] = useState(JSON.parse(lease.leaseFees));
+  // const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
+  // const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
+  // const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
+  // const [childrenOccupants, setChildrenOccupants] = useState(JSON.parse(lease.lease_children));
+  const [pets, setPets] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [adultOccupants, setAdultOccupants] = useState([]);
+  const [childrenOccupants, setChildrenOccupants] = useState([]);
+  const [fees, setFees] = useState([]);
 
   useEffect(() => {
     console.log("property", property);
@@ -62,6 +65,16 @@ function TenantLeases(props) {
       }
       const leaseData = await leaseResponse.json();
       console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
+      const properties_with_details=leaseData.Lease_Details.result
+      let detailed_property=properties_with_details.filter(p=> p.lease_uid===property.lease_uid)
+      if (Array.isArray(detailed_property))
+      detailed_property=detailed_property[0]
+      console.log(detailed_property)
+      setPets(detailed_property?.lease_pets ?? [])
+      setVehicles(detailed_property?.lease_vehicles ?? [])
+      setAdultOccupants(detailed_property?.lease_adults ?? [])
+      setChildrenOccupants(detailed_property?.lease_children ?? [])
+      setFees(JSON.parse(detailed_property?.leaseFees) ?? [])
     }
 
     fetchData();
@@ -269,7 +282,7 @@ function TenantLeases(props) {
     } else if (fee.frequency === "Monthly") {
       return `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month`;
     } else if (fee.frequency === "One-time" || fee.frequency === "Annually") {
-      return `${fee.due_by_date}`;
+      return `${fee.due_by_date ?? 'No Due Date'}`;
     } else {
       return "-";
     }
@@ -391,7 +404,8 @@ function TenantLeases(props) {
                 # of Occupants
               </Typography>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                {JSON.parse(lease.lease_adults).length + JSON.parse(lease.lease_children).length}
+                {/* {JSON.parse(lease.lease_adults).length + JSON.parse(lease.lease_children).length} */}
+                {adultOccupants.length + childrenOccupants.length}
               </Typography>
             </CenteringBox>
           </Grid>
@@ -399,7 +413,8 @@ function TenantLeases(props) {
             <CenteringBox justify_content="flex-start">
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}># of Pets</Typography>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                {JSON.parse(lease.lease_pets).length}
+                {/* {JSON.parse(lease.lease_pets).length} */}
+                {pets.length}
               </Typography>
             </CenteringBox>
           </Grid>
@@ -409,7 +424,8 @@ function TenantLeases(props) {
                 # of Vehicles
               </Typography>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                {JSON.parse(lease.lease_vehicles).length}
+                {/* {JSON.parse(lease.lease_vehicles).length} */}
+                {vehicles.length} 
               </Typography>
             </CenteringBox>
           </Grid>
