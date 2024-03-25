@@ -173,9 +173,9 @@ export default function BusinessQuoteForm({acceptBool}){
     const [selectedImageList, setSelectedImageList] = useState([])
     const [selectedDocumentList, setSelectedDocumentList] = useState([])
 
-    useEffect(() => {
-        console.log("ROHIT - availabilityTime - ", availabilityTime);
-    }, [availabilityTime]);
+    // useEffect(() => {
+    //     console.log("availabilityTime - ", availabilityTime);
+    // }, [availabilityTime]);
 
     const [partsObject, setPartsObject] = useState([{
             part: "",

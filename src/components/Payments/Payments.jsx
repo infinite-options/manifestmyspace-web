@@ -10,6 +10,7 @@ import StripePayment from "../Settings/StripePayment";
 import BackIcon from "./backIcon.png";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { DataGrid } from "@mui/x-data-grid";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -30,6 +31,10 @@ export default function Payments(props) {
   const [total, setTotal] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
+
+  // useEffect(() => {
+  //   console.log("paymentDueResult - ", paymentDueResult);
+  // }, [paymentDueResult]);
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -367,185 +372,8 @@ export default function Payments(props) {
                 Balance Details
               </Typography>
             </Stack>
-
             <Stack>
-              <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={1}>
-                  <Checkbox // Select All Button
-                    checked={isHeaderChecked}
-                    onChange={() => handleSelectAllButton()}
-                    style={selectedCheckboxStyle}
-                    label="Select All"
-                  />
-                </Grid>
-                <Grid item xs={3} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Description
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={3} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Address
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={1} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Unit
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={2} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Due Date
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={2} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Amount
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Divider light />
-
-              {paymentDueResult.length > 0 &&
-                paymentDueResult.map((item, index) => (
-                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index}>
-                    <Grid item xs={1} alignItems="center">
-                      <Checkbox checked={selectedItems[index].selected} onChange={() => handleCheckboxChange(index)} style={selectedCheckboxStyle} />
-                    </Grid>
-                    <Grid item xs={3} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.pur_description}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={3} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.property_address}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={1} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.property_unit}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={2} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.pur_due_date}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={2} alignItems="right">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        $ {item.pur_amount_due}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                ))}
-              <Divider light />
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-                <Grid item xs={1} alignItems="center"></Grid>
-                <Grid item xs={9} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Total
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} alignItems="right">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    $ {total.toFixed(2)}
-                  </Typography>
-                </Grid>
-              </Grid>
+              <BalanceDetailsTable data={paymentDueResult}/>
             </Stack>
           </Paper>
           <Paper
@@ -757,4 +585,127 @@ export default function Payments(props) {
       </ThemeProvider>
     </>
   );
+}
+
+
+function BalanceDetailsTable(props) {
+  const data = props.data;
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const paymentDueResult = data.map((item) => ({
+    ...item, pur_amount_due : parseFloat(item.pur_amount_due)
+  }));
+
+
+
+  // useEffect(() => {
+  //   console.log("selectedRows - ", selectedRows);
+  // }, [selectedRows]);
+
+  const columnsList = [
+    {
+      field: "pur_description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+    },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+    },
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_due_date",
+      headerName: "Due Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_amount_due",
+      headerName: "Amount",
+      flex: 1,
+      headerStyle: {
+        fontWeight: 'bold', // Apply inline style to the header cell
+      },
+      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>$ {params.value}</Box>,
+    },
+  ];
+  
+  const handleSelectionModelChange = (newRowSelectionModel) => {    
+    setSelectedRows(newRowSelectionModel);
+  };
+
+
+  if (paymentDueResult.length > 0) {    
+    console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          rows={paymentDueResult}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          getRowId={(row) => row.purchase_uid}
+          pageSizeOptions={[10, 50, 100]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
+                <Grid item xs={1} alignItems="center"></Grid>
+                <Grid item xs={9} alignItems="center">
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.medium.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      fontFamily: "Source Sans Pro",
+                    }}
+                  >
+                    Total
+                  </Typography>
+                </Grid>
+                <Grid item xs={2} alignItems="right">
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.medium.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      fontFamily: "Source Sans Pro",
+                    }}
+                  >
+                    $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)}
+                  </Typography>
+                </Grid>
+              </Grid>
+      </>      
+    );
+  } else {
+    return <></>;
+  }
 }

@@ -163,6 +163,7 @@ import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
 function Main() {
+  console.log("In Main Page");
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box
