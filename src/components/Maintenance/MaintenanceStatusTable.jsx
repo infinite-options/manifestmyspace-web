@@ -4,21 +4,17 @@ import {
     AccordionSummary,
     AccordionDetails,
     Typography,
+    Paper,
+    Chip,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import Divider from '@mui/material/Divider';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import theme from '../../theme/theme';
+import dayjs from 'dayjs';
 
 
 
@@ -26,13 +22,80 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
     const location = useLocation();
     let navigate = useNavigate();
 
-    const tableTextStyle = {
-        backgroundColor: color, 
-        color: '#FFFFFF', 
-        fontFamily: 'Source Sans Pro', 
-        fontSize: '15px', 
-        fontWeight: 600,
-    }
+    const getChipColor = (priority) => {
+        switch (priority) {
+          case 'High':
+            return '#A52A2A';
+          case 'Medium':
+            return '#FF8A00';
+          case 'Low':
+            return '#FFC614';
+          default:
+            return 'default';
+        }
+      };
+
+    const columns = [
+        {
+            headerName: "Property",
+            field: "property_name",
+            renderCell: (params) => {
+                return `${params.row.property_address} ${params.row.property_unit}`;
+            },
+            flex: 1,
+        }, 
+        {
+           headerName: "Type",
+           field: "maintenance_request_type",
+           flex: 1,
+           hide: true,
+        },
+        {
+            headerName: "Priority",
+            field: "maintenance_priority",
+            flex: 0.5,
+            renderCell: (params) => {
+                return (
+                    <Chip
+                        label={params.value}
+                        size="small"
+                        style={{ backgroundColor: getChipColor(params.value), color: 'white' }}
+                    />
+                )
+            },
+        },
+        {
+            headerName: "Title",
+            field: "maintenance_title",
+            flex: 1,
+        }, 
+        {
+            headerName: "ID",
+            field: "maintenance_request_uid",
+            flex: 0.5,
+            renderCell: (params) => {
+                return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
+            }
+        }, 
+        {
+            headerName: "Date Created",
+            field: "maintenance_request_created_date",
+            flex: 1,
+        },
+        {
+            headerName: "Scheduled Date",
+            field: "maintenance_scheduled_date",
+            flex: 1,
+        },
+        {
+            headerName: "Scheduled Time",
+            field: "maintenance_scheduled_time",
+            flex: 1,
+            renderCell: (params) => {
+                return `${dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A")}`
+            }
+        },
+    ];
 
     function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
 
@@ -92,60 +155,51 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                         <span style={{ float: "right", alignContent: "center", alignItems: "center" }}>{maintenanceItemsForStatus ? maintenanceItemsForStatus.length : ( maintenanceRequestsCount ? maintenanceRequestsCount : 0 )}</span>
                 </div>
             </AccordionSummary>
-            {maintenanceItemsForStatus.map((item, index) => 
-                <AccordionDetails key={index}>
-                    <div
-                        style={{
-                            paddingLeft: "15px",
-                            paddingRight: "15px",
+            {maintenanceItemsForStatus.length !== 0 ? (
+                <AccordionDetails>
+                    <DataGrid
+                        rows={maintenanceItemsForStatus}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: maintenanceItemsForStatus.length,
+                                },
+                            },
                         }}
-                    >
-                        <Table>
-                            <TableBody>
-                                <TableRow onClick={() => handleRequestDetailPage(index, item.property_uid, item.maintenance_request_uid)}>
-                                    <TableCell align="left" sx={{width: "250px"}}>
-                                        <Typography 
-                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
-                                        >
-                                            {item.property_address} {item.property_unit}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left" sx={{width: "100px"}}>
-                                        <Typography 
-                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
-                                        >
-                                        {item.maintenance_request_type}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left" sx={{width: "350px"}}>
-                                        <Typography 
-                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
-                                        >
-                                        {item.maintenance_title}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left" sx={{width: "250px"}}>
-                                        <Typography 
-                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
-                                        >
-                                        {item.maintenance_request_uid.substr(item.maintenance_request_uid.length - 3)}
-                                        </Typography>
-                                    </TableCell>
-                                    {/* <Divider orientation="vertical" color="white"/> */}
-                                    <TableCell align="right" sx={{width: "250px"}}>
-                                        <Typography 
-                                            sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}
-                                        >
-                                            {item.maintenance_request_created_date}
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                        <Divider color="white"/>
-                    </div>
+                        hideFooter={true}
+                        sx={{
+                            '& .MuiDataGrid-cell': {
+                                fontSize: '16px', // Change the font size
+                                fontWeight: theme.typography.common.fontWeight, // Change the font weight
+                                color: theme.typography.secondary.white,
+                            },
+                            '& .MuiDataGrid-columnHeaders': {
+                                fontSize: '16px', // Change the font size
+                                fontWeight: theme.typography.common.fontWeight, // Change the font weight
+                                color: theme.typography.secondary.white, // Change the font color of the headers
+                            },
+                            border: 0,
+                            '& .MuiDataGrid-main': {
+                                border: 0, // Removes the inner border
+                            },
+                            '& .MuiDataGrid-row:last-child .MuiDataGrid-cell': {
+                                borderBottom: 'none', // Removes the border of the last row
+                            },
+                            '& .MuiDataGrid-columnSeparator': {
+                                display: 'none', // Remove vertical borders in the header
+                            },
+                        }}
+                        disableExtendRowFullWidth={true}
+                        getRowId={(row) => row.maintenance_request_uid}
+                        pageSizeOptions={[5]}
+                        onRowClick={(params) => {
+                            const index = maintenanceItemsForStatus.findIndex(row => row.maintenance_request_uid === params.row.maintenance_request_uid);
+                            handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
+                        }}
+                    />
                 </AccordionDetails>
-            )}
+            ) : null}
             </Accordion>
         </ThemeProvider>
     )

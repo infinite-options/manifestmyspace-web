@@ -113,28 +113,6 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     });
   }
 
-  //   const refreshPropertyData = async () => {
-  //     try {
-  //       const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
-  //       // const response = await fetch(`http://localhost:4000/properties/${getProfileId()}`);
-  //       if (!response.ok) {
-  //         console.log("Error fetching property data");
-  //       }
-  //       const propertyResponse = await response.json();
-  //       // console.log("propertyResponse", propertyResponse.result)
-  //       const propertyList = getPropertyList(propertyResponse);
-  //       setProperty(propertyList[currentIndex]);
-  //       setPropertyData(propertyList);
-  //       // setItem(propertyList[currentIndex])
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     refreshPropertyData();
-  //   }, []);
-
   useEffect(() => {
     // console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
     setPropertyId(propertyData[currentIndex].property_uid);
@@ -326,14 +304,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
 
   function displayTopMaintenanceItem() {
     const colorStatus = getColorStatusBasedOnSelectedRole();
-    // console.log(`maintenanceReqData in displayTopMaintenanceItem for ${propertyId}`, maintenanceReqData)
-    // console.log(`maintenanceData before maintenance table ${JSON.stringify(maintenanceData)}`)
-    // console.log(`colorStatus mapping ${JSON.stringify(colorStatus)}`)
-    // console.log(maintenanceData)
-    // if (maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid) {
     if (property.maintenanceCount > 0) {
-      // console.log("Here is the maintenance data:", maintenanceData[0].maintenance_request_uid); // Expect this to be undefined since we are not calling the endpoint
-      // console.log("Maintenance data:", maintenanceData); // Expect this to be undefined since we are not calling the endpoint
       console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
       return (
         <DataGrid
