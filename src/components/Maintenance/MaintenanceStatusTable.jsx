@@ -43,17 +43,20 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                 return `${params.row.property_address} ${params.row.property_unit}`;
             },
             flex: 1,
+            minWidth: 175,
         }, 
         {
            headerName: "Type",
            field: "maintenance_request_type",
            flex: 1,
            hide: true,
+           minWidth: 100,
         },
         {
             headerName: "Priority",
             field: "maintenance_priority",
             flex: 0.5,
+            minWidth: 100,
             renderCell: (params) => {
                 return (
                     <Chip
@@ -68,11 +71,13 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             headerName: "Title",
             field: "maintenance_title",
             flex: 1,
+            minWidth: 200,
         }, 
         {
             headerName: "ID",
             field: "maintenance_request_uid",
             flex: 0.5,
+            minWidth: 75,
             renderCell: (params) => {
                 return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
             }
@@ -81,16 +86,19 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             headerName: "Date Created",
             field: "maintenance_request_created_date",
             flex: 1,
+            minWidth: 100,
         },
         {
             headerName: "Scheduled Date",
             field: "maintenance_scheduled_date",
             flex: 1,
+            minWidth: 100,
         },
         {
             headerName: "Scheduled Time",
             field: "maintenance_scheduled_time",
             flex: 1,
+            minWidth: 100,
             renderCell: (params) => {
                 return `${dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A")}`
             }
@@ -160,6 +168,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     <DataGrid
                         rows={maintenanceItemsForStatus}
                         columns={columns}
+                        rowHeight={50}
                         initialState={{
                             pagination: {
                                 paginationModel: {
@@ -170,7 +179,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                         hideFooter={true}
                         sx={{
                             '& .MuiDataGrid-cell': {
-                                fontSize: '16px', // Change the font size
+                                fontSize: '14px', // Change the font size
                                 fontWeight: theme.typography.common.fontWeight, // Change the font weight
                                 color: theme.typography.secondary.white,
                             },
