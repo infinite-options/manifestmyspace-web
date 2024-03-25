@@ -80,9 +80,6 @@ export default function RescheduleMaintenance(){
 
 
     function handleSubmit(availabilityDate, availabilityTime) {
-        console.log("handleSubmit")
-        console.log("availabilityDate", availabilityDate)
-        console.log("availabilityTime", availabilityTime)
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             

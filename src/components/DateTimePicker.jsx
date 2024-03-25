@@ -34,16 +34,12 @@ function DateTimePickerModal(props) {
   const [availabilityDate, setAvailabilityDate] = useState(props.date || "");
   const [availabilityTime, setAvailabilityTime] = useState(props.time || "");
 
-  console.log(availabilityTime)
-  console.log(availabilityDate)
-
   const handleOpen = () => props.setOpenModal(true);
   const handleClose = () => props.setOpenModal(false);
 
   const activeButton = availabilityDate !== "" && availabilityTime !== "";
 
   function submit(){
-    console.log("submitting")
     props.handleSubmit(availabilityDate, availabilityTime).then(
         handleClose()
     )
