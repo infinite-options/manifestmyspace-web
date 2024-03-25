@@ -304,7 +304,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                           Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
                       </Typography>
                       <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
-                          Scheduled Time: {dayjs(maintenanceItem?.maintenance_scheduled_time,"HH:mm").format("h:mm A")}
+                          Scheduled Time: {dayjs(maintenanceItem?.maintenance_scheduled_time, "HH:mm").format("h:mm A")}
                       </Typography>
                   </Box>
               </Grid>
