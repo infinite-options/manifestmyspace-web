@@ -55,7 +55,7 @@ export default function SelectPayment(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
-  console.log("--DEBUG-- paymentData", paymentData)
+  console.log("--DEBUG-- paymentData", paymentData);
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
   const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
@@ -91,9 +91,11 @@ export default function SelectPayment(props) {
   const payment_url = {
     "Credit Card": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent",
     "Bank Transfer": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent",
+    Zelle: "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment",
   };
 
   const [stripePromise, setStripePromise] = useState(null);
+
   //Credit Card Handler
   function credit_card_handler(notes) {
     if (notes === "PMTEST") {
@@ -141,6 +143,10 @@ export default function SelectPayment(props) {
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
     console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
+    paymentIntent = paymentIntent === undefined ? "Zelle" : paymentIntent;
+    paymentMethod = paymentMethod === undefined ? "Zelle" : paymentMethod;
+    console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
+
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
 
@@ -151,16 +157,16 @@ export default function SelectPayment(props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "pay_purchase_id": paymentData.purchase_uids,
-        "pay_fee": convenience_fee,
-        "pay_total": totalBalance,
-        "payment_notes": paymentData.business_code,
-        "pay_charge_id": "stripe transaction key",
-        "payment_type": selectedMethod,
-        "payment_verify": "Unverified",
-        "paid_by": getProfileId(),
-        "payment_intent": paymentIntent,
-        "payment_method": paymentMethod
+        pay_purchase_id: paymentData.purchase_uids,
+        pay_fee: convenience_fee,
+        pay_total: totalBalance,
+        payment_notes: paymentData.business_code,
+        pay_charge_id: "stripe transaction key",
+        payment_type: selectedMethod,
+        payment_verify: "Unverified",
+        paid_by: getProfileId(),
+        payment_intent: paymentIntent,
+        payment_method: paymentMethod,
       }),
     });
 
@@ -226,16 +232,27 @@ export default function SelectPayment(props) {
     console.log("selectedMethod", selectedMethod);
     console.log("Payment total", totalBalance);
     console.log("Convenience Fee", convenience_fee);
+    console.log("PaymentData: ", { ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
+
     // e.preventDefault();
     setPaymentData({ ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
     // paymentData.payment_summary.total = parseFloat(totalBalance.toFixed(2));
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
     else if (selectedMethod === "Credit Card") {
-      console.log("in else if");
+      console.log("Credit Card Selected");
       // toggleKeys();
 
       setStripeDialogShow(true);
+    }
+    // credit_card_handler(paymentData.business_code);
+    else if (selectedMethod === "Zelle") {
+      console.log("Zelle Selected");
+      let payment_intent = "Zelle";
+      let payment_method = "Zelle";
+      console.log("Setting PI and PM: ", payment_intent, payment_method);
+      submit(payment_intent, payment_method);
+      // toggleKeys();
     }
     // credit_card_handler(paymentData.business_code);
   };
