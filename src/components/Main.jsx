@@ -321,7 +321,7 @@ function Main() {
 
             <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
             <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
-            {/* <Route path="businessEditQuoteForm" element={<BusinessQuoteForm acceptBool={true} editBool={true}/>} /> */}
+            <Route path="businessEditQuoteForm" element={<BusinessQuoteForm acceptBool={true} editBool={true}/>} />
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
             <Route path="workerMaintenance" element={<WorkerMaintenance />} />
             <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />

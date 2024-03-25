@@ -305,38 +305,38 @@ export default function BusinessQuoteForm({acceptBool}){
     const handleSubmit = (status) => {
         console.log("handleSubmit")
 
-        const uploadQuoteDocuments = async () => {
-            // Get the current date and time
-            const currentDatetime = new Date();
+        // const uploadQuoteDocuments = async () => {
+        //     // Get the current date and time
+        //     const currentDatetime = new Date();
 
-            // Format the date and time
-            const formattedDatetime = 
-                (currentDatetime.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                currentDatetime.getDate().toString().padStart(2, '0') + '-' +
-                currentDatetime.getFullYear() + ' ' +
-                currentDatetime.getHours().toString().padStart(2, '0') + ':' +
-                currentDatetime.getMinutes().toString().padStart(2, '0') + ':' +
-                currentDatetime.getSeconds().toString().padStart(2, '0');
-            try {
-                var formData = new FormData();
-                formData.append("document_type", "pdf");
-                formData.append("document_date_created", formattedDatetime);
-                formData.append("document_property", maintenanceItem.property_id);
+        //     // Format the date and time
+        //     const formattedDatetime = 
+        //         (currentDatetime.getMonth() + 1).toString().padStart(2, '0') + '-' +
+        //         currentDatetime.getDate().toString().padStart(2, '0') + '-' +
+        //         currentDatetime.getFullYear() + ' ' +
+        //         currentDatetime.getHours().toString().padStart(2, '0') + ':' +
+        //         currentDatetime.getMinutes().toString().padStart(2, '0') + ':' +
+        //         currentDatetime.getSeconds().toString().padStart(2, '0');
+        //     try {
+        //         var formData = new FormData();
+        //         formData.append("document_type", "pdf");
+        //         formData.append("document_date_created", formattedDatetime);
+        //         formData.append("document_property", maintenanceItem.property_id);
 
-                for (let i = 0; i < selectedDocumentList.length; i++){
-                    formData.append("document_file", selectedDocumentList[i]);
-                    formData.append("document_title", selectedDocumentList[i].name);
-                }
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`, {
-                    method: 'POST',
-                    body: formData,
-                })
-                // const responseData = await response.json();
-            } catch (error) {
-                console.log("error", error)
-            }
+        //         for (let i = 0; i < selectedDocumentList.length; i++){
+        //             formData.append("document_file", selectedDocumentList[i]);
+        //             formData.append("document_title", selectedDocumentList[i].name);
+        //         }
+        //         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`, {
+        //             method: 'POST',
+        //             body: formData,
+        //         })
+        //         // const responseData = await response.json();
+        //     } catch (error) {
+        //         console.log("error", error)
+        //     }
 
-        }
+        // }
 
         const changeQuoteStatus = async (status) => {
             setShowSpinner(true);
@@ -365,8 +365,23 @@ export default function BusinessQuoteForm({acceptBool}){
                             formData.append(key, selectedImageList[i])
                         }
                     } catch (error) {
-                        console.log("Error uploading images", error)
+                        console.log("Error creating image binary", error)
                     }
+                }
+
+                var documentBinary = []
+                if (selectedDocumentList.length > 0){
+                    
+                    for (let i = 0; i < selectedDocumentList.length; i++){
+                        try {
+                            const documentBlob = dataURItoBlob(selectedDocumentList[i]);
+                            documentBinary.push(documentBlob)
+                        } catch (error){
+                            console.log("Error creating document binary", error)
+                        }
+                    }
+
+                    formData.append("qd_files", documentBinary);
                 }
         
                 for (let [key, value] of formData.entries()) {
@@ -405,7 +420,7 @@ export default function BusinessQuoteForm({acceptBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
-        uploadQuoteDocuments()
+        // uploadQuoteDocuments()
         navigate("/workerMaintenance", {state: {refresh: true}})
     }
 

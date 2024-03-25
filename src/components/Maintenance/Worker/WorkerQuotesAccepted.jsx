@@ -29,11 +29,19 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
+import Scheduler from "../../utils/Scheduler";
 
 export default function WorkerQuotesAccepted({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [schedulerDate, setSchedulerDate] = useState(null);
+
+    useEffect(() => {
+        console.log("--DEBUG--", schedulerDate)
+    }, [schedulerDate])
+    
 
     function handleNavigateToQuotesRequested(){
 
@@ -64,19 +72,16 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
 
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
+
+            const formData = new FormData();
+            formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_scheduled_date", schedulerDate.format("MM-DD-YYYY")); // this needs to change for the date and time picker
+            formData.append("maintenance_scheduled_time", schedulerDate.format("HH:mm:ss")); // this needs to change for the date and time picker
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "maintenance_request_uid": maintenanceItem.maintenance_request_uid,
-                        "maintenance_request_status": "SCHEDULED",
-                        "maintenance_scheduled_date": "10/30/2023",
-                        "maintenance_scheduled_time": "10:00:00"
-
-                    })
+                    body: formData,
                 });
 
                 const responseData = await response.json();
@@ -116,6 +121,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
             setShowSpinner(false);
         }
         changeMaintenanceRequestStatus()
+        setShowScheduler(false);
     }
 
     async function handleComplete(id){
@@ -245,7 +251,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                            Withdraw Quote
                         </Typography>
                     </Button>
-                </Grid> 
+                </Grid>
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -260,7 +266,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleScheduleChange(maintenanceItem.maintenance_request_uid)}
+                        onClick={() => setShowScheduler(true)}
                     >   
                         <CalendarTodayIcon sx={{
                             color: "#3D5CAC",
@@ -271,6 +277,13 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                         </Typography>
                     </Button>
                 </Grid> 
+                <Scheduler 
+                    show={showScheduler} 
+                    setShow={setShowScheduler} 
+                    date={schedulerDate} 
+                    setDate={setSchedulerDate}
+                    handleSubmit={handleScheduleChange(maintenanceItem.maintenance_request_uid)}
+                />
             </Grid>
         </Box>
     )
