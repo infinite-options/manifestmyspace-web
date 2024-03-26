@@ -34,7 +34,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
 
-    function handleNavigateToQuotesRequested(){
+    function handleNavigateToQuotesAccept(){
 
         console.log("NewRequestAction", maintenanceItem)
         console.log(navigateParams)
@@ -43,6 +43,15 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                 maintenanceItem,
                 navigateParams,
                 quotes
+            }
+        });
+    }
+
+    function handleNavigateToQuotesRequested(){
+        navigate("/quoteRequest", {
+            state:{
+                maintenanceItem,
+                navigateParams
             }
         });
     }
@@ -68,7 +77,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                         variant="contained"
                         disableElevation
                         sx={{
-                            backgroundColor: "#CB8E8E",
+                            backgroundColor: "#C06A6A",
                             textTransform: "none",
                             paddingRight: "0px",
                             borderRadius: "10px",
@@ -76,6 +85,29 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                             width: "100%",
                         }}
                         onClick={() => handleNavigateToQuotesRequested()}
+                    >
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                            Request Additional Quotes
+                        </Typography>
+                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                    </Button>
+                </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            backgroundColor: "#CB8E8E",
+                            textTransform: "none",
+                            paddingRight: "0px",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%",
+                        }}
+                        onClick={() => handleNavigateToQuotesAccept()}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
                             View Quotes and Accept
