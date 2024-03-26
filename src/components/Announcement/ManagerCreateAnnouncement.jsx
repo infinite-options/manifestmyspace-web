@@ -354,8 +354,9 @@ export default function ManagerCreateAnnouncement() {
         try {
             console.log("promises added - ", promises_added);
             await Promise.all(promises)
-            console.log("All Announcements Sent", promises)                        
-            
+            console.log("All Announcements Sent", promises)
+            navigate(-1);                        
+        
         } catch (error) {
             console.error("Error:", error);
         }
