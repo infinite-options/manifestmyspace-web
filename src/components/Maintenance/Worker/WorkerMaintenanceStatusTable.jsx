@@ -210,7 +210,6 @@ export default function WorkerMaintenanceStatusTable({status, color, maintenance
                             pageSizeOptions={[5]}
                             onRowClick={(params) => {
                                 const index = maintenanceItemsForStatus.findIndex(row => row.maintenance_request_uid === params.row.maintenance_request_uid);
-                                console.log("clicked on row with index", index)
                                 handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
                             }}
                         />
