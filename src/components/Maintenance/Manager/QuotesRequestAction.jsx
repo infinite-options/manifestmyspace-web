@@ -51,7 +51,8 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
         navigate("/quoteRequest", {
             state:{
                 maintenanceItem,
-                navigateParams
+                navigateParams,
+                quotes
             }
         });
     }
