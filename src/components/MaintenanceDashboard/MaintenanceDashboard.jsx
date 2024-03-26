@@ -29,7 +29,6 @@ export default function MaintenanceDashboard(){
     const navigate = useNavigate();
     const location = useLocation();
     const { user, getProfileId } = useUser(); 
-    const [loading, setLoading] = useState(true);
     const [quoteRequestedCount, setQuoteRequestedCount] = useState(0);
     const [submittedCount, setSubmittedCount] = useState(0);
     const [quoteAcceptedCount, setQuoteAcceptedCount] = useState(0);
@@ -132,8 +131,6 @@ export default function MaintenanceDashboard(){
                             break;
                     }
                 }
-
-                setLoading(false);
             } catch(error) {
                 console.log("Error getting maintenance worker dashboard data: ", error)
             }
@@ -162,11 +159,6 @@ export default function MaintenanceDashboard(){
                     paddingBottom: "500px"
                 }}
             >
-                {loading ? (
-                    <Grid container>
-                        <CircularProgress color="inherit" />
-                    </Grid>
-                )  : (
                 <>
                     <Grid container direction="row" rowGap={5}>
                         <Grid item xs={12}>
@@ -400,7 +392,7 @@ export default function MaintenanceDashboard(){
                                     },
                                     paddingTop: '10px',
                                 }}>
-                                    <MaintenanceWorkerDashboardWidget dashboard_data={api_data}/>
+                                    <MaintenanceWorkerDashboardWidget/>
                                 </Paper>
                             </Box>
                         </Grid>
@@ -555,7 +547,6 @@ export default function MaintenanceDashboard(){
                         </Grid>
                     </Grid>
                 </>
-                )}
             </Stack>
         </ThemeProvider> 
     )
