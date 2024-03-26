@@ -8,6 +8,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import dayjs from "dayjs";
 
 
 async function getInitialImages(requestData, currentIndex) {
@@ -328,7 +329,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                     fontSize: theme.typography.mediumFont,
                   }}
                 >
-                  {/* {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + requestData[currentIndex].maintenance_scheduled_time: null} */}
+                  {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + dayjs(requestData[currentIndex].maintenance_scheduled_time,"HH:mm").format("h:mm A"): null}
                 </Typography>
               </div>
             </CardContent>

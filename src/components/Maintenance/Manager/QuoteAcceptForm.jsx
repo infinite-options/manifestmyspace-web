@@ -143,14 +143,6 @@ export default function QuoteAcceptForm(){
         changeMaintenanceQuoteStatus(quoteStatusParam)
     }
 
-    function displayQuoteDetails(quote_expenses){
-        let quoteJSON = JSON.parse(quote_expenses)
-
-        let parts = quoteJSON.parts
-
-        
-    }
-
     function numImages(){
         if (displayImages.length == 0){
             return 0

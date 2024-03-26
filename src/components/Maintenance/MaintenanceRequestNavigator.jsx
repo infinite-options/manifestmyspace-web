@@ -13,6 +13,8 @@ import CreateIcon from '@mui/icons-material/Create';
 
 import QuotesTable from "./MaintenanceComponents/QuotesTable";
 
+import dayjs from 'dayjs';
+
 
 function getInitialImages(requestData, currentIndex) {
     try {
@@ -118,19 +120,15 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    function formatDate(date) {
-        let formattedDate = "";
-        let openTime = "";
-        if (date) {
-        const postDate = new Date(date);
-        let currentDate = new Date();
-        formattedDate = postDate.toLocaleDateString();
-        const diffInMilliseconds = currentDate.getTime() - postDate.getTime();
-        openTime = Math.floor(diffInMilliseconds / (1000 * 3600 * 24));
+    function displayScheduledDate(data){
+        console.log("displayScheduledDate from this one:", data)
+        if (!data.maintenance_scheduled_date || !data.maintenance_scheduled_time || data.maintenance_scheduled_time == "null" || data.maintenance_scheduled_date == "null") {
+            return "Not Scheduled"
+        } else {
+            const formattedTime = dayjs(data.maintenance_scheduled_time, "HH:mm").format("h:mm A");
+            // setFormattedDate(formattedDate)
+            return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`
         }
-        // console.log("formattedDate", formattedDate, "openTime", openTime);
-        setNumOpenRequestDays(openTime);
-        setFormattedDate(formattedDate);
     }
 
     const data = requestData[currentIndex];
@@ -157,7 +155,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
     
 
     useEffect(() => {
-        formatDate(data.maintenance_request_created_date);
+        displayScheduledDate(data);
     }, [data]);
     //automatic refresh problem - the data is not displaying after save update 
 
@@ -332,7 +330,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                                 Reported: {formattedDate} | Open: {numOpenRequestDays} days
                             </Typography> 
                             <Typography sx={maintenanceSecondary}>
-                                {data.maintenance_request_status === "SCHEDULED" ? "Scheduled for " + data.maintenance_scheduled_date + " at " + data.maintenance_scheduled_time: null}
+                                {displayScheduledDate(data)}
                             </Typography>
                             <Typography sx={maintenanceTertiary}>
                                 {data?.maintenance_desc}
