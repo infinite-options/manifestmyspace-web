@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Payments(props) {
+  console.log("In Payments.jsx");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -132,6 +133,7 @@ export default function Payments(props) {
   };
 
   const fetchPaymentsData = async () => {
+    console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
       const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
@@ -373,7 +375,7 @@ export default function Payments(props) {
               </Typography>
             </Stack>
             <Stack>
-              <BalanceDetailsTable data={paymentDueResult}/>
+              <BalanceDetailsTable data={paymentDueResult} />
             </Stack>
           </Paper>
           <Paper
@@ -587,16 +589,15 @@ export default function Payments(props) {
   );
 }
 
-
 function BalanceDetailsTable(props) {
+  console.log("In BalanceDetailTable");
   const data = props.data;
   const [selectedRows, setSelectedRows] = useState([]);
 
   const paymentDueResult = data.map((item) => ({
-    ...item, pur_amount_due : parseFloat(item.pur_amount_due)
+    ...item,
+    pur_amount_due: parseFloat(item.pur_amount_due),
   }));
-
-
 
   // useEffect(() => {
   //   console.log("selectedRows - ", selectedRows);
@@ -607,26 +608,26 @@ function BalanceDetailsTable(props) {
       field: "pur_description",
       headerName: "Description",
       flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "property_address",
       headerName: "Address",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "property_unit",
       headerName: "Unit",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
 
     {
       field: "pur_due_date",
       headerName: "Due Date",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
 
     {
@@ -634,18 +635,17 @@ function BalanceDetailsTable(props) {
       headerName: "Amount",
       flex: 1,
       headerStyle: {
-        fontWeight: 'bold', // Apply inline style to the header cell
+        fontWeight: "bold", // Apply inline style to the header cell
       },
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>$ {params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ {params.value}</Box>,
     },
   ];
-  
-  const handleSelectionModelChange = (newRowSelectionModel) => {    
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
     setSelectedRows(newRowSelectionModel);
   };
 
-
-  if (paymentDueResult.length > 0) {    
+  if (paymentDueResult.length > 0) {
     console.log("Passed Data ", paymentDueResult);
     return (
       <>
@@ -677,33 +677,33 @@ function BalanceDetailsTable(props) {
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-                <Grid item xs={1} alignItems="center"></Grid>
-                <Grid item xs={9} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Total
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} alignItems="right">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)}
-                  </Typography>
-                </Grid>
-              </Grid>
-      </>      
+          <Grid item xs={1} alignItems="center"></Grid>
+          <Grid item xs={9} alignItems="center">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total
+            </Typography>
+          </Grid>
+          <Grid item xs={2} alignItems="right">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
     );
   } else {
     return <></>;
