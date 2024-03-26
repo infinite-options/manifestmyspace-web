@@ -138,13 +138,12 @@ export default function CardSlider(props) {
                                 height: 'inherit',
                                 boxShadow: '0px 4px 4px #00000019',
                             }}>
-                                <Box sx={{
+                                {/* <Box sx={{
                                     fontSize: '16px',
                                     fontWeight: '800',
-                                }}>
-                                    {/* Alert */}
+                                }}>                                    
                                     {i}
-                                </Box>
+                                </Box> */}
                                 <Box sx={{
                                     fontSize: '16px',
                                     fontWeight: '800',
