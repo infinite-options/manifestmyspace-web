@@ -93,6 +93,10 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             field: "maintenance_scheduled_date",
             flex: 1,
             minWidth: 100,
+            renderCell: (params) => {
+                const scheduledDate = params.row.maintenance_scheduled_date
+                return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
+            }
         },
         {
             headerName: "Scheduled Time",
@@ -100,7 +104,8 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             flex: 1,
             minWidth: 100,
             renderCell: (params) => {
-                return `${dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A")}`
+                const scheduledTime = params.row.maintenance_scheduled_date
+                return (scheduledTime && scheduledTime !== "null") ? dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A") : "N/A"
             }
         },
     ];
