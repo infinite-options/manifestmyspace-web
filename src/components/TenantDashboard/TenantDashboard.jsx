@@ -18,6 +18,7 @@ import BuildIcon from "@mui/icons-material/Build"; // For "Maintenance"
 import AddIcon from "@mui/icons-material/Add"; // For "New Request"
 import { PropertyCard } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
+import { DataGrid } from "@mui/x-data-grid";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -48,6 +49,10 @@ function TenantDashboard(props) {
   // const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
   const open = Boolean(anchorEl);
+
+  // useEffect(() => {
+  //   console.log("selectedProperty - ", selectedProperty);
+  // }, [selectedProperty]);
 
   useEffect(() => {
     console.log("maintenanceRequests - ", maintenanceRequests);
@@ -184,17 +189,26 @@ function TenantDashboard(props) {
       let filteredMaintenanceItems = allMaintenanceRequests.filter((request) => request.property_uid === selectedProperty.property_uid);
       setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems));
     }
-    if (allAnnouncementsData) {
-      const filteredAnnouncements = allAnnouncementsData.filter((announcement) => {
-        // If announcement_properties is an array, check if currentProperty is included
-        if (Array.isArray(announcement.announcement_properties)) {
-          return announcement.announcement_properties.includes(selectedProperty.property_uid);
-        }
-        // If announcement_properties is a string, compare directly with currentProperty
-        return announcement.announcement_properties === selectedProperty.property_uid;
+    if (allAnnouncementsData) {      
+      const filteredAnnouncements = allAnnouncementsData.filter((announcement) => {                
+        const announcementPropertiesString = announcement.announcement_properties;
+        
+        if(announcementPropertiesString == null){
+          return false;
+        }       
+
+        
+        let announcementPropertiesArray;        
+        if (announcementPropertiesString.startsWith('[') && announcementPropertiesString.endsWith(']')) {            
+            announcementPropertiesArray = JSON.parse(announcementPropertiesString);
+        } else {            
+            announcementPropertiesArray = [announcementPropertiesString];
+        }        
+        return announcement.announcement_properties.includes(selectedProperty.property_uid);
+        
       });
 
-      filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));
+      filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));      
 
       setAnnouncementsData(filteredAnnouncements);
     }
@@ -445,7 +459,7 @@ function TenantDashboard(props) {
                           </Box> */}
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"})
+                          (Pay before {selectedProperty == null ? "No Data" : selectedProperty.earliest_due_date})
                         </Box>
                       </Box>
                       <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
@@ -551,45 +565,10 @@ function TenantDashboard(props) {
                       </Box>
                     </Box>
                   </Box>
-                  <TableContainer component={Paper} sx={{ maxHeight: 275, backgroundColor: "#F2F2F2" }}>
-                    <Table sx={{ backgroundColor: "#F2F2F2" }} stickyHeader>
-                      {/* <TableHead sx={{ backgroundColor: "#F2F2F2" }}> */}
-                      <TableHead sx={{ backgroundColor: "#F2F2F2", "& .MuiTableCell-root": { backgroundColor: "#F2F2F2" } }}>
-                        <TableRow sx={{ backgroundColor: "#F2F2F2" }}>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Images</TableCell>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Title</TableCell>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Status</TableCell>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Priority</TableCell>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Created Date</TableCell>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Scheduled Date</TableCell>
-                          <TableCell sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>Scheduled Time</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {maintenanceRequests.map((item, index) => {
-                          let favoriteImage = "";
-                          if (item.maintenance_images && item.maintenance_images.length > 0) {
-                            const image_list = JSON.parse(item.maintenance_images);
-                            favoriteImage = image_list.find((url) => url.endsWith("img_cover"));
-                          } else {
-                            favoriteImage = PlaceholderImage;
-                          }
-                          const requestData = [
-                            favoriteImage || defaultMaintenanceImage,
-                            item.maintenance_title,
-                            item.maintenance_request_status,
-                            item.maintenance_priority,
-                            item.maintenance_request_created_date,
-                            item.maintenance_scheduled_date,
-                            item.maintenance_scheduled_time,
-                            item,
-                          ];
-
-                          return <CustomTableRow key={index} data={requestData} />;
-                        })}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  
+                  <Stack>
+                    <MaintenanceRequestsTable data={maintenanceRequests}/>
+                    </Stack>
                 </DashboardTab>
                 <DashboardTab>
                   <Box
@@ -758,40 +737,13 @@ function DashboardTab(props) {
   );
 }
 
-function CustomTableRow(props) {
-  const [image, title, status, priority, created_date, scheduled_date, scheduled_time, item] = props.data;
 
-  const tdStyle = {
-    color: "#160449",
-    fontSize: "14px",
-    fontWeight: "600",
-    // textAlign: "center",
-  };
-  function getStatusColor(status) {
-    switch (status) {
-      case "NEW":
-        return "#B62C2A";
-      case "PROCESSING":
-        return "#D4736D";
-      case "INFO":
-        return "#DEA19C";
-      case "SCHEDULED":
-        return "#92A9CB";
-      case "COMPLETED":
-        return "#6788B3";
-      case "CANCELLED":
-        return "#173C8D";
-      default:
-        return "#000000";
-    }
-  }
-  const statusStyle = {
-    color: getStatusColor(status),
-    fontSize: "14px",
-    fontWeight: "bold",
-    // textAlign: "center",
-  };
-  const navigate = useNavigate();
+export default TenantDashboard;
+
+
+
+function MaintenanceRequestsTable(props) {
+  const data = props.data;  
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -811,26 +763,113 @@ function CustomTableRow(props) {
     }
     return date;
   }
-  return (
-    <TableRow
-      onClick={() => {
-        navigate("/tenantMaintenanceItem", {
-          state: { color: getStatusColor(status), item: item },
-        });
-      }}
-    >
-      <TableCell style={{ ...tdStyle, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <img src={image} alt="Maintenance" style={{ width: "60px", height: "55px" }} />
-      </TableCell>
-      <TableCell style={{ ...tdStyle, textAlign: "center" }}>{title}</TableCell>
-      <TableCell style={{ ...tdStyle, textAlign: "center" }}>{status}</TableCell>
-      <TableCell style={{ ...tdStyle, textAlign: "center" }}>{priority}</TableCell>
-      <TableCell style={{ ...tdStyle, textAlign: "center" }}>{created_date ? created_date : "-"}</TableCell>
-      {/* <TableCell style={{...tdStyle, textAlign: "center",}}>{scheduled_date? scheduled_date : "-"}</TableCell> */}
-      <TableCell style={{ ...tdStyle, textAlign: "center" }}>{scheduled_date ? getValidDate(scheduled_date) : "-"}</TableCell>
-      <TableCell style={{ ...tdStyle, textAlign: "center" }}>{scheduled_time ? formatTime(scheduled_time) : "-"}</TableCell>
-      {/* <TableCell style={{...tdStyle, textAlign: "center",}}>{scheduled_time? scheduled_time : "-"}</TableCell> */}
-    </TableRow>
-  );
+
+  data.forEach(item => {
+    let favoriteImage = "";
+    if (item.maintenance_images && item.maintenance_images.length > 0) {
+      const image_list = JSON.parse(item.maintenance_images);
+      favoriteImage = image_list.find((url) => url.endsWith("img_cover"));
+    } else {
+      favoriteImage = PlaceholderImage;
+    }
+    item.favorite_image = favoriteImage
+
+  })
+  console.log("MaintenanceRequestsTable - data - ", data);
+
+  const columnsList = [
+    {
+      field: "favorite_image",
+      headerName: "Images",
+      flex: 0.5,
+      renderCell: (params) => <img src={params.value} alt="Maintenance" style={{ width: "60px", height: "55px" }} />,
+      headerAlign: 'center',
+    },
+    {
+      field: "maintenance_title",
+      headerName: "Title",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: 'bold', textAlign: 'center' }}>{params.value}</Box>,
+      headerAlign: 'center',
+    },
+    {
+      field: "maintenance_request_status",
+      headerName: "Status",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value}</Box>,
+      headerAlign: 'center',      
+    },
+
+    {
+      field: "maintenance_priority",
+      headerName: "Priority",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value}</Box>,
+      headerAlign: 'center',
+    },
+
+    {
+      field: "maintenance_request_created_date",
+      headerName: "Created Date",
+      flex: 1,
+      headerStyle: {
+        fontWeight: 'bold', 
+      },
+      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value? params.value : "-"}</Box>,
+      headerAlign: 'center',
+    },
+
+    {
+      field: "maintenance_scheduled_date",
+      headerName: "Scheduled Date",
+      flex: 1,
+      headerStyle: {
+        fontWeight: 'bold',
+      },
+      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value? getValidDate(params.value) : "-"}</Box>,
+      headerAlign: 'center',
+    },
+
+    {
+      field: "maintenance_scheduled_time",
+      headerName: "Scheduled Time",
+      flex: 1,
+      headerStyle: {
+        width: '100%',
+        fontWeight: 'bold', 
+      },
+      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value? formatTime(params.value) : "-"}</Box>,
+      headerAlign: 'center',
+    },
+  ];
+
+  if (data.length > 0) {    
+    console.log("Passed Data ", data);
+    return (
+      <>
+        <DataGrid
+          rows={data}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          getRowId={(row) => row.maintenance_request_uid}
+          pageSizeOptions={[5, 10, 25]}          
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />        
+      </>      
+    );
+  } else {
+    return <></>;
+  }
 }
-export default TenantDashboard;
