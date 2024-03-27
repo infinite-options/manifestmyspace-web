@@ -24,7 +24,7 @@ export default function CardSlider(props) {
 
     useEffect(() => {
         let cardsData = props.data;
-        console.log("CardSlider - cardsData - ", cardsData);
+        console.log("In CardSlider - cardsData - ", cardsData);
         setCards(cardsData);
         let baseArray = [true];
         for (let i = 1; i < cardsData.length; i++) {

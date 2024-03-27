@@ -55,7 +55,7 @@ function TenantDashboard(props) {
   // }, [selectedProperty]);
 
   useEffect(() => {
-    console.log("maintenanceRequests - ", maintenanceRequests);
+    // console.log("maintenanceRequests - ", maintenanceRequests);
   }, [maintenanceRequests]);
 
   const handleOpen = useCallback((event) => {
@@ -68,7 +68,7 @@ function TenantDashboard(props) {
   const { user } = useUser();
 
   let automatic_navigation_handler = (propertyData) => {
-    console.log("In navigation handler: ", propertyData)
+    // console.log("In navigation handler: ", propertyData)
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
     if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
       navigate("/listings");
@@ -103,12 +103,12 @@ function TenantDashboard(props) {
   };
 
   useEffect(() => {
-    console.log("In UseEffect")
+    // console.log("In UseEffect")
     if (!getProfileId()) navigate("/PrivateprofileName");
     const getTenantData = async () => {
       setShowSpinner(true);
       try {
-        console.log("Call endpoints")
+        // console.log("Call endpoints")
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
@@ -125,8 +125,8 @@ function TenantDashboard(props) {
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
         let announcementsReceivedData = announcementsResponseData?.received?.result;
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
-        console.log("Maintenance data from endpoint: ", maintenanceRequestsData )
-        console.log("allNonActiveLease: ", allNonActiveLease)
+        // console.log("Maintenance data from endpoint: ", maintenanceRequestsData )
+        // console.log("allNonActiveLease: ", allNonActiveLease)
 
         // sort propertyData by lease_status so that active lease is first
         propertyData.sort((a, b) => {
@@ -750,9 +750,9 @@ export default TenantDashboard;
 
 
 function MaintenanceRequestsTable(props) {
-  console.log("In Maintenance Request Table from Stack")
+  // console.log("In Maintenance Request Table from Stack")
   const data = props.data;  
-  console.log("Data in MRD from props: ", data)
+  // console.log("Data in MRD from props: ", data)
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -775,7 +775,7 @@ function MaintenanceRequestsTable(props) {
 
   // Set favorite image
   data.forEach(item => {
-    console.log("For Each Item: ", item)
+    // console.log("For Each Item: ", item)
     let favoriteImage = "";
     // console.log("Image Display: ", item.maintenance_images.length, item.maintenance_images)
     if (item.maintenance_images && item.maintenance_images.length > 2) {
@@ -783,17 +783,16 @@ function MaintenanceRequestsTable(props) {
       const image_list = JSON.parse(item.maintenance_images);
       // console.log("image_list: ", image_list)
       favoriteImage = image_list.find((url) => url.endsWith("img_cover"));
-      console.log("favoriteImage: ", favoriteImage)
+      // console.log("favoriteImage: ", favoriteImage)
     } else {
       favoriteImage = PlaceholderImage;
-      console.log("Placeholder Image selected")
-      console.log("Placeholder image: ", favoriteImage)
+      // console.log("Placeholder image: ", favoriteImage)
     }
     // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage
 
   })
-  console.log("MaintenanceRequestsTable - data - ", data);
+  // console.log("MaintenanceRequestsTable - data - ", data);
 
   const columnsList = [
     {
@@ -862,7 +861,7 @@ function MaintenanceRequestsTable(props) {
   ];
 
   if (data.length > 0) {    
-    console.log("Passed Data ", data);
+    // console.log("Passed Data ", data);
     return (
       <>
         <DataGrid
@@ -876,7 +875,7 @@ function MaintenanceRequestsTable(props) {
             },
           }}
           getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5, 10, 25]}          
+          pageSizeOptions={[5, 10, 25, 100]}          
           onRowClick={(row) => {
             {
               console.log("Row =", row);
