@@ -48,10 +48,10 @@ function TenantLeases(props) {
   const [fees, setFees] = useState([]);
 
   useEffect(() => {
-    console.log("property", property);
-    console.log("status", status);
-    console.log("lease", lease);
-    console.log("fees", fees);
+    // console.log("property", property);
+    // console.log("status", status);
+    // console.log("lease", lease);
+    // console.log("fees", fees);
 
     async function fetchData() {
       console.log("In fetch data");
@@ -64,9 +64,9 @@ function TenantLeases(props) {
         return;
       }
       const leaseData = await leaseResponse.json();
-      console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
+    //   console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
       const properties_with_details=leaseData.Lease_Details.result
-      let detailed_property=properties_with_details.filter(p=> p.lease_uid===property.lease_uid)
+      let detailed_property=properties_with_details.filter(p=> p.lease_uid===lease.lease_uid)            
       if (Array.isArray(detailed_property))
       detailed_property=detailed_property[0]
       console.log(detailed_property)

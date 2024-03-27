@@ -23,20 +23,20 @@ export default function MaintenanceWorkerDashboardWidget(props) {
   const [maintenanceRequests, setMaintenanceRequests] = useState({});
   const [query, setQuery] = useState("");
 
+
   useEffect(() => {
     const dataObject = {};
-    const fetchMaintenanceDashboardData = async () => {
-      setShowSpinner(true);
-      const jsonData = props.dashboard_data;
-
-      setWorkOrders(jsonData.WorkOrders.result);
-      setCurrentActivities(jsonData.CurrentActivities.result);
-      setShowSpinner(false);
-    };
+    // const fetchMaintenanceDashboardData = async () => {
+    //   setShowSpinner(true);
+    //   const jsonData = props.dashboard_data;
+    //   console.log("DEBUG jsonData", jsonData);
+    //   setWorkOrders(jsonData.WorkOrders.result);
+    //   setCurrentActivities(jsonData.CurrentActivities.result);
+    //   setShowSpinner(false);
+    // };
 
     const getMaintenanceData = async () => {
         setShowSpinner(true);
-        console.log("About to call maintenanceStatus endpoint Maintenace Worker Dashboard Widget");
         const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
         const maintenanceRequestsData1 = await maintenanceRequests1.json();
 
@@ -76,7 +76,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
     };
         getMaintenanceData();
 
-        fetchMaintenanceDashboardData();
+        // fetchMaintenanceDashboardData();
   }, []);
 
   function handleFilter(filterString, searchArray) {

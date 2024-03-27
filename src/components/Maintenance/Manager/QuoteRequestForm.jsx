@@ -14,6 +14,7 @@ import {
     TextField,
     MenuItem,
     Select,
+    Chip,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -38,7 +39,12 @@ export default function QuoteRequestForm(){
 
     const maintenanceItem = location.state.maintenanceItem;
 
-    const navigationParams = location.state.navigateParams
+    const navigationParams = location.state.navigateParams;
+
+    const alreadyRequestedQuotes = location.state?.quotes || [];
+
+    console.log(alreadyRequestedQuotes)
+
 
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [additionalInfo, setAdditionalInfo] = useState("")
@@ -196,19 +202,27 @@ export default function QuoteRequestForm(){
     useEffect(() => {
         // console.log("get all maintenance workers")
 
-        const getMaintenanceWorkers = async () => {
+        const getMaintenanceWorkers = async (requestedQuotes) => {
             setShowSpinner(true);
             const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsMaintenance")
             const data = await response.json()
             const workers = data.Maintenance_Contacts.result
             // console.log("workers",  workers)
             //workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
-            setContactList(workers)
+            // Get a list of maint_business_uid values from requestedQuotes
+            const requestedBusinessUids = requestedQuotes.map(quote => quote.maint_business_uid);
+
+            // Filter out workers whose business_uid is in requestedBusinessUids
+            const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.business_uid));
+            setContactList(filteredWorkers)
             setShowSpinner(false);
         }
-        getMaintenanceWorkers().then(() => setLoadingContacts(false))
+
+        getMaintenanceWorkers(alreadyRequestedQuotes).then(() => setLoadingContacts(false))
 
         let imageArray = JSON.parse(maintenanceItem.maintenance_images)
+
+        // setMaintenanceContacts(location.state?.quotes)
 
         setDisplayImages(imageArray)
 
@@ -420,30 +434,41 @@ export default function QuoteRequestForm(){
                                 </>
                             )}
 
-                                {[...new Set (maintenanceContacts)].map((c)=>{
-    return (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    {c.business_name}
-                </Typography>
-                <IconButton onClick={()=>{
-                    let contacts= new Set ([...maintenanceContacts])
-                    contacts.delete(c)
-                    setMaintenanceContacts(contacts)
-                    }} >
-                    
-                <ClearIcon />
-                </IconButton>
-            </Box>
-        )
-        
-
-    
-
-    })}
-
-
+                            {[...new Set (maintenanceContacts)].map((c)=>{
+                            return (
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                                            {c.business_name}
+                                        </Typography>
+                                        <IconButton onClick={()=>{
+                                            let contacts= new Set ([...maintenanceContacts])
+                                            contacts.delete(c)
+                                            setMaintenanceContacts(contacts)
+                                            }} >
+                                            
+                                        <ClearIcon />
+                                        </IconButton>
+                                    </Box>
+                                )
+                            })}
                         </Grid>
+                        {alreadyRequestedQuotes.length > 0 ? (
+                            <Grid item xs={12} sx={{width: '90%'}}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                        Previously Requested Quotes:
+                                    </Typography>
+                                    {alreadyRequestedQuotes.map((quoteRequested) => {
+                                        return (
+                                            <Box sx={{paddingLeft: "5px", paddingRight: "5px"}}>
+                                                <Chip label={quoteRequested.maint_business_name} variant="outlined" sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont}}/>
+                                            </Box>
+                                        )
+                                    })}
+                                </Box>
+                            </Grid>
+                            ): null
+                        }
                         <Grid item xs={12} sx={{width: '90%'}}>
                             <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
                                 Additional Information
