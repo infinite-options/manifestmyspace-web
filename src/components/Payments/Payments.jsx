@@ -57,6 +57,7 @@ export default function Payments(props) {
       return "";
     }
     var splitDate = date.split("-");
+    console.log("Split Date: ", splitDate)
     var month = splitDate[1];
     var day = splitDate[2];
     var year = splitDate[0].slice(-2);
@@ -394,7 +395,7 @@ export default function Payments(props) {
 
             <Stack sx={{ paddingTop: "10px" }}>
               <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={1}>
+                <Grid item xs={2}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -406,7 +407,7 @@ export default function Payments(props) {
                     Date
                   </Typography>
                 </Grid>
-                <Grid item xs={3} alignItems="center">
+                <Grid item xs={3} alignItems="left">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -419,7 +420,7 @@ export default function Payments(props) {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={3} alignItems="center">
+                <Grid item xs={3} alignItems="left">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -445,7 +446,7 @@ export default function Payments(props) {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={2} alignItems="center">
+                <Grid item xs={1} alignItems="center">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -475,7 +476,7 @@ export default function Payments(props) {
               {paidItems.length > 0 &&
                 paidItems.map((item, index) => (
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index} sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
-                    <Grid item xs={1} alignItems="center">
+                    <Grid item xs={2} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -526,7 +527,7 @@ export default function Payments(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={2} alignItems="center">
+                    <Grid item xs={1} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -646,7 +647,7 @@ function BalanceDetailsTable(props) {
   };
 
   if (paymentDueResult.length > 0) {
-    console.log("Passed Data ", paymentDueResult);
+    // console.log("Passed Data ", paymentDueResult);
     return (
       <>
         <DataGrid

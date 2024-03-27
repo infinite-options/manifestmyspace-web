@@ -305,7 +305,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   function displayTopMaintenanceItem() {
     const colorStatus = getColorStatusBasedOnSelectedRole();
     if (property.maintenanceCount > 0) {
-      console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
+      // console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
       return (
         <DataGrid
           rows={property.maintenance}

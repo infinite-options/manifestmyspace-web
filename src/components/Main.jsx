@@ -42,7 +42,6 @@ import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
 
 import ViewTransactionOwner from "./Transactions/ViewTransactionOwner";
-import PaymentsTenant from "./Payments/PaymentsTenant";
 import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
 import ManagerDashboardHappinessMatrix from "./ManagerDashboard/ManagerDashboardHappinessMatrix";
@@ -245,7 +244,6 @@ function Main() {
             <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
-            {/* <Route path="payments" element={<PaymentsTenant />} /> */}
             <Route path="payments" element={<Payments />} />
             <Route path="card" element={<CardDetails />} />
             <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
