@@ -151,7 +151,7 @@ function CostPartsTable({parts, setParts}){
 
 // /businessDeclineQuoteForm
 // /businessAcceptQuoteForm
-export default function BusinessQuoteForm({acceptBool}){
+export default function BusinessQuoteForm({acceptBool, editBool}){
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -165,10 +165,10 @@ export default function BusinessQuoteForm({acceptBool}){
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [checked, setChecked] = useState(true);
     const [showSpinner, setShowSpinner] = useState(false);
-    const [availabilityDate, setAvailabilityDate] = useState('');
-    const [availabilityTime, setAvailabilityTime] = useState('');
+    const [availabilityDate, setAvailabilityDate] = useState(maintenanceItem?.quote_earliest_availability ? maintenanceItem?.quote_earliest_availability.split(" ")[0] : '');
+    const [availabilityTime, setAvailabilityTime] = useState(maintenanceItem?.quote_earliest_availability ? dayjs(maintenanceItem?.quote_earliest_availability.split(" ")[1], "HH:mm").format("h:mm A") : '');
     const [rate, setRate] = useState(0);
-    const [notes, setNotes] = useState('');
+    const [notes, setNotes] = useState(editBool ? maintenanceItem.quote_notes : "");
     const [jobType, setJobType] = useState("");
     const [selectedImageList, setSelectedImageList] = useState([])
     const [selectedDocumentList, setSelectedDocumentList] = useState([])
@@ -178,16 +178,35 @@ export default function BusinessQuoteForm({acceptBool}){
     // }, [availabilityTime]);
 
     const [partsObject, setPartsObject] = useState([{
-            part: "",
-            quantity: "",
-            cost: "",
-        }]);
+        part: "",
+        quantity: "",
+        cost: "",
+    }]);
     
-    const [labor, setLabor] = useState({
+    const [labor, setLabor] = useState([{
         description: "",
         hours: "",
         rate: "",
-    });
+    }]);
+
+    useEffect(() => {
+        console.log("maintenanceItem", maintenanceItem)
+        console.log("editBool", editBool)
+        const quoteServicesExpenses = JSON.parse(maintenanceItem?.quote_services_expenses)
+        if (quoteServicesExpenses){
+            console.log("quoteServicesExpenses", quoteServicesExpenses)
+            console.log("quote_earliest_availability", maintenanceItem?.quote_earliest_availability)
+            console.log("quote_notes", maintenanceItem?.quote_notes)
+            console.log("quoteServicesExpenses.labor.rate", quoteServicesExpenses.labor[0].rate)
+            console.log("quoteServicesExpenses.labor.hours", quoteServicesExpenses.labor[0].hours)
+            console.log("maintenanceItem.event_type", maintenanceItem.event_type)
+            setRate(parseInt(quoteServicesExpenses.labor[0].rate))
+            setJobType(quoteServicesExpenses.labor[0].hours ? quoteServicesExpenses.labor[0].hours : maintenanceItem.event_type)
+            setPartsObject(quoteServicesExpenses.parts)
+            setLabor(quoteServicesExpenses.labor)
+        }
+
+    }, [])
 
     function computeTotalCost({hours, rate}){
         if (hours === "Fixed Bid" || hours === "Custom"){
@@ -205,9 +224,10 @@ export default function BusinessQuoteForm({acceptBool}){
             "parts": partsObject,
             "labor": [{
                 "description": "",
-                "hours": jobType,
-                "rate": rate,
+                "hours": labor[0].jobType,
+                "rate": labor[0].rate,
             }],
+            // "labor": labor,
             "total_estimate": computeTotalCost({hours: jobType, rate: rate})
 
         }
@@ -304,39 +324,6 @@ export default function BusinessQuoteForm({acceptBool}){
 
     const handleSubmit = (status) => {
         console.log("handleSubmit")
-
-        // const uploadQuoteDocuments = async () => {
-        //     // Get the current date and time
-        //     const currentDatetime = new Date();
-
-        //     // Format the date and time
-        //     const formattedDatetime = 
-        //         (currentDatetime.getMonth() + 1).toString().padStart(2, '0') + '-' +
-        //         currentDatetime.getDate().toString().padStart(2, '0') + '-' +
-        //         currentDatetime.getFullYear() + ' ' +
-        //         currentDatetime.getHours().toString().padStart(2, '0') + ':' +
-        //         currentDatetime.getMinutes().toString().padStart(2, '0') + ':' +
-        //         currentDatetime.getSeconds().toString().padStart(2, '0');
-        //     try {
-        //         var formData = new FormData();
-        //         formData.append("document_type", "pdf");
-        //         formData.append("document_date_created", formattedDatetime);
-        //         formData.append("document_property", maintenanceItem.property_id);
-
-        //         for (let i = 0; i < selectedDocumentList.length; i++){
-        //             formData.append("document_file", selectedDocumentList[i]);
-        //             formData.append("document_title", selectedDocumentList[i].name);
-        //         }
-        //         const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`, {
-        //             method: 'POST',
-        //             body: formData,
-        //         })
-        //         // const responseData = await response.json();
-        //     } catch (error) {
-        //         console.log("error", error)
-        //     }
-
-        // }
 
         const changeQuoteStatus = async (status) => {
             setShowSpinner(true);
@@ -495,333 +482,315 @@ export default function BusinessQuoteForm({acceptBool}){
                                 </Typography>
                             </Button>
                         </Box>
-                        {/* <Box position="absolute" right={10}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
-                                <ArrowForwardIcon sx={{color: "#3D5CAC", fontSize: "30px", margin:'5px'}}/>
-                            </Button>
-                        </Box> */}
                     </Stack>
-                            <Card
-                                sx={{
-                                    backgroundColor: "#FFFFFF",
-                                    borderRadius: "10px",
-                                    width: "90%",
-                                    height: "100%",
-                                    padding: "10px",
-                                    margin: "10px",
-                                    paddingTop: "25px",
-                                    minWidth: "300px"
-                                }}>
-                                <Grid container
-                                    direction="column"
-                                >
-                                    <Grid item xs={12}>
-                                        <Grid container spacing={2} justifyContent="center">
-                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
-                                                {maintenanceItem.maintenance_title}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <ImageCarousel images={displayImages}/>
-                                    <Grid item xs={12}>
-                                        <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                { numImages() > 0 ? numImages() + " Images" : "No Images" }
-                                            </Typography>
-                                        </Grid>
-
-                                        <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                    <b>{maintenanceItem?.maintenance_priority} Priority</b>
-                                                </Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                            <b>Property Address</b>
-                                        </Typography>
-                                        <div style={{paddingLeft: "10px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                {maintenanceItem.property_address} {maintenanceItem.property_unit} {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                            <b>Reported</b>
-                                        </Typography>
-                                        <div style={{paddingLeft: "10px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                {maintenanceItem.quote_created_date}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                            <b>Days Open</b>
-                                        </Typography>
-                                        <div style={{paddingLeft: "10px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                3 Days
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={12} sx={{paddingBottom: "20px"}}>
-                                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                            <b>Description</b>
-                                        </Typography>
-                                        <div style={{paddingLeft: "10px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                                {maintenanceItem.maintenance_desc}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
+                    <Card
+                        sx={{
+                            backgroundColor: "#FFFFFF",
+                            borderRadius: "10px",
+                            width: "90%",
+                            height: "100%",
+                            padding: "10px",
+                            margin: "10px",
+                            paddingTop: "25px",
+                            minWidth: "300px"
+                        }}>
+                        <Grid container
+                            direction="column"
+                        >
+                            <Grid item xs={12}>
+                                <Grid container spacing={2} justifyContent="center">
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
+                                        {maintenanceItem.maintenance_title}
+                                    </Typography>
                                 </Grid>
-                                <Grid container direction="row" spacing={1}>
-                                    {acceptBool ? (
-                                        <>
-                                            <Grid item xs={4} sx={{paddingTop: "10px"}}>
-                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                                    # of hours
-                                                </Typography>
-                                                <Select
-                                                    sx={{
-                                                        backgroundColor: 'white',
-                                                        borderColor: 'black',
-                                                        borderRadius: '7px',
-                                                    }}
-                                                    size="small"
-                                                    fullWidth
-                                                    onChange={(e) => setJobType(e.target.value)}
-                                                    value={jobType}
-                                                    placeholder="Select # of hours"
-                                                >
-                                                    <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
-                                                    <MenuItem value={1}>1 hour</MenuItem>
-                                                    <MenuItem value={2}>2 hours</MenuItem>
-                                                    <MenuItem value={3}>3 hours</MenuItem>
-                                                    <MenuItem value={4}>4 hours</MenuItem>
-                                                    <MenuItem value={5}>5 hours</MenuItem>
-                                                    <MenuItem value={"Custom"}>Custom</MenuItem>
-                                                </Select>
-                                            </Grid>
-                                            <Grid item xs={4} sx={{paddingTop: "10px"}}>
-                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                                    Charge/Hour
-                                                </Typography>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    value={rate}
-                                                    onChange={handleRateChange}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={4} sx={{paddingTop: "10px"}}>
-                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                                    Total Cost
-                                                </Typography>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    readOnly
-                                                    InputProps={{
-                                                        startAdornment: (
-                                                            <InputAdornment position="start">$</InputAdornment>
-                                                        ),
-                                                        // This will remove the underline styling
-                                                        disableUnderline: true
-                                                    }}
-                                                    value={computeTotalCost({hours: jobType, rate: rate})}
-                                                />
-                                            </Grid>
-                                            <CostPartsTable parts={partsObject} setParts={setPartsObject}/>
-                                            <Grid item xs={12}>
-                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                    Earliest Availability
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
-                                                
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DatePicker
-                                                        value={dayjs(availabilityDate)}
-                                                        minDate={dayjs()}
-                                                        onChange={(v) => setAvailabilityDate(v.format("MM-DD-YYYY"))}
-                                                        slots={{
-                                                            openPickerIcon: CalendarIcon,
-                                                        }}
-                                                        slotProps={{
-                                                            textField: {
-                                                                size: "small",
-                                                                style: {
-                                                                    width: "100%",
-                                                                    fontSize: 12,
-                                                                    backgroundColor: "#F2F2F2 !important",
-                                                                    borderRadius: "10px !important",
-                                                                },
-                                                                label: "Date"
-                                                            },
-                                                        }}
-                                                    />
-                                                </LocalizationProvider>
-                                            </Grid>
-                                            {/* <Grid item xs={0} md={3}>
+                            </Grid>
+                            <ImageCarousel images={displayImages}/>
+                            <Grid item xs={12}>
+                                <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                        { numImages() > 0 ? numImages() + " Images" : "No Images" }
+                                    </Typography>
+                                </Grid>
 
-                                            </Grid> */}
-                                            <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
-                                                {/* <TextField
-                                                    label="Time"
-                                                    size="small"
-                                                    onChange={handleTimeChange}
-                                                    placeholder="HH:MM:SS"
-                                                /> */}
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <TimePicker                                                        
-                                                        slotProps={{ 
-                                                            textField: { 
-                                                                size: 'small',
-                                                                style: {
-                                                                    width: "100%",
-                                                                    fontSize: 12,
-                                                                    backgroundColor: "#F2F2F2 !important",
-                                                                    borderRadius: "10px !important",
-                                                                },
-                                                                label: 'Time (select AM or PM)'                                                                
-                                                            } 
-                                                        }}                                                        
-                                                        views={['hours', 'minutes']}
-                                                        
-                                                        value={dayjs(availabilityTime)}
-                                                        onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
-                                                    />
-                                                </LocalizationProvider>
-                                                {/* <Button onClick={()=> convertToDateTime(availabilityDate, availabilityTime)}>
-                                                    Test DateTime Convert
-                                                </Button> */}
-                                            </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                    Notes
-                                                </Typography>
-                                                <TextField
-                                                    multiline
-                                                    required
-                                                    rows={2}
-                                                    borderRadius="10px"
-                                                    variant="outlined"
-                                                    fullWidth 
-                                                    InputProps={{
-                                                        readOnly: false,
-                                                        style: { 
-                                                            backgroundColor: 'white',
-                                                            borderColor: '#000000'
-                                                        }
-                                                    }}
-                                                    onChange={handleNotesChange}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                                <FormControlLabel
-                                                    control={
-                                                        <Checkbox
-                                                            checked={checked}
-                                                            onChange={handleCheckChange}
-                                                            color="primary"
-                                                            sx={{
-                                                                color: "#3D5CAC"
-                                                            }}
-                                                        />
-                                                    }
+                                <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
+                                        </Typography>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    <b>Property Address</b>
+                                </Typography>
+                                <div style={{paddingLeft: "10px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                        {maintenanceItem.property_address} {maintenanceItem.property_unit} {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    <b>Reported</b>
+                                </Typography>
+                                <div style={{paddingLeft: "10px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                        {maintenanceItem.quote_created_date}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    <b>Days Open</b>
+                                </Typography>
+                                <div style={{paddingLeft: "10px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                        3 Days
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sx={{paddingBottom: "20px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    <b>Description</b>
+                                </Typography>
+                                <div style={{paddingLeft: "10px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                        {maintenanceItem.maintenance_desc}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                        </Grid>
+                        <Grid container direction="row" spacing={1}>
+                            {acceptBool ? (
+                                <>
+                                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                            # of hours
+                                        </Typography>
+                                        <Select
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderColor: 'black',
+                                                borderRadius: '7px',
+                                            }}
+                                            size="small"
+                                            fullWidth
+                                            onChange={(e) => setJobType(e.target.value)}
+                                            value={jobType}
+                                            placeholder="Select # of hours"
+                                        >
+                                            <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
+                                            <MenuItem value={1}>1 hour</MenuItem>
+                                            <MenuItem value={2}>2 hours</MenuItem>
+                                            <MenuItem value={3}>3 hours</MenuItem>
+                                            <MenuItem value={4}>4 hours</MenuItem>
+                                            <MenuItem value={5}>5 hours</MenuItem>
+                                            <MenuItem value={"Custom"}>Custom</MenuItem>
+                                        </Select>
+                                    </Grid>
+                                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                            Charge/Hour
+                                        </Typography>
+                                        <TextField
+                                            size="small"
+                                            fullWidth
+                                            value={rate}
+                                            onChange={handleRateChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                            Total Cost
+                                        </Typography>
+                                        <TextField
+                                            size="small"
+                                            fullWidth
+                                            readOnly
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">$</InputAdornment>
+                                                ),
+                                                // This will remove the underline styling
+                                                disableUnderline: true
+                                            }}
+                                            value={computeTotalCost({hours: jobType, rate: rate})}
+                                        />
+                                    </Grid>
+                                    <CostPartsTable parts={partsObject} setParts={setPartsObject}/>
+                                    <Grid item xs={12}>
+                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                            Earliest Availability
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
+                                        
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DatePicker
+                                                value={dayjs(availabilityDate)}
+                                                minDate={dayjs()}
+                                                onChange={(v) => setAvailabilityDate(v.format("MM-DD-YYYY"))}
+                                                slots={{
+                                                    openPickerIcon: CalendarIcon,
+                                                }}
+                                                slotProps={{
+                                                    textField: {
+                                                        size: "small",
+                                                        style: {
+                                                            width: "100%",
+                                                            fontSize: 12,
+                                                            backgroundColor: "#F2F2F2 !important",
+                                                            borderRadius: "10px !important",
+                                                        },
+                                                        label: "Date"
+                                                    },
+                                                }}
+                                            />
+                                        </LocalizationProvider>
+                                    </Grid>
+                                    <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <TimePicker                                                        
+                                                slotProps={{ 
+                                                    textField: { 
+                                                        size: 'small',
+                                                        style: {
+                                                            width: "100%",
+                                                            fontSize: 12,
+                                                            backgroundColor: "#F2F2F2 !important",
+                                                            borderRadius: "10px !important",
+                                                        },
+                                                        label: 'Time (select AM or PM)'                                                                
+                                                    } 
+                                                }}                                                        
+                                                views={['hours', 'minutes']}
+                                                
+                                                value={dayjs(availabilityTime)}
+                                                onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
+                                            />
+                                        </LocalizationProvider>
+                                    </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
+                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                            Notes
+                                        </Typography>
+                                        <TextField
+                                            multiline
+                                            required
+                                            rows={2}
+                                            borderRadius="10px"
+                                            variant="outlined"
+                                            fullWidth 
+                                            InputProps={{
+                                                readOnly: false,
+                                                style: { 
+                                                    backgroundColor: 'white',
+                                                    borderColor: '#000000'
+                                                }
+                                            }}
+                                            value={notes}
+                                            onChange={handleNotesChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={checked}
+                                                    onChange={handleCheckChange}
+                                                    color="primary"
                                                     sx={{
                                                         color: "#3D5CAC"
                                                     }}
-                                                    label="Diagnostic fees included"
                                                 />
-                                            </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                    Add Documents
-                                                </Typography>
-                                                <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/>
-                                            </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                                <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
-                                            </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                                <Button
-                                                    variant="contained"
-                                                    disableElevation
-                                                    sx={{
-                                                        backgroundColor: "#668AAE",
-                                                        textTransform: "none",
-                                                        borderRadius: "10px",
-                                                        display: 'flex',
-                                                        width: "100%",
-                                                    }}
-                                                    onClick={() => handleSubmit("SENT")}
-                                                    >
-                                                    <Typography sx={{
-                                                        fontWeight: theme.typography.primary.fontWeight, 
-                                                        fontSize: "14px",
-                                                        color: "#FFFFFF",
-                                                        textTransform: "none",
-                                                    }}>
-                                                        Send Quote
-                                                    </Typography>
-                                                </Button>
-                                            </Grid>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Grid item xs={12} sx={{paddingTop: "10px"}}>
-                                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                    Notes
-                                                </Typography>
-                                                <TextField
-                                                    multiline
-                                                    required
-                                                    rows={5}
-                                                    borderRadius="10px"
-                                                    variant="outlined"
-                                                    fullWidth 
-                                                    InputProps={{
-                                                        readOnly: false,
-                                                        style: { 
-                                                            backgroundColor: 'white',
-                                                            borderColor: '#000000'
-                                                        }
-                                                    }}
-                                                    onChange={handleNotesChange}
-                                                    value={notes}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                                <Button
-                                                    variant="contained"
-                                                    disableElevation
-                                                    sx={{
-                                                        backgroundColor: "#668AAE",
-                                                        textTransform: "none",
-                                                        borderRadius: "10px",
-                                                        display: 'flex',
-                                                        width: "100%",
-                                                    }}
-                                                    onClick={() => handleSubmit("REFUSED")}
-                                                    >
-                                                    <Typography sx={{
-                                                        fontWeight: theme.typography.primary.fontWeight, 
-                                                        fontSize: "14px",
-                                                        color: "#FFFFFF",
-                                                        textTransform: "none",
-                                                    }}>
-                                                        Decline Quote
-                                                    </Typography>
-                                                </Button>
-                                            </Grid>
-                                        </>
-                                    )}
-                                </Grid>
-                            </Card>
+                                            }
+                                            sx={{
+                                                color: "#3D5CAC"
+                                            }}
+                                            label="Diagnostic fees included"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                            Add Documents
+                                        </Typography>
+                                        <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/>
+                                    </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                        <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
+                                    </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: "#668AAE",
+                                                textTransform: "none",
+                                                borderRadius: "10px",
+                                                display: 'flex',
+                                                width: "100%",
+                                            }}
+                                            onClick={() => handleSubmit("SENT")}
+                                            >
+                                            <Typography sx={{
+                                                fontWeight: theme.typography.primary.fontWeight, 
+                                                fontSize: "14px",
+                                                color: "#FFFFFF",
+                                                textTransform: "none",
+                                            }}>
+                                                Send Quote
+                                            </Typography>
+                                        </Button>
+                                    </Grid>
+                                </>
+                            ) : (
+                                <>
+                                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                            Notes
+                                        </Typography>
+                                        <TextField
+                                            multiline
+                                            required
+                                            rows={5}
+                                            borderRadius="10px"
+                                            variant="outlined"
+                                            fullWidth 
+                                            InputProps={{
+                                                readOnly: false,
+                                                style: { 
+                                                    backgroundColor: 'white',
+                                                    borderColor: '#000000'
+                                                }
+                                            }}
+                                            onChange={handleNotesChange}
+                                            value={notes}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "25px"}}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: "#668AAE",
+                                                textTransform: "none",
+                                                borderRadius: "10px",
+                                                display: 'flex',
+                                                width: "100%",
+                                            }}
+                                            onClick={() => handleSubmit("REFUSED")}
+                                            >
+                                            <Typography sx={{
+                                                fontWeight: theme.typography.primary.fontWeight, 
+                                                fontSize: "14px",
+                                                color: "#FFFFFF",
+                                                textTransform: "none",
+                                            }}>
+                                                Decline Quote
+                                            </Typography>
+                                        </Button>
+                                    </Grid>
+                                </>
+                            )}
+                        </Grid>
+                    </Card>
                 </Stack> 
             </Paper>
         </Box>

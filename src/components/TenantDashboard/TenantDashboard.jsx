@@ -858,7 +858,8 @@ function MaintenanceRequestsTable(props) {
             },
           }}
           getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5, 10, 25]}          
+          pageSizeOptions={[5, 10, 25]}      
+          disableExtendRowFullWidth={true}    
           onRowClick={(row) => {
             {
               console.log("Row =", row);
