@@ -52,17 +52,17 @@ export default function Payments(props) {
     purchase_uids: [],
   });
 
-  function formatDate(date) {
-    if (date === null || date === undefined) {
-      return "";
-    }
-    var splitDate = date.split("-");
-    console.log("Split Date: ", splitDate)
-    var month = splitDate[1];
-    var day = splitDate[2];
-    var year = splitDate[0].slice(-2);
-    return month + "-" + day + "-" + year;
-  }
+  // function formatDate(date) {
+  //   if (date === null || date === undefined) {
+  //     return "";
+  //   }
+  //   var splitDate = date.split("-"); 
+  //   console.log("Split Date: ", splitDate)
+  //   var month = splitDate[1];
+  //   var day = splitDate[2];
+  //   var year = splitDate[0].slice(-2);
+  //   return month + "-" + day + "-" + year;
+  // }
 
   function totalPaidUpdate(paidItems) {
     var total = 0;
