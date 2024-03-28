@@ -40,12 +40,13 @@ import PhoneNumberField from '../FormComponents/PhoneNumberField'
 import { darken } from '@mui/system';
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){
+export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){    
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, dashboardRoutingBasedOnSelectedRole } = useUser();
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [property, setProperty] = useState(location.state.propertyData);
+    const [lease, setLease] = useState(location.state.leaseData);
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('left');
@@ -59,6 +60,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
     // useEffect(() => {
     //     console.log(selectedImageList)
     // }, [selectedImageList])
+
+    // useEffect(() => {
+    //     console.log("property - ", property);
+    // }, [property])
 
     const handlePropertyChange = (event) => {
         setProperty(event.target.value);
@@ -182,7 +187,35 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
             }
             setShowSpinner(false);
         }
+
+        const sendAnnouncement = async () => {            
+            const receiverPropertyMapping = {            
+                [lease.business_uid]: [property.property_uid],
+            };
+            // console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
+
+            const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+            // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "announcement_title" : "New Maintenance Request",
+                    "announcement_msg" : `New maintenance request created by Tenant for ${property.property_address}, Unit - ${property.property_unit}`,
+                    "announcement_sender": getProfileId(),
+                    "announcement_date": currentDate.toDateString(),
+                    // "announcement_properties": property.contract_property_id,
+                    "announcement_properties": JSON.stringify(receiverPropertyMapping),
+                    "announcement_mode": "LEASE",
+                    "announcement_receiver": [lease.business_uid],
+                    "announcement_type": ["Text", "Email", "App"]
+                })
+            })
+        }
+
         postData();
+        sendAnnouncement();
 
         setSelectedImageList([])
         setProperty('')
