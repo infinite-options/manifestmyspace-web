@@ -362,6 +362,7 @@ export default function AddMaintenanceItem(){
                                             <MenuItem value={"Electrical"}>Electrical</MenuItem>
                                             <MenuItem value={"Appliance"}>Appliance</MenuItem>
                                             <MenuItem value={"HVAC"}>HVAC</MenuItem>
+                                            <MenuItem value={"Other"}>Other</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>

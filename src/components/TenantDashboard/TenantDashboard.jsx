@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Stack, Grid, MenuItem, Menu, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, ListItemAvatar } from "@mui/material";
 import CardSlider from "./CardSlider";
-import PlaceholderImage from "./PlaceholderImage.png";
+import PlaceholderImage from "./MaintenanceIcon.png"; // "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
@@ -73,6 +73,7 @@ function TenantDashboard(props) {
   const { user } = useUser();
 
   let automatic_navigation_handler = (propertyData) => {
+    // console.log("In navigation handler: ", propertyData)
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
     if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
       navigate("/listings");
@@ -107,10 +108,12 @@ function TenantDashboard(props) {
   };
 
   useEffect(() => {
+    // console.log("In UseEffect")
     if (!getProfileId()) navigate("/PrivateprofileName");
     const getTenantData = async () => {
       setShowSpinner(true);
       try {
+        // console.log("Call endpoints")
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
@@ -128,6 +131,8 @@ function TenantDashboard(props) {
         let leaseDetailsData = tenantRequestsData?.leaseDetails?.result;
         let announcementsReceivedData = announcementsResponseData?.received?.result;
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
+        // console.log("Maintenance data from endpoint: ", maintenanceRequestsData )
+        // console.log("allNonActiveLease: ", allNonActiveLease)
 
         // sort propertyData by lease_status so that active lease is first
         propertyData.sort((a, b) => {
@@ -139,6 +144,8 @@ function TenantDashboard(props) {
           }
           return 0;
         });
+
+        // console.log("Property Data after sorting: ", propertyData)
 
         if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
           navigate("/listings");
@@ -752,7 +759,9 @@ export default TenantDashboard;
 
 
 function MaintenanceRequestsTable(props) {
+  // console.log("In Maintenance Request Table from Stack")
   const data = props.data;  
+  // console.log("Data in MRD from props: ", data)
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -773,7 +782,9 @@ function MaintenanceRequestsTable(props) {
     return date;
   }
 
+  // Set favorite image
   data.forEach(item => {
+    // console.log("For Each Item: ", item)
     let favoriteImage = "";
     const maintenanceImagesList = JSON.parse(item.maintenance_images) 
     
@@ -782,10 +793,11 @@ function MaintenanceRequestsTable(props) {
     } else {
       favoriteImage = PlaceholderImage;      
     }
+    // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage
 
   })
-  console.log("MaintenanceRequestsTable - data - ", data);
+  // console.log("MaintenanceRequestsTable - data - ", data);
 
   const columnsList = [
     {
@@ -854,7 +866,7 @@ function MaintenanceRequestsTable(props) {
   ];
 
   if (data.length > 0) {    
-    console.log("Passed Data ", data);
+    // console.log("Passed Data ", data);
     return (
       <>
         <DataGrid
@@ -868,7 +880,7 @@ function MaintenanceRequestsTable(props) {
             },
           }}
           getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5, 10, 25]}          
+          pageSizeOptions={[5, 10, 25, 100]}          
           onRowClick={(row) => {
             {
               console.log("Row =", row);
