@@ -70,10 +70,10 @@ function TenantLeases(props) {
       if (Array.isArray(detailed_property))
       detailed_property=detailed_property[0]
       console.log(detailed_property)
-      setPets(detailed_property?.lease_pets ?? [])
-      setVehicles(detailed_property?.lease_vehicles ?? [])
-      setAdultOccupants(detailed_property?.lease_adults ?? [])
-      setChildrenOccupants(detailed_property?.lease_children ?? [])
+      setPets(JSON.parse(detailed_property?.lease_pets) ?? [])
+      setVehicles(JSON.parse(detailed_property?.lease_vehicles) ?? [])
+      setAdultOccupants(JSON.parse(detailed_property?.lease_adults) ?? [])
+      setChildrenOccupants(JSON.parse(detailed_property?.lease_children) ?? [])
       setFees(JSON.parse(detailed_property?.leaseFees) ?? [])
     }
 
@@ -578,6 +578,90 @@ function TenantLeases(props) {
             </CenteringBox>
           </Grid>
 
+          
+        </Grid>
+
+        <Box sx={{
+            fontSize: '13px',
+            marginTop: '7px',
+            marginBottom: '7px',
+        }}>
+            {adultOccupants?.length ?? 0} Adults
+        </Box>
+
+        {adultOccupants?.map((adult) => (
+            <Box sx={{
+            fontSize: '13px',
+            color: '#160449',
+            marginBottom: '7px', 
+        }}>
+                        {`${adult?.name} | ${adult?.relationship} | DOB: ${adult?.dob}`}
+                    </Box>
+                ))}
+
+        
+        
+
+        <Box sx={{
+            fontSize: '13px',
+            marginTop: '7px',
+            marginBottom: '7px',
+        }}>
+            {childrenOccupants?.length ?? 0} Child
+        </Box>
+        {childrenOccupants?.map((child) => (
+            <Box sx={{
+            fontSize: '13px',
+            color: '#160449',
+            marginBottom: '7px', 
+        }}>
+                        {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
+                    </Box>
+                ))}
+
+        
+            
+        <Box sx={{
+            fontSize: '13px',
+            marginTop: '7px',
+            marginBottom: '7px',
+        }}>
+            {pets?.length ??  0} Pets
+        </Box>
+        
+            {pets?.map((pet) => (
+                <Box sx={{
+            fontSize: '13px',
+            color: '#160449',
+            marginBottom: '7px', 
+        }}>
+                        {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
+                    </Box>
+                ))}
+    
+        <Box sx={{
+            fontSize: '13px',
+            marginTop: '7px',
+            marginBottom: '7px',
+        }}>
+            {vehicles?.length ?? 0} Vehicles
+        </Box>
+        
+
+
+        {vehicles?.map((vehicle) => (
+            <Box sx={{
+            fontSize: '13px',
+            color: '#160449',
+            marginBottom: '7px', 
+        }}>
+                        {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
+                    </Box>
+                ))}  
+            
+            
+            
+        <Grid container spacing={2}>
           <Grid item xs={6}>
             <CenteringBox>
               <Button
@@ -625,6 +709,12 @@ function TenantLeases(props) {
             </CenteringBox>
           </Grid>
         </Grid>
+
+      
+        
+        
+
+ 
       </Paper>
     </Box>
   );
