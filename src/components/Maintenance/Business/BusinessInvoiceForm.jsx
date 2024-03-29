@@ -35,6 +35,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../../contexts/UserContext";
 import DocumentUploader from "../../DocumentUploader";
+import dayjs from 'dayjs';
 
 function LaborTable({labor, setLabor}){
 
@@ -709,7 +710,7 @@ export default function BusinessInvoiceForm(){
                                     Estimated Time: {maintenanceItem.quote_event_type}
                                 </Typography>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
-                                    Earliest Availability: {maintenanceItem.quote_earliest_availability}
+                                    Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("hh:mm A")}
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>

@@ -40,18 +40,20 @@ export default function MarkPaidButton({maintenanceItem, disabled}){
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    pay_purchase_id: maintenanceItem.purchase_uid,
+                    pay_purchase_id: [{"purchase_uid": maintenanceItem.purchase_uid, "pur_amount_due": amount}],
                     pay_fee: 0,
+                    pay_charge_id: "stripe transaction key",
                     pay_amount: amount,
                     pay_total: amount,
                     payment_type: checkNumber ? "check" : "cash",
                     payment_verify: "Unverified",
                     payment_notes: "manual payment",
                     paid_by: maintenanceItem.business_name,
-                    payment_intent: "manual payment",
-                    payment_method: "manual payment",
+                    payment_intent: checkNumber ? "manual payment check" : "manual payment cash",
+                    payment_method: checkNumber ? "manual payment check" : "manual payment cash",
 
                 }),
+
             })
         } catch (error) {
             console.log(error);
