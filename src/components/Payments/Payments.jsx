@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Payments(props) {
   console.log("In Payments.jsx");
+  console.log("intial commit");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
