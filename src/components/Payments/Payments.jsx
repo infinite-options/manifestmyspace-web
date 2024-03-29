@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Payments(props) {
+  console.log("In Payments.jsx");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,7 +36,7 @@ export default function Payments(props) {
   // useEffect(() => {
   //   console.log("paymentDueResult - ", paymentDueResult);
   // }, [paymentDueResult]);
-
+  
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
     //customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
@@ -51,16 +52,26 @@ export default function Payments(props) {
     purchase_uids: [],
   });
 
-  function formatDate(date) {
-    if (date === null || date === undefined) {
-      return "";
-    }
-    var splitDate = date.split("-");
-    var month = splitDate[1];
-    var day = splitDate[2];
-    var year = splitDate[0].slice(-2);
-    return month + "-" + day + "-" + year;
-  }
+  // useEffect(() => {
+  //   console.log("Payments component - total - ", total);
+  // }, [total]);
+
+  // useEffect(() => {
+  //   console.log("Payments component - paymentData - ", paymentData);
+  // }, [paymentData]);
+
+
+  // function formatDate(date) {
+  //   if (date === null || date === undefined) {
+  //     return "";
+  //   }
+  //   var splitDate = date.split("-"); 
+  //   console.log("Split Date: ", splitDate)
+  //   var month = splitDate[1];
+  //   var day = splitDate[2];
+  //   var year = splitDate[0].slice(-2);
+  //   return month + "-" + day + "-" + year;
+  // }
 
   function totalPaidUpdate(paidItems) {
     var total = 0;
@@ -132,6 +143,7 @@ export default function Payments(props) {
   };
 
   const fetchPaymentsData = async () => {
+    console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
       const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
@@ -141,8 +153,8 @@ export default function Payments(props) {
       setPaymentDueResult(paymentStatusData);
       setPaidItems(paidStatusData);
 
-      console.log("--> paymentStatusData", paymentStatusData);
-      console.log("--> paidStatusData", paidStatusData);
+      // console.log("--> paymentStatusData", paymentStatusData);
+      // console.log("--> paidStatusData", paidStatusData);
 
       // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
       var initialSelectedItems = [];
@@ -171,7 +183,7 @@ export default function Payments(props) {
       totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
       totalPaidUpdate(paidStatusData);
 
-      console.log("--> initialSelectedItems", initialSelectedItems);
+      // console.log("--> initialSelectedItems", initialSelectedItems);
     } catch (error) {
       console.error("Error fetching payment data:", error);
     }
@@ -373,7 +385,7 @@ export default function Payments(props) {
               </Typography>
             </Stack>
             <Stack>
-              <BalanceDetailsTable data={paymentDueResult}/>
+              <BalanceDetailsTable data={paymentDueResult} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems}/>
             </Stack>
           </Paper>
           <Paper
@@ -392,7 +404,7 @@ export default function Payments(props) {
 
             <Stack sx={{ paddingTop: "10px" }}>
               <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={1}>
+                <Grid item xs={2}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -404,7 +416,7 @@ export default function Payments(props) {
                     Date
                   </Typography>
                 </Grid>
-                <Grid item xs={3} alignItems="center">
+                <Grid item xs={3} alignItems="left">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -417,7 +429,7 @@ export default function Payments(props) {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={3} alignItems="center">
+                <Grid item xs={3} alignItems="left">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -443,7 +455,7 @@ export default function Payments(props) {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={2} alignItems="center">
+                <Grid item xs={1} alignItems="center">
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -473,7 +485,7 @@ export default function Payments(props) {
               {paidItems.length > 0 &&
                 paidItems.map((item, index) => (
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index} sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
-                    <Grid item xs={1} alignItems="center">
+                    <Grid item xs={2} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -482,7 +494,8 @@ export default function Payments(props) {
                           fontFamily: "Source Sans Pro",
                         }}
                       >
-                        {formatDate(item.payment_date)}
+                        {/* {formatDate(item.payment_date)} */}
+                        {(item.payment_date)}
                       </Typography>
                     </Grid>
                     <Grid item xs={3} alignItems="center">
@@ -524,7 +537,7 @@ export default function Payments(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={2} alignItems="center">
+                    <Grid item xs={1} alignItems="center">
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -587,46 +600,82 @@ export default function Payments(props) {
   );
 }
 
-
 function BalanceDetailsTable(props) {
-  const data = props.data;
+  console.log("In BalanceDetailTable");
+  const [data, setData]  = useState(props.data);      
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);  
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
 
-  const paymentDueResult = data.map((item) => ({
-    ...item, pur_amount_due : parseFloat(item.pur_amount_due)
-  }));
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]); 
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.purchase_uid));
+      setPaymentDueResult(data.map((item) => ({
+        ...item, pur_amount_due : parseFloat(item.pur_amount_due)
+      })));
+    }
+  }, [data]);
+
+  useEffect(() => {    
+    var total = 0;
+
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      // console.log("item in loop", item)
+    
+        let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item); 
+        purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+        // console.log("payment item data", paymentItemData);
+        total += parseFloat(paymentItemData.pur_amount_due);    
+    }
+    // console.log("selectedRows useEffect - total - ", total);
+    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+    props.setTotal(total);
+    props.setPaymentData((prevPaymentData) => ({
+      ...prevPaymentData,
+      balance: total.toFixed(2),
+      purchase_uids: purchase_uid_mapping,
+    }));
+    
+  }, [selectedRows]);
+
+  useEffect(() => {
+    console.log("selectedPayments - ", selectedPayments);
+    props.setSelectedItems(selectedPayments)
+  }, [selectedPayments]);
 
 
-
-  // useEffect(() => {
-  //   console.log("selectedRows - ", selectedRows);
-  // }, [selectedRows]);
 
   const columnsList = [
     {
       field: "pur_description",
       headerName: "Description",
       flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "property_address",
       headerName: "Address",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "property_unit",
       headerName: "Unit",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
 
     {
       field: "pur_due_date",
       headerName: "Due Date",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
 
     {
@@ -634,19 +683,50 @@ function BalanceDetailsTable(props) {
       headerName: "Amount",
       flex: 1,
       headerStyle: {
-        fontWeight: 'bold', // Apply inline style to the header cell
+        fontWeight: "bold", // Apply inline style to the header cell
       },
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold' }}>$ {params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ {params.value}</Box>,
     },
   ];
   
-  const handleSelectionModelChange = (newRowSelectionModel) => {    
+  const handleSelectionModelChange = (newRowSelectionModel) => {   
+    console.log("newRowSelectionModel - ", newRowSelectionModel);
+    
+    const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));    
+    const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
+    
+    if (addedRows.length > 0) {
+        // console.log("Added rows: ", addedRows);
+        let newPayments = []
+        addedRows.forEach((item, index) => {
+          const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+          // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+          newPayments.push(addedPayment)
+        })
+        
+        // console.log("newPayments - ", newPayments);
+        setSelectedPayments((prevState) => {
+          return [...prevState, ...newPayments]
+        });        
+    }
+    
+    if (removedRows.length > 0) {
+        // console.log("Removed rows: ", removedRows);
+        let removedPayments = []
+        removedRows.forEach((item, index) => {
+          let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+          // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+          removedPayments.push(removedPayment)
+        })
+        // console.log("removedPayments - ", removedPayments);        
+        setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
+    }
     setSelectedRows(newRowSelectionModel);
   };
 
 
   if (paymentDueResult.length > 0) {    
-    console.log("Passed Data ", paymentDueResult);
+    // console.log("Passed Data ", paymentDueResult);
     return (
       <>
         <DataGrid
@@ -677,33 +757,33 @@ function BalanceDetailsTable(props) {
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-                <Grid item xs={1} alignItems="center"></Grid>
-                <Grid item xs={9} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Total
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} alignItems="right">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)}
-                  </Typography>
-                </Grid>
-              </Grid>
-      </>      
+          <Grid item xs={1} alignItems="center"></Grid>
+          <Grid item xs={9} alignItems="center">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total
+            </Typography>
+          </Grid>
+          <Grid item xs={2} alignItems="right">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
     );
   } else {
     return <></>;

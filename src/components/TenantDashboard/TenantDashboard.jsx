@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Stack, Grid, MenuItem, Menu, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, ListItemAvatar } from "@mui/material";
 import CardSlider from "./CardSlider";
-import PlaceholderImage from "./PlaceholderImage.png";
+import PlaceholderImage from "./MaintenanceIcon.png"; // "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
 import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
@@ -33,6 +33,7 @@ function TenantDashboard(props) {
   const [maintenanceRequests, setMaintenanceRequests] = useState([]);
   const [allMaintenanceRequests, setAllMaintenanceRequests] = useState([]);
   const [propertyData, setPropertyData] = useState([]);
+  const [leaseDetails, setLeaseDetails] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
   const [announcementsData, setAnnouncementsData] = useState([]);
@@ -54,9 +55,13 @@ function TenantDashboard(props) {
   //   console.log("selectedProperty - ", selectedProperty);
   // }, [selectedProperty]);
 
-  useEffect(() => {
-    console.log("maintenanceRequests - ", maintenanceRequests);
-  }, [maintenanceRequests]);
+  // useEffect(() => {
+  //   console.log("selectedLease - ", selectedLease);
+  // }, [selectedLease]);
+
+  // useEffect(() => {
+  //   console.log("maintenanceRequests - ", maintenanceRequests);
+  // }, [maintenanceRequests]);
 
   const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -68,6 +73,7 @@ function TenantDashboard(props) {
   const { user } = useUser();
 
   let automatic_navigation_handler = (propertyData) => {
+    // console.log("In navigation handler: ", propertyData)
     const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
     if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
       navigate("/listings");
@@ -102,10 +108,12 @@ function TenantDashboard(props) {
   };
 
   useEffect(() => {
+    // console.log("In UseEffect")
     if (!getProfileId()) navigate("/PrivateprofileName");
     const getTenantData = async () => {
       setShowSpinner(true);
       try {
+        // console.log("Call endpoints")
         const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
@@ -120,8 +128,11 @@ function TenantDashboard(props) {
 
         let propertyData = tenantRequestsData?.property?.result;
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
+        let leaseDetailsData = tenantRequestsData?.leaseDetails?.result;
         let announcementsReceivedData = announcementsResponseData?.received?.result;
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
+        // console.log("Maintenance data from endpoint: ", maintenanceRequestsData )
+        // console.log("allNonActiveLease: ", allNonActiveLease)
 
         // sort propertyData by lease_status so that active lease is first
         propertyData.sort((a, b) => {
@@ -134,11 +145,14 @@ function TenantDashboard(props) {
           return 0;
         });
 
+        // console.log("Property Data after sorting: ", propertyData)
+
         if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
           navigate("/listings");
         }
 
         setPropertyData(propertyData || []);
+        setLeaseDetails(leaseDetailsData || []);
         setAllMaintenanceRequests(maintenanceRequestsData);
         setMaintenanceRequests(maintenanceRequestsData || []);
 
@@ -234,8 +248,10 @@ function TenantDashboard(props) {
 
   function handleTenantMaintenanceNavigate() {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address);
+    const propertyLeaseData = leaseDetails.find((item) => item.lease_property_id === selectedProperty.lease_property_id);
+    console.log("Navigating to /addTenantMaintenanceItem - propertyLeaseData - ", propertyLeaseData);
     navigate("/addTenantMaintenanceItem", {
-      state: { propertyData: navPropertyData },
+      state: { propertyData: navPropertyData, leaseData: propertyLeaseData },
     });
   }
 
@@ -276,6 +292,9 @@ function TenantDashboard(props) {
 
   return (
     <>
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {selectedProperty !== null ? (
         <>
           <Box
@@ -283,10 +302,7 @@ function TenantDashboard(props) {
               fontFamily: "Source Sans Pro",
               padding: "14px",
             }}
-          >
-            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-              <CircularProgress color="inherit" />
-            </Backdrop>
+          >            
             <Grid
               container
               sx={{
@@ -459,7 +475,7 @@ function TenantDashboard(props) {
                           </Box> */}
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Pay before {selectedProperty == null ? "No Data" : selectedProperty.earliest_due_date})
+                          (Pay before: {(selectedProperty == null || !selectedProperty.earliest_due_date) ? "No Data" : selectedProperty.earliest_due_date})
                         </Box>
                       </Box>
                       <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
@@ -743,7 +759,9 @@ export default TenantDashboard;
 
 
 function MaintenanceRequestsTable(props) {
+  // console.log("In Maintenance Request Table from Stack")
   const data = props.data;  
+  // console.log("Data in MRD from props: ", data)
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -764,18 +782,22 @@ function MaintenanceRequestsTable(props) {
     return date;
   }
 
+  // Set favorite image
   data.forEach(item => {
+    // console.log("For Each Item: ", item)
     let favoriteImage = "";
-    if (item.maintenance_images && item.maintenance_images.length > 0) {
-      const image_list = JSON.parse(item.maintenance_images);
-      favoriteImage = image_list.find((url) => url.endsWith("img_cover"));
+    const maintenanceImagesList = JSON.parse(item.maintenance_images) 
+    
+    if (maintenanceImagesList && maintenanceImagesList.length > 0) {      
+      favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));      
     } else {
-      favoriteImage = PlaceholderImage;
+      favoriteImage = PlaceholderImage;      
     }
+    // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage
 
   })
-  console.log("MaintenanceRequestsTable - data - ", data);
+  // console.log("MaintenanceRequestsTable - data - ", data);
 
   const columnsList = [
     {
@@ -844,7 +866,7 @@ function MaintenanceRequestsTable(props) {
   ];
 
   if (data.length > 0) {    
-    console.log("Passed Data ", data);
+    // console.log("Passed Data ", data);
     return (
       <>
         <DataGrid
@@ -858,8 +880,7 @@ function MaintenanceRequestsTable(props) {
             },
           }}
           getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5, 10, 25]}      
-          disableExtendRowFullWidth={true}    
+          pageSizeOptions={[5, 10, 25, 100]}          
           onRowClick={(row) => {
             {
               console.log("Row =", row);
