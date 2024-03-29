@@ -12,8 +12,8 @@ import { useNavigate, useLocation,} from 'react-router-dom';
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
 
-export default function Announcements() {
-    const { getProfileId } = useUser();
+export default function Announcements() {        
+    const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
     const [sentData, setSentData] = useState([]);
     const [receivedData, setReceivedData] = useState([]);
@@ -94,14 +94,30 @@ export default function Announcements() {
     // Handle Navigation to the Contacts
 
     const [dataDetails, setDataDetails]= useState({})
+
+    // useEffect(() => {
+    //     console.log("dataDetails - ", dataDetails);
+    // }, [dataDetails]);
+
     const fetchContactData = async () => {
         const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
         setShowSpinner(true);
+        let data = null;
         
         await axios.get(url)
             .then((resp) => {
-                const data = resp.data['management_contacts'];
-                setDataDetails(prev => {return {...prev, Tenant:data['tenants'] , Owner: data['owners'], Maintenance: data['maintenance'] }})
+                // console.log("selectedRole - ", selectedRole);
+                if(selectedRole === "MANAGER"){
+                    data = resp.data['management_contacts'];
+                    setDataDetails(prev => {return {...prev, Tenant:data['tenants'] , Owner: data['owners'], Maintenance: data['maintenance'] }})
+                }else if(selectedRole === "OWNER"){
+                    data = resp.data['owner_contacts'];
+                    setDataDetails(prev => {return {...prev, Tenant:data['tenants'] , Manager: data['managers'] }})
+                }else if(selectedRole === "MAINTENANCE"){
+                    data = resp.data['maintenance_contacts'];
+                    setDataDetails(prev => {return {...prev, Tenant:data['tenants'] , Manager: data['managers'] }})
+                }  
+                
                 setShowSpinner(false);
             })
             .catch((e) => {
@@ -117,7 +133,7 @@ export default function Announcements() {
 
     // function onClick
 //
-    const { user, selectedRole, selectRole, Name } = useUser();
+    
     
     const handleAnnouncements = (announcement) => {
             if(announcement.announcement_mode=="PROPERTIES"){

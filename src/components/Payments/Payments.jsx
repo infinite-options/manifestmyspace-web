@@ -36,7 +36,7 @@ export default function Payments(props) {
   // useEffect(() => {
   //   console.log("paymentDueResult - ", paymentDueResult);
   // }, [paymentDueResult]);
-
+  
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
     //customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
@@ -52,17 +52,26 @@ export default function Payments(props) {
     purchase_uids: [],
   });
 
-  function formatDate(date) {
-    if (date === null || date === undefined) {
-      return "";
-    }
-    var splitDate = date.split("-");
-    console.log("Split Date: ", splitDate)
-    var month = splitDate[1];
-    var day = splitDate[2];
-    var year = splitDate[0].slice(-2);
-    return month + "-" + day + "-" + year;
-  }
+  // useEffect(() => {
+  //   console.log("Payments component - total - ", total);
+  // }, [total]);
+
+  // useEffect(() => {
+  //   console.log("Payments component - paymentData - ", paymentData);
+  // }, [paymentData]);
+
+
+  // function formatDate(date) {
+  //   if (date === null || date === undefined) {
+  //     return "";
+  //   }
+  //   var splitDate = date.split("-"); 
+  //   console.log("Split Date: ", splitDate)
+  //   var month = splitDate[1];
+  //   var day = splitDate[2];
+  //   var year = splitDate[0].slice(-2);
+  //   return month + "-" + day + "-" + year;
+  // }
 
   function totalPaidUpdate(paidItems) {
     var total = 0;
@@ -144,8 +153,8 @@ export default function Payments(props) {
       setPaymentDueResult(paymentStatusData);
       setPaidItems(paidStatusData);
 
-      console.log("--> paymentStatusData", paymentStatusData);
-      console.log("--> paidStatusData", paidStatusData);
+      // console.log("--> paymentStatusData", paymentStatusData);
+      // console.log("--> paidStatusData", paidStatusData);
 
       // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
       var initialSelectedItems = [];
@@ -174,7 +183,7 @@ export default function Payments(props) {
       totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
       totalPaidUpdate(paidStatusData);
 
-      console.log("--> initialSelectedItems", initialSelectedItems);
+      // console.log("--> initialSelectedItems", initialSelectedItems);
     } catch (error) {
       console.error("Error fetching payment data:", error);
     }
@@ -376,7 +385,7 @@ export default function Payments(props) {
               </Typography>
             </Stack>
             <Stack>
-              <BalanceDetailsTable data={paymentDueResult} />
+              <BalanceDetailsTable data={paymentDueResult} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems}/>
             </Stack>
           </Paper>
           <Paper
@@ -593,17 +602,54 @@ export default function Payments(props) {
 
 function BalanceDetailsTable(props) {
   console.log("In BalanceDetailTable");
-  const data = props.data;
+  const [data, setData]  = useState(props.data);      
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);  
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
 
-  const paymentDueResult = data.map((item) => ({
-    ...item,
-    pur_amount_due: parseFloat(item.pur_amount_due),
-  }));
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]); 
 
-  // useEffect(() => {
-  //   console.log("selectedRows - ", selectedRows);
-  // }, [selectedRows]);
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.purchase_uid));
+      setPaymentDueResult(data.map((item) => ({
+        ...item, pur_amount_due : parseFloat(item.pur_amount_due)
+      })));
+    }
+  }, [data]);
+
+  useEffect(() => {    
+    var total = 0;
+
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      // console.log("item in loop", item)
+    
+        let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item); 
+        purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+        // console.log("payment item data", paymentItemData);
+        total += parseFloat(paymentItemData.pur_amount_due);    
+    }
+    // console.log("selectedRows useEffect - total - ", total);
+    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+    props.setTotal(total);
+    props.setPaymentData((prevPaymentData) => ({
+      ...prevPaymentData,
+      balance: total.toFixed(2),
+      purchase_uids: purchase_uid_mapping,
+    }));
+    
+  }, [selectedRows]);
+
+  useEffect(() => {
+    console.log("selectedPayments - ", selectedPayments);
+    props.setSelectedItems(selectedPayments)
+  }, [selectedPayments]);
+
+
 
   const columnsList = [
     {
@@ -642,12 +688,44 @@ function BalanceDetailsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ {params.value}</Box>,
     },
   ];
-
-  const handleSelectionModelChange = (newRowSelectionModel) => {
+  
+  const handleSelectionModelChange = (newRowSelectionModel) => {   
+    console.log("newRowSelectionModel - ", newRowSelectionModel);
+    
+    const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));    
+    const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
+    
+    if (addedRows.length > 0) {
+        // console.log("Added rows: ", addedRows);
+        let newPayments = []
+        addedRows.forEach((item, index) => {
+          const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+          // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+          newPayments.push(addedPayment)
+        })
+        
+        // console.log("newPayments - ", newPayments);
+        setSelectedPayments((prevState) => {
+          return [...prevState, ...newPayments]
+        });        
+    }
+    
+    if (removedRows.length > 0) {
+        // console.log("Removed rows: ", removedRows);
+        let removedPayments = []
+        removedRows.forEach((item, index) => {
+          let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+          // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+          removedPayments.push(removedPayment)
+        })
+        // console.log("removedPayments - ", removedPayments);        
+        setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
+    }
     setSelectedRows(newRowSelectionModel);
   };
 
-  if (paymentDueResult.length > 0) {
+
+  if (paymentDueResult.length > 0) {    
     // console.log("Passed Data ", paymentDueResult);
     return (
       <>

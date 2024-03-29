@@ -33,6 +33,7 @@ function TenantDashboard(props) {
   const [maintenanceRequests, setMaintenanceRequests] = useState([]);
   const [allMaintenanceRequests, setAllMaintenanceRequests] = useState([]);
   const [propertyData, setPropertyData] = useState([]);
+  const [leaseDetails, setLeaseDetails] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
   const [announcementsData, setAnnouncementsData] = useState([]);
@@ -54,9 +55,13 @@ function TenantDashboard(props) {
   //   console.log("selectedProperty - ", selectedProperty);
   // }, [selectedProperty]);
 
-  useEffect(() => {
-    // console.log("maintenanceRequests - ", maintenanceRequests);
-  }, [maintenanceRequests]);
+  // useEffect(() => {
+  //   console.log("selectedLease - ", selectedLease);
+  // }, [selectedLease]);
+
+  // useEffect(() => {
+  //   console.log("maintenanceRequests - ", maintenanceRequests);
+  // }, [maintenanceRequests]);
 
   const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -123,6 +128,7 @@ function TenantDashboard(props) {
 
         let propertyData = tenantRequestsData?.property?.result;
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
+        let leaseDetailsData = tenantRequestsData?.leaseDetails?.result;
         let announcementsReceivedData = announcementsResponseData?.received?.result;
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
         // console.log("Maintenance data from endpoint: ", maintenanceRequestsData )
@@ -146,6 +152,7 @@ function TenantDashboard(props) {
         }
 
         setPropertyData(propertyData || []);
+        setLeaseDetails(leaseDetailsData || []);
         setAllMaintenanceRequests(maintenanceRequestsData);
         setMaintenanceRequests(maintenanceRequestsData || []);
 
@@ -241,8 +248,10 @@ function TenantDashboard(props) {
 
   function handleTenantMaintenanceNavigate() {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address);
+    const propertyLeaseData = leaseDetails.find((item) => item.lease_property_id === selectedProperty.lease_property_id);
+    console.log("Navigating to /addTenantMaintenanceItem - propertyLeaseData - ", propertyLeaseData);
     navigate("/addTenantMaintenanceItem", {
-      state: { propertyData: navPropertyData },
+      state: { propertyData: navPropertyData, leaseData: propertyLeaseData },
     });
   }
 
@@ -283,6 +292,9 @@ function TenantDashboard(props) {
 
   return (
     <>
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {selectedProperty !== null ? (
         <>
           <Box
@@ -290,10 +302,7 @@ function TenantDashboard(props) {
               fontFamily: "Source Sans Pro",
               padding: "14px",
             }}
-          >
-            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-              <CircularProgress color="inherit" />
-            </Backdrop>
+          >            
             <Grid
               container
               sx={{
@@ -466,7 +475,7 @@ function TenantDashboard(props) {
                           </Box> */}
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Pay before {selectedProperty == null ? "No Data" : selectedProperty.earliest_due_date})
+                          (Pay before: {(selectedProperty == null || !selectedProperty.earliest_due_date) ? "No Data" : selectedProperty.earliest_due_date})
                         </Box>
                       </Box>
                       <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
@@ -777,16 +786,12 @@ function MaintenanceRequestsTable(props) {
   data.forEach(item => {
     // console.log("For Each Item: ", item)
     let favoriteImage = "";
-    // console.log("Image Display: ", item.maintenance_images.length, item.maintenance_images)
-    if (item.maintenance_images && item.maintenance_images.length > 2) {
-      // console.log("In if ")
-      const image_list = JSON.parse(item.maintenance_images);
-      // console.log("image_list: ", image_list)
-      favoriteImage = image_list.find((url) => url.endsWith("img_cover"));
-      // console.log("favoriteImage: ", favoriteImage)
+    const maintenanceImagesList = JSON.parse(item.maintenance_images) 
+    
+    if (maintenanceImagesList && maintenanceImagesList.length > 0) {      
+      favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));      
     } else {
-      favoriteImage = PlaceholderImage;
-      // console.log("Placeholder image: ", favoriteImage)
+      favoriteImage = PlaceholderImage;      
     }
     // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage
