@@ -18,7 +18,7 @@ export default function ManagerProfileLink(props){
         }}>
         <Button
             variant="contained"
-            disableElevation
+            
             sx={{
                 backgroundColor: "#D6D5DA",
                 textTransform: "none",

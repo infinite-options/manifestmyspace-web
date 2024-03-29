@@ -133,7 +133,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#97A7CF",
                             textTransform: "none",

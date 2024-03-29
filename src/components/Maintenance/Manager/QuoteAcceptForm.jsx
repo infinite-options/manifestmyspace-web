@@ -346,7 +346,7 @@ export default function QuoteAcceptForm(){
                                 <>
                                     <Button
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             backgroundColor: "#9EAED6",
                                             textTransform: "none",
@@ -366,7 +366,7 @@ export default function QuoteAcceptForm(){
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             backgroundColor: "#CB8E8E",
                                             textTransform: "none",

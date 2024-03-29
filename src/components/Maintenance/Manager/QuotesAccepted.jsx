@@ -28,6 +28,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
+import DateTimePickerModal from "../../DateTimePicker";
 
 export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}){
     // console.log("--debug-- maintenanceItem", maintenanceItem)
@@ -37,18 +38,25 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
     const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([])
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
+    const [date, setDate] = useState(maintenanceItem.earliest_available_date || "")
+    const [time, setTime] = useState(maintenanceItem.earliest_available_time || "")
+    const [showModal, setShowModal] = useState(false);
+
+    let business_name = maintenanceItem?.maint_business_name || "Business Name Not Available";
 
     useEffect(() => {
         setMaintenanceItemQuotes(quotes);
         // console.log("--debug-- maintenanceItemQuotes", maintenanceItemQuotes, quotes)
     }, [quotes]);
-
-    async function handleScheduleStatusChange(){
+ 
+    async function handleScheduleStatusChange(id, date, time){
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             const formData = new FormData();
-            formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_uid", id);
             formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_scheduled_date", date); 
+            formData.append("maintenance_scheduled_time", time);
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
@@ -74,7 +82,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             console.log("changeMaintenanceQuoteStatus maintenanceItemQuotes", maintenanceItemQuotes)
             console.log(quote)
             formData.append("maintenance_quote_uid", quote.maintenance_quote_uid); // 900-xxx
-            formData.append("quote_maintenance_request_id", maintenanceItem?.maintenance_request_uid) //quote_maintenance_request_id maintenance_request_uid
+            formData.append("quote_maintenance_request_id", id) //quote_maintenance_request_id maintenance_request_uid
             formData.append("quote_status", "SCHEDULED")
             
             try {
@@ -97,7 +105,8 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             }
             setShowSpinner(false);
         }
-        changeMaintenanceQuoteStatus()
+        await changeMaintenanceQuoteStatus()
+        navigate(maintenanceRoutingBasedOnSelectedRole())
     }
 
     return(
@@ -125,7 +134,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#DEA19C",
                             textTransform: "none",
@@ -136,7 +145,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                         }}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Contact Maintenance - Kim Deal
+                            Contact Maintenance - {business_name}
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
@@ -149,7 +158,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#97A7CF",
                             textTransform: "none",
@@ -157,17 +166,25 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                             display: 'flex',
                             width: "100%"
                         }}
-                        onClick={() => handleScheduleStatusChange()}
+                        onClick={() => setShowModal(true)}
                     >
                         <CalendarMonthIcon sx={{color: "#FFFFFF"}}/>
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Ready for Scheduling
+                            Schedule Maintenance
                         </Typography>
                     </Button>
                 </Grid>
                 <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
+            <DateTimePickerModal 
+                setOpenModal={setShowModal}
+                open={showModal}
+                maintenanceItem={maintenanceItem}
+                date={date}
+                time={time}
+                handleSubmit={handleScheduleStatusChange}
+            />
         </Box>
     )
 }

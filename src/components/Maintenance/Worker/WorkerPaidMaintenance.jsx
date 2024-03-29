@@ -103,7 +103,7 @@ export default function WorkerPaidMaintenance({maintenanceItem}){
             }}>
                 <Box
                     variant="contained"
-                    disableElevation
+                    
                     sx={{
                         flexDirection: "column",
                         backgroundColor: "#D6D5DA",
@@ -132,7 +132,7 @@ export default function WorkerPaidMaintenance({maintenanceItem}){
                     </Typography>
                     <Box
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
@@ -159,7 +159,7 @@ export default function WorkerPaidMaintenance({maintenanceItem}){
                     </Typography>
                     <Box
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             flexDirection: "column",
                             backgroundColor: "#D6D5DA",
@@ -199,7 +199,7 @@ export default function WorkerPaidMaintenance({maintenanceItem}){
                     </Typography>
                     <Box
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",

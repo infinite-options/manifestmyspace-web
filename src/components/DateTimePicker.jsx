@@ -40,7 +40,8 @@ function DateTimePickerModal(props) {
   const activeButton = availabilityDate !== "" && availabilityTime !== "";
 
   function submit(){
-    props.handleSubmit(availabilityDate, availabilityTime).then(
+    console.log("in submit for datetimepicker")
+    props.handleSubmit(props.maintenanceItem.maintenance_request_uid, availabilityDate, availabilityTime).then(
         handleClose()
     )
   }

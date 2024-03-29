@@ -31,7 +31,7 @@ export default function CompletedM({maintenanceItem}){
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
     
-    let business_name = maintenanceItem?.business_name || "Business Name Not Available";
+    let business_name = maintenanceItem?.maint_business_name || "Business Name Not Available";
 
 
     function handleNavigateToQuotesRequested(){
@@ -63,7 +63,7 @@ export default function CompletedM({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#3D5CAC",
                             textTransform: "none",

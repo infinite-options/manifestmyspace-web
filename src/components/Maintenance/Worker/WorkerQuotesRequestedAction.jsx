@@ -75,7 +75,7 @@ export default function WorkerQuotesRequestedAction({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
@@ -97,7 +97,7 @@ export default function WorkerQuotesRequestedAction({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
@@ -120,7 +120,7 @@ export default function WorkerQuotesRequestedAction({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",

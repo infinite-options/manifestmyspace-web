@@ -100,7 +100,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                     }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
@@ -122,7 +122,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#9EAED6",
                             textTransform: "none",
@@ -144,7 +144,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#C06A6A",
                             textTransform: "none",

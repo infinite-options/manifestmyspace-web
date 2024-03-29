@@ -826,7 +826,7 @@ export default function BusinessInvoiceForm(){
                             <Grid item xs={12}>
                                 <Button
                                     variant="contained"
-                                    disableElevation
+                                    
                                     sx={{
                                         backgroundColor: "#3D5CAC",
                                         textTransform: "none",

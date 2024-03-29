@@ -30,17 +30,19 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 import Scheduler from "../../utils/Scheduler";
+import DateTimePickerModal from "../../DateTimePicker";
 
 export default function WorkerQuotesAccepted({maintenanceItem}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [showScheduler, setShowScheduler] = useState(false);
-    const [schedulerDate, setSchedulerDate] = useState(null);
+    const [schedulerDate, setSchedulerDate] = useState("");    
+    const [schedulerTime, setSchedulerTime] = useState("");    
 
-    useEffect(() => {
-        console.log("--DEBUG--", schedulerDate)
-    }, [schedulerDate])
+    // useEffect(() => {
+    //     console.log("--DEBUG--", schedulerDate)
+    // }, [schedulerDate])
     
 
     function handleNavigateToQuotesRequested(){
@@ -66,9 +68,9 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
         }
     }
 
-    async function handleScheduleChange(id){
+    async function handleScheduleChange(id, date, time){
 
-        console.log("handleScheduleChange", id)
+        console.log("handleScheduleChange", id, date, time)
 
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
@@ -76,8 +78,8 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
             const formData = new FormData();
             formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
             formData.append("maintenance_request_status", "SCHEDULED");
-            formData.append("maintenance_scheduled_date", schedulerDate.format("MM-DD-YYYY")); // this needs to change for the date and time picker
-            formData.append("maintenance_scheduled_time", schedulerDate.format("HH:mm:ss")); // this needs to change for the date and time picker
+            formData.append("maintenance_scheduled_date", schedulerDate); // this needs to change for the date and time picker
+            formData.append("maintenance_scheduled_time", schedulerTime); // this needs to change for the date and time picker
             try {
                 const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
                     method: 'PUT',
@@ -120,8 +122,9 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
             }
             setShowSpinner(false);
         }
-        changeMaintenanceRequestStatus()
         setShowScheduler(false);
+
+        changeMaintenanceRequestStatus();
     }
 
     async function handleComplete(id){
@@ -188,7 +191,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                 }}>
                     <Box
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             flexDirection: "column",
                             backgroundColor: "#D6D5DA",
@@ -213,7 +216,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                     </Typography>
                     <Box
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
@@ -236,7 +239,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
@@ -258,7 +261,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
@@ -277,12 +280,13 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                         </Typography>
                     </Button>
                 </Grid> 
-                <Scheduler 
-                    show={showScheduler} 
-                    setShow={setShowScheduler} 
+                <DateTimePickerModal 
+                    open={showScheduler}
+                    setOpenModal={setShowScheduler} 
                     date={schedulerDate} 
-                    setDate={setSchedulerDate}
-                    handleSubmit={handleScheduleChange(maintenanceItem.maintenance_request_uid)}
+                    time={schedulerTime}
+                    maintenanceItem={maintenanceItem}
+                    handleSubmit={() => handleScheduleChange(maintenanceItem.maintenance_request_uid, schedulerDate,  schedulerTime)}
                 />
             </Grid>
         </Box>

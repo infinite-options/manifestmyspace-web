@@ -416,7 +416,7 @@ export default function RescheduleMaintenance(){
                         <Grid item xs={12}>
                             <Button
                                 variant="contained"
-                                disableElevation
+                                
                                 sx={{
                                     backgroundColor: "#9EAED6",
                                     textTransform: "none",

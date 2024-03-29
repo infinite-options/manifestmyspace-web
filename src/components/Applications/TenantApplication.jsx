@@ -934,7 +934,7 @@ export default function TenantApplication(){
                                 
                                     <Button
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             backgroundColor: "#9EAED6",
                                             textTransform: "none",
@@ -958,7 +958,7 @@ export default function TenantApplication(){
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             backgroundColor: "#CB8E8E",
                                             textTransform: "none",

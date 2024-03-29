@@ -112,7 +112,7 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
 }
 
 export default function MaintenanceManager() {
-  console.log("In MaintenanceManager");
+  // console.log("In MaintenanceManager");
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId } = useUser();

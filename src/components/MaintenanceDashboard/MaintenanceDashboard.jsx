@@ -340,7 +340,7 @@ export default function MaintenanceDashboard(){
                                 <Grid item xs={12}>
                                     <Box
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             flexDirection: "column",
                                             backgroundColor: "#598A96",
@@ -406,7 +406,7 @@ export default function MaintenanceDashboard(){
                         >
                             <Button
                                 variant="contained"
-                                disableElevation                            
+                                                            
                                 sx={{
                                     backgroundColor: "#DEDFE3",
                                     textTransform: "none",

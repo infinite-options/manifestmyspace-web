@@ -343,12 +343,12 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 <Typography sx={{color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "18px"}}>
                     Quote Total: ${estimatedCost}
                 </Typography>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
+                {/* <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     Your Estimated Time: {maintenanceItem?.quote_event_type}
-                </Typography>
+                </Typography> */}
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     {/* I would like this to be stored as time and date */}
-                    Your Earliest Availability: {maintenanceItem.quote_earliest_availability}
+                    Your Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("h:mm A")}
                 </Typography>
             </Grid>
             {maintenanceItem?.maintenance_request_status == "SCHEDULED" ? (
@@ -399,7 +399,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     </Typography>
                 </Button>
             </Grid>
-            {maintenanceItem.quote_status !== "REJECTED" ? (
+            {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" ? (
                 <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                     <Button sx={{
                         backgroundColor: "#F44336",
@@ -407,7 +407,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                         margin: "1px",
                         }}
                         variant="contained"
-                        disableElevation
+                        
                         onClick={() => setShowWithdrawModal(true)}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>

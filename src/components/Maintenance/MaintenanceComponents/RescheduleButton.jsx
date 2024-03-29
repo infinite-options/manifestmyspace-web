@@ -16,25 +16,28 @@ export default function RescheduleButton({maintenanceItem}){
     const date = maintenanceItem.maintenance_scheduled_date;
     const time = maintenanceItem.maintenance_scheduled_time;
 
-    const reschedule = async (date, time) => {
-        // setShowSpinner(true);
-        console.log("reschedule", date, time)
-        var formData = new FormData();
-        formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
-        formData.append("maintenance_request_status", "SCHEDULED");
-        formData.append("maintenance_scheduled_date", date); // this needs to change for the date and time picker
-        formData.append("maintenance_scheduled_time", time); // this needs to change for the date and time picker
 
-        try {
-            console.log("in try block")
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
-                method: 'PUT',
-                body: formData
-            });
-        } catch (error){
-            console.log("error", error)
+    async function handleSubmit(date, time){
+        const reschedule = async () => {
+            // setShowSpinner(true);
+            console.log("reschedule", date, time)
+            var formData = new FormData();
+            formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_scheduled_date", date); // this needs to change for the date and time picker
+            formData.append("maintenance_scheduled_time", time); // this needs to change for the date and time picker
+    
+            try {
+                console.log("in try block")
+                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                    method: 'PUT',
+                    body: formData
+                });
+            } catch (error){
+                console.log("error", error)
+            }
+            // setShowSpinner(false);
         }
-        // setShowSpinner(false);
     }
 
     return (
@@ -44,7 +47,7 @@ export default function RescheduleButton({maintenanceItem}){
         }}>
             <Button
                 variant="contained"
-                disableElevation
+                
                 sx={{
                     backgroundColor: "#FFFFFF",
                     textTransform: "none",
@@ -70,7 +73,7 @@ export default function RescheduleButton({maintenanceItem}){
                 maintenanceItem={maintenanceItem}
                 date={date}
                 time={time}
-                handleSubmit={reschedule}
+                handleSubmit={handleSubmit}
             />
         </Grid>
     )

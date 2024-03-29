@@ -169,9 +169,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const [availabilityTime, setAvailabilityTime] = useState(maintenanceItem?.quote_earliest_availability ? dayjs(maintenanceItem?.quote_earliest_availability.split(" ")[1], "HH:mm").format("h:mm A") : '');
     const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState(editBool ? maintenanceItem.quote_notes : "");
-    const [jobType, setJobType] = useState("");
+    const [jobType, setJobType] = useState("Fixed Bid");
     const [selectedImageList, setSelectedImageList] = useState([])
     const [selectedDocumentList, setSelectedDocumentList] = useState([])
+    const [hours, setHours] = useState(0)
+    const [total, setTotal] = useState(0)
+    const [grandTotal, setGrandTotal] = useState(0)
 
     // useEffect(() => {
     //     console.log("availabilityTime - ", availabilityTime);
@@ -193,9 +196,10 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         console.log("maintenanceItem", maintenanceItem)
         console.log("editBool", editBool)
         const quoteServicesExpenses = JSON.parse(maintenanceItem?.quote_services_expenses)
-        if (quoteServicesExpenses){
+        if (editBool && quoteServicesExpenses){
             console.log("quoteServicesExpenses", quoteServicesExpenses)
-            console.log("quote_earliest_availability", maintenanceItem?.quote_earliest_availability)
+            console.log("quote_earliest_available_date", availabilityDate)
+            console.log("quote_earliest_available_time", availabilityTime)
             console.log("quote_notes", maintenanceItem?.quote_notes)
             console.log("quoteServicesExpenses.labor.rate", quoteServicesExpenses.labor[0].rate)
             console.log("quoteServicesExpenses.labor.hours", quoteServicesExpenses.labor[0].hours)
@@ -208,12 +212,17 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 
     }, [])
 
+
+    useEffect(() => {
+        console.log("hours, rate, jobType", hours, rate, jobType)
+        setTotal(computeTotalCost({hours: hours, rate: rate}))
+        const totalEstimate = computeTotalEstimate()
+        console.log("grand total", totalEstimate)
+        setGrandTotal(totalEstimate)
+    }, [rate, hours, partsObject, jobType])
+
     function computeTotalCost({hours, rate}){
-        if (hours === "Fixed Bid" || hours === "Custom"){
-            return "TBD"
-        } else{
-            return hours * rate
-        }
+        return hours * rate
     }
 
     function compileExpenseObject(){
@@ -224,11 +233,11 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
             "parts": partsObject,
             "labor": [{
                 "description": "",
-                "hours": labor[0].jobType,
-                "rate": labor[0].rate,
+                "hours": hours,
+                "rate": rate,
             }],
             // "labor": labor,
-            "total_estimate": computeTotalCost({hours: jobType, rate: rate})
+            "total_estimate": computeTotalCost({hours: hours, rate: rate})
 
         }
         return JSON.stringify(expenseObject)
@@ -266,7 +275,14 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 
     const handleRateChange = (event) => {
         // console.log("handleRateChange", event.target.value)
+        if (jobType === "Fixed Bid"){
+            setHours(1)
+        }
         setRate(event.target.value);
+    }
+
+    const handleHourChange = (event) => {
+        setHours(event.target.value)
     }
 
     function navigateToAddMaintenanceItem(){
@@ -274,19 +290,9 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
-    function createEventType(){
-        if (jobType === "Fixed Bid" || jobType === "Custom"){
-            return jobType
-        } else {
-            return `${jobType} Hour Job`
-        }
-    }
-
     function computeTotalEstimate(){
         var total = 0
-        if(jobType !== "Fixed Bid" && jobType !== "Custom"){
-            total += computeTotalCost({hours: jobType, rate: rate})
-        }
+        total += computeTotalCost({hours: hours, rate: rate})
         partsObject.forEach(part => {
             if(part.cost !== ""){
                 total += parseInt(part.cost) * parseInt(part.quantity)
@@ -295,22 +301,16 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         return total        
     }
 
-    function convertToDateTime(date, time){
+    function calculateDaysOpen(){
+        const maintenanceRequestCreatedDate = new Date(maintenanceItem.maintenance_request_created_date);
+        const currentDate = new Date();
 
-        var dateArray = date.split("-")
-        var timeArray = time.split(":")
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = currentDate - maintenanceRequestCreatedDate;
 
-        var year = dateArray[2]
-        var month = dateArray[0]
-        var day = dateArray[1]
-
-        var hour = timeArray[0]
-        var minute = timeArray[1]
-        var second = timeArray[2] || "00"
-
-        var dateTimeString = `${month}-${day}-${year} ${hour}:${minute}:${second}`
-        console.log(dateTimeString);
-        return dateTimeString
+        // Convert milliseconds to days (1 day = 24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
+        const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+        return differenceInDays;
     }
 
     function handleBackButton(){
@@ -336,10 +336,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 formData.append("quote_services_expenses", compileExpenseObject())
                 formData.append("quote_notes", notes);
                 formData.append("quote_status", status);
-                formData.append("quote_event_type", createEventType())
+                // formData.append("quote_event_type", createEventType())
                 formData.append("quote_total_estimate", String(computeTotalEstimate()));
                 formData.append("quote_created_date", formatDateToCustomString())
-                formData.append("quote_earliest_availability", convertToDateTime(availabilityDate, availabilityTime))
+                // formData.append("quote_earliest_availability", convertToDateTime(availabilityDate, availabilityTime))
+                formData.append("quote_earliest_available_date", availabilityDate)
+                formData.append("quote_earliest_available_time", availabilityTime)
 
                 for (let i = 0; i < selectedImageList.length; i++) {
                     try {
@@ -412,14 +414,9 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }
 
     function numImages(){
-        if (displayImages == null){
-            return 0
-        }
-        else if (displayImages.length == 0){
-            return 0
-        } else{
-            return displayImages.length
-        }
+        if (displayImages == null){ return 0 }
+        else if (displayImages.length == 0){ return 0} 
+        else { return displayImages.length }
     }
 
     useEffect(() => {
@@ -497,125 +494,164 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                         <Grid container
                             direction="column"
                         >
-                            <Grid item xs={12}>
-                                <Grid container spacing={2} justifyContent="center">
-                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
-                                        {maintenanceItem.maintenance_title}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <ImageCarousel images={displayImages}/>
-                            <Grid item xs={12}>
-                                <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                        { numImages() > 0 ? numImages() + " Images" : "No Images" }
-                                    </Typography>
-                                </Grid>
-
-                                <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
+                                <Grid item xs={12}>
+                                    <Grid container spacing={2} justifyContent="center">
+                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
+                                            {maintenanceItem.maintenance_title}
                                         </Typography>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                    <b>Property Address</b>
-                                </Typography>
-                                <div style={{paddingLeft: "10px"}}>
-                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                        {maintenanceItem.property_address} {maintenanceItem.property_unit} {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}
-                                    </Typography>
-                                </div>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                    <b>Reported</b>
-                                </Typography>
-                                <div style={{paddingLeft: "10px"}}>
-                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                        {maintenanceItem.quote_created_date}
-                                    </Typography>
-                                </div>
-                            </Grid>
-                            <Grid item xs={6}>
+                                <ImageCarousel images={displayImages}/>
+                                <Grid item xs={12}>
+                                    <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                            { numImages() > 0 ? numImages() + " Images" : "No Images" }
+                                        </Typography>
+                                    </Grid>
+
+                                    <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                                <b>{maintenanceItem?.maintenance_priority} Priority</b>
+                                            </Typography>
+                                    </Grid>
+                                </Grid>
+                            <Grid container direction="row">
+                                <Grid item xs={12}>
                                     <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                    <b>Days Open</b>
-                                </Typography>
-                                <div style={{paddingLeft: "10px"}}>
-                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                        3 Days
+                                        <b>Property Address</b>
                                     </Typography>
-                                </div>
-                            </Grid>
-                            <Grid item xs={12} sx={{paddingBottom: "20px"}}>
+                                    <div style={{paddingLeft: "10px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                            {maintenanceItem.property_address} {maintenanceItem.property_unit} {maintenanceItem.property_city} {maintenanceItem.property_state} {maintenanceItem.property_zip}
+                                        </Typography>
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6}>
                                     <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                    <b>Description</b>
-                                </Typography>
-                                <div style={{paddingLeft: "10px"}}>
-                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                        {maintenanceItem.maintenance_desc}
+                                        <b>Reported</b>
                                     </Typography>
-                                </div>
+                                    <div style={{paddingLeft: "10px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                            {maintenanceItem.maintenance_request_created_date}
+                                        </Typography>
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6}>
+                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                        <b>Days Open</b>
+                                    </Typography>
+                                    <div style={{paddingLeft: "10px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                            {calculateDaysOpen()}
+                                        </Typography>
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6} sx={{paddingBottom: "20px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                        <b>Description</b>
+                                    </Typography>
+                                    <div style={{paddingLeft: "10px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                            {maintenanceItem.maintenance_desc}
+                                        </Typography>
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6} sx={{paddingBottom: "20px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                        <b>Grand Total: </b>
+                                    </Typography>
+                                    <div style={{paddingLeft: "10px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                            $ {grandTotal}
+                                        </Typography>
+                                    </div>
+                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid container direction="row" spacing={1}>
                             {acceptBool ? (
                                 <>
-                                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                <Grid item xs={12} sx={{paddingTop: "10px"}}>
+                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                        Labor Details
+                                    </Typography>
+                                </Grid>
+                                    <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                            # of hours
+                                            Job Type
                                         </Typography>
-                                        <Select
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderColor: 'black',
-                                                borderRadius: '7px',
-                                            }}
-                                            size="small"
-                                            fullWidth
-                                            onChange={(e) => setJobType(e.target.value)}
-                                            value={jobType}
-                                            placeholder="Select # of hours"
-                                        >
+                                        <Select sx={{backgroundColor: 'white', borderColor: 'black', borderRadius: '7px'}} size="small" fullWidth onChange={(e) => setJobType(e.target.value)} value={jobType} placeholder="Job Type">
                                             <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
-                                            <MenuItem value={1}>1 hour</MenuItem>
-                                            <MenuItem value={2}>2 hours</MenuItem>
-                                            <MenuItem value={3}>3 hours</MenuItem>
-                                            <MenuItem value={4}>4 hours</MenuItem>
-                                            <MenuItem value={5}>5 hours</MenuItem>
-                                            <MenuItem value={"Custom"}>Custom</MenuItem>
+                                            <MenuItem value={"Hourly"}>Hourly</MenuItem>
                                         </Select>
                                     </Grid>
-                                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
-                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                            Charge/Hour
-                                        </Typography>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            value={rate}
-                                            onChange={handleRateChange}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={4} sx={{paddingTop: "10px"}}>
-                                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
-                                            Total Cost
-                                        </Typography>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            readOnly
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">$</InputAdornment>
-                                                ),
-                                                // This will remove the underline styling
-                                                disableUnderline: true
-                                            }}
-                                            value={computeTotalCost({hours: jobType, rate: rate})}
-                                        />
-                                    </Grid>
+                                    {jobType === "Hourly" ? (
+                                        <>
+                                            <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                                    # of hours
+                                                </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        borderColor: 'black',
+                                                        borderRadius: '7px',
+                                                    }}
+                                                    fullWidth
+                                                    value={hours}
+                                                    onChange={handleHourChange}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                                    Charge/Hour
+                                                </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    fullWidth
+                                                    value={rate}
+                                                    onChange={handleRateChange}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                                    Total Cost
+                                                </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    fullWidth
+                                                    readOnly
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">$</InputAdornment>
+                                                        ),
+                                                        disableUnderline: true
+                                                    }}
+                                                    value={computeTotalCost({hours: hours, rate: rate})}
+                                                />
+                                            </Grid>
+                                        </>  
+                                    ) : (
+                                        <Grid item xs={4} sx={{paddingTop: "10px"}}>
+                                            <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
+                                                Charge
+                                            </Typography>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                value={rate}
+                                                onChange={handleRateChange}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">$</InputAdornment>
+                                                    ),
+                                                    // This will remove the underline styling
+                                                    disableUnderline: true
+                                                }}
+                                            />
+                                        </Grid>
+                                    )}
                                     <CostPartsTable parts={partsObject} setParts={setPartsObject}/>
                                     <Grid item xs={12}>
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
