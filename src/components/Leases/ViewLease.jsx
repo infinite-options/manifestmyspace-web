@@ -53,8 +53,12 @@ const ViewLease = (props) => {
 
     return [month, day, year].join("-");
   }
+  const [fetchData, setFetchData] = useState([]);
+  const [leaseData, setLeaseData] = useState([]);
+  const [document, setDocument] = useState([]);
 
   const [endLeaseDialogOpen, setEndLeaseDialogOpen] = useState(false);
+  const [renewLeaseDialogOpen, setRenewLeaseDialogOpen] = useState(false);
 
   const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
   useEffect(() => {
@@ -62,12 +66,16 @@ const ViewLease = (props) => {
     setMoveOut(formatDate(moveOutDate));
   }, [moveOutDate]);
 
+  useEffect(() => {
+    console.log("ROHIT - leaseData - ", leaseData);    
+  }, [leaseData]);  
+
   const closeEndLeaseDialog = () => {
     setEndLeaseDialogOpen(false);
-  };
+  };  
 
-  const openEndLeaseDialog = () => {
-    setEndLeaseDialogOpen(true);
+  const closeRenewLeaseDialog = () => {
+    setRenewLeaseDialogOpen(false);
   };
 
   const handleBackButton = () => {
@@ -115,12 +123,40 @@ const ViewLease = (props) => {
           console.log(error.response.data);
         }
       });
+      const sendAnnouncement = async () => {
+        try {
+          const receiverPropertyMapping = {
+            [leaseData.business_uid]: [leaseData.lease_property_id],
+          };
+  
+          await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+            // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              announcement_title: "Lease Ended by Tenant",
+              announcement_msg: `Lease for ${leaseData.property_address}, Unit -${leaseData.property_unit} has been ended by the Tenant.`,
+              announcement_sender: getProfileId(),
+              announcement_date: new Date().toDateString(),
+              // announcement_properties: property.property_uid,
+              announcement_properties: JSON.stringify(receiverPropertyMapping),
+              announcement_mode: "LEASE",
+              announcement_receiver: [leaseData.business_uid],
+              announcement_type: ["Text", "Email"],
+            }),
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      sendAnnouncement();
+      setEndLeaseDialogOpen(false);
   };
   const leaseID = location.state.lease_id; //'300-000005';
 
-  const [fetchData, setFetchData] = useState([]);
-  const [leaseData, setLeaseData] = useState([]);
-  const [document, setDocument] = useState([]);
+  
 
   useEffect(() => {
     setShowSpinner(true);
@@ -152,7 +188,7 @@ const ViewLease = (props) => {
     }
   }
 
-  const handleRenewLease = (leaseData) => {
+  const handleRenewLease = () => {
     navigate("/editLease", {
       state: {
         leaseData: leaseData,
@@ -649,7 +685,7 @@ const ViewLease = (props) => {
             </TableBody>
           </Table>
 
-          {selectedRole === "MANAGER" && (
+          {(selectedRole === "MANAGER" || selectedRole === "TENANT") && (
             <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ paddingTop: "15px" }}>
               <Button
                 variant="contained"
@@ -675,7 +711,7 @@ const ViewLease = (props) => {
                   margin: "10px",
                 }}
                 onClick={() => {
-                  handleRenewLease(leaseData);
+                  setRenewLeaseDialogOpen(true);
                 }}
               >
                 Renew Lease
@@ -739,6 +775,49 @@ const ViewLease = (props) => {
           </Button>
           <Button
             onClick={() => setEndLeaseDialogOpen(false)}
+            sx={{
+              color: "white",
+              backgroundColor: "#3D5CAC80",
+              ":hover": {
+                backgroundColor: "#3D5CAC",
+              },
+            }}
+          >
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={renewLeaseDialogOpen} onClose={closeRenewLeaseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Renew Lease</DialogTitle>
+        <DialogContent>                
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.common.fontWeight,
+              paddingTop: "10px",
+            }}
+          >
+            Are you sure you want to renew the lease?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
+          <Button
+            onClick={() => handleRenewLease(leaseData)}
+            sx={{
+              color: "white",
+              backgroundColor: "#3D5CAC80",
+              ":hover": {
+                backgroundColor: "#3D5CAC",
+              },
+            }}
+            autoFocus
+          >
+            Yes
+          </Button>
+          <Button
+            onClick={() => setRenewLeaseDialogOpen(false)}
             sx={{
               color: "white",
               backgroundColor: "#3D5CAC80",
