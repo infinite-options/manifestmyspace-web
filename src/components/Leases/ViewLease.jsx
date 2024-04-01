@@ -66,9 +66,9 @@ const ViewLease = (props) => {
     setMoveOut(formatDate(moveOutDate));
   }, [moveOutDate]);
 
-  useEffect(() => {
-    console.log("ROHIT - leaseData - ", leaseData);    
-  }, [leaseData]);  
+  // useEffect(() => {
+  //   console.log("leaseData - ", leaseData);    
+  // }, [leaseData]);  
 
   const closeEndLeaseDialog = () => {
     setEndLeaseDialogOpen(false);

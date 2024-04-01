@@ -26,9 +26,9 @@ export default function Announcements() {
     const [showAnnouncement, setShowAnnouncement] = useState(false);
     const [annData, setAnnData] = useState("");
 
-    useEffect(() => {
-        console.log("ROHIT - receivedData - ", receivedData);
-    }, [receivedData]);
+    // useEffect(() => {
+    //     console.log("receivedData - ", receivedData);
+    // }, [receivedData]);
     
     const result =[
         {
