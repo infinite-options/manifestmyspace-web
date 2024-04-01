@@ -85,7 +85,7 @@ const OwnerContacts = (props) => {
         
         const terms = searchTerm.trim().toLowerCase().split(" "); // Split the search term into individual terms
         
-        return data.filter((contact) => {
+        return data?.filter((contact) => {
             // Customize the filtering logic based on your requirements
             return terms.every((term) => {
                 // Check if any part of the contact's name includes each term in the search query
@@ -250,7 +250,7 @@ const OwnerContacts = (props) => {
                                             getStatusColor(contactsTab),
                                     }}
                                 />
-                                {displayedData.map((contact, index) => (
+                                {displayedData?.map((contact, index) => (
                                     <ContactCard
                                         data={contact}
                                         key={index}

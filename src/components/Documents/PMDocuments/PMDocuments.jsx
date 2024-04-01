@@ -77,21 +77,21 @@ function PMDocuments() {
 
         switch(tab){
             case "leases":
-                const leases = leasesData.filter((lease) =>
+                const leases = leasesData?.filter((lease) =>
                     lease.property_address.toLowerCase().includes(searchString.toLowerCase()) ||
                     (lease.tenant_first_name + " " + lease.tenant_last_name).toLowerCase().includes(searchString.toLowerCase())
                 );
                 setDisplayedLeases(leases);                
                 break;
             case "contracts":
-                const contracts = contractsData.filter((contract) =>
+                const contracts = contractsData?.filter((contract) =>
                     contract.property_address.toLowerCase().includes(searchString.toLowerCase()) ||
                     (contract.owner_first_name + " " + contract.owner_last_name).toLowerCase().includes(searchString.toLowerCase())
                 );
                 setDisplayedContracts(contracts);                
                 break;
             case "applications":
-                const applications = applicationsData.filter((application) =>
+                const applications = applicationsData?.filter((application) =>
                     application.property_address.toLowerCase().includes(searchString.toLowerCase()) ||
                     (application.tenant_first_name + " " + application.tenant_last_name).toLowerCase().includes(searchString.toLowerCase())
                 );
@@ -279,7 +279,7 @@ function PMDocuments() {
                                     )                                
                                 }
 
-                                {statusList[tabStatus] === "Contracts" && displayedContracts.map((contract, index) => {
+                                {statusList[tabStatus] === "Contracts" && displayedContracts?.map((contract, index) => {
                                     const address = contract.property_address;
                                     const unit = contract.property_unit;
                                     const city = contract.property_city;
@@ -324,7 +324,7 @@ function PMDocuments() {
                                     )                                
                                 }
 
-                                {displayedApplications.map((app) => {                                    
+                                {displayedApplications?.map((app) => {                                    
                                     const address = app.property_address;
                                     const unit = app.property_unit;
                                     const city = app.property_city;
@@ -375,7 +375,7 @@ function PMDocuments() {
                                     )                                
                                 }
                                
-                                {statusList[tabStatus] === "Leases" && displayedLeases.map((lease, index) => {
+                                {statusList[tabStatus] === "Leases" && displayedLeases?.map((lease, index) => {
                                     const address  = lease.property_address;
                                     const unit     = lease.property_unit;
                                     const city     = lease.property_city;
@@ -483,7 +483,7 @@ function DocumentCard(props) {
                     <Box>
                         Documents:
                         {
-                            docs.map((document) =>
+                            docs?.map((document) =>
                                 (
                                     <Box sx={{
                                         display: 'flex',
@@ -600,7 +600,7 @@ function LeaseCard(props) {
                 <Box>
                     Documents:
                     {
-                        docs.map((document) =>
+                        docs?.map((document) =>
                             (
                                 <Box sx={{
                                     display: 'flex',
@@ -693,7 +693,7 @@ function ApplicationCard(props) {
             <Box>
                 Documents:
                 {
-                    docs.map((document) =>
+                    docs?.map((document) =>
                         (
                             <Box sx={{
                                 display: 'flex',

@@ -48,7 +48,7 @@ const PMContacts = (props) => {
         
         const terms = searchTerm.trim().toLowerCase().split(" "); // Split the search term into individual terms
         
-        return data.filter((contact) => {
+        return data?.filter((contact) => {
             // Customize the filtering logic based on your requirements
             return terms.every((term) => {
                 // Check if any part of the contact's name includes each term in the search query
@@ -298,7 +298,7 @@ const PMContacts = (props) => {
                                 />
                                 {contactsTab === 'Owner' ? (
                                     <>
-                                        {displayedOwnersData.map((owner, index) => (
+                                        {displayedOwnersData?.map((owner, index) => (
                                             <OwnerContactsCard
                                                 data={owner}
                                                 key={index}
@@ -310,7 +310,7 @@ const PMContacts = (props) => {
                                     </>
                                 ) : contactsTab === 'Tenant' ? (
                                     <>
-                                        {displayedTenantsData.map((tenant, index) => (
+                                        {displayedTenantsData?.map((tenant, index) => (
                                             <TenantContactsCard
                                                 data={tenant}
                                                 key={index}
@@ -321,7 +321,7 @@ const PMContacts = (props) => {
                                     </>
                                 ) : (
                                     <>
-                                        {displayedMaintenanceData.map((maint, index) => (
+                                        {displayedMaintenanceData?.map((maint, index) => (
                                             <MaintenanceContactsCard
                                                 data={maint}
                                                 key={index}
