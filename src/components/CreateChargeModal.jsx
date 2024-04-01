@@ -41,7 +41,7 @@ export default function CreateChargeModal(props) {
   }
 
   const submit = (amount) => {
-    props.handleSubmit(amount).then(
+    props.handleModalSubmit(amount).then(
         handleClose()
     )
   }

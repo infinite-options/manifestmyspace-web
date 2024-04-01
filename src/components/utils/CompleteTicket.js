@@ -1,4 +1,4 @@
-import APIConfig from "../utils/api";
+import APIConfig from "../../utils/APIConfig";
 
 export default async function CompleteTicket(maintenance_request_uid, setShowSpinner = () => {}){
     setShowSpinner(true);

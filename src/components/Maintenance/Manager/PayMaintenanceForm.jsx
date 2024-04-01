@@ -53,38 +53,60 @@ export default function PayMaintenanceForm(){
         navigate("/payments", {state: {maintenanceItem}})
     }
 
-    const modalSubmit = (chargeAmount) => {
+    const modalSubmit = async (chargeAmount) => {
         console.log("Printing modal submit")
 
         const now = new Date();
         const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         console.log("now, nextWeek", now, nextWeek)
 
-        let data = {
-            pur_property_id: maintenanceItem.property_id,
-            purchase_type: "maintenance",
-            pur_cf_type: "expense",
-            purchase_date: dayjs(now).format("MM-DD-YYYY"),
-            pur_due_date: dayjs(nextWeek).format("MM-DD-YYYY"),
-            pur_amount_due: Number(chargeAmount),
-            purchase_status: "PAID", //should this be UNPAID?
-            pur_notes: `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`,
-            pur_description: `Maintenance ID: ${maintenanceItem.maintenance_request_uid} Completed On: ${maintenanceItem.maintenance_scheduled_date}`,
-            pur_receiver: `${maintenanceItem.owner_uid}`,
-            pur_initiator: `${maintenanceItem.business_uid}`,
-            pur_payer: `${maintenanceItem.owner_uid}`
+        const formData = new FormData();
+
+        formData.append("bill_description", `Maintenance ID: ${maintenanceItem.maintenance_request_uid} Completed On: ${maintenanceItem.maintenance_scheduled_date}`);
+        formData.append("bill_created_by", `${maintenanceItem.business_uid}`)
+        formData.append("bill_utility_type", "maintenance")
+        formData.append("bill_amount", Number(chargeAmount))
+        formData.append("bill_split", "Uniform")
+        formData.append("bill_property_id", JSON.stringify([{"property_uid":`${maintenanceItem.property_uid}`}]))
+        formData.append("bill_notes", `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`)
+        formData.append("bill_maintenance_quote_id", `Completed by ${maintenanceItem.business_uid} on ${maintenanceItem.maintenance_scheduled_date}`)
+        // bill_notes:yes
+        // bill_maintenance_quote_id:900-000043
+        // let data = {
+        //     pur_property_id: maintenanceItem.property_id,
+        //     purchase_type: "maintenance",
+        //     pur_cf_type: "expense",
+        //     purchase_date: dayjs(now).format("MM-DD-YYYY"),
+        //     pur_due_date: dayjs(nextWeek).format("MM-DD-YYYY"),
+        //     pur_amount_due: Number(chargeAmount),
+        //     purchase_status: "UNPAID", //should this be UNPAID?
+        //     pur_notes: `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`,
+        //     pur_description: `Maintenance ID: ${maintenanceItem.maintenance_request_uid} Completed On: ${maintenanceItem.maintenance_scheduled_date}`,
+        //     pur_receiver: `${maintenanceItem.owner_uid}`,
+        //     pur_initiator: `${maintenanceItem.business_uid}`,
+        //     pur_payer: `${maintenanceItem.owner_uid}`
+        // }
+
+        // bill_description:yes_test
+        // bill_created_by:110-000099
+        // bill_utility_type:maintenance
+        // bill_amount:311
+        // bill_split:Uniformly
+        // bill_property_id:[{"property_uid":"200-000117"}]
+        // bill_notes:yes
+        // bill_maintenance_quote_id:900-000043
+
+        // console.log("data", data)
+        console.log(`url ${APIConfig.baseURL.dev}/bills`)
+
+        try {
+            fetch(`${APIConfig.baseURL.dev}/bills`, {
+                method: "POST",
+                body: formData,
+            })
+        } catch (error) {
+            console.log(error)
         }
-
-        console.log("data", data)
-        console.log(`url ${APIConfig.baseURL.dev}/addExpense`)
-
-        fetch(`${APIConfig.baseURL.dev}/addExpense`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
     }
 
     useEffect(() => {
@@ -387,7 +409,7 @@ export default function PayMaintenanceForm(){
                 open={showModal}
                 setOpenModal={setShowModal}
                 maintenanceItem={maintenanceItem}
-                handleSubmit={modalSubmit}
+                handleModalSubmit={modalSubmit}
             />
         </Box>
     )
