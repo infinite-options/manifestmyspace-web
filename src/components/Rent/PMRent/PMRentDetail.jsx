@@ -7,6 +7,7 @@ import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from "../../../utils/APIConfig";
 
 function PMRentDetail(props) {
   const location = useLocation();
@@ -63,7 +64,7 @@ function PMRentDetail(props) {
   const { getProfileId } = useUser();
   useEffect(() => {
     setShowSpinner(true);
-    const requestURL = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/rentDetails/${getProfileId()}`;
+    const requestURL = `${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`;
     axios.get(requestURL).then((res) => {
       // console.log(res.data.RentStatus.result);
       const fetchData = res.data.RentStatus.result;

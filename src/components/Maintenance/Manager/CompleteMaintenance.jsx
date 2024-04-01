@@ -23,7 +23,6 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 
-
 export default function CompleteMaintenance({maintenanceItem, navigateParams}){
     const navigate = useNavigate();
     const [showMessage, setShowMessage] = useState(false);
@@ -59,7 +58,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#3D5CAC",
                             textTransform: "none",
@@ -76,8 +75,6 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
-                {/* <CancelButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
-                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/> */}
             </Grid>
         </Box>
     )

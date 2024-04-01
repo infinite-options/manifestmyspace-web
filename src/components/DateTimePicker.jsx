@@ -40,6 +40,7 @@ function DateTimePickerModal(props) {
   const activeButton = availabilityDate !== "" && availabilityTime !== "";
 
   function submit(){
+    console.log("in submit for datetimepicker")
     props.handleSubmit(availabilityDate, availabilityTime).then(
         handleClose()
     )
@@ -82,7 +83,6 @@ function DateTimePickerModal(props) {
                         />
                     </Grid> 
                     <Grid item xs={12}>
-                        {console.log("timepicker 1")}
                         <TimePicker                                                        
                             slotProps={{ 
                                 textField: { 
@@ -101,7 +101,6 @@ function DateTimePickerModal(props) {
                             value={dayjs(availabilityTime,"HH:mm")}
                             onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
                         />
-                        {console.log("timepicker 2")}
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sx={{padding: "8px"}}>

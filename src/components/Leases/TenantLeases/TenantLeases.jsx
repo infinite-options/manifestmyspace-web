@@ -28,6 +28,8 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import backButton from "../../Payments/backIcon.png";
 import theme from "../../../theme/theme";
 
+import APIConfig from "../../../utils/APIConfig"
+
 function TenantLeases(props) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,7 +57,7 @@ function TenantLeases(props) {
 
     async function fetchData() {
       console.log("In fetch data");
-      const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`);
+      const leaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`);
 
       if (!leaseResponse.ok) {
         // Handle the error as needed (maybe set an error state or log the error)
@@ -130,7 +132,7 @@ function TenantLeases(props) {
     leaseApplicationFormData.append("lease_status", "REFUSED");
 
     try {
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
       });
@@ -150,7 +152,7 @@ function TenantLeases(props) {
           [property.contract_business_id]: [property.property_uid],
         };
 
-        await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
           // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
           method: "POST",
           headers: {
@@ -187,7 +189,7 @@ function TenantLeases(props) {
         status = "ACTIVE";
       }
       leaseApplicationFormData.append("lease_status", status);
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
       });
@@ -207,7 +209,7 @@ function TenantLeases(props) {
           [property.contract_business_id]: [property.property_uid],
         };
 
-        await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
           // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
           method: "POST",
           headers: {

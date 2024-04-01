@@ -12,6 +12,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid } from "@mui/x-data-grid";
 
+import APIConfig from "../../utils/APIConfig";
+
 const useStyles = makeStyles((theme) => ({
   input: {
     background: "#000000",
@@ -146,7 +148,7 @@ export default function Payments(props) {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
-      const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
+      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
       const paymentStatusData = res.data.PaymentStatus.result;
       const paidStatusData = res.data.PaidStatus.result;
 

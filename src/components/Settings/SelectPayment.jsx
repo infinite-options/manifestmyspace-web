@@ -28,6 +28,8 @@ import BankIcon from "../../images/mdi_bank.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 
+import APIConfig from "../../utils/APIConfig";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -164,7 +166,8 @@ export default function SelectPayment(props) {
     console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
-    let payment_request_payload={
+
+    let payment_request_payload = {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
       pay_total: totalBalance,
@@ -178,7 +181,8 @@ export default function SelectPayment(props) {
     };
     if (paymentMethod=='Zelle')
       payment_request_payload.confirmation_number=confirmationNumber;
-    await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
+
+    await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
       // await fetch("http://localhost:4000/makePayment2", {
       method: "POST",
       headers: {

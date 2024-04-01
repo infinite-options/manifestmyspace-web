@@ -25,9 +25,6 @@ import {
 } from '@mui/material';
 import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
-
-
-
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
@@ -36,6 +33,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import ImageCarousel from "../../ImageCarousel";
 import defaultHouseImage from "../../Property/defaultHouseImage.png"
+
+import APIConfig from "../../../utils/APIConfig";
 
 function isValidDate(dateString){
     const dateParts = dateString.split("-");
@@ -105,7 +104,7 @@ function PMContractDetailsList(props) {
             
 
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`)
             
             const responseData = await response.json();
 
@@ -515,7 +514,7 @@ function PropertyCard(props) {
     }
 
     const sendPutRequest = (data) => {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
+        const url = `${APIConfig.baseURL.dev}/contracts`;
         // const url = `http://localhost:4000/contracts`; 
     
         fetch(url, {
@@ -667,7 +666,7 @@ function PropertyCard(props) {
 
         //get contracts
         const fetchData = async () => {
-            const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
+            const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
             const data = await result.json();
 
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
@@ -694,7 +693,7 @@ function PropertyCard(props) {
 
 
             //get default contract fees for manager
-            const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
+            const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${contractBusinessID}`);
             const data2 = await businessProfileResult.json();
             const businessProfileData = data2["result"][0];
             console.log("Business Services Fees", businessProfileData["business_services_fees"]);
@@ -1746,7 +1745,7 @@ function PropertyCard(props) {
             
                 <Button
                     variant="contained"
-                    disableElevation
+                    
                     sx={{
                         backgroundColor: "#CB8E8E",
                         textTransform: "none",
@@ -1770,7 +1769,7 @@ function PropertyCard(props) {
                 </Button>
                 <Button
                     variant="contained"
-                    disableElevation
+                    
                     sx={{
                         backgroundColor: "#9EAED6",
                         textTransform: "none",

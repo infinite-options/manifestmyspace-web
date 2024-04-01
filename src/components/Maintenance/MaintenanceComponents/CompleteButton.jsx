@@ -23,7 +23,12 @@ export default function CompleteButton(props){
     async function handleComplete(id, quotes){
         // console.log("handleComplete id", id)
 
-        FinishQuote(maintenanceItem.maintenance_quote_uid)
+        if (maintenanceItem.maintenance_quote_uid === null){
+            // it's handled by the property manager
+            console.log("handled by the property manager")
+        } else{
+            FinishQuote(maintenanceItem.maintenance_quote_uid)
+        }
 
         let response = CompleteTicket(id)
         // console.log("handleComplete", response);
@@ -46,7 +51,7 @@ export default function CompleteButton(props){
         }}>
             <Button
                 variant="contained"
-                disableElevation
+                
                 sx={{
                     backgroundColor: "#FFFFFF",
                     textTransform: "none",

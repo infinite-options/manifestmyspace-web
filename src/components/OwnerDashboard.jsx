@@ -16,6 +16,8 @@ import LeaseWidget from "./Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../utils/APIConfig";
+
 export default function OwnerDashboard() {
   const { user, getProfileId } = useUser();
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ export default function OwnerDashboard() {
     const fetchData = async () => {
       if (!getProfileId()) navigate("/PrivateprofileName");
       setShowSpinner(true);
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
 
       // MAINTENANCE Status

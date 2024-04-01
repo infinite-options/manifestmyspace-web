@@ -17,6 +17,7 @@ import {
     Avatar,
 } from "@mui/material";
 
+import APIConfig from "../../utils/APIConfig";
 
 export default function PublicProfile(){
     let { id } = useParams();
@@ -31,7 +32,7 @@ export default function PublicProfile(){
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${profile}`);
+                const response = await fetch(`${APIConfig.baseURL.dev}/profile/${profile}`);
                 const data = await response.json();
                 console.log(data);
             } catch (error) {

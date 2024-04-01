@@ -76,7 +76,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#C06A6A",
                             textTransform: "none",
@@ -99,7 +99,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#CB8E8E",
                             textTransform: "none",

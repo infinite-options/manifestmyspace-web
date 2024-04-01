@@ -5,7 +5,6 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 function ImageCarousel(props) {
-  console.log("In Image Carousel");
   let images = props.images;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 

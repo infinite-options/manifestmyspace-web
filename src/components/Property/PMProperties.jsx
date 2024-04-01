@@ -49,6 +49,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 // import PropertyData from './PropertyData';
 
+import APIConfig from "../../utils/APIConfig";
+
 const SearchBar = ({ propertyList, newPMRequestList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearchChange = (event) => {
@@ -237,7 +239,7 @@ export default function PMProperties({}) {
     const fetchData = async () => {
       setShowSpinner(true);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/600-000003`)
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`)
+      const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`)
       const propertyData = await response.json();
       const propertyList = getPropertyList(propertyData);
       const newPMRequestList = getNewPMRequestList(propertyData);

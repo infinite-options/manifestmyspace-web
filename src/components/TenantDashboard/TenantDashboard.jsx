@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add"; // For "New Request"
 import { PropertyCard } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
 import { DataGrid } from "@mui/x-data-grid";
+import APIConfig from "../../utils/APIConfig";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -50,18 +51,6 @@ function TenantDashboard(props) {
   // const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
   const open = Boolean(anchorEl);
-
-  // useEffect(() => {
-  //   console.log("selectedProperty - ", selectedProperty);
-  // }, [selectedProperty]);
-
-  // useEffect(() => {
-  //   console.log("selectedLease - ", selectedLease);
-  // }, [selectedLease]);
-
-  // useEffect(() => {
-  //   console.log("maintenanceRequests - ", maintenanceRequests);
-  // }, [maintenanceRequests]);
 
   const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -114,10 +103,10 @@ function TenantDashboard(props) {
       setShowSpinner(true);
       try {
         // console.log("Call endpoints")
-        const tenantRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+        const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
         // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
-        const announcementsResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`);
+        const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
 
         const tenantRequestsData = await tenantRequests.json();
         // const leaseData = await leaseResponse.json();

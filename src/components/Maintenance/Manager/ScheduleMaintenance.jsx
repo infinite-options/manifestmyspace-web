@@ -29,6 +29,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
+import APIConfig from "../../../utils/APIConfig";
+
 export default function ScheduleMaintenance({maintenanceItem, navigateParams, quotes}){
     
     const location = useLocation();
@@ -54,7 +56,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -86,7 +88,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
             formData.append("quote_status", "FINISHED")
             
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                     method: 'PUT',
                     body: formData
                 });
@@ -133,7 +135,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#97A7CF",
                             textTransform: "none",

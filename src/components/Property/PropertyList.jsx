@@ -47,7 +47,7 @@ import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-// import PropertyData from './PropertyData';
+import APIConfig from "../../utils/APIConfig";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -221,7 +221,7 @@ export default function PropertyList({}) {
       //   console.log("GetProfile: ", getProfileId);
       setShowSpinner(true);
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
       // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
       const propertyData = await response.json();
       console.log("In Property List >> Property Data: ", propertyData); // This has Applications, MaintenanceRequests, NewPMRequests and Property info from endpoint

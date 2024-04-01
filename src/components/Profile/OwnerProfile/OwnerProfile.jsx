@@ -16,6 +16,8 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from '../../../utils/APIConfig'
+
 
 function OwnerProfile() {
     const navigate = useNavigate();
@@ -44,7 +46,7 @@ function OwnerProfile() {
 
     useEffect(()=>{
         setShowSpinner(true);
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
+        axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`)
         .then((res)=>{
             // console.log(res.data);
             setProfileData(res.data.result[0]);
@@ -53,7 +55,7 @@ function OwnerProfile() {
 
         const fetchPaymentData = async () => {
             try {
-              const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+              const response = await axios.get(`${APIConfig.baseURL.dev}/paymentMethod/${getProfileId()}`);
               set_payment_accounts(response.data.result);
               
               

@@ -40,7 +40,7 @@ const Scheduler = ({
   setShow,
   date = getInitialDate(),
   setDate,
-  handleSubmit = () => {},
+  handleSubmit,
 }) => {
   const times = getAvailableTimeSlots();
   const theme = useTheme();
@@ -74,7 +74,7 @@ const Scheduler = ({
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <TextField
-              value={date.format("h:mm A, MM/DD/YYYY")}
+              value={dayjs(date, "MM-DD-YYYY").format("h:mm A")}
               inputProps={{
                 readOnly: true,
               }}

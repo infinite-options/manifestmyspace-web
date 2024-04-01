@@ -30,6 +30,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
+import APIConfig from "../../../utils/APIConfig";
+
 
 export default function NewRequestAction({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
@@ -61,7 +63,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             formData.append("maintenance_scheduled_date", date); // this needs to change for the date and time picker
             formData.append("maintenance_scheduled_time", time); // this needs to change for the date and time picker
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData,
                 });
@@ -100,7 +102,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                     }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
@@ -122,7 +124,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#9EAED6",
                             textTransform: "none",
@@ -144,7 +146,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#C06A6A",
                             textTransform: "none",

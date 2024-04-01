@@ -47,7 +47,7 @@ export default function CancelButton(props){
         }}>
             <Button
                 variant="contained"
-                disableElevation
+                
                 sx={{
                     backgroundColor: "#FFFFFF",
                     // backgroundColor: 'transparent',

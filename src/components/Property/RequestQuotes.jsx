@@ -8,6 +8,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
 import ReturnArrow from "../../images/refund_back.png";
 
+import APIConfig from "../../utils/APIConfig";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -41,7 +43,7 @@ const RequestQuotes = () => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${profileId}`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
       const propertyData = await response.json();
       setProperties([...propertyData["Property"].result]);
     };
@@ -119,7 +121,7 @@ const RequestQuotes = () => {
     formData.append("contract_status", "NEW");
 
 
-    const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`; 
+    const url = `${APIConfig.baseURL.dev}/contracts`; 
 
     try {
       const response = await fetch(url, {

@@ -23,6 +23,8 @@ import { useUser } from "../../contexts/UserContext";
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
+import APIConfig from "../../utils/APIConfig";
+
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 // export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
@@ -119,7 +121,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
 
     const getContractsForOwner = async () => {
       try {
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
         if (!response.ok) {
           console.log("Error fetching contracts data");
         }

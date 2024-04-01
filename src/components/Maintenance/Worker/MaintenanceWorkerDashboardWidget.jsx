@@ -12,6 +12,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../../utils/APIConfig"
+
 export default function MaintenanceWorkerDashboardWidget(props) {
   const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
 
     const getMaintenanceData = async () => {
         setShowSpinner(true);
-        const maintenanceRequests1 = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
+        const maintenanceRequests1 = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
         const maintenanceRequestsData1 = await maintenanceRequests1.json();
 
         let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];

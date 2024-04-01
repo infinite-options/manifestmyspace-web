@@ -27,6 +27,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import { isValidDate } from "../../utils/dates";
 
+import APIConfig from "../../utils/APIConfig";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -496,7 +498,7 @@ const TenantLease = () => {
     //     body: leaseApplicationFormData
     //   }
     // );
-    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+    await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
       body: leaseApplicationFormData,
     });
@@ -505,7 +507,7 @@ const TenantLease = () => {
       [application.tenant_uid]: [property.property_uid],
     };
 
-    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+    await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

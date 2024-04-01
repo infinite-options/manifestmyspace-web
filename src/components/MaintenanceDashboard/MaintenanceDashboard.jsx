@@ -24,6 +24,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import MaintenanceWorker from "../Maintenance/Worker/MaintenanceWorker";
 import MaintenanceWorkerDashboardWidget from "../Maintenance/Worker/MaintenanceWorkerDashboardWidget";
 
+import APIConfig from "../../utils/APIConfig";
+
 
 export default function MaintenanceDashboard(){
     const navigate = useNavigate();
@@ -102,7 +104,7 @@ export default function MaintenanceDashboard(){
         const getMaintenanceWorkerDashboardData = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',                    
@@ -362,7 +364,7 @@ export default function MaintenanceDashboard(){
                                 <Grid item xs={12}>
                                     <Box
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             flexDirection: "column",
                                             backgroundColor: "#598A96",
@@ -428,7 +430,7 @@ export default function MaintenanceDashboard(){
                         >
                             <Button
                                 variant="contained"
-                                disableElevation                            
+                                                            
                                 sx={{
                                     backgroundColor: "#DEDFE3",
                                     textTransform: "none",

@@ -15,12 +15,33 @@ import theme from '../../../theme/theme';
 import { DataGrid } from "@mui/x-data-grid";
 import dayjs from 'dayjs';
 
+export const getChipColor = (priority) => {
+    switch (priority) {
+      case 'High':
+        return '#A52A2A';
+      case 'Medium':
+        return '#FF8A00';
+      case 'Low':
+        return '#FFC614';
+      case 'REJECTED':
+        return '#A52A2A';
+      case 'WITHDRAWN':
+        return '#FF8A00';
+      case 'SENT':
+        return '#FFC614'
+      case 'ACCEPTED':
+        return '#4CAF50';
+      default:
+        return 'default';
+    }
+};
+
 
 export default function WorkerMaintenanceStatusTable({status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount}){
     const location = useLocation();
     let navigate = useNavigate();
 
-    console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
+    // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
 
     const tableTextStyle = {
         backgroundColor: color, 
@@ -29,19 +50,6 @@ export default function WorkerMaintenanceStatusTable({status, color, maintenance
         fontSize: '15px', 
         fontWeight: 600,
     }
-
-    const getChipColor = (priority) => {
-        switch (priority) {
-          case 'High':
-            return '#A52A2A';
-          case 'Medium':
-            return '#FF8A00';
-          case 'Low':
-            return '#FFC614';
-          default:
-            return 'default';
-        }
-      };
 
     const columns = [
         {
@@ -63,6 +71,21 @@ export default function WorkerMaintenanceStatusTable({status, color, maintenance
         {
             headerName: "Priority",
             field: "maintenance_priority",
+            flex: 0.5,
+            minWidth: 100,
+            renderCell: (params) => {
+                return (
+                    <Chip
+                        label={params.value}
+                        size="small"
+                        style={{ backgroundColor: getChipColor(params.value), color: 'white' }}
+                    />
+                )
+            },
+        },
+        {
+            headerName: "Status",
+            field: "quote_status",
             flex: 0.5,
             minWidth: 100,
             renderCell: (params) => {

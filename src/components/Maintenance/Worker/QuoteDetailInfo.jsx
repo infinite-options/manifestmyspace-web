@@ -13,6 +13,7 @@ import {
     Grid,
     Checkbox,
     responsiveFontSizes,
+    Chip,
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -22,12 +23,21 @@ import documentIcon from "./../Business/documentIcon.png"
 import { useUser } from "../../../contexts/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { getChipColor } from "./WorkerMaintenanceStatusTable";
+import DateTimePickerModal from "../../DateTimePicker";
+import AreYouSureModal from "../../AreYouSureModal";
+
+import APIConfig from "../../../utils/APIConfig";
 
 function LaborTableReadOnly({labor, setLabor}){
 
     const calculateTotal = (hours, cost) => {
         return parseInt(hours) * parseInt(cost)
     }
+
+    useEffect(() => {
+        console.log("labor", labor)
+    }, [labor])
 
     return (
         <>
@@ -61,7 +71,7 @@ function LaborTableReadOnly({labor, setLabor}){
                     </Grid>
                     <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            {laborItem.hours}
+                            {laborItem.hours ? laborItem.hours : 1}
                         </Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -71,7 +81,7 @@ function LaborTableReadOnly({labor, setLabor}){
                     </Grid>
                     <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            ${calculateTotal(laborItem.hours, laborItem.charge || laborItem.rate)}
+                            ${calculateTotal(laborItem.hours || 1, laborItem.charge || laborItem.rate)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -147,7 +157,6 @@ export default function QuoteDetailInfo({maintenanceItem}){
     const navigate = useNavigate();
 
     let costData;
-    console.log(maintenanceItem)
     try {
         if (maintenanceItem?.quote_services_expenses) {
             costData = JSON.parse(maintenanceItem?.quote_services_expenses);
@@ -170,6 +179,33 @@ export default function QuoteDetailInfo({maintenanceItem}){
     const [estimatedTime, setEstimatedTime] = useState("");
     const [earliestAvailability, setEarliestAvailability] = useState("");
     const [quoteImages, setQuoteImages] = useState([])
+    const [showModal, setShowModal] = useState(false);
+    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+    const date = maintenanceItem.maintenance_scheduled_date;
+    const time = maintenanceItem.maintenance_scheduled_time;
+
+    useEffect(() => {
+        console.log("[DEBUG] QuoteDetailInfo", maintenanceItem)
+    })
+
+    const handleWithdraw = async () => {
+        // PUT to withdraw request
+
+        console.log("handleWithdraw")
+        var formData = new FormData();
+        formData.append("maintenance_quote_uid",  maintenanceItem.maintenance_quote_uid);
+        formData.append("quote_status", "WITHDRAW");
+
+        try {
+            console.log("in try block")
+            const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
+                method: 'PUT',
+                body: formData
+            });
+        } catch (error){
+            console.log("error", error)
+        }
+    }
 
     useEffect(() => {
         const parseServicesExpenses = (expenses) => {
@@ -206,6 +242,11 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     }, [maintenanceItem])
 
+    const handleUpdateScheduleDateTime = () => {
+        console.log("handleUpdateScheduleDateTime")
+
+    }
+
     return (
         <Stack
             direction="column"
@@ -221,9 +262,23 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
                         Maintenance Quote Details
                     </Typography>
+                    <Chip
+                        label={maintenanceItem.quote_status}
+                        size="small"
+                        style={{ backgroundColor: getChipColor(maintenanceItem.quote_status), color: 'white' }}
+                    />
                 </Grid>
-                <Grid item xs={1} sx={{alignItems: "right", justifyContent: "right"}}>
-                    {roleName() == "Manager" ? null : <EditIcon onClick={() => navigate("/businessEditQuoteForm", {state: {maintenanceItem: maintenanceItem}})}/>}
+                <Grid item xs={1}>
+                    <Box sx={{alignItems: "right", justifyContent: "right"}}>
+                        {roleName() == "Manager" ? null : (
+                            <Button 
+                                onClick={() => navigate("/businessEditQuoteForm", {state: {maintenanceItem: maintenanceItem}})}
+                                sx={{background: "#FFFFFF", color: "#3D5CAC"}}
+                            >
+                                <EditIcon/>
+                            </Button>
+                        )}
+                    </Box>
                 </Grid>
             </Grid>
             <Grid item xs={12}>
@@ -290,16 +345,17 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 <Typography sx={{color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "18px"}}>
                     Quote Total: ${estimatedCost}
                 </Typography>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
+                {/* <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     Your Estimated Time: {maintenanceItem?.quote_event_type}
-                </Typography>
+                </Typography> */}
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
-                    Your Earliest Availability: {maintenanceItem.quote_earliest_availability}
+                    {/* I would like this to be stored as time and date */}
+                    Your Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("h:mm A")}
                 </Typography>
             </Grid>
             {maintenanceItem?.maintenance_request_status == "SCHEDULED" ? (
-                <Grid item xs={12}>
-                  <Box sx={{paddingTop: "15px", paddingBottom: "15px"}}>
+                <Grid item xs={12} sx={{paddingBottom: "15px"}}>
+                  <Box sx={{paddingTop: "15px"}}>
                       <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
                           Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
                       </Typography>
@@ -345,7 +401,39 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     </Typography>
                 </Button>
             </Grid>
+            {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" ? (
+                <Grid item xs={12} sx={{paddingLeft: "0px"}}>
+                    <Button sx={{
+                        backgroundColor: "#F44336",
+                        textTransform: "none",
+                        margin: "1px",
+                        }}
+                        variant="contained"
+                        
+                        onClick={() => setShowWithdrawModal(true)}
+                    >
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                            Withdraw
+                        </Typography>
+                    </Button>
+                </Grid>
+            ) : null}
         </Grid>
+        <DateTimePickerModal
+            setOpenModal={setShowModal}
+            open={showModal}
+            maintenanceItem={maintenanceItem}
+            date={date}
+            time={time}
+            handleSubmit={handleUpdateScheduleDateTime}
+        />
+        <AreYouSureModal
+            setOpenModal={setShowWithdrawModal}
+            open={showWithdrawModal}
+            maintenanceItem={maintenanceItem}
+            action={"WITHDRAW"}
+            handleSubmit={handleWithdraw}
+        />
     </Stack>
     )
 
