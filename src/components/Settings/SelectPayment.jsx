@@ -6,7 +6,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider } from "@mui/material";
+import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider } from "@mui/material";
 
 // Stripe Imports
 import StripeFeesDialog from "./StripeFeesDialog";
@@ -63,13 +63,18 @@ export default function SelectPayment(props) {
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
   const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
 
+  // Confirmation Box State
+  const [confirmationNumber, setConfirmationNumber] = useState("");
+  const [isMakePaymentDisabled, setIsMakePaymentDisabled] = useState(true); // State to control the disabled status of the Make Payment button
+
   //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
   console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
   console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
   console.log("--debug-- location.state", location.state);
   console.log("---debug--- convenience_fee", convenience_fee);
 
-  //  This will update everytime the convenience fee changes
+
+
   useEffect(() => {
     console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
   }, [convenience_fee]);
@@ -82,6 +87,17 @@ export default function SelectPayment(props) {
   const [stripeResponse, setStripeResponse] = useState(null);
   const [applePay, setApplePay] = useState(false);
   const [paymentConfirm, setPaymentConfirm] = useState(false);
+
+
+  
+  useEffect(() => {
+    // Check if selectedMethod is not empty and confirmationNumber is not empty for Zelle and method for payment is selected
+    if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod ) {
+      setIsMakePaymentDisabled(true); // Disable button if conditions not met
+    } else {
+      setIsMakePaymentDisabled(false); // Enable button if conditions met
+    }
+  }, [selectedMethod, confirmationNumber]);
 
   useEffect(() => {
     console.log("stripe payment", stripePayment);
@@ -146,28 +162,29 @@ export default function SelectPayment(props) {
     paymentIntent = paymentIntent === undefined ? "Zelle" : paymentIntent;
     paymentMethod = paymentMethod === undefined ? "Zelle" : paymentMethod;
     console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
-
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
-
+    let payment_request_payload={
+      pay_purchase_id: paymentData.purchase_uids,
+      pay_fee: convenience_fee,
+      pay_total: totalBalance,
+      payment_notes: paymentData.business_code,
+      pay_charge_id: "stripe transaction key",
+      payment_type: selectedMethod,
+      payment_verify: "Unverified",
+      paid_by: getProfileId(),
+      payment_intent: paymentIntent,
+      payment_method: paymentMethod,
+    };
+    if (paymentMethod=='Zelle')
+      payment_request_payload.confirmation_number=confirmationNumber;
     await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
       // await fetch("http://localhost:4000/makePayment2", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        pay_purchase_id: paymentData.purchase_uids,
-        pay_fee: convenience_fee,
-        pay_total: totalBalance,
-        payment_notes: paymentData.business_code,
-        pay_charge_id: "stripe transaction key",
-        payment_type: selectedMethod,
-        payment_verify: "Unverified",
-        paid_by: getProfileId(),
-        payment_intent: paymentIntent,
-        payment_method: paymentMethod,
-      }),
+      body: JSON.stringify(payment_request_payload),
     });
 
     let routingString = paymentRoutingBasedOnSelectedRole();
@@ -223,9 +240,15 @@ export default function SelectPayment(props) {
   }
 
   const handleChange = (event) => {
-    console.log("--debug selectedMethod 1-->", event.target.value);
-    setSelectedMethod(event.target.value);
+    const selectedValue = event.target.value;
+    setSelectedMethod(selectedValue);
+    // Clear confirmation number when a different payment method is selected
+    if (selectedValue !== "Zelle") {
+      setConfirmationNumber("");
+    }
+    
     update_fee(event);
+  
   };
 
   const handleSubmit = async (e) => {
@@ -340,7 +363,7 @@ export default function SelectPayment(props) {
             }}
           >
             {"$" + (balance + convenience_fee).toFixed(2)}
-          </Typography>
+            </Typography>
         </Stack>
         <Divider light />
         <Stack>
@@ -521,9 +544,20 @@ export default function SelectPayment(props) {
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
                   Zelle
+                  <TextField
+                    id="confirmation-number"
+                    label="Confirmation Number"
+                    variant="outlined"
+                    size="small"
+                    value={confirmationNumber}
+                    sx={{ marginLeft: "10px" }} // Add some spacing between the image and the textfield
+                    disabled={selectedMethod!=='Zelle'}
+                    onChange={(e) => setConfirmationNumber(e.target.value)}
+                  />
                 </div>
               }
             />
+
             <FormControlLabel
               value="Venmo"
               control={<Radio />}
@@ -546,7 +580,7 @@ export default function SelectPayment(props) {
             borderRadius: "10px", // Rounded corners
             marginTop: "20px", // Add some spacing to the top
           }}
-        >
+          disabled={isMakePaymentDisabled}>
           Make Payment
         </Button>
       </Paper>
@@ -563,3 +597,5 @@ export default function SelectPayment(props) {
     </div>
   );
 }
+
+         
