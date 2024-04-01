@@ -11,6 +11,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import defaultPropertyImage from "./paintedLadies.jpeg";
 
+import APIConfig from "../../utils/APIConfig";
+
 const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");
 

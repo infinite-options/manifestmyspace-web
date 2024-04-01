@@ -37,6 +37,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
+import APIConfig from "../../utils/APIConfig";
+
 export default function EditProperty({}) {
   console.log("In Edit Property2 - rename to Edit Property");
   const { state } = useLocation();

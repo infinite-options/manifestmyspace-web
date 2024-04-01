@@ -25,6 +25,7 @@ export default function CompleteButton(props){
 
         if (maintenanceItem.maintenance_quote_uid === null){
             // it's handled by the property manager
+            console.log("handled by the property manager")
         } else{
             FinishQuote(maintenanceItem.maintenance_quote_uid)
         }

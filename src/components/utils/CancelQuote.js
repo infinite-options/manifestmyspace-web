@@ -1,3 +1,5 @@
+import APIConfig from "../../utils/APIConfig";
+
 export default async function CancelQuote(maintenance_quote_uid, setShowSpinner = () => {}){
     setShowSpinner(true);
     try {

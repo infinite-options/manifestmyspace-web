@@ -37,6 +37,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
+import APIConfig from '../../utils/APIConfig';
+
 export default function EditProperty({}){
     const { state } = useLocation();
     let navigate = useNavigate();

@@ -23,6 +23,8 @@ import { useUser } from "../../contexts/UserContext";
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
+import APIConfig from "../../utils/APIConfig";
+
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 // export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {

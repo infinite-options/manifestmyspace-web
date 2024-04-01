@@ -49,6 +49,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 // import PropertyData from './PropertyData';
 
+import APIConfig from "../../utils/APIConfig";
+
 const SearchBar = ({ propertyList, newPMRequestList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearchChange = (event) => {

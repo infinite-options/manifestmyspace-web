@@ -25,9 +25,6 @@ import {
 } from '@mui/material';
 import theme from '../../../theme/theme';
 import CircularProgress from "@mui/material/CircularProgress";
-
-
-
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
@@ -36,6 +33,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import ImageCarousel from "../../ImageCarousel";
 import defaultHouseImage from "../../Property/defaultHouseImage.png"
+
+import APIConfig from "../../../utils/APIConfig";
 
 function isValidDate(dateString){
     const dateParts = dateString.split("-");

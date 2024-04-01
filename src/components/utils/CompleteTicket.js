@@ -1,4 +1,4 @@
-import axios from "axios";
+import APIConfig from "../utils/api";
 
 export default async function CompleteTicket(maintenance_request_uid, setShowSpinner = () => {}){
     setShowSpinner(true);

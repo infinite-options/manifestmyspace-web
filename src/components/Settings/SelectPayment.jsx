@@ -28,6 +28,8 @@ import BankIcon from "../../images/mdi_bank.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 
+import APIConfig from "../../utils/APIConfig";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {

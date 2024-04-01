@@ -310,8 +310,8 @@ export default function PayMaintenanceForm(){
                                     {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === 'FINISHED'
                                         ? `$${maintenanceItem.bill_amount}`
                                         : (
-                                            maintenanceItem.bill_amount === null &&
-                                                maintenanceItem.quote_status !== 'FINISHED' &&
+                                            // maintenanceItem.bill_amount === null &&
+                                                maintenanceItem.quote_status !== 'FINISHED' && maintenanceItem.quote_status !== 'COMPLETED' &&
                                                 maintenanceItem.maintenance_request_status === 'COMPLETED' ? (
                                                     <Grid item xs={12}>
                                                         <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC", pointerEvents: "auto"}} onClick={() => setShowModal(true)}>

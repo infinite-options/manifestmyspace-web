@@ -8,6 +8,8 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../../utils/APIConfig";
+
 function OwnerRentDetail(props) {
   const location = useLocation();
   const [index, setIndex] = useState(location.state.index);

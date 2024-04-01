@@ -30,6 +30,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
+import APIConfig from "../../../utils/APIConfig";
+
 
 export default function NewRequestAction({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();

@@ -17,6 +17,8 @@ import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
 import DeleteIcon from '@mui/icons-material/Delete';
 
+import APIConfig from '../../utils/APIConfig'
+
 
 
 const useStyles = makeStyles((theme) => ({

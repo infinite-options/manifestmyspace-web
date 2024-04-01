@@ -1,3 +1,5 @@
+import APIConfig from "../../utils/APIConfig";
+
 export default async function CancelTicket(maintenance_request_uid, setShowSpinner = () => {}){
     setShowSpinner(true);
     try {

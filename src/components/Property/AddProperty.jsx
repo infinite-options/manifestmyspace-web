@@ -42,6 +42,8 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../utils/APIConfig";
+
 // Variable Declaration
 export default function AddProperty({}) {
   console.log("In AddProperty.jsx");
