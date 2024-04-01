@@ -50,12 +50,26 @@
 .announcement-searchbar-container {
     display: flex;
     flex-direction: row;
+
+    background-color: #F2F2F2;
+    border-radius: 10px;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.announcement-searchbar {
+    display: flex;
+    flex-direction: row;
     background-color: #A9AAAB19;
-    width: 70%;
+    width: 90%;
     height: 30px;
     align-items: center;
     border-radius: 10px;
     margin-top: 12px;
+    padding-left: 20px; 
 
 }
 .searchbar-icon {

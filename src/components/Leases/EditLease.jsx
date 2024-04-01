@@ -232,6 +232,36 @@ const EditLease = (props) => {
                 console.log(error.response.data);
             }
         });
+
+        const sendAnnouncement = async () => {
+            try {
+              const receiverPropertyMapping = {
+                [leaseData.business_uid]: [leaseData.lease_property_id],
+              };
+      
+              await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+                // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  announcement_title: "Lease Renewed by Tenant",
+                  announcement_msg: `Lease for ${leaseData.property_address}, Unit -${leaseData.property_unit} has been renewed by the Tenant.`,
+                  announcement_sender: getProfileId(),
+                  announcement_date: new Date().toDateString(),
+                  // announcement_properties: property.property_uid,
+                  announcement_properties: JSON.stringify(receiverPropertyMapping),
+                  announcement_mode: "LEASE",
+                  announcement_receiver: [leaseData.business_uid],
+                  announcement_type: ["Text", "Email"],
+                }),
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          sendAnnouncement();          
     }
 
     return (
