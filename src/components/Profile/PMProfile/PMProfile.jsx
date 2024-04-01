@@ -57,9 +57,18 @@ function PMProfile() {
 
 
   
-    let manager_address = profileData?.business_address
-      ? `${profileData?.business_address} # ${profileData?.business_unit}, ${profileData?.business_city} ${profileData?.business_state}, ${profileData?.business_zip}`
-      : 'No Address Is Not Available ';
+    let manager_address = (
+        profileData.business_address || profileData.business_unit ||
+        profileData.business_city || profileData.business_state || profileData.business_zip ? 
+        [
+            profileData.business_address && `${profileData.business_address}`,
+            profileData.business_unit && `, #${profileData.business_unit}`,
+            profileData.business_city && `, ${profileData.business_city}`,
+            profileData.business_state && `, ${profileData.business_state}`,
+            profileData.business_zip && `, ${profileData.business_zip}`
+        ].filter(Boolean).join('') 
+            : 'No Address Is Not Available'
+    )
   
     let paymentElements = {
       'zelle': { icon: <img src={ZelleIcon} alt="Zelle Icon" width="25" height="25" />} ,

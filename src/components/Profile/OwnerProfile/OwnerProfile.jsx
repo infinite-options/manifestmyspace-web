@@ -255,7 +255,20 @@ function OwnerProfile() {
                         color: theme.typography.common.blue, 
                         fontWeight: theme.typography.common.fontWeight, 
                         fontSize:theme.typography.smallFont}}>
-                        {profileData.owner_address ? profileData.owner_address : '-'}
+                        {
+                            profileData.owner_address || profileData.owner_unit ||
+                            profileData.owner_city || profileData.owner_state || profileData.owner_zip ? 
+                            [
+                                profileData.owner_address,
+                                profileData.owner_unit && `, #${profileData.owner_unit}`,
+                                profileData.owner_city && `, ${profileData.owner_city}`,
+                                profileData.owner_state && `, ${profileData.owner_state}`,
+                                profileData.owner_zip && `, ${profileData.owner_zip}`
+                            ].filter(Boolean).join('') 
+                                : 'No Address Is Not Available'
+                        }
+
+
                     </Typography>
                     </Stack>
                     
