@@ -263,7 +263,7 @@ export default function Announcements() {
                             return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} sent_or_received={'Sent'} /> }
                                 </Box>
                             </div>)
                     }
@@ -299,7 +299,7 @@ export default function Announcements() {
                             return (
                             <div key={i}>
                                 <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} sent_or_received={'Received'}/> }
                                 </Box>
                             </div>)
                     }
