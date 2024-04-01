@@ -4,7 +4,7 @@ export default async function CancelQuote(maintenance_quote_uid, setShowSpinner 
         var formData = new FormData();
         formData.append("maintenance_quote_uid", maintenance_quote_uid);
         formData.append("quote_status", "CANCELLED");
-        const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
             method: 'PUT',
             body: formData
         });

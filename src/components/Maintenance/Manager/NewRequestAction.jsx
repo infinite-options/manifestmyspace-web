@@ -61,7 +61,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             formData.append("maintenance_scheduled_date", date); // this needs to change for the date and time picker
             formData.append("maintenance_scheduled_time", time); // this needs to change for the date and time picker
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData,
                 });

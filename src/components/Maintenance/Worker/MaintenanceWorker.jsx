@@ -12,6 +12,8 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../../utils/APIConfig"
+
 export default function MaintenanceWorker() {
   const { user, getProfileId } = useUser();
   const location = useLocation();
@@ -169,7 +171,7 @@ export default function MaintenanceWorker() {
     const getMaintenanceData = async () => {
       setShowSpinner(true);
       console.log("About to call maintenanceStatus endpoint Maintenance Worker");
-      const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`); // Change back to ${getProfileId()}
+      const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`); // Change back to ${getProfileId()}
       const maintenanceRequestsData = await maintenanceRequests.json();
       // console.log("maintenanceRequestsData", maintenanceRequestsData)
 

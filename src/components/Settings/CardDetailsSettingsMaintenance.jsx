@@ -161,7 +161,7 @@ export default function CardDetailsSettingsMaintenance() {
         setShowSpinner(true);
         const fetchPaymentData = async () => {
             try {
-            const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+            const response = await axios.get(`${APIConfig.baseURL.dev}/paymentMethod/${getProfileId()}`);
             setPaymentsData(response.data.result);
             
             

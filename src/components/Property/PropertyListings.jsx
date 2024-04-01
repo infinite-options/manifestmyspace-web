@@ -299,7 +299,7 @@ const PropertyListings = (props) => {
 
   async function fetchData() {
     // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-    const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`);
+    const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
     // const propertyResponse = await fetch(`http://localhost:4000/listings/${getProfileId()}`)
 
     // if (!leaseResponse.ok || !propertyResponse.ok) {

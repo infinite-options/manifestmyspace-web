@@ -34,6 +34,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import ImageCarousel from "../../ImageCarousel";
 
+import APIConfig from "../../../utils/APIConfig";
 
 
 function NewOwnerInquiry(props) {
@@ -85,7 +86,7 @@ function NewOwnerInquiry(props) {
             
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
 
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${announcementData["announcement_sender"]}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/properties/${announcementData["announcement_sender"]}`)
             
             const responseData = await response.json();
 
@@ -486,7 +487,7 @@ function PropertyCard(props) {
 
         //get contracts
         const fetchData = async () => {
-            const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
+            const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
             const data = await result.json();
 
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");

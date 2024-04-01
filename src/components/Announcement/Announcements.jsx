@@ -12,6 +12,8 @@ import { useNavigate, useLocation,} from 'react-router-dom';
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
 
+import APIConfig from "../../utils/APIConfig";
+
 export default function Announcements() {        
     const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
@@ -73,7 +75,7 @@ export default function Announcements() {
 
     useEffect(() => {
         setShowSpinner(true);
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`)
+        axios.get(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`)
             .then((res) => {
              //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
              setAnnouncementData(res.data);
@@ -100,7 +102,7 @@ export default function Announcements() {
     // }, [dataDetails]);
 
     const fetchContactData = async () => {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`;
+        const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
         setShowSpinner(true);
         let data = null;
         

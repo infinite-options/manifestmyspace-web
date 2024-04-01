@@ -26,7 +26,7 @@ export default function PMQuotesList({}) {
     const getContractsForPM = async () => {
       setShowSpinner(true);
       try {
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
         const contractsResponse = await response.json();
         const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
         setContractRequests(contractsData);

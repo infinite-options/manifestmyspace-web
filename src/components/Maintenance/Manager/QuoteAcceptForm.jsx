@@ -27,6 +27,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
 
+import APIConfig from "../../../utils/APIConfig";
+
 export default function QuoteAcceptForm(){
 
     const navigate = useNavigate();
@@ -123,7 +125,7 @@ export default function QuoteAcceptForm(){
             formData.append("quote_status", quoteStatusParam);
 
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                     method: 'PUT',
                     body: formData,
                 });            

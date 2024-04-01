@@ -21,6 +21,8 @@ import React, {useState} from "react";
 import PaymentInfoModal from "../../PaymentInfoModal";
 import { useUser } from '../../../contexts/UserContext';
 
+import APIConfig from "../../../utils/APIConfig";
+
 export default function MarkPaidButton({maintenanceItem, disabled}){
 
     const [showModal, setShowModal] = useState(false);
@@ -34,8 +36,8 @@ export default function MarkPaidButton({maintenanceItem, disabled}){
         console.log("handleMarkPaid", checkNumber, amount, id, getProfileId());
 
         try {
-            fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
-                method: "POST",
+            fetch(`${APIConfig.baseURL.dev}/makePayment`, {
+                method: "POST", 
                 headers: {
                     "Content-Type": "application/json",
                 },

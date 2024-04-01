@@ -119,7 +119,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
 
     const getContractsForOwner = async () => {
       try {
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
         if (!response.ok) {
           console.log("Error fetching contracts data");
         }

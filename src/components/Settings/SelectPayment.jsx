@@ -150,7 +150,7 @@ export default function SelectPayment(props) {
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
 
-    await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
+    await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

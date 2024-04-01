@@ -17,6 +17,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from '@mui/icons-material/Close';
 import documentIcon from "../../images/Subtract.png"
 import User_fill from '../../images/User_fill.png';
+import APIConfig from '../../utils/APIConfig'
 
 function PropertyContract(props) {
 
@@ -67,7 +68,7 @@ function PropertyContract(props) {
             setShowSpinner(true);
             console.log("ANNOUNCEMENT DATA", announcementData);
 
-            const responseContract = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/`+ownerId)
+            const responseContract = await fetch(`${APIConfig.baseURL.dev}/contracts/`+ownerId)
             const responseContractData = await responseContract.json();
             const contracts = responseContractData.result? responseContractData.result : [];
 
@@ -91,7 +92,7 @@ function PropertyContract(props) {
             
             //console.log("Contract: "+JSON.stringify(contract))
             
-            const responseProperties = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/`+ownerId)
+            const responseProperties = await fetch(`${APIConfig.baseURL.dev}/properties/`+ownerId)
             const responsePropertiesData = await responseProperties.json();
             
             const properties = responsePropertiesData.Property.result ? responsePropertiesData.Property.result : [];

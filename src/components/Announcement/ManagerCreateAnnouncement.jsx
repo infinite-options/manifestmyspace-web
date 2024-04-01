@@ -30,6 +30,7 @@ import AnnouncementPopUp from "./AnnouncementPopUp";
 import theme from "../../theme/theme";
 import TenantDoucments from "../Documents/TenantDocuments/TenantDocuments";
 import FormGroup from '@mui/material/FormGroup';
+import APIConfig from "../../utils/APIConfig";
 
 export default function ManagerCreateAnnouncement() {
     const { getProfileId } = useUser();
@@ -264,8 +265,7 @@ export default function ManagerCreateAnnouncement() {
                 announcement_types_list.push("Email")
             }
             
-            promises.push(fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
-            // promises.push(fetch(`http://localhost:4000/announcements/${getProfileId()}`,
+            promises.push(fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`,
             {
                 method: "POST",
                 headers: {

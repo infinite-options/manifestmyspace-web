@@ -25,6 +25,11 @@ import AddIcon from '@mui/icons-material/Add';
 import userFillIcon from './User_fill.png'
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import CreateChargeModal from "../../CreateChargeModal";
+
+import APIConfig from "../../../utils/APIConfig";
+
+import dayjs from "dayjs";
 
 export default function PayMaintenanceForm(){
 
@@ -36,15 +41,50 @@ export default function PayMaintenanceForm(){
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [showSpinner, setShowSpinner] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    // const [amount, setAmount] = useState(props.maintenanceItem.bill_amount || '');
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
 
-    console.log(maintenanceItem)
 
     const handleSubmit = () => {
         navigate("/payments", {state: {maintenanceItem}})
+    }
+
+    const modalSubmit = (chargeAmount) => {
+        console.log("Printing modal submit")
+
+        const now = new Date();
+        const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        console.log("now, nextWeek", now, nextWeek)
+
+        let data = {
+            pur_property_id: maintenanceItem.property_id,
+            purchase_type: "maintenance",
+            pur_cf_type: "expense",
+            purchase_date: dayjs(now).format("MM-DD-YYYY"),
+            pur_due_date: dayjs(nextWeek).format("MM-DD-YYYY"),
+            pur_amount_due: Number(chargeAmount),
+            purchase_status: "PAID", //should this be UNPAID?
+            pur_notes: `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`,
+            pur_description: `Maintenance ID: ${maintenanceItem.maintenance_request_uid} Completed On: ${maintenanceItem.maintenance_scheduled_date}`,
+            pur_receiver: `${maintenanceItem.owner_uid}`,
+            pur_initiator: `${maintenanceItem.business_uid}`,
+            pur_payer: `${maintenanceItem.owner_uid}`
+        }
+
+        console.log("data", data)
+        console.log(`url ${APIConfig.baseURL.dev}/addExpense`)
+
+        fetch(`${APIConfig.baseURL.dev}/addExpense`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
     }
 
     useEffect(() => {
@@ -246,22 +286,46 @@ export default function PayMaintenanceForm(){
                     </Grid>
                     <Grid container spacing={3} sx={{paddingTop: "25px"}}>
                         <Grid item xs={12}>
-                            <Container style={{ 
-                                display: 'flex',           // Turn the container into a flex container
-                                flexDirection: 'column',   // Stack children vertically
-                                justifyContent: 'center',  // Center children vertically
-                                alignItems: 'center',      // Center children horizontally
-                                backgroundColor: '#FFFFFF', 
-                                padding: '20px',
-                                width: '90%',             // Make sure the container takes the full width of its parent
-                                borderRadius: '10px',      // Rounded border
-                            }} maxWidth={false}> 
-                                <Typography align="center" sx={{color: theme.typography.primary.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>  {/* This will center the text inside the Typography component */}
-                                    {maintenanceItem.bill_amount !== null ? `${maintenanceItem.bill_amount}` : "No Invoice Submitted"}
+                            <Container
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: '#FFFFFF',
+                                    padding: '20px',
+                                    width: '90%',
+                                    borderRadius: '10px',
+                                }}
+                                maxWidth={false}
+                            >
+                                <Typography
+                                    align="center"
+                                    sx={{
+                                        color: theme.typography.primary.blue,
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: '16px',
+                                    }}
+                                >
+                                    {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === 'FINISHED'
+                                        ? `$${maintenanceItem.bill_amount}`
+                                        : (
+                                            maintenanceItem.bill_amount === null &&
+                                                maintenanceItem.quote_status !== 'FINISHED' &&
+                                                maintenanceItem.maintenance_request_status === 'COMPLETED' ? (
+                                                    <Grid item xs={12}>
+                                                        <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC", pointerEvents: "auto"}} onClick={() => setShowModal(true)}>
+                                                            <Typography sx={{color: "#FFFFFF",  textTransform: "none", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                                                                Create Charge for Owner
+                                                            </Typography>
+                                                        </Button>
+                                                    </Grid>
+                                                ) : 'No Invoice Submitted'
+                                            )}
                                 </Typography>
-                            </Container>       
+                            </Container>
                         </Grid>
-                        {maintenanceItem.bill_amount !== null ? (
+                        {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === "FINISHED" ? (
                             <>
                                 <Grid item xs={12}>
                                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
@@ -319,6 +383,12 @@ export default function PayMaintenanceForm(){
                     </Grid>
                 </Stack>
             </Paper>
+            <CreateChargeModal
+                open={showModal}
+                setOpenModal={setShowModal}
+                maintenanceItem={maintenanceItem}
+                handleSubmit={modalSubmit}
+            />
         </Box>
     )
 }

@@ -13,6 +13,8 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../utils/APIConfig";
+
 export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId) {
   const dataObject = {};
 
@@ -59,7 +61,7 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
   const getMaintenanceData = async () => {
     setShowSpinner(true);
 
-    const maintenanceRequests = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
+    const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
     const maintenanceRequestsData = await maintenanceRequests.json();
 
     console.log("[DEBUG] Data returned from maintenanceStatus endpoint:", maintenanceRequestsData);

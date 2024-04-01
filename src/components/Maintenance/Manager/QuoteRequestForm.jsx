@@ -30,6 +30,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
+import APIConfig from '../../../utils/APIConfig';
+
 export default function QuoteRequestForm(){
 
     
@@ -95,7 +97,7 @@ export default function QuoteRequestForm(){
             formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
             formData.append("maintenance_request_status", "PROCESSING");
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData,
                 });
@@ -143,7 +145,7 @@ export default function QuoteRequestForm(){
         
             try {
                 // console.log("right before call");
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quotes", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/quotes`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -204,7 +206,7 @@ export default function QuoteRequestForm(){
 
         const getMaintenanceWorkers = async (requestedQuotes) => {
             setShowSpinner(true);
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsMaintenance")
+            const response = await fetch(`${APIConfig.baseURL.dev}/contactsMaintenance`)
             const data = await response.json()
             const workers = data.Maintenance_Contacts.result
             // console.log("workers",  workers)

@@ -7,6 +7,7 @@ import CalendarToday from "@mui/icons-material/CalendarToday";
 import theme from '../../../theme/theme';
 import DateTimePickerModal from "../../DateTimePicker";
 import { useState } from "react";
+import APIConfig from "../../../utils/APIConfig";
 
 
 export default function RescheduleButton({maintenanceItem}){
@@ -29,7 +30,7 @@ export default function RescheduleButton({maintenanceItem}){
     
             try {
                 console.log("in try block")
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData
                 });

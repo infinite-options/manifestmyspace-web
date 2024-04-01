@@ -37,6 +37,8 @@ import { useUser } from "../../../contexts/UserContext";
 import DocumentUploader from "../../DocumentUploader";
 import dayjs from 'dayjs';
 
+import APIConfig from "../../../utils/APIConfig";
+
 function LaborTable({labor, setLabor}){
 
     const [indexToggle, setIndexToggle] = useState(-1);
@@ -507,7 +509,7 @@ export default function BusinessInvoiceForm(){
         const getMaintenanceProfileInfo = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${getProfileId()}`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${getProfileId()}`, {
                     method: 'GET',
                 })
                 const responseData = await response.json();
@@ -553,7 +555,7 @@ export default function BusinessInvoiceForm(){
 
             setShowSpinner(true);
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                const response = await fetch("${APIConfig.baseURL.dev}/maintenanceQuotes", {
                     method: 'PUT',
                     body: formData,
                 })
@@ -584,7 +586,7 @@ export default function BusinessInvoiceForm(){
                     formData.append("document_file", selectedDocumentList[i]);
                     formData.append("document_title", selectedDocumentList[i].name);
                 }
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/documents/${getProfileId()}`, {
                     method: 'POST',
                     body: formData,
                 })
@@ -612,7 +614,7 @@ export default function BusinessInvoiceForm(){
                 
 
                 // TODO: Change this to form data
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/bills`, {
                     method: 'POST',
                     body: formData,
                 });

@@ -21,6 +21,7 @@ import { formattedPhoneNumber } from '../utils/privacyMasking';
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from "../../utils/APIConfig";
 
 const Contacts = (props) => {
     const { getProfileId } = useUser();
@@ -41,7 +42,7 @@ const Contacts = (props) => {
 
     const fetchData = async () => {
         const url =
-            `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContacts/${getProfileId()}`;
+            `${APIConfig.baseURL.dev}/contactsBusinessContacts/${getProfileId()}`;
         setShowSpinner(true);
         await axios
             .get(url)

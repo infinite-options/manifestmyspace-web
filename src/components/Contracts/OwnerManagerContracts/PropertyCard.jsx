@@ -21,6 +21,8 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg";
 import dayjs from "dayjs";
 
+import APIConfig from "../../../utils/APIConfig"
+
 
 function TextInputField(props) {
     const inputStyle = {
@@ -1078,7 +1080,7 @@ const handleDeleteContact = (index, event) => {
 }
 
 const sendPutRequest = (data) => {
-    const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
+    const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`; 
 
     fetch(url, {
@@ -1228,7 +1230,7 @@ useEffect(() => {
 
     //get contracts
     const fetchData = async () => {
-        const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
+        const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
         const data = await result.json();
         console.log("--debug--", data)
 
@@ -1256,7 +1258,7 @@ useEffect(() => {
         }
 
         // get default contract fees for manager
-        const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
+        const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${contractBusinessID}`);
         const data2 = await businessProfileResult.json();
         const businessProfileData = data2["result"][0];
         console.log("Business Services Fees", businessProfileData["business_services_fees"]);

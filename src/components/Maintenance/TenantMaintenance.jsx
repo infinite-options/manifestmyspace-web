@@ -44,6 +44,7 @@ import TenantMaintenanceView from './TenantMaintenanceView';
 import AddTenantMaintenanceItem from './AddTenantMaintenanceItem';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from "../../utils/APIConfig";
 
 export default function TenantMaintenance(){
     const [filterToggle, setFilterToggle] = useState(false);
@@ -82,7 +83,7 @@ export default function TenantMaintenance(){
         const getTenantMaintenanceData = async () => {
             console.log("Getting Tenant Maintenance Data")
                 setShowSpinner(true);
-                const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceReq/350-000040');//+tenantId);
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/350-000040`);//+tenantId);
                 const jsonData = await response.json();
                 const data = jsonData.result;
                   

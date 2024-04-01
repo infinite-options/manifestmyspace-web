@@ -83,7 +83,7 @@ export default function PMQuotesRequested({}){
         
         const getContractsForOwner = async () => {
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${getProfileId()}`);
+                const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
                 
                 const contractsResponse = await response.json();
                 
@@ -516,7 +516,7 @@ function DocumentCard(props) {
     useEffect(() => {
         const getBusinessProfileFees = async (obj) => {
             try{
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/" + data.business_uid, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${data.business_uid}`, {
                     method: 'GET',
                 })
                 const responseData = await response.json()

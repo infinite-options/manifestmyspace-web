@@ -236,7 +236,7 @@ export default function SelectPayment(props) {
     const makePayments = async () => {
       setShowSpinner(true);
       const makePayment = (purchase_uid, pur_amount_due) =>
-        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment", {
+        fetch(`${APIConfig.baseURL.dev}/makePayment`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -272,7 +272,7 @@ export default function SelectPayment(props) {
               const formData = new FormData();
               formData.append("maintenance_quote_uid", quote_id);
               formData.append("quote_status", "COMPLETED");
-              fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+              fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                 method: "PUT",
                 body: formData,
               });

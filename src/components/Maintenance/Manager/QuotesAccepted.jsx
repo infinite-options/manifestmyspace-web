@@ -30,6 +30,8 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 import DateTimePickerModal from "../../DateTimePicker";
 
+import APIConfig from "../../../utils/APIConfig";
+
 export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}){
     // console.log("--debug-- maintenanceItem", maintenanceItem)
     const navigate = useNavigate();
@@ -58,7 +60,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             formData.append("maintenance_scheduled_date", date); 
             formData.append("maintenance_scheduled_time", time);
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData
                 });
@@ -86,7 +88,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             formData.append("quote_status", "SCHEDULED")
             
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                     method: 'PUT',
                     body: formData
                 });

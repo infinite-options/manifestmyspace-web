@@ -27,6 +27,8 @@ import { getChipColor } from "./WorkerMaintenanceStatusTable";
 import DateTimePickerModal from "../../DateTimePicker";
 import AreYouSureModal from "../../AreYouSureModal";
 
+import APIConfig from "../../../utils/APIConfig";
+
 function LaborTableReadOnly({labor, setLabor}){
 
     const calculateTotal = (hours, cost) => {
@@ -196,7 +198,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
         try {
             console.log("in try block")
-            const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+            const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                 method: 'PUT',
                 body: formData
             });

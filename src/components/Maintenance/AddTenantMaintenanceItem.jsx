@@ -40,6 +40,8 @@ import PhoneNumberField from '../FormComponents/PhoneNumberField'
 import { darken } from '@mui/system';
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
+import APIConfig from '../../utils/APIConfig';
+
 export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){    
     const location = useLocation();
     let navigate = useNavigate();
@@ -172,7 +174,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
             setShowSpinner(true);
             try {
                 
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: "POST",
                     body: formData,
                 })
@@ -194,7 +196,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
             };
             // console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
 
-            const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+            const annoucementsResponse = fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
             // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
                 method: 'POST',
                 headers: {

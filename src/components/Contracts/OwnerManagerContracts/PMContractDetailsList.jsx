@@ -105,7 +105,7 @@ function PMContractDetailsList(props) {
             
 
             // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`)
             
             const responseData = await response.json();
 
@@ -515,7 +515,7 @@ function PropertyCard(props) {
     }
 
     const sendPutRequest = (data) => {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
+        const url = `${APIConfig.baseURL.dev}/contracts`;
         // const url = `http://localhost:4000/contracts`; 
     
         fetch(url, {
@@ -667,7 +667,7 @@ function PropertyCard(props) {
 
         //get contracts
         const fetchData = async () => {
-            const result = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts/${contractBusinessID}`);
+            const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
             const data = await result.json();
 
             // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
@@ -694,7 +694,7 @@ function PropertyCard(props) {
 
 
             //get default contract fees for manager
-            const businessProfileResult = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${contractBusinessID}`);
+            const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${contractBusinessID}`);
             const data2 = await businessProfileResult.json();
             const businessProfileData = data2["result"][0];
             console.log("Business Services Fees", businessProfileData["business_services_fees"]);
