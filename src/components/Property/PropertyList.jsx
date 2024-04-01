@@ -173,7 +173,7 @@ function getPropertyList(data) {
   //   console.log(maintMap);
   return propertyList.map((p) => {
     p.applications = appsMap.get(p.property_uid) || [];
-    p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
+    p.applicationsCount = [...p.applications].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
     p.maintenance = maintMap.get(p.property_uid) || [];
     p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
     // p.newContracts = contractsMap.get(p.property_uid) || [];
