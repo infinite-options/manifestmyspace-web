@@ -27,6 +27,10 @@ export default function Announcements() {
     //
     const [showAnnouncement, setShowAnnouncement] = useState(false);
     const [annData, setAnnData] = useState("");
+
+    // useEffect(() => {
+    //     console.log("receivedData - ", receivedData);
+    // }, [receivedData]);
     
     const result =[
         {
@@ -78,17 +82,28 @@ export default function Announcements() {
         axios.get(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`)
             .then((res) => {
              //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
-             setAnnouncementData(res.data);
-             let sent_data=res.data.sent.result
-             let received_data=res.data.received.result 
-             if (owner_uid_filter) // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
-             {  received_data= received_data.filter(record=>record.announcement_sender === owner_uid_filter );
-                sent_data= sent_data.filter(record=>record.announcement_receiver === owner_uid_filter );}
-             setSentData(sent_data)
-             setReceivedData(received_data)
+                setAnnouncementData(res.data);
+                let sent_data=res.data.sent.result
+                let received_data=res.data.received.result 
+                if (owner_uid_filter) // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
+                {  
+                    received_data= received_data.filter(record=>record.announcement_sender === owner_uid_filter );
+                    sent_data= sent_data.filter(record=>record.announcement_receiver === owner_uid_filter );
+                }
+                sent_data.sort((a, b) => {
+                    if (a.announcement_uid < b.announcement_uid) return 1;
+                    if (a.announcement_uid > b.announcement_uid) return -1;
+                    return 0;
+                })
+                received_data.sort((a, b) => {
+                    if (a.announcement_uid < b.announcement_uid) return 1;
+                    if (a.announcement_uid > b.announcement_uid) return -1;
+                    return 0;
+                })
+                setSentData(sent_data)
+                setReceivedData(received_data)
 
-
-            setShowSpinner(false);
+                setShowSpinner(false);
             });
     }, []);
 
@@ -185,14 +200,16 @@ export default function Announcements() {
                     103 N. Abel St unit #104
                 </div>
             </div> */}
-            <div className="announcement-menu-container">
+            <div className="announcement-searchbar-container">
                 <Searchbar />
                 <Box
                     sx={{
-                        width: "100%",
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
+                        width: "10%",
+                        height: "30px",
+                        paddingTop: "15px",
+                        paddingBottom: "5px",
                         paddingRight: "10px",
+                        paddingLeft: "10px",
                         display: "flex",
                         flexDirection: "row",
                         justifyContent: "flex-end",
@@ -205,7 +222,7 @@ export default function Announcements() {
                             color: "#fff",
                             fontWeight: "bold",
                             textTransform: "none",
-                            width: "10%",
+                            width: "100%",
                             "&:hover, &:focus, &:active": {
                             backgroundColor: "#3F51B5",
                             },
@@ -214,6 +231,8 @@ export default function Announcements() {
                         +
                     </Button>
                 </Box>
+            </div>
+            <div className="announcement-menu-container">
                 <div className="announcement-menu-bar">
                     <div className="announcement-view">
                         <div className="announcement-view-icon">
@@ -236,6 +255,41 @@ export default function Announcements() {
                             <input type="checkbox" />
                         </div>
                     </div>
+                </div>
+                <div className="announcement-view-text">
+                           Received
+                </div>
+                <div style={{width:"100%", height: "220px", overflow: "auto"}}>
+                 <div className="announcement-list-container">
+                    {receivedData.length > 0 ? (
+                        receivedData.map((announcement, i) =>{
+                            let role=announcement?.sender_role
+                            let pageToNavigate;
+                            let navigationParams;
+                            try{
+                                let indx= dataDetails[role].findIndex(contact=> contact.contact_uid===announcement?.announcement_sender)
+                                if (indx>=0){
+                                pageToNavigate= `/${role.toLowerCase()}ContactDetails`;
+                                navigationParams={state: {
+                                dataDetails:dataDetails[role] ,
+                                tab: role,
+                                index:indx,
+                                viewData: dataDetails[role],
+                            },};}
+                            }
+                            catch(e){
+                                console.log(e)
+                            }
+
+                            return (
+                            <div key={i}>
+                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
+                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
+                                </Box>
+                            </div>)
+                    }
+                        )) : "No announcements"}
+                </div>
                 </div>
                 <div className="announcement-view-text">
                            Sent
@@ -273,42 +327,8 @@ export default function Announcements() {
                 </div>
                 </div>
 
-                <div className="announcement-view-text">
-                           Received
-                </div>
-                <div style={{width:"100%", height: "150px", overflow: "auto"}}>
-                 <div className="announcement-list-container">
-                    {receivedData.length > 0 ? (
-                        receivedData.map((announcement, i) =>{
-                            let role=announcement?.sender_role
-                            let pageToNavigate;
-                            let navigationParams;
-                            try{
-                                let indx= dataDetails[role].findIndex(contact=> contact.contact_uid===announcement?.announcement_sender)
-                                if (indx>=0){
-                                pageToNavigate= `/${role.toLowerCase()}ContactDetails`;
-                                navigationParams={state: {
-                                dataDetails:dataDetails[role] ,
-                                tab: role,
-                                index:indx,
-                                viewData: dataDetails[role],
-                            },};}
-                            }
-                            catch(e){
-                                console.log(e)
-                            }
-
-                            return (
-                            <div key={i}>
-                                <Box onClick={()=>{handleAnnouncements(announcement)}}>
-                                   { <AnnouncementCard data={announcement} role={getProfileId} isContract={announcement.announcement_mode=="CONTRACT"} isLease={announcement.announcement_mode=="LEASE"} pageToNavigate={pageToNavigate}  navigationParams={navigationParams} /> }
-                                </Box>
-                            </div>)
-                    }
-                        )) : "No announcements"}
-                </div>
-                </div>
             </div>
+            
             {/**
             <hr/>
             <SearchFilter/>

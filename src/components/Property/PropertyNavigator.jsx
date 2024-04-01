@@ -650,97 +650,94 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                       Lease Expiring : {property.lease_end ? property.lease_end : "No Lease"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={4}>
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                        paddingRight: "10px",
-                      }}
-                    >
-                      Property Value
-                    </Typography>
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      ${property.property_value}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                        paddingRight: "10px",
-                      }}
-                    >
-                      $ Per Sqft
-                    </Typography>
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      ${(property.property_value / property.property_area).toFixed(2)}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        whiteSpace: "nowrap", // Ensures text remains on a single line
-                        display: "inline-flex", // Allow button box to adjust to content
-                        alignItems: "center", // Center content vertically
-                        maxWidth: "100%", // Allow button to take full width
-                        width: "auto", // Let the width be determined by the content
-                        padding: "8px 16px", // Add padding around the text
-                      }}
-                      size="small"
-                      onClick={() => {
-                        navigate("/editProperty2", {
-                          state: {
-                            index: currentIndex,
-                            propertyList: propertyData,
-                            page: "edit_property",
-                          },
-                        });
-                      }}
-                    >
-                      <CreateIcon
-                        sx={{
-                          color: "#FFFFFF",
-                          margin: "5px",
-                          fontSize: "18px",
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Edit Property
-                      </Typography>
-                    </Button>
-                  </Grid>
+                  <Grid container spacing={2} alignItems="center">
+  <Grid item xs={5} md={4}>
+    <Typography
+      sx={{
+        textTransform: "none",
+        color: theme.typography.primary.black,
+        fontWeight: theme.typography.secondary.fontWeight,
+        fontSize: theme.typography.smallFont,
+        paddingRight: "10px",
+      }}
+    >
+      Property Value
+    </Typography>
+    <Typography
+      sx={{
+        textTransform: "none",
+        color: theme.typography.primary.black,
+        fontWeight: theme.typography.light.fontWeight,
+        fontSize: theme.typography.smallFont,
+      }}
+    >
+      ${property.property_value}
+    </Typography>
+  </Grid>
+  <Grid item xs={3} md={3}>
+    <Typography
+      sx={{
+        textTransform: "none",
+        color: theme.typography.primary.black,
+        fontWeight: theme.typography.secondary.fontWeight,
+        fontSize: theme.typography.smallFont,
+        // paddingRight: "10px",
+      }}
+    >
+      $ Per Sqft
+    </Typography>
+    <Typography
+      sx={{
+        textTransform: "none",
+        color: theme.typography.primary.black,
+        fontWeight: theme.typography.light.fontWeight,
+        fontSize: theme.typography.smallFont,
+      }}
+    >
+      ${(property.property_value / property.property_area).toFixed(2)}
+    </Typography>
+  </Grid>
+  <Grid item xs={4} md={5} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <Button
+      variant="outlined"
+      sx={{
+        background: "#3D5CAC",
+        color: theme.palette.background.default,
+        cursor: "pointer",
+        textTransform: "none",
+        minWidth: "110px", // Fixed width for the button
+        minHeight: "35px",
+      }}
+      size="small"
+      onClick={() => {
+        navigate("/editProperty2", {
+          state: {
+            index: currentIndex,
+            propertyList: propertyData,
+            page: "edit_property",
+          },
+        });
+      }}
+    >
+      <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+      <Typography
+        sx={{
+          textTransform: "none",
+          color: "#FFFFFF",
+          fontWeight: theme.typography.secondary.fontWeight,
+          fontSize: theme.typography.smallFont,
+          whiteSpace: "nowrap",
+          marginLeft: '1%', // Adjusting margin for icon and text
+        }}
+      >
+        {"Edit Property"}
+      </Typography>
+    </Button>
+  </Grid>
+</Grid>
+
+  
+
                   <Grid item xs={3}>
                     <Typography
                       sx={{
@@ -1062,6 +1059,8 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                           color: theme.palette.background.default,
                           cursor: "pointer",
                           textTransform: "none",
+                          minWidth: "110px", // Fixed width for the button
+                          minHeight: "35px",
                         }}
                         size="small"
                         onClick={() => {

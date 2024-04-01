@@ -44,7 +44,7 @@ export default function MaintenanceDashboard(){
     const [quotesFinishedCashflow, setQuotesFinishedCashflow] = useState(0);
     const [api_data, set_api_data]= useState({});
     const [refresh, setRefresh] = useState(false || location.state?.refresh);
-
+    const [chartSize, setChartSize] = useState(400);
     const data = [
         {
             "name": "Quotes Requested" + '(' + quoteRequestedCount+')',
@@ -78,6 +78,24 @@ export default function MaintenanceDashboard(){
         },
       ]
 
+      
+      useEffect(() => {
+        const handleResize = () => {
+            // Calculate the minimum dimension of the screen
+            const minDimension = Math.min(window.innerWidth, window.innerHeight);
+            // Update the chart size based on the minimum dimension
+            setChartSize(minDimension * 0.8); // Adjust the factor (0.8) as needed
+        };
+
+        // Add event listener for window resize
+        window.addEventListener("resize", handleResize);
+
+        // Call handleResize initially to set the initial chart size
+        handleResize();
+
+        // Cleanup function to remove event listener
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         if (!getProfileId())
@@ -180,81 +198,85 @@ export default function MaintenanceDashboard(){
                             </Box>
                         </Grid>
                         <Grid item xs={8}>
-                            <Box
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    width: '100%', // Take up full screen width
-                                    minHeight: '300px', // Set the Box height to full height
-                                    marginTop: theme.spacing(2), // Set the margin to 20px
-                                }}
-                            >
-                                <Paper
-                                    style={{
-                                        padding: theme.spacing(2),
-                                        backgroundColor: theme.palette.primary.main,
-                                        width: '85%', // Occupy full width with 25px margins on each side
-                                        [theme.breakpoints.down('sm')]: {
-                                            width: '80%',
-                                        },
-                                        [theme.breakpoints.up('sm')]: {
-                                            width: '50%',
-                                        },
-                                        paddingTop: '10px',
-                                    }}
-                                >
-                                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:"22px"}}>
-                                        Current Activity
-                                    </Typography>                                    
-                                    <Box
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            marginTop: theme.spacing(2), // Set the margin to 20px
-                                            position: 'relative',
-                                        }}
-                                    >
-                                        <RadialBarChart 
-                                            width={500} 
-                                            height={500} 
-                                            // cx='50%'
-                                            // cy='50%'
-                                            innerRadius="10%" 
-                                            outerRadius="100%" 
-                                            data={data.reverse()} 
-                                            startAngle={90} 
-                                            endAngle={-180} // -180
-                                        >
-                                            <RadialBar minAngle={15} background clockWise={true} dataKey='count'/>
-                                        </RadialBarChart>
-                                        <Legend
-                                                iconSize={20}
-                                                layout="vertical"
-                                                verticalAlign="middle"
-                                                align="right"
-                                                alignItems="right"
-                                                justifyContent="space-between"
-                                                wrapperStyle={{ 
-                                                    position: 'absolute', 
-                                                    left: '95px', 
-                                                    top: '60px',
-                                                    display: 'flex', 
-                                                    flexDirection: 'column', 
-                                                    gap: '20px'
-                                                }}
-                                                margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
-                                                payload={
-                                                    data.map(item => ({
-                                                        value: item.name,
-                                                        type: 'square',
-                                                        id: item.name,
-                                                        color: item.fill, // Assuming 'fill' is a property in your data array that specifies the color
-                                                    })).reverse()
-                                                }
-                                            />
-                                    </Box>
-                                </Paper>
-                            </Box>
+                        <Box
+    style={{
+        display: 'flex',
+        justifyContent: 'center',
+        width: '100%', // Take up full screen width
+        marginTop: theme.spacing(2), // Set the margin to 20px
+        padding: theme.spacing(2), // Add padding to the Box component
+    }}
+>
+    <Paper
+    style={{
+        padding: theme.spacing(2),
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.palette.primary.main,
+        width: '90%', // Occupy full width with 25px margins on each side
+        [theme.breakpoints.down('sm')]: {
+            width: '80%',
+        },
+        [theme.breakpoints.up('sm')]: {
+            width: '50%',
+        },
+        paddingTop: '10px',
+        overflow: 'hidden', // Add this line to prevent content from sticking out
+    }}
+    >
+        <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:"22px"}}>
+            Current Activity
+        </Typography>
+        <Box
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: theme.spacing(2), // Set the margin to 20px
+                position: 'relative',
+            }}
+        >
+            <RadialBarChart 
+                width={chartSize} 
+                height={chartSize} 
+                innerRadius="10%" 
+                outerRadius="90%" 
+                data={data.reverse()} 
+                startAngle={90} 
+                endAngle={-180} // -180
+            >
+                <RadialBar minAngle={15} background clockWise={true} dataKey='count'/>
+            </RadialBarChart>
+            <Legend
+                iconSize={20}
+                layout="vertical"
+                verticalAlign="middle"
+                align="right"
+                alignItems="right"
+                justifyContent="space-between"
+                wrapperStyle={{ 
+                    position: 'absolute', 
+                    left: '5%', // Adjusted to move the legend to the left
+                    top: '50%', 
+                    transform: 'translateY(-50%)', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '20px'
+                }}
+                margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
+                payload={
+                    data.map(item => ({
+                        value: item.name,
+                        type: 'square',
+                        id: item.name,
+                        color: item.fill,
+                    })).reverse()
+                }
+            />
+        </Box>
+
+    </Paper>
+</Box>
+
                         </Grid>
                         <Grid item xs={4} sx={{
                             alignItems: "center",
