@@ -95,7 +95,11 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             minWidth: 100,
             renderCell: (params) => {
                 const scheduledDate = params.row.maintenance_scheduled_date
-                return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
+                if (params.row.maintenance_request_status === "CANCELLED"){
+                    return "CANCELLED"
+                } else{
+                    return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
+                }
             }
         },
         {
@@ -105,7 +109,11 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             minWidth: 100,
             renderCell: (params) => {
                 const scheduledTime = params.row.maintenance_scheduled_date
-                return (scheduledTime && scheduledTime !== "null") ? dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A") : "N/A"
+                if (params.row.maintenance_request_status === "CANCELLED"){
+                    return "CANCELLED"
+                } else{
+                    return (scheduledTime && scheduledTime !== "null") ? dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A") : "N/A"
+                }
             }
         },
     ];

@@ -122,6 +122,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
     function displayScheduledDate(data){
         console.log("displayScheduledDate from this one:", data)
+        console.log("display quote info", JSON.parse(data.quote_info))
         if (!data.maintenance_scheduled_date || !data.maintenance_scheduled_time || data.maintenance_scheduled_time == "null" || data.maintenance_scheduled_date == "null") {
             return "Not Scheduled"
         } else {
