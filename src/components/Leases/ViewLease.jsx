@@ -66,9 +66,9 @@ const ViewLease = (props) => {
     setMoveOut(formatDate(moveOutDate));
   }, [moveOutDate]);
 
-  // useEffect(() => {
-  //   console.log("leaseData - ", leaseData);    
-  // }, [leaseData]);  
+  useEffect(() => {
+    console.log("ROHIT - leaseData - ", leaseData);    
+  }, [leaseData]);  
 
   const closeEndLeaseDialog = () => {
     setEndLeaseDialogOpen(false);
@@ -160,7 +160,8 @@ const ViewLease = (props) => {
 
   useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
+    axios.get(`http://localhost:4000/leaseDetails/${getProfileId()}`).then((res) => { //rohit
+    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
       // console.log(data);
       setFetchData(data);
@@ -248,7 +249,7 @@ const ViewLease = (props) => {
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                Viewing Current Lease
+                Viewing Current Lease - {leaseData.lease_uid /*rohit*/}
               </Typography>
             </Box>
             {document > 0 ? (

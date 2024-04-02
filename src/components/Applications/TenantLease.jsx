@@ -99,7 +99,7 @@ const initialFees = (property, application) => {
   return fees;
 };
 
-const TenantLease = () => {
+const TenantLease = () => {  
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -111,6 +111,7 @@ const TenantLease = () => {
   const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
 
   const [noOfOccupants, setNoOfOccupants] = useState(JSON.parse(application.lease_adults).length + JSON.parse(application.lease_children).length);
+  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period? application.lease_end_notice_period : 0);
 
   console.log("# of Occupants", noOfOccupants);
 
@@ -460,6 +461,7 @@ const TenantLease = () => {
     leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
     leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
     leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
+    leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
     // leaseApplicationFormData.append("documents", leaseFiles);
 
     const hasMissingType = !checkFileTypeSelected();
@@ -491,17 +493,17 @@ const TenantLease = () => {
     //   console.log(key, value);
     // }
 
-    // await fetch(
-    //   `http://localhost:4000/leaseApplication`,
-    //   {
-    //     method: "PUT",
-    //     body: leaseApplicationFormData
-    //   }
-    // );
-    await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-      method: "PUT",
-      body: leaseApplicationFormData,
-    });
+    await fetch(
+      `http://localhost:4000/leaseApplication`,
+      {
+        method: "PUT",
+        body: leaseApplicationFormData
+      }
+    ); //rohit
+    // await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+    //   method: "PUT",
+    //   body: leaseApplicationFormData,
+    // });
 
     const receiverPropertyMapping = {            
       [application.tenant_uid]: [property.property_uid],
@@ -802,22 +804,45 @@ const TenantLease = () => {
                     backgroundColor: "#D6D5DA",
                     borderRadius: 10,
                     height: 40,
+                    paddingBottom: "10px",
+                  },
+                }}
+                className={classes.root}
+              />
+            </Stack>
+          </Grid>
+          <Grid item xs={6} md={6}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"End Lease Notice Period"}
+              </Typography>
+              <TextField
+                name="endLeaseNoticePeriod"
+                value={endLeaseNoticePeriod}
+                onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
+                variant="filled"
+                fullWidth
+                placeholder=""
+                sx={{
+                  "& .MuiFilledInput-root": {
+                    backgroundColor: "#D6D5DA",
+                    borderRadius: 10,
+                    height: 40,
                     paddingBottom: "15px",
                   },
                 }}
                 className={classes.root}
-
-                // sx={{
-                //   "& .MuiFormControl-root": {
-                //     backgroundColor: "#D6D5DA",
-                //     borderRadius: 10,
-                //     height: 40,
-                //     paddingBottom: "15px",
-                //   },
-                // }}
               />
             </Stack>
           </Grid>
+          
           <Grid item xs={12}>
             <hr />
           </Grid>
