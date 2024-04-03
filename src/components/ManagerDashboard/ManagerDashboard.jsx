@@ -44,7 +44,10 @@ const useStyles = makeStyles({
 function ManagerDashboard() {
   console.log("In Manager Dashboard function");
   const classes = useStyles();
-  const { getProfileId } = useUser();
+  const { getProfileId, user, selectedRole } = useUser();
+  let dashboard_id=getProfileId()
+  if (selectedRole==='PM_EMPLOYEE')
+  dashboard_id= user.businesses?.MANAGEMENT?.business_uid || user?.supervisor;
   const navigate = useNavigate();
   let date = new Date();
   // const [loading, setLoading] = useState(true);
@@ -152,7 +155,7 @@ function ManagerDashboard() {
     // console.log("In UseEffect after if");
     const fetchData = async () => {
       setShowSpinner(true);
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${getProfileId()}`);
+      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${dashboard_id}`);
       // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();

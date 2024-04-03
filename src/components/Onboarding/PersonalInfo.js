@@ -47,12 +47,13 @@ const useStyles = makeStyles((theme) => ({
 const PersonalInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const { user, isLoggedIn, isEmployee, roleName, updateProfileUid, isBusiness } = useUser();
+  const {user, setUser, isLoggedIn, isEmployee, roleName, updateProfileUid, isBusiness, selectedRole } = useUser();
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
   const location = useLocation();
   const { businessId } = location.state;
-  
+  const [emp_cookie, set_emp_cookie] = useCookies(["user"]);
+  const emp_cookiesData = emp_cookie["user"];
   
   
   const [showSpinner, setShowSpinner] = useState(false);
@@ -131,6 +132,12 @@ const PersonalInfo = () => {
     }
   };
 
+  const add_supervisor= async () => {
+    setUser(prev=>{return {...prev,supervisor:businessId }})
+    const emp_user = emp_cookiesData;
+    set_emp_cookie("user", emp_user);
+  }
+
   const handleNextStep = async () => {
     setShowSpinner(true);
     const payload = {
@@ -148,6 +155,11 @@ const PersonalInfo = () => {
       employee_zip: zip,
       employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
     };
+    
+
+
+
+
     const formPayload = new FormData();
     for (const key of Object.keys(payload)) {
       if (key === "employee_photo" && payload[key])
@@ -161,6 +173,8 @@ const PersonalInfo = () => {
     );
     setCookie("default_form_vals", {...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
     handleUpdateProfileUid(data);
+    if (selectedRole==='PM_EMPLOYEE')
+      await add_supervisor()
     setShowSpinner(false);
     if (isEmployee())
       navigate(profilePage, { state: { profileId: businessId } });

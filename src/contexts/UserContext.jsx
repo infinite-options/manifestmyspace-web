@@ -9,10 +9,12 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
   const [isLoggedIn, setLoggedIn] = useState(!!cookies.user);
   const [onboardingState, setOnboardingState] = useState();
+  const [supervisor, setSupervisor]= useState(null)
   const setAuthData = (data) => {
     setUser(data.user);
     setCookie("user", data.user);
     setCookie("token", data.access_token);
+
   };
   const selectRole = (role) => {
     setSelectedRole(role);
@@ -91,15 +93,13 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;
   const getProfileId = () => {
-    const profileId = isManagement()
-      ? getBusiness(user, "MANAGEMENT")
-      : isMaintenance()
-      ? getBusiness(user, "MAINTENANCE")
-      : selectedRole === "TENANT"
-      ? user.tenant_id
-      : user.owner_id;
+    console.log('Raminsss', user)
+    if (selectedRole==='PM_EMPLOYEE') return user.businesses.MANAGEMENT.business_employee_id;
+    if (isManagement()) return getBusiness(user, "MANAGEMENT");
+    if (isMaintenance()) return getBusiness(user, "MAINTENANCE");
+    if (selectedRole=== 'TENANT') return user.tenant_id; 
+    if (selectedRole=== 'OWNER') return  user.owner_id;
 
-    return profileId;
   };
   const logout = () => {
     console.log("In logout as ", user);
@@ -195,6 +195,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         isManager,
         isEmployee,
         isManagementEmployee,
+        supervisor,
+        setSupervisor,
         isOwner,
         roleName,
         isLoggedIn,
