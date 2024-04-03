@@ -281,7 +281,18 @@ export default function PayMaintenanceForm(){
                         </Grid>
                     </Grid>
                     <Grid container spacing={3} sx={{paddingTop: "25px"}}>
-                        <Grid item xs={12}>
+                        <Grid item xs={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.blue,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                                Bill Amount
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={9}>
                             <Container
                                 style={{
                                     display: 'flex',
@@ -323,52 +334,59 @@ export default function PayMaintenanceForm(){
                         </Grid>
                         {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === "FINISHED" ? (
                             <>
-                                <Grid item xs={12}>
-                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
+                                <Grid item xs={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.primary.blue,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: '16px',
+                                        }}
+                                    >
                                         Notes
                                     </Typography>
-                                    <Container maxWidth="sm" style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-                                        <TextField
-                                            multiline
-                                            rows={10}
-                                            defaultValue={maintenanceItem.bill_notes}
-                                            variant="outlined"
-                                            fullWidth
-                                            InputProps={{
-                                                readOnly: true,
-                                                style: { backgroundColor: 'white' }
-                                            }}
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Container
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#FFFFFF',
+                                            padding: '20px',
+                                            width: '90%',
+                                            borderRadius: '10px',
+                                        }}
+                                        maxWidth={false}
+                                    >
+                                        <Typography
+                                            align="center"
                                             sx={{
-                                                width: '90%',
+                                                color: theme.typography.primary.blue,
+                                                fontWeight: theme.typography.primary.fontWeight,
+                                                fontSize: '16px',
                                             }}
-                                        />
+                                        >
+                                            {maintenanceItem.bill_notes}
+                                        </Typography>
                                     </Container>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                        Paypal: bossanova43@gmail.com
-                                    </Typography>
-                                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                                        Venmo: bossanova43@gmail.com
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
+                                <Grid item xs={12} md={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Button
                                         variant="contained"
-                                        
                                         sx={{
                                             backgroundColor: "#9EAED6",
                                             textTransform: "none",
                                             borderRadius: "10px",
                                             display: 'flex',
-                                            width: "100%",
+                                            width: "50%",
                                         }}
                                         onClick={() => handleSubmit()}
                                         >
                                         <Typography sx={{
                                             color: "#160449",
                                             fontWeight: theme.typography.primary.fontWeight, 
-                                            fontSize: "14px"
+                                            fontSize: "16px"
                                         }}>
                                             Pay Maintenance
                                         </Typography>

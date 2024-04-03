@@ -28,7 +28,7 @@ function getInitialImages(requestData, currentIndex) {
     return [maintenanceRequestImage];
     }
 
-export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs  }) {
+export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs }) {
     const [currentIndex, setCurrentIndex] = useState(requestIndex);
     
     const [activeStep, setActiveStep] = useState(0);
@@ -122,8 +122,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
 
     function displayScheduledDate(data){
         console.log("displayScheduledDate from this one:", data)
-        console.log("display quote info", JSON.parse(data.quote_info))
-        if (!data.maintenance_scheduled_date || !data.maintenance_scheduled_time || data.maintenance_scheduled_time == "null" || data.maintenance_scheduled_date == "null") {
+        // console.log("display quote info", JSON.parse(data.quote_info))
+        if (!data.maintenance_scheduled_date || !data.maintenance_scheduled_time || data.maintenance_scheduled_time === "null" || data.maintenance_scheduled_date === "null") {
             return "Not Scheduled"
         } else {
             const formattedTime = dayjs(data.maintenance_scheduled_time, "HH:mm").format("h:mm A");
@@ -144,7 +144,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
     // console.log("estimatedCost>>",typeof(estimatedCost))
 
     let completionStatus = "no"
-    if (data?.maintenance_request_status == "Completed" || data?.maintenance_request_status == "Closed") {
+    if (data?.maintenance_request_status === "Completed" || data?.maintenance_request_status === "Closed") {
         // console.log("inside ifffff", data?.maintenance_request_status)
         completionStatus = "yes"
     }
@@ -180,7 +180,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                 spacing={2}
             >
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-                    {item.status}
+                    {/* {item.status} */}
+                    {data?.maintenance_request_status}
                 </Typography>
                 <Stack
                     direction="row"
