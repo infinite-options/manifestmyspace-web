@@ -22,8 +22,14 @@ export default function CompleteButton(props){
 
     async function handleComplete(id, quotes){
         // console.log("handleComplete id", id)
+        const filteredQuoteArray = [];
 
-        if (maintenanceItem.maintenance_quote_uid === null){
+        if (quotes){
+            let quoteArray = JSON.parse(quotes)
+            filteredQuoteArray = quoteArray.filter((quote) => quote.status == "ACCEPTED" || quote.status == "SCHEDULED")
+        }
+
+        if (filteredQuoteArray.length === 0){
             // it's handled by the property manager
             console.log("handled by the property manager")
         } else{
@@ -59,7 +65,7 @@ export default function CompleteButton(props){
                     display: 'flex',
                     width: "100%"
                 }}
-                onClick={() => handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.maintenance_quote_uid)}
+                onClick={() => handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.quotes_info)}
             >
                 <CheckIcon sx={{color: "#3D5CAC"}}/>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
