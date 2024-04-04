@@ -41,7 +41,7 @@ function DateTimePickerModal(props) {
 
   function submit(){
     console.log("in submit for datetimepicker")
-    props.handleSubmit(availabilityDate, availabilityTime).then(
+    props.handleSubmit(props.maintenanceItem.maintenance_request_uid, availabilityDate, availabilityTime).then(
         handleClose()
     )
   }
