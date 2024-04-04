@@ -620,7 +620,7 @@ function PaymentHistoryTable(props) {
     if (data && data.length > 0) {
       setSelectedRows(data.map((row) => row.payment_uid));
       setPayments(data.map((item) => ({
-        ...item, pur_amount_due : Number(parseFloat(item.pur_amount_due).toFixed(2))        
+        ...item, pur_amount_due : parseFloat(item.pur_amount_due)        
       })));
     }
   }, [data]);
@@ -782,7 +782,7 @@ function PaymentHistoryTable(props) {
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-          <Grid item xs={1} alignItems="center"></Grid>
+          <Grid item xs={2} alignItems="center"></Grid>
           <Grid item xs={9} alignItems="center">
             <Typography
               sx={{
@@ -795,7 +795,7 @@ function PaymentHistoryTable(props) {
               Total
             </Typography>
           </Grid>
-          <Grid item xs={2} alignItems="right">
+          <Grid item xs={1} alignItems="right">
             <Typography
               sx={{
                 color: theme.typography.primary.black,
@@ -804,7 +804,7 @@ function PaymentHistoryTable(props) {
                 fontFamily: "Source Sans Pro",
               }}
             >
-              $ {selectedRows.reduce((total, rowId) => total + payments.find((row) => row.payment_uid === rowId).pur_amount_due, 0)}
+              $ {parseFloat(selectedRows.reduce((total, rowId) => total + payments.find((row) => row.payment_uid === rowId).pur_amount_due, 0)).toFixed(2)}
             </Typography>
           </Grid>
         </Grid>

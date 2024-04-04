@@ -14,7 +14,8 @@ import Button from "@mui/material/Button";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function Announcements() {        
+export default function Announcements() {
+    console.log("intial commit");
     const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
     const [announcementData, setAnnouncementData] = useState([]);
     const [sentData, setSentData] = useState([]);
