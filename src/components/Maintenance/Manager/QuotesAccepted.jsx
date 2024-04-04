@@ -30,7 +30,9 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 import DateTimePickerModal from "../../DateTimePicker";
 
+
 import APIConfig from "../../../utils/APIConfig";
+
 
 export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}){
     // console.log("--debug-- maintenanceItem", maintenanceItem)
@@ -46,11 +48,6 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
 
     let business_name = maintenanceItem?.maint_business_name || "Business Name Not Available";
 
-    useEffect(() => {
-        setMaintenanceItemQuotes(quotes);
-        // console.log("--debug-- maintenanceItemQuotes", maintenanceItemQuotes, quotes)
-    }, [quotes]);
- 
     async function handleScheduleStatusChange(id, date, time){
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
@@ -64,7 +61,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                     method: 'PUT',
                     body: formData
                 });
-
+    
                 const responseData = await response.json();
                 console.log(responseData);
                 if (response.status === 200) {
@@ -92,7 +89,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                     method: 'PUT',
                     body: formData
                 });
-
+    
                 const responseData = await response.json();
                 console.log(responseData);
                 if (response.status === 200) {
@@ -108,8 +105,13 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             setShowSpinner(false);
         }
         await changeMaintenanceQuoteStatus()
-        navigate(maintenanceRoutingBasedOnSelectedRole())
+        // navigate(maintenanceRoutingBasedOnSelectedRole())
     }
+
+    useEffect(() => {
+        setMaintenanceItemQuotes(quotes);
+        // console.log("--debug-- maintenanceItemQuotes", maintenanceItemQuotes, quotes)
+    }, [quotes]);
 
     return(
         <Box 
