@@ -26,7 +26,7 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 
-export default function CompletedM({maintenanceItem}){
+export default function PaidMaintenance({maintenanceItem}){
     const navigate = useNavigate();
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");

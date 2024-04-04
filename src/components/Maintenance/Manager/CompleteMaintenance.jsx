@@ -23,10 +23,14 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 
 
-export default function CompleteMaintenance({maintenanceItem, navigateParams}){
+export default function CompleteMaintenance({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
+
+    console.log("COMPLETE MAINTENANCE QUOTES", quotes)
+
+    let finishedQuote = quotes.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
 
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
@@ -70,7 +74,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams}){
                         onClick={() => handleNavigate()}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Pay Maintenance - {maintenanceItem?.business_name}
+                            {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance - " + finishedQuote?.maint_business_name  : "Charge Owner - " + maintenanceItem?.owner_first_name + " " + maintenanceItem?.owner_last_name}
                         </Typography>
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
