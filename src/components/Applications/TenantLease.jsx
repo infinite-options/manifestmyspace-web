@@ -493,17 +493,17 @@ const TenantLease = () => {
     //   console.log(key, value);
     // }
 
-    await fetch(
-      `http://localhost:4000/leaseApplication`,
-      {
-        method: "PUT",
-        body: leaseApplicationFormData
-      }
-    ); //rohit
-    // await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-    //   method: "PUT",
-    //   body: leaseApplicationFormData,
-    // });
+    // await fetch(
+    //   `http://localhost:4000/leaseApplication`,
+    //   {
+    //     method: "PUT",
+    //     body: leaseApplicationFormData
+    //   }
+    // ); 
+    await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+      method: "PUT",
+      body: leaseApplicationFormData,
+    });
 
     const receiverPropertyMapping = {            
       [application.tenant_uid]: [property.property_uid],
