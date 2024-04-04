@@ -12,6 +12,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid } from "@mui/x-data-grid";
 
+import APIConfig from "../../utils/APIConfig";
+
 const useStyles = makeStyles((theme) => ({
   input: {
     background: "#000000",
@@ -19,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Payments(props) {
-  console.log("In Payments.jsx");
+  console.log("In Payments.jsx");  
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -146,7 +148,7 @@ export default function Payments(props) {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
-      const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentStatus/${getProfileId()}`);
+      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
       const paymentStatusData = res.data.PaymentStatus.result;
       const paidStatusData = res.data.PaidStatus.result;
 
@@ -402,196 +404,9 @@ export default function Payments(props) {
               </Typography>
             </Stack>
 
-            <Stack sx={{ paddingTop: "10px" }}>
-              <Grid container alignItems="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={2}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Date
-                  </Typography>
-                </Grid>
-                <Grid item xs={3} alignItems="left">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Description
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={3} alignItems="left">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Address
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={1} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Unit
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={1} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Method
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Amount
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Divider light />
-
-              {paidItems.length > 0 &&
-                paidItems.map((item, index) => (
-                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" key={index} sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
-                    <Grid item xs={2} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {/* {formatDate(item.payment_date)} */}
-                        {(item.payment_date)}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={3} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.pur_description}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={3} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.property_address}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={1} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.property_unit}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={1} alignItems="center">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        {item.payment_type}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={2} alignItems="right">
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          fontFamily: "Source Sans Pro",
-                        }}
-                      >
-                        $ {item.pur_amount_due}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                ))}
-              <Divider light />
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-                <Grid item xs={1} alignItems="center"></Grid>
-                <Grid item xs={9} alignItems="center">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    Total Paid
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={2} alignItems="right">
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      fontFamily: "Source Sans Pro",
-                    }}
-                  >
-                    $ {totalPaid.toFixed(2)}
-                  </Typography>
-                </Grid>
-              </Grid>
+            
+            <Stack>
+              <PaymentHistoryTable data={paidItems} />
             </Stack>
           </Paper>
         </Paper>
@@ -789,3 +604,214 @@ function BalanceDetailsTable(props) {
     return <></>;
   }
 }
+
+function PaymentHistoryTable(props) {
+  console.log("In PaymentHistoryTable");
+  const [data, setData]  = useState(props.data);      
+  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedPayments, setSelectedPayments] = useState([]);  
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]); 
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.payment_uid));
+      setPayments(data.map((item) => ({
+        ...item, pur_amount_due : Number(parseFloat(item.pur_amount_due).toFixed(2))        
+      })));
+    }
+  }, [data]);
+
+  // useEffect(() => {    
+  //   var total = 0;
+
+  //   let purchase_uid_mapping = [];
+
+  //   for (const item of selectedRows) {
+  //     // console.log("item in loop", item)
+    
+  //       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item); 
+  //       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+  //       // console.log("payment item data", paymentItemData);
+  //       total += parseFloat(paymentItemData.pur_amount_due);    
+  //   }
+  //   // console.log("selectedRows useEffect - total - ", total);
+  //   // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+  //   props.setTotal(total);
+  //   props.setPaymentData((prevPaymentData) => ({
+  //     ...prevPaymentData,
+  //     balance: total.toFixed(2),
+  //     purchase_uids: purchase_uid_mapping,
+  //   }));
+    
+  // }, [selectedRows]);
+
+  // useEffect(() => {
+  //   console.log("selectedPayments - ", selectedPayments);
+  //   props.setSelectedItems(selectedPayments)
+  // }, [selectedPayments]);
+
+
+
+  const columnsList = [
+    {
+      field: "payment_date",
+      headerName: "Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "payment_type",
+      headerName: "Method",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_amount_due",
+      headerName: "Amount",
+      flex: 0.7,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell        
+      },      
+      renderCell: (params) => <Box sx={{ 
+                                      fontWeight: "bold", 
+                                      width: "100%",
+                                      display: "flex",
+                                      flexDirection: "row",
+                                      justifyContent: "flex-end", 
+                                    }}
+                              >
+                                $ {parseFloat(params.value).toFixed(2)}
+                              </Box>
+      ,
+    },
+  ];
+  
+  const handleSelectionModelChange = (newRowSelectionModel) => {   
+    console.log("newRowSelectionModel - ", newRowSelectionModel);
+    
+    // const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));    
+    // const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
+    
+    // if (addedRows.length > 0) {
+    //     // console.log("Added rows: ", addedRows);
+    //     let newPayments = []
+    //     addedRows.forEach((item, index) => {
+    //       const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+    //       // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+    //       newPayments.push(addedPayment)
+    //     })
+        
+    //     // console.log("newPayments - ", newPayments);
+    //     setSelectedPayments((prevState) => {
+    //       return [...prevState, ...newPayments]
+    //     });        
+    // }
+    
+    // if (removedRows.length > 0) {
+    //     // console.log("Removed rows: ", removedRows);
+    //     let removedPayments = []
+    //     removedRows.forEach((item, index) => {
+    //       let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+    //       // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+    //       removedPayments.push(removedPayment)
+    //     })
+    //     // console.log("removedPayments - ", removedPayments);        
+    //     setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
+    // }
+    setSelectedRows(newRowSelectionModel);
+  };
+
+
+  if (payments.length > 0) {    
+    // console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          rows={payments}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          getRowId={(row) => row.payment_uid}
+          pageSizeOptions={[10, 50, 100]}
+          // checkboxSelection
+          // disableRowSelectionOnClick
+          // rowSelectionModel={selectedRows}
+          // onRowSelectionModelChange={handleSelectionModelChange}
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems="center"></Grid>
+          <Grid item xs={9} alignItems="center">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total
+            </Typography>
+          </Grid>
+          <Grid item xs={2} alignItems="right">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              $ {selectedRows.reduce((total, rowId) => total + payments.find((row) => row.payment_uid === rowId).pur_amount_due, 0)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
+    );
+  } else {
+    return <></>;
+  }
+}
+

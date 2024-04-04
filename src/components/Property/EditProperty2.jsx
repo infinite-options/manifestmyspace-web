@@ -37,6 +37,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
+import APIConfig from "../../utils/APIConfig";
+
 export default function EditProperty({}) {
   console.log("In Edit Property2 - rename to Edit Property");
   const { state } = useLocation();
@@ -407,7 +409,7 @@ export default function EditProperty({}) {
     const putData = async () => {
       setShowSpinner(true);
       promises.push(
-        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
+        fetch(`${APIConfig.baseURL.dev}/properties`, {
           method: "PUT",
           body: formData,
         })
@@ -422,7 +424,7 @@ export default function EditProperty({}) {
       setShowSpinner(true);
 
       promises.push(
-        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities", {
+        fetch(`${APIConfig.baseURL.dev}/utilities`, {
           method: "PUT",
           body: utilitiesFormData,
         })
@@ -442,7 +444,7 @@ export default function EditProperty({}) {
       const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
       if (numberOfAddedUtilities > 0) {
         promises.push(
-          fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities", {
+          fetch(`${APIConfig.baseURL.dev}/utilities`, {
             method: "POST",
             body: addedUtilitiesFormData,
           })
@@ -456,7 +458,7 @@ export default function EditProperty({}) {
       setShowSpinner(true);
 
       promises.push(
-        fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities", {
+        fetch(`${APIConfig.baseURL.dev}/utilities`, {
           method: "POST",
           body: utilitiesFormData,
         })

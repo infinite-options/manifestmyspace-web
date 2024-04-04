@@ -1344,7 +1344,7 @@ function ProfileTenantTable(props) {
         'Name': 'name',
         'Last Name': 'last_name',
         'Relation': 'relationship',
-        'DOB (YY/MM/DD)': 'dob',
+        'DOB (MM-DD-YYYY)': 'dob', 
         'Type': 'type',
         'Breed': 'breed',
         'Weight': 'weight',

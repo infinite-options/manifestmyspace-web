@@ -35,6 +35,9 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../../contexts/UserContext";
 import DocumentUploader from "../../DocumentUploader";
+import dayjs from 'dayjs';
+
+import APIConfig from "../../../utils/APIConfig";
 
 function LaborTable({labor, setLabor}){
 
@@ -506,7 +509,7 @@ export default function BusinessInvoiceForm(){
         const getMaintenanceProfileInfo = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile/${getProfileId()}`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${getProfileId()}`, {
                     method: 'GET',
                 })
                 const responseData = await response.json();
@@ -552,7 +555,7 @@ export default function BusinessInvoiceForm(){
 
             setShowSpinner(true);
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes", {
+                const response = await fetch("${APIConfig.baseURL.dev}/maintenanceQuotes", {
                     method: 'PUT',
                     body: formData,
                 })
@@ -583,7 +586,7 @@ export default function BusinessInvoiceForm(){
                     formData.append("document_file", selectedDocumentList[i]);
                     formData.append("document_title", selectedDocumentList[i].name);
                 }
-                const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/documents/${getProfileId()}`, {
                     method: 'POST',
                     body: formData,
                 })
@@ -611,7 +614,7 @@ export default function BusinessInvoiceForm(){
                 
 
                 // TODO: Change this to form data
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/bills`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -709,7 +712,7 @@ export default function BusinessInvoiceForm(){
                                     Estimated Time: {maintenanceItem.quote_event_type}
                                 </Typography>
                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px"}}>
-                                    Earliest Availability: {maintenanceItem.quote_earliest_availability}
+                                    Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("hh:mm A")}
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
@@ -826,7 +829,7 @@ export default function BusinessInvoiceForm(){
                             <Grid item xs={12}>
                                 <Button
                                     variant="contained"
-                                    disableElevation
+                                    
                                     sx={{
                                         backgroundColor: "#3D5CAC",
                                         textTransform: "none",

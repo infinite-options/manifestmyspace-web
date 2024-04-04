@@ -8,6 +8,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import APIConfig from "../../utils/APIConfig"
+
 export default function Leases(props) {
   console.log("In Leases");
   const { getProfileId, selectedRole } = useUser();
@@ -133,7 +135,7 @@ export default function Leases(props) {
       return num;
     }
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
       // console.log(res.data['Lease Details'].result);
       const fetchData = res.data["Lease_Details"].result;
       console.log("leases fetchData", fetchData);

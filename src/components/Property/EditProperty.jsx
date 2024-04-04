@@ -37,6 +37,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
+import APIConfig from '../../utils/APIConfig';
+
 export default function EditProperty({}){
     const { state } = useLocation();
     let navigate = useNavigate();
@@ -368,7 +370,7 @@ export default function EditProperty({}){
 
         const putData = async () => {
             setShowSpinner(true);
-            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties",{
+            promises.push(fetch(`${APIConfig.baseURL.dev}/properties`,{
                 method: "PUT",
                 body: formData
             }));
@@ -382,7 +384,7 @@ export default function EditProperty({}){
         const updateUtilitiesData = async () => {
             setShowSpinner(true);
 
-            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+            promises.push(fetch(`${APIConfig.baseURL.dev}/utilities`,{
                 method: "PUT",
                 body: utilitiesFormData
             }));
@@ -401,7 +403,7 @@ export default function EditProperty({}){
 
             const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
             if(numberOfAddedUtilities > 0){
-                promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+                promises.push(fetch(`${APIConfig.baseURL.dev}/utilities`,{
                     method: "POST",
                     body: addedUtilitiesFormData
                 }));
@@ -414,7 +416,7 @@ export default function EditProperty({}){
         const postUtilitiesData = async () => {
             setShowSpinner(true);
 
-            promises.push(fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/utilities",{
+            promises.push(fetch(`${APIConfig.baseURL.dev}/utilities`,{
                 method: "POST",
                 body: utilitiesFormData
             }));
@@ -424,7 +426,7 @@ export default function EditProperty({}){
         }
 
         const autoUpdate = async () => {
-            const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+            const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
             // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
                 const updatedJson = await updateResponse.json();
                 const updatedProperty = updatedJson.result[0];  

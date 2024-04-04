@@ -1,6 +1,5 @@
-import { Chart } from "react-google-charts";
-import { Button, Container, Box, ThemeProvider, Grid, Typography } from "@mui/material";
-import { PieChart, Pie, Legend, Cell } from "recharts";
+
+import { Button, Box, ThemeProvider, Grid } from "@mui/material";
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +18,8 @@ import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import OwnerList from "./OwnerList";
+
+import APIConfig from "../../utils/APIConfig";
 
 // console.log("In Manager Dashboard");
 
@@ -151,7 +152,7 @@ function ManagerDashboard() {
     if (selectedRole === 'PM_EMPLOYEE'){
     const emp_verification = async () => {
       try {
-        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
@@ -177,7 +178,9 @@ function ManagerDashboard() {
     // console.log("In UseEffect after if");
     const fetchData = async () => {
       setShowSpinner(true);
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/dashboard/${dashboard_id}`);
+
+      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
+
       // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();

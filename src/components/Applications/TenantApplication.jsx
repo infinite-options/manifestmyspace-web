@@ -25,6 +25,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+import APIConfig from "../../utils/APIConfig";
+
 export default function TenantApplication(){
     const location = useLocation();
     const navigate = useNavigate();
@@ -158,7 +160,7 @@ export default function TenantApplication(){
     useEffect(() => {
         const getTenantProfileInformation = async () => {
 
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/tenantProfile/${getProfileId()}`)
             const data = await response.json()
             const tenantProfileData = data.Profile.result[0]
             setTenantProfile(tenantProfileData)
@@ -188,7 +190,7 @@ export default function TenantApplication(){
         withdrawLeaseData.append('lease_uid', lease.lease_uid)
         withdrawLeaseData.append('lease_status', "WITHDRAWN")
         
-        const withdrawLeaseResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+        const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
             method: 'PUT',
             body: withdrawLeaseData
         })
@@ -210,8 +212,7 @@ export default function TenantApplication(){
         };
 
 
-        const annoucementsResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
-        // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
+        const annoucementsResponse = fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -242,7 +243,7 @@ export default function TenantApplication(){
         leaseApplicationData.append('lease_rent', "[]")
         leaseApplicationData.append('lease_application_date', date.toLocaleDateString())
         leaseApplicationData.append('tenant_uid', getProfileId())
-        const leaseApplicationResponse = fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+        const leaseApplicationResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
             method: 'POST',
             body: leaseApplicationData
         })
@@ -934,7 +935,7 @@ export default function TenantApplication(){
                                 
                                     <Button
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             backgroundColor: "#9EAED6",
                                             textTransform: "none",
@@ -958,7 +959,7 @@ export default function TenantApplication(){
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        disableElevation
+                                        
                                         sx={{
                                             backgroundColor: "#CB8E8E",
                                             textTransform: "none",

@@ -20,7 +20,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
             }}>
                 <Box
                     variant="contained"
-                    disableElevation
+                    
                     sx={{
                         flexDirection: "column",
                         backgroundColor: "#D6D5DA",

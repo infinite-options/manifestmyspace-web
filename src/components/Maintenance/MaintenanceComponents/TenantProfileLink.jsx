@@ -44,7 +44,7 @@ export default function TenantProfileLink(props){
         }}>
         <Button
             variant="contained"
-            disableElevation
+            
             sx={{
                 backgroundColor: "#D6D5DA",
                 textTransform: "none",

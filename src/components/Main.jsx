@@ -324,7 +324,6 @@ function Main() {
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
             <Route path="workerMaintenance" element={<WorkerMaintenance />} />
             <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
-            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
 
             <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
             <Route path="pmQuotesList" element={<PMQuotesList />} />

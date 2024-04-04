@@ -48,7 +48,7 @@ export default function CreateOrEditInvoiceButton({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
@@ -71,7 +71,7 @@ export default function CreateOrEditInvoiceButton({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",

@@ -182,5 +182,22 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                 <Typography sx={tableText}> No quotes have been requested yet. </Typography>
             </Grid>
         )
+        // if (request_status === "SCHEDULED") {
+        //     return (
+        //         <Grid item xs={12}>
+        //             {/* <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography> */}
+        //             {/* <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography> */}
+        //             <Typography sx={tableText}> Maintenance Item Hanlded By Property Manager: {maintenanceItem.business_name}</Typography>
+        //         </Grid>
+        //     )
+        // } else {
+        //     return (
+        //         <Grid item xs={12}>
+        //             <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
+        //             <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
+        //             <Typography sx={tableText}> No quotes have been requested yet. </Typography>
+        //         </Grid>
+        //     )
+        // }
     }
 }

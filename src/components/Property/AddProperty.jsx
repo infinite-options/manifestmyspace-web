@@ -42,6 +42,8 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../utils/APIConfig";
+
 // Variable Declaration
 export default function AddProperty({}) {
   console.log("In AddProperty.jsx");
@@ -91,7 +93,7 @@ export default function AddProperty({}) {
       console.log("MANAGER ID", ownerId);
       const getOwnerContacts = async () => {
         try {
-          const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contacts/${getProfileId()}`);
+          const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`);
 
           if (!response.ok) {
             console.log("Error fetching owner data");
@@ -298,7 +300,7 @@ export default function AddProperty({}) {
       //   method: "POST",
       //   body: formData,
       // });
-      const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties", {
+      const response = await fetch(`${APIConfig.baseURL.dev}/properties`, {
         method: "POST",
         body: formData,
       });
@@ -333,7 +335,7 @@ export default function AddProperty({}) {
       // console.log("Contract Formdata:", contractFormData);
 
       console.log("In Create new contract - contractFormData = ", contractFormData);
-      const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
+      const url = `${APIConfig.baseURL.dev}/contracts`;
 
       let responseContractUID = null;
 

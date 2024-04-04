@@ -23,6 +23,8 @@ import PaidMaintenance from "./Manager/PaidMaintenance";
 import { useUser } from "../../contexts/UserContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import APIConfig from "../../utils/APIConfig";
+
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -185,7 +187,7 @@ export function MaintenanceRequestDetail() {
 
   useEffect(() => {
     const getMaintenanceItemQuotes = async () => {
-      const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes/${profileId}`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
       const data = await response.json();
       const quotes = data.maintenanceQuotes.result;
       setMaintenanceQuotes(quotes);

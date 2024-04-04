@@ -25,6 +25,10 @@ import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import { useUser } from "../../../contexts/UserContext";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
+import DateTimePickerModal from "../../DateTimePicker";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import handleScheduleStatusChange from "./QuotesAccepted";
+import APIConfig from "../../../utils/APIConfig";
 
 
 export default function QuotesRequestAction({maintenanceItem, navigateParams, quotes}){
@@ -32,7 +36,85 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showMessage, setShowMessage] = useState(false);
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([])
     const [message, setMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [date, setDate] = useState(maintenanceItem.earliest_available_date || "")
+    const [time, setTime] = useState(maintenanceItem.earliest_available_time || "")
+    const [showSpinner, setShowSpinner] = useState(false);
+
+    useEffect(() => {
+        setMaintenanceItemQuotes(quotes);
+        // console.log("--debug-- maintenanceItemQuotes", maintenanceItemQuotes, quotes)
+    }, [quotes]);
+
+    async function handleScheduleStatusChange(id, date, time){
+        const changeMaintenanceRequestStatus = async () => {
+            setShowSpinner(true);
+            const formData = new FormData();
+            formData.append("maintenance_request_uid", id);
+            formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_scheduled_date", date); 
+            formData.append("maintenance_scheduled_time", time);
+            try {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+                    method: 'PUT',
+                    body: formData
+                });
+    
+                const responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
+                } else{
+                    console.log("error setting status")
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+            setShowSpinner(false);
+        }
+        const changeMaintenanceQuoteStatus = async () => {
+
+            console.log(maintenanceItemQuotes.length !== 0, quotes.length !== 0)
+            setShowSpinner(true);
+            const formData = new FormData();
+            let quote = quotes.find(quote => quote.quote_status === "ACCEPTED") // see number 16 in "Testing Maintenance Flow" ticket
+            if (quote) {
+                console.log("changeMaintenanceQuoteStatus maintenanceItemQuotes", maintenanceItemQuotes)
+                console.log(quote)
+                formData.append("maintenance_quote_uid", quote.maintenance_quote_uid); // 900-xxx
+                formData.append("quote_maintenance_request_id", id) //quote_maintenance_request_id maintenance_request_uid
+                formData.append("quote_status", "SCHEDULED")
+                
+                try {
+                    const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
+                        method: 'PUT',
+                        body: formData
+                    });
+        
+                    const responseData = await response.json();
+                    console.log(responseData);
+                    if (response.status === 200) {
+                        console.log("success")
+                        changeMaintenanceRequestStatus()
+                        navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
+                    } else{
+                        console.log("error setting status")
+                    }
+                } catch (error){
+                    console.log("error", error)
+                }
+            }
+            else {
+                changeMaintenanceRequestStatus()
+                navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})   
+            }
+            setShowSpinner(false);
+        }
+        await changeMaintenanceQuoteStatus()
+        // navigate(maintenanceRoutingBasedOnSelectedRole())
+    }
 
     function handleNavigateToQuotesAccept(){
 
@@ -76,7 +158,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#C06A6A",
                             textTransform: "none",
@@ -99,7 +181,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                 }}>
                     <Button
                         variant="contained"
-                        disableElevation
+                        
                         sx={{
                             backgroundColor: "#CB8E8E",
                             textTransform: "none",
@@ -116,9 +198,41 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                         <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
                     </Button>
                 </Grid>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+
+                }}>
+                    <Button
+                        variant="contained"
+                        
+                        sx={{
+                            backgroundColor: "#97A7CF",
+                            textTransform: "none",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%"
+                        }}
+                        onClick={() => setShowModal(true)}
+                    >
+                        <CalendarMonthIcon sx={{color: "#FFFFFF", paddingRight: "5px"}}/>
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
+                            Schedule Maintenance
+                        </Typography>
+                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                    </Button>
+                </Grid>
                 <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
+            <DateTimePickerModal 
+                setOpenModal={setShowModal}
+                open={showModal}
+                maintenanceItem={maintenanceItem}
+                date={date}
+                time={time}
+                handleSubmit={handleScheduleStatusChange}
+            />
         </Box>
     )
 }

@@ -8,7 +8,7 @@ let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 const GOOGLE_LOGIN = process.env.REACT_APP_GOOGLE_LOGIN;
 let SCOPES =
-  "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile";
+  "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile email";
 
 const GoogleSignup = () => {
   const navigate = useNavigate();

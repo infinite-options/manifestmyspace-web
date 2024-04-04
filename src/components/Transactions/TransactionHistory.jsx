@@ -39,6 +39,8 @@ import SelectPropertyFilter from "../SelectPropertyFilter/SelectPropertyFilter";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 
+import APIConfig from "../../utils/APIConfig";
+
   const useStyles = makeStyles(theme => ({
     cell_long: {
       width: '50%',
@@ -76,7 +78,7 @@ export default function TransactionHistory(props) {
         const fetchOwnerTransactions = async () => {
             setShowSpinner(true);
             // const res = await axios.get(`http://127.0.0.1:4000/allTransactions/${getProfileId()}`);
-            const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/allTransactions/${getProfileId()}`);
+            const res = await axios.get(`${APIConfig.baseURL.dev}/allTransactions/${getProfileId()}`);
             // console.log("payments", res);
             // setTransactionsResult(res.data.result);
             const transactions = res.data.result;
@@ -86,7 +88,7 @@ export default function TransactionHistory(props) {
           };
         const fetchOwnerProperties = async () => {
             setShowSpinner(true);
-            const res = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
+            const res = await axios.get(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
             const properties = res.data.Property.result;
             const propertyList = []
             const addedAddresses = [];

@@ -40,6 +40,8 @@ import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
+import APIConfig from "../../utils/APIConfig"
+
 export default function AddMaintenanceItem(){
     let navigate = useNavigate();
     const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -147,7 +149,7 @@ export default function AddMaintenanceItem(){
 
         const getProperties = async () => {
             // setShowSpinner(true);
-            const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`)
 
             const propertyData = await response.json();
             // console.log("data", data)
@@ -215,7 +217,7 @@ export default function AddMaintenanceItem(){
         const postData = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: "POST",
                     body: formData,
                 })

@@ -34,6 +34,8 @@ import dayjs from "dayjs";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DateTimePickerModal from '../../../components/DateTimePicker';
 
+import APIConfig from "../../../utils/APIConfig";
+
 export default function RescheduleMaintenance(){
 
     // console.log("RescheduleMaintenance")
@@ -90,7 +92,7 @@ export default function RescheduleMaintenance(){
             formData.append("maintenance_scheduled_time", availabilityTime); // this needs to change for the date and time picker
 
             try {
-                const response = await fetch("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData
                 });
@@ -416,7 +418,7 @@ export default function RescheduleMaintenance(){
                         <Grid item xs={12}>
                             <Button
                                 variant="contained"
-                                disableElevation
+                                
                                 sx={{
                                     backgroundColor: "#9EAED6",
                                     textTransform: "none",
