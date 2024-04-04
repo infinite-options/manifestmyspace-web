@@ -105,7 +105,7 @@ import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
-
+import Emp_Waiting from "./PM_Emp_Dashboard/Waiting_Page"
 import MaintenanceDashboard from "./MaintenanceDashboard/MaintenanceDashboard";
 
 import SettingsACH1 from "./SettingsACH/SettingsACH1";
@@ -310,6 +310,7 @@ function Main() {
 
             <Route path="poContracts" element={<POContracts />} />
             <Route path="managerDashboard" element={<ManagerDashboard />} />
+            <Route path="emp_waiting" element={<Emp_Waiting/>} />
 
             <Route path="quoteAccept" element={<QuoteAcceptForm />} />
             <Route path="quoteRequest" element={<QuoteRequestForm />} />

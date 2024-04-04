@@ -146,6 +146,28 @@ function ManagerDashboard() {
 
   // console.log("In Manager Dashboard Step 3");
 
+  // Employee Verification useEffect
+  useEffect(() => {
+    if (selectedRole === 'PM_EMPLOYEE'){
+    const emp_verification = async () => {
+      try {
+        const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        const employee = data.result[0]; // Assuming there's only one employee
+        if (!employee?.employee_verification) {
+          navigate('/emp_waiting')
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    emp_verification();}
+  }, []);
+
   // USE EFFECT gets all the data
   useEffect(() => {
     // const dataObject = {};
