@@ -93,7 +93,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;
   const getProfileId = () => {
-    console.log('Raminsss', user)
+    // console.log('Raminsss', user)
     if (selectedRole==='PM_EMPLOYEE') return user.businesses.MANAGEMENT.business_employee_id;
     if (isManagement()) return getBusiness(user, "MANAGEMENT");
     if (isMaintenance()) return getBusiness(user, "MAINTENANCE");
