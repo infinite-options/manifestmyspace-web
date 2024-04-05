@@ -80,7 +80,13 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             minWidth: 75,
             renderCell: (params) => {
                 return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
-            }
+            },
+            sortComparator: (v1, v2, row1, row2, sortDirection) => {
+                console.log(sortDirection);
+                return sortDirection === 'ASC'
+                  ? row1.maintenance_request_uid - row2.maintenance_request_uid
+                  : row2.maintenance_request_uid - row1.maintenance_request_uid;
+              },
         }, 
         {
             headerName: "Date Created",
