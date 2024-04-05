@@ -211,6 +211,9 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                             '& .MuiDataGrid-columnSeparator': {
                                 display: 'none', // Remove vertical borders in the header
                             },
+                            '& .highlighted-row': {
+                                backgroundColor: '#f0f0f0', // Use the same color as in your CSS
+                            },
                         }}
                         disableExtendRowFullWidth={true}
                         getRowId={(row) => row.maintenance_request_uid}
@@ -218,6 +221,17 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                         onRowClick={(params) => {
                             const index = maintenanceItemsForStatus.findIndex(row => row.maintenance_request_uid === params.row.maintenance_request_uid);
                             handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
+                        }}
+                        getRowClassName={(params) => {
+                            if (params.row.maintenance_request_status === 'SCHEDULED' && params.row.quote_status !== 'ACCEPTED' && params.row.quote_status !== 'SCHEDULED' && params.row.quote_status !== 'FINISHED'){
+                                console.log("params", params.row)
+                            }
+                            return (
+                                ['SCHEDULED', 'COMPLETED', 'PAID'].includes(params.row.maintenance_request_status) &&
+                                !['ACCEPTED', 'SCHEDULED', 'FINISHED'].includes(params.row.quote_status)
+                                  ? 'highlighted-row'
+                                  : ''
+                            );
                         }}
                     />
                 </AccordionDetails>

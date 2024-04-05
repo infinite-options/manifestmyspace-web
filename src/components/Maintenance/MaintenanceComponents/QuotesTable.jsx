@@ -124,10 +124,73 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
             )
         }
         else {
+            // if there is no accepted quote, and it is in scheduled then the PM is doing it
+            if (request_status === "SCHEDULED" || request_status === "COMPLETED" || request_status === "PAID"){ 
+                let anyAcceptedQuotes = maintenanceQuotesForItem.some(quote => quote.quote_status === "ACCEPTED" || quote.quote_status === "SCHEDULED" || quote.quote_status === "FINISHED") // check that there is at least one accepted quote
+                if (!anyAcceptedQuotes) {
+                    return (
+                        <>
+                            <Grid item xs={12}>
+                                <Typography sx={{ color: "#FFFFFF", fontWeight: 900, fontSize: "24px" }}>Quotes Table</Typography>
+                                <Table sx={{ padding: "0px" }}>
+                                    {maintenanceQuotesForItem.length > 0 ? (
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell sx={tableCell}>
+                                                    <Typography sx={tableHeader}> Business Name </Typography>
+                                                </TableCell>
+                                                <TableCell sx={tableCell}>
+                                                    <Typography sx={tableHeader}> ID </Typography>
+                                                </TableCell>
+                                                <TableCell sx={tableCell}>
+                                                    <Typography sx={tableHeader}> Amount </Typography>
+                                                </TableCell>
+                                                <TableCell sx={tableCell}>
+                                                    <Typography sx={tableHeader}> Status </Typography>
+                                                </TableCell>
+                                                <TableCell sx={tableCell}>
+                                                    <Typography sx={tableHeader}> Date </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                    ) : null}
+                                    {maintenanceQuotesForItem.map((quote, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.maint_business_name}</Typography>
+                                            </TableCell>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.maint_business_uid} </Typography>
+                                            </TableCell>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.quote_total_estimate ? quote.quote_total_estimate : "Not Provided"} </Typography>
+                                            </TableCell>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.quote_status} </Typography>
+                                            </TableCell>
+                                            <TableCell sx={tableCell}>
+                                                <Typography sx={tableText}> {quote.quote_created_date} </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </Table>
+                                {maintenanceQuotesForItem.length === 0 ? <Typography sx={tableText}> No quotes have been submitted </Typography> : null}
+                            </Grid>
+                            <Grid item xs={12}>
+                                {request_status === "COMPLETED" ? (
+                                    <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px" }}> Property Manager handled this ticket.</Typography>
+                                ) : (
+                                    <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px" }}> Property Manager is handling this ticket.</Typography>
+                                )}
+                            </Grid>
+                        </>
+                    );
+                }                
+            }
             return (
                 <Grid item xs={12}>
-                     <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
-                     <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
+                    <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
+                    <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
                     <Table sx={{padding: "0px"}}>
                         {maintenanceQuotesForItem.length > 0 ? (
                             <TableHead>
@@ -174,30 +237,15 @@ export default function QuotesTable({maintenanceItem, maintenanceQuotesForItem})
                 </Grid>
             )
         }
-    } else{
-        return (
-            <Grid item xs={12}>
-                <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
-                <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
-                <Typography sx={tableText}> No quotes have been requested yet. </Typography>
-            </Grid>
-        )
-        // if (request_status === "SCHEDULED") {
-        //     return (
-        //         <Grid item xs={12}>
-        //             {/* <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography> */}
-        //             {/* <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography> */}
-        //             <Typography sx={tableText}> Maintenance Item Hanlded By Property Manager: {maintenanceItem.business_name}</Typography>
-        //         </Grid>
-        //     )
-        // } else {
-        //     return (
-        //         <Grid item xs={12}>
-        //             <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
-        //             <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
-        //             <Typography sx={tableText}> No quotes have been requested yet. </Typography>
-        //         </Grid>
-        //     )
-        // }
     }
 }
+    
+    // else{
+    //     return (
+    //         <Grid item xs={12}>
+    //             <Typography sx={{color: "#FFFFFF", fontWeight: 900, fontSize: "24px",}}>Quotes Table</Typography>
+    //             <Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
+    //             <Typography sx={tableText}> No quotes have been requested yet. </Typography>
+    //         </Grid>
+    //     )
+    // }
