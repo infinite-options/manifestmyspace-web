@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import theme from '../../theme/theme';
 import dayjs from 'dayjs';
+import { lighten } from "@material-ui/core";
 
 
 
@@ -212,7 +213,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                                 display: 'none', // Remove vertical borders in the header
                             },
                             '& .highlighted-row': {
-                                backgroundColor: '#f0f0f0', // Use the same color as in your CSS
+                                backgroundColor: lighten(color, 0.4)//'#f0f0f0', // Use the same color as in your CSS
                             },
                         }}
                         disableExtendRowFullWidth={true}
@@ -223,9 +224,9 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                             handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
                         }}
                         getRowClassName={(params) => {
-                            if (params.row.maintenance_request_status === 'SCHEDULED' && params.row.quote_status !== 'ACCEPTED' && params.row.quote_status !== 'SCHEDULED' && params.row.quote_status !== 'FINISHED'){
-                                console.log("params", params.row)
-                            }
+                            // if (params.row.maintenance_request_status === 'SCHEDULED' && params.row.quote_status !== 'ACCEPTED' && params.row.quote_status !== 'SCHEDULED' && params.row.quote_status !== 'FINISHED'){
+                            //     console.log("params", params.row)
+                            // }
                             return (
                                 ['SCHEDULED', 'COMPLETED', 'PAID'].includes(params.row.maintenance_request_status) &&
                                 !['ACCEPTED', 'SCHEDULED', 'FINISHED'].includes(params.row.quote_status)
