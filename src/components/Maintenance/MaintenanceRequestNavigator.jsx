@@ -72,6 +72,17 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         setImages(initialImages);
         setActiveStep(0);
 
+        if (requestData[currentIndex] && requestData[currentIndex].maintenance_request_created_date !== "null") {
+            let formattedDate = dayjs(requestData[currentIndex].maintenance_request_created_date).format("MM-DD-YYYY");
+            setFormattedDate(formattedDate);
+            const today = dayjs()
+            let diff = today.diff(formattedDate, 'day')
+            setNumOpenRequestDays(diff);
+        } else {
+            setFormattedDate("N/A");
+            setNumOpenRequestDays("N/A");
+        }
+
     }, [currentIndex]);
 
     const maxSteps = images.length;
@@ -127,7 +138,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             return "Not Scheduled"
         } else {
             const formattedTime = dayjs(data.maintenance_scheduled_time, "HH:mm").format("h:mm A");
-            // setFormattedDate(formattedDate)
+            // setFormattedTime(formattedTime)
+            // setFormattedDate(dayjs(data.maintenance_scheduled_date, "MM-DD-YYYY"));
             return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`
         }
     }
