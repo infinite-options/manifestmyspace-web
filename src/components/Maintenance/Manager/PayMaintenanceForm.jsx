@@ -48,9 +48,20 @@ export default function PayMaintenanceForm(){
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
 
+    console.log("[DEBUG] maintenance item with payment info?", maintenanceItem)
+
 
     const handleSubmit = () => {
-        navigate("/payments", {state: {maintenanceItem}})
+        navigate("/payments", {state: {
+            maintenanceItem: maintenanceItem,
+            paymentMethodInfo: {
+                "apple_pay": true,
+                "venmo": true,
+                "credit_card": true,
+                "paypal": true,
+                "zelle": true,
+            }
+        }})
     }
 
     const modalSubmit = async (chargeAmount) => {

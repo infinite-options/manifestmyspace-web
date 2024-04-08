@@ -225,7 +225,7 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
                 <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
                 <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
-            <DateTimePickerModal 
+            <DateTimePickerModal
                 setOpenModal={setShowModal}
                 open={showModal}
                 maintenanceItem={maintenanceItem}

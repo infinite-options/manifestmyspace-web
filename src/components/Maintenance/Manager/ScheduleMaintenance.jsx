@@ -38,7 +38,12 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
     const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        setMaintenanceItemQuotes(quotes);
+    }, [quotes])
 
     function handleNavigate(){
         console.log("navigate to Rescheduling Maintenance")
@@ -50,6 +55,27 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
             }
         })
     }
+
+    function handleNavigateToQuotesAccept(){
+        navigate("/quoteAccept", {
+            state:{
+                maintenanceItem,
+                navigateParams,
+                quotes
+            }
+        });
+    }
+
+    function handleNavigateToQuotesRequested(){
+        navigate("/quoteRequest", {
+            state:{
+                maintenanceItem,
+                navigateParams,
+                quotes
+            }
+        });
+    }
+
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -129,6 +155,54 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <TenantProfileLink maintenanceItem={maintenanceItem}/>
                 <OwnerProfileLink maintenanceItem={maintenanceItem}/>
+                <Grid item xs={12} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            
+                            sx={{
+                                backgroundColor: "#C06A6A",
+                                textTransform: "none",
+                                paddingRight: "0px",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => handleNavigateToQuotesRequested()}
+                        >
+                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                                Request Additional Quotes
+                            </Typography>
+                            <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                        </Button>
+                </Grid>
+                {quotes.length > 0 ? (
+                     <Grid item xs={12} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            
+                            sx={{
+                                backgroundColor: "#CB8E8E",
+                                textTransform: "none",
+                                paddingRight: "0px",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => handleNavigateToQuotesAccept()}
+                        >
+                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                                View Quotes
+                            </Typography>
+                            <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                        </Button>
+                    </Grid>
+                ) : null}
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
