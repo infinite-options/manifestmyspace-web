@@ -38,7 +38,12 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
+    const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
     const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        setMaintenanceItemQuotes(quotes);
+    }, [quotes])
 
     function handleNavigate(){
         console.log("navigate to Rescheduling Maintenance")
@@ -52,10 +57,11 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
     }
 
     function handleNavigateToQuotesRequested(){
-        navigate("/quoteRequest", {
+        navigate("/quoteAccept", {
             state:{
                 maintenanceItem,
-                navigateParams
+                navigateParams,
+                quotes
             }
         });
     }
@@ -146,14 +152,14 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
                         variant="contained"
                         
                         sx={{
-                            backgroundColor: "#97A7CF",
+                            backgroundColor: "#CB8E8E",
                             textTransform: "none",
                             paddingRight: "0px",
                             borderRadius: "10px",
                             display: 'flex',
                             width: "100%",
                         }}
-                        onClick={() => handleNavigate()}
+                        onClick={() => handleNavigateToQuotesRequested()}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
                             View Quotes
