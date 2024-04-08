@@ -54,17 +54,22 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
     const columns = [
         {
             headerName: "Property",
-            field: "property_name",
+            field: "property_address",
             renderCell: (params) => {
-                return `${params.row.property_address} ${params.row.property_unit}`;
+                return `${params.row.property_address}`;
             },
             flex: 1,
             minWidth: 175,
-            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
-            //     return sortDirection === 'ASC'
-            //       ? cellParams1.property_address + cellParams1.property_unit - cellParams2.property_address + cellParams2.property_unit
-            //       : cellParams2.property_address + cellParams2.property_unit - cellParams2.property_name  + cellParams1.property_unit;
-            // }
+            // sortComparator: propertyNameSorting
+        }, 
+        {
+            headerName: "Unit",
+            field: "property_unit",
+            renderCell: (params) => {
+                return `${params.row.property_unit}`;
+            },
+            flex: 1,
+            minWidth: 50,
             // sortComparator: propertyNameSorting
         }, 
         {
