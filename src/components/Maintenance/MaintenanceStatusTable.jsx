@@ -36,6 +36,20 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         }
       };
 
+    const propertyNameSorting = (a,b) => {
+
+        let aTitle = a.property_address + " " + a.property_unit;
+        let bTitle = b.property_address + " " + b.property_unit;
+        
+        if (aTitle < bTitle) {
+            return -1;
+        }
+        if (aTitle > bTitle) {
+            return 1;
+        }
+        return 0;
+    }
+
     const columns = [
         {
             headerName: "Property",
@@ -45,6 +59,12 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             },
             flex: 1,
             minWidth: 175,
+            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
+            //     return sortDirection === 'ASC'
+            //       ? cellParams1.property_address + cellParams1.property_unit - cellParams2.property_address + cellParams2.property_unit
+            //       : cellParams2.property_address + cellParams2.property_unit - cellParams2.property_name  + cellParams1.property_unit;
+            // }
+            sortComparator: propertyNameSorting
         }, 
         {
            headerName: "Type",
@@ -82,12 +102,12 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             renderCell: (params) => {
                 return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
             },
-            sortComparator: (v1, v2, row1, row2, sortDirection) => {
-                console.log(sortDirection);
-                return sortDirection === 'ASC'
-                  ? row1.maintenance_request_uid - row2.maintenance_request_uid
-                  : row2.maintenance_request_uid - row1.maintenance_request_uid;
-              },
+            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
+            //     console.log(sortDirection);
+            //     return sortDirection === 'ASC'
+            //       ? cellParams1.maintenance_request_uid - cellParams2.maintenance_request_uid
+            //       : cellParams2.maintenance_request_uid - cellParams1.maintenance_request_uid;
+            //   },
         }, 
         {
             headerName: "Date Created",
@@ -108,6 +128,8 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
                 }
             }
+            // there are values displayed like "N/A" or "CANCELLED" that need to be sorted in ascending order
+
         },
         {
             headerName: "Scheduled Time",

@@ -51,6 +51,15 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
         })
     }
 
+    function handleNavigateToQuotesRequested(){
+        navigate("/quoteRequest", {
+            state:{
+                maintenanceItem,
+                navigateParams
+            }
+        });
+    }
+
     const handleSubmit = () => {
         console.log("handleSubmit")
         const changeMaintenanceRequestStatus = async () => {
@@ -129,6 +138,29 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <TenantProfileLink maintenanceItem={maintenanceItem}/>
                 <OwnerProfileLink maintenanceItem={maintenanceItem}/>
+                <Grid item xs={12} sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}>
+                    <Button
+                        variant="contained"
+                        
+                        sx={{
+                            backgroundColor: "#97A7CF",
+                            textTransform: "none",
+                            paddingRight: "0px",
+                            borderRadius: "10px",
+                            display: 'flex',
+                            width: "100%",
+                        }}
+                        onClick={() => handleNavigate()}
+                    >
+                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                            View Quotes
+                        </Typography>
+                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                    </Button>
+                </Grid>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
