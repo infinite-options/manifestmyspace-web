@@ -165,7 +165,27 @@ const ProfileInfo = () => {
     setCookie("default_form_vals", {...cookiesData, phoneNumber, email, address, unit, city, state, zip, ein, locations });
     
     
+
+    let role_id={}
+    if (selectedRole==='OWNER')
+      role_id={owner_id:data.owner_uid}
     
+    if (selectedRole==='TENANT')
+      role_id={tenant_id:data.tenant_uid}
+    
+    if (selectedRole==='MANAGER'){
+      let businesses=  user.businesses
+      businesses['MANAGEMENT'].business_uid=data.business_uid
+      role_id={businesses}
+    }
+
+    if (selectedRole==='MAINTENANCE'){
+      let businesses=  user.businesses
+      businesses['MAINTENANCE'].business_uid=data.business_uid
+      role_id={businesses}
+    }
+    
+    setCookie("user", {...user, ...role_id})
 
 
 
