@@ -36,6 +36,21 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         }
       };
 
+      const propertyNameSorting = (v1, v2, cellParams1, cellParams2) => {
+        console.log(v1, v2, cellParams1, cellParams2)
+        const addressUnit1 = cellParams1.row.property_address + cellParams1.row.property_unit;
+        const addressUnit2 = cellParams2.row.property_address + cellParams2.row.property_unit;
+      
+        if (addressUnit1 < addressUnit2) {
+          return -1;
+        } else if (addressUnit1 > addressUnit2) {
+          return 1;
+        } else {
+          return 0;
+        }
+      };
+      
+
     const columns = [
         {
             headerName: "Property",
@@ -45,6 +60,12 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             },
             flex: 1,
             minWidth: 175,
+            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
+            //     return sortDirection === 'ASC'
+            //       ? cellParams1.property_address + cellParams1.property_unit - cellParams2.property_address + cellParams2.property_unit
+            //       : cellParams2.property_address + cellParams2.property_unit - cellParams2.property_name  + cellParams1.property_unit;
+            // }
+            // sortComparator: propertyNameSorting
         }, 
         {
            headerName: "Type",
@@ -81,7 +102,13 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             minWidth: 75,
             renderCell: (params) => {
                 return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
-            }
+            },
+            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
+            //     console.log(sortDirection);
+            //     return sortDirection === 'ASC'
+            //       ? cellParams1.maintenance_request_uid - cellParams2.maintenance_request_uid
+            //       : cellParams2.maintenance_request_uid - cellParams1.maintenance_request_uid;
+            //   },
         }, 
         {
             headerName: "Date Created",
@@ -102,6 +129,8 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
                 }
             }
+            // there are values displayed like "N/A" or "CANCELLED" that need to be sorted in ascending order
+
         },
         {
             headerName: "Scheduled Time",

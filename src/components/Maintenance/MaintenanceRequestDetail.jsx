@@ -426,7 +426,7 @@ export function MaintenanceRequestDetail() {
                 {colorStatus[value]?.status === "Scheduled" ? (
                   <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
-                {colorStatus[value]?.status === "Completed" ? (
+                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !== "CANCELLED" ? (
                   <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
                 {colorStatus[value]?.status === "Paid" ? (
