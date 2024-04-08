@@ -48,7 +48,7 @@ function ManagerDashboard() {
   const { getProfileId, user, selectedRole } = useUser();
   let dashboard_id=getProfileId()
   if (selectedRole==='PM_EMPLOYEE')
-  dashboard_id= user.businesses?.MANAGEMENT?.business_uid || user?.supervisor;
+    dashboard_id= user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
   const navigate = useNavigate();
   let date = new Date();
   // const [loading, setLoading] = useState(true);
