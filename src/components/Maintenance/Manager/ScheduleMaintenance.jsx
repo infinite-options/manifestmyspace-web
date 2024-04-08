@@ -56,7 +56,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
         })
     }
 
-    function handleNavigateToQuotesRequested(){
+    function handleNavigateToQuotesAccept(){
         navigate("/quoteAccept", {
             state:{
                 maintenanceItem,
@@ -65,6 +65,17 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
             }
         });
     }
+
+    function handleNavigateToQuotesRequested(){
+        navigate("/quoteRequest", {
+            state:{
+                maintenanceItem,
+                navigateParams,
+                quotes
+            }
+        });
+    }
+
 
     const handleSubmit = () => {
         console.log("handleSubmit")
@@ -145,28 +156,53 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
                 <TenantProfileLink maintenanceItem={maintenanceItem}/>
                 <OwnerProfileLink maintenanceItem={maintenanceItem}/>
                 <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        
-                        sx={{
-                            backgroundColor: "#CB8E8E",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleNavigateToQuotesRequested()}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            View Quotes
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            
+                            sx={{
+                                backgroundColor: "#C06A6A",
+                                textTransform: "none",
+                                paddingRight: "0px",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => handleNavigateToQuotesRequested()}
+                        >
+                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                                Request Additional Quotes
+                            </Typography>
+                            <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                        </Button>
                 </Grid>
+                {quotes.length > 0 ? (
+                     <Grid item xs={12} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            
+                            sx={{
+                                backgroundColor: "#CB8E8E",
+                                textTransform: "none",
+                                paddingRight: "0px",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => handleNavigateToQuotesAccept()}
+                        >
+                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                                View Quotes
+                            </Typography>
+                            <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                        </Button>
+                    </Grid>
+                ) : null}
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",

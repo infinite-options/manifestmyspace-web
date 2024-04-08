@@ -36,19 +36,20 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         }
       };
 
-    const propertyNameSorting = (a,b) => {
-
-        let aTitle = a.property_address + " " + a.property_unit;
-        let bTitle = b.property_address + " " + b.property_unit;
-        
-        if (aTitle < bTitle) {
-            return -1;
+      const propertyNameSorting = (v1, v2, cellParams1, cellParams2) => {
+        console.log(v1, v2, cellParams1, cellParams2)
+        const addressUnit1 = cellParams1.row.property_address + cellParams1.row.property_unit;
+        const addressUnit2 = cellParams2.row.property_address + cellParams2.row.property_unit;
+      
+        if (addressUnit1 < addressUnit2) {
+          return -1;
+        } else if (addressUnit1 > addressUnit2) {
+          return 1;
+        } else {
+          return 0;
         }
-        if (aTitle > bTitle) {
-            return 1;
-        }
-        return 0;
-    }
+      };
+      
 
     const columns = [
         {
@@ -64,7 +65,7 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             //       ? cellParams1.property_address + cellParams1.property_unit - cellParams2.property_address + cellParams2.property_unit
             //       : cellParams2.property_address + cellParams2.property_unit - cellParams2.property_name  + cellParams1.property_unit;
             // }
-            sortComparator: propertyNameSorting
+            // sortComparator: propertyNameSorting
         }, 
         {
            headerName: "Type",
