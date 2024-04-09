@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { roleMap } from "./helper";
 
 const OnboardingRouter = () => {
-  const { onboardingState, setOnboardingState, selectRole, setLoggedIn, isLoggedIn } =
+  const { onboardingState, setOnboardingState, selectRole, setLoggedIn, isLoggedIn, selectedRole } =
     useUser();
   const navigate = useNavigate();
 
@@ -33,6 +33,7 @@ const OnboardingRouter = () => {
         navigate(dashboardUrl);
       } else {
         console.error("Opening role is undefined. Handle this case appropriately.");
+        navigate(roleMap[selectedRole].dashboardUrl)
       }
     } else {
       const nextRole = roles.shift();
