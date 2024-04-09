@@ -335,7 +335,7 @@ function MaintenanceProfile() {
                             height: '25px',
                         }}>
                             
-                        { paymentElements[payment_account.paymentMethod_type].icon}
+                        { paymentElements[payment_account.paymentMethod_type]?.icon}
 
 
                         </Box>
@@ -430,12 +430,13 @@ function MaintenanceProfile() {
                     
                     
                     {
-                        business_service_fees.map( f=>
+                        business_service_fees.map((fee, index)=>
                     
                             <Stack
                                 direction="row"
                                 justifyContent="left"
                                 marginLeft={10}
+                                key={index}
                             >
                             <Box
                                 sx={{
@@ -453,22 +454,22 @@ function MaintenanceProfile() {
                                         fontSize:theme.typography.smallFont
                                     }}
                                 >
-                                    { `${f.service_name}` }
+                                    { `${fee.service_name}` }
                                 </Typography>
                                 
                                 
                                 <FlexBox direction="row">
                                     <Box sx={{ paddingRight: '10px' }}>
                                         <Box sx={{ fontSize: '13px' }}>No. of hours</Box>
-                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${f.hours ? f.hours : '<NUM_HOURS>'}`}</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${fee.hours ? fee.hours : '<NUM_HOURS>'}`}</Box>
                                     </Box>
                                     <Box sx={{ padding: '0 10px' }}>
                                         <Box sx={{ fontSize: '13px' }}>Charge per hour</Box>
-                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${f.charge ? f.charge : '<CHARGE>'}`}</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${fee.charge ? fee.charge : '<CHARGE>'}`}</Box>
                                     </Box>
                                     <Box sx={{ paddingLeft: '10px' }}>
                                         <Box sx={{ fontSize: '13px' }}>Total Cost</Box>
-                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${f.total_cost ? f.total_cost : '<TOTAL_COST>'}`}</Box>
+                                        <Box sx={{ fontSize: '13px', color: '#160449' }}>{`${fee.total_cost ? fee.total_cost : '<TOTAL_COST>'}`}</Box>
                                     </Box>
                                 </FlexBox>
                             </Box>

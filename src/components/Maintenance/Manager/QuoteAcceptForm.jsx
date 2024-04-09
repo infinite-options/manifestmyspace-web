@@ -37,8 +37,7 @@ export default function QuoteAcceptForm(){
     
     const maintenanceItem = location.state.maintenanceItem;
     const navigationParams = location.state.navigateParams
-    // const quotes = location.state.quotes
-    // console.log("navigationParams", navigationParams)
+
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
@@ -94,13 +93,6 @@ export default function QuoteAcceptForm(){
         let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
         let allMaintenanceData = navigationParams.allData
         let maintenanceQuotes = navigationParams.maintenanceQuotes
-
-        // console.log("-----navigationParams-----")
-        // console.log("maintenance_request_index", maintenance_request_index)
-        // console.log("status", status)
-        // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-        // console.log("allMaintenanceData", allMaintenanceData)
-        // console.log("--------------------------")
 
         navigate("/maintenance/detail", {
             state: {
@@ -332,7 +324,8 @@ export default function QuoteAcceptForm(){
                         </Button>
                     </Grid>
                 </Grid>
-                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED") ? (
+                {console.log(maintenanceItem)}
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="SCHEDULED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="FINISHED") ? (
                         <Stack direction="column" display="flex" spacing={2} padding="20px">
                             <Box alignContent="center"
                                 justifyContent="center"
@@ -344,58 +337,79 @@ export default function QuoteAcceptForm(){
                                 
                             </Box>
                             <QuoteDetailInfo maintenanceItem={maintenanceQuotes[currentQuoteIndex]}/>
-                            {maintenanceQuotes[currentQuoteIndex]?.quote_status!=="REJECTED" ? (
-                                <>
+                            {maintenanceQuotes[currentQuoteIndex]?.quote_status !== "REJECTED" ? (
+                                maintenanceQuotes[currentQuoteIndex]?.quote_status === "SCHEDULED" ? (
+                                    <Box alignContent="center" justifyContent="center" alignItems="center">
+                                    <Typography sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: "20px"
+                                    }}>
+                                        Scheduled
+                                    </Typography>
+                                    </Box>
+                                ) : maintenanceQuotes[currentQuoteIndex]?.quote_status === "FINISHED" ? (
+                                    <Box alignContent="center" justifyContent="center" alignItems="center">
+                                    <Typography sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: "20px"
+                                    }}>
+                                        Completed
+                                    </Typography>
+                                    </Box>
+                                ) : (
+                                    <>
                                     <Button
                                         variant="contained"
-                                        
                                         sx={{
-                                            backgroundColor: "#9EAED6",
-                                            textTransform: "none",
-                                            borderRadius: "10px",
-                                            display: 'flex',
-                                            width: "100%",
+                                        backgroundColor: "#9EAED6",
+                                        textTransform: "none",
+                                        borderRadius: "10px",
+                                        display: 'flex',
+                                        width: "100%",
                                         }}
                                         onClick={() => handleSubmit("ACCEPTED")}
-                                        >
+                                    >
                                         <Typography sx={{
-                                            color: "#160449",
-                                            fontWeight: theme.typography.primary.fontWeight, 
-                                            fontSize: "14px"
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: "14px"
                                         }}>
-                                            Accept Quote
+                                        Accept Quote
                                         </Typography>
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        
                                         sx={{
-                                            backgroundColor: "#CB8E8E",
-                                            textTransform: "none",
-                                            borderRadius: "10px",
-                                            display: 'flex',
-                                            width: "100%",
+                                        backgroundColor: "#CB8E8E",
+                                        textTransform: "none",
+                                        borderRadius: "10px",
+                                        display: 'flex',
+                                        width: "100%",
                                         }}
                                         onClick={() => handleSubmit("REJECTED")}
-                                        >
+                                    >
                                         <Typography sx={{
-                                            color: "#160449",
-                                            fontWeight: theme.typography.primary.fontWeight, 
-                                            fontSize: "14px"
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: "14px"
                                         }}>
-                                            Decline Quote
+                                        Decline Quote
                                         </Typography>
                                     </Button>
-                                </>) : (
-                                    <Box alignContent="center" justifyContent="center" alignItems="center">
-                                        <Typography sx={{
-                                            color: "#160449",
-                                            fontWeight: theme.typography.primary.fontWeight, 
-                                            fontSize: "20px"
-                                        }}>
-                                            Rejected
-                                        </Typography>
-                                    </Box>
+                                    </>
+                                )
+                                ) : (
+                                <Box alignContent="center" justifyContent="center" alignItems="center">
+                                    <Typography sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: "20px"
+                                    }}>
+                                    Rejected
+                                    </Typography>
+                                </Box>
                                 )}
                         </Stack>
                     ): maintenanceQuotes[currentQuoteIndex]?.quote_status==="REQUESTED" ? (

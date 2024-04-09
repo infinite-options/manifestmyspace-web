@@ -43,6 +43,16 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
         })
     }
 
+    function handleNavigateToQuotesAccept(){
+        navigate("/quoteAccept", {
+            state:{
+                maintenanceItem,
+                navigateParams,
+                quotes
+            }
+        });
+    }
+
     return(
         <Box 
             sx={{
@@ -56,6 +66,31 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
             <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
                 <TenantProfileLink maintenanceItem={maintenanceItem}/>
                 <OwnerProfileLink maintenanceItem={maintenanceItem}/>
+                {quotes.length > 0 ? (
+                     <Grid item xs={12} sx={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            
+                            sx={{
+                                backgroundColor: "#CB8E8E",
+                                textTransform: "none",
+                                paddingRight: "0px",
+                                borderRadius: "10px",
+                                display: 'flex',
+                                width: "100%",
+                            }}
+                            onClick={() => handleNavigateToQuotesAccept()}
+                        >
+                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+                                View Quotes
+                            </Typography>
+                            <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
+                        </Button>
+                    </Grid>
+                ) : null}
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
