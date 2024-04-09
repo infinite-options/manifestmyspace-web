@@ -161,6 +161,7 @@ export default function Payments(props) {
       // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
       var initialSelectedItems = [];
       if (location.state && location.state.maintenanceItem) {
+        console.log("--> location.state is defined", location.state);
         const maintenanceItemNav = location.state.maintenanceItem;
         console.log("--> maintenanceItemNav", maintenanceItemNav);
         //make the purchase_uid of the maintenance item selected
