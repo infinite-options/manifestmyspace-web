@@ -7,6 +7,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import CryptoJS from "crypto-js"; 
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,7 +28,6 @@ export default function EditProfileSettings() {
     let   owner_data = location.state.owner_data;
     const [modifiedData, setModifiedData] = useState({ 'owner_uid': owner_data?.owner_uid, });
     const [isEdited, setIsEdited] = useState(false);
-
     const [firstName, setFirstName] = useState(owner_data.owner_first_name? owner_data.owner_first_name : '');
     const [lastName, setLastName] = useState(owner_data.owner_last_name? owner_data.owner_last_name : '');
     const [emailAddress, setEmailAddress] = useState(owner_data.owner_email? owner_data.owner_email : '');
@@ -38,15 +38,29 @@ export default function EditProfileSettings() {
     const [state, setState] = useState(owner_data.owner_state? owner_data.owner_state : '');
     const [zipCode, setZipCode] = useState(owner_data.owner_zip? owner_data.owner_zip : '');
     const [EIN, setEIN] = useState(owner_data.owner_ein_number? owner_data.owner_ein_number : '');
-    const [SSN, setSSN] = useState(owner_data.owner_ssn? owner_data.owner_ssn : '');
+    const [SSN, setSSN] = useState('');
     const [uploadedImage, setUploadedImage] = useState(null);
 
     const handleInputChange = (event) => {
-        console.log("Input changed")
         const { name, value } = event.target;
-        // console.log(name)
-        // console.log(value)
-
+    
+        let encryptedValue = value;
+    
+        if (name === 'owner_ssn') {
+            encryptedValue = CryptoJS.AES.encrypt(value, process.env.REACT_APP_ENKEY).toString();
+        }
+    
+        setModifiedData((prevData) => {
+            const newData = { ...prevData };
+    
+            if (name === 'owner_ssn') {
+                newData[name] = encryptedValue;
+            } else {
+                newData[name] = value;
+            }
+    
+            return newData;
+        });
         if (name === 'owner_first_name') {
             setFirstName(value);
         } else if (name === 'owner_last_name') {
@@ -70,11 +84,6 @@ export default function EditProfileSettings() {
         } else if (name === 'owner_ssn') {
             setSSN(value);
         }
-
-        setModifiedData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
 
         setIsEdited(true);
     }

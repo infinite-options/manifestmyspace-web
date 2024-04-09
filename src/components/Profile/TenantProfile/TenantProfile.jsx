@@ -7,6 +7,16 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import Setting_fill from "../../../images/Setting_fill.png";
+import CryptoJS from "crypto-js";
+
+function getSSNText(data) {
+    if (data === undefined) {
+        return '***-**-****';
+    }
+    const decryptedSSN = CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
+    const lastFourDigits = decryptedSSN.slice(-4); // Get the last 4 digits of the decrypted SSN
+    return `***-**-${lastFourDigits}`;
+}
 
 const theme = createTheme({
     palette: {
@@ -525,7 +535,7 @@ function TenantProfile() {
                         <FlexBox direction="row">
                             <Box>
                                 <TextBox fontSize={'16px'} fontWeight={'bold'}>
-                                    {"*********" ?? profileData?.tenant_ssn}
+                                    {getSSNText(profileData?.tenant_ssn)}
                                 </TextBox>
                                 <TextBox fontSize={'12px'}>
                                     SSN
