@@ -18,7 +18,7 @@ function TenantDoucments() {
    
     useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantDocuments/${getProfileId()}`)  
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`)  
     .then((res) => {
                 setDocumentsData(res.data.Documents.result);
                 setShowSpinner(false);

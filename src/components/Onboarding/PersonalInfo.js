@@ -132,11 +132,6 @@ const PersonalInfo = () => {
     }
   };
 
-  const add_supervisor= async () => {
-    setUser(prev=>{return {...prev,supervisor:businessId }})
-    const emp_user = emp_cookiesData;
-    set_emp_cookie("user", emp_user);
-  }
 
   const handleNextStep = async () => {
     setShowSpinner(true);
@@ -156,8 +151,8 @@ const PersonalInfo = () => {
       employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
     };
     
-
-
+    
+    
 
 
     const formPayload = new FormData();
@@ -173,8 +168,28 @@ const PersonalInfo = () => {
     );
     setCookie("default_form_vals", {...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
     handleUpdateProfileUid(data);
-    if (selectedRole==='PM_EMPLOYEE')
-      await add_supervisor()
+        
+      if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
+        let role_id={}
+        let businesses=  user.businesses
+        
+        if (selectedRole === 'PM_EMPLOYEE') {
+          businesses['MANAGEMENT'].business_employee_id=data.employee_uid
+          role_id={businesses}
+          setCookie("user", {...user, ...role_id, pm_supervisor:businessId})
+          setUser(prev=>{return {...prev,...role_id, pm_supervisor:businessId }})
+        }
+          
+        else {
+          businesses['MAINTENANCE'].business_employee_id=data.employee_uid
+          role_id={businesses}
+          setCookie("user", {...user, ...role_id, maint_supervisor:businessId})
+          setUser(prev=>{return {...prev,...role_id, maint_supervisor:businessId }})
+        }
+
+      role_id={businesses}
+      }
+
     setShowSpinner(false);
     if (isEmployee())
       navigate(profilePage, { state: { profileId: businessId } });

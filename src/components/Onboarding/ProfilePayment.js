@@ -1,16 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Paper,
-  Box,
-  Stack,
-  ThemeProvider,
-  Button,
-  Typography,
-  Checkbox,
-  Backdrop,
-  CircularProgress,
-} from "@mui/material";
+import { Paper, Box, Stack, ThemeProvider, Button, Typography, Checkbox, Backdrop, CircularProgress } from "@mui/material";
 import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,12 +11,14 @@ import Status33 from "../../images/status_bar_7.png";
 import BankIcon from "../../images/Chase.png";
 import Status34 from "../../images/status_bar_9.png";
 import PayPal from "../../images/PayPal.png";
-import Zelle from "../../images/Zelle.png";
-import Venmo from "../../images/Venmo.png";
+import ZelleIcon from "../../images/Zelle.png";
+import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import { headers } from "./helper";
 import { useCookies } from "react-cookie";
+import ChaseIcon from "../../images/Chase.png";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -45,183 +37,189 @@ function ProfilePayment() {
   const location = useLocation();
   const { profileId } = location.state;
   const [statusImg, setStatusImg] = useState();
-  const { user, isBusiness, roleName, isLoggedIn } =
-    useUser();
-  
+  const { user, isBusiness, roleName, isLoggedIn } = useUser();
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
-  const [nextStepDisabled, setNextStepDisabled]=useState(false)
+  const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false },
     apple_pay: { value: "", checked: false },
     stripe: { value: "", checked: false },
     zelle: { value: "", checked: false },
     venmo: { value: "", checked: false },
+    credit_card: { value: "", checked: false },
+    bank_account: { account_number: "", routing_number: "", checked: false },
   });
-
- 
-  const [checkedCreditCard, setCheckedCreditCard] = useState(false);
-  const [creditCardNumber, setCreditCardNumber] = useState('');
-  const [routingNumber, setRoutingNumber] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [checkedBankAccount, setCheckedBankAccount] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-  const personalInfoPage= isLoggedIn? "/privatePersonalInfo" : "/personalInfo" 
-  const onBoaringPage= isLoggedIn? "/privateOnboardingRouter" : "/onboardingRouter";
+  const personalInfoPage = isLoggedIn ? "/privatePersonalInfo" : "/personalInfo";
+  const onBoardingPage = isLoggedIn ? "/privateOnboardingRouter" : "/onboardingRouter";
+
   const handleChangeValue = (e) => {
-    const map = { ...paymentMethods };
-    map[e.target.name].value = e.target.value;
-    setPaymentMethods(map);
+    const { name, value } = e.target;
+    if (name === 'bank_account_account' || name === 'bank_account_routing') {
+      setPaymentMethods(prevState => ({
+        ...prevState,
+        bank_account: {
+          ...prevState.bank_account,
+          [name === 'bank_account_account' ? 'account_number' : 'routing_number']: value
+        }
+      }));
+    } else {
+      setPaymentMethods(prevState => ({
+        ...prevState,
+        [name]: { ...prevState[name], value }
+      }));
+    }
   };
 
   const handleChangeChecked = (e) => {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-  
-    // If the checkbox is unchecked, disable the corresponding text field and clear its value
-    if (!checked) {
-      map[name].value = ""; // Clear the value
-  
-      // Reset credit card number when unchecking the credit card checkbox
-      if (name === "checkedCreditCard") {
-        setCreditCardNumber(""); // Reset credit card number
+    if (name === 'bank_account') {
+      if (!checked) {
+        map.bank_account.account_number = "";
+        map.bank_account.routing_number = "";
       }
-  
-      // Reset routing number and account number when unchecking the bank account checkbox
-      if (name === "checkedBankAccount") {
-        setRoutingNumber(""); // Reset routing number
-        setAccountNumber(""); // Reset account number
+    } else {
+      if (!checked) {
+        map[name].value = "";
       }
     }
-  
     setPaymentMethods(map);
   };
   
-  
   useEffect(() => {
-    let disable_state = Object.keys(paymentMethods).some(
-      (key) =>
-        paymentMethods[key]?.checked &&
-        paymentMethods[key]?.value === ""
-    );
-  
-    if (checkedCreditCard && creditCardNumber === "") {
-      disable_state = true;
-    }
-  
-    if (
-      checkedBankAccount &&
-      (routingNumber === "" || accountNumber === "")
-    ) {
-      disable_state = true;
-    }
-  
+    let disable_state = Object.keys(paymentMethods).some((key) => {
+      if (
+        paymentMethods[key].checked &&
+        paymentMethods[key].value === ""
+      ) {
+        return true;
+      }
+      if (
+        key === "bank_account" && paymentMethods[key].checked && (paymentMethods[key].account_number === "" || paymentMethods[key].routing_number === "")
+      ) {
+        return true;
+      }
+      return false;
+    });
     setNextStepDisabled(disable_state);
-  }, [paymentMethods, checkedCreditCard, creditCardNumber, checkedBankAccount, routingNumber, accountNumber]);
+  }, [paymentMethods]);
   
-  const handleNextStep = async () => {
+  async function handleNextStep() {
     setShowSpinner(true);
     const keys = Object.keys(paymentMethods);
     const payload = [];
-  
-    // Iterate over paymentMethods to construct payload
+    let bankAccountIncomplete = false;
     keys.forEach((key) => {
       if (paymentMethods[key].value !== "") {
-        payload.push({
+        let paymentMethodPayload = {
           paymentMethod_profile_id: profileId,
           paymentMethod_type: key,
-          paymentMethod_name: paymentMethods[key].value,
-          paymentMethod_status: paymentMethods[key].checked ? "ACTIVE" : "INACTIVE",
-        });
+        };
+        if (key === "bank_account") {
+          const bankAccount = paymentMethods[key];
+          if (bankAccount.routing_number && bankAccount.account_number) {
+            paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+            paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+            payload.push(paymentMethodPayload);
+          } 
+        } else {
+          paymentMethodPayload.paymentMethod_value = paymentMethods[key].value;
+          payload.push(paymentMethodPayload);
+        }
       }
     });
-  
-    // Include credit card information if checked
-    if (checkedCreditCard && creditCardNumber !== "") {
-      payload.push({
-        paymentMethod_profile_id: profileId,
-        paymentMethod_type: "credit_card",
-        paymentMethod_name: creditCardNumber,
-        paymentMethod_status: "ACTIVE", // You can set the status based on your requirements
-      });
-    } else {
-      // Clear credit card number if unchecked
-      setCreditCardNumber("");
-    }
-  
-    // Include bank account information if checked
-    if (checkedBankAccount && routingNumber !== "" && accountNumber !== "") {
-      payload.push({
-        paymentMethod_profile_id: profileId,
-        paymentMethod_type: "bank_account",
-        paymentMethod_name: `Routing Number: ${routingNumber}, Account Number: ${accountNumber}`,
-        paymentMethod_status: "ACTIVE", // You can set the status based on your requirements
-      });
-    } else {
-      // Clear routing number and account number if unchecked
-      setRoutingNumber("");
-      setAccountNumber("");
-    }
-  
-    // POST request to submit payload
+
     const response = await axios.post(
       "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
       payload,
       headers
     );
-  
-    console.log("POST response: " + response);
+    console.log("POST response: ", response);
     setShowSpinner(false);
-  
-    // Update cookie with default form values
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
-  
-    // Navigate based on conditions
-    if (checkedCreditCard) {
-      navigate("");
-    } else if (isBusiness()) {
+    if (isBusiness()) {
       navigate(personalInfoPage, { state: { businessId: profileId } });
     } else {
-      navigate(onBoaringPage);
+      navigate(onBoardingPage);
     }
-  };
-  
-  
-
-  const handleRoleSpecifics = () => {
-    if (isBusiness()) setStatusImg(Status34);
-    else setStatusImg(Status33);
-  };
-
-  useEffect(() => {
-    if (cookiesData?.paymentMethods)
-    setPaymentMethods(cookiesData.paymentMethods)
-  
-    handleRoleSpecifics();
-  }, []);
-
-  useEffect(() => {
-    let disable_state = Object.keys(paymentMethods).some(key => paymentMethods[key]?.checked && paymentMethods[key]?.value === "");
-    setNextStepDisabled(disable_state);
-  }, [paymentMethods]);
-  
-  // Add useEffect to reset credit card number when checkbox is unchecked
-useEffect(() => {
-  if (!checkedCreditCard) {
-    setCreditCardNumber("");
   }
-}, [checkedCreditCard]);
 
-// Add useEffect to reset routing number and account number when checkbox is unchecked
-useEffect(() => {
-  if (!checkedBankAccount) {
-    setRoutingNumber("");
-    setAccountNumber("");
-  }
-}, [checkedBankAccount]);
+  const paymentMethodsArray = [
+    { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
+    { name: "Apple Pay", icon: ApplePay, state: paymentMethods.apple_pay },
+    { name: "Stripe", icon: Stripe, state: paymentMethods.stripe },
+    { name: "Zelle", icon: ZelleIcon, state: paymentMethods.zelle },
+    { name: "Venmo", icon: VenmoIcon, state: paymentMethods.venmo },
+    { name: "Credit Card", icon: ChaseIcon, state: paymentMethods.credit_card },
+    { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
+  ];
 
-
+  const renderPaymentMethods = () => {
+    return paymentMethodsArray.map((method, index) => (
+      <Grid
+        container
+        alignItems="center"
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        key={index}
+      >
+        <Grid item xs={2}>
+          <Checkbox
+            name={method.name.toLowerCase().replace(/\s/g, "_")}
+            checked={method.state?.checked}
+            onChange={handleChangeChecked}
+          />
+        </Grid>
+        <Grid item xs={2}>
+          <img src={method.icon} alt={method.name} />
+        </Grid>
+        {method.name === "Bank Account" ? (
+          <>
+            <Grid item xs={4}>
+              <TextField
+                name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
+                value={method.state?.account_number}
+                onChange={handleChangeValue}
+                variant="filled"
+                fullWidth
+                placeholder={`Enter Your Bank Account Number`}
+                disabled={!method.state?.checked}
+                className={classes.root}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
+                value={method.state?.routing_number}
+                onChange={handleChangeValue}
+                variant="filled"
+                fullWidth
+                placeholder={`Enter Your Bank Routing Number`}
+                disabled={!method.state?.checked}
+                className={classes.root}
+              />
+            </Grid>
+          </>
+        ) : (
+          <Grid item xs={8}>
+            <TextField
+              name={method.name.toLowerCase().replace(/\s/g, "_")}
+              value={method.state?.value}
+              onChange={handleChangeValue}
+              variant="filled"
+              fullWidth
+              placeholder={`Enter ${method.name}`}
+              disabled={!method.state?.checked}
+              className={classes.root}
+            />
+          </Grid>
+        )}
+      </Grid>
+    ));
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -281,7 +279,7 @@ useEffect(() => {
                   <img src={statusImg} alt="status" />
                 </Box>
               </Stack>
-  
+
               <Typography
                 sx={{
                   color: theme.typography.propertyPage.color,
@@ -294,265 +292,13 @@ useEffect(() => {
               </Typography>
             </>
           </Box>
-          {/* PayPal Grid */}
           <Grid
             container
             rowSpacing={1}
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
-            {/* PayPal Grid Item */}
-            <Grid
-              container
-              alignItems="center"
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={2}>
-                <Checkbox
-                  name="paypal"
-                  checked={paymentMethods.paypal.checked}
-                  onChange={handleChangeChecked}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <img src={PayPal} alt="PayPal" />
-              </Grid>
-              <Grid item xs={8}>
-                <TextField
-                  name="paypal"
-                  value={paymentMethods.paypal.value}
-                  onChange={handleChangeValue}
-                  variant="filled"
-                  fullWidth
-                  placeholder="Enter Paypal"
-                  disabled={!paymentMethods.paypal.checked}
-                  className={classes.root}
-                />
-              </Grid>
-            </Grid>
-            {/* Apple Pay Grid */}
-            <Grid
-              container
-              alignItems="center"
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={2}>
-                <Checkbox
-                  name="apple_pay"
-                  checked={paymentMethods.apple_pay.checked}
-                  onChange={handleChangeChecked}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <img src={ApplePay} alt="ApplePay" />
-              </Grid>
-              <Grid item xs={8}>
-                <TextField
-                  name="apple_pay"
-                  value={paymentMethods.apple_pay.value}
-                  onChange={handleChangeValue}
-                  variant="filled"
-                  fullWidth
-                  placeholder="Enter Apple Pay"
-                  disabled={!paymentMethods.apple_pay.checked}
-                  className={classes.root}
-                />
-              </Grid>
-            </Grid>
-            {/* Stripe Grid */}
-            <Grid
-              container
-              alignItems="center"
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={2}>
-                <Checkbox
-                  name="stripe"
-                  checked={paymentMethods.stripe.checked}
-                  onChange={handleChangeChecked}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <img src={Stripe} alt="Stripe" />
-              </Grid>
-              <Grid item xs={8}>
-                <TextField
-                  name="stripe"
-                  value={paymentMethods.stripe.value}
-                  onChange={handleChangeValue}
-                  variant="filled"
-                  fullWidth
-                  placeholder="Use Stripe"
-                  disabled={!paymentMethods.stripe.checked}
-                  className={classes.root}
-                />
-              </Grid>
-            </Grid>
-            {/* Zelle Grid */}
-            <Grid
-              container
-              alignItems="center"
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={2}>
-                <Checkbox
-                  name="zelle"
-                  checked={paymentMethods.zelle.checked}
-                  onChange={handleChangeChecked}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <img src={Zelle} alt="Zelle" />
-              </Grid>
-              <Grid item xs={8}>
-                <TextField
-                  name="zelle"
-                  value={paymentMethods.zelle.value}
-                  onChange={handleChangeValue}
-                  variant="filled"
-                  fullWidth
-                  placeholder="Enter Zelle Number"
-                  disabled={!paymentMethods.zelle.checked}
-                  className={classes.root}
-                />
-              </Grid>
-            </Grid>
-            {/* Venmo Grid */}
-            <Grid
-              container
-              alignItems="center"
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={2}>
-                <Checkbox
-                  name="venmo"
-                  checked={paymentMethods.venmo.checked}
-                  onChange={handleChangeChecked}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <img src={Venmo} alt="Venmo" />
-              </Grid>
-              <Grid item xs={8}>
-                <TextField
-                  name="venmo"
-                  value={paymentMethods.venmo.value}
-                  onChange={handleChangeValue}
-                  variant="filled"
-                  fullWidth
-                  placeholder="Enter Venmo"
-                  disabled={!paymentMethods.venmo.checked}
-                  className={classes.root}
-                />
-              </Grid>
-            </Grid>
+            {renderPaymentMethods()}
           </Grid>
-
-          
-          {/* Credit Card Grid */}
-          
-          <Grid
-  container
-  rowSpacing={1}
-  columnSpacing={{ xs: 1, sm: 2, md: 3 }}
->
-  <Grid
-    container
-    alignItems="center"
-    rowSpacing={1}
-    columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-  >
-    <Grid item xs={2}>
-      <Checkbox
-        checked={checkedCreditCard}
-        onChange={() => setCheckedCreditCard((prev) => !prev)}
-      />
-    </Grid>
-    <Grid item xs={2}>
-      <img src={BankIcon} alt="Bank" />
-    </Grid>
-    <Grid item xs={8}>
-      <TextField
-        variant="filled"
-        fullWidth
-        placeholder="Connect credit card"
-        className={classes.root}
-        disabled={!checkedCreditCard}
-        value={creditCardNumber}
-        onChange={(e) => setCreditCardNumber(e.target.value)}
-      />
-    </Grid>
-  </Grid>
-</Grid>
-
-          {/* Bank Account Grid */}
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
-            
-            {/* Routing Number and Account Number Grid */}
-          </Grid>
-          {/*Bank Account */}
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
-            {/* Remaining Grids */}
-          </Grid>
-          {/* Routing Number and Account Number */}
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
-            <Grid
-              container
-              alignItems="center"
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={2}>
-                <Checkbox
-                  checked={checkedBankAccount}
-                  onChange={() => setCheckedBankAccount((prev) => !prev)}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <img src={BankIcon} alt="Bank" />
-              </Grid>
-              
-              <Grid item xs={2}>
-                <TextField
-          variant="filled"
-          fullWidth
-          placeholder="Routing Number"
-          className={classes.root}
-          disabled={!checkedBankAccount}
-          value={routingNumber}
-          onChange={(e) => setRoutingNumber(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <TextField
-          variant="filled"
-          fullWidth
-          placeholder="Account Number"
-          className={classes.root}
-          disabled={!checkedBankAccount}
-          value={accountNumber}
-          onChange={(e) => setAccountNumber(e.target.value)}
-        />
-              </Grid>
-            </Grid>
-          </Grid>
-          {/* Next Step Button */}
           <Box
             component="span"
             display="flex"
@@ -583,8 +329,6 @@ useEffect(() => {
       </Box>
     </ThemeProvider>
   );
-  
-  
 }
 
 export default ProfilePayment;
