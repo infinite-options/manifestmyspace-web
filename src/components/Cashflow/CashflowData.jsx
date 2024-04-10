@@ -15,7 +15,7 @@ const { getProfileId } = useUser();
 
 const fetchCashflow = async () => {
     setShowSpinner(true);
-    const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowByOwner/${getProfileId()}/TTM`);
+    const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/${getProfileId()}/TTM`);
     console.log("cashflowByOwner api response data", cashflow.data);
     if (props.setTotalRevenueByMonth) { 
     props.setTotalRevenueByMonth(0); 
