@@ -57,6 +57,7 @@ export default function SelectPayment(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
   console.log("--DEBUG-- paymentData", paymentData);
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
@@ -504,8 +505,12 @@ export default function SelectPayment(props) {
         </FormControl>
 
         <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>
-          <Typography>Other Payment Methods</Typography>
+          Other Payment Methods
         </Typography>
+        <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
+          Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle, please include the transaction confirmation number.
+        </Typography>
+
         <Divider light />
 
         <FormControl component="fieldset">
@@ -516,7 +521,7 @@ export default function SelectPayment(props) {
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img src={PayPal} alt="PayPal" style={{ marginRight: "8px", height: "24px" }} />
-                  Paypal
+                  Paypal {paymentMethodInfo.paypal ? paymentMethodInfo.paypal : "No Payment Info"}
                 </div>
               }
             />
@@ -526,28 +531,17 @@ export default function SelectPayment(props) {
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
-                  Apple Pay
+                  Apple Pay {paymentMethodInfo.apple_pay ? `Make payment to: ${paymentMethodInfo.apple_pay}` : "No Payment Info"}
                 </div>
               }
             />
-            <FormControlLabel
-              value="Stripe"
-              control={<Radio />}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
-                  Stripe
-                </div>
-              }
-            />
-
             <FormControlLabel
               value="Zelle"
               control={<Radio />}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
-                  Zelle
+                  Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
                   <TextField
                     id="confirmation-number"
                     label="Confirmation Number"
@@ -568,12 +562,24 @@ export default function SelectPayment(props) {
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
-                  Venmo
+                  Venmo {paymentMethodInfo.venmo ? paymentMethodInfo.venmo : "No Payment Info"}
+                </div>
+              }
+            />
+
+            <FormControlLabel
+              value="Stripe"
+              control={<Radio />}
+              label={
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
+                  Stripe
                 </div>
               }
             />
           </RadioGroup>
         </FormControl>
+        
         <Button
           variant="contained"
           onClick={handleSubmit}

@@ -42,7 +42,7 @@ export default function QuoteAcceptForm(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
     const [quoteImages, setQuoteImages] = useState([])
-    const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
+    const [currentQuoteIndex, setCurrentQuoteIndex] = useState(location.state.index || 0);
     const [maintenanceQuotes, setMaintenanceQuotes] = useState(location.state.quotes)
     const [showSpinner, setShowSpinner] = useState(false);
     const [estimatedTotalCost, setEstimatedTotalCost] = useState(0);

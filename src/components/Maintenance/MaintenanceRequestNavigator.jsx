@@ -28,7 +28,7 @@ function getInitialImages(requestData, currentIndex) {
     return [maintenanceRequestImage];
     }
 
-export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs }) {
+export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs, navigateParams }) {
     const [currentIndex, setCurrentIndex] = useState(requestIndex);
     
     const [activeStep, setActiveStep] = useState(0);
@@ -350,7 +350,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                                 {data?.maintenance_desc}
                             </Typography>
                             <Grid container sx={{padding: "0px"}}>
-                                <QuotesTable maintenanceItem={data} maintenanceQuotesForItem={maintenanceQuotes}/>
+                                <QuotesTable maintenanceItem={data} navigateParams={navigateParams} maintenanceQuotesForItem={maintenanceQuotes}/>
                             </Grid>
                         </Box>
                     </CardContent>
