@@ -23,6 +23,7 @@ import axios from "axios";
 import { formatPhoneNumber, headers, maskNumber } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
+import DataValidator from "../DataValidator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -132,8 +133,38 @@ const PersonalInfo = () => {
     }
   };
 
+  const validate_form= () =>{
+    if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
+      
+          if (!DataValidator.email_validate(email )){
+            alert("Please enter a valid email");
+            return false;}
+
+          if (!DataValidator.phone_validate(phoneNumber )){
+            alert("Please enter a valid phone number");
+            return false;}
+          
+          if (!DataValidator.zipCode_validate(zip )){
+            console.log(zip)
+            alert("Please enter a valid zip code");
+            return false;}
+          
+            if (!DataValidator.ssn_validate(ssn )) {
+              console.log(ssn)
+              console.log('ssn')
+              alert("Please enter a valid SSN");
+              return false;
+            }
+          }
+
+
+  }
+
 
   const handleNextStep = async () => {
+    if (validate_form() === false)
+      return;
+
     setShowSpinner(true);
     const payload = {
       employee_user_id: user.user_uid,

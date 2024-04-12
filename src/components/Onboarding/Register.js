@@ -11,6 +11,7 @@ import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
+import DataValidator from "../DataValidator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,15 +32,29 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleNextStep = () => {
+  const validate_form= () =>{
     if (email === "" || password === "" || confirmPassword === "") {
       alert("Please fill out all fields");
-      return;
+      return false;
     }
+
+    if (!DataValidator.email_validate(email ) ){
+      alert("Please enter a valid email");
+      return false;
+    }
+
     if (password !== confirmPassword) {
       alert("Passwords must match");
-      return;
+      return false;
     }
+  }
+
+
+  const handleNextStep = () => {
+
+    if (validate_form() === false)
+      return;
+  
     navigate("/contactInfo", {
       state: {
         email,

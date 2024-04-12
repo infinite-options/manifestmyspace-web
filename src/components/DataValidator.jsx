@@ -20,6 +20,13 @@ class DataValidator {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
+
+  static zipCode_validate(zipCode) {
+    // Implement zip code validation logic here
+    // For example, a basic validation could be checking if the zip code is a 5-digit number
+    const zipCodeRegex = /^\d{5}$/;
+    return zipCodeRegex.test(zipCode);
+  }
 }
 
 export default DataValidator;
