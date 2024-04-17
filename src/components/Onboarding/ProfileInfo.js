@@ -33,7 +33,7 @@ import {
 } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
-
+import DataValidator from "../DataValidator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -156,6 +156,9 @@ const ProfileInfo = () => {
   };
 
   const handleNextStep = async () => {
+    if (validate_form() === false)
+      return;
+
     setShowSpinner(true);
     const payload = getPayload(selectedRole);
     const form = encodeForm(payload);
@@ -208,6 +211,49 @@ const ProfileInfo = () => {
       updateProfileUid({ business_uid: data.business_uid });
     }
   };
+  const validate_form= () =>{
+    if (['OWNER', 'TENANT'].includes(selectedRole) ){
+      
+          if (!DataValidator.email_validate(email )){
+            alert("Please enter a valid email");
+            return false;}
+
+          if (!DataValidator.phone_validate(phoneNumber )){
+            alert("Please enter a valid phone number");
+            return false;}
+          
+          if (!DataValidator.zipCode_validate(zip )){
+            alert("Please enter a valid zip code");
+            return false;}
+          
+            if (!DataValidator.ssn_validate(ssn )) {
+              alert("Please enter a valid SSN");
+              return false;
+            }
+          }
+
+          if (['MANAGER', 'MAINTENANCE'].includes(selectedRole) ){
+      
+            if (!DataValidator.email_validate(email )){
+              alert("Please enter a valid email");
+              return false;}
+
+            if (!DataValidator.phone_validate(phoneNumber )){
+              alert("Please enter a valid phone number");
+              return false;}
+            
+            if (!DataValidator.zipCode_validate(zip )){
+              alert("Please enter a valid zip code");
+              return false;}
+            
+              if (!DataValidator.ssn_validate(ein )) {
+
+                alert("Please enter a valid EIN");
+                return false;
+              }
+            }
+
+  }
 
   const getPayload = (type) => {
     switch (type) {

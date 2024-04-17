@@ -13,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
 import { formatPhoneNumber } from "./helper";
 import { useCookies } from "react-cookie";
+import DataValidator from "../DataValidator";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,12 +37,23 @@ function Register() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
+  const validate_form= () =>{
 
-  const handleCreateUser = async () => {
     if (firstName === "" || lastName === "" || phoneNumber === "") {
       alert("Please fill out all fields");
-      return;
+      return false;
     }
+    if (!DataValidator.phone_validate(phoneNumber )){
+      alert("Please enter a valid phone number");
+      return false;
+    }
+  }
+
+
+
+  const handleCreateUser = async () => {
+    if (validate_form() === false)
+      return;
     const user = {
       first_name: firstName,
       last_name: lastName,
@@ -166,7 +178,6 @@ function Register() {
             >
               <TextField
                 type="tel"
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                 value={phoneNumber}
                 onChange={(e) =>
                   setPhoneNumber(formatPhoneNumber(e.target.value))

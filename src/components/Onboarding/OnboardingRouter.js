@@ -33,6 +33,7 @@ const OnboardingRouter = () => {
         navigate(dashboardUrl);
       } else {
         console.error("Opening role is undefined. Handle this case appropriately.");
+        if (selectedRole)
         navigate(roleMap[selectedRole].dashboardUrl)
       }
     } else {

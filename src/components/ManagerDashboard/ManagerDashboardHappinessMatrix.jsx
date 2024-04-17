@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {Box, ThemeProvider, Paper, Typography, Stack, Grid, CircularProgress} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme/theme";
-import CashflowData from '../Cashflow/CashflowData';
-import { getPast12MonthsCashflow, fetchCashflow } from '../Cashflow/CashflowFetchData';
+// import CashflowData from '../Cashflow/CashflowData';
+// import { getPast12MonthsCashflow, fetchCashflow } from '../Cashflow/CashflowFetchData';
 import MixedChart from '../Graphs/OwnerCashflowGraph';
 import HappinessMatrix from './HappinessMatrix';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -21,7 +21,7 @@ export default function ManagerDashboardHappinessMatrix(props) {
     const { user, getProfileId } = useUser();
     const profileId=getProfileId();
     const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
-    const [showSpinner, setShowSpinner] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
     let date = new Date();
     let currentMonth = date.toLocaleString('default', { month: 'long' });
     let currentYear = date.getFullYear().toString()
@@ -29,23 +29,23 @@ export default function ManagerDashboardHappinessMatrix(props) {
     const [cashflowData,setCashflowData ]=useState(null)
     const [last12Months, setLast12Months]=useState([])
     
-    useEffect(() => {
-        fetchCashflow(profileId).then((data) => {
-            setCashflowData(data)
-            // let currentMonthYearRevenueExpected = get
+    // useEffect(() => {
+    //     fetchCashflow(profileId).then((data) => {
+    //         setCashflowData(data)
+    //         // let currentMonthYearRevenueExpected = get
 
-        }).catch((error) => {
-            console.error("Error fetching cashflow data:", error)
-        })
-    }, [])
+    //     }).catch((error) => {
+    //         console.error("Error fetching cashflow data:", error)
+    //     })
+    // }, [])
 
     
-useEffect(() => {
-    if (cashflowData){
-         setLast12Months(getPast12MonthsCashflow(cashflowData,currentMonth, currentYear));
-    }
+// useEffect(() => {
+//     if (cashflowData){
+//          setLast12Months(getPast12MonthsCashflow(cashflowData,currentMonth, currentYear));
+//     }
     
-}, [cashflowData])
+// }, [cashflowData])
 
     return (
         <>
@@ -55,7 +55,7 @@ useEffect(() => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <CashflowData setShowSpinner={setShowSpinner} year={currentYear} month={currentMonth} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData>
+            {/* <CashflowData setShowSpinner={setShowSpinner} year={currentYear} month={currentMonth} role={'Owner'} userID={user.user_uid} setRevenueCashflowByMonth={setRevenueCashflowByMonth}></CashflowData> */}
             <ThemeProvider theme={theme}>
                 <Paper
                     component={Stack}
@@ -114,7 +114,7 @@ useEffect(() => {
                                 width: '50%',
                             },
                         }}
-                        onClick={() => navigate('/cashflow')}
+                        // onClick={() => navigate('/cashflow')}
                     >
                         <Stack
                             direction="row"
@@ -216,7 +216,7 @@ useEffect(() => {
                                         height={150}
                                     >
                                         {/* <MixedChart revenueCashflowByMonth={revenueCashflowByMonth}></MixedChart> */}
-                                        <MixedChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
+                                        {/* <MixedChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} /> */}
                                     </Stack>
                                 </Grid>
                             </Grid>
