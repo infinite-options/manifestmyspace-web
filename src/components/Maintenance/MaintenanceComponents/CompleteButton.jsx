@@ -18,15 +18,19 @@ export default function CompleteButton(props){
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
 
+    console.log(JSON.parse(maintenanceItem.quote_info))
+
     // console.log("CancelButton maintenanceItem", maintenanceItem)
 
     async function handleComplete(id, quotes){
         // console.log("handleComplete id", id)
-        const filteredQuoteArray = [];
+        var filteredQuoteArray = [];
 
         if (quotes){
             let quoteArray = JSON.parse(quotes)
-            filteredQuoteArray = quoteArray.filter((quote) => quote.status == "ACCEPTED" || quote.status == "SCHEDULED")
+            // console.log("handleComplete quoteArray", quoteArray)
+            filteredQuoteArray = quoteArray.filter((quote) => quote.quote_status == "ACCEPTED" || quote.quote_status == "SCHEDULED")
+            console.log(filteredQuoteArray)
         }
 
         if (filteredQuoteArray.length === 0){
@@ -37,7 +41,7 @@ export default function CompleteButton(props){
         }
 
         let response = CompleteTicket(id)
-        // console.log("handleComplete", response);
+        
         if (response){
             console.log("Ticket Completed")
             setShowMessage(true);
@@ -65,7 +69,7 @@ export default function CompleteButton(props){
                     display: 'flex',
                     width: "100%"
                 }}
-                onClick={() => handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.quotes_info)}
+                onClick={() => handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.quote_info)}
             >
                 <CheckIcon sx={{color: "#3D5CAC"}}/>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>

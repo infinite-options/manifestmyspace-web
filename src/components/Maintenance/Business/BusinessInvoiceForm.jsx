@@ -555,7 +555,7 @@ export default function BusinessInvoiceForm(){
 
             setShowSpinner(true);
             try {
-                const response = await fetch("${APIConfig.baseURL.dev}/maintenanceQuotes", {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                     method: 'PUT',
                     body: formData,
                 })

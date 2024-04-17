@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { Button, Box, ThemeProvider } from "@mui/material";
+import { Button, Box, ThemeProvider, Grid } from "@mui/material";
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import CashflowWidget from "./Dashboard-Components/Cashflow/CashflowWidget";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -15,11 +15,33 @@ import PropertyRentWidget from "./Dashboard-Components/PropertyRent/PropertyRent
 import LeaseWidget from "./Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { makeStyles } from "@material-ui/core";
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import APIConfig from "../utils/APIConfig";
+
+const useStyles = makeStyles({
+  button: {
+    width: "100%",
+    fontSize: "13px",
+    marginBottom: "10px", // Adjust the spacing between buttons as needed
+  },
+  container: {
+    width: "90%",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: "25px",
+  },
+  row: {
+    marginBottom: "20px", // Adjust the spacing between rows
+  },
+});
 
 export default function OwnerDashboard() {
   const { user, getProfileId } = useUser();
+  const classes = useStyles();
   const navigate = useNavigate();
   let date = new Date();
   // const [loading, setLoading] = useState(true);
@@ -79,44 +101,68 @@ export default function OwnerDashboard() {
           <LeaseWidget leaseData={leaseStatus} />
         </div>
 
-        <div className="bottom-buttons">
-          <Button
-            variant="outlined"
-            id="revenue"
-            className="bottom-item"
-            onClick={() => {
-              navigate("/transactionHistory");
-            }}
-          >
-            {" "}
-            <img src={Dollar}></img> Transactions
-          </Button>
-          <Button
-            variant="outlined"
-            id="expense"
-            className="bottom-item"
-            onClick={() => {
-              navigate("/ownerDocuments");
-            }}
-          >
-            {" "}
-            <img src={File_dock_fill}></img> Documents
-          </Button>
-          <Button
-            variant="outlined"
-            id="maintenance"
-            className="bottom-item"
-            onClick={() => {
-              navigate("/ownerContacts");
-            }}
-          >
-            {" "}
-            <img src={User_fill_dark}></img> Contacts
-          </Button>
+        <div className={classes.container}>
+          <Grid container spacing={2} className={classes.row}>
+            <Grid item xs={6}>
+              <Button
+                variant="outlined"
+                id="revenue"
+                className={classes.button}
+                onClick={() => {
+                  navigate("/transactionHistory");
+                }}
+              >
+                {" "}
+                <img src={Dollar}></img> Transactions
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                variant="outlined"
+                id="expense"
+                className={classes.button}
+                onClick={() => {
+                  navigate("/ownerDocuments");
+                }}
+              >
+                {" "}
+                <img src={File_dock_fill}></img> Documents
+              </Button>
+            </Grid>
+              <Grid item xs={6}>
+                <Button
+                  variant="outlined"
+                  id="maintenance"
+                  className={classes.button}
+                  onClick={() => {
+                    navigate("/ownerContacts");
+                  }}
+                >
+                  {" "}
+                  <img src={User_fill_dark}></img> Contacts
+                </Button>
+              </Grid>
+              <Grid item xs={6}>
+                <Button
+                  variant="outlined"
+                  id="revenue"
+                  className={classes.button}
+                  style={{
+                    height: "100%",
+                  }}
+                  onClick={() => {
+                    navigate("/payments");
+                  }}
+                >
+                  {/* <img src={User_fill_dark} alt="Payments" /> */}
+                  <CurrencyExchangeIcon sx={{ paddingRight: "5px" }} />
+                  Pay Bills
+                </Button>
+            </Grid>
+          </Grid>
         </div>
         <br />
       </div>
-      {/* } */}
     </ThemeProvider>
   );
 }
