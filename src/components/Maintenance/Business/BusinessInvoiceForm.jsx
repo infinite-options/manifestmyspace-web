@@ -611,6 +611,7 @@ export default function BusinessInvoiceForm(){
                 formData.append("bill_docs", JSON.stringify(selectedImageList));
                 formData.append("bill_notes", notes);
                 formData.append("bill_maintenance_quote_id", maintenanceItem.maintenance_quote_uid);
+                formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid);
                 
 
                 // TODO: Change this to form data

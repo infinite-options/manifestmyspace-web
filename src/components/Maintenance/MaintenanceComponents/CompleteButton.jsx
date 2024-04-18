@@ -18,8 +18,7 @@ export default function CompleteButton(props){
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
 
-    console.log(JSON.parse(maintenanceItem.quote_info))
-
+    // console.log(JSON.parse(maintenanceItem.quote_info))
     // console.log("CancelButton maintenanceItem", maintenanceItem)
 
     async function handleComplete(id, quotes){

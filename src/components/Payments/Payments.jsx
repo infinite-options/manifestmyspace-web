@@ -340,10 +340,11 @@ export default function Payments(props) {
                       width: "100%",
                     }}
                     onClick={() => {
-                      paymentData.business_code = paymentNotes;
+                      // paymentData.business_code = paymentNotes;
+                      const updatedPaymentData = {...paymentData, business_code: paymentNotes};
                       console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                       navigate("/selectPayment", {
-                        state: { paymentData, total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo },
+                        state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo },
                       });
                     }}
                   >

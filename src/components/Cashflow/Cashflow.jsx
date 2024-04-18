@@ -586,9 +586,9 @@ function StatementTable(props) {
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
               </TableCell>
-              <TableCell align="right">
+              {/* <TableCell align="right">
                 <DeleteIcon />
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ) : (
             <TableRow key={index}>
@@ -605,9 +605,9 @@ function StatementTable(props) {
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
               </TableCell>
-              <TableCell align="right">
+              {/* <TableCell align="right">
                 <EditIcon />
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           );
         })}

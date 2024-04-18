@@ -54,14 +54,15 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
         });
     }
 
-    async function handleSubmit(date, time){
+    async function handleSubmit(maintenanceItemUID, date, time){
+        // console.log(maintenanceItemUID, date, time)
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             const formData = new FormData();
-            formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_request_uid",  maintenanceItemUID);
+            formData.append("maintenance_scheduled_date", date); 
+            formData.append("maintenance_scheduled_time", time);
             formData.append("maintenance_request_status", "SCHEDULED");
-            formData.append("maintenance_scheduled_date", date); // this needs to change for the date and time picker
-            formData.append("maintenance_scheduled_time", time); // this needs to change for the date and time picker
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',

@@ -51,14 +51,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SelectPayment(props) {
   const location = useLocation();
+  console.log("--DEBUG-- props", props);
+  console.log("--DEBUG-- location.state", location.state);
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId, paymentRoutingBasedOnSelectedRole } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
-  const [balance, setBalance] = useState(parseFloat(location.state.paymentData.balance));
+  // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
   console.log("--DEBUG-- paymentData", paymentData);
+  const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
   const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
@@ -156,6 +159,8 @@ export default function SelectPayment(props) {
   }
 
   const submit = async ({ paymentIntent, paymentMethod }) => {
+    console.log("In Submit Function");
+    console.log("paymentData", paymentData)
     console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
@@ -192,8 +197,9 @@ export default function SelectPayment(props) {
       body: JSON.stringify(payment_request_payload),
     });
 
-    let routingString = paymentRoutingBasedOnSelectedRole();
-    navigate(routingString);
+    // let routingString = paymentRoutingBasedOnSelectedRole();
+    // navigate(routingString);
+    navigate("/payments")
 
     setShowSpinner(false);
   };

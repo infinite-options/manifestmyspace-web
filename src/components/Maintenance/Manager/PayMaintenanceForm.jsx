@@ -99,23 +99,6 @@ export default function PayMaintenanceForm(){
         const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         console.log("now, nextWeek", now, nextWeek)
 
-        // let data = {
-        //     "pur_property_id": maintenanceItem.property_uid,
-        //     "purchase_type": "Extra Charge",
-        //     "pur_description": `Maintenance ID: ${maintenanceItem.maintenance_request_uid} Completed On: ${maintenanceItem.maintenance_scheduled_date}`,
-        //     "pur_date": now,
-        //     "pur_amount": Number(chargeAmount),
-        //     "pur_notes": `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`,
-        //     "pur_created_by": `${maintenanceItem.business_uid}`,
-        //     "pur_frequency": "One Time",
-        //     "pur_next_date": nextWeek,
-        //     "pur_notes": `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`,
-        //     "purchase_status": "UNPAID",
-        //     "pur_receiver": maintenanceItem.owner_uid,
-        //     "pur_sender": maintenanceItem.business_uid
-
-        // }
-
         const formData = new FormData();
         // WIP TODO
         formData.append("bill_description", `Maintenance ID: ${maintenanceItem.maintenance_request_uid} Completed On: ${maintenanceItem.maintenance_scheduled_date}`);
@@ -125,7 +108,8 @@ export default function PayMaintenanceForm(){
         formData.append("bill_split", "Uniform")
         formData.append("bill_property_id", JSON.stringify([{"property_uid":`${maintenanceItem.property_uid}`}]))
         formData.append("bill_notes", `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`)
-        formData.append("bill_maintenance_quote_id", `Completed by ${maintenanceItem.business_uid} on ${maintenanceItem.maintenance_scheduled_date}`)
+        formData.append("bill_maintenance_quote_id", null)
+        formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid)
 
         console.log(`url ${APIConfig.baseURL.dev}/bills`)
 
