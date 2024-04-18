@@ -108,7 +108,8 @@ export default function PayMaintenanceForm(){
         formData.append("bill_split", "Uniform")
         formData.append("bill_property_id", JSON.stringify([{"property_uid":`${maintenanceItem.property_uid}`}]))
         formData.append("bill_notes", `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`)
-        formData.append("bill_maintenance_quote_id", `Completed by ${maintenanceItem.business_uid} on ${maintenanceItem.maintenance_scheduled_date}`)
+        formData.append("bill_maintenance_quote_id", null)
+        formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid)
 
         console.log(`url ${APIConfig.baseURL.dev}/bills`)
 

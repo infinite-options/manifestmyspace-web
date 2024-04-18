@@ -45,6 +45,7 @@ import AddTenantMaintenanceItem from './AddTenantMaintenanceItem';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
+import { useUser } from "../../contexts/UserContext";
 
 export default function TenantMaintenance(){
     const [filterToggle, setFilterToggle] = useState(false);
@@ -55,6 +56,8 @@ export default function TenantMaintenance(){
     const [showSpinner, setShowSpinner] = useState(false);
     const location = useLocation();
     const tenantId = '';//location.state.tenantId;
+    const { user, getProfileId } = useUser();
+    const profileId = getProfileId();
 
     console.log("tenant ID :"+tenantId)
     let navigate = useNavigate();
@@ -83,7 +86,8 @@ export default function TenantMaintenance(){
         const getTenantMaintenanceData = async () => {
             console.log("Getting Tenant Maintenance Data")
                 setShowSpinner(true);
-                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/350-000040`);//+tenantId);
+                console.log("tenant profile id in getTenantMaintenanceData", profileId)
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/${profileId}`);//+tenantId);
                 const jsonData = await response.json();
                 const data = jsonData.result;
                   

@@ -34,6 +34,7 @@ export default function Payments(props) {
   const [total, setTotal] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
 
   // useEffect(() => {
   //   console.log("paymentDueResult - ", paymentDueResult);
@@ -162,6 +163,7 @@ export default function Payments(props) {
       var initialSelectedItems = [];
       if (location.state && location.state.maintenanceItem) {
         console.log("--> location.state is defined", location.state);
+        setPaymentMethodInfo(location.state.paymentMethodInfo);
         const maintenanceItemNav = location.state.maintenanceItem;
         console.log("--> maintenanceItemNav", maintenanceItemNav);
         //make the purchase_uid of the maintenance item selected
@@ -338,10 +340,11 @@ export default function Payments(props) {
                       width: "100%",
                     }}
                     onClick={() => {
-                      paymentData.business_code = paymentNotes;
+                      // paymentData.business_code = paymentNotes;
+                      const updatedPaymentData = {...paymentData, business_code: paymentNotes};
                       console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                       navigate("/selectPayment", {
-                        state: { paymentData, total, selectedItems: selectedItems },
+                        state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo },
                       });
                     }}
                   >

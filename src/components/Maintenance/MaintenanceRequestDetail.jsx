@@ -402,6 +402,7 @@ export function MaintenanceRequestDetail() {
                           maintenanceQuotes={filteredQuotes}
                           currentTabValue={value}
                           tabs={tabs}
+                          navigateParams={navParams}
                         />
                       ) : null}
                     </Grid>
