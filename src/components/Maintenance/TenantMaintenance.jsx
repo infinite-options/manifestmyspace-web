@@ -86,6 +86,7 @@ export default function TenantMaintenance(){
         const getTenantMaintenanceData = async () => {
             console.log("Getting Tenant Maintenance Data")
                 setShowSpinner(true);
+                console.log("tenant profile id in getTenantMaintenanceData", profileId)
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/${profileId}`);//+tenantId);
                 const jsonData = await response.json();
                 const data = jsonData.result;

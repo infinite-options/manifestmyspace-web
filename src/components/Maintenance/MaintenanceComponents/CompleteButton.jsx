@@ -25,6 +25,8 @@ export default function CompleteButton(props){
         // console.log("handleComplete id", id)
         var filteredQuoteArray = [];
 
+        console.log("handleComplete quotes", quotes)
+
         if (quotes){
             let quoteArray = JSON.parse(quotes)
             // console.log("handleComplete quoteArray", quoteArray)
@@ -36,6 +38,8 @@ export default function CompleteButton(props){
             // it's handled by the property manager
             console.log("handled by the property manager")
         } else{
+            console.log("not handled by the property manager")
+            console.log("handled by maintenance", maintenanceItem.maintenance_quote_uid)
             FinishQuote(maintenanceItem.maintenance_quote_uid)
         }
 
