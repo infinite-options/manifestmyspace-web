@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Payments(props) {
-  console.log("In Payments.jsx");  
+  console.log("In Payments.jsx");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,7 +39,7 @@ export default function Payments(props) {
   // useEffect(() => {
   //   console.log("paymentDueResult - ", paymentDueResult);
   // }, [paymentDueResult]);
-  
+
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
     //customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
@@ -63,12 +63,11 @@ export default function Payments(props) {
   //   console.log("Payments component - paymentData - ", paymentData);
   // }, [paymentData]);
 
-
   // function formatDate(date) {
   //   if (date === null || date === undefined) {
   //     return "";
   //   }
-  //   var splitDate = date.split("-"); 
+  //   var splitDate = date.split("-");
   //   console.log("Split Date: ", splitDate)
   //   var month = splitDate[1];
   //   var day = splitDate[2];
@@ -341,7 +340,7 @@ export default function Payments(props) {
                     }}
                     onClick={() => {
                       // paymentData.business_code = paymentNotes;
-                      const updatedPaymentData = {...paymentData, business_code: paymentNotes};
+                      const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
                       console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                       navigate("/selectPayment", {
                         state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo },
@@ -391,7 +390,7 @@ export default function Payments(props) {
               </Typography>
             </Stack>
             <Stack>
-              <BalanceDetailsTable data={paymentDueResult} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems}/>
+              <BalanceDetailsTable data={paymentDueResult} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
             </Stack>
           </Paper>
           <Paper
@@ -408,7 +407,6 @@ export default function Payments(props) {
               </Typography>
             </Stack>
 
-            
             <Stack>
               <PaymentHistoryTable data={paidItems} />
             </Stack>
@@ -420,37 +418,40 @@ export default function Payments(props) {
 }
 
 function BalanceDetailsTable(props) {
-  console.log("In BalanceDetailTable");
-  const [data, setData]  = useState(props.data);      
+  console.log("In BalanceDetailTable", props);
+  const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedPayments, setSelectedPayments] = useState([]);  
+  const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
 
   useEffect(() => {
     setData(props.data);
-  }, [props.data]); 
+  }, [props.data]);
 
   useEffect(() => {
     if (data && data.length > 0) {
       setSelectedRows(data.map((row) => row.purchase_uid));
-      setPaymentDueResult(data.map((item) => ({
-        ...item, pur_amount_due : parseFloat(item.pur_amount_due)
-      })));
+      setPaymentDueResult(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
     }
   }, [data]);
 
-  useEffect(() => {    
+  useEffect(() => {
     var total = 0;
 
     let purchase_uid_mapping = [];
 
     for (const item of selectedRows) {
       // console.log("item in loop", item)
-    
-        let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item); 
-        purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-        // console.log("payment item data", paymentItemData);
-        total += parseFloat(paymentItemData.pur_amount_due);    
+
+      let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
+      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+      // console.log("payment item data", paymentItemData);
+      total += parseFloat(paymentItemData.pur_amount_due);
     }
     // console.log("selectedRows useEffect - total - ", total);
     // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
@@ -460,15 +461,12 @@ function BalanceDetailsTable(props) {
       balance: total.toFixed(2),
       purchase_uids: purchase_uid_mapping,
     }));
-    
   }, [selectedRows]);
 
   useEffect(() => {
     console.log("selectedPayments - ", selectedPayments);
-    props.setSelectedItems(selectedPayments)
+    props.setSelectedItems(selectedPayments);
   }, [selectedPayments]);
-
-
 
   const columnsList = [
     {
@@ -507,44 +505,43 @@ function BalanceDetailsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ {params.value}</Box>,
     },
   ];
-  
-  const handleSelectionModelChange = (newRowSelectionModel) => {   
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
     console.log("newRowSelectionModel - ", newRowSelectionModel);
-    
-    const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));    
-    const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
-    
+
+    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
     if (addedRows.length > 0) {
-        // console.log("Added rows: ", addedRows);
-        let newPayments = []
-        addedRows.forEach((item, index) => {
-          const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
-          // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
-          newPayments.push(addedPayment)
-        })
-        
-        // console.log("newPayments - ", newPayments);
-        setSelectedPayments((prevState) => {
-          return [...prevState, ...newPayments]
-        });        
+      // console.log("Added rows: ", addedRows);
+      let newPayments = [];
+      addedRows.forEach((item, index) => {
+        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+        newPayments.push(addedPayment);
+      });
+
+      // console.log("newPayments - ", newPayments);
+      setSelectedPayments((prevState) => {
+        return [...prevState, ...newPayments];
+      });
     }
-    
+
     if (removedRows.length > 0) {
-        // console.log("Removed rows: ", removedRows);
-        let removedPayments = []
-        removedRows.forEach((item, index) => {
-          let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
-          // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
-          removedPayments.push(removedPayment)
-        })
-        // console.log("removedPayments - ", removedPayments);        
-        setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
+      // console.log("Removed rows: ", removedRows);
+      let removedPayments = [];
+      removedRows.forEach((item, index) => {
+        let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+        // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+        removedPayments.push(removedPayment);
+      });
+      // console.log("removedPayments - ", removedPayments);
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
     }
     setSelectedRows(newRowSelectionModel);
   };
 
-
-  if (paymentDueResult.length > 0) {    
+  if (paymentDueResult.length > 0) {
     // console.log("Passed Data ", paymentDueResult);
     return (
       <>
@@ -610,37 +607,40 @@ function BalanceDetailsTable(props) {
 }
 
 function PaymentHistoryTable(props) {
-  console.log("In PaymentHistoryTable");
-  const [data, setData]  = useState(props.data);      
+  console.log("In PaymentHistoryTable", props);
+  const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
-  // const [selectedPayments, setSelectedPayments] = useState([]);  
+  // const [selectedPayments, setSelectedPayments] = useState([]);
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
     setData(props.data);
-  }, [props.data]); 
+  }, [props.data]);
 
   useEffect(() => {
     if (data && data.length > 0) {
       setSelectedRows(data.map((row) => row.payment_uid));
-      setPayments(data.map((item) => ({
-        ...item, pur_amount_due : parseFloat(item.pur_amount_due)        
-      })));
+      setPayments(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
     }
   }, [data]);
 
-  // useEffect(() => {    
+  // useEffect(() => {
   //   var total = 0;
 
   //   let purchase_uid_mapping = [];
 
   //   for (const item of selectedRows) {
   //     // console.log("item in loop", item)
-    
-  //       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item); 
+
+  //       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
   //       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
   //       // console.log("payment item data", paymentItemData);
-  //       total += parseFloat(paymentItemData.pur_amount_due);    
+  //       total += parseFloat(paymentItemData.pur_amount_due);
   //   }
   //   // console.log("selectedRows useEffect - total - ", total);
   //   // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
@@ -650,15 +650,13 @@ function PaymentHistoryTable(props) {
   //     balance: total.toFixed(2),
   //     purchase_uids: purchase_uid_mapping,
   //   }));
-    
+
   // }, [selectedRows]);
 
   // useEffect(() => {
   //   console.log("selectedPayments - ", selectedPayments);
   //   props.setSelectedItems(selectedPayments)
   // }, [selectedPayments]);
-
-
 
   const columnsList = [
     {
@@ -702,28 +700,30 @@ function PaymentHistoryTable(props) {
       headerName: "Amount",
       flex: 0.7,
       headerStyle: {
-        fontWeight: "bold", // Apply inline style to the header cell        
-      },      
-      renderCell: (params) => <Box sx={{ 
-                                      fontWeight: "bold", 
-                                      width: "100%",
-                                      display: "flex",
-                                      flexDirection: "row",
-                                      justifyContent: "flex-end", 
-                                    }}
-                              >
-                                $ {parseFloat(params.value).toFixed(2)}
-                              </Box>
-      ,
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          $ {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
     },
   ];
-  
-  const handleSelectionModelChange = (newRowSelectionModel) => {   
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
     console.log("newRowSelectionModel - ", newRowSelectionModel);
-    
-    // const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));    
+
+    // const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));
     // const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
-    
+
     // if (addedRows.length > 0) {
     //     // console.log("Added rows: ", addedRows);
     //     let newPayments = []
@@ -732,13 +732,13 @@ function PaymentHistoryTable(props) {
     //       // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
     //       newPayments.push(addedPayment)
     //     })
-        
+
     //     // console.log("newPayments - ", newPayments);
     //     setSelectedPayments((prevState) => {
     //       return [...prevState, ...newPayments]
-    //     });        
+    //     });
     // }
-    
+
     // if (removedRows.length > 0) {
     //     // console.log("Removed rows: ", removedRows);
     //     let removedPayments = []
@@ -747,14 +747,13 @@ function PaymentHistoryTable(props) {
     //       // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
     //       removedPayments.push(removedPayment)
     //     })
-    //     // console.log("removedPayments - ", removedPayments);        
+    //     // console.log("removedPayments - ", removedPayments);
     //     setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
     // }
     setSelectedRows(newRowSelectionModel);
   };
 
-
-  if (payments.length > 0) {    
+  if (payments.length > 0) {
     // console.log("Passed Data ", paymentDueResult);
     return (
       <>
@@ -768,7 +767,7 @@ function PaymentHistoryTable(props) {
               },
             },
           }}
-          getRowId={(row) => row.payment_uid}
+          getRowId={(row) => row.purchase_uid}
           pageSizeOptions={[10, 50, 100]}
           // checkboxSelection
           // disableRowSelectionOnClick
@@ -818,4 +817,3 @@ function PaymentHistoryTable(props) {
     return <></>;
   }
 }
-
