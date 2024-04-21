@@ -28,11 +28,13 @@ export default function Payments(props) {
   const { user, getProfileId, roleName } = useUser();
   const [paymentDueResult, setPaymentDueResult] = useState([]);
   const [paidItems, setPaidItems] = useState([]);
+  const [moneyReceived, setMoneyReceived] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
+  const [totalReceived, setTotalReceived] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
 
@@ -81,6 +83,14 @@ export default function Payments(props) {
       total += parseFloat(item.pur_amount_due);
     }
     setTotalPaid(total);
+  }
+
+  function totalMoneyReceivedUpdate(moneyReceived) {
+    var total = 0;
+    for (const item of moneyReceived) {
+      total += parseFloat(item.total_paid);
+    }
+    setTotalReceived(total);
   }
 
   function totalBillUpdateLogic(selectedItems, paymentData) {
@@ -152,8 +162,12 @@ export default function Payments(props) {
       const paymentStatusData = res.data.PaymentStatus.result;
       const paidStatusData = res.data.PaidStatus.result;
 
+      const moneyReceivedData = res.data.MoneyReceived.result;
+
       setPaymentDueResult(paymentStatusData);
       setPaidItems(paidStatusData);
+
+      setMoneyReceived(moneyReceivedData);
 
       // console.log("--> paymentStatusData", paymentStatusData);
       // console.log("--> paidStatusData", paidStatusData);
@@ -186,6 +200,8 @@ export default function Payments(props) {
 
       totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
       totalPaidUpdate(paidStatusData);
+
+      totalMoneyReceivedUpdate(moneyReceivedData);
 
       // console.log("--> initialSelectedItems", initialSelectedItems);
     } catch (error) {
@@ -409,6 +425,28 @@ export default function Payments(props) {
 
             <Stack>
               <PaymentHistoryTable data={paidItems} />
+            </Stack>
+          </Paper>
+
+          <Paper
+            style={{
+              margin: "25px",
+              padding: 20,
+              backgroundColor: theme.palette.primary.main,
+              height: "25%",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between">
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                Money Received
+              </Typography>
+              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                ${totalReceived.toFixed(2)}
+              </Typography>
+            </Stack>
+
+            <Stack>
+              <MoneyReceivedTable data={moneyReceived} />
             </Stack>
           </Paper>
         </Paper>
@@ -660,17 +698,32 @@ function PaymentHistoryTable(props) {
 
   const columnsList = [
     {
-      field: "payment_date",
+      field: "latest_date",
       headerName: "Date",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
+
+    {
+      field: "purchase_uid",
+      headerName: "Purchase UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
     {
       field: "pur_description",
       headerName: "Description",
       flex: 2,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
     {
       field: "property_address",
       headerName: "Address",
@@ -686,8 +739,8 @@ function PaymentHistoryTable(props) {
     },
 
     {
-      field: "payment_type",
-      headerName: "Method",
+      field: "purchase_status",
+      headerName: "Status",
       flex: 1,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
@@ -697,7 +750,29 @@ function PaymentHistoryTable(props) {
 
     {
       field: "pur_amount_due",
-      headerName: "Amount",
+      headerName: "Amount Due",
+      flex: 0.7,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          $ {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+    },
+
+    {
+      field: "total_paid",
+      headerName: "Total Paid",
       flex: 0.7,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
@@ -755,6 +830,190 @@ function PaymentHistoryTable(props) {
 
   if (payments.length > 0) {
     // console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          rows={payments}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          getRowId={(row) => row.purchase_uid}
+          pageSizeOptions={[10, 50, 100]}
+          // checkboxSelection
+          // disableRowSelectionOnClick
+          // rowSelectionModel={selectedRows}
+          // onRowSelectionModelChange={handleSelectionModelChange}
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
+          <Grid item xs={2} alignItems="center"></Grid>
+          <Grid item xs={9} alignItems="center">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total
+            </Typography>
+          </Grid>
+          <Grid item xs={1} alignItems="right">
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              $ {parseFloat(selectedRows.reduce((total, rowId) => total + payments.find((row) => row.payment_uid === rowId).pur_amount_due, 0)).toFixed(2)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
+    );
+  } else {
+    return <></>;
+  }
+}
+
+function MoneyReceivedTable(props) {
+  console.log("In MoneyReceivedTable", props);
+  const [data, setData] = useState(props.data);
+  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedPayments, setSelectedPayments] = useState([]);
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.payment_uid));
+      setPayments(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
+    }
+  }, [data]);
+
+  const columnsList = [
+    {
+      field: "latest_date",
+      headerName: "Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "purchase_uid",
+      headerName: "Purchase UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "purchase_status",
+      headerName: "Status",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_amount_due",
+      headerName: "Amount Due",
+      flex: 0.7,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          $ {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+    },
+
+    {
+      field: "total_paid",
+      headerName: "Total Paid",
+      flex: 0.7,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          $ {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+    },
+  ];
+
+  if (payments.length > 0) {
     return (
       <>
         <DataGrid
