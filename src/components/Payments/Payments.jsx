@@ -92,7 +92,7 @@ export default function Payments(props) {
 
   function totalMoneyPaidUpdate(moneyPaid) {
     var total = 0;
-    for (const item of moneyReceived) {
+    for (const item of moneyPaid) {
       total += parseFloat(item.total_paid);
     }
     setTotalPaid(total);
@@ -108,16 +108,16 @@ export default function Payments(props) {
 
   function totalMoneyToBePaidUpdate(moneyToBePaid) {
     var total = 0;
-    for (const item of moneyReceived) {
-      total += parseFloat(item.total_paid);
+    for (const item of moneyToBePaid) {
+      total += parseFloat(item.pur_amount_due);
     }
     setTotalToBePaid(total);
   }
 
   function totalMoneyToBeReceivedUpdate(moneyToBeReceived) {
     var total = 0;
-    for (const item of moneyReceived) {
-      total += parseFloat(item.total_paid);
+    for (const item of moneyToBeReceived) {
+      total += parseFloat(item.pur_amount_due);
     }
     setTotalToBeReceived(total);
   }
@@ -193,7 +193,7 @@ export default function Payments(props) {
 
       const moneyPaidData = res.data.MoneyPaid.result;
       const moneyReceivedData = res.data.MoneyReceived.result;
-      const moneyToBePaiddData = res.data.MoneyToBePaid.result;
+      const moneyToBePaidData = res.data.MoneyToBePaid.result;
       const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
 
       setPaymentDueResult(paymentStatusData);
@@ -201,7 +201,7 @@ export default function Payments(props) {
 
       setMoneyPaid(moneyPaidData);
       setMoneyReceived(moneyReceivedData);
-      setMoneyToBePaid(moneyToBePaiddData);
+      setMoneyToBePaid(moneyToBePaidData);
       setMoneyToBeReceived(moneyToBeReceivedData);
 
       // console.log("--> paymentStatusData", paymentStatusData);
@@ -236,7 +236,10 @@ export default function Payments(props) {
       totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
       totalPaidUpdate(paidStatusData);
 
+      totalMoneyPaidUpdate(moneyPaidData);
       totalMoneyReceivedUpdate(moneyReceivedData);
+      totalMoneyToBePaidUpdate(moneyToBePaidData);
+      totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
 
       // console.log("--> initialSelectedItems", initialSelectedItems);
     } catch (error) {
