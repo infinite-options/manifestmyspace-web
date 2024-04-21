@@ -28,13 +28,18 @@ export default function Payments(props) {
   const { user, getProfileId, roleName } = useUser();
   const [paymentDueResult, setPaymentDueResult] = useState([]);
   const [paidItems, setPaidItems] = useState([]);
+  const [moneyPaid, setMoneyPaid] = useState([]);
   const [moneyReceived, setMoneyReceived] = useState([]);
+  const [moneyToBePaid, setMoneyToBePaid] = useState([]);
+  const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
+  const [totalToBePaid, setTotalToBePaid] = useState(0);
+  const [totalToBeReceived, setTotalToBeReceived] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
 
@@ -85,12 +90,36 @@ export default function Payments(props) {
     setTotalPaid(total);
   }
 
+  function totalMoneyPaidUpdate(moneyPaid) {
+    var total = 0;
+    for (const item of moneyReceived) {
+      total += parseFloat(item.total_paid);
+    }
+    setTotalPaid(total);
+  }
+
   function totalMoneyReceivedUpdate(moneyReceived) {
     var total = 0;
     for (const item of moneyReceived) {
       total += parseFloat(item.total_paid);
     }
     setTotalReceived(total);
+  }
+
+  function totalMoneyToBePaidUpdate(moneyToBePaid) {
+    var total = 0;
+    for (const item of moneyReceived) {
+      total += parseFloat(item.total_paid);
+    }
+    setTotalToBePaid(total);
+  }
+
+  function totalMoneyToBeReceivedUpdate(moneyToBeReceived) {
+    var total = 0;
+    for (const item of moneyReceived) {
+      total += parseFloat(item.total_paid);
+    }
+    setTotalToBeReceived(total);
   }
 
   function totalBillUpdateLogic(selectedItems, paymentData) {
@@ -162,12 +191,18 @@ export default function Payments(props) {
       const paymentStatusData = res.data.PaymentStatus.result;
       const paidStatusData = res.data.PaidStatus.result;
 
+      const moneyPaidData = res.data.MoneyPaid.result;
       const moneyReceivedData = res.data.MoneyReceived.result;
+      const moneyToBePaiddData = res.data.MoneyToBePaid.result;
+      const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
 
       setPaymentDueResult(paymentStatusData);
       setPaidItems(paidStatusData);
 
+      setMoneyPaid(moneyPaidData);
       setMoneyReceived(moneyReceivedData);
+      setMoneyToBePaid(moneyToBePaiddData);
+      setMoneyToBeReceived(moneyToBeReceivedData);
 
       // console.log("--> paymentStatusData", paymentStatusData);
       // console.log("--> paidStatusData", paidStatusData);
@@ -438,6 +473,28 @@ export default function Payments(props) {
           >
             <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                Money Paid
+              </Typography>
+              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                ${totalPaid.toFixed(2)}
+              </Typography>
+            </Stack>
+
+            <Stack>
+              <MoneyReceivedTable data={moneyPaid} />
+            </Stack>
+          </Paper>
+
+          <Paper
+            style={{
+              margin: "25px",
+              padding: 20,
+              backgroundColor: theme.palette.primary.main,
+              height: "25%",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between">
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                 Money Received
               </Typography>
               <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
@@ -447,6 +504,50 @@ export default function Payments(props) {
 
             <Stack>
               <MoneyReceivedTable data={moneyReceived} />
+            </Stack>
+          </Paper>
+
+          <Paper
+            style={{
+              margin: "25px",
+              padding: 20,
+              backgroundColor: theme.palette.primary.main,
+              height: "25%",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between">
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                Money To Be Paid
+              </Typography>
+              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                ${totalToBePaid.toFixed(2)}
+              </Typography>
+            </Stack>
+
+            <Stack>
+              <MoneyReceivedTable data={moneyToBePaid} />
+            </Stack>
+          </Paper>
+
+          <Paper
+            style={{
+              margin: "25px",
+              padding: 20,
+              backgroundColor: theme.palette.primary.main,
+              height: "25%",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between">
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                Money To Be Received
+              </Typography>
+              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                ${totalToBeReceived.toFixed(2)}
+              </Typography>
+            </Stack>
+
+            <Stack>
+              <MoneyReceivedTable data={moneyToBeReceived} />
             </Stack>
           </Paper>
         </Paper>
