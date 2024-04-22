@@ -422,7 +422,7 @@ export default function Payments(props) {
 }
 
 function BalanceDetailsTable(props) {
-  console.log("In BalanceDetailTable", props);
+  // console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
@@ -482,6 +482,13 @@ function BalanceDetailsTable(props) {
     }
   };
 
+  const sortModel = [
+    {
+      field: "pgps", // Specify the field to sort by
+      sort: "asc", // Specify the sort order, 'asc' for ascending
+    },
+  ];
+
   const columnsList = [
     {
       field: "pur_description",
@@ -518,13 +525,21 @@ function BalanceDetailsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-      field: "ps",
-      headerName: "PS Status",
+      field: "pgps",
+      headerName: "Rent Status",
       flex: 1,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
       },
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", color: getFontColor(params.value) }}>{params.value}</Box>,
+      renderCell: (params) => {
+        if (params.value === null) {
+          return <div>Maintenance</div>; // Handle null values here
+        }
+
+        const trimmedValue = params.value.substring(11); // Extract characters after the first 11 characters
+        return <Box sx={{ fontWeight: "bold", color: getFontColor(trimmedValue) }}>{trimmedValue}</Box>;
+      },
+      // renderCell: (params) => <Box sx={{ fontWeight: "bold", color: getFontColor(params.value) }}>{params.value}</Box>,
     },
     {
       field: "pur_due_date",
@@ -608,21 +623,12 @@ function BalanceDetailsTable(props) {
           // getRowId={(row) => row.purchase_uid}
           getRowId={(row) => {
             const rowId = row.purchase_uid;
-            console.log("Hello Globe");
-            console.log("Row ID:", rowId);
-            console.log("Row Data:", row); // Log the entire row data
-            console.log("Row PS:", row.ps); // Log the ps field
+            // console.log("Hello Globe");
+            // console.log("Row ID:", rowId);
+            // console.log("Row Data:", row); // Log the entire row data
+            // console.log("Row PS:", row.ps); // Log the ps field
             return rowId;
           }}
-          // getRowStyle={(row) => {
-          //   const rowPS = row.ps;
-          //   console.log("Hello World");
-          //   console.log("Params:", row); // Log the parameters
-          //   console.log("Row PS 2:", rowPS); // Log the ps field of the row
-          //   return {
-          //     color: rowPS === "UNPAID" ? "green" : "red",
-          //   };
-          // }}
           pageSizeOptions={[10, 50, 100]}
           checkboxSelection
           disableRowSelectionOnClick
@@ -634,40 +640,7 @@ function BalanceDetailsTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
-          sx={{
-            "& .MuiDataGrid-cell": {
-              fontSize: "14px", // Change the font size
-              fontWeight: theme.typography.common.fontWeight, // Change the font weight
-              color: theme.typography.secondary.black,
-            },
-          }}
-
-          // getRowStyle={(params) => {
-          //   // console.log("Hello World");
-          //   // console.log("Params1:", params.id);
-          //   // const rowData = paymentDueResult.find((row) => row.purchase_uid === params.id);
-          //   // console.log("WHAT?");
-          //   // console.log("Row Data:", rowData);
-          //   // console.log("Row Data PS:", rowData.ps);
-          //   // console.log("Row Data PS:", rowData.cf_month);
-          //   // console.log("Params3:", params.row);
-          //   return { color: theme.typography.primary.blue };
-          // }}
-
-          //   return { color: rowData && rowData.ps === "UNPAID" ? "green" : "red" };
-          // }}
-          // sx={{
-          //   "& .MuiDataGrid-row": {
-          //     color: (params) => {
-          //       console.log("Params2:", params);
-          //       const rowData = paymentDueResult.find((row) => row.purchase_uid === params.id);
-          //       console.log("Row Data 2:", rowData);
-          //       // console.log("Row Data PS:", rowData.ps);
-          //       // return rowData && rowData.ps === "UNPAID" ? "green" : "red";
-          //       return;
-          //     },
-          //   },
-          // }}
+          sortModel={sortModel} // Set the sortModel prop
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
@@ -711,7 +684,7 @@ function BalanceDetailsTable(props) {
 }
 
 function MoneyReceivedTable(props) {
-  console.log("In MoneyReceivedTable", props);
+  // console.log("In MoneyReceivedTable", props);
   const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
   // const [selectedPayments, setSelectedPayments] = useState([]);
@@ -877,7 +850,7 @@ function MoneyReceivedTable(props) {
 }
 
 function MoneyPaidTable(props) {
-  console.log("In MoneyPaidTable", props);
+  // console.log("In MoneyPaidTable", props);
   const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
   // const [selectedPayments, setSelectedPayments] = useState([]);
