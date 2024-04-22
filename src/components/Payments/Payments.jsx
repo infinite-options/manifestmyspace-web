@@ -26,12 +26,12 @@ export default function Payments(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, getProfileId, roleName } = useUser();
-  const [paymentDueResult, setPaymentDueResult] = useState([]);
-  const [paidItems, setPaidItems] = useState([]);
+
   const [moneyPaid, setMoneyPaid] = useState([]);
   const [moneyReceived, setMoneyReceived] = useState([]);
   const [moneyToBePaid, setMoneyToBePaid] = useState([]);
   const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
+
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
@@ -42,10 +42,6 @@ export default function Payments(props) {
   const [totalToBeReceived, setTotalToBeReceived] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
-
-  // useEffect(() => {
-  //   console.log("paymentDueResult - ", paymentDueResult);
-  // }, [paymentDueResult]);
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -62,33 +58,18 @@ export default function Payments(props) {
     purchase_uids: [],
   });
 
-  // useEffect(() => {
-  //   console.log("Payments component - total - ", total);
-  // }, [total]);
+  console.log("Profile Info: ", getProfileId());
+  console.log("Customer UID: ", paymentData);
+  console.log("Customer UID: ", paymentData.customer_uid);
+  console.log("User Info: ", user);
 
-  // useEffect(() => {
-  //   console.log("Payments component - paymentData - ", paymentData);
-  // }, [paymentData]);
-
-  // function formatDate(date) {
-  //   if (date === null || date === undefined) {
-  //     return "";
+  // function totalPaidUpdate(paidItems) {
+  //   var total = 0;
+  //   for (const item of paidItems) {
+  //     total += parseFloat(item.pur_amount_due);
   //   }
-  //   var splitDate = date.split("-");
-  //   console.log("Split Date: ", splitDate)
-  //   var month = splitDate[1];
-  //   var day = splitDate[2];
-  //   var year = splitDate[0].slice(-2);
-  //   return month + "-" + day + "-" + year;
+  //   setTotalPaid(total);
   // }
-
-  function totalPaidUpdate(paidItems) {
-    var total = 0;
-    for (const item of paidItems) {
-      total += parseFloat(item.pur_amount_due);
-    }
-    setTotalPaid(total);
-  }
 
   function totalMoneyPaidUpdate(moneyPaid) {
     var total = 0;
@@ -122,119 +103,47 @@ export default function Payments(props) {
     setTotalToBeReceived(total);
   }
 
-  function totalBillUpdateLogic(selectedItems, paymentData) {
-    // console.log("--DEBUG-- payment Data", paymentData)
-    var total = 0;
+  // function totalBillUpdateLogic(selectedItems, paymentData) {
+  //   // console.log("--DEBUG-- payment Data", paymentData)
+  //   var total = 0;
 
-    let purchase_uid_mapping = [];
+  //   let purchase_uid_mapping = [];
 
-    for (const item of selectedItems) {
-      // console.log("item in loop", item)
-      if (item.selected) {
-        let paymentItemData = paymentData.find((element) => element.purchase_uid === item.id); // Use item.purchase_uid for comparison
-        purchase_uid_mapping.push({ purchase_uid: item.id, pur_amount_due: paymentItemData.pur_amount_due });
-        // console.log("payment item data", paymentItemData);
-        total += parseFloat(paymentItemData.pur_amount_due);
-      }
-    }
+  //   for (const item of selectedItems) {
+  //     // console.log("item in loop", item)
+  //     if (item.selected) {
+  //       let paymentItemData = paymentData.find((element) => element.purchase_uid === item.id); // Use item.purchase_uid for comparison
+  //       purchase_uid_mapping.push({ purchase_uid: item.id, pur_amount_due: paymentItemData.pur_amount_due });
+  //       // console.log("payment item data", paymentItemData);
+  //       total += parseFloat(paymentItemData.pur_amount_due);
+  //     }
+  //   }
 
-    setTotal(total);
-    setPaymentData((prevPaymentData) => ({
-      ...prevPaymentData,
-      balance: total.toFixed(2),
-      purchase_uids: purchase_uid_mapping,
-    }));
-  }
-
-  const handleSelectAllButton = () => {
-    const newSelectedItems = selectedItems.map((item) => ({
-      ...item,
-      selected: !isHeaderChecked,
-    }));
-
-    setSelectedItems(newSelectedItems);
-    setIsHeaderChecked(!isHeaderChecked);
-
-    // console.log("newSelectedItems", newSelectedItems)
-
-    totalBillUpdateLogic(newSelectedItems, paymentDueResult);
-  };
-
-  // Update total and selectedItems when a checkbox is clicked
-  const handleCheckboxChange = (index) => {
-    setSelectedItems((prevSelectedItems) => {
-      const newSelectedItems = [...prevSelectedItems];
-      const currentItem = newSelectedItems[index];
-
-      currentItem.selected = !currentItem.selected;
-      newSelectedItems[index] = currentItem;
-
-      const allSelected = newSelectedItems.every((item) => item.selected);
-
-      if (allSelected) {
-        setIsHeaderChecked(true);
-      } else {
-        setIsHeaderChecked(false);
-      }
-
-      totalBillUpdateLogic(newSelectedItems, paymentDueResult);
-
-      return newSelectedItems;
-    });
-  };
+  //   setTotal(total);
+  //   setPaymentData((prevPaymentData) => ({
+  //     ...prevPaymentData,
+  //     balance: total.toFixed(2),
+  //     purchase_uids: purchase_uid_mapping,
+  //   }));
+  // }
 
   const fetchPaymentsData = async () => {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
       const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
-      const paymentStatusData = res.data.PaymentStatus.result;
-      const paidStatusData = res.data.PaidStatus.result;
+      // const paymentStatusData = res.data.PaymentStatus.result;
+      // const paidStatusData = res.data.PaidStatus.result;
 
       const moneyPaidData = res.data.MoneyPaid.result;
       const moneyReceivedData = res.data.MoneyReceived.result;
       const moneyToBePaidData = res.data.MoneyToBePaid.result;
       const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
 
-      setPaymentDueResult(paymentStatusData);
-      setPaidItems(paidStatusData);
-
       setMoneyPaid(moneyPaidData);
       setMoneyReceived(moneyReceivedData);
       setMoneyToBePaid(moneyToBePaidData);
       setMoneyToBeReceived(moneyToBeReceivedData);
-
-      // console.log("--> paymentStatusData", paymentStatusData);
-      // console.log("--> paidStatusData", paidStatusData);
-
-      // initialize selectedItems as a list of objects with keys id (string) and selected (bool)
-      var initialSelectedItems = [];
-      if (location.state && location.state.maintenanceItem) {
-        console.log("--> location.state is defined", location.state);
-        setPaymentMethodInfo(location.state.paymentMethodInfo);
-        const maintenanceItemNav = location.state.maintenanceItem;
-        console.log("--> maintenanceItemNav", maintenanceItemNav);
-        //make the purchase_uid of the maintenance item selected
-        initialSelectedItems = paymentStatusData.map((item) => ({
-          id: item.purchase_uid,
-          details: item,
-          quote_id: item.bill_maintenance_quote_id,
-          selected: item.purchase_uid === maintenanceItemNav.purchase_uid,
-        }));
-      } else {
-        console.log("--> maintenanceItemNav is undefined");
-        initialSelectedItems = paymentStatusData.map((item) => ({
-          id: item.purchase_uid,
-          details: item,
-          quote_id: item.bill_maintenance_quote_id,
-          selected: true,
-        }));
-      }
-
-      setSelectedItems(initialSelectedItems);
-
-      totalBillUpdateLogic(initialSelectedItems, paymentStatusData);
-      totalPaidUpdate(paidStatusData);
 
       totalMoneyPaidUpdate(moneyPaidData);
       totalMoneyReceivedUpdate(moneyReceivedData);
@@ -256,49 +165,49 @@ export default function Payments(props) {
     setPaymentNotes(event.target.value);
   };
 
-  const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
+  // const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
-  const handleStripePayment = async (e) => {
-    setShowSpinner(true);
-    console.log("Stripe Payment");
-    try {
-      // Update paymentData with the latest total value
-      const updatedPaymentData = {
-        ...paymentData,
-        business_code: paymentNotes,
-        payment_summary: {
-          total: total.toFixed(2), // Format the total as a string with 2 decimal places
-        },
-      };
+  // const handleStripePayment = async (e) => {
+  //   setShowSpinner(true);
+  //   console.log("Stripe Payment");
+  //   try {
+  //     // Update paymentData with the latest total value
+  //     const updatedPaymentData = {
+  //       ...paymentData,
+  //       business_code: paymentNotes,
+  //       payment_summary: {
+  //         total: total.toFixed(2), // Format the total as a string with 2 decimal places
+  //       },
+  //     };
 
-      console.log("Updated Payment Data: ", updatedPaymentData);
+  //     console.log("Updated Payment Data: ", updatedPaymentData);
 
-      //const stripe = await stripePromise;
-      const response = await fetch(API_CALL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedPaymentData),
-      });
-      const checkoutURL = await response.text();
-      //console.log(response.text());
-      window.location.href = checkoutURL;
-    } catch (error) {
-      console.log(error);
-    }
-    setShowSpinner(false);
-  };
+  //     //const stripe = await stripePromise;
+  //     const response = await fetch(API_CALL, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(updatedPaymentData),
+  //     });
+  //     const checkoutURL = await response.text();
+  //     //console.log(response.text());
+  //     window.location.href = checkoutURL;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   setShowSpinner(false);
+  // };
 
   // Define the CSS style for the selected checkbox
-  const selectedCheckboxStyle = {
-    color: theme.palette.custom.bgBlue, // Change the color of the tick (checked icon)
-    borderColor: "black", // Change the border color
-    "&.Mui-checked": {
-      color: "gray",
-      borderColor: "black",
-    },
-  };
+  // const selectedCheckboxStyle = {
+  //   color: theme.palette.custom.bgBlue, // Change the color of the tick (checked icon)
+  //   borderColor: "black", // Change the border color
+  //   "&.Mui-checked": {
+  //     color: "gray",
+  //     borderColor: "black",
+  //   },
+  // };
 
   return (
     <>
@@ -430,6 +339,7 @@ export default function Payments(props) {
               <TextField variant="filled" fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label="Payment Notes" />
             </Stack>
           </Paper>
+
           <Paper
             style={{
               margin: "25px",
@@ -450,25 +360,6 @@ export default function Payments(props) {
               <BalanceDetailsTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
             </Stack>
           </Paper>
-
-          {/* <Paper
-            style={{
-              margin: "25px",
-              padding: 20,
-              backgroundColor: theme.palette.primary.main,
-              height: "25%",
-            }}
-          >
-            <Stack direction="row" justifyContent="left">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                30 Day Payment History
-              </Typography>
-            </Stack>
-
-            <Stack>
-              <PaymentHistoryTable data={paidItems} />
-            </Stack>
-          </Paper> */}
 
           <Paper
             style={{
@@ -492,7 +383,7 @@ export default function Payments(props) {
             </Stack>
           </Paper>
 
-          <Paper
+          {/* <Paper
             style={{
               margin: "25px",
               padding: 20,
@@ -512,31 +403,36 @@ export default function Payments(props) {
             <Stack>
               <MoneyReceivedTable data={moneyReceived} />
             </Stack>
-          </Paper>
-
-          {/* <Paper
-            style={{
-              margin: "25px",
-              padding: 20,
-              backgroundColor: theme.palette.primary.main,
-              height: "25%",
-            }}
-          >
-            <Stack direction="row" justifyContent="space-between">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Money To Be Paid
-              </Typography>
-              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                ${totalToBePaid.toFixed(2)}
-              </Typography>
-            </Stack>
-
-            <Stack>
-              <MoneyReceivedTable data={moneyToBePaid} />
-            </Stack>
           </Paper> */}
 
-          <Paper
+          {/* Conditional rendering for Money To Be Received section */}
+          {paymentData.customer_uid.substring(0, 3) !== "350" && (
+            <Paper
+              style={{
+                margin: "25px",
+                padding: 20,
+                backgroundColor: theme.palette.primary.main,
+                height: "25%",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Money Received
+                </Typography>
+                <Typography
+                  sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                >
+                  ${totalToBeReceived.toFixed(2)}
+                </Typography>
+              </Stack>
+
+              <Stack>
+                <MoneyReceivedTable data={moneyReceived} />
+              </Stack>
+            </Paper>
+          )}
+
+          {/* <Paper
             style={{
               margin: "25px",
               padding: 20,
@@ -556,7 +452,34 @@ export default function Payments(props) {
             <Stack>
               <MoneyReceivedTable data={moneyToBeReceived} />
             </Stack>
-          </Paper>
+          </Paper> */}
+
+          {/* Conditional rendering for Money To Be Received section */}
+          {paymentData.customer_uid.substring(0, 3) !== "350" && (
+            <Paper
+              style={{
+                margin: "25px",
+                padding: 20,
+                backgroundColor: theme.palette.primary.main,
+                height: "25%",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Money To Be Received
+                </Typography>
+                <Typography
+                  sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                >
+                  ${totalToBeReceived.toFixed(2)}
+                </Typography>
+              </Stack>
+
+              <Stack>
+                <MoneyReceivedTable data={moneyToBeReceived} />
+              </Stack>
+            </Paper>
+          )}
         </Paper>
       </ThemeProvider>
     </>
@@ -779,254 +702,254 @@ function BalanceDetailsTable(props) {
   }
 }
 
-function PaymentHistoryTable(props) {
-  console.log("In PaymentHistoryTable", props);
-  const [data, setData] = useState(props.data);
-  const [selectedRows, setSelectedRows] = useState([]);
-  // const [selectedPayments, setSelectedPayments] = useState([]);
-  const [payments, setPayments] = useState([]);
+// function PaymentHistoryTable(props) {
+//   console.log("In PaymentHistoryTable", props);
+//   const [data, setData] = useState(props.data);
+//   const [selectedRows, setSelectedRows] = useState([]);
+//   // const [selectedPayments, setSelectedPayments] = useState([]);
+//   const [payments, setPayments] = useState([]);
 
-  useEffect(() => {
-    setData(props.data);
-  }, [props.data]);
+//   useEffect(() => {
+//     setData(props.data);
+//   }, [props.data]);
 
-  useEffect(() => {
-    if (data && data.length > 0) {
-      setSelectedRows(data.map((row) => row.payment_uid));
-      setPayments(
-        data.map((item) => ({
-          ...item,
-          pur_amount_due: parseFloat(item.pur_amount_due),
-        }))
-      );
-    }
-  }, [data]);
+//   useEffect(() => {
+//     if (data && data.length > 0) {
+//       setSelectedRows(data.map((row) => row.payment_uid));
+//       setPayments(
+//         data.map((item) => ({
+//           ...item,
+//           pur_amount_due: parseFloat(item.pur_amount_due),
+//         }))
+//       );
+//     }
+//   }, [data]);
 
-  // useEffect(() => {
-  //   var total = 0;
+//   // useEffect(() => {
+//   //   var total = 0;
 
-  //   let purchase_uid_mapping = [];
+//   //   let purchase_uid_mapping = [];
 
-  //   for (const item of selectedRows) {
-  //     // console.log("item in loop", item)
+//   //   for (const item of selectedRows) {
+//   //     // console.log("item in loop", item)
 
-  //       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
-  //       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-  //       // console.log("payment item data", paymentItemData);
-  //       total += parseFloat(paymentItemData.pur_amount_due);
-  //   }
-  //   // console.log("selectedRows useEffect - total - ", total);
-  //   // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
-  //   props.setTotal(total);
-  //   props.setPaymentData((prevPaymentData) => ({
-  //     ...prevPaymentData,
-  //     balance: total.toFixed(2),
-  //     purchase_uids: purchase_uid_mapping,
-  //   }));
+//   //       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
+//   //       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+//   //       // console.log("payment item data", paymentItemData);
+//   //       total += parseFloat(paymentItemData.pur_amount_due);
+//   //   }
+//   //   // console.log("selectedRows useEffect - total - ", total);
+//   //   // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+//   //   props.setTotal(total);
+//   //   props.setPaymentData((prevPaymentData) => ({
+//   //     ...prevPaymentData,
+//   //     balance: total.toFixed(2),
+//   //     purchase_uids: purchase_uid_mapping,
+//   //   }));
 
-  // }, [selectedRows]);
+//   // }, [selectedRows]);
 
-  // useEffect(() => {
-  //   console.log("selectedPayments - ", selectedPayments);
-  //   props.setSelectedItems(selectedPayments)
-  // }, [selectedPayments]);
+//   // useEffect(() => {
+//   //   console.log("selectedPayments - ", selectedPayments);
+//   //   props.setSelectedItems(selectedPayments)
+//   // }, [selectedPayments]);
 
-  const columnsList = [
-    {
-      field: "latest_date",
-      headerName: "Date",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+//   const columnsList = [
+//     {
+//       field: "latest_date",
+//       headerName: "Date",
+//       flex: 1,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
 
-    {
-      field: "purchase_uid",
-      headerName: "Purchase UID",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+//     {
+//       field: "purchase_uid",
+//       headerName: "Purchase UID",
+//       flex: 1,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
 
-    {
-      field: "pur_description",
-      headerName: "Description",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
-    {
-      field: "pur_property_id",
-      headerName: "Property UID",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+//     {
+//       field: "pur_description",
+//       headerName: "Description",
+//       flex: 2,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
+//     {
+//       field: "pur_property_id",
+//       headerName: "Property UID",
+//       flex: 1,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
 
-    {
-      field: "property_address",
-      headerName: "Address",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+//     {
+//       field: "property_address",
+//       headerName: "Address",
+//       flex: 1,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
 
-    {
-      field: "property_unit",
-      headerName: "Unit",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+//     {
+//       field: "property_unit",
+//       headerName: "Unit",
+//       flex: 1,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
 
-    {
-      field: "purchase_status",
-      headerName: "Status",
-      flex: 1,
-      headerStyle: {
-        fontWeight: "bold", // Apply inline style to the header cell
-      },
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+//     {
+//       field: "purchase_status",
+//       headerName: "Status",
+//       flex: 1,
+//       headerStyle: {
+//         fontWeight: "bold", // Apply inline style to the header cell
+//       },
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+//     },
 
-    {
-      field: "pur_amount_due",
-      headerName: "Amount Due",
-      flex: 0.7,
-      headerStyle: {
-        fontWeight: "bold", // Apply inline style to the header cell
-      },
-      renderCell: (params) => (
-        <Box
-          sx={{
-            fontWeight: "bold",
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          $ {parseFloat(params.value).toFixed(2)}
-        </Box>
-      ),
-    },
+//     {
+//       field: "pur_amount_due",
+//       headerName: "Amount Due",
+//       flex: 0.7,
+//       headerStyle: {
+//         fontWeight: "bold", // Apply inline style to the header cell
+//       },
+//       renderCell: (params) => (
+//         <Box
+//           sx={{
+//             fontWeight: "bold",
+//             width: "100%",
+//             display: "flex",
+//             flexDirection: "row",
+//             justifyContent: "flex-end",
+//           }}
+//         >
+//           $ {parseFloat(params.value).toFixed(2)}
+//         </Box>
+//       ),
+//     },
 
-    {
-      field: "total_paid",
-      headerName: "Total Paid",
-      flex: 0.7,
-      headerStyle: {
-        fontWeight: "bold", // Apply inline style to the header cell
-      },
-      renderCell: (params) => (
-        <Box
-          sx={{
-            fontWeight: "bold",
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          $ {parseFloat(params.value).toFixed(2)}
-        </Box>
-      ),
-    },
-  ];
+//     {
+//       field: "total_paid",
+//       headerName: "Total Paid",
+//       flex: 0.7,
+//       headerStyle: {
+//         fontWeight: "bold", // Apply inline style to the header cell
+//       },
+//       renderCell: (params) => (
+//         <Box
+//           sx={{
+//             fontWeight: "bold",
+//             width: "100%",
+//             display: "flex",
+//             flexDirection: "row",
+//             justifyContent: "flex-end",
+//           }}
+//         >
+//           $ {parseFloat(params.value).toFixed(2)}
+//         </Box>
+//       ),
+//     },
+//   ];
 
-  const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("newRowSelectionModel - ", newRowSelectionModel);
+//   const handleSelectionModelChange = (newRowSelectionModel) => {
+//     console.log("newRowSelectionModel - ", newRowSelectionModel);
 
-    // const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));
-    // const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
+//     // const addedRows = newRowSelectionModel.filter(rowId => !selectedRows.includes(rowId));
+//     // const removedRows = selectedRows.filter(rowId => !newRowSelectionModel.includes(rowId));
 
-    // if (addedRows.length > 0) {
-    //     // console.log("Added rows: ", addedRows);
-    //     let newPayments = []
-    //     addedRows.forEach((item, index) => {
-    //       const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
-    //       // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
-    //       newPayments.push(addedPayment)
-    //     })
+//     // if (addedRows.length > 0) {
+//     //     // console.log("Added rows: ", addedRows);
+//     //     let newPayments = []
+//     //     addedRows.forEach((item, index) => {
+//     //       const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+//     //       // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+//     //       newPayments.push(addedPayment)
+//     //     })
 
-    //     // console.log("newPayments - ", newPayments);
-    //     setSelectedPayments((prevState) => {
-    //       return [...prevState, ...newPayments]
-    //     });
-    // }
+//     //     // console.log("newPayments - ", newPayments);
+//     //     setSelectedPayments((prevState) => {
+//     //       return [...prevState, ...newPayments]
+//     //     });
+//     // }
 
-    // if (removedRows.length > 0) {
-    //     // console.log("Removed rows: ", removedRows);
-    //     let removedPayments = []
-    //     removedRows.forEach((item, index) => {
-    //       let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
-    //       // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
-    //       removedPayments.push(removedPayment)
-    //     })
-    //     // console.log("removedPayments - ", removedPayments);
-    //     setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
-    // }
-    setSelectedRows(newRowSelectionModel);
-  };
+//     // if (removedRows.length > 0) {
+//     //     // console.log("Removed rows: ", removedRows);
+//     //     let removedPayments = []
+//     //     removedRows.forEach((item, index) => {
+//     //       let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+//     //       // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+//     //       removedPayments.push(removedPayment)
+//     //     })
+//     //     // console.log("removedPayments - ", removedPayments);
+//     //     setSelectedPayments(prevState => prevState.filter(payment => !removedRows.includes(payment.purchase_uid)));
+//     // }
+//     setSelectedRows(newRowSelectionModel);
+//   };
 
-  if (payments.length > 0) {
-    // console.log("Passed Data ", paymentDueResult);
-    return (
-      <>
-        <DataGrid
-          rows={payments}
-          columns={columnsList}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 100,
-              },
-            },
-          }}
-          getRowId={(row) => row.purchase_uid}
-          pageSizeOptions={[10, 50, 100]}
-          // checkboxSelection
-          // disableRowSelectionOnClick
-          // rowSelectionModel={selectedRows}
-          // onRowSelectionModelChange={handleSelectionModelChange}
-          onRowClick={(row) => {
-            {
-              console.log("Row =", row);
-            }
-            // handleOnClickNavigateToMaintenance(row);
-          }}
-          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
-        />
-        {/* {selectedRows.length > 0 && (
-          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
-        )} */}
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-          <Grid item xs={2} alignItems="center"></Grid>
-          <Grid item xs={9} alignItems="center">
-            <Typography
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.medium.fontWeight,
-                fontSize: theme.typography.smallFont,
-                fontFamily: "Source Sans Pro",
-              }}
-            >
-              Total
-            </Typography>
-          </Grid>
-          <Grid item xs={1} alignItems="right">
-            <Typography
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.medium.fontWeight,
-                fontSize: theme.typography.smallFont,
-                fontFamily: "Source Sans Pro",
-              }}
-            >
-              $ {parseFloat(selectedRows.reduce((total, rowId) => total + payments.find((row) => row.payment_uid === rowId).pur_amount_due, 0)).toFixed(2)}
-            </Typography>
-          </Grid>
-        </Grid>
-      </>
-    );
-  } else {
-    return <></>;
-  }
-}
+//   if (payments.length > 0) {
+//     // console.log("Passed Data ", paymentDueResult);
+//     return (
+//       <>
+//         <DataGrid
+//           rows={payments}
+//           columns={columnsList}
+//           initialState={{
+//             pagination: {
+//               paginationModel: {
+//                 pageSize: 100,
+//               },
+//             },
+//           }}
+//           getRowId={(row) => row.purchase_uid}
+//           pageSizeOptions={[10, 50, 100]}
+//           // checkboxSelection
+//           // disableRowSelectionOnClick
+//           // rowSelectionModel={selectedRows}
+//           // onRowSelectionModelChange={handleSelectionModelChange}
+//           onRowClick={(row) => {
+//             {
+//               console.log("Row =", row);
+//             }
+//             // handleOnClickNavigateToMaintenance(row);
+//           }}
+//           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+//         />
+//         {/* {selectedRows.length > 0 && (
+//           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+//         )} */}
+//         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
+//           <Grid item xs={2} alignItems="center"></Grid>
+//           <Grid item xs={9} alignItems="center">
+//             <Typography
+//               sx={{
+//                 color: theme.typography.primary.black,
+//                 fontWeight: theme.typography.medium.fontWeight,
+//                 fontSize: theme.typography.smallFont,
+//                 fontFamily: "Source Sans Pro",
+//               }}
+//             >
+//               Total
+//             </Typography>
+//           </Grid>
+//           <Grid item xs={1} alignItems="right">
+//             <Typography
+//               sx={{
+//                 color: theme.typography.primary.black,
+//                 fontWeight: theme.typography.medium.fontWeight,
+//                 fontSize: theme.typography.smallFont,
+//                 fontFamily: "Source Sans Pro",
+//               }}
+//             >
+//               $ {parseFloat(selectedRows.reduce((total, rowId) => total + payments.find((row) => row.payment_uid === rowId).pur_amount_due, 0)).toFixed(2)}
+//             </Typography>
+//           </Grid>
+//         </Grid>
+//       </>
+//     );
+//   } else {
+//     return <></>;
+//   }
+// }
 
 function MoneyReceivedTable(props) {
   console.log("In MoneyReceivedTable", props);
