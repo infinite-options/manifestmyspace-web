@@ -121,6 +121,9 @@ export default function Payments(props) {
       setMoneyToBePaid(moneyToBePaidData);
       setMoneyToBeReceived(moneyToBeReceivedData);
 
+      // console.log("Money To Be Paid: ", moneyToBePaid);
+      // console.log("Money To Be Paid: ", moneyToBePaid[0].ps);
+
       totalMoneyPaidUpdate(moneyPaidData);
       totalMoneyReceivedUpdate(moneyReceivedData);
       totalMoneyToBePaidUpdate(moneyToBePaidData);
@@ -583,7 +586,14 @@ function BalanceDetailsTable(props) {
               },
             },
           }}
-          getRowId={(row) => row.purchase_uid}
+          // getRowId={(row) => row.purchase_uid}
+          getRowId={(row) => {
+            const rowId = row.purchase_uid;
+            console.log("Row ID:", rowId);
+            console.log("Row Data:", row); // Log the entire row data
+            console.log("Row PS:", row.ps); // Log the ps field
+            return rowId;
+          }}
           pageSizeOptions={[10, 50, 100]}
           checkboxSelection
           disableRowSelectionOnClick
@@ -595,6 +605,31 @@ function BalanceDetailsTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
+          getRowStyle={(params) => {
+            console.log("Helloworld");
+            console.log("Params1:", params.id);
+            const rowData = paymentDueResult.find((row) => row.purchase_uid === params.id);
+            console.log("WHAT?");
+            console.log("Row Data:", rowData);
+            // console.log("Row Data PS:", rowData.ps);
+            console.log("Row Data PS:", rowData.cf_month);
+            console.log("Params3:", params);
+
+            return { color: rowData && rowData.ps === "UNPAID" ? "green" : "red" };
+          }}
+          // sx={{
+          //   "& .MuiDataGrid-row": {
+          //     color: (params) => {
+          //       console.log("Params2:", params);
+          //       const rowData = paymentDueResult.find((row) => row.purchase_uid === params.id);
+          //       console.log("Row Data:", rowData);
+          //       // console.log("Row Data PS:", rowData.ps);
+          //       // return rowData && rowData.ps === "UNPAID" ? "green" : "red";
+          //       return;
+          //     },
+          //   },
+          // }}
+
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
         {/* {selectedRows.length > 0 && (
@@ -605,7 +640,8 @@ function BalanceDetailsTable(props) {
           <Grid item xs={9} alignItems="center">
             <Typography
               sx={{
-                color: theme.typography.primary.black,
+                // color: theme.typography.primary.black,
+                // color: paymentDueResult.ps === "UNPAID" ? "green" : "red", // Set color based on condition
                 fontWeight: theme.typography.medium.fontWeight,
                 fontSize: theme.typography.smallFont,
                 fontFamily: "Source Sans Pro",
