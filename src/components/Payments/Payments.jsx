@@ -473,9 +473,13 @@ function BalanceDetailsTable(props) {
   }, [selectedPayments]);
 
   const getFontColor = (ps_value) => {
-    if (ps_value === "UNPAID") {
-      return theme.typography.secondary.white;
-    } else return theme.typography.secondary.blue;
+    if (ps_value === "PAID") {
+      return theme.typography.primary.blue;
+    } else if (ps_value === "PAID LATE") {
+      return theme.typography.primary.aqua;
+    } else {
+      return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
+    }
   };
 
   const columnsList = [
@@ -634,7 +638,7 @@ function BalanceDetailsTable(props) {
             "& .MuiDataGrid-cell": {
               fontSize: "14px", // Change the font size
               fontWeight: theme.typography.common.fontWeight, // Change the font weight
-              color: theme.typography.secondary.blue,
+              color: theme.typography.secondary.black,
             },
           }}
 

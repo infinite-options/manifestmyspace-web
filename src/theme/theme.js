@@ -156,7 +156,9 @@ const theme = createTheme({
     primary: {
       fontWeight: 600, // Custom font weight
       black: "#000000", // Custom font color (e.g., red)
-      blue: "#3D5CAC", // Custom font color (e.g., red)
+      aqua: "#6788B3", // FOR PAID LATE
+      blue: "#173C8D", // FOR PAID
+      red: "#B62C2A", // FOR UNPAID or PARTIALLY PAID
     },
     secondary: {
       fontWeight: 700, // Custom font weight
