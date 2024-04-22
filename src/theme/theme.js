@@ -37,10 +37,9 @@ const theme = createTheme({
     MuiFilledInput: {
       styleOverrides: {
         root: {
-          "&.MuiFilledInput-root:before, &.MuiFilledInput-root:hover:before, &.MuiFilledInput-root:after":
-            {
-              borderBottom: "none",
-            },
+          "&.MuiFilledInput-root:before, &.MuiFilledInput-root:hover:before, &.MuiFilledInput-root:after": {
+            borderBottom: "none",
+          },
         },
       },
     },
@@ -118,7 +117,7 @@ const theme = createTheme({
       pink: "#F5B7B6",
       mustardYellow: alpha("#FF8A00", 0.35),
       lightYellow: "#FFC319",
-      white: "#FFFFFF"
+      white: "#FFFFFF",
     },
     custom: {
       blue: "#3D5CAC80",
@@ -141,14 +140,14 @@ const theme = createTheme({
 
   typography: {
     maintenance: {
-        secondary: {
-          fontWeight: 500,
-          color: "#FFFFFF",
-        },
-        primary: {
-          fontWeight: 700,
-          color: "#FFFFFF",
-        }
+      secondary: {
+        fontWeight: 500,
+        color: "#FFFFFF",
+      },
+      primary: {
+        fontWeight: 700,
+        color: "#FFFFFF",
+      },
     },
     common: {
       fontWeight: 700, // Custom font weight
@@ -157,10 +156,12 @@ const theme = createTheme({
     primary: {
       fontWeight: 600, // Custom font weight
       black: "#000000", // Custom font color (e.g., red)
+      blue: "#3D5CAC", // Custom font color (e.g., red)
     },
     secondary: {
       fontWeight: 700, // Custom font weight
       white: "#FFFFFF", // Custom font color (e.g., red)
+      blue: "#3D5CAC", // Custom font color (e.g., red)
     },
     light: {
       fontWeight: 500, // Custom font weight
@@ -222,12 +223,12 @@ const theme = createTheme({
     { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
   ],
   colorStatusMM: [
-    {'color': '#DB9687', 'status': 'Quotes Requested', 'mapping': 'REQUESTED'},
-    {'color': '#CEA892', 'status': 'Quotes Submitted', 'mapping': 'SUBMITTED'},
-    {'color': '#BAAC7A', 'status': 'Quotes Accepted', 'mapping': 'ACCEPTED'},
-    {'color': '#959A76', 'status': 'Scheduled', 'mapping': 'SCHEDULED'},
-    {'color': '#598A96', 'status': 'Finished', 'mapping': 'FINISHED'},
-    {'color': '#6588AC', 'status': 'Paid', 'mapping': 'PAID'}, //COMPLETED
+    { color: "#DB9687", status: "Quotes Requested", mapping: "REQUESTED" },
+    { color: "#CEA892", status: "Quotes Submitted", mapping: "SUBMITTED" },
+    { color: "#BAAC7A", status: "Quotes Accepted", mapping: "ACCEPTED" },
+    { color: "#959A76", status: "Scheduled", mapping: "SCHEDULED" },
+    { color: "#598A96", status: "Finished", mapping: "FINISHED" },
+    { color: "#6588AC", status: "Paid", mapping: "PAID" }, //COMPLETED
   ],
   spacing: 2, // Set the spacing unit to 2 to represent 8px (Material-UI's default spacing unit)
   breakpoints: {
