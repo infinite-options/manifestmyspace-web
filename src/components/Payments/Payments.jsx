@@ -565,7 +565,13 @@ function BalanceDetailsTable(props) {
             justifyContent: "flex-end",
           }}
         >
-          $ {parseFloat(params.value).toFixed(2)}
+          {/* $ {parseFloat(params.value).toFixed(2)} */}
+          {/* Check pur_cf_type value */}
+          {params.row.pur_cf_type === "revenue"
+            ? // If pur_cf_type is 'revenue', display amount due without parentheses
+              `$ ${parseFloat(params.value).toFixed(2)}`
+            : // If pur_cf_type is 'expense', display amount due with parentheses
+              `($ ${parseFloat(params.value).toFixed(2)})`}
         </Box>
       ),
     },
@@ -717,6 +723,13 @@ function MoneyReceivedTable(props) {
     {
       field: "purchase_uid",
       headerName: "Purchase UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "purchase_type",
+      headerName: "Purchase Type",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
@@ -883,6 +896,13 @@ function MoneyPaidTable(props) {
     {
       field: "purchase_uid",
       headerName: "Purchase UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "purchase_type",
+      headerName: "Purchase Type",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
