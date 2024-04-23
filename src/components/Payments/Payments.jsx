@@ -90,7 +90,13 @@ export default function Payments(props) {
   function totalMoneyToBePaidUpdate(moneyToBePaid) {
     var total = 0;
     for (const item of moneyToBePaid) {
-      total += parseFloat(item.pur_amount_due);
+      // total += parseFloat(item.pur_amount_due);
+      // Adjust total based on pur_cf_type
+      if (item.pur_cf_type === "revenue") {
+        total += parseFloat(item.pur_amount_due);
+      } else if (item.pur_cf_type === "expense") {
+        total -= parseFloat(item.pur_amount_due);
+      }
     }
     setTotalToBePaid(total);
   }
@@ -284,6 +290,7 @@ export default function Payments(props) {
                       // paymentData.business_code = paymentNotes;
                       const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
                       console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
+                      console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
                       navigate("/selectPayment", {
                         state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo },
                       });
@@ -455,7 +462,14 @@ function BalanceDetailsTable(props) {
       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
       // console.log("payment item data", paymentItemData);
-      total += parseFloat(paymentItemData.pur_amount_due);
+
+      // total += parseFloat(paymentItemData.pur_amount_due);
+      // Adjust total based on pur_cf_type
+      if (paymentItemData.pur_cf_type === "revenue") {
+        total += parseFloat(paymentItemData.pur_amount_due);
+      } else if (paymentItemData.pur_cf_type === "expense") {
+        total -= parseFloat(paymentItemData.pur_amount_due);
+      }
     }
     // console.log("selectedRows useEffect - total - ", total);
     // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
@@ -494,6 +508,13 @@ function BalanceDetailsTable(props) {
       field: "pur_description",
       headerName: "Description",
       flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "owner_uid",
+      headerName: "Owner UID",
+      flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
 
@@ -678,7 +699,15 @@ function BalanceDetailsTable(props) {
                 fontFamily: "Source Sans Pro",
               }}
             >
-              $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)}
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}${" "}
+              {selectedRows.reduce((total, rowId) => {
+                const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
+                const amountDue = payment.pur_amount_due;
+                const isExpense = payment.pur_cf_type === "expense";
+
+                // Adjust the total based on whether the payment is an expense or revenue
+                return total + (isExpense ? -amountDue : amountDue);
+              }, 0)}
             </Typography>
           </Grid>
         </Grid>
