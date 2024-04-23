@@ -63,6 +63,7 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             formData.append("maintenance_scheduled_date", date); 
             formData.append("maintenance_scheduled_time", time);
             formData.append("maintenance_request_status", "SCHEDULED");
+            formData.append("maintenance_assigned_business", maintenanceItem.maint_business_uid)
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
