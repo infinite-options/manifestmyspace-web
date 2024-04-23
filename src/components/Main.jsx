@@ -122,11 +122,17 @@ import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
 import NewUser from "./Onboarding/NewUser";
+import NewUserReferred from "./Onboarding/NewUserReferred"; //rohit - remove
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
 import OnboardingRouter from "./Onboarding/OnboardingRouter";
 import ContactInfo from "./Onboarding/ContactInfo";
+import ReferralSignup from "./Onboarding/ReferralSignup";
+import ReferralSignupPassword from "./Onboarding/ReferralSignupPassword";
+import ReferralGoogleSignup from "./Onboarding/ReferralGoogleSignup";
+
+import ReferUser from "./Referral/ReferUser";
 
 import SelectRole from "./Onboarding/SelectRole";
 
@@ -178,6 +184,7 @@ function Main() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="newUser" element={<NewUser />} />
+            {/* <Route path="newUser/:userID" element={<NewUserReferred />} /> */} {/* rohit - remove */}
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -189,6 +196,9 @@ function Main() {
             <Route path="onboardingRouter" element={<OnboardingRouter />} />
             <Route path="contactInfo" element={<ContactInfo />} />
             <Route path="forbidden" element={<Forbidden />} />
+            <Route path="referralSignup/:userID" element={<ReferralSignup />} />
+            <Route path="referralSignupPassword" element={<ReferralSignupPassword />} />
+            <Route path="referralGoogleSignup/:userID" element={<ReferralGoogleSignup />} />                        
           </Route>
 
           {/* Private Routes */}
@@ -338,6 +348,8 @@ function Main() {
             <Route path="poNotifications" element={<PONotifications />} />
             <Route path="propertyContract" element={<PropertyContract />} />
             <Route path="profile/:id" element={<PublicProfile />} />
+
+            <Route path="referUser" element={<ReferUser />} />
           </Route>
         </Routes>
         <Footer />

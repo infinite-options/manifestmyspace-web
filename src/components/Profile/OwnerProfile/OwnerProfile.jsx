@@ -32,7 +32,8 @@ function OwnerProfile() {
         return `(${num1}) ${num2} - ${num3}`;
     }
     function getSSNText(data) {
-        if(data === undefined) {
+        console.log("ROHIT - getSSNText - data - ", data);
+        if(data == undefined) {
             return '***-**-****';
         }
         const num1 = data.slice(0, 3);

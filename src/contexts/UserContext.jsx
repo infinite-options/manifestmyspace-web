@@ -1,26 +1,30 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useCookies, Cookies } from "react-cookie";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const [cookies, setCookie] = useCookies(["user", "token", "selectedRole"]);
-  const [user, setUser] = useState(cookies.user);
+  const [user, setUser] = useState(cookies.user);  
   const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
   const [isLoggedIn, setLoggedIn] = useState(!!cookies.user);
   const [onboardingState, setOnboardingState] = useState();
   const [supervisor, setSupervisor]= useState(null)
-  const setAuthData = (data) => {
-    setUser(data.user);
-    setCookie("user", data.user);
+  const setAuthData = (data) => {    
+    // setUser(data.user); 
+    setUser(prevUser => {
+      return { ...prevUser, ...data.user };
+    });
+    let newUserData = {...user, ...data.user}    
+    setCookie("user", newUserData);
     setCookie("token", data.access_token);
 
   };
-  const selectRole = (role) => {
+  const selectRole = (role) => {    
     setSelectedRole(role);
     setCookie("selectedRole", role);
   };
-  const isBusiness = () => {
+  const isBusiness = () => {    
     return selectedRole === "MANAGER" || selectedRole === "MAINTENANCE";
   };
   const isManager = () => {
@@ -60,7 +64,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         return "Tenant";
     }
   };
-  const updateProfileUid = (profileUidObj) => {
+  const updateProfileUid = (profileUidObj) => {    
     if (isBusiness() || isEmployee()) {
       setUser((prev) => updateUser(prev, profileUidObj));
     } else {
@@ -71,13 +75,13 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     let newBusinesses;
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       newBusinesses = {
-        ...prevUser.businesses,
-        MANAGEMENT: updateBusinessSection(prevUser.businesses?.MANAGEMENT, profileUidObj),
+        ...prevUser?.businesses,
+        MANAGEMENT: updateBusinessSection(prevUser?.businesses?.MANAGEMENT, profileUidObj),
       };
     } else {
       newBusinesses = {
-        ...prevUser.businesses,
-        MAINTENANCE: updateBusinessSection(prevUser.businesses?.MAINTENANCE, profileUidObj),
+        ...prevUser?.businesses,
+        MAINTENANCE: updateBusinessSection(prevUser?.businesses?.MAINTENANCE, profileUidObj),
       };
     }
     return {
@@ -93,7 +97,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;
   const getProfileId = () => {
-    console.log('Raminsss', user)
+    console.log('Raminsss', user)    
     if (selectedRole==='PM_EMPLOYEE') return user.businesses.MANAGEMENT.business_employee_id;
     if (isManagement()) return getBusiness(user, "MANAGEMENT");
     if (isMaintenance()) return getBusiness(user, "MAINTENANCE");

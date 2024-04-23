@@ -173,7 +173,10 @@ const ProfileName = () => {
     setLastName(cookiesData?.lastName ?? '');
     setBusinessName(cookiesData?.businessName ?? '');
     handleRoleSpecifics();
-    handleFetchBusinesses();
+    if(isEmployee || isManagementEmployee){
+      handleFetchBusinesses();
+    }
+    
   }, []);
 
   return (
