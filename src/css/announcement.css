@@ -50,7 +50,7 @@
 .announcement-searchbar-container {
     display: flex;
     flex-direction: row;
-
+    width: 90%;
     background-color: #F2F2F2;
     border-radius: 10px;
     margin-left: 25px;

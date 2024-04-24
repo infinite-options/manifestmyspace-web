@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 function NewUser() {
-
+    console.log("In NewUser");
     const classes = useStyles();
     const navigate = useNavigate();
 

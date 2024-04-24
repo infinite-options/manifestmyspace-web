@@ -55,17 +55,17 @@ export function Footer() {
     const getCommentButtonNav = () => {
         switch (selectedRole) {
           case 'OWNER':
-            return '/ownerDashboard';
+            return '/referUser';
           case 'MANAGER':
-            return '/managerDashboard';
+            return '/referUser';
           case 'TENANT':
-            return '/tenantDashboard';
+            return '/referUser';
           case 'MAINTENANCE':
-            return '/maintenanceDashboard';
+            return '/referUser';
           case 'PM_EMPLOYEE':
-            return '/managerDashboard';
+            return '/referUser';
           case 'MAINT_EMPLOYEE':
-            return '/maintenanceDashboard';
+            return '/referUser';
           default:
             return '/';
         }

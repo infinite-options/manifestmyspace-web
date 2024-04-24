@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Paper,
@@ -26,6 +26,10 @@ function SelectRole() {
   const [roles, setRoles] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
 
+  // useEffect(() => {
+  //   console.log("SelectRole - roles - ", roles);
+  // }, [roles]);
+
   const handleNextStep = async () => {
     if (roles.length === 0) {
       alert("Please select a role");
@@ -45,7 +49,7 @@ function SelectRole() {
       const response = await axios.post(
         "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
         payload
-      );
+      );            
       if (response.data.message === "User already exists") {
         alert(response.data.message);
         return;
