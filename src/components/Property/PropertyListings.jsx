@@ -346,6 +346,8 @@ const PropertyListings = (props) => {
   }
 
   function sortProperties(leaseData, propertyData) {
+    console.log("Lease Data in PropertyListings.jsx: ", leaseData);
+    console.log("Property Data in PropertyListings.jsx: ", propertyData);
     if (JSON.stringify(leaseData) !== "{}") {
       var activePropertyArray = [];
       const leases = leaseData;

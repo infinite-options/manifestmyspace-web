@@ -44,13 +44,13 @@ function TenantProfile() {
     setShowSpinner(true);
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`).then((res) => {
       //   console.log("Res 1: ", res);
-      //   console.log("Res 2: ", res.data.tenantProfile);
-      //   console.log("Res 3: ", res.data.tenantProfile.result[0]);
-      setProfileData(res.data.tenantProfile.result[0]);
-      setAdultTenantData(JSON.parse(res.data.tenantProfile.result[0].tenant_adult_occupants));
-      setChildTenantData(JSON.parse(res.data.tenantProfile.result[0].tenant_children_occupants));
-      setPetTenantData(JSON.parse(res.data.tenantProfile.result[0].tenant_pet_occupants));
-      setVehicleTenantData(JSON.parse(res.data.tenantProfile.result[0].tenant_vehicle_info));
+      //   console.log("Res 2: ", res.data.profile);
+      //   console.log("Res 3: ", res.data.profile.result[0]);
+      setProfileData(res.data.profile.result[0]);
+      setAdultTenantData(JSON.parse(res.data.profile.result[0].tenant_adult_occupants));
+      setChildTenantData(JSON.parse(res.data.profile.result[0].tenant_children_occupants));
+      setPetTenantData(JSON.parse(res.data.profile.result[0].tenant_pet_occupants));
+      setVehicleTenantData(JSON.parse(res.data.profile.result[0].tenant_vehicle_info));
       setShowSpinner(false);
     });
   }, []);

@@ -31,12 +31,12 @@ function PMProfile() {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
       //   console.log("Res 1: ", res);
-      //   console.log("Res 2: ", res.data.businessProfile);
-      //   console.log("Res 3: ", res.data.businessProfile.result[0]);
-      setProfileData(res.data.businessProfile.result[0]);
+      //   console.log("Res 2: ", res.data.profile);
+      //   console.log("Res 3: ", res.data.profile.result[0]);
+      setProfileData(res.data.profile.result[0]);
       setShowSpinner(false);
       try {
-        const parsedFees = JSON.parse(res.data.businessProfile.result[0]?.business_services_fees);
+        const parsedFees = JSON.parse(res.data.profile.result[0]?.business_services_fees);
         set_business_service_fees(parsedFees);
       } catch (e) {
         set_business_service_fees([]);
