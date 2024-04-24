@@ -30,7 +30,11 @@ import APIConfig from "../../utils/APIConfig";
 export default function MaintenanceDashboard(){
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, getProfileId } = useUser(); 
+    const { user, getProfileId, selectedRole } = useUser(); 
+    let dashboard_id=getProfileId()
+    if (selectedRole==='MAINT_EMPLOYEE')
+        dashboard_id= user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
+
     const [quoteRequestedCount, setQuoteRequestedCount] = useState(0);
     const [submittedCount, setSubmittedCount] = useState(0);
     const [quoteAcceptedCount, setQuoteAcceptedCount] = useState(0);
@@ -97,6 +101,28 @@ export default function MaintenanceDashboard(){
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    // Checking if the supervisor has verified the employee
+    useEffect(() => {
+        if (selectedRole === 'MAINT_EMPLOYEE'){
+        const emp_verification = async () => {
+          try {
+            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            const employee = data.result[0]; // Assuming there's only one employee
+            if (!employee?.employee_verification) {
+              navigate('/emp_waiting')
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        };
+    
+        emp_verification();}
+      }, []);
+
     useEffect(() => {
         if (!getProfileId())
             navigate('/PrivateprofileName')
@@ -104,7 +130,7 @@ export default function MaintenanceDashboard(){
         const getMaintenanceWorkerDashboardData = async () => {
             setShowSpinner(true);
             try {
-                const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',                    

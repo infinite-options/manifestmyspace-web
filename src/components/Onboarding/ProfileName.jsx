@@ -60,7 +60,7 @@ const ProfileName = () => {
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
 
-  const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee } =
+  const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee, selectedRole } =
     useUser();
   const {
     firstName,
@@ -75,7 +75,26 @@ const ProfileName = () => {
   const personalInfoPage= isLoggedIn? "/privatePersonalInfo" : "/personalInfo" 
   const profileInfoPage= isLoggedIn ? "/privateProfileInfo" : "/profileInfo"
 
+  const validate_form= () =>{
+    if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
+      if (! selectedBusiness){
+        alert("Please select a business");
+        return false;
+      }
+
+      if (! selectedBizRole){
+        alert("Please select a role");
+        return false;
+      }
+        
+    }
+}
+
+
   const handleNextStep = () => {
+    if (validate_form() === false)
+      return;
+
     setCookie("default_form_vals", {...cookiesData, firstName, lastName, businessName });
     if (isBusiness() && businessName === "") {
       alert("Please enter a name");

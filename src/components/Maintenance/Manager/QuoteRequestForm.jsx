@@ -145,7 +145,7 @@ export default function QuoteRequestForm(){
         
             try {
                 // console.log("right before call");
-                const response = await fetch(`${APIConfig.baseURL.dev}/quotes`, {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                     method: 'POST',
                     body: formData,
                 });

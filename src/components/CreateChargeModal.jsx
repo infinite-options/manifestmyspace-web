@@ -29,7 +29,7 @@ export default function CreateChargeModal(props) {
 
   const [amount, setAmount] = useState(props.maintenanceItem.bill_amount || '');
 
-  console.log("props", props.maintenanceItem)
+  // console.log("props", props.maintenanceItem)
 
   const handleAmountChange = (event) => {
     console.log(event.target.value);

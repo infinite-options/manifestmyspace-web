@@ -15,7 +15,7 @@ import theme from '../../../theme/theme';
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-
+import CryptoJS from "crypto-js";
 import APIConfig from '../../../utils/APIConfig'
 
 
@@ -31,15 +31,16 @@ function OwnerProfile() {
         const num3 = data.slice(6);
         return `(${num1}) ${num2} - ${num3}`;
     }
+
     function getSSNText(data) {        
-        if(data == undefined) {
-            return '***-**-****';
+            if (data == undefined) {
+                return '***-**-****';
+            }
+            const decryptedSSN = CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
+            const lastFourDigits = decryptedSSN.slice(-4); // Get the last 4 digits of the decrypted SSN
+            return `***-**-${lastFourDigits}`;
         }
-        const num1 = data.slice(0, 3);
-        const num2 = data.slice(3, 5);
-        const num3 = data.slice(5);
-        return `${num1}_${num2}_${num3}`;
-    }
+
     const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState([]);
     const [payment_accounts, set_payment_accounts] = useState([]);

@@ -42,15 +42,54 @@ export default function PayMaintenanceForm(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [showSpinner, setShowSpinner] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [businessProfile, setBusinessProfile] = useState({});
     // const [amount, setAmount] = useState(props.maintenanceItem.bill_amount || '');
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
 
+    // console.log("[DEBUG] maintenance item with payment info?", maintenanceItem)
+
+    useEffect(() => {
+        console.log(maintenanceItem)
+        const getBusinessProfile = async (profileId) => {
+            const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${profileId}`);
+            const data2 = await businessProfileResult.json();
+            const businessProfileData = data2["result"][0];
+            console.log("businessProfileData", businessProfileData)
+            setBusinessProfile(businessProfileData);
+        }
+        if (maintenanceItem.bill_uid !== null){
+            getBusinessProfile(maintenanceItem.bill_created_by)
+        } else if(maintenanceItem.quote_status !== 'FINISHED' && maintenanceItem.quote_status !== 'COMPLETED' && maintenanceItem.maintenance_request_status === 'COMPLETED'){
+            // getBusinessProfile(maintenanceItem.owner_uid)
+            console.log(maintenanceItem)
+            setBusinessProfile({
+                business_apple_pay: maintenanceItem.owner_apple_pay,
+                business_venmo: maintenanceItem.owner_venmo,
+                business_paypal: maintenanceItem.owner_paypal,
+                business_zelle: maintenanceItem.owner_zelle
+            })
+        } else {
+            console.log("no business profile data yet")
+        }
+    }, [maintenanceItem])
+
 
     const handleSubmit = () => {
-        navigate("/payments", {state: {maintenanceItem}})
+        navigate("/payments", {state: {
+            maintenanceItem: maintenanceItem,
+            bill_uid: maintenanceItem.bill_uid,
+            quote_id: maintenanceItem.maintenance_quote_uid,
+            navigateParams: navigationParams,
+            paymentMethodInfo: {
+                "apple_pay": businessProfile.business_apple_pay,
+                "venmo": businessProfile.business_venmo,
+                "paypal": businessProfile.business_paypal,
+                "zelle": businessProfile.business_zelle,
+            }
+        }})
     }
 
     const modalSubmit = async (chargeAmount) => {
@@ -69,7 +108,8 @@ export default function PayMaintenanceForm(){
         formData.append("bill_split", "Uniform")
         formData.append("bill_property_id", JSON.stringify([{"property_uid":`${maintenanceItem.property_uid}`}]))
         formData.append("bill_notes", `Charge from ${maintenanceItem.business_name} for ${maintenanceItem.maintenance_title}`)
-        formData.append("bill_maintenance_quote_id", `Completed by ${maintenanceItem.business_uid} on ${maintenanceItem.maintenance_scheduled_date}`)
+        formData.append("bill_maintenance_quote_id", null)
+        formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid)
 
         console.log(`url ${APIConfig.baseURL.dev}/bills`)
 

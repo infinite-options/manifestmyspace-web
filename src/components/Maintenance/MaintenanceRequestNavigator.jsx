@@ -28,7 +28,7 @@ function getInitialImages(requestData, currentIndex) {
     return [maintenanceRequestImage];
     }
 
-export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs }) {
+export default function MaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, maintenanceQuotes, currentTabValue, status, tabs, navigateParams }) {
     const [currentIndex, setCurrentIndex] = useState(requestIndex);
     
     const [activeStep, setActiveStep] = useState(0);
@@ -71,6 +71,17 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
         const initialImages = getInitialImages(requestData, currentIndex);
         setImages(initialImages);
         setActiveStep(0);
+
+        if (requestData[currentIndex] && requestData[currentIndex].maintenance_request_created_date !== "null") {
+            let formattedDate = dayjs(requestData[currentIndex].maintenance_request_created_date).format("MM-DD-YYYY");
+            setFormattedDate(formattedDate);
+            const today = dayjs()
+            let diff = today.diff(formattedDate, 'day')
+            setNumOpenRequestDays(diff);
+        } else {
+            setFormattedDate("N/A");
+            setNumOpenRequestDays("N/A");
+        }
 
     }, [currentIndex]);
 
@@ -127,7 +138,8 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             return "Not Scheduled"
         } else {
             const formattedTime = dayjs(data.maintenance_scheduled_time, "HH:mm").format("h:mm A");
-            // setFormattedDate(formattedDate)
+            // setFormattedTime(formattedTime)
+            // setFormattedDate(dayjs(data.maintenance_scheduled_date, "MM-DD-YYYY"));
             return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`
         }
     }
@@ -338,7 +350,7 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                                 {data?.maintenance_desc}
                             </Typography>
                             <Grid container sx={{padding: "0px"}}>
-                                <QuotesTable maintenanceItem={data} maintenanceQuotesForItem={maintenanceQuotes}/>
+                                <QuotesTable maintenanceItem={data} navigateParams={navigateParams} maintenanceQuotesForItem={maintenanceQuotes}/>
                             </Grid>
                         </Box>
                     </CardContent>

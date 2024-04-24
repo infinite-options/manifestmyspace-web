@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import theme from '../../theme/theme';
 import dayjs from 'dayjs';
+import { lighten } from "@material-ui/core";
 
 
 
@@ -35,15 +36,41 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
         }
       };
 
+      const propertyNameSorting = (v1, v2, cellParams1, cellParams2) => {
+        console.log(v1, v2, cellParams1, cellParams2)
+        const addressUnit1 = cellParams1.row.property_address + cellParams1.row.property_unit;
+        const addressUnit2 = cellParams2.row.property_address + cellParams2.row.property_unit;
+      
+        if (addressUnit1 < addressUnit2) {
+          return -1;
+        } else if (addressUnit1 > addressUnit2) {
+          return 1;
+        } else {
+          return 0;
+        }
+      };
+      
+
     const columns = [
         {
             headerName: "Property",
-            field: "property_name",
+            field: "property_address",
             renderCell: (params) => {
-                return `${params.row.property_address} ${params.row.property_unit}`;
+                return `${params.row.property_address}`;
             },
             flex: 1,
             minWidth: 175,
+            // sortComparator: propertyNameSorting
+        }, 
+        {
+            headerName: "Unit",
+            field: "property_unit",
+            renderCell: (params) => {
+                return `${params.row.property_unit}`;
+            },
+            flex: 1,
+            minWidth: 50,
+            // sortComparator: propertyNameSorting
         }, 
         {
            headerName: "Type",
@@ -80,7 +107,13 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             minWidth: 75,
             renderCell: (params) => {
                 return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
-            }
+            },
+            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
+            //     console.log(sortDirection);
+            //     return sortDirection === 'ASC'
+            //       ? cellParams1.maintenance_request_uid - cellParams2.maintenance_request_uid
+            //       : cellParams2.maintenance_request_uid - cellParams1.maintenance_request_uid;
+            //   },
         }, 
         {
             headerName: "Date Created",
@@ -101,6 +134,8 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                     return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
                 }
             }
+            // there are values displayed like "N/A" or "CANCELLED" that need to be sorted in ascending order
+
         },
         {
             headerName: "Scheduled Time",
@@ -211,6 +246,9 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                             '& .MuiDataGrid-columnSeparator': {
                                 display: 'none', // Remove vertical borders in the header
                             },
+                            '& .highlighted-row': {
+                                backgroundColor: lighten(color, 0.4)//'#f0f0f0', // Use the same color as in your CSS
+                            },
                         }}
                         disableExtendRowFullWidth={true}
                         getRowId={(row) => row.maintenance_request_uid}
@@ -218,6 +256,17 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                         onRowClick={(params) => {
                             const index = maintenanceItemsForStatus.findIndex(row => row.maintenance_request_uid === params.row.maintenance_request_uid);
                             handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
+                        }}
+                        getRowClassName={(params) => {
+                            // if (params.row.maintenance_request_status === 'SCHEDULED' && params.row.quote_status !== 'ACCEPTED' && params.row.quote_status !== 'SCHEDULED' && params.row.quote_status !== 'FINISHED'){
+                            //     console.log("params", params.row)
+                            // }
+                            return (
+                                ['SCHEDULED', 'COMPLETED', 'PAID'].includes(params.row.maintenance_request_status) &&
+                                !['ACCEPTED', 'SCHEDULED', 'FINISHED'].includes(params.row.quote_status)
+                                  ? 'highlighted-row'
+                                  : ''
+                            );
                         }}
                     />
                 </AccordionDetails>

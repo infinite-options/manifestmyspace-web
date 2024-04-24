@@ -273,7 +273,7 @@ const AddExpense = (props) => {
                   <MenuItem value="Mortgage">Mortgage</MenuItem>
                   <MenuItem value="Repairs">Repairs</MenuItem>
                   <MenuItem value="Taxes">Taxes</MenuItem>
-                  <MenuItem value="Utilities">Utilities</MenuItem>
+                  {/* <MenuItem value="Utilities">Utilities</MenuItem> */}
                   <MenuItem value="BILL POSTING">BILL POSTING</MenuItem>
                 </Select>
               </FormControl>
