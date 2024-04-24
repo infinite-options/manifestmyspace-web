@@ -9,6 +9,7 @@ import FinishQuote from "../../utils/FinishQuote";
 import { useUser } from "../../../contexts/UserContext"
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router-dom";
+import APIConfig from "../../../utils/APIConfig";
 
 export default function CompleteButton(props){
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId, roleName, selectedRole} = useUser();
@@ -31,7 +32,7 @@ export default function CompleteButton(props){
 
         if (role === "PM Employee" || role === "Manager"){
             // handle PM side
-            console.log(maintenanceItem)
+            console.log("PM side", maintenanceItem)
             let rankedQuote;
 
             if (quotes){
@@ -51,59 +52,38 @@ export default function CompleteButton(props){
                 if (maintenanceItem.maintenance_assigned_business === null){
                     // PUT to assign maintenance request to PM
                     console.log("assign maintenance request to PM")
+                    console.log("handled by the property manager")
+                    // Update Maintenance Request Status
+                    try {
+                        const formData = new FormData();
+                        formData.append("maintenance_assigned_business", getProfileId());
+                        formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+                        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+                            method: 'PUT',
+                            body: formData,
+                        });
+                        if (response.status === 200) {
+                            CompleteTicket(id)
+                        }
+                    } catch(error){
+                        console.log("error", error)
+                    }
+                } else {
+                    // PM is completing the ticket and the quote
+                    console.log("PM is completing the ticket and the quote")
+                    CompleteTicket(id)
+                    FinishQuote(rankedQuote.maintenance_quote_uid)                        
                 }
-                // it's handled by maintenance
-                // Update maintenance request
-                // Update the quote status
-                let res = CompleteTicket(id)
-                if (res){
-                    FinishQuote(rankedQuote.maintenance_quote_uid)
-                }
+            } else if (maintenanceItem.maintenance_assigned_business === null){
+                // it's handled by the property manager
             }
         } else if (role === "Maintenance" || role === "Maintenance Employee"){
             // handle maintenance side
+            console.log("Maintenance", maintenanceItem.maintenance_quote_uid)
             FinishQuote(maintenanceItem.maintenance_quote_uid)
         } else {
             console.log("not supported role is trying to complete a ticket")
         }
-
-        // Maintenance person
-        // PM
-            // 1. there are quotes in an array
-            // 2. the PM is handling it
-
-        // assign maintenance_assigned_business to the maintenance item depending on who is completing it.
-
-        // if (quotes && !isMaintenancePerson){
-        //     let quoteArray = JSON.parse(quotes)
-        //     // console.log("handleComplete quoteArray", quoteArray)
-        //     filteredQuoteArray = quoteArray.filter((quote) => quote.quote_status == "ACCEPTED" || quote.quote_status == "SCHEDULED")
-        //     console.log(filteredQuoteArray)
-        // } else if (isMaintenancePerson){
-        //     console.log("isMaintenancePerson")
-        // }
-
-        // if (filteredQuoteArray.length === 0){
-        //     // it's handled by the property manager
-        //     console.log("handled by the property manager")
-        // } else{
-        //     console.log("not handled by the property manager")
-        //     console.log("handled by maintenance", maintenanceItem.maintenance_quote_uid)
-        //     //FinishQuote(maintenanceItem.maintenance_quote_uid)
-        // }
-
-        // let response = CompleteTicket(id)
-        
-        // if (response){
-        //     console.log("Ticket Completed")
-        //     setShowMessage(true);
-        //     setMessage("Ticket Completed!! Maintenance Status changed to COMPLETED");
-        //     //navigate(maintenanceRoutingBasedOnSelectedRole())
-        // } else{
-        //     console.log("Ticket Not Completed")
-        //     setShowMessage(true);
-        //     alert("Error: Ticket Not Completed")
-        // }
     }
 
     return (
