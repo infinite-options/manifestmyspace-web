@@ -129,16 +129,17 @@ export default function ReferUser({}) {
         return;
       } else {
         // setAuthData(response.data.result);        
-        const userUID = response.data.result?.user?.user_uid;
-        console.log("ROHIT - userUID - ", userUID);
-        const link = `http://localhost:3000/referralSignup/${userUID}` //rohit - replace localhost
+        const userUID = response.data.result?.user?.user_uid;        
+        // const link = `http://localhost:3000/referralSignup/${userUID}`
+        const link = `https://iopropertymanagement.netlify.app/referralSignup/${userUID}`
+        
         const emailPayload = {
             "receiver": email,
             "email_subject": `You have been invited to join ManifestMySpace`,
             "email_body": message + ` Please sign up using the link - ${link}. Don't forget to verify your profile information and create a password to finish setting up your profile. You can also sign up using your Google Account.`,
         }
         const emailResponse = await axios.post(
-            "http://localhost:4000/sendEmail", //rohit
+            "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
             emailPayload
         );
 
@@ -150,22 +151,6 @@ export default function ReferUser({}) {
 
         // navigate(-1);
       }
-    } else {
-        console.log("ROHIT - google signup");
-        //google signup
-    //   const response = await axios.post(
-    //     "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE",
-    //     payload
-    //   );
-    //   const userData = response.data;
-    //   if (userData.message === "User already exists") {
-    //     setUserAlreadyExists(!userAlreadyExists);
-    //     return;
-    //   } else {
-    //     setAuthData(response.data.result);
-    //     setShowSpinner(false);
-    //     navigate(`/onboardingRouter`, { state: { isPrivate:false } });
-    //   }
     }
   };
 
@@ -399,7 +384,7 @@ export default function ReferUser({}) {
               (selectedRole === "MANAGER" || selectedRole === "MAINTENANCE") && (
                 <Grid container columnSpacing={12} rowSpacing={6} sx={{ display: "flex" }}>
                   <Grid item xs={12}>
-                    <Button variant="contained" sx={{ width: "300px", backgroundColor: "#9EAED6", "&:hover, &:focus, &:active": { background: "#9EAED6" } }}>
+                    <Button variant="contained" sx={{ width: "300px", backgroundColor: "#9EAED6", "&:hover, &:focus, &:active": { background: "#9EAED6" } }} onClick={() => navigate("/employeeAccess")}>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                         Employee Access
                       </Typography>

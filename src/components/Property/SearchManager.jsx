@@ -221,9 +221,17 @@ function DocumentCard(props) {
   const index = props.index;
   const navigate = useNavigate();
 
-  let location1 = JSON.parse(obj.business_locations);
-  let city = location1[0]!==undefined ? location1[0].location : "";
-  let distance = location1[0]!==undefined ? location1[0].distance : "";
+  console.log("BUSINESS Locations - ", obj.business_locations);
+  let location1 = "";
+  if(obj.business_locations !== null && obj.business_locations.length > 2){
+    console.log("Valid business location");
+    location1 = JSON.parse(obj.business_locations);
+  }  
+  let city = "";
+  if(location1.length > 0){
+    city = (location1[0]!==undefined && location1[0]!==null) ? location1[0]?.location : "";
+  }  
+  let distance = location1[0]!==undefined ? location1[0]?.distance : "";
   let feesArray = JSON.parse(obj.business_services_fees);
 
   const handleRequestQuotes = async (obj) => {
@@ -297,7 +305,7 @@ function DocumentCard(props) {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {feesArray.map((fee) =>{
+                    {feesArray && feesArray.map((fee) =>{
                         return( <FeesTextCard fee={fee}/>)
                     })}
                 </AccordionDetails>

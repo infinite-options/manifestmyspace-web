@@ -91,8 +91,7 @@ export default function ReferralGoogleSignup({}) {
   const { googleUserInfo } = location.state || {};  
   const { user, selectedRole, selectRole, Name, getProfileId, updateProfileUid, setAuthData, setLoggedIn, } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
-  const { userID } = useParams();
-  console.log("ROHIT - userID from params - ", userID);
+  const { userID } = useParams();  
 
   
   
@@ -267,9 +266,9 @@ export default function ReferralGoogleSignup({}) {
     }
   }, [getAuthorizationCode]);
 
-  useEffect(() => {
-    console.log("ROHIT - userInfo - ", userInfo);
-  }, [userInfo]);
+  // useEffect(() => {
+  //   console.log("userInfo - ", userInfo);
+  // }, [userInfo]);
 
   // Update userInfo object whenever input values change
   useEffect(() => {
@@ -304,11 +303,9 @@ export default function ReferralGoogleSignup({}) {
 
   const getDetailsAfterGoogleSignup = () => {
     setShowSpinner(true);
-    axios.get(`http://localhost:4000/userInfo/${userID}`).then((res) => { //rohit
-    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${userID}`).then((res) => {
+    // axios.get(`http://localhost:4000/userInfo/${userID}`).then((res) => {
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${userID}`).then((res) => {
       const data = res.data?.result[0];
-      console.log("ROHIT - userInfo - data - ", data);
-      console.log("ROHIT - googleUserInfo - data - ", googleUserInfo);
       
       setFirstName(googleUserInfo?.first_name);
       setLastName(googleUserInfo?.last_name);
@@ -387,15 +384,14 @@ export default function ReferralGoogleSignup({}) {
     };
     
     
-    // const response = await axios.put(
-    //   "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
-    //   payload
-    // );
-    //rohit
     const response = await axios.put(
-      "http://localhost:2000/api/v2/UserSocialSignUp/MYSPACE", //rohit
+      "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE", 
       payload
-    );        
+    );  
+    // const response = await axios.put(
+    //   "http://localhost:2000/api/v2/UserSocialSignUp/MYSPACE",
+    //   payload
+    // );        
 
     if (response.data.message === "User details updated") {                
 
@@ -407,8 +403,8 @@ export default function ReferralGoogleSignup({}) {
       // const openingRole = role.split(",")[0];      
       // const { dashboardUrl } = roleMap[openingRole];
       // localStorage.setItem('signedUpWithReferral', 'true');                      
-      // navigate(dashboardUrl); //rohit - uncomment        
-      // // navigate(`/onboardingRouter`, { state: { isPrivate:false } }); // rohit - navigate to dashboard
+      // navigate(dashboardUrl); 
+      // // navigate(`/onboardingRouter`, { state: { isPrivate:false } }); 
 
 
       if(userInfo.role === "MANAGER" || userInfo.role === "MAINTENANCE" || userInfo.role === "OWNER" || userInfo.role === "TENANT"){ 
@@ -418,7 +414,7 @@ export default function ReferralGoogleSignup({}) {
         await createEmployee();
       }
       getAuthorizationCode();
-      // navigate(`/onboardingRouter`, { state: { isPrivate:false } });        //rohit 
+      // navigate(`/onboardingRouter`, { state: { isPrivate:false } });       
     } else {
       
       alert(response.data.message);        
@@ -478,12 +474,10 @@ export default function ReferralGoogleSignup({}) {
     return form;
   };  
 
-  const createProfile = async () => {
-    console.log("ROHIT - in createProfile ");
+  const createProfile = async () => {    
     setShowSpinner(true);
     const payload = getProfilePayload(userInfo?.role);
-    const form = encodeForm(payload);
-    console.log("ROHIT - profile form data - ");
+    const form = encodeForm(payload);   
     for (var pair of form.entries()) {
       console.log(pair[0]+ ', ' + pair[1]); 
     }
@@ -510,14 +504,12 @@ export default function ReferralGoogleSignup({}) {
 
     }
     
-    // const { dashboardUrl } = roleMap[userInfo.role]
-    // console.log("ROHIT - ReferralSignupPassword - navigating to - ", dashboardUrl);
+    // const { dashboardUrl } = roleMap[userInfo.role]    
     // // navigate(dashboardUrl);
     setShowSpinner(false);
   };
 
-  const createEmployee = async () => {
-    //rohit - from PersonalInfo.js
+  const createEmployee = async () => {    
     setShowSpinner(true);
     const payload = {
       employee_user_id: userInfo.userID,
@@ -596,8 +588,8 @@ export default function ReferralGoogleSignup({}) {
                 };
                 console.log(JSON.stringify(loginObject));
                 axios
-                  // .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject) //rohit
-                  .post("http://localhost:2000/api/v2/Login/MYSPACE", loginObject)
+                  .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject) 
+                  // .post("http://localhost:2000/api/v2/Login/MYSPACE", loginObject)
                   .then((response) => {
                     console.log(response.data.message);
                     const { message, result } = response.data;
@@ -615,7 +607,7 @@ export default function ReferralGoogleSignup({}) {
                       setLoggedIn(true);
                       const { dashboardUrl } = roleMap[openingRole];
                       localStorage.setItem('signedUpWithReferral', 'true');                      
-                      // navigate(dashboardUrl); //rohit - uncomment
+                      // navigate(dashboardUrl);
                     }
                   })
                   .catch((err) => {

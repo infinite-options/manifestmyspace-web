@@ -26,9 +26,9 @@ function SelectRole() {
   const [roles, setRoles] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
 
-  useEffect(() => {
-    console.log("ROHIT - roles - ", roles);
-  }, [roles]);
+  // useEffect(() => {
+  //   console.log("SelectRole - roles - ", roles);
+  // }, [roles]);
 
   const handleNextStep = async () => {
     if (roles.length === 0) {
@@ -46,15 +46,10 @@ function SelectRole() {
       roles,
     });
     if (user.isEmailSignup) {
-      // const response = await axios.post(
-      //   "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
-      //   payload
-      // );
-      //rohit
       const response = await axios.post(
-        "http://localhost:2000/api/v2/CreateAccount/MYSPACE",
+        "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
         payload
-      );
+      );            
       if (response.data.message === "User already exists") {
         alert(response.data.message);
         return;

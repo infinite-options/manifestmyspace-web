@@ -31,8 +31,7 @@ function OwnerProfile() {
         const num3 = data.slice(6);
         return `(${num1}) ${num2} - ${num3}`;
     }
-    function getSSNText(data) {
-        console.log("ROHIT - getSSNText - data - ", data);
+    function getSSNText(data) {        
         if(data == undefined) {
             return '***-**-****';
         }

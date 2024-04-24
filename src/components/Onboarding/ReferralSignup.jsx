@@ -76,8 +76,7 @@ export default function ReferralSignup({}) {
   const { isGoogleSignup, googleUserInfo } = location.state || {};  
   const { user, selectedRole, selectRole, Name, getProfileId } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
-  const { userID } = useParams();
-  console.log("ROHIT - userID from params - ", userID);
+  const { userID } = useParams();  
 
   
   
@@ -98,9 +97,9 @@ export default function ReferralSignup({}) {
 
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
 
-  useEffect(() => {
-    console.log("ROHIT - userInfo - ", userInfo);
-  }, [userInfo]);
+  // useEffect(() => {
+  //   console.log("userInfo - ", userInfo);
+  // }, [userInfo]);
 
   // Update userInfo object whenever input values change
   useEffect(() => {
@@ -136,10 +135,9 @@ export default function ReferralSignup({}) {
 
   useEffect(() => {
     setShowSpinner(true);
-    axios.get(`http://localhost:4000/userInfo/${userID}`).then((res) => { //rohit
-    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${userIDParam}`).then((res) => {
-      const data = res.data?.result[0];
-      console.log("ROHIT - userInfo - data - ", data);
+    // axios.get(`http://localhost:4000/userInfo/${userID}`).then((res) => { 
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${userID}`).then((res) => {
+      const data = res.data?.result[0];     
       
       setFirstName(data.first_name? data.first_name : "");
       setLastName(data.last_name? data.last_name : "");
@@ -182,77 +180,6 @@ export default function ReferralSignup({}) {
     console.log("handleBackButton");
     navigate(-1);
   };
-
-  
-  //rohit - delete later
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
-//     if (role.length === 0) {
-//       alert("Please select a role");
-//       return;
-//     }
-//     setShowSpinner(true);
-//     // const role = roles.join(",");
-//     const payload = {
-//       "first_name" : firstName,
-//       "last_name" : lastName,
-//       "phone_number" : phoneNumber,
-//       "email": email,
-//       "password": `referred by ${getProfileId()}`,
-//       "role": role,
-//       "isEmailSignup": true,      
-//     };
-    
-//     // setOnboardingState({
-//     //   ...onboardingState,
-//     //   roles,
-//     // });
-//     const isEmailSignup = true
-//     if (isEmailSignup) {
-//       const response = await axios.post(
-//         "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
-//         payload
-//       );
-//       if (response.data.message === "User already exists") {
-//         alert(response.data.message);
-//         return;
-//       } else {
-//         // setAuthData(response.data.result);
-//         setShowSpinner(false);
-//         const userUID = response.data.result?.user?.user_uid;
-//         console.log("ROHIT - userUID - ", userUID);
-//         const link = `localhost:3000/referralSignup/${userUID}`
-//         const emailPayload = {
-//             "receiver": email,
-//             "email_subject": `You have been invited to join ManifestMySpace`,
-//             "email_body": message + `Please sign up using the link - ${link? link : "LINK-TO-SIGNUP"}`,
-//         }
-//         const emailResponse = await axios.post(
-//             "http://localhost:4000/sendEmail",
-//             emailPayload
-//         );
-
-
-//         // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
-//       }
-//     } else {
-//         console.log("ROHIT - google signup");
-//         //google signup
-//     //   const response = await axios.post(
-//     //     "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE",
-//     //     payload
-//     //   );
-//     //   const userData = response.data;
-//     //   if (userData.message === "User already exists") {
-//     //     setUserAlreadyExists(!userAlreadyExists);
-//     //     return;
-//     //   } else {
-//     //     setAuthData(response.data.result);
-//     //     setShowSpinner(false);
-//     //     navigate(`/onboardingRouter`, { state: { isPrivate:false } });
-//     //   }
-//     }
-//   };
 
   const handleSignup = () => {
     setCookie("default_form_vals", {...cookiesData, firstName, lastName, phoneNumber, email });

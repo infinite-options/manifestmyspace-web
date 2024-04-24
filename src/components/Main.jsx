@@ -122,7 +122,6 @@ import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
 import NewUser from "./Onboarding/NewUser";
-import NewUserReferred from "./Onboarding/NewUserReferred"; //rohit - remove
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
@@ -133,6 +132,7 @@ import ReferralSignupPassword from "./Onboarding/ReferralSignupPassword";
 import ReferralGoogleSignup from "./Onboarding/ReferralGoogleSignup";
 
 import ReferUser from "./Referral/ReferUser";
+import EmployeeAccess from "./Referral/EmployeeAccess";
 
 import SelectRole from "./Onboarding/SelectRole";
 
@@ -183,8 +183,7 @@ function Main() {
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="newUser" element={<NewUser />} />
-            {/* <Route path="newUser/:userID" element={<NewUserReferred />} /> */} {/* rohit - remove */}
+            <Route path="newUser" element={<NewUser />} />            
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -350,6 +349,7 @@ function Main() {
             <Route path="profile/:id" element={<PublicProfile />} />
 
             <Route path="referUser" element={<ReferUser />} />
+            <Route path="employeeAccess" element={<EmployeeAccess />} />
           </Route>
         </Routes>
         <Footer />
