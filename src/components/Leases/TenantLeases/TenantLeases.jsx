@@ -28,16 +28,17 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import backButton from "../../Payments/backIcon.png";
 import theme from "../../../theme/theme";
 
-import APIConfig from "../../../utils/APIConfig"
+import APIConfig from "../../../utils/APIConfig";
 
 function TenantLeases(props) {
+  console.log("In Tenant Leases");
   const location = useLocation();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const [tenantLeases, setTenantLeases] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [property, setProperty] = useState(location.state.property);
-  const [status, setStatus] = useState(location.state.status);
+  const [status, setStatus] = useState([]);
   const [lease, setLease] = useState(location.state.lease);
   // const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
   // const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
@@ -52,7 +53,7 @@ function TenantLeases(props) {
   useEffect(() => {
     // console.log("property", property);
     // console.log("status", status);
-    // console.log("lease", lease);
+    console.log("lease", lease);
     // console.log("fees", fees);
 
     async function fetchData() {
@@ -66,17 +67,17 @@ function TenantLeases(props) {
         return;
       }
       const leaseData = await leaseResponse.json();
-    //   console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
-      const properties_with_details=leaseData.Lease_Details.result
-      let detailed_property=properties_with_details.filter(p=> p.lease_uid===lease.lease_uid)            
-      if (Array.isArray(detailed_property))
-      detailed_property=detailed_property[0]
-      console.log(detailed_property)
-      setPets(JSON.parse(detailed_property?.lease_pets) ?? [])
-      setVehicles(JSON.parse(detailed_property?.lease_vehicles) ?? [])
-      setAdultOccupants(JSON.parse(detailed_property?.lease_adults) ?? [])
-      setChildrenOccupants(JSON.parse(detailed_property?.lease_children) ?? [])
-      setFees(JSON.parse(detailed_property?.leaseFees) ?? [])
+      //   console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
+      const properties_with_details = leaseData.Lease_Details.result;
+      let detailed_property = properties_with_details.filter((p) => p.lease_uid === lease.lease_uid);
+      if (Array.isArray(detailed_property)) detailed_property = detailed_property[0];
+      console.log("Detailed Property: ", detailed_property);
+      setPets(JSON.parse(detailed_property?.lease_pets) ?? []);
+      setVehicles(JSON.parse(detailed_property?.lease_vehicles) ?? []);
+      setAdultOccupants(JSON.parse(detailed_property?.lease_adults) ?? []);
+      setChildrenOccupants(JSON.parse(detailed_property?.lease_children) ?? []);
+      setFees(JSON.parse(detailed_property?.leaseFees) ?? []);
+      setStatus(detailed_property?.lease_effective_date ?? []);
     }
 
     fetchData();
@@ -178,16 +179,26 @@ function TenantLeases(props) {
   }
 
   async function handleTenantAccept() {
+    console.log("Data we have1: ", lease);
+    console.log("Data we have2: ", property);
+    console.log("Data we have3: ", status);
+    console.log("Data we have4: ", pets);
+    // console.log("Lease Application Data1: ", leaseApplicationFormData);
+    // console.log("In handle Accept: ", detailed_property?.lease_effective_date);
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+    console.log("Lease Application Data2: ", leaseApplicationFormData);
 
     try {
       var status = "TENANT APPROVED";
       const date = new Date();
+      console.log("Date: ", date);
+      console.log("Lease Effective Date, ", lease.lease_effective_date);
 
-      if (lease.lease_effective_date < date) {
+      if (lease.lease_effective_date <= date) {
         status = "ACTIVE";
       }
+      console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", status);
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
@@ -284,7 +295,7 @@ function TenantLeases(props) {
     } else if (fee.frequency === "Monthly") {
       return `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month`;
     } else if (fee.frequency === "One-time" || fee.frequency === "Annually") {
-      return `${fee.due_by_date ?? 'No Due Date'}`;
+      return `${fee.due_by_date ?? "No Due Date"}`;
     } else {
       return "-";
     }
@@ -374,7 +385,7 @@ function TenantLeases(props) {
               </Typography>
             </CenteringBox>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <CenteringBox justify_content="flex-start">
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>Start Date</Typography>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
@@ -382,7 +393,7 @@ function TenantLeases(props) {
               </Typography>
             </CenteringBox>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <CenteringBox justify_content="flex-start">
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
                 Move In Date
@@ -392,7 +403,17 @@ function TenantLeases(props) {
               </Typography>
             </CenteringBox>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
+            <CenteringBox justify_content="flex-start">
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
+                Effective Date
+              </Typography>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
+                {lease.lease_effective_date ? lease.lease_effective_date : "No Effective Date"}
+              </Typography>
+            </CenteringBox>
+          </Grid>
+          <Grid item xs={3}>
             <CenteringBox justify_content="flex-start">
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>End Date</Typography>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
@@ -427,7 +448,7 @@ function TenantLeases(props) {
               </Typography>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
                 {/* {JSON.parse(lease.lease_vehicles).length} */}
-                {vehicles.length} 
+                {vehicles.length}
               </Typography>
             </CenteringBox>
           </Grid>
@@ -579,90 +600,95 @@ function TenantLeases(props) {
               </Typography>
             </CenteringBox>
           </Grid>
-
-          
         </Grid>
 
-        <Box sx={{
-            fontSize: '13px',
-            marginTop: '7px',
-            marginBottom: '7px',
-        }}>
-            {adultOccupants?.length ?? 0} Adults
+        <Box
+          sx={{
+            fontSize: "13px",
+            marginTop: "7px",
+            marginBottom: "7px",
+          }}
+        >
+          {adultOccupants?.length ?? 0} Adults
         </Box>
 
         {adultOccupants?.map((adult) => (
-            <Box sx={{
-            fontSize: '13px',
-            color: '#160449',
-            marginBottom: '7px', 
-        }}>
-                        {`${adult?.name} | ${adult?.relationship} | DOB: ${adult?.dob}`}
-                    </Box>
-                ))}
+          <Box
+            sx={{
+              fontSize: "13px",
+              color: "#160449",
+              marginBottom: "7px",
+            }}
+          >
+            {`${adult?.name} | ${adult?.relationship} | DOB: ${adult?.dob}`}
+          </Box>
+        ))}
 
-        
-        
-
-        <Box sx={{
-            fontSize: '13px',
-            marginTop: '7px',
-            marginBottom: '7px',
-        }}>
-            {childrenOccupants?.length ?? 0} Child
+        <Box
+          sx={{
+            fontSize: "13px",
+            marginTop: "7px",
+            marginBottom: "7px",
+          }}
+        >
+          {childrenOccupants?.length ?? 0} Child
         </Box>
         {childrenOccupants?.map((child) => (
-            <Box sx={{
-            fontSize: '13px',
-            color: '#160449',
-            marginBottom: '7px', 
-        }}>
-                        {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
-                    </Box>
-                ))}
+          <Box
+            sx={{
+              fontSize: "13px",
+              color: "#160449",
+              marginBottom: "7px",
+            }}
+          >
+            {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
+          </Box>
+        ))}
 
-        
-            
-        <Box sx={{
-            fontSize: '13px',
-            marginTop: '7px',
-            marginBottom: '7px',
-        }}>
-            {pets?.length ??  0} Pets
+        <Box
+          sx={{
+            fontSize: "13px",
+            marginTop: "7px",
+            marginBottom: "7px",
+          }}
+        >
+          {pets?.length ?? 0} Pets
         </Box>
-        
-            {pets?.map((pet) => (
-                <Box sx={{
-            fontSize: '13px',
-            color: '#160449',
-            marginBottom: '7px', 
-        }}>
-                        {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
-                    </Box>
-                ))}
-    
-        <Box sx={{
-            fontSize: '13px',
-            marginTop: '7px',
-            marginBottom: '7px',
-        }}>
-            {vehicles?.length ?? 0} Vehicles
-        </Box>
-        
 
+        {pets?.map((pet) => (
+          <Box
+            sx={{
+              fontSize: "13px",
+              color: "#160449",
+              marginBottom: "7px",
+            }}
+          >
+            {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
+          </Box>
+        ))}
+
+        <Box
+          sx={{
+            fontSize: "13px",
+            marginTop: "7px",
+            marginBottom: "7px",
+          }}
+        >
+          {vehicles?.length ?? 0} Vehicles
+        </Box>
 
         {vehicles?.map((vehicle) => (
-            <Box sx={{
-            fontSize: '13px',
-            color: '#160449',
-            marginBottom: '7px', 
-        }}>
-                        {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
-                    </Box>
-                ))}  
-            
-            
-            
+          <Box
+            sx={{
+              fontSize: "13px",
+              color: "#160449",
+              marginBottom: "7px",
+            }}
+          >
+            {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
+          </Box>
+        ))}
+
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <CenteringBox>
@@ -711,12 +737,6 @@ function TenantLeases(props) {
             </CenteringBox>
           </Grid>
         </Grid>
-
-      
-        
-        
-
- 
       </Paper>
     </Box>
   );

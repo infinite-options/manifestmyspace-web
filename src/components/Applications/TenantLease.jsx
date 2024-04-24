@@ -99,19 +99,21 @@ const initialFees = (property, application) => {
   return fees;
 };
 
-const TenantLease = () => {  
+const TenantLease = () => {
+  console.log("In Tenant Lease");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
+  console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
   const [endDate, setEndDate] = useState(application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
   const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
 
   const [noOfOccupants, setNoOfOccupants] = useState(JSON.parse(application.lease_adults).length + JSON.parse(application.lease_children).length);
-  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period? application.lease_end_notice_period : 0);
+  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 0);
 
   console.log("# of Occupants", noOfOccupants);
 
@@ -142,6 +144,7 @@ const TenantLease = () => {
       } else if (application?.lease_status === "NEW") {
         feesList = initialFees(property, application);
       }
+      console.log("Fees: ", feesList);
 
       let i = 0;
       feesList.forEach((fee) => {
@@ -457,6 +460,7 @@ const TenantLease = () => {
 
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
     leaseApplicationFormData.append("lease_status", "PROCESSING");
+    leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
     leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
     leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
     leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
@@ -499,13 +503,13 @@ const TenantLease = () => {
     //     method: "PUT",
     //     body: leaseApplicationFormData
     //   }
-    // ); 
+    // );
     await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
       body: leaseApplicationFormData,
     });
 
-    const receiverPropertyMapping = {            
+    const receiverPropertyMapping = {
       [application.tenant_uid]: [property.property_uid],
     };
 
@@ -520,7 +524,7 @@ const TenantLease = () => {
         announcement_sender: getProfileId(),
         announcement_date: new Date().toDateString(),
         // announcement_properties: property.property_uid,
-        announcement_properties: JSON.stringify(receiverPropertyMapping),        
+        announcement_properties: JSON.stringify(receiverPropertyMapping),
         announcement_mode: "LEASE",
         announcement_receiver: [application.tenant_uid],
         announcement_type: ["Text", "Email"],
@@ -842,7 +846,7 @@ const TenantLease = () => {
               />
             </Stack>
           </Grid>
-          
+
           <Grid item xs={12}>
             <hr />
           </Grid>
