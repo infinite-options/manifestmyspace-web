@@ -37,10 +37,10 @@ const RequestQuotes = () => {
   const { getProfileId } = useUser();
   const profileId = getProfileId();
   const [ownerId, setOwnerId] = useState(getProfileId());
-  
-  const [announcementTitle, setAnnouncementTitle] = useState('');
-  const [announcementMsg, setAnnouncementMsg] = useState('');
-  
+
+  const [announcementTitle, setAnnouncementTitle] = useState("");
+  const [announcementMsg, setAnnouncementMsg] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
@@ -60,7 +60,7 @@ const RequestQuotes = () => {
     }
 
     if (selectedProperties.includes(checkedProperty)) {
-      setSelectedProperties(selectedProperties.filter(property => property !== checkedProperty));
+      setSelectedProperties(selectedProperties.filter((property) => property !== checkedProperty));
     } else {
       setSelectedProperties([...selectedProperties, checkedProperty]);
     }
@@ -78,27 +78,27 @@ const RequestQuotes = () => {
     }
 
     const currentDate = new Date();
-    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
-   
+    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+
     let announcement_data = JSON.stringify({
-      "announcement_title": announcementTitle,
-      "announcement_msg": announcementMsg, 
-      "announcement_sender": ownerId,
-      "announcement_date": formattedDate,
-      "announcement_properties": selectedProperties,
-      "announcement_mode": "CONTRACT",
-      "announcement_receiver": [managerData.business_uid],
-      "announcement_type": ["App"],
+      announcement_title: announcementTitle,
+      announcement_msg: announcementMsg,
+      announcement_sender: ownerId,
+      announcement_date: formattedDate,
+      announcement_properties: selectedProperties,
+      announcement_mode: "CONTRACT",
+      announcement_receiver: [managerData.business_uid],
+      announcement_type: ["App"],
     });
-    
+
     let config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
       url: `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${ownerId}`,
-      headers: { 
-        'Content-Type': 'application/json'
+      headers: {
+        "Content-Type": "application/json",
       },
-      data: announcement_data
+      data: announcement_data,
     };
 
     try {
@@ -108,39 +108,37 @@ const RequestQuotes = () => {
       console.log(error);
     }
 
-
     // Prepare form data for contracts endpoint
     const formData = new FormData();
 
     // Stringify the array and append it as a single value
-    formData.append("contract_property_ids", JSON.stringify(selectedProperties)); 
+    formData.append("contract_property_ids", JSON.stringify(selectedProperties));
 
     // Append other required fields
     formData.append("contract_business_id", managerData.business_uid);
     formData.append("contract_start_date", formattedDate);
     formData.append("contract_status", "NEW");
 
-
-    const url = `${APIConfig.baseURL.dev}/contracts`; 
+    const url = `${APIConfig.baseURL.dev}/contracts`;
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
       console.log("Data added successfully");
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
+      console.error("There was a problem with the fetch operation:", error);
     }
 
-    navigate("/propertyDetail", { 
+    navigate("/propertyDetail", {
       state: {
         propertyList: propertyData,
         index: index,
-      }
+      },
     });
   };
 
@@ -188,13 +186,13 @@ const RequestQuotes = () => {
             >
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   paddingLeft: "5px",
                 }}
                 onClick={() => navigate(-1)}
               >
-                <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }}  alt="back" />
+                <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -229,9 +227,9 @@ const RequestQuotes = () => {
               sx={{
                 position: "relative",
                 backgroundColor: "background.gray",
-                paddingBottom: "5%"
+                paddingBottom: "5%",
               }}
-            > 
+            >
               <Box
                 sx={{
                   padding: "13px",
@@ -242,45 +240,45 @@ const RequestQuotes = () => {
               >
                 <Grid container columnSpacing={12} rowSpacing={6}>
                   <Grid item xs={12}>
-                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont}}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                       Title
                     </Typography>
-                    <TextField 
+                    <TextField
                       fullWidth
                       sx={{
-                        backgroundColor: 'white',
-                        borderColor: 'black',
-                        borderRadius: '7px',
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "7px",
                       }}
-                      size="small"  
-                      multiline={true} 
+                      size="small"
+                      multiline={true}
                       onChange={handleTitleChange}
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont}}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                       Message
                     </Typography>
-                    <TextField 
+                    <TextField
                       fullWidth
                       sx={{
-                        backgroundColor: 'white',
-                        borderColor: 'black',
-                        borderRadius: '7px',
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "7px",
                       }}
-                      size="small"  
-                      multiline={true} 
+                      size="small"
+                      multiline={true}
                       onChange={handleMsgChange}
                     />
                   </Grid>
                 </Grid>
               </Box>
-              <Box sx={{padding: '10px'}}></Box>
-              <Box 
+              <Box sx={{ padding: "10px" }}></Box>
+              <Box
                 sx={{
-                  height: "195px", 
+                  height: "195px",
                   overflow: "auto",
-                  paddingBottom: '20px'
+                  paddingBottom: "20px",
                 }}
               >
                 <Box
@@ -289,14 +287,11 @@ const RequestQuotes = () => {
                     backgroundColor: "#D6D5DA",
                     borderRadius: "10px",
                     justifyContent: "center",
-                    marginBottom: '20px',
+                    marginBottom: "20px",
                   }}
                 >
                   {properties.map((property) => (
-                    <Box 
-                      key={property.property_uid} 
-                      sx={{ paddingBottom: "10px" }}
-                    >
+                    <Box key={property.property_uid} sx={{ paddingBottom: "10px" }}>
                       <Box
                         sx={{
                           backgroundColor: "#FFFFFF",
@@ -305,16 +300,9 @@ const RequestQuotes = () => {
                           fontSize: "13px",
                           display: "flex",
                         }}
-                      >     
-                        <Checkbox 
-                          sx={{ color: theme.typography.common.blue }} 
-                          name={property.property_uid} 
-                          onChange={handlePropertyCheck} 
-                          checked={determineChecked(property)}
-                        />  
-                        <Typography sx={{paddingTop:"2%"}}>
-                          {propertyDisplayValue =   property.property_address + " #" + property.property_unit} 
-                        </Typography>
+                      >
+                        <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} checked={determineChecked(property)} />
+                        <Typography sx={{ paddingTop: "2%" }}>{(propertyDisplayValue = property.property_address + " #" + property.property_unit)}</Typography>
                       </Box>
                     </Box>
                   ))}
