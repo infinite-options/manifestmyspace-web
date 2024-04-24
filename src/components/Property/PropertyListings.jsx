@@ -508,12 +508,16 @@ const PropertyListings = (props) => {
 
 function PropertyCard(props) {
   const navigate = useNavigate();
+  console.log("Props in PropertyListing.jsx: ", props);
 
   const [status, setStatus] = useState(props.status);
+  console.log("Status in PropertyListing.jsx: ", status);
 
   const [lease, setLease] = useState(props.leaseData || {});
+  console.log("Lease in PropertyListing.jsx: ", lease);
 
   const property = props.data;
+  console.log("Property in PropertyListing.jsx: ", property);
 
   const propertyImages = property?.property_images || "";
   const ppt_images = propertyImages.split(",");

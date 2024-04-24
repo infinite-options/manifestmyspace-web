@@ -67,9 +67,16 @@ function TenantLeases(props) {
         return;
       }
       const leaseData = await leaseResponse.json();
-      //   console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
+      console.log("leaseData.Lease_Details.result", leaseData);
+      console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
+
       const properties_with_details = leaseData.Lease_Details.result;
+      console.log("properties_with_details", properties_with_details);
+
       let detailed_property = properties_with_details.filter((p) => p.lease_uid === lease.lease_uid);
+      console.log("Lease: ", lease);
+      console.log("detailed_property", detailed_property);
+
       if (Array.isArray(detailed_property)) detailed_property = detailed_property[0];
       console.log("Detailed Property: ", detailed_property);
       setPets(JSON.parse(detailed_property?.lease_pets) ?? []);
@@ -223,6 +230,8 @@ function TenantLeases(props) {
 
     const sendAnnouncement = async () => {
       try {
+        console.log("Announcements ID: ", property);
+        console.log("Announcements ID: ", property.contract_business_id);
         const receiverPropertyMapping = {
           [property.contract_business_id]: [property.property_uid],
         };
