@@ -15,6 +15,11 @@ import PropertyRentWidget from "./Dashboard-Components/PropertyRent/PropertyRent
 import LeaseWidget from "./Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import { makeStyles } from "@material-ui/core";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import APIConfig from "../utils/APIConfig";
@@ -62,6 +67,8 @@ export default function OwnerDashboard() {
     ["paid on time", 36],
   ];
 
+  const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
+
   useEffect(() => {
     const dataObject = {};
     const fetchData = async () => {
@@ -81,6 +88,11 @@ export default function OwnerDashboard() {
       setShowSpinner(false);
     };
     fetchData();
+    const signedUpWithReferral = localStorage.getItem('signedUpWithReferral');
+    if (signedUpWithReferral && signedUpWithReferral === 'true') {
+      setShowReferralWelcomeDialog(true);      
+      localStorage.removeItem('signedUpWithReferral');
+    }
   }, []);
 
   // RETURN statement has HTML, CSS and uses all the DATA
@@ -163,6 +175,38 @@ export default function OwnerDashboard() {
         </div>
         <br />
       </div>
+      {/* } */}
+      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        {/* <DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle> */}
+        <DialogContent>                
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.common.fontWeight,
+              paddingTop: "10px",
+            }}
+          >
+            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need to add additional details such as your SSN and address. Thank you!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
+          <Button
+            onClick={() => setShowReferralWelcomeDialog(false)}
+            sx={{
+              color: "white",
+              backgroundColor: "#3D5CAC80",
+              ":hover": {
+                backgroundColor: "#3D5CAC",
+              },
+            }}
+            autoFocus
+          >
+            OK
+          </Button>          
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 }

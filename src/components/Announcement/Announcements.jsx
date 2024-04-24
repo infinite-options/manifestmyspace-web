@@ -7,7 +7,7 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import { useNavigate, useLocation,} from 'react-router-dom';
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
@@ -20,6 +20,8 @@ export default function Announcements() {
     const [announcementData, setAnnouncementData] = useState([]);
     const [sentData, setSentData] = useState([]);
     const [receivedData, setReceivedData] = useState([]);
+    const [filteredSentData, setFilteredSentData] = useState([]);
+    const [filteredReceivedData, setFilteredReceivedData] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const navigate = useNavigate();
     // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
@@ -29,9 +31,24 @@ export default function Announcements() {
     const [showAnnouncement, setShowAnnouncement] = useState(false);
     const [annData, setAnnData] = useState("");
 
-    // useEffect(() => {
-    //     console.log("receivedData - ", receivedData);
-    // }, [receivedData]);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+
+        if (searchTerm === "") {
+            setFilteredSentData(sentData);
+            setFilteredReceivedData(receivedData);
+        } else {
+            setFilteredSentData(sentData.filter(announcement =>
+                announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())
+            ));
+            setFilteredReceivedData(receivedData.filter(announcement =>
+                announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())
+            ));
+        }
+
+        
+    }, [searchTerm, sentData, receivedData]);
     
     const result =[
         {
@@ -179,33 +196,33 @@ export default function Announcements() {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <div className="announcement-title">
-                <div className="announcement-title-icon">
-                    <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M8.2963 0.75C8.2963 0.335786 8.63208 0 9.0463 0H18.213C18.6272 0 18.963 0.335786 18.963 0.75V1.02778C18.963 1.44199 18.6272 1.77778 18.213 1.77778H9.0463C8.63208 1.77778 8.2963 1.44199 8.2963 1.02778V0.75ZM0 7.86111C0 7.4469 0.335786 7.11111 0.75 7.11111H18.213C18.6272 7.11111 18.963 7.4469 18.963 7.86111V8.13889C18.963 8.5531 18.6272 8.88889 18.213 8.88889H0.75C0.335786 8.88889 0 8.5531 0 8.13889V7.86111ZM0.75 14.2222C0.335786 14.2222 0 14.558 0 14.9722V15.25C0 15.6642 0.335787 16 0.750001 16H9.91667C10.3309 16 10.6667 15.6642 10.6667 15.25V14.9722C10.6667 14.558 10.3309 14.2222 9.91667 14.2222H0.75Z" fill="#160449" />
-                    </svg>
-                </div>
-                <div className="announcement-title-text">
-                    {"Notifications"}
-                </div>
-                <div className="announcement-title-emptybox" />
-            </div>
-            <hr />
-            {/* <div className="announcement-location">
-                <div className="announcement-location-icon">
-                    <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="14.5" cy="14.5" r="14.5" fill="#D9D9D9" />
-                    </svg>
-                </div>
-                <div className="announcement-location-text">
-                    103 N. Abel St unit #104
-                </div>
-            </div> */}
-            <div className="announcement-searchbar-container">
-                <Searchbar />
+            <Box 
+                className="announcement-title" 
+                sx={{                    
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                    width: "100%",
+
+                }}
+            >
+                
+                <Box 
+                    className="announcement-title-text"
+                    sx={{
+                        width:"95%",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Box className="announcement-title-text">
+                        {"Announcements"}
+                    </Box>
+                </Box>
                 <Box
                     sx={{
-                        width: "10%",
+                        width: "5%",
                         height: "30px",
                         paddingTop: "15px",
                         paddingBottom: "5px",
@@ -231,7 +248,37 @@ export default function Announcements() {
                         >              
                         +
                     </Button>
-                </Box>
+                </Box>                
+            </Box>
+            <hr />
+            {/* <div className="announcement-location">
+                <div className="announcement-location-icon">
+                    <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14.5" cy="14.5" r="14.5" fill="#D9D9D9" />
+                    </svg>
+                </div>
+                <div className="announcement-location-text">
+                    103 N. Abel St unit #104
+                </div>
+            </div> */}
+            <div className="announcement-searchbar-container">
+                {/* <Searchbar /> */}
+                <div className="announcement-searchbar-container">
+                    <TextField
+                        type="small"                        
+                        placeholder="Search announcements..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        sx={{
+                            width: "80%",
+                            marginTop: "10px",
+                            '& input': {
+                                height: '20px',
+                                padding: '5px',
+                            }
+                        }}
+                    />
+                </div>
             </div>
             <div className="announcement-menu-container">
                 <div className="announcement-menu-bar">
@@ -262,8 +309,8 @@ export default function Announcements() {
                 </div>
                 <div style={{width:"100%", height: "220px", overflow: "auto"}}>
                  <div className="announcement-list-container">
-                    {receivedData.length > 0 ? (
-                        receivedData.map((announcement, i) =>{
+                    {filteredReceivedData.length > 0 ? (
+                        filteredReceivedData.map((announcement, i) =>{
                             let role=announcement?.sender_role
                             let pageToNavigate;
                             let navigationParams;
@@ -297,8 +344,8 @@ export default function Announcements() {
                 </div>
                 <div style={{width:"100%", height: "150px", overflow: "auto"}}>
                  <div className="announcement-list-container">
-                    {sentData.length > 0 ? (
-                        sentData.map((announcement, i) => {
+                    {filteredSentData.length > 0 ? (
+                        filteredSentData.map((announcement, i) => {
                             let role=announcement?.receiver_role
                             let pageToNavigate;
                             let navigationParams;
@@ -340,7 +387,9 @@ export default function Announcements() {
                 annData={annData} 
                 sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
             />
-             <Box sx={{paddingBottom:"10%", width: "100%", marginLeft: "10%", marginRight: "10%"}}></Box>
+             <Box sx={{paddingBottom:"10%", width: "100%", marginLeft: "20px", marginRight: "20px"}}></Box>
+             
+             
         </div>
     );
 }

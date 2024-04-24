@@ -32,8 +32,8 @@ function OwnerProfile() {
         return `(${num1}) ${num2} - ${num3}`;
     }
 
-    function getSSNText(data) {
-            if (data === undefined) {
+    function getSSNText(data) {        
+            if (data == undefined) {
                 return '***-**-****';
             }
             const decryptedSSN = CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
