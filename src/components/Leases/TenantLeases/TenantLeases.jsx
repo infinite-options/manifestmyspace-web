@@ -38,7 +38,7 @@ function TenantLeases(props) {
   const [tenantLeases, setTenantLeases] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [property, setProperty] = useState(location.state.property);
-  const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState("01-01-2024");
   const [lease, setLease] = useState(location.state.lease);
   // const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
   // const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
@@ -190,16 +190,23 @@ function TenantLeases(props) {
     console.log("Lease Application Data2: ", leaseApplicationFormData);
 
     try {
-      var status = "TENANT APPROVED";
+      var lease_status = "TENANT APPROVED";
+      // var status = "TENANT APPROVED";
       const date = new Date();
       console.log("Date: ", date);
-      console.log("Lease Effective Date, ", lease.lease_effective_date);
+      console.log("Lease Effective Date, ", status);
+      const [month, day, year] = status.split("-").map(Number);
+      const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
+      console.log("Lease Effective Date, ", leaseDate);
 
-      if (lease.lease_effective_date <= date) {
-        status = "ACTIVE";
+      if (leaseDate <= date) {
+        lease_status = "ACTIVE";
+        console.log("Lease Status Changed: ", lease_status);
+        // if (lease.lease_effective_date <= date) {
+        // status = "ACTIVE";
       }
       console.log("Status: ", status);
-      leaseApplicationFormData.append("lease_status", status);
+      leaseApplicationFormData.append("lease_status", lease_status);
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
