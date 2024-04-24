@@ -115,8 +115,6 @@ export default function QuoteAcceptForm(){
 
             formData.append("maintenance_quote_uid", maintenanceQuotes[currentQuoteIndex]?.maintenance_quote_uid);
             formData.append("quote_status", quoteStatusParam);
-            // formData.append("maintenance_assigned_business", maintenanceQuotes[currentQuoteIndex]?.quote_business_id)
-            // maintenanceQuotes[currentQuoteIndex]?.quote_business_id
 
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
@@ -127,8 +125,6 @@ export default function QuoteAcceptForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    // navigate("/maintenance")
-                    // navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                     assignMaintenanceRequest(maintenanceQuotes[currentQuoteIndex]?.quote_business_id, maintenanceItem.maintenance_request_uid)
                 }
             } catch (error){
@@ -142,26 +138,18 @@ export default function QuoteAcceptForm(){
             var formData = new FormData();
             formData.append("maintenance_assigned_business", assigned_business);
             formData.append("maintenance_request_uid", request_uid);
+            formData.append("maintenance_request_status", "PROCESSING");
 
             try {
                 console.log("trying to put maintenance assigned business", formData)
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     body: formData
-                    
-                    // JSON.stringify({
-                    //     "maintenance_assigned_business": assigned_business,
-                    //     "maintenance_request_uid": request_uid
-                    // })
                 });            
                 let responseData = await response.json();
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    // navigate("/maintenance")
                     navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                 } else {
                     console.log("error changing maintenance assigned business")

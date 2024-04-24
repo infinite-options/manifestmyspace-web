@@ -72,15 +72,21 @@ export default function CompleteButton(props){
                     // PM is completing the ticket and the quote
                     console.log("PM is completing the ticket and the quote")
                     CompleteTicket(id)
-                    FinishQuote(rankedQuote.maintenance_quote_uid)                        
+                    if (maintenanceItem.quote_status_ranked !== "FINISHED"){
+                        FinishQuote(rankedQuote.maintenance_quote_uid)                        
+                    }
                 }
             } else if (maintenanceItem.maintenance_assigned_business === null){
                 // it's handled by the property manager
+                console.log('[BUG] THIS SHOULD NOT HAPPEN')
             }
         } else if (role === "Maintenance" || role === "Maintenance Employee"){
             // handle maintenance side
             console.log("Maintenance", maintenanceItem.maintenance_quote_uid)
             FinishQuote(maintenanceItem.maintenance_quote_uid)
+            if (maintenanceItem.maintenance_assigned_business === getProfileId()){
+                CompleteTicket(id)
+            }
         } else {
             console.log("not supported role is trying to complete a ticket")
         }
