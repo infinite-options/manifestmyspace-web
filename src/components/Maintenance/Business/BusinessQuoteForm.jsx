@@ -227,12 +227,14 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         return hours * rate
     }
 
+
+
     function compileExpenseObject(){
         let expenseObject = {
             "per Hour Charge": rate,
             "event_type": jobType,
             "service_name": "Labor",
-            "parts": partsObject,
+            "parts": partsObject.length === 1 && partsObject[0].part === "" ? [] : partsObject,
             "labor": [{
                 "description": "",
                 "hours": hours,

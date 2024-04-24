@@ -35,7 +35,7 @@ import APIConfig from "../../../utils/APIConfig";
 
 export default function NewRequestAction({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
-    const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+    const { maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
     const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -63,6 +63,9 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             formData.append("maintenance_scheduled_date", date); 
             formData.append("maintenance_scheduled_time", time);
             formData.append("maintenance_request_status", "SCHEDULED");
+            if (!maintenanceItem.maint_business_uid){
+                formData.append("maintenance_assigned_business", getProfileId());
+            }
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',

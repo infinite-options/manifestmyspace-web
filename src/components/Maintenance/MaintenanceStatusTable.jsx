@@ -258,9 +258,6 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
                             handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
                         }}
                         getRowClassName={(params) => {
-                            // if (params.row.maintenance_request_status === 'SCHEDULED' && params.row.quote_status !== 'ACCEPTED' && params.row.quote_status !== 'SCHEDULED' && params.row.quote_status !== 'FINISHED'){
-                            //     console.log("params", params.row)
-                            // }
                             return (
                                 ['SCHEDULED', 'COMPLETED', 'PAID'].includes(params.row.maintenance_request_status) &&
                                 !['ACCEPTED', 'SCHEDULED', 'FINISHED'].includes(params.row.quote_status)
