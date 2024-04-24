@@ -10,7 +10,9 @@ const GOOGLE_LOGIN = process.env.REACT_APP_GOOGLE_LOGIN;
 let SCOPES =
   "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile email";
 
-const GoogleSignup = () => {
+const GoogleSignup = (props) => {
+  const { isReferral } = props;
+  const { userID } = props || {};  
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [socialId, setSocialId] = useState("");
@@ -104,11 +106,15 @@ const GoogleSignup = () => {
                         access_expires_in: String(ax),
                         phone_number: "",
                       };
-                      navigate("/selectRole", {
-                        state: {
-                          user: user,
-                        },
-                      });
+                      if (isReferral) {                        
+                        navigate(`/referralGoogleSignup/${userID}`, { state: { googleUserInfo: user, } });
+                      } else {
+                        navigate("/selectRole", {
+                          state: {
+                            user: user,
+                          },
+                        });
+                      }
                     };
                     socialGoogle();
                   })
@@ -134,7 +140,7 @@ const GoogleSignup = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        paddingTop: "5%",
+        // paddingTop: "5%",
       }}
     >
       <div className="w-100">

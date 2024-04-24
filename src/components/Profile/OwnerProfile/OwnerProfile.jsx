@@ -32,7 +32,7 @@ function OwnerProfile() {
   }
 
   function getSSNText(data) {
-    if (data === undefined) {
+    if (data == undefined) {
       return "***-**-****";
     }
     const decryptedSSN = CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);

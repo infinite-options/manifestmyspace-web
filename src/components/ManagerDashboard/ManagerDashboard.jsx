@@ -18,6 +18,11 @@ import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import OwnerList from "./OwnerList";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -71,6 +76,8 @@ function ManagerDashboard() {
     ["vacant", 3],
     ["paid on time", 36],
   ];
+
+  const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
 
   // console.log("In Manager Dashboard Step 2");
   let [matrixData, setMatrixData] = useState([]);
@@ -167,6 +174,11 @@ function ManagerDashboard() {
     };
 
     emp_verification();}
+    const signedUpWithReferral = localStorage.getItem('signedUpWithReferral');
+    if (signedUpWithReferral && signedUpWithReferral === 'true') {
+      setShowReferralWelcomeDialog(true);      
+      localStorage.removeItem('signedUpWithReferral');
+    }
   }, []);
 
   // USE EFFECT gets all the data
@@ -360,6 +372,37 @@ function ManagerDashboard() {
         <br />
       </div>
       {/* } */}
+      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        {/* <DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle> */}
+        <DialogContent>                
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.common.fontWeight,
+              paddingTop: "10px",
+            }}
+          >
+            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need to add additional details such as your SSN and address. Thank you!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
+          <Button
+            onClick={() => setShowReferralWelcomeDialog(false)}
+            sx={{
+              color: "white",
+              backgroundColor: "#3D5CAC80",
+              ":hover": {
+                backgroundColor: "#3D5CAC",
+              },
+            }}
+            autoFocus
+          >
+            OK
+          </Button>          
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 }

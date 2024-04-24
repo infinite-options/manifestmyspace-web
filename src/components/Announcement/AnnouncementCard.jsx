@@ -1,6 +1,7 @@
 import { calculateAge } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from 'react-router-dom';
+import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 
 function AnnouncementCard(props) {
     const { selectedRole } = useUser();
@@ -11,8 +12,44 @@ function AnnouncementCard(props) {
         console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
     };
 
+    const getBorderColor = () => {      
+        // return data.sender_role === 'admin' ? 'blue' : 'green';
+        let color = "#3D5CAC"
+        const role = data.sender_role? data.sender_role : data.receiver_role;
+        switch(role){
+            case "Tenant": 
+                color =  "#3D5CAC";
+                break;
+            case "Owner": 
+                color =  "#A52A2A";
+                break;
+            case "Manager": 
+                color =  "#FFC614";
+                break;
+            case "Business": 
+                color =  "#FFC614";
+                break;
+            case "Maintenance": 
+                color =  "#FF8A00";
+                break;
+            default:
+                color = "#A9AAAB";
+                break;
+        }
+
+        return color;
+    };
+
     return (
         <div className="announcement-list-card" onClick={handleAnnouncements}>
+            <div className="announcement-list-card-picture-container">
+                <div className="announcement-list-card-picture" style={{ width: '40px', height: '40px', border: "4px solid transparent", borderRadius: "50%", borderColor: getBorderColor(), overflow: "hidden" }}>
+                    {data.sender_photo_url ?
+                        <img src={data.sender_photo_url} alt="Sender" className="announcement-list-card-profile-img" style={{ width: '100%', height: '100%', borderRadius: '50%' }} /> :
+                        <img src={DefaultProfileImg} alt="Default" className="announcement-list-card-profile-img" style={{ width: '100%', height: '100%', borderRadius: '50%'  }} />
+                    }
+                </div>
+            </div>
             <div className="announcement-list-card-text-container">
                 <div className="announcement-list-card-text-from">
                     {sent_or_received === 'Sent' ? ("To: " + data.announcement_receiver) : ("From: " + data.announcement_sender)}
