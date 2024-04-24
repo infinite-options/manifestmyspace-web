@@ -125,8 +125,34 @@ export default function QuoteAcceptForm(){
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    // navigate("/maintenance")
+                    assignMaintenanceRequest(maintenanceQuotes[currentQuoteIndex]?.quote_business_id, maintenanceItem.maintenance_request_uid)
+                }
+            } catch (error){
+                console.log("error", error)
+            }
+            setShowSpinner(false);
+        }
+
+        const assignMaintenanceRequest = async (assigned_business, request_uid) => {
+            setShowSpinner(true);
+            var formData = new FormData();
+            formData.append("maintenance_assigned_business", assigned_business);
+            formData.append("maintenance_request_uid", request_uid);
+            formData.append("maintenance_request_status", "PROCESSING");
+
+            try {
+                console.log("trying to put maintenance assigned business", formData)
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+                    method: 'PUT',
+                    body: formData
+                });            
+                let responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success")
                     navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
+                } else {
+                    console.log("error changing maintenance assigned business")
                 }
             } catch (error){
                 console.log("error", error)

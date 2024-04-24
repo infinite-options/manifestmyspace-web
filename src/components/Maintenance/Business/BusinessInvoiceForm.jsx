@@ -408,7 +408,8 @@ export default function BusinessInvoiceForm() {
   const [labor, setLabor] = useState([
     {
       description: "",
-      hours: costData.event_type,
+      // hours: costData.event_type,
+      hours: costData.event_type === "Fixed Bid" ? 1 : costData.event_type,
       charge: costData["per Hour Charge"],
     },
   ]);

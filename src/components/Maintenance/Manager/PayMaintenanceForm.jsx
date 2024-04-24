@@ -28,8 +28,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CreateChargeModal from "../../CreateChargeModal";
 
 import APIConfig from "../../../utils/APIConfig";
-
-import dayjs from "dayjs";
+import { useUser } from "../../../contexts/UserContext";
 
 export default function PayMaintenanceForm(){
 
@@ -43,6 +42,8 @@ export default function PayMaintenanceForm(){
     const [showSpinner, setShowSpinner] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [businessProfile, setBusinessProfile] = useState({});
+    const { getProfileId } = useUser();
+
     // const [amount, setAmount] = useState(props.maintenanceItem.bill_amount || '');
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
     let status = navigationParams.status
@@ -74,7 +75,19 @@ export default function PayMaintenanceForm(){
         } else {
             console.log("no business profile data yet")
         }
+        console.log("calling determinePayerAndPayee")
+        determinePayerAndPayee()
+        console.log("after determinePayerAndPayee")
     }, [maintenanceItem])
+
+    const determinePayerAndPayee = () => {
+        if(maintenanceItem.maintenance_assigned_business === getProfileId()){
+            console.log("Is current profile", maintenanceItem.maintenance_assigned_business, getProfileId())
+        }
+        if(maintenanceItem.maintenance_assigned_business !== getProfileId()){
+            console.log("Not current profile", maintenanceItem.maintenance_assigned_business)
+        }
+    }
 
 
     const handleSubmit = () => {
@@ -321,6 +334,17 @@ export default function PayMaintenanceForm(){
                         </Grid>
                     </Grid>
                     <Grid container spacing={3} sx={{paddingTop: "25px"}}>
+                        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.blue,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: '16px',
+                                }}
+                            >
+                            Should be paying {maintenanceItem.maintenance_assigned_business}
+                            </Typography>
+                        </Grid>
                         <Grid item xs={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Typography
                                 sx={{
@@ -357,7 +381,6 @@ export default function PayMaintenanceForm(){
                                     {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === 'FINISHED'
                                         ? `$${maintenanceItem.bill_amount}`
                                         : (
-                                            // maintenanceItem.bill_amount === null &&
                                                 maintenanceItem.quote_status !== 'FINISHED' && maintenanceItem.quote_status !== 'COMPLETED' &&
                                                 maintenanceItem.maintenance_request_status === 'COMPLETED' ? (
                                                     <Grid item xs={12}>

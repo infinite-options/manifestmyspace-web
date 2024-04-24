@@ -77,7 +77,7 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
     }
 
 
-    const handleSubmit = () => {
+    const handleSubmit = () => { // TODO: REMOVE BECAUSE IT ISN'T BEING CALLED
         console.log("handleSubmit")
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);

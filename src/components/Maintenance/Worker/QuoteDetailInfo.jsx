@@ -71,7 +71,7 @@ function LaborTableReadOnly({labor, setLabor}){
                     </Grid>
                     <Grid item xs={3}>
                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
-                            {laborItem.hours ? laborItem.hours : 1}
+                            {laborItem?.event_type === "Fixed Bid" ? "Fixed Bid" : (laborItem.hours ? laborItem.hours : 1)}
                         </Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -319,15 +319,31 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 </Typography>
             </Grid>
         </Grid>
-            
-        {labor.length > 0 ? <LaborTableReadOnly labor={labor} setLabor={setLabor}/> : (
-            <Grid container sx={{paddingTop: "10px"}}>
-                <Grid item xs={12}>
-                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                        No Labor
+        {JSON.parse(maintenanceItem?.quote_services_expenses)?.event_type === "Fixed Bid" ? (
+            <Grid container sx={{ paddingTop: "10px" }}>
+                <Grid item xs={6}>
+                    <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+                        Fixed Bid
+                    </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+                        ${labor[0]?.rate || 0}
                     </Typography>
                 </Grid>
             </Grid>
+        ) : (
+            labor.length > 0 ? (
+                <LaborTableReadOnly labor={labor} setLabor={setLabor} />
+            ) : (
+                <Grid container sx={{ paddingTop: "10px" }}>
+                    <Grid item xs={12}>
+                        <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+                            No Labor
+                        </Typography>
+                    </Grid>
+                </Grid>
+            )
         )}
 
         {parts.length > 0 ? <PartsTableReadOnly parts={parts} setParts={setParts}/> : (
