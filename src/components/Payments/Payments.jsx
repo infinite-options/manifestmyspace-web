@@ -31,6 +31,7 @@ export default function Payments(props) {
   const [moneyReceived, setMoneyReceived] = useState([]);
   const [moneyToBePaid, setMoneyToBePaid] = useState([]);
   const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
+  const [moneyPayable, setMoneyPayable] = useState([]);
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
@@ -40,6 +41,7 @@ export default function Payments(props) {
   const [totalReceived, setTotalReceived] = useState(0);
   const [totalToBePaid, setTotalToBePaid] = useState(0);
   const [totalToBeReceived, setTotalToBeReceived] = useState(0);
+  const [totalPayable, setTotalPayable] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
 
@@ -90,8 +92,6 @@ export default function Payments(props) {
   function totalMoneyToBePaidUpdate(moneyToBePaid) {
     var total = 0;
     for (const item of moneyToBePaid) {
-      // total += parseFloat(item.pur_amount_due);
-      // Adjust total based on pur_cf_type
       if (item.pur_cf_type === "revenue") {
         total += parseFloat(item.pur_amount_due);
       } else if (item.pur_cf_type === "expense") {
@@ -99,6 +99,18 @@ export default function Payments(props) {
       }
     }
     setTotalToBePaid(total);
+  }
+
+  function totalMoneyPayable(moneyPayable) {
+    var total = 0;
+    for (const item of moneyPayable) {
+      if (item.pur_cf_type === "revenue") {
+        total += parseFloat(item.pur_amount_due);
+      } else if (item.pur_cf_type === "expense") {
+        total -= parseFloat(item.pur_amount_due);
+      }
+    }
+    setTotalPayable(total);
   }
 
   function totalMoneyToBeReceivedUpdate(moneyToBeReceived) {
@@ -121,11 +133,13 @@ export default function Payments(props) {
       const moneyReceivedData = res.data.MoneyReceived.result;
       const moneyToBePaidData = res.data.MoneyToBePaid.result;
       const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
+      const moneyPayableData = res.data.MoneyPayable.result;
 
       setMoneyPaid(moneyPaidData);
       setMoneyReceived(moneyReceivedData);
       setMoneyToBePaid(moneyToBePaidData);
       setMoneyToBeReceived(moneyToBeReceivedData);
+      setMoneyPayable(moneyPayableData);
 
       // console.log("Money To Be Paid: ", moneyToBePaid);
       // console.log("Money To Be Paid: ", moneyToBePaid[0].ps);
@@ -134,6 +148,7 @@ export default function Payments(props) {
       totalMoneyReceivedUpdate(moneyReceivedData);
       totalMoneyToBePaidUpdate(moneyToBePaidData);
       totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
+      totalMoneyPayable(moneyPayableData);
 
       // console.log("--> initialSelectedItems", initialSelectedItems);
     } catch (error) {
@@ -336,14 +351,36 @@ export default function Payments(props) {
           >
             <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Balance Details - Money To Be Paid
+                Balance Details - Money Payable
+              </Typography>
+              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                ${totalPayable.toFixed(2)}
+              </Typography>
+            </Stack>
+            <Stack>
+              <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+            </Stack>
+          </Paper>
+
+          <Paper
+            style={{
+              margin: "25px",
+              padding: 20,
+              backgroundColor: theme.palette.primary.main,
+              height: "25%",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between">
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                Money To Be Paid
               </Typography>
               <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                 ${totalToBePaid.toFixed(2)}
               </Typography>
             </Stack>
+
             <Stack>
-              <BalanceDetailsTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+              <MoneyPaidTable data={moneyToBePaid} />
             </Stack>
           </Paper>
 
