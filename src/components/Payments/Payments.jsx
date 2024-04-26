@@ -113,7 +113,8 @@ export default function Payments(props) {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
-      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
+      // const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
+      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/600-000003`); //rohit
       // const paymentStatusData = res.data.PaymentStatus.result;
       // const paidStatusData = res.data.PaidStatus.result;
 
@@ -428,16 +429,86 @@ export default function Payments(props) {
   );
 }
 
+const useStylesBalanceDetails = makeStyles({
+  root: {
+    '& .MuiDataGrid-row': {
+      backgroundColor: (rowData) => rowData.backgroundColor,
+    },
+  },
+});
+
 function BalanceDetailsTable(props) {
   // console.log("In BalanceDetailTable", props);
+  const classes = useStylesBalanceDetails();
   const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
+  let ownerColors = {};
+  const [randomColorRows, setRandomColorRows] = useState();
 
   useEffect(() => {
     setData(props.data);
   }, [props.data]);
+
+  useEffect(() => {
+    console.log("ROHIT - paymentDueResult - ", paymentDueResult);
+    ownerColors = {}            
+    paymentDueResult.forEach((row) => {
+      if (!ownerColors[row.owner_uid]) {
+        ownerColors[row.owner_uid] = generateRandomPastelColor();
+      }
+    });
+    const rowsWithBackgroundColors = paymentDueResult.map((row) => ({
+      ...row,
+      backgroundColor: ownerColors[row.owner_uid],
+      textColor: getTextColor(ownerColors[row.owner_uid]),
+    }));
+    setRandomColorRows(rowsWithBackgroundColors)
+
+    // // Map through paymentDueResult and add the renderCell function to each row
+    // const rowsWithCellRenderer = paymentDueResult.map((row, index) => ({
+    //   ...row,
+    //   id: index + 1,
+    //   renderCell,
+    // }));
+    // setRandomColorRows(rowsWithCellRenderer)
+
+  }, [paymentDueResult]);
+
+  useEffect(() => {
+    console.log("ROHIT - randomColorRows - ", randomColorRows);    
+  }, [randomColorRows]);
+
+  // Function to generate a random pastel color
+  const generateRandomPastelColor = () => {
+    const hue = Math.floor(Math.random() * 200);
+    const pastel = `hsl(${hue}, 70%, 80%)`;
+    return pastel;
+  };
+
+  // Function to get text color based on background color brightness
+  const getTextColor = (backgroundColor) => {
+    const hexColor = backgroundColor.substring(1); // Remove #
+    const r = parseInt(hexColor.substr(0, 2), 16);
+    const g = parseInt(hexColor.substr(2, 2), 16);
+    const b = parseInt(hexColor.substr(4, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 125 ? 'black' : 'white';
+  };
+
+  // Function to render cell with background and text color
+  const renderCell = (params) => {
+    const backgroundColor = ownerColors[params.row.owner_uid];
+    const textColor = getTextColor(backgroundColor);
+    return (
+      <div style={{ backgroundColor, color: textColor }}>
+        {params.value}
+      </div>
+    );
+  };
+
+  
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -508,14 +579,36 @@ function BalanceDetailsTable(props) {
       field: "pur_description",
       headerName: "Description",
       flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ 
+                                          width: "100%",
+                                          height: "100%",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "flex-start",
+                                          overflow: "hidden", 
+                                          fontWeight: "bold",
+                                          // backgroundColor: params.row.backgroundColor,
+                                          // color: params.row.textColor,
+                              }}>
+                                {params.value}
+                              </Box>,
     },
 
     {
       field: "owner_uid",
       headerName: "Owner UID",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ 
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden", 
+        fontWeight: "bold",
+        backgroundColor: params.row.backgroundColor,
+        // color: params.row.textColor,
+}}>{params.value}</Box>,
     },
 
     {
@@ -638,8 +731,13 @@ function BalanceDetailsTable(props) {
     return (
       <>
         <DataGrid
-          rows={paymentDueResult}
+          // className={classes.root}
+          // rows={paymentDueResult}
+          rows={randomColorRows}
           columns={columnsList}
+          rowClassName={(params) => {
+            return `row-${params.row.backgroundColor} ${params.row.textColor}-text`;
+          }}
           initialState={{
             pagination: {
               paginationModel: {
