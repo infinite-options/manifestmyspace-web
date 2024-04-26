@@ -1,142 +1,142 @@
 :root {
-    --text-color: #F6EEE3;
+  --text-color: #f6eee3;
 }
 
 .main-header {
-    width: 100%;
-    /* height: 154px; */
-    /* filter: drop-shadow(0 2px 6px #888888); */
+  width: 100%;
+  /* height: 154px; */
+  /* filter: drop-shadow(0 2px 6px #888888); */
 }
 
 .main-header-title-logo {
-    background-color: #160449;
-    border: 1px solid #160449;
-    color: var(--text-color);
+  background-color: #160449;
+  border: 1px solid #160449;
+  color: var(--text-color);
 }
 
 .main-header-title-logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
 }
 
 .main-header-title-logo-container-logged-out {
-    display: flex;
-    justify-content: left;
-    align-items: left;
-    margin: 20px;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  margin: 20px;
 }
 
 .main-header-title {
-    display: inline-block;
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    font-size: 36px;
-    line-height: 47.99px;
-    letter-spacing: 1px;
+  display: inline-block;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 47.99px;
+  letter-spacing: 1px;
 }
 
-.main-header-title>span {
-    display: block;
-    font-family: 'Source Sans 3', sans-serif;
-    text-transform: uppercase;
-    font-weight: 400px;
-    font-size: 10px;
-    line-height: 12.57px;
+.main-header-title > span {
+  display: block;
+  font-family: "Source Sans 3", sans-serif;
+  text-transform: uppercase;
+  font-weight: 400px;
+  font-size: 10px;
+  line-height: 12.57px;
 }
 
 .main-header-redirect-btns {
-    background-color: #3D5CAC;
-    height: 40px;
-    clear: both;
+  background-color: #3d5cac;
+  height: 40px;
+  clear: both;
 }
 
-.main-header-redirect-btns>a {
-    color: var(--text-color);
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: '400';
-    font-size: 16px;
-    line-height: 20.11px;
-    margin-top: 12px;
-    text-decoration: none;
+.main-header-redirect-btns > a {
+  color: var(--text-color);
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: "400";
+  font-size: 16px;
+  line-height: 20.11px;
+  margin-top: 12px;
+  text-decoration: none;
 }
 
 .main-header-redirect-owner {
-    float: left;
-    width: 25%;
-    text-align: center;
+  float: left;
+  width: 25%;
+  text-align: center;
 }
 .main-header-redirect-owner.selected {
-    font-weight: 400; /* Increase font-weight for the selected element */
-    /* other styles for the selected state */
-    text-align: left;
-  }
+  font-weight: 400; /* Increase font-weight for the selected element */
+  /* other styles for the selected state */
+  text-align: left;
+}
 
 .main-header-redirect-tenant {
-    float: left;
-    width: 25%;
-    text-align: center;
+  float: left;
+  width: 25%;
+  text-align: center;
 }
 
 .main-header-logo {
-    display: inline-block;
-    margin-right: 25px;
+  display: inline-block;
+  margin-right: 25px;
 }
 
-.main-header-logo>.rectangle-1 {
-    height: 7px;
-    width: 26.5px;
-    border: 1px solid var(--text-color);
-    transform: rotate(-44.5deg);
-    margin-bottom: 2px;
+.main-header-logo > .rectangle-1 {
+  height: 7px;
+  width: 26.5px;
+  border: 1px solid var(--text-color);
+  transform: rotate(-44.5deg);
+  margin-bottom: 2px;
 }
 
-.main-header-logo>.rectangle-2 {
-    height: 7px;
-    width: 26.5px;
-    border: 1px solid var(--text-color);
-    transform: rotate(-44.5deg) translateX(15px);
-    margin-bottom: 2px;
+.main-header-logo > .rectangle-2 {
+  height: 7px;
+  width: 26.5px;
+  border: 1px solid var(--text-color);
+  transform: rotate(-44.5deg) translateX(15px);
+  margin-bottom: 2px;
 }
 
-.main-header-logo>.rectangle-3 {
-    height: 7px;
-    width: 26.5px;
-    border: 1px solid var(--text-color);
-    transform: rotate(-44.5deg) translateX(10px);
-    margin-bottom: 2px;
+.main-header-logo > .rectangle-3 {
+  height: 7px;
+  width: 26.5px;
+  border: 1px solid var(--text-color);
+  transform: rotate(-44.5deg) translateX(10px);
+  margin-bottom: 2px;
 }
 
-.main-header-logo>.rectangle-4 {
-    height: 7px;
-    width: 26.5px;
-    border: 1px solid var(--text-color);
-    transform: rotate(-44.5deg) translateX(30px);
-    margin-bottom: 2px;
+.main-header-logo > .rectangle-4 {
+  height: 7px;
+  width: 26.5px;
+  border: 1px solid var(--text-color);
+  transform: rotate(-44.5deg) translateX(30px);
+  margin-bottom: 2px;
 }
 
-.main-header-logo>.rectangle-2 {
-    height: 7px;
-    width: 26.5px;
-    border: 1px solid var(--text-color);
-    transform: rotate(-44.5deg) translateX(25px);
+.main-header-logo > .rectangle-2 {
+  height: 7px;
+  width: 26.5px;
+  border: 1px solid var(--text-color);
+  transform: rotate(-44.5deg) translateX(25px);
 }
 
 .main-header-new-user-button {
-    align-content: right;
-    align-items: right;
+  align-content: right;
+  align-items: right;
 }
 
 .footer {
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
 }
 
 @font-face {
-    font-family: 'Source Sans Pro';
-    src: url('./fonts/Source_Sans_3/SourceSans3-VariableFont_wght.ttf') format('opentype');
+  font-family: "Source Sans Pro";
+  src: url("./fonts/Source_Sans_3/SourceSans3-VariableFont_wght.ttf") format("opentype");
 }
 
 @import "~react-image-gallery/styles/css/image-gallery.css";

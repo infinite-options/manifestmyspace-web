@@ -18,7 +18,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
 function PMRent(props) {
-  console.log("In PMRent --> Consider renaming");
+  console.log("In PMRent --> Consider renaming", props);
   const { getProfileId } = useUser();
   const [dataNum, setDataNum] = useState(0);
   const [rentData, setRentData] = useState({});
@@ -30,6 +30,7 @@ function PMRent(props) {
     axios.get(requestURL).then((res) => {
       const fetchingData = res.data.RentStatus.result;
       setDataNum(fetchingData.length);
+      // console.log("Rent Data: ", dataNum, fetchingData);
       const not_paid = [];
       const partial_paid = [];
       const late_paid = [];

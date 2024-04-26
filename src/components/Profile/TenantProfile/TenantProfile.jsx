@@ -63,7 +63,7 @@ function TenantProfile() {
       <ThemeProvider theme={theme}>
         <Box
           sx={{
-            "font-family": "Source Sans Pro",
+            fontFamily: "Source Sans Pro",
             color: "text.primary",
           }}
         >

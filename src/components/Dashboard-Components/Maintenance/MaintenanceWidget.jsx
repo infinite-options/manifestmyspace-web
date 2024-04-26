@@ -6,6 +6,7 @@ import theme from "../../../theme/theme";
 
 export default function MaintenanceWidget({ maintenanceData }) {
   console.log("In MaintenanceWidget");
+  console.log(window.getComputedStyle(document.body).fontFamily);
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 

@@ -380,7 +380,7 @@ export default function Payments(props) {
             </Stack>
 
             <Stack>
-              <MoneyPaidTable data={moneyToBePaid} />
+              <MoneyPayableTable data={moneyToBePaid} />
             </Stack>
           </Paper>
 
@@ -1062,6 +1062,175 @@ function MoneyPaidTable(props) {
           }}
         >
           $ {params.value === null || parseFloat(params.value) === 0 ? "0.00" : parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+    },
+  ];
+
+  if (payments.length > 0) {
+    return (
+      <>
+        <DataGrid
+          rows={payments}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          getRowId={(row) => row.purchase_uid}
+          pageSizeOptions={[10, 50, 100]}
+          // checkboxSelection
+          // disableRowSelectionOnClick
+          // rowSelectionModel={selectedRows}
+          // onRowSelectionModelChange={handleSelectionModelChange}
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />
+      </>
+    );
+  } else {
+    return <></>;
+  }
+}
+
+function MoneyPayableTable(props) {
+  // console.log("In MoneyPaidTable", props);
+  const [data, setData] = useState(props.data);
+  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedPayments, setSelectedPayments] = useState([]);
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.payment_uid));
+      setPayments(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
+    }
+  }, [data]);
+
+  const getFontColor = (ps_value) => {
+    if (ps_value === "PAID") {
+      return theme.typography.primary.blue;
+    } else if (ps_value === "PAID LATE") {
+      return theme.typography.primary.aqua;
+    } else {
+      return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
+    }
+  };
+
+  const sortModel = [
+    {
+      field: "pgps", // Specify the field to sort by
+      sort: "asc", // Specify the sort order, 'asc' for ascending
+    },
+  ];
+
+  const columnsList = [
+    {
+      field: "pur_description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "owner_uid",
+      headerName: "Owner UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "purchase_status",
+      headerName: "Status",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pgps",
+      headerName: "Rent Status",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => {
+        if (params.value === null) {
+          return <div>Maintenance</div>; // Handle null values here
+        }
+
+        const trimmedValue = params.value.substring(11); // Extract characters after the first 11 characters
+        return <Box sx={{ fontWeight: "bold", color: getFontColor(trimmedValue) }}>{trimmedValue}</Box>;
+      },
+      // renderCell: (params) => <Box sx={{ fontWeight: "bold", color: getFontColor(params.value) }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_due_date",
+      headerName: "Due Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_amount_due",
+      headerName: "Amount Due",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {/* $ {parseFloat(params.value).toFixed(2)} */}
+          {/* Check pur_cf_type value */}
+          {params.row.pur_cf_type === "revenue"
+            ? // If pur_cf_type is 'revenue', display amount due without parentheses
+              `$ ${parseFloat(params.value).toFixed(2)}`
+            : // If pur_cf_type is 'expense', display amount due with parentheses
+              `($ ${parseFloat(params.value).toFixed(2)})`}
         </Box>
       ),
     },
