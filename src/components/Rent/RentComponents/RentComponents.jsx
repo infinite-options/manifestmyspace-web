@@ -282,7 +282,7 @@ export function RentAccordion(props) {
           " " +
           property.property_zip;
         return (
-          <AccordionDetails>
+          <AccordionDetails key={property.property_uid}>
             <Box
               sx={{
                 display: "flex",
