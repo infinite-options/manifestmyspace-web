@@ -346,33 +346,58 @@ export default function Payments(props) {
             </Stack>
           </Paper>
 
-          <Paper
-            style={{
-              margin: "25px",
-              padding: 20,
-              backgroundColor: theme.palette.primary.main,
-              height: "25%",
-            }}
-          >
-            <Stack direction="row" justifyContent="space-between">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Balance Details - Money Payable
-              </Typography>
-              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                ${totalPayable.toFixed(2)}
-              </Typography>
-            </Stack>
-            {customer_role === "350" ? (
+          {/* What is shown in Balance Details Depends on Role */}
+          {customer_role === "350" ? (
+            <Paper
+              style={{
+                margin: "25px",
+                padding: 20,
+                backgroundColor: theme.palette.primary.main,
+                height: "25%",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Balance Details - Money Payable
+                </Typography>
+                <Typography
+                  sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                >
+                  ${totalToBePaid.toFixed(2)}
+                </Typography>
+              </Stack>
+
               <Stack>
                 <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
               </Stack>
-            ) : (
+            </Paper>
+          ) : (
+            <Paper
+              style={{
+                margin: "25px",
+                padding: 20,
+                backgroundColor: theme.palette.primary.main,
+                height: "25%",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Balance Details - Money Payable
+                </Typography>
+                <Typography
+                  sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                >
+                  ${totalPayable.toFixed(2)}
+                </Typography>
+              </Stack>
+
               <Stack>
                 <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
               </Stack>
-            )}
-          </Paper>
+            </Paper>
+          )}
 
+          {/* Conditional rendering for Money To Be Paid section */}
           {customer_role !== "350" && (
             <Paper
               style={{
@@ -399,6 +424,7 @@ export default function Payments(props) {
             </Paper>
           )}
 
+          {/* All Roles show Money Paid */}
           <Paper
             style={{
               margin: "25px",
@@ -421,7 +447,7 @@ export default function Payments(props) {
             </Stack>
           </Paper>
 
-          {/* Conditional rendering for Money To Be Received section */}
+          {/* Conditional rendering for Money Received section */}
           {paymentData.customer_uid.substring(0, 3) !== "350" && (
             <Paper
               style={{
@@ -839,13 +865,6 @@ function TenantBalanceTable(props) {
     }
   };
 
-  const sortModel = [
-    {
-      field: "pgps", // Specify the field to sort by
-      sort: "asc", // Specify the sort order, 'asc' for ascending
-    },
-  ];
-
   const columnsList = [
     {
       field: "pur_description",
@@ -1011,7 +1030,6 @@ function TenantBalanceTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
-          sortModel={sortModel} // Set the sortModel prop
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
