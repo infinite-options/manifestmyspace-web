@@ -60,7 +60,11 @@ export default function Payments(props) {
     purchase_uids: [],
   });
 
-  // console.log("Profile Info: ", getProfileId());
+  let customer_uid = getProfileId();
+  let customer_role = customer_uid.substring(0, 3);
+  console.log("Profile Info: ", getProfileId());
+  console.log("Customer UID: ", customer_uid);
+  console.log("Customer Role: ", customer_role);
   // console.log("Customer UID: ", paymentData);
   // console.log("Customer UID: ", paymentData.customer_uid);
   // console.log("User Info: ", user);
@@ -358,32 +362,42 @@ export default function Payments(props) {
                 ${totalPayable.toFixed(2)}
               </Typography>
             </Stack>
-            <Stack>
-              <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
-            </Stack>
+            {customer_role === "350" ? (
+              <Stack>
+                <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+              </Stack>
+            ) : (
+              <Stack>
+                <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+              </Stack>
+            )}
           </Paper>
 
-          <Paper
-            style={{
-              margin: "25px",
-              padding: 20,
-              backgroundColor: theme.palette.primary.main,
-              height: "25%",
-            }}
-          >
-            <Stack direction="row" justifyContent="space-between">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Money To Be Paid
-              </Typography>
-              <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                ${totalToBePaid.toFixed(2)}
-              </Typography>
-            </Stack>
+          {customer_role !== "350" && (
+            <Paper
+              style={{
+                margin: "25px",
+                padding: 20,
+                backgroundColor: theme.palette.primary.main,
+                height: "25%",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Money To Be Paid
+                </Typography>
+                <Typography
+                  sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                >
+                  ${totalToBePaid.toFixed(2)}
+                </Typography>
+              </Stack>
 
-            <Stack>
-              <MoneyPayableTable data={moneyToBePaid} />
-            </Stack>
-          </Paper>
+              <Stack>
+                <MoneyPayableTable data={moneyToBePaid} />
+              </Stack>
+            </Paper>
+          )}
 
           <Paper
             style={{
@@ -583,6 +597,7 @@ function BalanceDetailsTable(props) {
       },
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
+
     {
       field: "pgps",
       headerName: "Rent Status",
@@ -600,6 +615,297 @@ function BalanceDetailsTable(props) {
       },
       // renderCell: (params) => <Box sx={{ fontWeight: "bold", color: getFontColor(params.value) }}>{params.value}</Box>,
     },
+    {
+      field: "pur_due_date",
+      headerName: "Due Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    {
+      field: "pur_amount_due",
+      headerName: "Amount Due",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {/* $ {parseFloat(params.value).toFixed(2)} */}
+          {/* Check pur_cf_type value */}
+          {params.row.pur_cf_type === "revenue"
+            ? // If pur_cf_type is 'revenue', display amount due without parentheses
+              `$ ${parseFloat(params.value).toFixed(2)}`
+            : // If pur_cf_type is 'expense', display amount due with parentheses
+              `($ ${parseFloat(params.value).toFixed(2)})`}
+        </Box>
+      ),
+    },
+  ];
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
+    console.log("newRowSelectionModel - ", newRowSelectionModel);
+
+    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+    if (addedRows.length > 0) {
+      // console.log("Added rows: ", addedRows);
+      let newPayments = [];
+      addedRows.forEach((item, index) => {
+        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+        newPayments.push(addedPayment);
+      });
+
+      // console.log("newPayments - ", newPayments);
+      setSelectedPayments((prevState) => {
+        return [...prevState, ...newPayments];
+      });
+    }
+
+    if (removedRows.length > 0) {
+      // console.log("Removed rows: ", removedRows);
+      let removedPayments = [];
+      removedRows.forEach((item, index) => {
+        let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+        // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+        removedPayments.push(removedPayment);
+      });
+      // console.log("removedPayments - ", removedPayments);
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+    }
+    setSelectedRows(newRowSelectionModel);
+  };
+
+  if (paymentDueResult.length > 0) {
+    // console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          rows={paymentDueResult}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          // getRowId={(row) => row.purchase_uid}
+          getRowId={(row) => {
+            const rowId = row.purchase_uid;
+            // console.log("Hello Globe");
+            // console.log("Row ID:", rowId);
+            // console.log("Row Data:", row); // Log the entire row data
+            // console.log("Row PS:", row.ps); // Log the ps field
+            return rowId;
+          }}
+          pageSizeOptions={[10, 50, 100]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
+          onRowClick={(row) => {
+            {
+              console.log("Row =", row);
+            }
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+          sortModel={sortModel} // Set the sortModel prop
+
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems="center"></Grid>
+          <Grid item xs={9} alignItems="center">
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                // color: paymentDueResult.ps === "UNPAID" ? "green" : "red", // Set color based on condition
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total To Be Paid
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2} alignItems="right">
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}${" "}
+              {selectedRows.reduce((total, rowId) => {
+                const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
+                const amountDue = payment.pur_amount_due;
+                const isExpense = payment.pur_cf_type === "expense";
+
+                // Adjust the total based on whether the payment is an expense or revenue
+                return total + (isExpense ? -amountDue : amountDue);
+              }, 0)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
+    );
+  } else {
+    return <></>;
+  }
+}
+
+function TenantBalanceTable(props) {
+  // console.log("In BalanceDetailTable", props);
+  const [data, setData] = useState(props.data);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.purchase_uid));
+      setPaymentDueResult(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
+    }
+  }, [data]);
+
+  useEffect(() => {
+    var total = 0;
+
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      // console.log("item in loop", item)
+
+      let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
+      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+      // console.log("payment item data", paymentItemData);
+
+      // total += parseFloat(paymentItemData.pur_amount_due);
+      // Adjust total based on pur_cf_type
+      if (paymentItemData.pur_cf_type === "revenue") {
+        total += parseFloat(paymentItemData.pur_amount_due);
+      } else if (paymentItemData.pur_cf_type === "expense") {
+        total -= parseFloat(paymentItemData.pur_amount_due);
+      }
+    }
+    // console.log("selectedRows useEffect - total - ", total);
+    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+    props.setTotal(total);
+    props.setPaymentData((prevPaymentData) => ({
+      ...prevPaymentData,
+      balance: total.toFixed(2),
+      purchase_uids: purchase_uid_mapping,
+    }));
+  }, [selectedRows]);
+
+  useEffect(() => {
+    console.log("selectedPayments - ", selectedPayments);
+    props.setSelectedItems(selectedPayments);
+  }, [selectedPayments]);
+
+  const getFontColor = (ps_value) => {
+    if (ps_value === "PAID") {
+      return theme.typography.primary.blue;
+    } else if (ps_value === "PAID LATE") {
+      return theme.typography.primary.aqua;
+    } else {
+      return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
+    }
+  };
+
+  const sortModel = [
+    {
+      field: "pgps", // Specify the field to sort by
+      sort: "asc", // Specify the sort order, 'asc' for ascending
+    },
+  ];
+
+  const columnsList = [
+    {
+      field: "pur_description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    // {
+    //   field: "owner_uid",
+    //   headerName: "Owner UID",
+    //   flex: 1,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "purchase_status",
+      headerName: "Status",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+
+    // {
+    //   field: "pgps",
+    //   headerName: "Rent Status",
+    //   flex: 1,
+    //   headerStyle: {
+    //     fontWeight: "bold", // Apply inline style to the header cell
+    //   },
+    //   renderCell: (params) => {
+    //     if (params.value === null) {
+    //       return <div>Maintenance</div>; // Handle null values here
+    //     }
+
+    //     const trimmedValue = params.value.substring(11); // Extract characters after the first 11 characters
+    //     return <Box sx={{ fontWeight: "bold", color: getFontColor(trimmedValue) }}>{trimmedValue}</Box>;
+    //   },
+    //   // renderCell: (params) => <Box sx={{ fontWeight: "bold", color: getFontColor(params.value) }}>{params.value}</Box>,
+    // },
     {
       field: "pur_due_date",
       headerName: "Due Date",
