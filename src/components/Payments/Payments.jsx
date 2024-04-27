@@ -295,6 +295,7 @@ export default function Payments(props) {
                 </Grid>
                 <Grid item xs={6}>
                   <Button
+                    disabled={total <= 0}
                     sx={{
                       backgroundColor: "#3D5CAC",
                       borderRadius: "10px",

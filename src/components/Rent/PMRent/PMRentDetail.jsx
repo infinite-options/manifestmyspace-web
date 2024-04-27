@@ -10,11 +10,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
 function PMRentDetail(props) {
+  // console.log("in PMRentDetail: ", props);
   const location = useLocation();
   const [index, setIndex] = useState(location.state.index);
+  // console.log("in PMRentDetail Index: ", index);
   const [propertyStatus, setPropertyStatus] = useState(location.state.status);
+  // console.log("in PMRentDetail Status: ", propertyStatus);
   const [showSpinner, setShowSpinner] = useState(false);
   const rentData = location.state.data;
+  // console.log("in PMRentDetail Rent Data: ", rentData);
   const months = {
     January: 1,
     February: 2,
@@ -68,14 +72,14 @@ function PMRentDetail(props) {
     axios.get(requestURL).then((res) => {
       // console.log(res.data.RentStatus.result);
       const fetchData = res.data.RentStatus.result;
-      console.log("After fetchData: ", fetchData);
+      // console.log("After fetchData: ", fetchData);
       fetchData.sort((a, b) => {
         const comp1 = b.cf_year - a.cf_year;
         const comp2 = b.cf_month - a.cf_month;
         return comp1 !== 0 ? comp1 : comp2;
       });
       setRentDetailsData(fetchData);
-      console.log("rentDetailsData: ", rentDetailsData);
+      // console.log("rentDetailsData: ", rentDetailsData);
       setShowSpinner(false);
     });
 

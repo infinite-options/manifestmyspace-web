@@ -60,13 +60,14 @@ const StatusText = (status) => {
 };
 
 export function RentDetailBody(props) {
-  console.log("In RentDetailBody props", props);
+  //   console.log("In RentDetailBody props", props);
   let [rentDetailsData, propertyID, index, propertyStatus] = props.data;
-  console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
+  //   console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
   //   console.log("In RentDetailBody actual image", rentDetailsData.property_favorite_image);
   const [decrementIndex, incrementIndex] = props.updator;
   const [getProperties] = props.methods;
   const property = getProperties(propertyStatus)[index];
+  //   console.log("Property: ", property);
 
   const uid = property?.property_uid;
   if (Array.isArray(rentDetailsData)) rentDetailsData = rentDetailsData.filter((rent_detail) => rent_detail.property_uid === uid);
@@ -212,8 +213,8 @@ export function RentDetailBody(props) {
         >
           {getProperties(propertyStatus).length > 0 ? (
             <img
-              //   src={property.property_favorite_image}
-              src={rentDetailsData.property_favorite_image}
+              src={property.property_favorite_image}
+              //   src={rentDetailsData.property_favorite_image}
               alt="Property Img"
               style={{
                 width: "130px",
@@ -289,9 +290,9 @@ export function RentDetailBody(props) {
           </tr>
           {rentDetailsData.length > 0 &&
             rentDetailsData.map((rentDetails, i) => {
-              console.log("In map: ", rentDetails);
+              //   console.log("In map: ", rentDetails);
               let image = rentDetails.property_favorite_image;
-              console.log("In map image: ", rentDetails.property_favorite_image);
+              //   console.log("In map image: ", rentDetails.property_favorite_image);
               {
                 /* let month = rentDetails.cf_month;
                         let paid = rentDetails.payment_date !== null ? (
