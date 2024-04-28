@@ -269,8 +269,8 @@ const ManagerContactDetails = (props) => {
                   </svg>
                 </Box>
                 <Typography sx={{ fontSize: "13px" }}>
-                  {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS>"} {", "}
-                  {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY>"} {", "}
+                  {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS1>"} {", "}
+                  {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY1>"} {", "}
                   {contactDetails[index].contact_state ? contactDetails[index].contact_state : "<STATE>"} {", "}
                   {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : "<ZIP>"}
                 </Typography>

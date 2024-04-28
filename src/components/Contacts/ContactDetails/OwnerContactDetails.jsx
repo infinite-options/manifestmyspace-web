@@ -259,9 +259,9 @@ const OwnerContactDetails = (props) => {
                                 {selectedData.contact_city}{', '}
                                 {selectedData.contact_state}{', '}
                                 {selectedData.contact_zip} */}
-                {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS>"}
+                {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS1>"}
                 {contactDetails[index].contact_unit ? contactDetails[index].contact_unit : ""} {", "}
-                {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY>"} {", "}
+                {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY1>"} {", "}
                 {contactDetails[index].contact_state ? contactDetails[index].contact_state : "<STATE>"} {", "}
                 {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : "<ZIP>"}
               </Typography>
@@ -308,9 +308,9 @@ const OwnerContactDetails = (props) => {
                         key={index}
                       >
                         {`                        
-                        ${property.property_address ? property.property_address : "<Address>"}
+                        ${property.property_address ? property.property_address : "<Address2>"}
                         ${property.property_unit ? property.property_unit : ""},
-                        ${property.property_city ? property.property_city : "<City>"}
+                        ${property.property_city ? property.property_city : "<City2>"}
                         ${property.property_state ? property.property_state : "<State>"}
                         ${property.property_zip ? property.property_zip : "<ZIP>"}
                         `}
