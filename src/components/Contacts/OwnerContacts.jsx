@@ -13,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
 
 const OwnerContacts = (props) => {
+  console.log("In OwnerContacts");
   const { getProfileId, selectedRole } = useUser();
   const [contactsTab, setContactsTab] = useState("Managers");
   const [showSpinner, setShowSpinner] = useState(false);
@@ -180,14 +181,14 @@ const OwnerContacts = (props) => {
                   }}
                   onClick={() => setContactsTab("Managers")}
                 >
-                  <div className="contacts-detail-text">Managers</div>
+                  <div className="contacts-detail-text">Managers1</div>
                 </div>
                 <div
                   className="contacts-detail-navbar"
                   style={{
-                    backgroundColor: getStatusColor("Tenants"),
+                    backgroundColor: getStatusColor("Tenant"),
                   }}
-                  onClick={() => setContactsTab("Tenants")}
+                  onClick={() => setContactsTab("Tenant")}
                 >
                   <div className="contacts-detail-text">Tenants</div>
                 </div>
@@ -224,7 +225,7 @@ const ContactCard = (props) => {
   const index = props.index;
 
   const handleSelection = () => {
-    console.log(index);
+    console.log("In handleSelection: ", contact, index);
     handleSetSelectedCard(contact, index);
   };
 

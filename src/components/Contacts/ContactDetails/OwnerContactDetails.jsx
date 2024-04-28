@@ -35,36 +35,9 @@ const OwnerContactDetails = (props) => {
   console.log("INDEX", index);
   console.log("SELECTED ROLE - ", selectedRole);
 
-  // JSON Parse Function
-  function parseJSON(jsonString) {
-    console.log("In Parsing Function");
-    try {
-      const jsonObject = JSON.parse(jsonString);
-      return jsonObject;
-    } catch (error) {
-      console.error("Error parsing JSON:", error);
-      return null;
-    }
-  }
-
-  console.log("Starting JSON Parsing", contactDetails);
-  const jsonString = contactDetails[0].entities;
-
-  const parsedObject = parseJSON(jsonString);
-  console.log("parsing complete");
-  console.log("Parsed JSON String: ", parsedObject);
-  console.log("Parsed JSON String [0]: ", parsedObject[0]);
-  console.log("Parsed JSON String Status: ", parsedObject[0].agreement_status);
-  console.log("Parsed JSON String Properties: ", parsedObject[0].properties);
-  console.log("Parsed JSON String Length: ", parsedObject[0].properties.length);
-  console.log("Parsed JSON String Specific Property: ", parsedObject[0].properties[0]);
-
   const handleBackBtn = () => {
-    // navigate('/ownerContacts');
-    // navigate(-1);
-    if (navigate > 0) {
-      navigate(-1);
-    }
+    // navigate('/PMContacts');
+    navigate(-1);
   };
   return (
     <ThemeProvider theme={theme}>
@@ -188,6 +161,7 @@ const OwnerContactDetails = (props) => {
                   backgroundColor: getStatusColor(contactsTab),
                   paddingBottom: "70px",
                   boxShadow: "0 4px 2px 0 #00000025",
+                  // padding: "5px 15px 50px 15px",
                 }}
               >
                 <Typography
@@ -195,11 +169,9 @@ const OwnerContactDetails = (props) => {
                     fontWeight: theme.typography.common.fontWeight,
                   }}
                 >
-                  {/* {selectedData.contact_first_name}{' '}
-                                    {selectedData.contact_last_name} */}
                   {`
-                                        ${contactDetails[index].contact_first_name ? contactDetails[index].contact_first_name : "<FIRST_NAME>"}
-                                        ${contactDetails[index].contact_last_name ? contactDetails[index].contact_last_name : "<LAST_NAME>"}`}
+                    ${contactDetails[index].contact_first_name ? contactDetails[index].contact_first_name : "<FIRST_NAME>"}
+                    ${contactDetails[index].contact_last_name ? contactDetails[index].contact_last_name : "<LAST_NAME>"}`}
                 </Typography>
               </Stack>
             </Stack>
@@ -250,7 +222,6 @@ const OwnerContactDetails = (props) => {
                       fontSize: "13px",
                     }}
                   >
-                    {/* {selectedData.contact_email} */}
                     {contactDetails[index].contact_email ? contactDetails[index].contact_email : "<EMAIL>"}
                   </Typography>
                 </Stack>
@@ -267,9 +238,6 @@ const OwnerContactDetails = (props) => {
                       fontSize: "13px",
                     }}
                   >
-                    {/* {formattedPhoneNumber(
-                                            selectedData.contact_phone_number
-                                        )} */}
                     {contactDetails[index].contact_phone_number ? formattedPhoneNumber(contactDetails[index].contact_phone_number) : "<PHONE_NUMBER>"}
                   </Typography>
                 </Stack>

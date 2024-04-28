@@ -50,6 +50,7 @@ const PMContacts = (props) => {
 
   const fetchData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+    console.log("In PMContracts.jsx");
     setShowSpinner(true);
 
     await axios
@@ -109,6 +110,7 @@ const PMContacts = (props) => {
         break;
     }
 
+    // Navigates to OwnerContactDetails.jsx, TenantContractDetails.jsx and MaitenanceContractDetails.jsx
     navigate(`/${contactsTab.toLowerCase()}ContactDetails`, {
       state: {
         dataDetails,

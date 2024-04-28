@@ -18,8 +18,6 @@ const ManagerContactDetails = (props) => {
   // const selectedData = location.state.selectedData;
   // const index = location.state.index;
   const [index, setIndex] = useState(location.state.index);
-  // const viewData = location.state.selectedData;
-
   // const passedData = location.state.viewData;
 
   useEffect(() => {
@@ -28,12 +26,14 @@ const ManagerContactDetails = (props) => {
     console.log("DATA DETAILS", contactDetails[index]);
   }, [index]);
 
-  console.log(contactDetails);
+  //   console.log("Data details passed 1: ", contactDetails);
+  //   console.log("Data details passed 2: ", contactDetails[0]);
+  //   console.log("Data details passed 3: ", contactDetails[0].entities);
+  //   console.log("Data details passed 4: ", contactDetails[3].entities);
+
   // console.log(selectedData);
   console.log("INDEX", index);
   console.log("SELECTED ROLE - ", selectedRole);
-
-  // const uniqueValues = {};
 
   const handleBackBtn = () => {
     // navigate('/ownerContacts');
@@ -169,10 +169,9 @@ const ManagerContactDetails = (props) => {
                     fontWeight: theme.typography.common.fontWeight,
                   }}
                 >
-                  {/* {`${selectedData.contact_first_name} ${selectedData.contact_last_name}`} */}
                   {`
-                                        ${contactDetails[index].contact_first_name ? contactDetails[index].contact_first_name : "<FIRST_NAME>"}
-                                        ${contactDetails[index].contact_last_name ? contactDetails[index].contact_last_name : "<LAST_NAME>"}`}
+                    ${contactDetails[index].contact_first_name ? contactDetails[index].contact_first_name : "<FIRST_NAME>"}
+                    ${contactDetails[index].contact_last_name ? contactDetails[index].contact_last_name : "<LAST_NAME>"}`}
                 </Typography>
               </Stack>
             </Stack>
@@ -287,24 +286,47 @@ const ManagerContactDetails = (props) => {
                   Manages {contactDetails[index].property_count ? contactDetails[index].property_count : "<PROPERTY_COUNT>"} of your Properties
                 </Typography>
 
-                {JSON.parse(contactDetails[index].properties).map((property, index) => (
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontSize: "13px",
-                      fontWeight: theme.typography.primary.fontWeight,
-                      textDecoration: "underline",
-                    }}
-                    key={index}
-                  >
-                    {`
-                                            ${property.property_address ? property.property_address : "<ADDRESS>"}, 
-                                            ${property.property_city ? property.property_city : "<CITY>"}, 
-                                            ${property.property_state ? property.property_state : "<STATE>"} 
-                                            ${property.property_zip ? property.property_zip : "<ZIP_CODE>"}
-                                        `}
-                  </Typography>
-                ))}
+                {contactDetails[index].entities !== null &&
+                  JSON.parse(contactDetails[index].entities).map((entity, index) => (
+                    <>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontSize: "13px",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          textDecoration: "underline",
+                        }}
+                        key={index}
+                      >
+                        {`
+                        ${entity.agreement_status ? entity.agreement_status : "<STATUS>"}
+                        `}
+                      </Typography>
+
+                      {console.log("After 1st Map:", entity, typeof entity)}
+
+                      {entity.properties.map((property, index) => (
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontSize: "13px",
+                            fontWeight: theme.typography.primary.fontWeight,
+                            textDecoration: "underline",
+                            marginLeft: "20px",
+                          }}
+                          key={index}
+                        >
+                          {`                        
+                        ${property.property_address ? property.property_address : "<Address>"}
+                        ${property.property_unit ? property.property_unit : ""},
+                        ${property.property_city ? property.property_city : "<City>"}
+                        ${property.property_state ? property.property_state : "<State>"}
+                        ${property.property_zip ? property.property_zip : "<ZIP>"}
+                        `}
+                        </Typography>
+                      ))}
+                    </>
+                  ))}
               </Stack>
             )}
             {selectedRole === "OWNER" && (
