@@ -255,10 +255,6 @@ const OwnerContactDetails = (props) => {
                 </svg>
               </Box>
               <Typography sx={{ fontSize: "13px" }}>
-                {/* {selectedData.contact_address}{', '}
-                                {selectedData.contact_city}{', '}
-                                {selectedData.contact_state}{', '}
-                                {selectedData.contact_zip} */}
                 {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS1>"}
                 {contactDetails[index].contact_unit ? contactDetails[index].contact_unit : ""} {", "}
                 {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY1>"} {", "}

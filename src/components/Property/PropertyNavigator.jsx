@@ -42,16 +42,27 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   const [property, setProperty] = useState(propertyData[currentIndex]);
   const [currentId, setCurrentId] = useState(property.property_uid);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
-  console.log("Maintenance Data: ", maintenanceData);
-  const [images, setImages] = useState(
-    JSON.parse(propertyData[currentIndex].property_images).length > 0 ? JSON.parse(propertyData[currentIndex].property_images) : [propertyImage]
-  );
-  // const [activeStep, setActiveStep] = useState(images.findIndex(image => image === propertyData[currentIndex].property_favorite_image));
-  // const [activeStep, setActiveStep] = useState(() => {
-  //     const index = images.findIndex(image => image === propertyData[currentIndex].property_favorite_image);
 
-  //     return index !== -1 ? index : 0;
-  // });
+  // Parse property images once outside the component
+  const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
+  console.log("parsedImages:", parsedPropertyImages);
+  console.log("parsedImages.length:", parsedPropertyImages.length);
+
+  // Initialize state with parsed images or fallback to propertyImage if empty
+  const [images, setImages] = useState(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
+
+  // Initialize maxSteps state
+  const [maxSteps, setMaxSteps] = useState(0);
+
+  // Log images and its length after it's updated
+  useEffect(() => {
+    console.log("What's in Images: ", images, images.length);
+    setMaxSteps(images.length); // Update maxSteps state
+    console.log("MaxSteps: ", images.length); // Log maxSteps within useEffect
+  }, [images]); // This useEffect will re-run whenever the 'images' state changes
+
+  console.log("MaxSteps: ", maxSteps); // Log maxSteps outside of useEffect
+
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
   const [contractsData, setContractsData] = useState(contracts);
@@ -59,8 +70,8 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   console.log("Maintenance Request Data1: ", maintenanceReqData);
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+
   const color = theme.palette.form.main;
-  const maxSteps = images.length;
   const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid);
 
   // console.log(propertyId)
@@ -651,92 +662,90 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                     </Typography>
                   </Grid>
                   <Grid container spacing={2} alignItems="center">
-  <Grid item xs={5} md={4}>
-    <Typography
-      sx={{
-        textTransform: "none",
-        color: theme.typography.primary.black,
-        fontWeight: theme.typography.secondary.fontWeight,
-        fontSize: theme.typography.smallFont,
-        paddingRight: "10px",
-      }}
-    >
-      Property Value
-    </Typography>
-    <Typography
-      sx={{
-        textTransform: "none",
-        color: theme.typography.primary.black,
-        fontWeight: theme.typography.light.fontWeight,
-        fontSize: theme.typography.smallFont,
-      }}
-    >
-      ${property.property_value}
-    </Typography>
-  </Grid>
-  <Grid item xs={3} md={3}>
-    <Typography
-      sx={{
-        textTransform: "none",
-        color: theme.typography.primary.black,
-        fontWeight: theme.typography.secondary.fontWeight,
-        fontSize: theme.typography.smallFont,
-        // paddingRight: "10px",
-      }}
-    >
-      $ Per Sqft
-    </Typography>
-    <Typography
-      sx={{
-        textTransform: "none",
-        color: theme.typography.primary.black,
-        fontWeight: theme.typography.light.fontWeight,
-        fontSize: theme.typography.smallFont,
-      }}
-    >
-      ${(property.property_value / property.property_area).toFixed(2)}
-    </Typography>
-  </Grid>
-  <Grid item xs={4} md={5} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-    <Button
-      variant="outlined"
-      sx={{
-        background: "#3D5CAC",
-        color: theme.palette.background.default,
-        cursor: "pointer",
-        textTransform: "none",
-        minWidth: "110px", // Fixed width for the button
-        minHeight: "35px",
-      }}
-      size="small"
-      onClick={() => {
-        navigate("/editProperty2", {
-          state: {
-            index: currentIndex,
-            propertyList: propertyData,
-            page: "edit_property",
-          },
-        });
-      }}
-    >
-      <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-      <Typography
-        sx={{
-          textTransform: "none",
-          color: "#FFFFFF",
-          fontWeight: theme.typography.secondary.fontWeight,
-          fontSize: theme.typography.smallFont,
-          whiteSpace: "nowrap",
-          marginLeft: '1%', // Adjusting margin for icon and text
-        }}
-      >
-        {"Edit Property"}
-      </Typography>
-    </Button>
-  </Grid>
-</Grid>
-
-  
+                    <Grid item xs={5} md={4}>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                          paddingRight: "10px",
+                        }}
+                      >
+                        Property Value
+                      </Typography>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        ${property.property_value}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={3} md={3}>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                          // paddingRight: "10px",
+                        }}
+                      >
+                        $ Per Sqft
+                      </Typography>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        ${(property.property_value / property.property_area).toFixed(2)}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          textTransform: "none",
+                          minWidth: "110px", // Fixed width for the button
+                          minHeight: "35px",
+                        }}
+                        size="small"
+                        onClick={() => {
+                          navigate("/editProperty2", {
+                            state: {
+                              index: currentIndex,
+                              propertyList: propertyData,
+                              page: "edit_property",
+                            },
+                          });
+                        }}
+                      >
+                        <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            whiteSpace: "nowrap",
+                            marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {"Edit Property"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  </Grid>
 
                   <Grid item xs={3}>
                     <Typography

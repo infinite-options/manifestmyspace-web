@@ -411,7 +411,7 @@ export default function PropertyList({}) {
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                All Properties
+                All Properties 1
               </Typography>
             </Box>
             <Button
