@@ -26,10 +26,10 @@ const OwnerContactDetails = (props) => {
     console.log("DATA DETAILS", contactDetails[index]);
   }, [index]);
 
-  console.log("Data details passed 1: ", contactDetails);
-  console.log("Data details passed 2: ", contactDetails[0]);
-  console.log("Data details passed 3: ", contactDetails[0].entities);
-  console.log("Data details passed 4: ", contactDetails[3].entities);
+  //   console.log("Data details passed 1: ", contactDetails);
+  //   console.log("Data details passed 2: ", contactDetails[0]);
+  //   console.log("Data details passed 3: ", contactDetails[0].entities);
+  //   console.log("Data details passed 4: ", contactDetails[3].entities);
 
   // console.log(selectedData);
   console.log("INDEX", index);
@@ -47,9 +47,6 @@ const OwnerContactDetails = (props) => {
     }
   }
 
-  // Example usage:
-  //   const jsonString =
-  //     '[{"properties": [{"property_zip": "95125", "property_city": "San Jose", "property_type": "Condo", "property_state": "CA", "property_address": "500 Street Anv"}, {"property_zip": "95129", "property_city": "San Jose", "property_type": "Multi Family", "property_state": "CA", "property_address": "200 Street Avn"}], "property_count": 2, "agreement_status": "NEW"}, {"properties": [{"property_zip": "95125", "property_city": "San Jose", "property_type": "Condo", "property_state": "CA", "property_address": "300 Street Avn"}], "property_count": 1, "agreement_status": "SENT"}]';
   console.log("Starting JSON Parsing", contactDetails);
   const jsonString = contactDetails[0].entities;
 
@@ -62,26 +59,12 @@ const OwnerContactDetails = (props) => {
   console.log("Parsed JSON String Length: ", parsedObject[0].properties.length);
   console.log("Parsed JSON String Specific Property: ", parsedObject[0].properties[0]);
 
-  // const uniqueValues = {};
-
-  // const uniqueContacts = contactDetails.filter((item) => {
-  //     if (
-  //         !uniqueValues[item.contract_name] &&
-  //         item.contract_status === 'ACTIVE'
-  //     ) {
-  //         uniqueValues[item.contract_name] = item;
-  //         return true;
-  //     }
-  //     return false;
-  // });
-
-  // const owner_object = Object.values(uniqueValues)[0];
-
-  // console.log(owner_object);
-
   const handleBackBtn = () => {
     // navigate('/ownerContacts');
-    navigate(-1);
+    // navigate(-1);
+    if (navigate > 0) {
+      navigate(-1);
+    }
   };
   return (
     <ThemeProvider theme={theme}>
@@ -164,7 +147,7 @@ const OwnerContactDetails = (props) => {
               >
                 <Box
                   onClick={() => {
-                    console.log("Previous button clicked");
+                    console.log("Previous button clicked", index, contactDetails.length);
                     index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
                   }}
                 >
@@ -308,12 +291,14 @@ const OwnerContactDetails = (props) => {
                                 {selectedData.contact_city}{', '}
                                 {selectedData.contact_state}{', '}
                                 {selectedData.contact_zip} */}
-                {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS>"} {", "}
+                {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS>"}
+                {contactDetails[index].contact_unit ? contactDetails[index].contact_unit : ""} {", "}
                 {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY>"} {", "}
                 {contactDetails[index].contact_state ? contactDetails[index].contact_state : "<STATE>"} {", "}
                 {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : "<ZIP>"}
               </Typography>
             </Stack>
+
             <Stack sx={{ padding: "15px" }}>
               <Typography
                 sx={{
@@ -321,11 +306,64 @@ const OwnerContactDetails = (props) => {
                 }}
               >
                 {/* {selectedData.property_count} Properties */}
-                {console.log("In JS:", contactDetails[index].entities, typeof contactDetails[index].entities)}
+                {console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)}
                 {contactDetails[index].property_count ? contactDetails[index].property_count : "<PROPERTY_COUNT>"} Properties
               </Typography>
-              {JSON.parse(contactDetails[index].entities).map((entity, index) => (
-                <>
+              {contactDetails[index].entities !== null &&
+                JSON.parse(contactDetails[index].entities).map((entity, index) => (
+                  <>
+                    <Typography
+                      sx={{
+                        color: theme.typography.common.blue,
+                        fontSize: "13px",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        textDecoration: "underline",
+                      }}
+                      key={index}
+                    >
+                      {`
+                        ${entity.agreement_status ? entity.agreement_status : "<STATUS>"}
+                        `}
+                    </Typography>
+
+                    {console.log("After 1st Map:", entity, typeof entity)}
+
+                    {entity.properties.map((property, index) => (
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontSize: "13px",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          textDecoration: "underline",
+                          marginLeft: "20px",
+                        }}
+                        key={index}
+                      >
+                        {`                        
+                        ${property.property_address ? property.property_address : "<Address>"}
+                        ${property.property_unit ? property.property_unit : ""},
+                        ${property.property_city ? property.property_city : "<City>"}
+                        ${property.property_state ? property.property_state : "<State>"}
+                        ${property.property_zip ? property.property_zip : "<ZIP>"}
+                        `}
+                      </Typography>
+                    ))}
+                  </>
+                ))}
+            </Stack>
+
+            <Stack sx={{ padding: "15px" }}>
+              <Typography
+                sx={{
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {/* {selectedData.property_count} Properties */}
+                {console.log("In Payment JS:", contactDetails[index].payment_method, typeof contactDetails[index].payment_method)}
+                Payment Methods
+              </Typography>
+              {contactDetails[index].payment_method !== null &&
+                JSON.parse(contactDetails[index].payment_method).map((method, index) => (
                   <Typography
                     sx={{
                       color: theme.typography.common.blue,
@@ -336,35 +374,13 @@ const OwnerContactDetails = (props) => {
                     key={index}
                   >
                     {`
-                                            ${entity.agreement_status ? entity.agreement_status : "<ADDRESS>"},
-                                    `}
+                        ${method.paymentMethod_type ? method.paymentMethod_type : "<Payment Method>"}
+                        ${method.paymentMethod_status ? method.paymentMethod_status : "Not Active"}
+                        `}
                   </Typography>
-
-                  {console.log("After 1st Map:", entity, typeof entity)}
-
-                  {entity.properties.map((property, index) => (
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontSize: "13px",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        textDecoration: "underline",
-                        marginLeft: "20px",
-                      }}
-                      key={index}
-                    >
-                      {`                        
-                                            ${property.property_address ? property.property_address : "<Address>"}
-                                            ${property.property_unit ? property.property_unit : ""},
-                                            ${property.property_city ? property.property_city : "<City>"}
-                                            ${property.property_state ? property.property_state : "<State>"}
-                                            ${property.property_zip ? property.property_zip : "<ZIP>"}
-                                    `}
-                    </Typography>
-                  ))}
-                </>
-              ))}
+                ))}
             </Stack>
+
             <Stack sx={{ padding: "15px" }}>
               <Stack flexDirection="row" justifyContent="space-between" alignItems="flex-start">
                 <Box>
@@ -390,6 +406,7 @@ const OwnerContactDetails = (props) => {
                     </Stack>
                   </Stack>
                 </Box>
+
                 <Stack justifyContent="space-between" alignItems="center" sx={{ paddingLeft: "30px" }}>
                   {!contactDetails[index].hasOwnProperty("contact_ssn") || contactDetails[index].contact_ssn === "" ? (
                     <Typography
