@@ -1,8 +1,6 @@
 import { Box } from "@mui/system";
 import { getStatusColor } from "./RentComponents";
 import { Typography } from "@material-ui/core";
-import defaultHouseImage from "../../Property/defaultHouseImage.png";
-import propertyImage from "../../Property/propertyImage.png";
 
 export function BackIcon(props) {
   return (
@@ -62,19 +60,15 @@ const StatusText = (status) => {
 };
 
 export function RentDetailBody(props) {
-  console.log("In RentDetailBody props", props);
-  let [rentDetailsData, propertyID, index, propertyStatus, propertiesData] = props.data;
-  console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
+  //   console.log("In RentDetailBody props", props);
+  let [rentDetailsData, propertyID, index, propertyStatus] = props.data;
+  //   console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
   //   console.log("In RentDetailBody actual image", rentDetailsData.property_favorite_image);
   const [decrementIndex, incrementIndex] = props.updator;
   const [getProperties] = props.methods;
-  // const property = getProperties(propertyStatus)[index];
-  const properties = getProperties(propertyStatus);
-  let property = null;
-  if (properties && properties.length > index) {
-    property = properties[index];
-    // Use property here
-  }
+  const property = getProperties(propertyStatus)[index];
+  console.log("Property: ", property);
+  console.log("Rent Details: ", rentDetailsData);
 
   const uid = property?.property_uid;
   if (Array.isArray(rentDetailsData)) rentDetailsData = rentDetailsData.filter((rent_detail) => rent_detail.property_uid === uid);
@@ -181,9 +175,9 @@ export function RentDetailBody(props) {
           </svg>
         </Box>
         <Box>
-          {getProperties(propertyStatus)?.length > 0 ? (
+          {getProperties(propertyStatus).length > 0 ? (
             <>
-              {index + 1} of {getProperties(propertyStatus)?.length} {StatusText(propertyStatus)}
+              {index + 1} of {getProperties(propertyStatus).length} {StatusText(propertyStatus)}
             </>
           ) : (
             <>None</>
@@ -218,11 +212,9 @@ export function RentDetailBody(props) {
             backgroundColor: "grey",
           }}
         >
-          {getProperties(propertyStatus)?.length > 0 ? (
+          {getProperties(propertyStatus).length > 0 ? (
             <img
-              // src={property.property_favorite_image}
-              src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : defaultHouseImage}
-              // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : propertyImage}
+              src={property.property_favorite_image}
               //   src={rentDetailsData.property_favorite_image}
               alt="Property Img"
               style={{
@@ -247,12 +239,12 @@ export function RentDetailBody(props) {
             }}
           >
             <div>
-              {getProperties(propertyStatus)?.length > 0 &&
+              {getProperties(propertyStatus).length > 0 &&
                 `${property.property_address}, ${property.property_unit !== null && property.property_unit !== "" ? property.property_unit + "," : ""} ${property.property_city} ${
                   property.property_state
                 } ${property.property_zip}`}
             </div>
-            <div>{getProperties(propertyStatus)?.length > 0 && `${property?.property_uid}`}</div>
+            <div>{getProperties(propertyStatus).length > 0 && `${property?.property_uid}`}</div>
           </Box>
 
           <Box
@@ -262,9 +254,9 @@ export function RentDetailBody(props) {
               fontSize: "14px",
             }}
           >
-            <Box>{getProperties(propertyStatus)?.length > 0 && (due_amount === null ? "Vacant" : `$ ${due_amount}`)}</Box>
-            <Box>{getProperties(propertyStatus)?.length > 0 && (due_date ? `due ${due_date.replaceAll("-", "/")}` : "No Due Date")}</Box>
-            <Box>{getProperties(propertyStatus)?.length > 0 && (due_date ? `${calculateDaysDifference(due_date)} Days Overdue` : "Not Overdue")}</Box>
+            <Box>{getProperties(propertyStatus).length > 0 && (due_amount === null ? "Vacant" : `$ ${due_amount}`)}</Box>
+            <Box>{getProperties(propertyStatus).length > 0 && (due_date ? `due ${due_date.replaceAll("-", "/")}` : "No Due Date")}</Box>
+            <Box>{getProperties(propertyStatus).length > 0 && (due_date ? `${calculateDaysDifference(due_date)} Days Overdue` : "Not Overdue")}</Box>
           </Box>
         </Box>
       </Box>
@@ -304,15 +296,15 @@ export function RentDetailBody(props) {
               //   console.log("In map image: ", rentDetails.property_favorite_image);
 
               let month = rentDetails?.cf_month || 0; //These fields need revision
-              let payment_date = rentDetails?.latest_date ?? "";
+              let payment_date = rentDetails?.payment_date ?? "";
               let paid;
               if (payment_date === "") {
                 paid = "-";
               } else {
-                const [payment_month, payment_day, payment_year] = payment_date.split("-");
+                const [payment_month, payment_day] = payment_date.split("-");
                 paid = `${payment_month}/${payment_day}`;
               }
-              let amount = `\$${rentDetails?.pur_amount_due ?? 0}`;
+              let amount = `\$${rentDetails?.total_paid ?? 0}`;
               let rent_status = rentDetails?.purchase_status || "No rent_status ";
               let fees = rentDetails?.total_late_fees ?? 0;
               let paid_fees = rentDetails?.total_late_fees_paid ?? 0;

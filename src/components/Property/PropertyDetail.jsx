@@ -81,7 +81,7 @@ export default function PropertyDetail({}) {
           >
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                All Properties
+                All Properties 1
               </Typography>
             </Box>
             <Box position="absolute" right={30}>

@@ -185,8 +185,11 @@ export const getStatusColor = (status) => {
 };
 
 export function RentAccordionView(props) {
+  console.log("In RentComponents");
   const rentData = props.data;
   const rentDetailUrl = props.link;
+  // console.log("In Rent Accordian View: ", props.data);
+  // console.log("In Rent Accordian View Links: ", props.link);
   const [unpaid, setUnpaid] = useState([]);
   const [partial, setPartial] = useState([]);
   const [late, setLate] = useState([]);
@@ -222,6 +225,9 @@ export function RentAccordion(props) {
   const status = props.status;
   const [rentData, properties] = props.data;
   const rentDetailUrl = props.link;
+  console.log("In Rent Accordian: ", props.data);
+  console.log("In Rent Accordian Links: ", props.link);
+  console.log("In Rent Accordian Status: ", props.status);
   const StatusText = () => {
     switch (status) {
       case "UNPAID":
@@ -240,6 +246,9 @@ export function RentAccordion(props) {
   };
   const navigate = useNavigate();
   function navigateTo(url, index) {
+    // console.log("Navigate to: ", status, index, rentData, url);
+    // console.log(rentData.status);
+    // console.log(rentData.late);
     navigate(url, {
       state: {
         status: status,
