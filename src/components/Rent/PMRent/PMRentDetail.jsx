@@ -17,17 +17,12 @@ function PMRentDetail(props) {
   const [propertyStatus, setPropertyStatus] = useState(location.state.status);
   console.log("in PMRentDetail Status: ", propertyStatus);
   const [showSpinner, setShowSpinner] = useState(false);
-<<<<<<< HEAD
   // const rentData = location.state.data;
   // console.log("ROHIT - renData - ", rentData);
   const [propertiesData, setPropertiesData] = useState([]);
   useEffect(() => {
     console.log("ROHIT - propertiesData - ", propertiesData);
   }, [propertiesData]);
-=======
-  const rentData = location.state.data;
-  console.log("in PMRentDetail Rent Data: ", rentData);
->>>>>>> master
   const months = {
     January: 1,
     February: 2,
@@ -80,15 +75,11 @@ function PMRentDetail(props) {
   useEffect(() => {
     setShowSpinner(true);
     const requestURL = `${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`;
+    // const requestURL = `${APIConfig.baseURL.dev}/rentDetails/600-000003`;
     axios.get(requestURL).then((res) => {
       // console.log(res.data.RentStatus.result);
       const fetchData = res.data.RentStatus.result;
-<<<<<<< HEAD
-      console.log("After fetchData: ", fetchData);
-
-=======
       // console.log("After fetchData: ", fetchData);
->>>>>>> master
       fetchData.sort((a, b) => {
         const comp1 = b.cf_year - a.cf_year;
         const comp2 = b.cf_month - a.cf_month;
@@ -158,7 +149,6 @@ function PMRentDetail(props) {
         property = [];
         break;
     }
-<<<<<<< HEAD
     if (property?.length > 0) {
       setPropertyID(property[index].property_id);
     }
@@ -207,14 +197,6 @@ function PMRentDetail(props) {
   //     setPropertyID(property[index].property_id);
   //   }
   // }, [propertyStatus, index, rentData]);
-=======
-    console.log("In PMRentDetail switch: ", property, index);
-    if (property.length > 0) {
-      setPropertyID(property[index].property_uid);
-    }
-    console.log("Property ID: ", propertyID);
-  }, [propertyStatus, index, rentData]);
->>>>>>> master
 
   // console.log('nav', getProperties(propertyStatus)[index]);
   // console.log('nav', rentDetailsData, propertyID);
