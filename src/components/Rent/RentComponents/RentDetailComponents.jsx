@@ -1,6 +1,8 @@
 import { Box } from "@mui/system";
 import { getStatusColor } from "./RentComponents";
 import { Typography } from "@material-ui/core";
+import defaultHouseImage from "../../Property/defaultHouseImage.png";
+import propertyImage from "../../Property/propertyImage.png";
 
 export function BackIcon(props) {
   return (
@@ -220,6 +222,8 @@ export function RentDetailBody(props) {
           {getProperties(propertyStatus).length > 0 ? (
             <img
               src={property.property_favorite_image}
+              // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : defaultHouseImage}
+              // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : propertyImage}
               //   src={rentDetailsData.property_favorite_image}
               alt="Property Img"
               style={{
