@@ -10,15 +10,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
 function PMRentDetail(props) {
-  // console.log("in PMRentDetail: ", props);
+  console.log("in PMRentDetail: ", props);
   const location = useLocation();
   const [index, setIndex] = useState(location.state.index);
-  // console.log("in PMRentDetail Index: ", index);
+  console.log("in PMRentDetail Index: ", index);
   const [propertyStatus, setPropertyStatus] = useState(location.state.status);
-  // console.log("in PMRentDetail Status: ", propertyStatus);
+  console.log("in PMRentDetail Status: ", propertyStatus);
   const [showSpinner, setShowSpinner] = useState(false);
   const rentData = location.state.data;
-  // console.log("in PMRentDetail Rent Data: ", rentData);
+  console.log("in PMRentDetail Rent Data: ", rentData);
   const months = {
     January: 1,
     February: 2,
@@ -104,9 +104,11 @@ function PMRentDetail(props) {
         property = [];
         break;
     }
+    console.log("In PMRentDetail switch: ", property, index);
     if (property.length > 0) {
-      setPropertyID(property[index].property_id);
+      setPropertyID(property[index].property_uid);
     }
+    console.log("Property ID: ", propertyID);
   }, [propertyStatus, index, rentData]);
 
   // console.log('nav', getProperties(propertyStatus)[index]);

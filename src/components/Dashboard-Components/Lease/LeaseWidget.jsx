@@ -74,20 +74,20 @@ export default function LeaseWidget(props) {
   // });
 
   leaseStatusData.forEach((item) => {
-    console.log("Lease item: ", item);
-    console.log("Lease end month ", item.lease_end_month);
-    console.log("Lease end num ", item.lease_end_num);
-    console.log("Leases_expiring ", item.leases_expiring);
-    console.log("Move Out ", item.move_out);
+    // console.log("Lease item: ", item);
+    // console.log("Lease end month ", item.lease_end_month);
+    // console.log("Lease end num ", item.lease_end_num);
+    // console.log("Leases_expiring ", item.leases_expiring);
+    // console.log("Move Out ", item.move_out);
     if (item.lease_end_month !== "MTM" && item.lease_end_month !== "FUTURE") {
       leaseStatusDictionary[item.lease_end_num] = item.leases_expiring;
-      console.log(currentMonth, item.lease_end_num, currentMonth === item.lease_end_num);
+      // console.log(currentMonth, item.lease_end_num, currentMonth === item.lease_end_num);
       if (currentMonth === item.lease_end_num) {
         moveoutsInSixWeeks = moveoutsInSixWeeks + item.move_out;
       }
     }
-    console.log("Lease Status Dictionary: ", leaseStatusDictionary[item.lease_end_num]);
-    console.log("Moveouts: ", moveoutsInSixWeeks);
+    // console.log("Lease Status Dictionary: ", leaseStatusDictionary[item.lease_end_num]);
+    // console.log("Moveouts: ", moveoutsInSixWeeks);
     // const leaseEndDate = new Date(item.lease_end);
     // console.log("leaseEndDate ", leaseEndDate);
     // diffDate = Math.floor((leaseEndDate - today) / (1000 * 60 * 60 * 24));

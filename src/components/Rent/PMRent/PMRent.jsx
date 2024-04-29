@@ -62,6 +62,7 @@ function PMRent(props) {
       setShowSpinner(false);
     });
   }, []);
+  console.log("Rent Data: ", rentData);
   return (
     <MainContainer>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>

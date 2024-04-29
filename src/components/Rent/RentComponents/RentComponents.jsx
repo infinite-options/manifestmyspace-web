@@ -185,6 +185,7 @@ export const getStatusColor = (status) => {
 };
 
 export function RentAccordionView(props) {
+  console.log("In RentComponents");
   const rentData = props.data;
   const rentDetailUrl = props.link;
   // console.log("In Rent Accordian View: ", props.data);
@@ -224,9 +225,9 @@ export function RentAccordion(props) {
   const status = props.status;
   const [rentData, properties] = props.data;
   const rentDetailUrl = props.link;
-  // console.log("In Rent Accordian: ", props.data);
-  // console.log("In Rent Accordian Links: ", props.link);
-  // console.log("In Rent Accordian Status: ", props.status);
+  console.log("In Rent Accordian: ", props.data);
+  console.log("In Rent Accordian Links: ", props.link);
+  console.log("In Rent Accordian Status: ", props.status);
   const StatusText = () => {
     switch (status) {
       case "UNPAID":
