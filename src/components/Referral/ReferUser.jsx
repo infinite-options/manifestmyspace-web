@@ -138,10 +138,17 @@ export default function ReferUser({}) {
             "email_subject": `You have been invited to join ManifestMySpace`,
             "email_body": message + ` Please sign up using the link - ${link}. Don't forget to verify your profile information and create a password to finish setting up your profile. You can also sign up using your Google Account.`,
         }
+
+        // const emailResponse = await axios.post(
+        //   "http://localhost:4000/sendEmail",
+        //   emailPayload
+        // );
+        
         const emailResponse = await axios.post(
             "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
             emailPayload
         );
+        
 
         if(emailResponse.status === 200){
           setShowEmailSentDialog(true);

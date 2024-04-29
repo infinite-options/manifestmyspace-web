@@ -125,7 +125,8 @@ export default function Payments(props) {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
-      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
+      // const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
+      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/600-000003`);
       // const paymentStatusData = res.data.PaymentStatus.result;
       // const paidStatusData = res.data.PaidStatus.result;
 
@@ -295,8 +296,10 @@ export default function Payments(props) {
                 </Grid>
                 <Grid item xs={6}>
                   <Button
+                    disabled={total <= 0}
                     sx={{
-                      backgroundColor: "#3D5CAC",
+                      // backgroundColor: "#3D5CAC",
+                      backgroundColor: total <= 0 ? "#A9A9A9" : "#3D5CAC",
                       borderRadius: "10px",
                       color: "#FFFFFF",
                       width: "100%",
@@ -477,8 +480,9 @@ function BalanceDetailsTable(props) {
   }, [props.data]);
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      setSelectedRows(data.map((row) => row.purchase_uid));
+    if (data && data.length > 0) {      
+      const filteredRows = data.filter(row => row.pgps && !row.pgps.includes("UNPAID"));
+      setSelectedRows(filteredRows.map((row) => row.purchase_uid));
       setPaymentDueResult(
         data.map((item) => ({
           ...item,
@@ -489,6 +493,7 @@ function BalanceDetailsTable(props) {
   }, [data]);
 
   useEffect(() => {
+    console.log("ROHIT - useEffect - selectedRows", selectedRows);
     var total = 0;
 
     let purchase_uid_mapping = [];
@@ -635,40 +640,166 @@ function BalanceDetailsTable(props) {
     },
   ];
 
-  const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("newRowSelectionModel - ", newRowSelectionModel);
+  // const handleSelectionModelChange = (newRowSelectionModel) => {
+  //   console.log("newRowSelectionModel - ", newRowSelectionModel);
 
-    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
-    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+  //   const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+  //   const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
-    if (addedRows.length > 0) {
-      // console.log("Added rows: ", addedRows);
+  //   if (addedRows.length > 0) {
+  //     // console.log("Added rows: ", addedRows);
+  //     let newPayments = [];
+  //     addedRows.forEach((item, index) => {
+  //       const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+  //       // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
+  //       newPayments.push(addedPayment);
+  //     });
+
+  //     // console.log("newPayments - ", newPayments);
+  //     setSelectedPayments((prevState) => {
+  //       return [...prevState, ...newPayments];
+  //     });
+  //   }
+
+  //   if (removedRows.length > 0) {
+  //     // console.log("Removed rows: ", removedRows);
+  //     let removedPayments = [];
+  //     removedRows.forEach((item, index) => {
+  //       let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+  //       // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+  //       removedPayments.push(removedPayment);
+  //     });
+  //     // console.log("removedPayments - ", removedPayments);
+  //     setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+  //   }
+  //   setSelectedRows(newRowSelectionModel);
+  // };
+
+//   const handleSelectionModelChange = (newRowSelectionModel) => {
+//     console.log("newRowSelectionModel - ", newRowSelectionModel);
+
+//     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+//     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+//     if (addedRows.length > 0) {
+//         // Select all payments with the same pgps as the newly added rows
+//         let newPayments = [];
+//         addedRows.forEach((rowId) => {
+//             const addedPayment = paymentDueResult.find((row) => row.purchase_uid === rowId);
+//             const pgpsValue = addedPayment.pgps;
+//             const paymentsWithSamePgps = paymentDueResult.filter((row) => row.pgps === pgpsValue);
+//             newPayments.push(...paymentsWithSamePgps);
+//         });
+//         setSelectedPayments((prevState) => {
+//             return [...prevState, ...newPayments];
+//         });
+//     }
+
+//     if (removedRows.length > 0) {
+//         // Unselect all payments with the same pgps as the removed rows
+//         let removedPayments = [];
+//         removedRows.forEach((rowId) => {
+//             const removedPayment = paymentDueResult.find((row) => row.purchase_uid === rowId);
+//             const pgpsValue = removedPayment.pgps;
+//             const paymentsWithSamePgps = selectedPayments.filter((row) => row.pgps === pgpsValue);
+//             removedPayments.push(...paymentsWithSamePgps);
+//         });
+//         setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+//     }
+//     setSelectedRows(newRowSelectionModel);
+// };
+// const handleSelectionModelChange = (newRowSelectionModel) => {
+//   console.log("newRowSelectionModel - ", newRowSelectionModel);
+
+//   const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+//   const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+//   if (addedRows.length > 0) {
+//       let newPayments = [];
+//       addedRows.forEach((item, index) => {
+//           const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+//           newPayments.push(addedPayment);
+//           const pgps = addedPayment.pgps;
+//           // Select all rows with the same pgps value
+//           const rowsWithSamePgps = paymentDueResult.filter((row) => row.pgps === pgps);
+//           rowsWithSamePgps.forEach((row) => {
+//               if (!newRowSelectionModel.includes(row.purchase_uid)) {
+//                   newRowSelectionModel.push(row.purchase_uid);
+//                   newPayments.push(row);
+//               }
+//           });
+//       });
+//       setSelectedPayments((prevState) => {
+//           return [...prevState, ...newPayments];
+//       });
+//   }
+
+//   if (removedRows.length > 0) {
+//     let removedPayments = [];
+//     removedRows.forEach((item, index) => {
+//         let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+//         removedPayments.push(removedPayment);
+//         const pgps = removedPayment.pgps;
+//         // Deselect all rows with the same pgps value
+//         const rowsWithSamePgps = paymentDueResult.filter((row) => row.pgps === pgps);
+//         rowsWithSamePgps.forEach((row) => {
+//             const indexToRemove = newRowSelectionModel.indexOf(row.purchase_uid);
+//             if (indexToRemove !== -1) {
+//                 newRowSelectionModel.splice(indexToRemove, 1);
+//             }
+//         });
+//     });
+//     setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+//   }
+//   setSelectedRows(newRowSelectionModel);
+// };
+const handleSelectionModelChange = (newRowSelectionModel) => {
+  console.log("newRowSelectionModel - ", newRowSelectionModel);
+
+  const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+  const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+  if (addedRows.length > 0) {
       let newPayments = [];
       addedRows.forEach((item, index) => {
-        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
-        // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
-        newPayments.push(addedPayment);
+          const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+          newPayments.push(addedPayment);
+          const pgps = addedPayment.pgps;
+          // Select all rows with the same pgps value
+          const rowsWithSamePgps = paymentDueResult.filter((row) => row.pgps === pgps);
+          rowsWithSamePgps.forEach((row) => {
+              if (!newRowSelectionModel.includes(row.purchase_uid)) {
+                  newRowSelectionModel.push(row.purchase_uid);
+                  newPayments.push(row);
+              }
+          });
       });
+      setSelectedPayments((prevState) => [...prevState, ...newPayments]);
+  }
 
-      // console.log("newPayments - ", newPayments);
-      setSelectedPayments((prevState) => {
-        return [...prevState, ...newPayments];
-      });
-    }
+  let rowIDsWithSamePgps = []
 
-    if (removedRows.length > 0) {
-      // console.log("Removed rows: ", removedRows);
+  if (removedRows.length > 0) {
       let removedPayments = [];
       removedRows.forEach((item, index) => {
-        let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
-        // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
-        removedPayments.push(removedPayment);
+          let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+          removedPayments.push(removedPayment);
+          const pgps = removedPayment.pgps;
+          // Deselect all rows with the same pgps value
+          const rowsWithSamePgps = paymentDueResult.filter((row) => row.pgps === pgps);
+          rowIDsWithSamePgps = rowsWithSamePgps.filter((rowId) => !newRowSelectionModel.includes(rowId));
+          console.log("ROHIT - rowIDsWithSamePgps - ", rowIDsWithSamePgps)
+          rowsWithSamePgps.forEach((row) => {
+              const indexToRemove = newRowSelectionModel.indexOf(row.purchase_uid);
+              if (indexToRemove !== -1) {
+                  newRowSelectionModel.splice(indexToRemove, 1);
+              }
+          });
       });
-      // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
-    }
-    setSelectedRows(newRowSelectionModel);
-  };
+      setSelectedPayments((prevState) => prevState.filter((payment) => !rowIDsWithSamePgps.includes(payment.purchase_uid)));
+  }
+  setSelectedRows(newRowSelectionModel);  
+};
 
   if (paymentDueResult.length > 0) {
     // console.log("Passed Data ", paymentDueResult);
@@ -705,6 +836,8 @@ function BalanceDetailsTable(props) {
             // handleOnClickNavigateToMaintenance(row);
           }}
           sortModel={sortModel} // Set the sortModel prop
+          isRowSelectable={params => (params.row.pgps && params.row.pgps.substring(11) !== "UNPAID")}
+          
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />

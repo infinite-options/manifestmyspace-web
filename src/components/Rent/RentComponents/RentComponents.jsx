@@ -244,7 +244,7 @@ export function RentAccordion(props) {
       state: {
         status: status,
         index: index,
-        data: rentData,
+        // data: rentData,
       },
     });
   }

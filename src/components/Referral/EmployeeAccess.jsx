@@ -101,6 +101,7 @@ export default function EmployeeAccess({}) {
 
   const [newRequests, setNewRequests] = useState([]);
   const [oldRequests, setOldRequests] = useState([]);
+  const [businessOwners, setBusinessOwners] = useState([]);
   const [updatedData, setUpdatedData] = useState([]);
 
 //   useEffect(() => {
@@ -131,8 +132,9 @@ export default function EmployeeAccess({}) {
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`).then((res) => {
       const data = res.data?.employee?.result;               
 
-      setNewRequests(data.filter((employee) => employee.employee_verification == null))
-      setOldRequests(data.filter((employee) => employee.employee_verification !== null && employee.employee_business_id !== getProfileId()))
+      setNewRequests(data.filter((employee) => employee.employee_verification == null && employee.employee_role === "EMPLOYEE"))
+      setOldRequests(data.filter((employee) => employee.employee_verification !== null && employee.employee_role === "EMPLOYEE"))
+      setBusinessOwners(data.filter((employee) => employee.employee_role === "OWNER"))
 
       setShowSpinner(false);
       
@@ -254,6 +256,19 @@ export default function EmployeeAccess({}) {
                     )
                 }
 
+{
+                    (businessOwners && businessOwners.length > 0) && (
+                        <Grid item xs={12}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont, fontWeight: theme.typography.primary.fontWeight }}>
+                                BUSINESS OWNERS
+                            </Typography>
+                            {businessOwners.map((employee) => (
+                                <EmployeeCard key={employee.id} employee={employee} onVerificationChange={handleVerificationChange} />
+                            ))}                   
+                        </Grid>
+                    )
+                }
+
 
               </Grid>
             </Box>
@@ -364,6 +379,7 @@ function EmployeeCard({ employee, onVerificationChange }) {
                 onChange={handleToggle}
                 color="primary"
                 inputProps={{ 'aria-label': 'toggle verification' }}
+                disabled={employee.employee_role === "OWNER"}
               />
             </Box>
           </Box>

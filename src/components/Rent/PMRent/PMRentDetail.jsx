@@ -14,7 +14,12 @@ function PMRentDetail(props) {
   const [index, setIndex] = useState(location.state.index);
   const [propertyStatus, setPropertyStatus] = useState(location.state.status);
   const [showSpinner, setShowSpinner] = useState(false);
-  const rentData = location.state.data;
+  // const rentData = location.state.data;
+  // console.log("ROHIT - renData - ", rentData);
+  const [propertiesData, setPropertiesData] = useState([]);
+  useEffect(() => {
+    console.log("ROHIT - propertiesData - ", propertiesData);
+  }, [propertiesData]);
   const months = {
     January: 1,
     February: 2,
@@ -33,17 +38,18 @@ function PMRentDetail(props) {
   const navigate = useNavigate();
 
   const getProperties = (status) => {
+    // console.log("ROHIT - getProperties called - propertiesData - ", propertiesData);
     switch (status) {
       case "UNPAID":
-        return rentData.unpaid;
+        return propertiesData? propertiesData.unpaid : [];
       case "PAID PARTIALLY":
-        return rentData.partial;
+        return propertiesData? propertiesData.partial : [];
       case "PAID LATE":
-        return rentData.late;
+        return propertiesData? propertiesData.late : [];
       case "PAID":
-        return rentData.paid;
+        return propertiesData? propertiesData.paid : [];
       case "VACANT":
-        return rentData.vacant;
+        return propertiesData? propertiesData.vacant : [];
       default:
         return [];
     }
@@ -62,6 +68,7 @@ function PMRentDetail(props) {
   const [rentDetailsData, setRentDetailsData] = useState({});
   const [propertyID, setPropertyID] = useState("");
   const { getProfileId } = useUser();
+
   useEffect(() => {
     setShowSpinner(true);
     const requestURL = `${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`;
@@ -69,41 +76,124 @@ function PMRentDetail(props) {
       // console.log(res.data.RentStatus.result);
       const fetchData = res.data.RentStatus.result;
       console.log("After fetchData: ", fetchData);
+
       fetchData.sort((a, b) => {
         const comp1 = b.cf_year - a.cf_year;
         const comp2 = b.cf_month - a.cf_month;
         return comp1 !== 0 ? comp1 : comp2;
       });
+
+      const filteredData = fetchData.reduce((unique, item) => {
+        return unique.some(entry => entry.property_uid === item.property_uid) ? unique : [...unique, item];
+      }, []);
+
+
+      console.log("ROHIT - filteredData - ", filteredData);
+      const not_paid = [];
+      const partial_paid = [];
+      const late_paid = [];
+      const paid = [];
+      const vacant = [];
+      for (let i = 0; i < filteredData.length; i++) {
+        const data = filteredData[i];
+        switch (data.rent_status) {
+          case "UNPAID":
+            not_paid.push(data);
+            break;
+          case "PAID PARTIALLY":
+            partial_paid.push(data);
+            break;
+          case "PAID LATE":
+            late_paid.push(data);
+            break;
+          case "PAID":
+            paid.push(data);
+            break;
+          case "VACANT":
+            vacant.push(data);
+            break;
+          default:
+            break;
+        }        
+      }
+      setPropertiesData({ unpaid: not_paid, partial: partial_paid, late: late_paid, paid: paid, vacant: vacant });      
       setRentDetailsData(fetchData);
       console.log("rentDetailsData: ", rentDetailsData);
       setShowSpinner(false);
     });
 
+  }, []);
+
+  useEffect(() => {
     let property;
     switch (propertyStatus) {
       case "UNPAID":
-        property = rentData.unpaid;
+        property = propertiesData.unpaid;
         break;
       case "PAID PARTIALLY":
-        property = rentData.partial;
+        property = propertiesData.partial;
         break;
       case "PAID LATE":
-        property = rentData.late;
+        property = propertiesData.late;
         break;
       case "PAID":
-        property = rentData.paid;
+        property = propertiesData.paid;
         break;
       case "VACANT":
-        property = rentData.vacant;
+        property = propertiesData.vacant;
         break;
       default:
         property = [];
         break;
     }
-    if (property.length > 0) {
+    if (property?.length > 0) {
       setPropertyID(property[index].property_id);
     }
-  }, [propertyStatus, index, rentData]);
+
+  }, [propertyStatus, index]);
+  
+  // useEffect(() => {
+  //   setShowSpinner(true);
+  //   const requestURL = `${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`;
+  //   axios.get(requestURL).then((res) => {
+  //     // console.log(res.data.RentStatus.result);
+  //     const fetchData = res.data.RentStatus.result;
+  //     console.log("After fetchData: ", fetchData);
+  //     fetchData.sort((a, b) => {
+  //       const comp1 = b.cf_year - a.cf_year;
+  //       const comp2 = b.cf_month - a.cf_month;
+  //       return comp1 !== 0 ? comp1 : comp2;
+  //     });
+  //     setRentDetailsData(fetchData);
+  //     console.log("rentDetailsData: ", rentDetailsData);
+  //     setShowSpinner(false);
+  //   });
+
+  //   let property;
+  //   switch (propertyStatus) {
+  //     case "UNPAID":
+  //       property = propertiesData.unpaid;
+  //       break;
+  //     case "PAID PARTIALLY":
+  //       property = propertiesData.partial;
+  //       break;
+  //     case "PAID LATE":
+  //       property = propertiesData.late;
+  //       break;
+  //     case "PAID":
+  //       property = propertiesData.paid;
+  //       break;
+  //     case "VACANT":
+  //       property = propertiesData.vacant;
+  //       break;
+  //     default:
+  //       property = [];
+  //       break;
+  //   }
+  //   if (property?.length > 0) {
+  //     setPropertyID(property[index].property_id);
+  //   }
+  // }, [propertyStatus, index, rentData]);
 
   // console.log('nav', getProperties(propertyStatus)[index]);
   // console.log('nav', rentDetailsData, propertyID);
@@ -172,7 +262,7 @@ function PMRentDetail(props) {
           title={"Vacant"}
         />
       </Box>
-      <RentDetailBody data={[rentDetailsData, propertyID, index, propertyStatus]} updator={[decrementIndex, incrementIndex]} methods={[getProperties]} />
+      <RentDetailBody data={[rentDetailsData, propertyID, index, propertyStatus, propertiesData]} updator={[decrementIndex, incrementIndex]} methods={[getProperties]} />
     </MainContainer>
   );
 }
