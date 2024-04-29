@@ -443,21 +443,9 @@ function TenantDashboard(props) {
                           flexDirection: "row",
                         }}
                       >
-                        {/* <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                              color: "#00000080",
-                              padding: "6px",
-                            }}
-                          >
-                            Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"}
-                          </Box> */}
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Pay before: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
+                          (Payment Due: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
                         </Box>
                       </Box>
                       <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
