@@ -221,7 +221,7 @@ export function RentDetailBody(props) {
         >
           {getProperties(propertyStatus).length > 0 ? (
             <img
-              src={property.property_favorite_image}
+              src={property.property_favorite_image? property.property_favorite_image : defaultHouseImage}
               // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : defaultHouseImage}
               // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : propertyImage}
               //   src={rentDetailsData.property_favorite_image}
