@@ -134,6 +134,9 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
     function displayScheduledDate(data){
         console.log("displayScheduledDate from this one:", data)
         // console.log("display quote info", JSON.parse(data.quote_info))
+        if (data.maintenance_request_closed_date){
+            return `Closed on ${data.maintenance_request_closed_date}`
+        }
         if (!data.maintenance_scheduled_date || !data.maintenance_scheduled_time || data.maintenance_scheduled_time === "null" || data.maintenance_scheduled_date === "null") {
             return "Not Scheduled"
         } else {
@@ -141,6 +144,13 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
             // setFormattedTime(formattedTime)
             // setFormattedDate(dayjs(data.maintenance_scheduled_date, "MM-DD-YYYY"));
             return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`
+        }
+    }
+
+    function displayEarliestAvailableDate(data){
+        console.log("maintenance quotes in maintenanceRequestNavigator", maintenanceQuotes)
+        if (data){
+            console.log(data)
         }
     }
 
@@ -343,6 +353,9 @@ export default function MaintenanceRequestNavigator({ requestIndex, backward_act
                             <Typography sx={maintenanceSecondary}>
                                 Reported: {formattedDate} | Open: {numOpenRequestDays} days
                             </Typography> 
+                            <Typography sx={maintenanceSecondary}>
+                                {displayEarliestAvailableDate(data)}
+                            </Typography>
                             <Typography sx={maintenanceSecondary}>
                                 {displayScheduledDate(data)}
                             </Typography>
