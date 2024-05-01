@@ -137,7 +137,7 @@ export default function TenantMaintenanceItemDetail() {
             {/* <ArrowBackIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/> */}
             <img src={ReturnButtonIcon} alt="Return Button Icon" style={{ width: "25px", height: "25px", marginRight: "10px" }} />
             <Typography sx={{ textTransform: "none", color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>
-              Return to Viewing All Properties
+              Return to Dashboard
             </Typography>
           </Button>
         </Box>

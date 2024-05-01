@@ -42,8 +42,11 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
     const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([])
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
-    const [date, setDate] = useState(maintenanceItem.earliest_available_date || "")
-    const [time, setTime] = useState(maintenanceItem.earliest_available_time || "")
+    let maintenanceQuoteInfo = JSON.parse(maintenanceItem.quote_info).find((quote) => quote.quote_status === maintenanceItem.quote_status_ranked)
+    console.log(maintenanceQuoteInfo)
+    const [date, setDate] = useState(maintenanceQuoteInfo.quote_earliest_available_date || "")
+    const [time, setTime] = useState(maintenanceQuoteInfo.quote_earliest_available_time || "")
+
     const [showModal, setShowModal] = useState(false);
 
     let business_name = maintenanceItem?.maint_business_name || "Business Name Not Available";
@@ -179,8 +182,9 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                     </Button>
                 </Grid>
                 <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
-                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
+                <CompleteButton maintenanceItem={maintenanceItem} date={date} time={time} setShowMessage={setShowMessage} setMessage={setMessage}/>
             </Grid>
+            {console.log("date", date, "time", time)}
             <DateTimePickerModal 
                 setOpenModal={setShowModal}
                 open={showModal}

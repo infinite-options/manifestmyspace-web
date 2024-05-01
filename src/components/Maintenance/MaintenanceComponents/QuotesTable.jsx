@@ -28,7 +28,7 @@ export default function QuotesTable({maintenanceItem, navigateParams, maintenanc
         { field: 'maint_business_uid', headerName: 'ID', flex: 1 },
         { field: 'quote_total_estimate', headerName: 'Amount', flex: 1 },
         { field: 'quote_status', headerName: 'Status', flex: 1 },
-        { field: 'quote_created_date', headerName: 'Date', flex: 1 },
+        { field: 'quote_created_date', headerName: 'Quote Date', flex: 1 },
       ];
     
 

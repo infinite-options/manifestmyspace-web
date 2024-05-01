@@ -37,7 +37,7 @@ export default function QuoteRequestForm(){
     
     const location = useLocation();
     const navigate = useNavigate();
-    const { roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
+    const { roleName, maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
 
     const maintenanceItem = location.state.maintenanceItem;
 
@@ -45,7 +45,10 @@ export default function QuoteRequestForm(){
 
     const alreadyRequestedQuotes = location.state?.quotes || [];
 
-    console.log(alreadyRequestedQuotes)
+
+    useEffect(() => {
+        console.log(alreadyRequestedQuotes)
+    }, [])
 
 
     const [selectedImageList, setSelectedImageList] = useState([]);
@@ -111,7 +114,7 @@ export default function QuoteRequestForm(){
         let maintenanceContactIds = [];
         for (let contact of maintenanceContacts) {
             // console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
-            maintenanceContactIds.push(contact.business_uid);
+            maintenanceContactIds.push(contact.contact_uid);
         }
 
 
@@ -192,7 +195,7 @@ export default function QuoteRequestForm(){
         // console.log("contactList", contactList)
         if(contactList.length > 0){
             return (contactList.map((contact, index) => (
-                <MenuItem key={index} value={contact}> {contact.business_name} </MenuItem>
+                <MenuItem key={index} value={contact}> {contact.contact_first_name} </MenuItem>
             )))
         } else{
             return (
@@ -206,16 +209,21 @@ export default function QuoteRequestForm(){
 
         const getMaintenanceWorkers = async (requestedQuotes) => {
             setShowSpinner(true);
-            const response = await fetch(`${APIConfig.baseURL.dev}/contactsMaintenance`)
+            // const response = await fetch(`${APIConfig.baseURL.dev}/contactsMaintenance`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`)
             const data = await response.json()
-            const workers = data.Maintenance_Contacts.result
-            // console.log("workers",  workers)
+            // const workers = data.Maintenance_Contacts.result
+            
+            const workers = data.management_contacts.maintenance
+            
+            console.log("workers",  workers)
             //workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
             // Get a list of maint_business_uid values from requestedQuotes
-            const requestedBusinessUids = requestedQuotes.map(quote => quote.maint_business_uid);
+            const requestedBusinessUids = requestedQuotes.map(quote => quote.contact_uid);
+            console.log("requestedBusinessUids", requestedBusinessUids)
 
             // Filter out workers whose business_uid is in requestedBusinessUids
-            const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.business_uid));
+            const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
             setContactList(filteredWorkers)
             setShowSpinner(false);
         }
@@ -429,6 +437,7 @@ export default function QuoteRequestForm(){
                                         size="small"
                                         fullWidth
                                         onChange={e => handleMaintenanceChange(e)}
+                                        value={""}
                                         // renderValue={(selected) => selected.join(', ')}
                                     >
                                         {displayContactList()}
@@ -438,9 +447,9 @@ export default function QuoteRequestForm(){
 
                             {[...new Set (maintenanceContacts)].map((c)=>{
                             return (
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }} key={c.contact_uid}>
                                         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                                            {c.business_name}
+                                            {c.contact_first_name}
                                         </Typography>
                                         <IconButton onClick={()=>{
                                             let contacts= new Set ([...maintenanceContacts])
