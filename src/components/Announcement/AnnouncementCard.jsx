@@ -47,6 +47,12 @@ function AnnouncementCard(props) {
         <div
           className="announcement-list-card-picture"
           style={{ width: "40px", height: "40px", border: "4px solid transparent", borderRadius: "50%", borderColor: getBorderColor(), overflow: "hidden" }}
+          onClick={(e) => {
+            if (pageToNavigate) {
+              e.stopPropagation();
+              navigate(pageToNavigate, navigationParams);
+            }
+          }}
         >
           {data.sender_photo_url ? (
             <img src={data.sender_photo_url} alt="Sender" className="announcement-list-card-profile-img" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
@@ -61,7 +67,7 @@ function AnnouncementCard(props) {
         <div className="announcement-list-card-text-date">{"Added: " + calculateAge(data.announcement_date)}</div>
       </div>
       <div className="announcement-list-card-options">
-        <div
+        {/* <div
           className="announcement-list-card-picture"
           onClick={(e) => {
             if (pageToNavigate) {
@@ -77,7 +83,7 @@ function AnnouncementCard(props) {
               fillOpacity="0.5"
             />
           </svg>
-        </div>
+        </div> */}
         <div
           className="announcement-list-card-checkbox"
           onClick={(e) => {
