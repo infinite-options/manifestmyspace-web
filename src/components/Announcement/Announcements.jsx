@@ -335,7 +335,7 @@ export default function Announcements() {
                             isLease={announcement.announcement_mode == "LEASE"}
                             pageToNavigate={pageToNavigate}
                             navigationParams={navigationParams}
-                            sent_or_received={"Sent"}
+                            sent_or_received={"Received"}
                           />
                         }
                       </Box>
@@ -387,7 +387,7 @@ export default function Announcements() {
                             isLease={announcement.announcement_mode == "LEASE"}
                             pageToNavigate={pageToNavigate}
                             navigationParams={navigationParams}
-                            sent_or_received={"Received"}
+                            sent_or_received={"Sent"}
                           />
                         }
                       </Box>
