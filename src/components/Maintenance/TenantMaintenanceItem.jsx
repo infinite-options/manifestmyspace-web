@@ -28,30 +28,30 @@ import {
 } from "@mui/material";
 import theme from '../../theme/theme';
 
-export default function TenantMaintenanceItem({color, request}){
+export default function TenantMaintenanceItem({request}){
     
     const location = useLocation();
     let navigate = useNavigate();
 
     const tableTextStyle = {
-        backgroundColor: color, 
+        backgroundColor: '#FFFFFF', 
         color: '#FFFFFF', 
         fontFamily: 'Source Sans Pro', 
         fontSize: '15px', 
         fontWeight:600,
     }
 
-    function handleRequestDetailPage(item, color){
-        // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
-        // navigate(`/app/tenantmaintenance/${property_uid}/${maintenance_request_uid}`)
-        console.log("handleRequestDetailPage color:", color)
-        navigate(`/tenantMaintenanceItem`, {
-            state: {
-                item, 
-                color
-            }
-        })
-    }
+    // function handleRequestDetailPage(item, color){
+    //     // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
+    //     // navigate(`/app/tenantmaintenance/${property_uid}/${maintenance_request_uid}`)
+    //     console.log("handleRequestDetailPage color:", color)
+    //     navigate(`/tenantMaintenanceItem`, {
+    //         state: {
+    //             item, 
+    //             color
+    //         }
+    //     })
+    // }
 
     return (
         <div
@@ -62,7 +62,7 @@ export default function TenantMaintenanceItem({color, request}){
         >
             <Table>
                 <TableBody>
-                <TableRow onClick={() => handleRequestDetailPage(request, color)}>
+                <TableRow>
                         <TableCell align="left">
                             <Typography 
                                 sx={{color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "16px"}}

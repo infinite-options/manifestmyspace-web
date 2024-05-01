@@ -39,8 +39,8 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
     const [showScheduler, setShowScheduler] = useState(false);
-    const [schedulerDate, setSchedulerDate] = useState("");    
-    const [schedulerTime, setSchedulerTime] = useState("");    
+    const [schedulerDate, setSchedulerDate] = useState(maintenanceItem.quote_earliest_available_date ? maintenanceItem.quote_earliest_available_date : "");    
+    const [schedulerTime, setSchedulerTime] = useState(maintenanceItem.quote_earliest_available_time ? maintenanceItem.quote_earliest_available_time : "");    
     
 
     function handleNavigateToQuotesRequested(){
@@ -284,7 +284,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                     date={schedulerDate} 
                     time={schedulerTime}
                     maintenanceItem={maintenanceItem}
-                    handleSubmit={() => handleScheduleChange(maintenanceItem.maintenance_request_uid, schedulerDate,  schedulerTime)}
+                    handleSubmit={handleScheduleChange}
                 />
             </Grid>
         </Box>

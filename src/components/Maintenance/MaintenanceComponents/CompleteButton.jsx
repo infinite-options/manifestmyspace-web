@@ -10,10 +10,14 @@ import { useUser } from "../../../contexts/UserContext"
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router-dom";
 import APIConfig from "../../../utils/APIConfig";
+import DateTimePickerModal from "../../DateTimePicker";
+import { useState } from "react";
 
 export default function CompleteButton(props){
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId, roleName, selectedRole} = useUser();
     let navigate = useNavigate();
+
+    const [showModal, setShowModal] = useState(false);
 
     let maintenanceItem = props.maintenanceItem;
     let setShowMessage = props.setShowMessage;
@@ -22,7 +26,7 @@ export default function CompleteButton(props){
     // console.log(JSON.parse(maintenanceItem.quote_info))
     // console.log("CancelButton maintenanceItem", maintenanceItem)
 
-    async function handleComplete(id, quotes){
+    async function handleComplete(id, quotes, date, time){
         // console.log("handleComplete id", id)
         // var filteredQuoteArray = [];
 
@@ -47,7 +51,7 @@ export default function CompleteButton(props){
     
             if (maintenanceItem.maintenance_assigned_business === getProfileId()){
                 // it's handled by the property manager
-                CompleteTicket(id)
+                CompleteTicket(id, date)
             } else if (maintenanceItem.maintenance_assigned_business !== getProfileId()){
                 if (maintenanceItem.maintenance_assigned_business === null){
                     // PUT to assign maintenance request to PM
@@ -58,6 +62,7 @@ export default function CompleteButton(props){
                         const formData = new FormData();
                         formData.append("maintenance_assigned_business", getProfileId());
                         formData.append("maintenance_request_uid",  maintenanceItem.maintenance_request_uid);
+                        formData.append("maintenance_request_closed_date", date)
                         const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                             method: 'PUT',
                             body: formData,
@@ -71,8 +76,8 @@ export default function CompleteButton(props){
                 } else {
                     // PM is completing the ticket and the quote
                     console.log("PM is completing the ticket and the quote")
-                    CompleteTicket(id)
-                    if (maintenanceItem.quote_status_ranked !== "FINISHED"){
+                    CompleteTicket(id, date)
+                    if (maintenanceItem.quote_status_ranked !== "FINISHED" && rankedQuote){
                         FinishQuote(rankedQuote.maintenance_quote_uid)                        
                     }
                 }
@@ -93,6 +98,7 @@ export default function CompleteButton(props){
     }
 
     return (
+        <>
         <Grid item xs={6} sx={{
             alignItems: "center",
             justifyContent: "center",
@@ -107,7 +113,7 @@ export default function CompleteButton(props){
                     display: 'flex',
                     width: "100%"
                 }}
-                onClick={() => handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.quote_info)}
+                onClick={() => setShowModal(true)}//handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.quote_info)}
             >
                 <CheckIcon sx={{color: "#3D5CAC"}}/>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
@@ -115,6 +121,19 @@ export default function CompleteButton(props){
                 </Typography>
             </Button>
         </Grid>
+        <DateTimePickerModal
+            setOpenModal={setShowModal}
+            open={showModal}
+            maintenanceItem={maintenanceItem}
+            date={""}
+            time={""}
+            completeTicket={handleComplete}
+        />
+        </>
     )
 
+    // We need a modal to pop up and confirm the date the ticket was completed.
+    // It can default to today and today's time, if the scheduled date doesn't exist or isn't in the past.
+    // The user can change the date and time if they want.
+    // There are also buttons to select that it was "done now", "done on scheduled date" (if in the past)
 }

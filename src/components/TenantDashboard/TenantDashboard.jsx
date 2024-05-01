@@ -18,6 +18,7 @@ import BuildIcon from "@mui/icons-material/Build"; // For "Maintenance"
 import AddIcon from "@mui/icons-material/Add"; // For "New Request"
 import { PropertyCard } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
+import TenantMaintenanceModal from "./TenantMaintenanceModal"
 import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 
@@ -443,21 +444,9 @@ function TenantDashboard(props) {
                           flexDirection: "row",
                         }}
                       >
-                        {/* <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                              color: "#00000080",
-                              padding: "6px",
-                            }}
-                          >
-                            Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"}
-                          </Box> */}
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Pay before: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
+                          (Payment Due: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
                         </Box>
                       </Box>
                       <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
@@ -565,8 +554,8 @@ function TenantDashboard(props) {
                   </Box>
 
                   <Stack>
-                    <MaintenanceRequestsTable data={maintenanceRequests} />
-                  </Stack>
+                    <MaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
+                    </Stack>
                 </DashboardTab>
                 <DashboardTab>
                   <Box
@@ -741,6 +730,11 @@ function MaintenanceRequestsTable(props) {
   // console.log("In Maintenance Request Table from Stack")
   const data = props.data;
   // console.log("Data in MRD from props: ", data)
+  const location = useLocation();
+  let navigate = useNavigate();
+
+  const [openModal, setOpenModal] = useState(false)
+
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -761,17 +755,23 @@ function MaintenanceRequestsTable(props) {
     return date;
   }
 
+  // function handleOnClickNavigateToMaintenance(row){
+  //   navigate()
+  // }
+
   // Set favorite image
   data.forEach((item) => {
     // console.log("For Each Item: ", item)
     let favoriteImage = "";
     const maintenanceImagesList = JSON.parse(item.maintenance_images);
+    console.log("Maintenance Images: ", maintenanceImagesList);
 
     if (maintenanceImagesList && maintenanceImagesList.length > 0) {
       favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
     } else {
       favoriteImage = PlaceholderImage;
     }
+    console.log("Favorite Image: ", favoriteImage);
     // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage;
   });
@@ -860,14 +860,21 @@ function MaintenanceRequestsTable(props) {
           getRowId={(row) => row.maintenance_request_uid}
           pageSizeOptions={[5, 10, 25, 100]}
           onRowClick={(row) => {
-            {
-              console.log("Row =", row);
-            }
-            // handleOnClickNavigateToMaintenance(row);
+            
+            console.log("Row =", row);
+            // setOpenModal(true)
+              navigate(`/tenantMaintenanceItemDetail`, {
+                state: {
+                    item: row.row
+                }
+            })
+            // return (
+            //   <TenantMaintenanceModal data={row.row} open={openModal} setOpenModal={setOpenModal}/>
+            // )
+
           }}
-          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
-        />
-      </>
+        /> 
+      </>      
     );
   } else {
     return <></>;

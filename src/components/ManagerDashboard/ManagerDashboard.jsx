@@ -281,16 +281,17 @@ function ManagerDashboard() {
                 Contacts
               </Button>
             </Grid>
+
             <Grid item xs={4}>
               <Button
                 variant="outlined"
                 id="revenue"
                 className={classes.button}
                 style={{
-                  fontSize: "9px",
                   height: "100%",
                 }}
                 onClick={() => {
+                  console.log("New Request Clicked");
                   navigate("/pmQuotesList", { state: { property_endpoint_resp } });
                 }}
               >
@@ -355,7 +356,6 @@ function ManagerDashboard() {
                 id="maintenance"
                 className={classes.button}
                 style={{
-                  fontSize: "9px",
                   height: "100%",
                 }}
                 onClick={() => {

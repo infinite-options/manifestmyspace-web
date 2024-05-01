@@ -14,6 +14,8 @@ import TenantMaintenanceItem from './TenantMaintenanceItem';
 import theme from '../../theme/theme';
 
 
+// TO BE REMOVED
+
 export default function TenantMaintenanceView({tenantMaintenanceData, handleNewRequestButton, handleRequestDetailPage, filterToggle, handleFilterToggle}) {
 
     const color = "#000000"

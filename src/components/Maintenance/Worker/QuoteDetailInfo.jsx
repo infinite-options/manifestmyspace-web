@@ -366,7 +366,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 </Typography> */}
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "16px"}}>
                     {/* I would like this to be stored as time and date */}
-                    Your Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("h:mm A")}
+                    Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("h:mm A")}
                 </Typography>
             </Grid>
             {maintenanceItem?.maintenance_request_status == "SCHEDULED" ? (
@@ -417,7 +417,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     </Typography>
                 </Button>
             </Grid>
-            {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" ? (
+            {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" && (roleName == "Maintenance" || roleName === "Maintenance Employee") ? (
                 <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                     <Button sx={{
                         backgroundColor: "#F44336",

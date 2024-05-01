@@ -108,12 +108,6 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             renderCell: (params) => {
                 return `${params.row.maintenance_request_uid.substr(params.row.maintenance_request_uid.length - 3)}`
             },
-            // sortComparator: (v1, v2, cellParams1, cellParams2, sortDirection) => {
-            //     console.log(sortDirection);
-            //     return sortDirection === 'ASC'
-            //       ? cellParams1.maintenance_request_uid - cellParams2.maintenance_request_uid
-            //       : cellParams2.maintenance_request_uid - cellParams1.maintenance_request_uid;
-            //   },
         }, 
         {
             headerName: "Date Created",
@@ -122,35 +116,41 @@ export default function MaintenanceStatusTable({status, color, maintenanceItemsF
             minWidth: 100,
         },
         {
-            headerName: "Scheduled Date",
+            headerName: "Scheduled",
             field: "maintenance_scheduled_date",
             flex: 1,
-            minWidth: 100,
+            minWidth: 100,  // Adjust minWidth to accommodate the combined data
             renderCell: (params) => {
-                const scheduledDate = params.row.maintenance_scheduled_date
-                if (params.row.maintenance_request_status === "CANCELLED"){
-                    return "CANCELLED"
-                } else{
-                    return (scheduledDate && scheduledDate !== "null") ? dayjs(params.row.maintenance_scheduled_date).format("MM-DD-YYYY") : "N/A"
+                const scheduledDate = params.row.maintenance_scheduled_date;
+                const scheduledTime = params.row.maintenance_scheduled_time;
+                const status = params.row.maintenance_request_status;
+        
+                // Check if the maintenance request was cancelled
+                if (status === "CANCELLED") {
+                    return "CANCELLED";
+                } else {
+                    // Format and combine date and time if neither is null or 'undefined'
+                    const formattedDate = (scheduledDate && scheduledDate !== "null") ? dayjs(scheduledDate).format("MM-DD-YYYY") : "N/A";
+                    const formattedTime = (scheduledTime && scheduledTime !== "null") ? dayjs(scheduledTime, "HH:mm").format("h:mm A") : "";
+        
+                    return `${formattedDate} ${formattedTime}`.trim(); // Combine and trim any extra space if time is not available
                 }
             }
-            // there are values displayed like "N/A" or "CANCELLED" that need to be sorted in ascending order
-
         },
         {
-            headerName: "Scheduled Time",
-            field: "maintenance_scheduled_time",
+            headerName: "Completed Data",
+            field: "maintenance_request_closed_date",
             flex: 1,
             minWidth: 100,
             renderCell: (params) => {
-                const scheduledTime = params.row.maintenance_scheduled_date
+                const completedDate = params.row.maintenance_request_closed_date
                 if (params.row.maintenance_request_status === "CANCELLED"){
                     return "CANCELLED"
                 } else{
-                    return (scheduledTime && scheduledTime !== "null") ? dayjs(params.row.maintenance_scheduled_time, "HH:mm").format("h:mm A") : "N/A"
+                    return (completedDate && completedDate !== "null") ? dayjs(params.row.maintenance_request_closed_date).format("MM-DD-YYYY") : "N/A"
                 }
             }
-        },
+        }
     ];
 
     function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid){
