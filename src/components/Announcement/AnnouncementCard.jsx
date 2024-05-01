@@ -8,6 +8,7 @@ function AnnouncementCard(props) {
   const { selectedRole } = useUser();
   const { data, pageToNavigate, navigationParams, sent_or_received } = props;
   const navigate = useNavigate();
+  const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
   const handleAnnouncements = () => {
     console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
@@ -54,11 +55,12 @@ function AnnouncementCard(props) {
             }
           }}
         >
-          {data.sender_photo_url ? (
+          {/* {data.sender_photo_url ? (
             <img src={data.sender_photo_url} alt="Sender" className="announcement-list-card-profile-img" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
           ) : (
             <img src={DefaultProfileImg} alt="Default" className="announcement-list-card-profile-img" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
-          )}
+          )} */}
+          <img src={photoURL} alt="Sender" className="announcement-list-card-profile-img" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
         </div>
       </div>
       <div className="announcement-list-card-text-container">
