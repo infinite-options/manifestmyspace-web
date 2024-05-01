@@ -554,13 +554,8 @@ function TenantDashboard(props) {
                   </Box>
 
                   <Stack>
-<<<<<<< HEAD
                     <MaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
                     </Stack>
-=======
-                    <MaintenanceRequestsTable data={maintenanceRequests} />
-                  </Stack>
->>>>>>> 040f2b981d168e521f8a85ccc2115c27f05bccc9
                 </DashboardTab>
                 <DashboardTab>
                   <Box
