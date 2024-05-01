@@ -20,9 +20,9 @@ function PMRentDetail(props) {
   // const rentData = location.state.data;
   // console.log("in PMRentDetail Rent Data: ", rentData);  
   const [propertiesData, setPropertiesData] = useState([]);
-  useEffect(() => {
-    console.log("ROHIT - propertiesData - ", propertiesData);
-  }, [propertiesData]);
+  // useEffect(() => {
+  //   console.log("propertiesData - ", propertiesData);
+  // }, [propertiesData]);
   
   const months = {
     January: 1,
@@ -41,8 +41,7 @@ function PMRentDetail(props) {
 
   const navigate = useNavigate();
 
-  const getProperties = (status) => {
-    // console.log("ROHIT - getProperties called - propertiesData - ", propertiesData);
+  const getProperties = (status) => {    
     switch (status) {
       case "UNPAID":
         return propertiesData? propertiesData.unpaid : [];
@@ -75,8 +74,8 @@ function PMRentDetail(props) {
 
   useEffect(() => {
     setShowSpinner(true);
-    // const requestURL = `${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`;
-    const requestURL = `${APIConfig.baseURL.dev}/rentDetails/600-000003`; //rohit
+    const requestURL = `${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`;
+    // const requestURL = `${APIConfig.baseURL.dev}/rentDetails/600-000003`;
     axios.get(requestURL).then((res) => {
       // console.log(res.data.RentStatus.result);
       const fetchData = res.data.RentStatus.result;
@@ -92,8 +91,7 @@ function PMRentDetail(props) {
         return unique.some(entry => entry.property_uid === item.property_uid) ? unique : [...unique, item];
       }, []);
 
-
-      console.log("ROHIT - filteredData - ", filteredData);
+      
       const not_paid = [];
       const partial_paid = [];
       const late_paid = [];
