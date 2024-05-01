@@ -64,8 +64,11 @@ function AnnouncementCard(props) {
         </div>
       </div>
       <div className="announcement-list-card-text-container">
+        <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + (data?.receiver_first_name + data?.receiver_last_name) : "From: " + (data?.sender_first_name + data?.sender_last_name)}</div>
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + data.announcement_receiver : "From: " + data.announcement_sender}</div>
-        <div className="announcement-list-card-text-contents">{data.announcement_title}</div>
+        <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "Role: " + data?.receiver_role : "Role: " + data?.sender_role}</div>
+        <div className="announcement-list-card-text-contents">{"Title: " + data.announcement_title}</div>
+        <div className="announcement-list-card-text-contents">{data.announcement_msg.substring(0, 20) + "..."}</div>
         <div className="announcement-list-card-text-date">{"Added: " + calculateAge(data.announcement_date)}</div>
       </div>
       <div className="announcement-list-card-options">

@@ -43,56 +43,12 @@ export default function Announcements() {
     }
   }, [searchTerm, sentData, receivedData]);
 
-  const result = [
-    {
-      announcement_uid: "020-000223",
-      announcement_title: "test formdata LEASE",
-      announcement_msg: "test formdata LEASE",
-      announcement_sender: "110-000096",
-      announcement_date: "2023-10-31 18:43:26",
-      announcement_properties: "200-000114",
-      announcement_mode: "LEASE",
-      announcement_receiver: "110-000096",
-      announcement_type: null,
-      Email: null,
-      Text: null,
-      App: 1,
-    },
-    {
-      announcement_uid: "020-000210",
-      announcement_title: "test notification PROPERTIES",
-      announcement_msg: "test notification PROPERTIES",
-      announcement_sender: "110-000096",
-      announcement_date: "2023-10-30 02:39:13",
-      announcement_properties: "200-000114",
-      announcement_mode: "PROPERTIES",
-      announcement_receiver: "110-000096",
-      announcement_type: null,
-      Email: null,
-      Text: null,
-      App: 1,
-    },
-    {
-      announcement_uid: "020-000210",
-      announcement_title: "test notification contract",
-      announcement_msg: "test notification contract",
-      announcement_sender: "110-000096",
-      announcement_date: "2023-10-30 02:39:13",
-      announcement_properties: "200-000114",
-      announcement_mode: "CONTRACT",
-      announcement_receiver: "110-000096",
-      announcement_type: null,
-      Email: null,
-      Text: null,
-      App: 1,
-    },
-  ];
 
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`).then((res) => {
       //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
-      setAnnouncementData(res.data);
+      // setAnnouncementData(res.data);
       let sent_data = res.data.sent.result;
       let received_data = res.data.received.result;
       if (owner_uid_filter) {
