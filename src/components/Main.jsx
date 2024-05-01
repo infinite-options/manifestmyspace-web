@@ -309,7 +309,7 @@ function Main() {
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
             {/* <Route path="PMProperties" element={<PMProperties />} /> */}
-            <Route path="tenantMaintenanceItem" element={<TenantMaintenanceItemDetail />} />
+            <Route path="tenantMaintenanceItemDetail" element={<TenantMaintenanceItemDetail />} />
 
             <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
             <Route path="settingsManagerACH2" element={<SettingsACH2 />} />
