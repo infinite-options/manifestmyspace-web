@@ -62,13 +62,14 @@ function TenantDashboard(props) {
 
   const { user } = useUser();
 
-  let automatic_navigation_handler = (propertyData) => {
-    // console.log("In navigation handler: ", propertyData)
-    const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
-    if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
-      navigate("/listings");
-    }
-  };
+  // let automatic_navigation_handler = (propertyData) => {
+  //   console.log("In navigation handler");
+  //   console.log("Property Data: ", propertyData);
+  //   const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE"); // Checks if there is any active lease or not
+  //   if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
+  //     navigate("/listings");
+  //   }
+  // };
 
   const showLeaseStatusIndicator = (lease_status) => {
     return (
@@ -105,16 +106,10 @@ function TenantDashboard(props) {
       try {
         // console.log("Call endpoints")
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-        // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-        // const propertyResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/listings/${getProfileId()}`); //removing /listings endpoint call from Tenant Dashboard
         const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
 
         const tenantRequestsData = await tenantRequests.json();
-        // const leaseData = await leaseResponse.json();
-        // const propertyResponseData = await propertyResponse.json(); //removing /listings endpoint call from Tenant Dashboard
         const announcementsResponseData = await announcementsResponse.json();
-
-        // setUserLeases(propertyResponseData.Tenant_Leases.result); //removing /listings endpoint call from Tenant Dashboard
 
         let propertyData = tenantRequestsData?.property?.result;
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
@@ -135,8 +130,8 @@ function TenantDashboard(props) {
           return 0;
         });
 
-        // console.log("Property Data after sorting: ", propertyData)
-
+        // console.log("Property Data after sorting: ", propertyData);
+        // Routes User to Listings Page if there are no active Leases
         if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
           navigate("/listings");
         }
@@ -193,26 +188,24 @@ function TenantDashboard(props) {
       let filteredMaintenanceItems = allMaintenanceRequests.filter((request) => request.property_uid === selectedProperty.property_uid);
       setMaintenanceRequests(sortMaintenanceRequests(filteredMaintenanceItems));
     }
-    if (allAnnouncementsData) {      
-      const filteredAnnouncements = allAnnouncementsData.filter((announcement) => {                
+    if (allAnnouncementsData) {
+      const filteredAnnouncements = allAnnouncementsData.filter((announcement) => {
         const announcementPropertiesString = announcement.announcement_properties;
-        
-        if(announcementPropertiesString == null){
-          return false;
-        }       
 
-        
-        let announcementPropertiesArray;        
-        if (announcementPropertiesString.startsWith('[') && announcementPropertiesString.endsWith(']')) {            
-            announcementPropertiesArray = JSON.parse(announcementPropertiesString);
-        } else {            
-            announcementPropertiesArray = [announcementPropertiesString];
-        }        
+        if (announcementPropertiesString == null) {
+          return false;
+        }
+
+        let announcementPropertiesArray;
+        if (announcementPropertiesString.startsWith("[") && announcementPropertiesString.endsWith("]")) {
+          announcementPropertiesArray = JSON.parse(announcementPropertiesString);
+        } else {
+          announcementPropertiesArray = [announcementPropertiesString];
+        }
         return announcement.announcement_properties.includes(selectedProperty.property_uid);
-        
       });
 
-      filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));      
+      filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));
 
       setAnnouncementsData(filteredAnnouncements);
     }
@@ -292,7 +285,7 @@ function TenantDashboard(props) {
               fontFamily: "Source Sans Pro",
               padding: "14px",
             }}
-          >            
+          >
             <Grid
               container
               sx={{
@@ -451,21 +444,9 @@ function TenantDashboard(props) {
                           flexDirection: "row",
                         }}
                       >
-                        {/* <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                              color: "#00000080",
-                              padding: "6px",
-                            }}
-                          >
-                            Pay before {propertyData[0] !== undefined ? propertyData[0].earliest_due_date : "No Data"}
-                          </Box> */}
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
                         <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Pay before: {(selectedProperty == null || !selectedProperty.earliest_due_date) ? "No Data" : selectedProperty.earliest_due_date})
+                          (Payment Due: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
                         </Box>
                       </Box>
                       <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
@@ -571,10 +552,15 @@ function TenantDashboard(props) {
                       </Box>
                     </Box>
                   </Box>
-                  
+
                   <Stack>
+<<<<<<< HEAD
                     <MaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
                     </Stack>
+=======
+                    <MaintenanceRequestsTable data={maintenanceRequests} />
+                  </Stack>
+>>>>>>> 040f2b981d168e521f8a85ccc2115c27f05bccc9
                 </DashboardTab>
                 <DashboardTab>
                   <Box
@@ -743,14 +729,11 @@ function DashboardTab(props) {
   );
 }
 
-
 export default TenantDashboard;
-
-
 
 function MaintenanceRequestsTable(props) {
   // console.log("In Maintenance Request Table from Stack")
-  const data = props.data;  
+  const data = props.data;
   // console.log("Data in MRD from props: ", data)
   const location = useLocation();
   let navigate = useNavigate();
@@ -782,20 +765,19 @@ function MaintenanceRequestsTable(props) {
   // }
 
   // Set favorite image
-  data.forEach(item => {
+  data.forEach((item) => {
     // console.log("For Each Item: ", item)
     let favoriteImage = "";
-    const maintenanceImagesList = JSON.parse(item.maintenance_images) 
-    
-    if (maintenanceImagesList && maintenanceImagesList.length > 0) {      
-      favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));      
+    const maintenanceImagesList = JSON.parse(item.maintenance_images);
+
+    if (maintenanceImagesList && maintenanceImagesList.length > 0) {
+      favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
     } else {
-      favoriteImage = PlaceholderImage;      
+      favoriteImage = PlaceholderImage;
     }
     // This line actually sets the favorite image in the data object to favoriteImage
-    item.favorite_image = favoriteImage
-
-  })
+    item.favorite_image = favoriteImage;
+  });
   // console.log("MaintenanceRequestsTable - data - ", data);
 
   const columnsList = [
@@ -804,29 +786,29 @@ function MaintenanceRequestsTable(props) {
       headerName: "Images",
       flex: 0.5,
       renderCell: (params) => <img src={params.value} alt="Maintenance" style={{ width: "60px", height: "55px" }} />,
-      headerAlign: 'center',
+      headerAlign: "center",
     },
     {
       field: "maintenance_title",
       headerName: "Title",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: 'bold', textAlign: 'center' }}>{params.value}</Box>,
-      headerAlign: 'center',
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>,
+      headerAlign: "center",
     },
     {
       field: "maintenance_request_status",
       headerName: "Status",
       flex: 1,
-      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value}</Box>,
-      headerAlign: 'center',      
+      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>,
+      headerAlign: "center",
     },
 
     {
       field: "maintenance_priority",
       headerName: "Priority",
       flex: 1,
-      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value}</Box>,
-      headerAlign: 'center',
+      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>,
+      headerAlign: "center",
     },
 
     {
@@ -834,10 +816,10 @@ function MaintenanceRequestsTable(props) {
       headerName: "Created Date",
       flex: 1,
       headerStyle: {
-        fontWeight: 'bold', 
+        fontWeight: "bold",
       },
-      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value? params.value : "-"}</Box>,
-      headerAlign: 'center',
+      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? params.value : "-"}</Box>,
+      headerAlign: "center",
     },
 
     {
@@ -845,10 +827,10 @@ function MaintenanceRequestsTable(props) {
       headerName: "Scheduled Date",
       flex: 1,
       headerStyle: {
-        fontWeight: 'bold',
+        fontWeight: "bold",
       },
-      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value? getValidDate(params.value) : "-"}</Box>,
-      headerAlign: 'center',
+      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? getValidDate(params.value) : "-"}</Box>,
+      headerAlign: "center",
     },
 
     {
@@ -856,15 +838,15 @@ function MaintenanceRequestsTable(props) {
       headerName: "Scheduled Time",
       flex: 1,
       headerStyle: {
-        width: '100%',
-        fontWeight: 'bold', 
+        width: "100%",
+        fontWeight: "bold",
       },
-      renderCell: (params) => <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center'  }}>{params.value? formatTime(params.value) : "-"}</Box>,
-      headerAlign: 'center',
+      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? formatTime(params.value) : "-"}</Box>,
+      headerAlign: "center",
     },
   ];
 
-  if (data.length > 0) {    
+  if (data.length > 0) {
     // console.log("Passed Data ", data);
     return (
       <>
@@ -879,7 +861,7 @@ function MaintenanceRequestsTable(props) {
             },
           }}
           getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5, 10, 25, 100]}          
+          pageSizeOptions={[5, 10, 25, 100]}
           onRowClick={(row) => {
             
             console.log("Row =", row);
@@ -894,7 +876,6 @@ function MaintenanceRequestsTable(props) {
             // )
 
           }}
-          // onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         /> 
       </>      
     );

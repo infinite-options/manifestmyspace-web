@@ -26,11 +26,11 @@ export default function PropertyRentWidget(props) {
   let paidLateCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID LATE") : 0;
   paidLateCount = paidLateCount ? paidLateCount.num : 0;
 
-  let vacantCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "VACANT") : 0;
-  vacantCount = vacantCount ? vacantCount.num : 0;
-
   let paidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID") : 0;
   paidCount = paidCount ? paidCount.num : 0;
+
+  let vacantCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "VACANT") : 0;
+  vacantCount = vacantCount ? vacantCount.num : 0;
 
   let noManagerCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "NO MANAGER") : 0;
   // console.log(noManagerCount);
@@ -43,8 +43,8 @@ export default function PropertyRentWidget(props) {
     { rent_status: "not paid", number: unpaidCount, fill: "#A52A2A" },
     { rent_status: "paid partially", number: partialPaidCount, fill: "#FF8A00" },
     { rent_status: "paid late", number: paidLateCount, fill: "#FFC85C" },
-    { rent_status: "vacant", number: vacantCount, fill: "#160449" },
     { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" },
+    { rent_status: "vacant", number: vacantCount, fill: "#160449" },
   ];
 
   // Add object conditionally only if selectedRole is "OWNER"

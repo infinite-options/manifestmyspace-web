@@ -1,5 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Modal, Box, Checkbox } from "@mui/material";
 import axios from "axios";
+import React from "react";
 import { useEffect, useState } from "react";
 import SelectProperty from "./SelectProperty";
 import AllOwnerIcon from "./AllOwnerIcon.png";
@@ -8,16 +9,17 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import APIConfig from "../../utils/APIConfig"
+import APIConfig from "../../utils/APIConfig";
 
 export default function Leases(props) {
   console.log("In Leases");
+  console.log("In Leases Props: ", props);
   const { getProfileId, selectedRole } = useUser();
   // console.log("Selected Role: ", selectedRole);
 
   const [open, setOpen] = useState(false);
   const [owner_checkbox_open, set_owner_checkbox_open] = useState(false);
-  const [showSpinner, setShowSpinner] = useState(false);  
+  const [showSpinner, setShowSpinner] = useState(false);
   const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
   const [moveoutCount, setMoveoutCount] = useState(0);
   const [leaseDate, setLeaseDate] = useState([]);
@@ -26,28 +28,34 @@ export default function Leases(props) {
   const [property_checkbox_items, set_property_checkbox_items] = useState([]);
   const [owner_checkbox_items, set_owner_checkbox_items] = useState([]);
   const [originalLeaseDate, setOriginalLeaseDate] = useState([]); // New state for storing original lease dates
-  
-  const property_filtered_LeaseDate = new Map([...originalLeaseDate].filter(([date, leases]) => {
-    return selectedProperties.length === 0 || leases.some(lease => selectedProperties.includes(lease.lease_property_id));
-  }));
-  
-  const owner_filtered_LeaseDate = new Map([...originalLeaseDate].filter(([date, leases]) => {
-    return selectedOwners.length === 0 || leases.some(lease => selectedOwners.some((owner)=>owner.id=== lease.property_owner_id));
-  }));
+
+  console.log("Before Map 1");
+  const property_filtered_LeaseDate = new Map(
+    [...originalLeaseDate].filter(([date, leases]) => {
+      return selectedProperties.length === 0 || leases.some((lease) => selectedProperties.includes(lease.lease_property_id));
+    })
+  );
+  console.log("Before Map 2");
+  const owner_filtered_LeaseDate = new Map(
+    [...originalLeaseDate].filter(([date, leases]) => {
+      return selectedOwners.length === 0 || leases.some((lease) => selectedOwners.some((owner) => owner.id === lease.property_owner_id));
+    })
+  );
+  console.log("After Map 2");
   const handle_property_checkbox_close = () => {
-      setOpen(false);
+    setOpen(false);
   };
-    
+
   const handle_property_checkbox_open = () => {
-      setOpen(true);
+    setOpen(true);
   };
 
   const handle_owner_checkbox_close = () => {
-      set_owner_checkbox_open(false);
+    set_owner_checkbox_open(false);
   };
 
   const handle_owner_checkbox_open = () => {
-      set_owner_checkbox_open(true);
+    set_owner_checkbox_open(true);
   };
 
   const apply_owner_filter = () => {
@@ -67,60 +75,56 @@ export default function Leases(props) {
   };
 
   const clear_property_filters = () => {
-      setOpen(false);
-      setSelectedProperties([]); // Clear selected properties
-      setLeaseDate(originalLeaseDate); // Reset lease dates to original
+    setOpen(false);
+    setSelectedProperties([]); // Clear selected properties
+    setLeaseDate(originalLeaseDate); // Reset lease dates to original
   };
 
   const handlePropertySelection = (propertyId) => {
-          if (selectedProperties.includes(propertyId)) {
-              setSelectedProperties(selectedProperties.filter(id => id !== propertyId));
-          } else {
-              setSelectedProperties([...selectedProperties, propertyId]);
-          }
-      };
+    if (selectedProperties.includes(propertyId)) {
+      setSelectedProperties(selectedProperties.filter((id) => id !== propertyId));
+    } else {
+      setSelectedProperties([...selectedProperties, propertyId]);
+    }
+  };
 
   const handleOwnerSelection = (ownerId) => {
-      if (selectedOwners.some(owner => owner.id === ownerId)) {
-          setSelectedOwners(selectedOwners.filter(owner => owner.id !== ownerId));
-      } else {
-          const ownerToAdd = owner_checkbox_items.find(owner => owner.id === ownerId);
-          setSelectedOwners([...selectedOwners, ownerToAdd]);
-      }
+    if (selectedOwners.some((owner) => owner.id === ownerId)) {
+      setSelectedOwners(selectedOwners.filter((owner) => owner.id !== ownerId));
+    } else {
+      const ownerToAdd = owner_checkbox_items.find((owner) => owner.id === ownerId);
+      setSelectedOwners([...selectedOwners, ownerToAdd]);
+    }
   };
-    
+
   function renderPropertyCheckboxes() {
-      return (
-          <>
-              {property_checkbox_items.map((property) => (
-                  <div key={property.property_id}>
-                      <Checkbox
-                          checked={selectedProperties.includes(property.property_id)}
-                          onChange={() => handlePropertySelection(property.property_id)}
-                      />
-                      <label htmlFor={property.property_id}>{`${property.property_address}, ${property.property_city}, ${property.property_state} ${property.property_zip}`}</label>
-                  </div>
-              ))}
-              <button onClick={apply_property_filter}>Apply</button>
-          </>
-      );
+    return (
+      <>
+        {property_checkbox_items.map((property) => (
+          <div key={property.property_id}>
+            <Checkbox checked={selectedProperties.includes(property.property_id)} onChange={() => handlePropertySelection(property.property_id)} />
+            <label
+              htmlFor={property.property_id}
+            >{`${property.property_address}${property.property_unit} , ${property.property_city}, ${property.property_state} ${property.property_zip}`}</label>
+          </div>
+        ))}
+        <button onClick={apply_property_filter}>Apply</button>
+      </>
+    );
   }
 
   function renderOwnerCheckboxes() {
-      return (
-          <>
-              {owner_checkbox_items.map((owner) => (
-                  <div key={owner.id}>
-                      <Checkbox
-                          checked={selectedOwners.some(selectedOwner => selectedOwner.id === owner.id)}
-                          onChange={() => handleOwnerSelection(owner.id)}
-                      />
-                      <label htmlFor={owner.id}>{`${owner.first_name} ${owner.last_name}`}</label>
-                  </div>
-              ))}
-              <button onClick={apply_owner_filter}>Apply</button>
-          </>
-      );
+    return (
+      <>
+        {owner_checkbox_items.map((owner) => (
+          <div key={owner.id}>
+            <Checkbox checked={selectedOwners.some((selectedOwner) => selectedOwner.id === owner.id)} onChange={() => handleOwnerSelection(owner.id)} />
+            <label htmlFor={owner.id}>{`${owner.first_name} ${owner.last_name}`}</label>
+          </div>
+        ))}
+        <button onClick={apply_owner_filter}>Apply</button>
+      </>
+    );
   }
 
   useEffect(() => {
@@ -132,6 +136,7 @@ export default function Leases(props) {
           num++;
         }
       }
+      console.log("Move out Num: ", num);
       return num;
     }
     setShowSpinner(true);
@@ -154,6 +159,7 @@ export default function Leases(props) {
         const month = String(obj.lease_end.getMonth() + 1).padStart(2, "0");
         const day = String(obj.lease_end.getDate()).padStart(2, "0");
         obj.lease_end = `${year}-${month}-${day}`;
+        // obj.lease_end = `${month}-${day}-${year}`;
       });
       console.log("leases sorted FetchData", fetchData);
 
@@ -161,35 +167,39 @@ export default function Leases(props) {
       let moveoutNum = 0;
       fetchData.forEach((lease) => {
         const date = lease.lease_end.slice(0, 7);
+        console.log("Date after slice: ", date);
         if (leases.get(date) === undefined) {
           leases.set(date, [lease]);
         } else {
           const arr = leases.get(date);
           arr.push(lease);
           leases.set(date, arr);
+          console.log("ARR: ", arr);
           moveoutNum += getMoveoutNum(arr);
+          console.log("Move out Num Total: ", moveoutNum);
         }
       });
-      set_property_checkbox_items(fetchData)
-        
+      set_property_checkbox_items(fetchData);
+
       let owners = fetchData.map((property) => {
-          return {
-            id: property.property_owner_id,
-            first_name: property.owner_first_name,
-            last_name: property.owner_last_name
-          };
-        });
-        
-      // Convert objects to JSON strings and create a Set
-      let uniqueOwners = new Set(owners.map(obj => JSON.stringify(obj)));
-      
-      // Convert Set back to an array of objects
-      uniqueOwners = Array.from(uniqueOwners).map(jsonString => JSON.parse(jsonString)).sort((a,b) => {
-          if (a.last_name !== b.last_name)
-          return a.last_name - b.last_name;
-          return a.first_name - b.first_name;
+        return {
+          id: property.property_owner_id,
+          first_name: property.owner_first_name,
+          last_name: property.owner_last_name,
+        };
       });
-      set_owner_checkbox_items(uniqueOwners)
+
+      // Convert objects to JSON strings and create a Set
+      let uniqueOwners = new Set(owners.map((obj) => JSON.stringify(obj)));
+
+      // Convert Set back to an array of objects
+      uniqueOwners = Array.from(uniqueOwners)
+        .map((jsonString) => JSON.parse(jsonString))
+        .sort((a, b) => {
+          if (a.last_name !== b.last_name) return a.last_name - b.last_name;
+          return a.first_name - b.first_name;
+        });
+      set_owner_checkbox_items(uniqueOwners);
 
       setLeaseDate(leases);
       setMoveoutCount(moveoutNum);
@@ -255,8 +265,8 @@ export default function Leases(props) {
                   d="M3.125 10.25C3.125 8.36438 3.125 7.42157 3.71079 6.83579C4.29657 6.25 5.23938 6.25 7.125 6.25H17.875C19.7606 6.25 20.7034 6.25 21.2892 6.83579C21.875 7.42157 21.875 8.36438 21.875 10.25V10.4167H3.125V10.25Z"
                   fill="#3D5CAC"
                 />
-                <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
-                <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" strokeWidth="2" stroke-linecap="round" />
+                <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
+                <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </Box>
             <Box>Next 1 Year</Box>
@@ -268,7 +278,7 @@ export default function Leases(props) {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }} 
+                }}
                 onClick={handle_owner_checkbox_open}
               >
                 <Box
@@ -347,10 +357,10 @@ export default function Leases(props) {
           {[...leaseDate.keys()].map((date, i) => {
             const leases = leaseDate.get(date);
             return (
-              <>
+              <React.Fragment key={i}>
                 {leases.map((lease, j) => {
                   return (
-                    <>
+                    <React.Fragment key={j}>
                       {lease.lease_renew_status === "MOVING" ? (
                         <AccordionDetails>
                           <Box>{`${lease.lease_end}:`}</Box>
@@ -362,16 +372,16 @@ export default function Leases(props) {
                               width: "fit-content",
                             }}
                           >
-                            {`${lease.property_address}, ${lease.property_city} ${lease.property_state} ${lease.property_zip}`}
+                            {`${lease.property_address} ${lease.property_unit},${lease.property_city} ${lease.property_state} ${lease.property_zip}`}
                           </Box>
                         </AccordionDetails>
                       ) : (
-                        <></>
+                        <React.Fragment key={j}></React.Fragment>
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })}
-              </>
+              </React.Fragment>
             );
           })}
         </Accordion>
@@ -388,53 +398,55 @@ export default function Leases(props) {
           return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} />;
         })}
       </Box>
-      <Modal
-          open={open}
-          onClose={handle_property_checkbox_close}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-      >
-          <Box
-              sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: 400,
-                  bgcolor: 'background.paper',
-                  border: '2px solid #000',
-                  boxShadow: 24,
-                  p: 4,
-              }}
+      <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <h2>Select Properties</h2>
+          {renderPropertyCheckboxes()}
+          <button
+            onClick={() => {
+              setOpen(false);
+            }}
           >
-              <h2>Select Properties</h2>
-              {renderPropertyCheckboxes()}
-              <button onClick={()=>{setOpen(false)}}>Cancel</button>
-          </Box>
+            Cancel
+          </button>
+        </Box>
       </Modal>
-      <Modal
-          open={owner_checkbox_open}
-          onClose={handle_owner_checkbox_close}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-      >
-          <Box
-              sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: 400,
-                  bgcolor: 'background.paper',
-                  border: '2px solid #000',
-                  boxShadow: 24,
-                  p: 4,
-              }}
+      <Modal open={owner_checkbox_open} onClose={handle_owner_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <h2>Select Owners</h2>
+          {renderOwnerCheckboxes()}
+          <button
+            onClick={() => {
+              set_owner_checkbox_open(false);
+            }}
           >
-              <h2>Select Owners</h2>
-              {renderOwnerCheckboxes()}
-              <button onClick={()=>{set_owner_checkbox_open(false)}}>Cancel</button>
-          </Box>
+            Cancel
+          </button>
+        </Box>
       </Modal>
     </Box>
   );
@@ -530,13 +542,13 @@ function LeaseComponent(props) {
   function getLeaseStatusIcon(status) {
     const moveoutIcon = (
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
     const renewIcon = (
       <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" strokeWidth="2.5" stroke-linecap="round" />
+        <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
     );
     const nullIcon = (
@@ -590,7 +602,7 @@ function LeaseComponent(props) {
           {`${leaseData.property_address} ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
         </Box>
         <Box>
-          {leaseData.lease_end}: {getLeaseStatusText(leaseData.lease_renew_status)}
+          {leaseData.lease_end}: {leaseData.lease_renew_status}
         </Box>
       </Box>
       <Box

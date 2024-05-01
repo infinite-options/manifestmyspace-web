@@ -1,8 +1,6 @@
 import { Box } from "@mui/system";
 import { getStatusColor } from "./RentComponents";
 import { Typography } from "@material-ui/core";
-import defaultHouseImage from "../../Property/defaultHouseImage.png";
-import propertyImage from "../../Property/propertyImage.png";
 
 export function BackIcon(props) {
   return (
@@ -62,13 +60,8 @@ const StatusText = (status) => {
 };
 
 export function RentDetailBody(props) {
-  console.log("In RentDetailBody props", props);
+  //   console.log("In RentDetailBody props", props);
   let [rentDetailsData, propertyID, index, propertyStatus] = props.data;
-  console.log("rentDetailsData:", rentDetailsData);
-  console.log("propertyID:", propertyID);
-  console.log("index:", index);
-  console.log("propertyStatus:", propertyStatus);
-
   //   console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
   //   console.log("In RentDetailBody actual image", rentDetailsData.property_favorite_image);
   const [decrementIndex, incrementIndex] = props.updator;
@@ -222,8 +215,6 @@ export function RentDetailBody(props) {
           {getProperties(propertyStatus).length > 0 ? (
             <img
               src={property.property_favorite_image}
-              // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : defaultHouseImage}
-              // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : propertyImage}
               //   src={rentDetailsData.property_favorite_image}
               alt="Property Img"
               style={{
@@ -305,15 +296,15 @@ export function RentDetailBody(props) {
               //   console.log("In map image: ", rentDetails.property_favorite_image);
 
               let month = rentDetails?.cf_month || 0; //These fields need revision
-              let payment_date = rentDetails?.latest_date ?? "";
+              let payment_date = rentDetails?.payment_date ?? "";
               let paid;
               if (payment_date === "") {
                 paid = "-";
               } else {
-                const [payment_month, payment_day, payment_year] = payment_date.split("-");
+                const [payment_month, payment_day] = payment_date.split("-");
                 paid = `${payment_month}/${payment_day}`;
               }
-              let amount = `\$${rentDetails?.pur_amount_due ?? 0}`;
+              let amount = `\$${rentDetails?.total_paid ?? 0}`;
               let rent_status = rentDetails?.purchase_status || "No rent_status ";
               let fees = rentDetails?.total_late_fees ?? 0;
               let paid_fees = rentDetails?.total_late_fees_paid ?? 0;

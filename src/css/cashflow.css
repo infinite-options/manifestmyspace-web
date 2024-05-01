@@ -1,34 +1,36 @@
-:root{
-    --light-gray-bg:#F2F2F2;
+:root {
+  --light-gray-bg: #f2f2f2;
 }
-.cf-widget-main{
-    background-color: var(--light-gray-bg);
-    display: block;
-    margin: 0 auto;
-    margin-top: 30px;
-    width: 90%;
-    padding: 5px;
-    /* height:150px; */
-    border-radius: 10px;
-    cursor: pointer;
+.cf-widget-main {
+  background-color: var(--light-gray-bg);
+  display: block;
+  margin: 0 auto;
+  margin-top: 30px;
+  width: 90%;
+  padding: 5px;
+  /* height:150px; */
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.cf-widget-title-info-container{
-    position: relative;
-    display: inline-block;
-    padding-left: 10px;
-    height: 150px;
-    width: 70%;
+.cf-widget-title-info-container {
+  position: relative;
+  display: inline-block;
+  padding-left: 10px;
+  height: 150px;
+  width: 70%;
 }
 
 .cf-widget-title {
-    font-family: 'Source Sans Pro';
-    /* text-align: center; */
-    color: #160449;
+  fontfamily: "Source Sans Pro";
+  /* text-align: center; */
+  color: #160449;
 }
 
-.cf-widget-info-cf, .cf-widget-info-revenue, .cf-widget-info-expenses {
-    font-family: 'Source Sans Pro';
-    color: #160449;
-    font-weight: 800;
+.cf-widget-info-cf,
+.cf-widget-info-revenue,
+.cf-widget-info-expenses {
+  fontfamily: "Source Sans Pro";
+  color: #160449;
+  font-weight: 800;
 }

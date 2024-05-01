@@ -1,4 +1,3 @@
-
 import { Button, Box, ThemeProvider, Grid } from "@mui/material";
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
@@ -27,6 +26,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import APIConfig from "../../utils/APIConfig";
 
 // console.log("In Manager Dashboard");
+// console.log(window.getComputedStyle(document.body).fontFamily);
 
 const useStyles = makeStyles({
   button: {
@@ -51,9 +51,8 @@ function ManagerDashboard() {
   console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId, user, selectedRole } = useUser();
-  let dashboard_id=getProfileId()
-  if (selectedRole==='PM_EMPLOYEE')
-    dashboard_id= user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
+  let dashboard_id = getProfileId();
+  if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
   const navigate = useNavigate();
   let date = new Date();
   // const [loading, setLoading] = useState(true);
@@ -156,28 +155,29 @@ function ManagerDashboard() {
 
   // Employee Verification useEffect
   useEffect(() => {
-    if (selectedRole === 'PM_EMPLOYEE'){
-    const emp_verification = async () => {
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
+    if (selectedRole === "PM_EMPLOYEE") {
+      const emp_verification = async () => {
+        try {
+          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch data");
+          }
+          const data = await response.json();
+          const employee = data.result[0]; // Assuming there's only one employee
+          if (!employee?.employee_verification) {
+            navigate("/emp_waiting");
+          }
+        } catch (error) {
+          console.error(error);
         }
-        const data = await response.json();
-        const employee = data.result[0]; // Assuming there's only one employee
-        if (!employee?.employee_verification) {
-          navigate('/emp_waiting')
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      };
 
-    emp_verification();}
-    const signedUpWithReferral = localStorage.getItem('signedUpWithReferral');
-    if (signedUpWithReferral && signedUpWithReferral === 'true') {
-      setShowReferralWelcomeDialog(true);      
-      localStorage.removeItem('signedUpWithReferral');
+      emp_verification();
+    }
+    const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
+    if (signedUpWithReferral && signedUpWithReferral === "true") {
+      setShowReferralWelcomeDialog(true);
+      localStorage.removeItem("signedUpWithReferral");
     }
   }, []);
 
@@ -281,16 +281,17 @@ function ManagerDashboard() {
                 Contacts
               </Button>
             </Grid>
+
             <Grid item xs={4}>
               <Button
                 variant="outlined"
                 id="revenue"
                 className={classes.button}
                 style={{
-                  fontSize: "9px",
                   height: "100%",
                 }}
                 onClick={() => {
+                  console.log("New Request Clicked");
                   navigate("/pmQuotesList", { state: { property_endpoint_resp } });
                 }}
               >
@@ -355,7 +356,6 @@ function ManagerDashboard() {
                 id="maintenance"
                 className={classes.button}
                 style={{
-                  fontSize: "9px",
                   height: "100%",
                 }}
                 onClick={() => {
@@ -374,7 +374,7 @@ function ManagerDashboard() {
       {/* } */}
       <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         {/* <DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle> */}
-        <DialogContent>                
+        <DialogContent>
           <DialogContentText
             id="alert-dialog-description"
             sx={{
@@ -383,7 +383,8 @@ function ManagerDashboard() {
               paddingTop: "10px",
             }}
           >
-            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need to add additional details such as your SSN and address. Thank you!
+            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
+            to add additional details such as your SSN and address. Thank you!
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -400,7 +401,7 @@ function ManagerDashboard() {
             autoFocus
           >
             OK
-          </Button>          
+          </Button>
         </DialogActions>
       </Dialog>
     </ThemeProvider>
