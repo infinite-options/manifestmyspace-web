@@ -18,6 +18,7 @@ import BuildIcon from "@mui/icons-material/Build"; // For "Maintenance"
 import AddIcon from "@mui/icons-material/Add"; // For "New Request"
 import { PropertyCard } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
+import TenantMaintenanceModal from "./TenantMaintenanceModal"
 import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 
@@ -553,8 +554,8 @@ function TenantDashboard(props) {
                   </Box>
 
                   <Stack>
-                    <MaintenanceRequestsTable data={maintenanceRequests} />
-                  </Stack>
+                    <MaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
+                    </Stack>
                 </DashboardTab>
                 <DashboardTab>
                   <Box
@@ -728,7 +729,12 @@ export default TenantDashboard;
 function MaintenanceRequestsTable(props) {
   // console.log("In Maintenance Request Table from Stack")
   const data = props.data;
-  // console.log("Data in MaintenanceRequestsTable from props: ", data)
+  // console.log("Data in MRD from props: ", data)
+  const location = useLocation();
+  let navigate = useNavigate();
+
+  const [openModal, setOpenModal] = useState(false)
+
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -748,6 +754,10 @@ function MaintenanceRequestsTable(props) {
     }
     return date;
   }
+
+  // function handleOnClickNavigateToMaintenance(row){
+  //   navigate()
+  // }
 
   // Set favorite image
   data.forEach((item) => {
@@ -850,14 +860,21 @@ function MaintenanceRequestsTable(props) {
           getRowId={(row) => row.maintenance_request_uid}
           pageSizeOptions={[5, 10, 25, 100]}
           onRowClick={(row) => {
-            {
-              console.log("Row =", row);
-            }
-            // handleOnClickNavigateToMaintenance(row);
+            
+            console.log("Row =", row);
+            // setOpenModal(true)
+              navigate(`/tenantMaintenanceItemDetail`, {
+                state: {
+                    item: row.row
+                }
+            })
+            // return (
+            //   <TenantMaintenanceModal data={row.row} open={openModal} setOpenModal={setOpenModal}/>
+            // )
+
           }}
-          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
-        />
-      </>
+        /> 
+      </>      
     );
   } else {
     return <></>;

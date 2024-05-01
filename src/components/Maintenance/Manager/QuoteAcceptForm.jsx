@@ -351,7 +351,7 @@ export default function QuoteAcceptForm(){
                     </Grid>
                 </Grid>
                 {console.log(maintenanceItem)}
-                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="SCHEDULED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="FINISHED") ? (
+                    {(maintenanceQuotes[currentQuoteIndex]?.quote_status==="SENT" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="ACCEPTED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="REJECTED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="SCHEDULED" || maintenanceQuotes[currentQuoteIndex]?.quote_status==="FINISHED") ? (
                         <Stack direction="column" display="flex" spacing={2} padding="20px">
                             <Box alignContent="center"
                                 justifyContent="center"
