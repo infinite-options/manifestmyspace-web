@@ -10,11 +10,12 @@ import {
 import { Message} from '@mui/icons-material';
 import theme from '../../theme/theme';
 import CloseIcon from '@mui/icons-material/Close';
+import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 
 export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement, annData}) {
     const first_name = annData?.sender_first_name || annData?.receiver_first_name || 'Unknown';
     const last_name = annData?.sender_last_name || annData?.receiver_last_name || 'Unknown';
-    const photo_url = annData?.sender_photo_url || annData?.receiver_photo_url || '';
+    const photo_url = annData?.sender_photo_url || annData?.receiver_photo_url || DefaultProfileImg;
     const announcement_date = annData?.announcement_date;
     const role = annData?.sender_role || annData?.receiver_role || 'Unknown Role'; 
 
