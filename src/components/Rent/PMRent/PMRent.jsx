@@ -26,7 +26,8 @@ function PMRent(props) {
 
   useEffect(() => {
     setShowSpinner(true);
-    const requestURL = `${APIConfig.baseURL.dev}/rents/${getProfileId()}`;
+    // const requestURL = `${APIConfig.baseURL.dev}/rents/${getProfileId()}`; 
+    const requestURL = `${APIConfig.baseURL.dev}/rents/600-000003`; //rohit
     axios.get(requestURL).then((res) => {
       const fetchingData = res.data.RentStatus.result;
       setDataNum(fetchingData.length);
