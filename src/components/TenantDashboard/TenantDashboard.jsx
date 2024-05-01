@@ -728,7 +728,7 @@ export default TenantDashboard;
 function MaintenanceRequestsTable(props) {
   // console.log("In Maintenance Request Table from Stack")
   const data = props.data;
-  // console.log("Data in MRD from props: ", data)
+  // console.log("Data in MaintenanceRequestsTable from props: ", data)
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -754,12 +754,14 @@ function MaintenanceRequestsTable(props) {
     // console.log("For Each Item: ", item)
     let favoriteImage = "";
     const maintenanceImagesList = JSON.parse(item.maintenance_images);
+    console.log("Maintenance Images: ", maintenanceImagesList);
 
     if (maintenanceImagesList && maintenanceImagesList.length > 0) {
       favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
     } else {
       favoriteImage = PlaceholderImage;
     }
+    console.log("Favorite Image: ", favoriteImage);
     // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage;
   });
