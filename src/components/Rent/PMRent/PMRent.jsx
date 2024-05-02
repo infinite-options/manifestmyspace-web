@@ -23,6 +23,11 @@ function PMRent(props) {
   const [dataNum, setDataNum] = useState(0);
   const [rentData, setRentData] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
+  const [rentDetailIndexList, setRentDetailIndexList] = useState([]);
+
+  // useEffect(() => {
+  //   console.log("rentDetailIndexList - ", rentDetailIndexList);
+  // }, [rentDetailIndexList]);
 
   useEffect(() => {
     setShowSpinner(true);
@@ -37,7 +42,10 @@ function PMRent(props) {
       const late_paid = [];
       const paid = [];
       const vacant = [];
+
+      const indexList = []
       for (let i = 0; i < fetchingData.length; i++) {
+        indexList.push(fetchingData[i]?.rent_detail_index)        
         const data = fetchingData[i];
         switch (data.rent_status) {
           case "UNPAID":
@@ -60,6 +68,7 @@ function PMRent(props) {
         }
         setRentData({ unpaid: not_paid, partial: partial_paid, late: late_paid, paid: paid, vacant: vacant });
       }
+      setRentDetailIndexList(indexList);
       setShowSpinner(false);
     });
   }, []);
@@ -109,7 +118,7 @@ function PMRent(props) {
           marginTop: "20px",
         }}
       >
-        <RentAccordionView data={rentData} link={"/pmRentDetail"} />
+        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} />
       </Box>
     </MainContainer>
   );

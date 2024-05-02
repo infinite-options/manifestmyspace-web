@@ -226,7 +226,7 @@ export function RentDetailBody(props) {
         >
           {getProperties(propertyStatus)?.length > 0 ? (
             <img
-              src={property.property_favorite_image? property.property_favorite_image : defaultHouseImage}
+              src={property?.property_favorite_image? property?.property_favorite_image : defaultHouseImage}
               // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : defaultHouseImage}
               // src={getProperties(propertyStatus)[index].property_favorite_image ? getProperties(propertyStatus)[index].property_favorite_image : propertyImage}
               //   src={rentDetailsData.property_favorite_image}
@@ -254,9 +254,9 @@ export function RentDetailBody(props) {
           >
             <div>
               {getProperties(propertyStatus)?.length > 0 &&
-                `${property.property_address}, ${property.property_unit !== null && property.property_unit !== "" ? property.property_unit + "," : ""} ${property.property_city} ${
-                  property.property_state
-                } ${property.property_zip}`}
+                `${property?.property_address}, ${property?.property_unit !== null && property?.property_unit !== "" ? property?.property_unit + "," : ""} ${property?.property_city} ${
+                  property?.property_state
+                } ${property?.property_zip}`}
             </div>
             <div>{getProperties(propertyStatus)?.length > 0 && `${property?.property_uid}`}</div>
           </Box>

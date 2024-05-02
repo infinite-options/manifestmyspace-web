@@ -16,6 +16,8 @@ function PMRentDetail(props) {
   console.log("in PMRentDetail Index: ", index);
   const [propertyStatus, setPropertyStatus] = useState(location.state.status);
   console.log("in PMRentDetail Status: ", propertyStatus);
+  const rentDetailIndexList = location.state.rentDetailIndexList;  
+  console.log("in PMRentDetail rentDetailIndexList - : ", rentDetailIndexList);
   const [showSpinner, setShowSpinner] = useState(false);
   // const rentData = location.state.data;
   // console.log("in PMRentDetail Rent Data: ", rentData);  
@@ -87,9 +89,12 @@ function PMRentDetail(props) {
         return comp1 !== 0 ? comp1 : comp2;
       });
 
-      const filteredData = fetchData.reduce((unique, item) => {
-        return unique.some(entry => entry.property_uid === item.property_uid) ? unique : [...unique, item];
-      }, []);
+      // const filteredData = fetchData.reduce((unique, item) => {
+      //   return unique.some(entry => entry.property_uid === item.property_uid) ? unique : [...unique, item];
+      // }, []);
+
+      const filteredData = fetchData.filter((data) => rentDetailIndexList.includes(data.rent_detail_index));      
+      console.log("filteredData -  ", filteredData);
 
       
       const not_paid = [];

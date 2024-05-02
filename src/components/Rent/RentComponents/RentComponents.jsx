@@ -188,6 +188,8 @@ export function RentAccordionView(props) {
   console.log("In RentComponents");
   const rentData = props.data;
   const rentDetailUrl = props.link;
+  const rentDetailIndexList = props.rentDetailIndexList;
+  // console.log("In Rent Accordion View: rentDetailIndexList - ", props.rentDetailIndexList);
   // console.log("In Rent Accordian View: ", props.data);
   // console.log("In Rent Accordian View Links: ", props.link);
   const [unpaid, setUnpaid] = useState([]);
@@ -212,11 +214,11 @@ export function RentAccordionView(props) {
         boxShadow: "0px 4px 4px #00000040",
       }}
     >
-      <RentAccordion status={"UNPAID"} data={[rentData, unpaid]} link={rentDetailUrl} />
-      <RentAccordion status={"PAID PARTIALLY"} data={[rentData, partial]} link={rentDetailUrl} />
-      <RentAccordion status={"PAID LATE"} data={[rentData, late]} link={rentDetailUrl} />
-      <RentAccordion status={"PAID"} data={[rentData, paid]} link={rentDetailUrl} />
-      <RentAccordion status={"VACANT"} data={[rentData, vacant]} link={rentDetailUrl} />
+      <RentAccordion status={"UNPAID"} data={[rentData, unpaid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
+      <RentAccordion status={"PAID PARTIALLY"} data={[rentData, partial]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
+      <RentAccordion status={"PAID LATE"} data={[rentData, late]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
+      <RentAccordion status={"PAID"} data={[rentData, paid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
+      <RentAccordion status={"VACANT"} data={[rentData, vacant]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
     </Box>
   );
 }
@@ -225,6 +227,7 @@ export function RentAccordion(props) {
   const status = props.status;
   const [rentData, properties] = props.data;
   const rentDetailUrl = props.link;
+  const rentDetailIndexList = props.rentDetailIndexList;
   console.log("In Rent Accordian: ", props.data);
   console.log("In Rent Accordian Links: ", props.link);
   console.log("In Rent Accordian Status: ", props.status);
@@ -254,6 +257,7 @@ export function RentAccordion(props) {
         status: status,
         index: index,
         // data: rentData,
+        rentDetailIndexList: rentDetailIndexList,
       },
     });
   }
