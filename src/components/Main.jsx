@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./Header";
+import Header from "./Layout/Header";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
@@ -20,7 +20,10 @@ import Announcements from "./Announcement/Announcements";
 import ManagerCreateAnnouncement from "./Announcement/ManagerCreateAnnouncement";
 import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
+
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
+import NewTenantDashboard from "./TenantDashboard/NewTenantDashboard";
+
 import TenantProfileEdit from "./Profile/TenantProfile/TenantProfileEdit";
 import TenantLeases from "./Leases/TenantLeases/TenantLeases";
 
@@ -103,7 +106,7 @@ import CardDetailsSettingsTenant from "./Settings/CardDetailsSettingsTenant";
 import CardDetailsSettingsMaintenance from "./Settings/CardDetailsSettingsMaintenance";
 import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
-import { Footer } from "./Footer";
+import { Footer } from "./Layout/Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
 import Emp_Waiting from "./PM_Emp_Dashboard/Waiting_Page"
 import MaintenanceDashboard from "./MaintenanceDashboard/MaintenanceDashboard";
@@ -167,8 +170,11 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
+
+
 function Main() {
   console.log("In Main Page");
+  const { roleName, selectedRole } = useUser();
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box
@@ -177,7 +183,7 @@ function Main() {
           overflow: "auto", // Enable scrolling when content overflows
         }}
       >
-        <Header />
+        <Header role={selectedRole}/>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
@@ -239,6 +245,7 @@ function Main() {
             <Route path="tenantProfileEdit" element={<TenantProfileEdit />} />
             <Route path="addRole" element={<AddRole />} />
             <Route path="tenantDashboard" element={<TenantDashboard />} />
+            <Route path="newTenantDashboard" element={<NewTenantDashboard/>}/>
 
             <Route path="pmProfile" element={<PMProfile />} />
             <Route path="pmProfileEdit" element={<PMProfileEdit />} />

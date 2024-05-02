@@ -284,13 +284,14 @@ function MaintenanceProfile() {
                     <Stack
                     direction="row"
                     justifyContent="center">
-                    <Typography
-                    sx={{
-                        color: theme.typography.common.blue, 
-                        fontWeight: theme.typography.light.fontWeight, 
-                        fontSize:theme.typography.smallFont}}>
-                        Address
-                    </Typography>
+                        <Typography
+                            sx={{
+                                color: theme.typography.common.blue, 
+                                fontWeight: theme.typography.light.fontWeight, 
+                                fontSize:theme.typography.smallFont
+                            }}>
+                            Address
+                        </Typography>
                     </Stack>
                 </Paper>
                 

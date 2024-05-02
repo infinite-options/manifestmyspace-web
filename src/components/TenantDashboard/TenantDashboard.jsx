@@ -422,241 +422,225 @@ function TenantDashboard(props) {
             </Grid>
 
             {selectedProperty?.lease_status === "ACTIVE" ? (
-              <>
-                <DashboardTab>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      padding: "10px",
-                      paddingRight: "0px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        marginLeft: "5px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                        }}
-                      >
-                        <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
-                        <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
-                          (Payment Due: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
-                        </Box>
-                      </Box>
-                      <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
-                      <Box
-                        sx={{ fontSize: "15px", fontWeight: "600", color: "#3D5CAC" }}
-                        onClick={() => {
-                          navigate("/payments");
-                        }}
-                      >
-                        View Details
-                      </Box>
-                    </Box>
+              <Grid container>
+                <Grid item xs={4}>
+                  <DashboardTab>
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        alignItem: "center",
-                        justifyContent: "center",
-                        marginRight: "20px",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        padding: "10px",
+                        paddingRight: "0px",
                       }}
                     >
                       <Box
                         sx={{
-                          backgroundColor: "#3D5CAC",
-                          borderRadius: "10px",
-                          color: "#FFFFFF",
-                          fontWeight: "bold",
-                          fontSize: "22px",
-
-                          padding: "10px",
-                          paddingRight: "20px",
-                          paddingLeft: "20px",
+                          marginLeft: "5px",
                         }}
-                        onClick={() => {
-                          // handleStripePayment()
-                          navigate("/payments");
-                        }}
-                      >
-                        Make a Payment
-                      </Box>
-                    </Box>
-                  </Box>
-                </DashboardTab>
-                <DashboardTab>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      margin: "10px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        color: "#160449",
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        marginLeft: "5px",
-                        marginTop: "10px",
-                      }}
-                      // onClick={() => navigate("/tenantMaintenance")}
-                    >
-                      Maintenance ({maintenanceRequests.length})
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: "#3D5CAC",
-                        borderRadius: "5px",
-                        paddingLeft: "5px",
-                        paddingRight: "5px",
-                        marginTop: "10px",
-                        marginRight: "10px",
-                        height: "35px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleTenantMaintenanceNavigate()}
                       >
                         <Box
                           sx={{
-                            marginTop: "5px",
-                            color: "#FFFFFF",
+                            display: "flex",
+                            flexDirection: "row",
                           }}
                         >
-                          <AddIcon />
+                          <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449" }}>Balance</Box>
+                          <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginLeft: "5px" }}>
+                            (Payment Due: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date})
+                          </Box>
                         </Box>
-                        <Button
-                          sx={{
-                            color: "#FFFFFF",
-                            fontSize: "16px",
+                        <Box sx={{ fontSize: "26px", fontWeight: "bold", color: "#A52A2A", margin: "10px" }}>${total}</Box>
+                        <Box
+                          sx={{ fontSize: "15px", fontWeight: "600", color: "#3D5CAC" }}
+                          onClick={() => {
+                            navigate("/payments");
                           }}
                         >
-                          <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>New Request</Typography>
-                        </Button>
+                          View Details
+                        </Box>
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItem: "center",
+                          justifyContent: "center",
+                          marginRight: "20px",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            backgroundColor: "#3D5CAC",
+                            borderRadius: "10px",
+                            color: "#FFFFFF",
+                            fontWeight: "bold",
+                            fontSize: "22px",
+
+                            padding: "10px",
+                            paddingRight: "20px",
+                            paddingLeft: "20px",
+                          }}
+                          onClick={() => {
+                            // handleStripePayment()
+                            navigate("/payments");
+                          }}
+                        >
+                          Make a Payment
+                        </Box>
                       </Box>
                     </Box>
-                  </Box>
-
-                  <Stack>
-                    <MaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
-                    </Stack>
-                </DashboardTab>
-                <DashboardTab>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      margin: "10px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        color: "#160449",
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        marginLeft: "5px",
-                        marginTop: "10px",
-                      }}
-                    >
-                      Announcements
-                    </Box>
-                    <Box
-                      sx={{
-                        color: "#007AFF",
-                        fontSize: "18px",
-                        marginLeft: "20px",
-                        marginTop: "10px",
-                      }}
-                      onClick={() => {
-                        navigate("/announcement", { state: { announcementsData, propertyAddr } });
-                      }}
-                    >
-                      View all ({announcementsData.length})
-                    </Box>
-                  </Box>
-                  <CardSlider data={announcementsData} />
-                  {/*debug*/}
-                  {/* <Box>
-                      {announcementsData.map((announcement, index) => {
-                        return (
-                          <>
-                          <Box>{index} - {announcement.announcement_title}</Box>
-                          </>
-                        )
-                      })}
-                    </Box> */}
-                </DashboardTab>
-                <DashboardTab>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "15px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <Grid container spacing={2} justifyContent="center">
-                      <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <DashboardActionItem
-                          icon={<PhoneIcon />}
-                          text={"Call Manager"}
-                          onClick={() => {
-                            console.log("Call Manager");
+                  </DashboardTab>
+                </Grid>
+                <Grid item xs={8}>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <DashboardTab>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            margin: "10px",
                           }}
-                        />
-                      </Grid>
-                      <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <DashboardActionItem
-                          icon={<BuildIcon />}
-                          text={"Maintenance"}
-                          onClick={() => {
-                            handleTenantMaintenanceNavigate();
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <DashboardActionItem
-                          icon={<ArticleIcon />}
-                          text={"View Lease"}
-                          onClick={() => {
-                            handleViewLeaseNavigate(selectedProperty.lease_uid);
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <DashboardActionItem
-                          icon={<ArticleIcon />}
-                          text={"Documents"}
-                          onClick={() => {
-                            navigate("/tenantDocuments", {
-                              state: { propertyAddr: propertyAddr },
-                            });
-                          }}
-                        />
-                      </Grid>
+                        >
+                          <Box
+                            sx={{
+                              color: "#160449",
+                              fontSize: "20px",
+                              fontWeight: "bold",
+                              marginLeft: "5px",
+                              marginTop: "10px",
+                            }}
+                          >
+                            Payment History
+                          </Box>
+                          <Box
+                            sx={{
+                              color: "#007AFF",
+                              fontSize: "18px",
+                              marginLeft: "20px",
+                              marginTop: "10px",
+                            }}
+                            onClick={() => {
+                              navigate("/payments", { state: { announcementsData, propertyAddr } });
+                            }}
+                          >
+                            {/* View all ({announcementsData.length}) */}
+                          </Box>
+                        </Box>
+                      </DashboardTab>
                     </Grid>
-                  </Box>
-                </DashboardTab>
-              </>
+                    <Grid item xs={6}>
+                      <DashboardTab>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          margin: "10px",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            color: "#160449",
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                            marginLeft: "5px",
+                            marginTop: "10px",
+                          }}
+                          // onClick={() => navigate("/tenantMaintenance")}
+                        >
+                          Maintenance ({maintenanceRequests.length})
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            backgroundColor: "#3D5CAC",
+                            borderRadius: "5px",
+                            paddingLeft: "5px",
+                            paddingRight: "5px",
+                            marginTop: "10px",
+                            marginRight: "10px",
+                            height: "35px",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleTenantMaintenanceNavigate()}
+                          >
+                            <Box
+                              sx={{
+                                marginTop: "5px",
+                                color: "#FFFFFF",
+                              }}
+                            >
+                              <AddIcon />
+                            </Box>
+                            <Button
+                              sx={{
+                                color: "#FFFFFF",
+                                fontSize: "16px",
+                              }}
+                            >
+                              <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>New Request</Typography>
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      <Stack>
+                        <TenantMaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
+                        </Stack>
+                      </DashboardTab>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <DashboardTab>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            margin: "10px",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              color: "#160449",
+                              fontSize: "20px",
+                              fontWeight: "bold",
+                              marginLeft: "5px",
+                              marginTop: "10px",
+                            }}
+                          >
+                            Announcements
+                          </Box>
+                          <Box
+                            sx={{
+                              color: "#007AFF",
+                              fontSize: "18px",
+                              marginLeft: "20px",
+                              marginTop: "10px",
+                            }}
+                            onClick={() => {
+                              navigate("/announcement", { state: { announcementsData, propertyAddr } });
+                            }}
+                          >
+                            View all ({announcementsData.length})
+                          </Box>
+                        </Box>
+                        <CardSlider data={announcementsData} />
+                      </DashboardTab>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
             ) : (
               <>
                 <NonActiveLeaseDashboardTab property={selectedProperty} leaseStatus={selectedProperty?.lease_status} lease={selectedLease} />
@@ -726,7 +710,7 @@ function DashboardTab(props) {
 
 export default TenantDashboard;
 
-function MaintenanceRequestsTable(props) {
+function TenantMaintenanceRequestsTable(props) {
   // console.log("In Maintenance Request Table from Stack")
   const data = props.data;
   // console.log("Data in MRD from props: ", data)
@@ -775,7 +759,6 @@ function MaintenanceRequestsTable(props) {
     // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage;
   });
-  // console.log("MaintenanceRequestsTable - data - ", data);
 
   const columnsList = [
     {
@@ -853,25 +836,19 @@ function MaintenanceRequestsTable(props) {
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 100,
+                pageSize: 5,
               },
             },
           }}
           getRowId={(row) => row.maintenance_request_uid}
           pageSizeOptions={[5, 10, 25, 100]}
           onRowClick={(row) => {
-            
             console.log("Row =", row);
-            // setOpenModal(true)
               navigate(`/tenantMaintenanceItemDetail`, {
                 state: {
                     item: row.row
                 }
             })
-            // return (
-            //   <TenantMaintenanceModal data={row.row} open={openModal} setOpenModal={setOpenModal}/>
-            // )
-
           }}
         /> 
       </>      
@@ -880,3 +857,58 @@ function MaintenanceRequestsTable(props) {
     return <></>;
   }
 }
+
+
+                      {/* <DashboardTab>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "15px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          <Grid container spacing={2} justifyContent="center">
+                            <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <DashboardActionItem
+                                icon={<PhoneIcon />}
+                                text={"Call Manager"}
+                                onClick={() => {
+                                  console.log("Call Manager");
+                                }}
+                              />
+                            </Grid>
+                            <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <DashboardActionItem
+                                icon={<BuildIcon />}
+                                text={"Maintenance"}
+                                onClick={() => {
+                                  handleTenantMaintenanceNavigate();
+                                }}
+                              />
+                            </Grid>
+                            <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <DashboardActionItem
+                                icon={<ArticleIcon />}
+                                text={"View Lease"}
+                                onClick={() => {
+                                  handleViewLeaseNavigate(selectedProperty.lease_uid);
+                                }}
+                              />
+                            </Grid>
+                            <Grid item xs={6} md={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <DashboardActionItem
+                                icon={<ArticleIcon />}
+                                text={"Documents"}
+                                onClick={() => {
+                                  navigate("/tenantDocuments", {
+                                    state: { propertyAddr: propertyAddr },
+                                  });
+                                }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </Box>
+                      </DashboardTab> */}
