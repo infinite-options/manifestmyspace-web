@@ -225,7 +225,8 @@ function TenantDashboard(props) {
         if (payment.purchase_type === "Utility"){
           utilityFeeSum += parseInt(payment.pur_amount_due)
         }
-        if (payment.purchase_type === "Late Fees"){
+        if (payment.purchase_type === "Late Fee"){
+          console.log("I found something that says Late Fees", payment)
           lateFeeSum += parseInt(payment.pur_amount_due)
         }
       })
@@ -309,6 +310,8 @@ function TenantDashboard(props) {
                     justifyContent: "left",
                     paddingLeft: "10px",
                     paddingRight: "10px",
+                    alignText: "center",
+                    alignContent: "center",
                   }}
                 >
                   <Typography

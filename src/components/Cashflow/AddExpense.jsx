@@ -153,13 +153,12 @@ const AddExpense = (props) => {
       "pur_due_date": date,
       "pur_amount_due": Number(amount),
       "purchase_status": determinePurchaseStatus(), // TODO: default to UNPAID, unless then already completed button is checked
-      "pur_notes": "This is just a note",
+      "pur_notes": notes,
       "pur_description": description,
       "pur_receiver": getProfileId(),
       "pur_initiator": getProfileId(),
       "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
-      "pur_frequency": frequency,
-      "pur_notes": notes,
+      "pur_frequency": frequency
     };
 
     if (determinePurchaseStatus() === "PARTIALLY PAID"){
