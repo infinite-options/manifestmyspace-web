@@ -426,7 +426,7 @@ function TenantDashboard(props) {
             {selectedProperty?.lease_status === "ACTIVE" ? (
               <Grid container spacing={3}>
                 <Grid item xs={4}>
-                  <DashboardTab>
+                  <DashboardTab sx={{ height: '100%' }}>
                     <Box
                       sx={{
                         display: "flex",
@@ -536,6 +536,8 @@ function TenantDashboard(props) {
                         alignItem: "center",
                         justifyContent: "center",
                         margin: "20px",
+                        paddingTop: "20px",
+                        paddingBottom: "20px"
                       }}>
                         <Typography sx={{fontSize: "35px", fontWeight: "bold"}}>Balance Details</Typography>
                         <Grid container>
@@ -555,6 +557,8 @@ function TenantDashboard(props) {
                         alignItem: "center",
                         justifyContent: "center",
                         margin: "20px",
+                        paddingTop: "20px",
+                        paddingBottom: "20px"
                       }}>
                         <Typography sx={{fontSize: "35px", fontWeight: "bold"}}>Lease Details</Typography>
                         <Grid container>
@@ -588,39 +592,51 @@ function TenantDashboard(props) {
                   <Grid container>
                   <Grid item xs={12}>
                       <DashboardTab>
+                        <Stack direction="row"
+                          sx={{
+                            justifyContent: "center",
+                            alignContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
                         <Box
                           sx={{
                             display: "flex",
                             flexDirection: "row",
-                            justifyContent: "space-between",
+                            alignItems: "center",
                             margin: "10px",
+                            alignContent: "center",
+                            justifyContent: "center",
+
                           }}
                         >
                           <Box
-                            sx={{
-                              color: "#160449",
-                              fontSize: "20px",
-                              fontWeight: "bold",
-                              marginLeft: "5px",
-                              marginTop: "10px",
-                            }}
-                          >
-                            Announcements
+                              sx={{
+                                color: "#160449",
+                                fontSize: "35px",
+                                fontWeight: "bold",
+                                marginLeft: "5px",
+                                marginTop: "10px",
+                              }}
+                            >
+                              Announcements
+                            </Box>
                           </Box>
                           <Box
-                            sx={{
-                              color: "#007AFF",
-                              fontSize: "18px",
-                              marginLeft: "20px",
-                              marginTop: "10px",
-                            }}
-                            onClick={() => {
-                              navigate("/announcement", { state: { announcementsData, propertyAddr } });
-                            }}
-                          >
-                            View all ({announcementsData.length})
+                              sx={{
+                                color: "#007AFF",
+                                fontSize: "18px",
+                                marginLeft: "20px",
+                                marginTop: "10px",
+                                textAlign: "right"
+                              }}
+                              onClick={() => {
+                                navigate("/announcement", { state: { announcementsData, propertyAddr } });
+                              }}
+                            >
+                              View all ({announcementsData.length})
                           </Box>
-                        </Box>
+                        </Stack>
                         <CardSlider data={announcementsData} />
                       </DashboardTab>
                     </Grid>
@@ -630,14 +646,16 @@ function TenantDashboard(props) {
                           sx={{
                             display: "flex",
                             flexDirection: "column",
-                            justifyContent: "space-between",
+                            justifyContent: "center",
+                            alignContent: "center",
+                            alignItems: "center",
                             margin: "10px",
                           }}
                         >
                           <Box
                             sx={{
                               color: "#160449",
-                              fontSize: "20px",
+                              fontSize: "35px",
                               fontWeight: "bold",
                               marginLeft: "5px",
                               marginTop: "10px",
@@ -649,8 +667,6 @@ function TenantDashboard(props) {
                             sx={{
                               color: "#007AFF",
                               fontSize: "18px",
-                              // marginLeft: "20px",
-                              // marginTop: "10px",
                             }}
                             onClick={() => {
                               navigate("/payments", { state: { announcementsData, propertyAddr } });
@@ -665,18 +681,27 @@ function TenantDashboard(props) {
                     </Grid>
                     <Grid item xs={12}>
                       <DashboardTab>
+                        <Stack direction="row"
+                          sx={{
+                            justifyContent: "center",
+                            alignContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
                         <Box
                           sx={{
                             display: "flex",
                             flexDirection: "row",
-                            justifyContent: "space-between",
+                            justifyContent: "center",
+                            alignContent: "center",
+                            alignItems: "center",
                             margin: "10px",
                           }}
                         >
                           <Box
                             sx={{
                               color: "#160449",
-                              fontSize: "20px",
+                              fontSize: "35px",
                               fontWeight: "bold",
                               marginLeft: "5px",
                               marginTop: "10px",
@@ -684,48 +709,48 @@ function TenantDashboard(props) {
                           >
                             Maintenance ({maintenanceRequests.length})
                           </Box>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "right",
+                            justifyContent: "right",
+                            backgroundColor: "#3D5CAC",
+                            borderRadius: "5px",
+                            paddingLeft: "5px",
+                            paddingRight: "5px",
+                            marginTop: "10px",
+                            marginRight: "10px",
+                            height: "35px",
+                          }}
+                        >
                           <Box
                             sx={{
                               display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              backgroundColor: "#3D5CAC",
-                              borderRadius: "5px",
-                              paddingLeft: "5px",
-                              paddingRight: "5px",
-                              marginTop: "10px",
-                              marginRight: "10px",
-                              height: "35px",
+                              flexDirection: "row",
+                              cursor: "pointer",
                             }}
+                            onClick={() => handleTenantMaintenanceNavigate()}
                           >
                             <Box
                               sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                cursor: "pointer",
+                                marginTop: "5px",
+                                color: "#FFFFFF",
                               }}
-                              onClick={() => handleTenantMaintenanceNavigate()}
                             >
-                              <Box
-                                sx={{
-                                  marginTop: "5px",
-                                  color: "#FFFFFF",
-                                }}
-                              >
-                                <AddIcon />
-                              </Box>
-                              <Button
-                                sx={{
-                                  color: "#FFFFFF",
-                                  fontSize: "16px",
-                                }}
-                              >
-                                <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>New Request</Typography>
-                              </Button>
+                              <AddIcon />
                             </Box>
+                            <Button
+                              sx={{
+                                color: "#FFFFFF",
+                                fontSize: "16px",
+                              }}
+                            >
+                              <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>New Request</Typography>
+                            </Button>
                           </Box>
                         </Box>
-
+                        </Stack>
                         <Stack>
                           <TenantMaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate}/>
                         </Stack>
@@ -813,12 +838,12 @@ function TenantPaymentHistoryTable(props){
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value ? params.value : params.row.pur_due_date}</Box>,
     },
 
-    // {
-    //   field: "purchase_uid",
-    //   headerName: "ID",
-    //   flex: 1,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
+    {
+      field: "purchase_uid",
+      headerName: "ID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
 
     {
       field: "purchase_type",
@@ -833,39 +858,39 @@ function TenantPaymentHistoryTable(props){
       flex: 2,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
-    // {
-    //   field: "pur_property_id",
-    //   headerName: "Property UID",
-    //   flex: 1,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
 
-    // {
-    //   field: "property_address",
-    //   headerName: "Address",
-    //   flex: 2,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
 
-    // {
-    //   field: "property_unit",
-    //   headerName: "Unit",
-    //   flex: 1,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
-    // {
-    //   field: "payer_profile_uid",
-    //   headerName: "Payer ID",
-    //   flex: 1,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "payer_profile_uid",
+      headerName: "Payer ID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
 
-    // {
-    //   field: "payer_user_name",
-    //   headerName: "Payer Name",
-    //   flex: 2,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
+    {
+      field: "payer_user_name",
+      headerName: "Payer Name",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
     {
       field: "payment_status",
       headerName: "Status",
@@ -876,27 +901,27 @@ function TenantPaymentHistoryTable(props){
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
 
-    // {
-    //   field: "pur_amount_due",
-    //   headerName: "Amount Due",
-    //   flex: 0.7,
-    //   headerStyle: {
-    //     fontWeight: "bold", // Apply inline style to the header cell
-    //   },
-    //   renderCell: (params) => (
-    //     <Box
-    //       sx={{
-    //         fontWeight: "bold",
-    //         width: "100%",
-    //         display: "flex",
-    //         flexDirection: "row",
-    //         justifyContent: "flex-end",
-    //       }}
-    //     >
-    //       $ {parseFloat(params.value).toFixed(2)}
-    //     </Box>
-    //   ),
-    // },
+    {
+      field: "pur_amount_due",
+      headerName: "Amount Due",
+      flex: 0.7,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          $ {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+    },
 
     {
       field: "total_paid",
