@@ -117,11 +117,11 @@ const AddUtility = (props) => {
 
       formData.append("bill_description", notes)
       formData.append("bill_created_by", getProfileId())
-      formData.append("bill_utility_type", "maintenance")
+      formData.append("bill_utility_type", type)
       formData.append("bill_amount", Number(amount))
       formData.append("bill_split", splitMethod)
-      formData.append("bill_property_id", propertyUidArray)
-      formData.append("bill_docs", [])
+      formData.append("bill_property_id", JSON.stringify(propertyUidArray))
+      formData.append("bill_docs", JSON.stringify([]))
       formData.append("bill_notes", notes)
       formData.append("bill_maintenance_quote_id", "")
 
