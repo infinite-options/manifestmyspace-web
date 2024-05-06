@@ -18,10 +18,10 @@ import BuildIcon from "@mui/icons-material/Build"; // For "Maintenance"
 import AddIcon from "@mui/icons-material/Add"; // For "New Request"
 import { PropertyCard } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
-import TenantMaintenanceModal from "./TenantMaintenanceModal"
 import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import documentIcon from "../../images/Subtract.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -30,6 +30,7 @@ function TenantDashboard(props) {
   const [showSpinner, setShowSpinner] = useState(false);
 
   const [paymentData, setPaymentData] = useState({});
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { getProfileId } = useUser();
 
@@ -65,6 +66,7 @@ function TenantDashboard(props) {
   const handleOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
   }, []);
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -121,8 +123,6 @@ function TenantDashboard(props) {
         let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result
 
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
-        // console.log("Maintenance data from endpoint: ", maintenanceRequestsData )
-        // console.log("allNonActiveLease: ", allNonActiveLease)
 
         // sort propertyData by lease_status so that active lease is first
         propertyData.sort((a, b) => {
@@ -250,12 +250,6 @@ function TenantDashboard(props) {
     return maintenanceDataArray.sort((a, b) => statusSortPriority[a.maintenance_request_status] - statusSortPriority[b.maintenance_request_status]);
   }
 
-  const thStyle = {
-    color: "#160449",
-    fontWeight: "600",
-    fontSize: "10px",
-  };
-
   function handleTenantMaintenanceNavigate() {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address);
     const propertyLeaseData = leaseDetails.find((item) => item.lease_property_id === selectedProperty.lease_property_id);
@@ -297,138 +291,75 @@ function TenantDashboard(props) {
               container
               sx={{
                 paddingBottom: "10px",
-                marginTop: "7px",
-                marginBottom: "7px",
+                marginTop: isMobile ? "0px" : "7px",
+                marginBottom: isMobile ? "0px" : "7px",
               }}
               spacing={2}
             >
-              <Grid item xs={12} md={12} lg={12}>
+              <Grid item xs={12} md={6} lg={6}>
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "left",
+                    flexDirection: isMobile ? "column" : "row",
+                    justifyContent: isMobile ? "center" : "left",
                     paddingLeft: "10px",
                     paddingRight: "10px",
                     alignText: "center",
                     alignContent: "center",
+                    // alignItems: "flex-end"
                   }}
                 >
                   <Typography
                     sx={{
-                      fontSize: "22px",
+                      // fontSize: "22px",
+                      fontSize: { xs: "22px", sm: "28px", md: "36px", lg: "40px" },
                       fontWeight: "600",
+                      // alignSelf: "flex-end"
                     }}
                   >
                     Welcome, {firstName}!
                   </Typography>
-                  <Typography sx={{fontSize: "16px", fontWeight: 400, paddingLeft: "15px", alignItems: "center", }}>
-                    <u>Not you?</u>
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={9}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    color: "#160449",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: "30px",
-                      width: "30px",
-                      backgroundColor: returnLeaseStatusColor(selectedProperty?.lease_status),
-                      borderRadius: "50%",
-                      marginRight: "10px",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontSize: "22px",
-                      fontWeight: "600",
-                      color: "#3D5CAC",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: "22px",
-                        fontWeight: "600",
-                        color: "#3D5CAC",
-                      }}
-                    >
-                      <Typography>{propertyAddr}</Typography>
-                      <KeyboardArrowDownIcon sx={{ alignItem: "center" }} onClick={(event) => handleOpen(event)} />
-                      <Menu
-                        id="demo-customized-menu"
-                        MenuListProps={{
-                          "aria-labelledby": "demo-customized-button",
-                        }}
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                      >
-                        {propertyData.map((item, index) => {
-                          return (
-                            <MenuItem
-                              key={index}
-                              onClick={() => {
-                                setPropertyAddr(item.property_address + " " + item.property_unit);
-                                setPropertyId(item.property_uid);
-                                setTotal(item.balance);
-                                setSelectedProperty(item);
-                                setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
-                                handleClose();
-                              }}
-                              disableRipple
-                            >
-                              {showLeaseStatusIndicator(item.lease_status)}
-                              {item.property_address + " " + item.property_unit}
-                            </MenuItem>
-                          );
-                        })}
-                      </Menu>
-                    </Box>
+                  <Box>
+                    <Typography sx={{fontSize: { xs: "14px", sm: "14px", md: "18px", lg: "18px" }, fontWeight: 400, paddingLeft: isMobile ? "0px" : "15px", alignItems: "center" }}>
+                      <u>Not you?</u>
+                    </Typography>
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={3}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "right",
-                    alignItems: "center",
-                    color: "#160449",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    sx={{
-                      backgroundColor: "#97A7CF",
-                      color: theme.typography.secondary.white,
-                      textTransform: "none",
-                      whiteSpace: "nowrap",
-                    }}
-                    onClick={() => navigate("/listings")}
-                  >
-                    <SearchIcon />
-                    Search Property
-                  </Button>
-                </Box>
-              </Grid>
+              {!isMobile && (
+                <>
+                  <Grid item xs={12} md={6} lg={6}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "right",
+                        alignItems: "center",
+                        color: "#160449",
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#97A7CF",
+                          color: theme.typography.secondary.white,
+                          textTransform: "none",
+                          whiteSpace: "nowrap",
+                        }}
+                        onClick={() => navigate("/listings")}
+                      >
+                        <SearchIcon />
+                        Search Property
+                      </Button>
+                    </Box>
+                  </Grid>
+                </>
+              )}
             </Grid>
 
             {selectedProperty?.lease_status === "ACTIVE" ? (
-              <Grid container spacing={3}>
-                <Grid item xs={4}>
+              <Grid container spacing={isMobile ? 1 : 3}>
+                <Grid item xs={12} md={4}>
                   <DashboardTab sx={{ height: '100%' }}>
                     <Box
                       sx={{
@@ -451,51 +382,80 @@ function TenantDashboard(props) {
                             alignItems: "center"
                           }}
                         >
-                          <Typography sx={{ fontSize: "35px", fontWeight: "bold", color: "#160449" }}>
+                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
                             Account Balance
                           </Typography>
                           <Box
                             sx={{
                               display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "left",
                               alignItems: "center",
-                              fontSize: "22px",
-                              fontWeight: "600",
-                              color: "#3D5CAC",
+                              color: "#160449",
                             }}
                           >
-                            <Typography>{propertyAddr}</Typography>
-                            <KeyboardArrowDownIcon sx={{ alignItem: "center" }} onClick={(event) => handleOpen(event)} />
-                            <Menu
-                              id="demo-customized-menu"
-                              MenuListProps={{
-                                "aria-labelledby": "demo-customized-button",
+                            <Box
+                              sx={{
+                                height: "30px",
+                                width: "30px",
+                                backgroundColor: returnLeaseStatusColor(selectedProperty?.lease_status),
+                                borderRadius: "50%",
+                                marginRight: "10px",
                               }}
-                              anchorEl={anchorEl}
-                              open={open}
-                              onClose={handleClose}
+                            />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                fontSize: "22px",
+                                fontWeight: "600",
+                                color: "#3D5CAC",
+                              }}
                             >
-                              {propertyData.map((item, index) => {
-                                return (
-                                  <MenuItem
-                                    key={index}
-                                    onClick={() => {
-                                      setPropertyAddr(item.property_address + " " + item.property_unit);
-                                      setPropertyId(item.property_uid);
-                                      setTotal(item.balance);
-                                      setSelectedProperty(item);
-                                      setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
-                                      handleClose();
-                                    }}
-                                    disableRipple
-                                  >
-                                    {showLeaseStatusIndicator(item.lease_status)}
-                                    {item.property_address + " " + item.property_unit}
-                                  </MenuItem>
-                                );
-                              })}
-                            </Menu>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontSize: "22px",
+                                  fontWeight: "600",
+                                  color: "#3D5CAC",
+                                }}
+                              >
+                                <Typography>{propertyAddr}</Typography>
+                                <KeyboardArrowDownIcon sx={{ alignItem: "center" }} onClick={(event) => handleOpen(event)} />
+                                <Menu
+                                  id="demo-customized-menu"
+                                  MenuListProps={{
+                                    "aria-labelledby": "demo-customized-button",
+                                  }}
+                                  anchorEl={anchorEl}
+                                  open={open}
+                                  onClose={handleClose}
+                                >
+                                  {propertyData.map((item, index) => {
+                                    return (
+                                      <MenuItem
+                                        key={index}
+                                        onClick={() => {
+                                          setPropertyAddr(item.property_address + " " + item.property_unit);
+                                          setPropertyId(item.property_uid);
+                                          setTotal(item.balance);
+                                          setSelectedProperty(item);
+                                          setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
+                                          handleClose();
+                                        }}
+                                        disableRipple
+                                      >
+                                        {showLeaseStatusIndicator(item.lease_status)}
+                                        {item.property_address + " " + item.property_unit}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </Menu>
+                              </Box>
+                            </Box>
                           </Box>
-                          <Box sx={{fontSize: "55px", fontWeight: "bold", color: "#3D5CAC", margin: "10px", alignItems: "center", alignContent: "center" }}>
+                          <Box sx={{fontSize: { xs: "35px", sm: "35px", md: "35px", lg: "55px" }, fontWeight: "bold", color: "#3D5CAC", margin: "10px", alignItems: "center", alignContent: "center" }}>
                             ${total}
                           </Box>
                           <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
@@ -538,11 +498,12 @@ function TenantDashboard(props) {
                         flexDirection: "column",
                         alignItem: "center",
                         justifyContent: "center",
-                        margin: "20px",
-                        paddingTop: "20px",
-                        paddingBottom: "20px"
+                        margin: isMobile ? "10px" : "20px",
+                        paddingTop: isMobile ? "5px" : "20px",
+                        paddingBottom: isMobile ? "5px" : "20px",
                       }}>
-                        <Typography sx={{fontSize: "35px", fontWeight: "bold"}}>Balance Details</Typography>
+                        <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold"}}>Balance Details</Typography>
+                        
                         <Grid container>
                           <Grid item xs={6} sx={{color: "#3D5CAC", fontSize: "20px", fontWeight: 700}}> Description </Grid>
                           <Grid item xs={6} sx={{color: "#3D5CAC", fontSize: "20px", fontWeight: 700, textAlign: "right"}}> Amount </Grid>
@@ -559,11 +520,11 @@ function TenantDashboard(props) {
                         flexDirection: "column",
                         alignItem: "center",
                         justifyContent: "center",
-                        margin: "20px",
-                        paddingTop: "20px",
-                        paddingBottom: "20px"
+                        margin: isMobile ? "10px" : "20px",
+                        paddingTop: isMobile ? "5px" : "20px",
+                        paddingBottom: isMobile ? "5px" : "20px",
                       }}>
-                        <Typography sx={{fontSize: "35px", fontWeight: "bold"}}>Lease Details</Typography>
+                        <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold"}}>Lease Details</Typography>
                         <Grid container>
                           <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> Start Date </Grid>
                           <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> {selectedLease?.lease_start ? selectedLease?.lease_start : ""} </Grid>
@@ -578,7 +539,8 @@ function TenantDashboard(props) {
                         flexDirection: "row",
                         alignItem: "left",
                         justifyContent: "left",
-                        margin: "20px",
+                        margin: isMobile ? "0px" : "20px",
+                        paddingBottom: isMobile ? "5px" : "10px",
                         cursor: "pointer",
                         color: "#3D5CAC",
                         fontSize: "20px",
@@ -591,9 +553,9 @@ function TenantDashboard(props) {
                       </Box>
                   </DashboardTab>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={12} md={8}>
                   <Grid container>
-                  <Grid item xs={12}>
+                    <Grid item xs={12}>
                       <DashboardTab>
                         <Stack direction="row"
                           sx={{
@@ -616,7 +578,7 @@ function TenantDashboard(props) {
                           <Box
                               sx={{
                                 color: "#160449",
-                                fontSize: "35px",
+                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
                                 fontWeight: "bold",
                                 marginLeft: "5px",
                                 marginTop: "10px",
@@ -658,7 +620,7 @@ function TenantDashboard(props) {
                           <Box
                             sx={{
                               color: "#160449",
-                              fontSize: "35px",
+                              fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
                               fontWeight: "bold",
                               marginLeft: "5px",
                               marginTop: "10px",
@@ -704,7 +666,7 @@ function TenantDashboard(props) {
                           <Box
                             sx={{
                               color: "#160449",
-                              fontSize: "35px",
+                              fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
                               fontWeight: "bold",
                               marginLeft: "5px",
                               marginTop: "10px",
@@ -803,15 +765,6 @@ const innerTextStyle = {
   paddingLeft: "5px", // Adjust as needed
   paddingRight: "5px", // Adjust as needed
 };
-
-function DashboardActionItem(props) {
-  return (
-    <Box sx={boxStyle} onClick={props.onClick}>
-      <Box sx={innerBoxStyle}>{props.icon}</Box>
-      <Box sx={innerTextStyle}>{props.text}</Box>
-    </Box>
-  );
-}
 
 function DashboardTab(props) {
   return (
