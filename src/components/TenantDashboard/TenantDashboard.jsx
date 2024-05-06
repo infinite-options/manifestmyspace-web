@@ -319,11 +319,6 @@ function TenantDashboard(props) {
                   >
                     Welcome, {firstName}!
                   </Typography>
-                  <Box>
-                    <Typography sx={{fontSize: { xs: "14px", sm: "14px", md: "18px", lg: "18px" }, fontWeight: 400, paddingLeft: isMobile ? "0px" : "15px", alignItems: "center" }}>
-                      <u>Not you?</u>
-                    </Typography>
-                  </Box>
                 </Box>
               </Grid>
               {!isMobile && (
