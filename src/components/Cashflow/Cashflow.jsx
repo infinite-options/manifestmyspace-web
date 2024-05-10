@@ -458,7 +458,7 @@ export default function Cashflow() {
               {" "}
               <img src={AddRevenueIcon}></img> Expense
             </Button>
-            <Button
+            {/* <Button
               sx={{
                 color: theme.typography.primary.black,
                 fontWeight: theme.typography.primary.fontWeight,
@@ -473,7 +473,7 @@ export default function Cashflow() {
             >
               {" "}
               <img src={AddRevenueIcon}></img> Utility
-            </Button>
+            </Button> */}
           </Box>
         </Paper>
       </Box>

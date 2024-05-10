@@ -113,6 +113,21 @@ const AddUtility = (props) => {
       property_uid: dropdown.selectedOption.property_uid
     }));
     try {
+      // let data = {
+      //   "pur_property_id": JSON.stringify(propertyUidArray),
+      //   "purchase_type": "utility",
+      //   "pur_cf_type": "expense",
+      //   "purchase_date": date,
+      //   "pur_due_date": date,
+      //   "pur_amount_due": Number(amount),
+      //   "purchase_status": determinePurchaseStatus(), // TODO: default to UNPAID, unless then already completed button is checked
+      //   "pur_notes": notes,
+      //   "pur_description": description,
+      //   "pur_receiver": getProfileId(),
+      //   "pur_initiator": getProfileId(),
+      //   "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
+      //   "pur_frequency": frequency
+      // };
       var formData = new FormData();
 
       formData.append("bill_description", notes)
@@ -126,8 +141,11 @@ const AddUtility = (props) => {
       formData.append("bill_maintenance_quote_id", "")
 
 
-      const response = await fetch(`${APIConfig.baseURL.dev}/bills`,{
+      const response = await fetch(`${APIConfig.baseURL.dev}/addExpense`,{
         method: "POST",
+        headers: { 
+          'Content-Type': 'application/json'
+      },
         body: formData,
       })
 

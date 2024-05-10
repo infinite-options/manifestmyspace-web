@@ -193,6 +193,24 @@ const theme = createTheme({
       text: "#160449",
     },
   },
+  colorStatusMaintenanceTenant: [
+    { color: "#A52A2A", status: "NEW REQUEST"},
+    { color: "#778DC5", status: "QUOTES REQUESTED"},
+    { color: "#D29494", status: "QUOTES ACCEPTED"},
+    { color: "#9EAED6", status: "SCHEDULED"},
+    { color: "#778DC5", status: "COMPLETED"},
+    { color: "#D4736D", status: "PROCESSING"}
+  ],
+  colorStatusMaintenancePriorityTenant: [
+    { color: "#A52A2A", status: "High"},
+    { color: '#FF8A00', status: "Medium"},
+    { color: "#FFC614", status: "Low"}
+  ],
+  colorStatusPaymentHistoryTenant: [
+    { color: "#435DAE", status: "PAID"},
+    { color: "#FF8A00", status: "PAID LATE" },
+    { color: "#FFC614", status: "PAID PARTIALLY"}
+  ],
   colorStatusPMO_old: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },
     { color: "#D4736D", status: "Quotes Requested", mapping: "PROCESSING" },

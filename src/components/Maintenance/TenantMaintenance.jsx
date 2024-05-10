@@ -71,17 +71,6 @@ export default function TenantMaintenance(){
 
 
     useEffect(() => {
-
-        // const getPropertyDetails = async () => {
-        //     console.log("Getting Property Details")
-        //     try {
-        //         const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/Property/' + propertyId);
-        //         const jsonData = await response.json();
-        //         const data = jsonData.PropertyDetails.result;
-        //     } catch (err) {
-        //         console.error(err.message);
-        //     }
-        // };
         const dataObject = {};
         const getTenantMaintenanceData = async () => {
             console.log("Getting Tenant Maintenance Data")
