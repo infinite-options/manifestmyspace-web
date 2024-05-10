@@ -4,6 +4,7 @@ import Bell_fill from '../../images/Bell_fill.png';
 import User_fill from '../../images/User_fill.png';
 import dark_User_fill from '../../images/User_fill_dark.png';
 import comment_fill from '../../images/comment_fill.png';
+import phone_fill from '../../images/phone_fill.svg';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Grid, Box, ThemeProvider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -108,15 +109,29 @@ const getCommentButtonNav = () => {
           style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
           onClick={()=>{navigate("/announcements")}}
         />
-      </Grid>
-      <Grid item xs={3}>
-        <img
-          src={comment_fill}
-          alt="Comment Icon"
-          style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
-          onClick={()=>{navigate(getCommentButtonNav())}}
-        />
-      </Grid>
+      </Grid>      
+      {
+        selectedRole === "MANAGER" ? (
+          <Grid item xs={3}>
+            <img
+              src={phone_fill}
+              alt="Phone Icon"
+              style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
+              onClick={()=>{navigate("/PMContacts")}}
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={3}>
+            <img
+              src={comment_fill}
+              alt="Comment Icon"
+              style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
+              onClick={()=>{navigate(getCommentButtonNav())}}
+            />
+          </Grid>
+        )
+      }
+      
     </Grid>
   )
 }
