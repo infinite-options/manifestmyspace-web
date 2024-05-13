@@ -821,14 +821,23 @@ function TenantPaymentHistoryTable(props){
         fontWeight: "bold", // Apply inline style to the header cell
       },
       renderCell: (params) => (
-        <Chip
-          label={params.value} // This value is all caps, so I need to convert it to regular cased
+        <Box
+          // label={params.value} // This value is all caps, so I need to convert it to regular cased
           sx={{
             backgroundColor: theme.colorStatusPaymentHistoryTenant.find(item => item.status === params.value)?.color,
             textTransform: "none",
             fontWeight: "bold",
+            width: "100px",
+            height: "20px",
+            borderRadius: "4px",
+            alignItems: "center",
+            textAlign: "center",
+            alignContent: "center",
+            color: "#FFFFFF"
           }}
-        />
+        >
+          {params.value}
+        </Box>
         // <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>
       )
     },
@@ -1010,26 +1019,21 @@ function TenantMaintenanceRequestsTable(props) {
 
   const columnsListDefault = [
     {
-      field: "maintenance_request_status",
-      headerName: "Status",
-      flex: 0,
-      maxWidth: 100,
-      // align: "center",
-      renderCell: (params) => (
-        <Box sx={{alignItems: "center"}}>
-          <Chip
-            size="medium"
-            style={{ backgroundColor: theme.colorStatusMaintenanceTenant.find(item => item.status === params.value)?.color || "#FFFFFF", color: 'white' }}
-          />
-        </Box>
-      ),
-      headerAlign: "center",
-    },
-    {
       field: "maintenance_title",
       headerName: "Title",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>,
+      renderCell: (params) => (
+        <Box sx={{ 
+          fontWeight: "bold", 
+          textAlign: "center",
+          backgroundColor: theme.colorStatusMaintenanceTenant.find(item => item.status === params.row.maintenance_request_status)?.color || "#FFFFFF",
+          padding: "5px",
+          color: "#FFFFFF",
+          borderRadius: "4px",
+        }}>
+          {params.value}
+        </Box>
+      ),
       headerAlign: "center",
     },
     {
