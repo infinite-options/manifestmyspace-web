@@ -268,7 +268,12 @@ export function RentDetailBody(props) {
               fontSize: "14px",
             }}
           >
-            <Box>Tenant: {getProperties(propertyStatus)?.length > 0 && (property?.tenant_uid === null ? "Vacant" : ` ${property?.tenant_uid}`)}</Box>            
+            {
+              property?.rent_status !== "VACANT" && (
+                <Box>Tenant: {getProperties(propertyStatus)?.length > 0 && (property?.tenant_uid === null ? "Vacant" : ` ${property?.tenant_first_name} ${property?.tenant_last_name}`)}</Box>            
+              )
+            }
+            
           </Box>
           <Box
             sx={{

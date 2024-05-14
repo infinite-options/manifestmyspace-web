@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import {
+  Button,
+  Box, 
+  ThemeProvider,
+  Grid,
+  List,
+  ListItem,
+  Typography,
+} from "@mui/material";
 
 export default function HappinessMatrixWidget(props) {
-  const chartWidth = 400;
-  const chartHeight = 400;
-  const chartMargin = { top: 20, right: 0, bottom:30, left: 20 };
+  const chartWidth = 350;
+  const chartHeight = 350;
+  const chartMargin = { top: 20, right: 35, bottom:-10, left: -15 };
   const { data, dataSetter } = props;
   console.log("ROHIT - HappinessMatrix2 - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
@@ -107,139 +116,146 @@ export default function HappinessMatrixWidget(props) {
   };
 
   return (
-    <div>
-      <ScatterChart
-        width={chartWidth}
-        height={chartHeight}
-        margin={chartMargin}
-        onClick={() => setTooltipVisible(!tooltipVisible)}
-      >
-        {/* <CartesianGrid /> */}
-
-        <YAxis
-            type="number"
-            dataKey="y"
-            name="Delta Cashflow"
-            axisLine={false}
-            tickLine={false}
-            style={axisLabelStyle}
-            // tick={{ transform: 'translate(-10, 7.5)' }}
-            // label={{
-            //     value: 'Delta Cashflow',
-            //     angle: -90,
-            //     position: 'insideLeft',
-            //     dx: -20,
-            //     dy: 40,
-            //     style: axisLabelStyle,
-            //     fill: '#160449',
-            // }}
-            domain={[-110, 10]}
-            // ticks={[-100, -50, 0]}
-            tick={false}
-            
-        />
-
-        <XAxis
-            type="number"
-            dataKey="x"
-            name="Vacancies"
-            axisLine={false}
-            tickLine={false}
-            style={axisLabelStyle}
-            // tick={{ transform: 'translate(0, 10)' }}
-            // label={{
-            //     value: 'Vacancies',
-            //     position: 'insideBottom',
-            //     dy: 40,
-            //     dx: 0,
-            //     style: axisLabelStyle,
-            //     fill: '#160449',
-            // }}
-            domain={[-110, 10]}
-            // ticks={[-100, -50, 0]} // Add this line
-            tick={false}
-        />
-
-        <Tooltip
-          cursor={{ strokeDasharray: '3 3' }}
-          content={({ payload }) => {
-            if (payload && payload.length && tooltipVisible) {
-              const dataPoint = payload[0].payload;
-              return (
-                <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
-                  <p><strong>Name:</strong> {dataPoint.name}</p>
-                  <p><strong>Delta Cashflow:</strong> {dataPoint.delta_cashflow}</p>
-                  <p><strong>Vacancies:</strong> {dataPoint.vacancy_num}</p>
-                </div>
-              );
-            }
-            return null;
-          }}
-        />
-
-        {/* <Scatter
-          name="A school"
-          data={shifted_data}
-          shape={(props) => (
-            <CustomImage
-              {...props}
-              onClick={() => handlePointClick(props.payload)}
-              isClicked={props.payload.index === clickedIndex}
-              isVisible={!hiddenPoints.includes(props.payload.index)}
-            />
-          )}
+    <Grid container style={{padding: '15px', }}>
+      <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
+                Happiness Matrix
+            </Typography>
+        </Grid>
+      <Grid item xs={12}>
+        <ScatterChart
+          width={chartWidth}
+          height={chartHeight}
+          margin={chartMargin}
+          onClick={() => setTooltipVisible(!tooltipVisible)}
         >
-          {shifted_data.map((point, index) => (
-            !hiddenPoints.includes(index) && (
-              <Scatter
-                key={`hidden-${index}`}
-                data={[point]}
-                shape={(props) => (
+          {/* <CartesianGrid /> */}
+
+          <YAxis
+              type="number"
+              dataKey="y"
+              name="Delta Cashflow"
+              axisLine={false}
+              tickLine={false}
+              style={axisLabelStyle}
+              // tick={{ transform: 'translate(-10, 7.5)' }}
+              // label={{
+              //     value: 'Delta Cashflow',
+              //     angle: -90,
+              //     position: 'insideLeft',
+              //     dx: -20,
+              //     dy: 40,
+              //     style: axisLabelStyle,
+              //     fill: '#160449',
+              // }}
+              domain={[-110, 10]}
+              // ticks={[-100, -50, 0]}
+              tick={false}
+              
+          />
+
+          <XAxis
+              type="number"
+              dataKey="x"
+              name="Vacancies"
+              axisLine={false}
+              tickLine={false}
+              style={axisLabelStyle}
+              // tick={{ transform: 'translate(0, 10)' }}
+              // label={{
+              //     value: 'Vacancies',
+              //     position: 'insideBottom',
+              //     dy: 40,
+              //     dx: 0,
+              //     style: axisLabelStyle,
+              //     fill: '#160449',
+              // }}
+              domain={[-110, 10]}
+              // ticks={[-100, -50, 0]} // Add this line
+              tick={false}
+          />
+
+          <Tooltip
+            cursor={{ strokeDasharray: '3 3' }}
+            content={({ payload }) => {
+              if (payload && payload.length && tooltipVisible) {
+                const dataPoint = payload[0].payload;
+                return (
+                  <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
+                    <p><strong>Name:</strong> {dataPoint.name}</p>
+                    <p><strong>Delta Cashflow:</strong> {dataPoint.delta_cashflow}</p>
+                    <p><strong>Vacancies:</strong> {dataPoint.vacancy_num}</p>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+
+          {/* <Scatter
+            name="A school"
+            data={shifted_data}
+            shape={(props) => (
+              <CustomImage
+                {...props}
+                onClick={() => handlePointClick(props.payload)}
+                isClicked={props.payload.index === clickedIndex}
+                isVisible={!hiddenPoints.includes(props.payload.index)}
+              />
+            )}
+          >
+            {shifted_data.map((point, index) => (
+              !hiddenPoints.includes(index) && (
+                <Scatter
+                  key={`hidden-${index}`}
+                  data={[point]}
+                  shape={(props) => (
+                    <CustomImage
+                      {...props}
+                      isClicked={false}
+                      isVisible={false}
+                    />
+                  )}
+                />
+              )
+            ))}
+          </Scatter> */}
+
+          <Scatter 
+              name="happiness_matrix" 
+              data={pointsToPlot} 
+              fill="#8884d8" 
+              shape={(props) => (
                   <CustomImage
                     {...props}
-                    isClicked={false}
-                    isVisible={false}
+                  //   onClick={() => handlePointClick(props.payload)}
+                    isClicked={props.payload.index === clickedIndex}
+                    isVisible={!hiddenPoints.includes(props.payload.index)}
                   />
-                )}
-              />
-            )
-          ))}
-        </Scatter> */}
+              )}
+          />
 
-        <Scatter 
-            name="happiness_matrix" 
-            data={pointsToPlot} 
-            fill="#8884d8" 
-            shape={(props) => (
-                <CustomImage
-                  {...props}
-                //   onClick={() => handlePointClick(props.payload)}
-                  isClicked={props.payload.index === clickedIndex}
-                  isVisible={!hiddenPoints.includes(props.payload.index)}
-                />
-            )}
-        />
+          <ReferenceLine
+            y={-50}
+            stroke="#000000"
+            strokeDasharray="3 3"
+          />
 
-        <ReferenceLine
-          y={-50}
-          stroke="#000000"
-          strokeDasharray="3 3"
-        />
+          <ReferenceLine
+            x={-50}
+            stroke="#000000"
+            strokeDasharray="3 3"
+          />
 
-        <ReferenceLine
-          x={-50}
-          stroke="#000000"
-          strokeDasharray="3 3"
-        />
-
-        <ReferenceLine
-          segment={[{ x: -110, y: -110 }, { x: 110, y: 110 }]}
-          stroke="#000000"
-          strokeWidth={1}
-          ifOverflow="hidden"
-        />
-      </ScatterChart>
-    </div>
+          <ReferenceLine
+            segment={[{ x: -110, y: -110 }, { x: 110, y: 110 }]}
+            stroke="#000000"
+            strokeWidth={1}
+            ifOverflow="hidden"
+          />
+        </ScatterChart>
+      </Grid>
+    </Grid>
   );
 }
 

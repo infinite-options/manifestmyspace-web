@@ -136,13 +136,14 @@ return (
             sx={{                                
                 // height: '200px',
                 width: '100%',                
-                padding: '20px',
+                padding: '15px',
                 cursor: 'pointer',
             }}
             onClick={() => navigate("/Leases")}
-            xs={12}            
+            xs={12}  
+            rowSpacing={6}          
         >
-            <Grid item xs={12}sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
+            <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
                     Leases Expiring: Next 12 Months
                 </Typography>

@@ -9,6 +9,8 @@ import { makeStyles } from "@material-ui/core";
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 import APIConfig from "../../../utils/APIConfig";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import theme from "../../../theme/theme";
 
 
 const useStyles = makeStyles({
@@ -32,6 +34,7 @@ const useStyles = makeStyles({
 
 export default function PropertyRentWidget2(props) {    
   console.log("In Property Rent Widget ");
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId } = useUser();
   const classes = useStyles();
   const navigate = useNavigate();
@@ -220,10 +223,10 @@ export default function PropertyRentWidget2(props) {
         position: "relative",        
       }}
     >
-      <Typography className="mt-widget-title" sx={{fontSize: '25px', fontWeight: 600, }}> Property Rent</Typography>
+      <Typography className="mt-widget-title" sx={{fontSize: '25px', fontWeight: 600, paddingTop: '15px'         }}> Property Rent</Typography>
       <Grid container>
         {/* <Grid item xs={2} sm={0}></Grid> */}
-        <Grid item xs={8} sm={6}>
+        <Grid item xs={6}>
             <Button            
                 variant="outlined"
                 id="revenue"
@@ -242,11 +245,11 @@ export default function PropertyRentWidget2(props) {
                 }}
             >                                    
             <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: '4px' }}/>
-            Last 30 days
+            {!isMobile && "Last 30 days"}
         </Button>
 
         </Grid>
-        <Grid item xs={8} sm={6}>
+        <Grid item xs={6}>
             <Button            
                 variant="outlined"
                 id="revenue"
@@ -263,7 +266,7 @@ export default function PropertyRentWidget2(props) {
                 onClick={handleSelectPropertyClick}
             >                        
                 <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/>
-                Select Property
+                {!isMobile && "Select Property"}
             </Button>
             <Menu
                 anchorEl={anchorEl}
@@ -379,6 +382,7 @@ export default function PropertyRentWidget2(props) {
                 color: "#FFFFFF",
                 fontSize: "15px",
                 marginBottom: '10px',
+                marginTop: '25px',
                 borderRadius: '5px',
             }}
             onClick={() => {            

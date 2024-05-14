@@ -65,7 +65,7 @@ function ManagerDashboard2() {
   const [rentStatus, setRentStatus] = useState([]);
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
@@ -162,7 +162,9 @@ function ManagerDashboard2() {
   // console.log("In Manager Dashboard Step 3");
 
   // Employee Verification useEffect
+  
   useEffect(() => {
+    setShowSpinner(true);
     if (selectedRole === "PM_EMPLOYEE") {
       const emp_verification = async () => {
         try {
@@ -181,6 +183,7 @@ function ManagerDashboard2() {
       };
 
       emp_verification();
+      setShowSpinner(false);
     }
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
     if (signedUpWithReferral && signedUpWithReferral === "true") {
@@ -235,47 +238,20 @@ function ManagerDashboard2() {
     };
     fetchData();
   }, []);
-
-//   return (
-//     <ThemeProvider theme={theme}>
-//         {/* <Box className={classes.row} sx={{width: '100%', minHeight: '100vh',  display: 'flex', flexDirection: 'row', border: '2px solid red'}}> */}
-//         <Box className={classes.row} sx={{width: '100%', minHeight: '80vh',  display: 'flex', flexDirection: 'row',}}>
-//             {/* <Box sx={{width: '30%', height: "100vh", marginRight: '10px', marginLeft: '10px', border: '2px solid red'}}> */}
-//             <Box sx={{width: '30%', height: "80vh", marginRight: '10px', marginLeft: '10px', padding: '10px',}}>
-//                 <PropertyRentWidget2 rentData={rentStatus}  />
-//             </Box>
-//             {/* <Box sx={{width: '70%', height: "100%", marginBottom: '10px', marginLeft: '10px', marginBottom: '30px', border: '2px solid red'}}> */}
-//             <Box sx={{width: '70%', height: "100%", marginBottom: '10px', marginLeft: '10px', marginBottom: '30px',}}>
-//                 {/* <Box sx={{width: '100%', height: "25vh", margin: '0px', padding: '10px', border: '2px solid black'}}> */}
-//                 <Box sx={{width: '100%', height: "20vh", margin: '0px', paddingTop: '15px',}}>                                        
-//                     <Box sx={{width: '95%', height: '90%', backgroundColor:'#f0f0f0', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: '10px',}}>
-//                         <Typography sx={{height: '20%',}}>Revenue and expenses</Typography>
-//                     </Box>
-//                 </Box>
-//                 {/* <Box sx={{width: '100%', height: "25vh", margin: '0px', border: '2px solid blue'}}> */}
-//                 <Box sx={{width: '100%', height: "20vh", margin: '0px',}}>
-//                     {/* <LeaseWidget leaseData={leaseStatus} /> */}
-//                     <LeaseWidget2 leaseData={leaseStatus} />
-//                 </Box>
-//                 {/* <Box sx={{width: '100%', height: "50vh", marginBottom: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', border: '2px solid red'}}> */}
-//                 <Box sx={{width: '100%', height: "40vh", marginBottom: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly',}}>
-//                     {/* <Box sx={{width: '50%', height: "100%", margin: '10px', border: '2px solid green'}}> */}
-//                     <Box sx={{width: '50%', height: "100%", margin: '10px',}}>
-//                         <OwnerList matrixData={matrixData} />
-//                     </Box>
-//                     {/* <Box sx={{width: '50%', height: "100%", margin: '10px', border: '2px solid red'}}> */}
-//                     <Box sx={{width: '50%', height: "100%", margin: '10px',}}>
-//                         <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
-//                     </Box>
-//                 </Box>
-//             </Box>
-//         </Box>
-      
-//     </ThemeProvider>
-//   );
+  if(showSpinner){
+    return (
+        <>
+            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <ShimmerUI />
+        </>
+        
+      );
+  }  
 
 return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>        
         <Container maxWidth="lg" sx={{paddingTop: '30px', paddingBottom: '50px', }}>
             <Grid container spacing={6}>
                 <Grid item xs={12} md={3}>
@@ -287,13 +263,13 @@ return (
                     <LeaseWidget2 leaseData={leaseStatus} />                    
 
                     <Grid container item xs={12} spacing={6}>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={5}>
                             {/* <OwnerList matrixData={matrixData} /> */}
-                            HappinessMatrixWidget
+                            {/* HappinessMatrixWidget */}
                             <Paper
                                 style={{
-                                    // margin: '50px', // Add margin here
-                                    // padding: '40px',
+                                    // margin: '50p', // Add margin here
+                                    borderRadius: '10px',
                                     backgroundColor: theme.palette.primary.main,
                                     height: 400,
                                     [theme.breakpoints.down('sm')]: {
@@ -307,37 +283,12 @@ return (
                                 <HappinessMatrixWidget data={matrixData} />
                             </Paper>
                         </Grid>
+                        <Grid item xs={0} md={0.5}>
+
+                        </Grid>
 
 
-
-                        {/* <Grid item xs={12} md={6}>
-                            
-                            HappinessMatrix2
-                            <Paper
-                                style={{
-                                    // margin: '50px', // Add margin here
-                                    // padding: '40px',
-                                    backgroundColor: theme.palette.primary.main,
-                                    height: 400,
-                                    [theme.breakpoints.down('sm')]: {
-                                        width: '80%',
-                                    },
-                                    [theme.breakpoints.up('sm')]: {
-                                        width: '50%',
-                                    },
-                                }}
-                            >
-                                <HappinessMatrix2 data={matrixData} />
-                            </Paper>
-                        </Grid> */}
-
-
-
-
-
-
-
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={6.5} style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
                             <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
                         </Grid>
                     </Grid>
@@ -348,5 +299,105 @@ return (
   );
 }
 // console.log("In Manager Dashboard Step 5");
+
+const ShimmerUI = () => (
+  <ThemeProvider theme={theme}>
+    <Container maxWidth="lg" sx={{ paddingTop: '30px', paddingBottom: '50px', }}>
+      <Grid container spacing={6}>
+        <Grid item xs={12} md={3}>
+            <Paper
+                style={{
+                  borderRadius: '10px',
+                  backgroundColor: theme.palette.primary.main,
+                  height: 780,
+                  [theme.breakpoints.down('sm')]: {
+                    width: '80%',
+                  },
+                  [theme.breakpoints.up('sm')]: {
+                    width: '50%',
+                  },
+                }}
+              >                
+              </Paper>
+        </Grid>
+        <Grid item xs={12} md={9} rowSpacing={6}>
+          {/* <RevenueWidget revenueData={null} shimmer /> */}
+          <Paper
+                style={{
+                    borderRadius: '10px',                    
+                    backgroundColor: theme.palette.primary.main,
+                    height: 162,
+                    [theme.breakpoints.down('sm')]: {
+                    width: '80%',
+                    },
+                    [theme.breakpoints.up('sm')]: {
+                    width: '50%',
+                    },
+                }}
+                >
+                {/* <HappinessMatrixWidget data={null} shimmer /> */}
+            </Paper>
+
+            <Paper
+                style={{
+                    marginTop: '10px',
+                    borderRadius: '10px',
+                    backgroundColor: theme.palette.primary.main,
+                    height: 198,
+                    [theme.breakpoints.down('sm')]: {
+                    width: '80%',
+                    },
+                    [theme.breakpoints.up('sm')]: {
+                    width: '50%',
+                    },
+                }}
+                >
+                {/* <HappinessMatrixWidget data={null} shimmer /> */}
+            </Paper>
+
+          <Grid container item xs={12} spacing={6}>
+            <Grid item xs={12} md={5}>
+              <Paper
+                style={{
+                  marginTop: '10px',
+                  borderRadius: '10px',
+                  backgroundColor: theme.palette.primary.main,
+                  height: 400,
+                  [theme.breakpoints.down('sm')]: {
+                    width: '80%',
+                  },
+                  [theme.breakpoints.up('sm')]: {
+                    width: '50%',
+                  },
+                }}
+              >
+                {/* <HappinessMatrixWidget data={null} shimmer /> */}
+              </Paper>
+            </Grid>
+            <Grid md={0.5}></Grid>
+            <Grid item xs={12} md={6.5} >
+                <Paper
+                    style={{
+                    marginTop: '10px',
+                    borderRadius: '10px',
+                    backgroundColor: theme.palette.primary.main,
+                    height: 400,
+                    [theme.breakpoints.down('sm')]: {
+                        width: '80%',
+                    },
+                    [theme.breakpoints.up('sm')]: {
+                        width: '50%',
+                    },
+                    }}
+                >
+                    {/* <HappinessMatrixWidget data={null} shimmer /> */}
+                </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Container>
+  </ThemeProvider>
+);
 
 export default ManagerDashboard2;

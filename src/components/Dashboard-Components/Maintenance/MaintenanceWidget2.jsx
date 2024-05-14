@@ -12,6 +12,8 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
+import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
+import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 
 export default function MaintenanceWidget({ maintenanceData }) {
   console.log("In MaintenanceWidget");
@@ -121,8 +123,10 @@ return (
     <Grid 
       container 
       justifyContent="center" 
-      alignItems="center" 
+    //   alignItems="center" 
+      style={{padding: '15px', }}
       sx={{
+        height: '100%',
         backgroundColor: '#F2F2F2',
         borderRadius: '10px',
         cursor: 'pointer',
@@ -132,17 +136,22 @@ return (
       onClick={() => navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}
     >
       <Grid item container xs={12} >
-        <Grid item xs={8} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+        <Grid item xs={2}>
+
+        </Grid>
+        <Grid item xs={8} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
                 Maintenance
             </Typography>
         </Grid>
-        <Grid item xs={4} container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end',}}>            
+        <Grid item xs={2} container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', }}>            
             <Button 
                 sx={{
                     color: '#160449', 
                     fontSize: '30px', 
-                    padding: '0px',
+                    padding: '0px',                    
+                    lineHeight: '1',
+                    justifyContent: 'center',
                     '&:hover': {
                         backgroundColor: '#F2F2F2',
                     }
@@ -157,7 +166,51 @@ return (
             </Button>
         </Grid>
       </Grid>
-      <Grid item xs={12} md={8}>
+      <Grid item container xs={12} >        
+        <Grid item xs={6} container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start', }}>            
+            <Button            
+                    variant="outlined"
+                    id="revenue"
+                    // className={classes.button}
+                    style={{
+                        // height: "100%",
+                        // width: '80%',
+                        // backgroundColor: '#160449',
+                        color: "#3D5CAC",
+                        fontSize: "13px",
+                        marginBottom: '10px',
+                        borderRadius: '5px',
+                    }}
+                    onClick={() => {            
+                        // navigate(propertyRoutingBasedOnSelectedRole());
+                    }}
+                >                                    
+                <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: '4px' }}/>
+                Last 30 days
+            </Button>
+        </Grid>
+        <Grid item xs={6} container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', }}>            
+            <Button            
+                    variant="outlined"
+                    id="revenue"
+                    // className={classes.button}
+                    style={{
+                        // height: "100%",
+                        // width: '80%',
+                        // backgroundColor: '#160449',
+                        color: "#3D5CAC",
+                        fontSize: "13px",
+                        marginBottom: '10px',
+                        borderRadius: '5px',
+                    }}
+                    // onClick={handleSelectPropertyClick}
+                >                        
+                    <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/>
+                    Select Property
+                </Button>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
         <List sx={{
           padding: '0',
           borderRadius: '10px',
