@@ -7,7 +7,9 @@ export default function NewCardSlider(props){
   const announcementList = [
       { announcement_title: "Announcement 1", announcement_msg: "Description of Announcement 1", announcement_uid: 1 },
       { announcement_title: "Announcement 2", announcement_msg: "Description of Announcement 2", announcement_uid: 2 },
-      { announcement_title: "Announcement 3", announcement_msg: "Description of Announcement 3", announcement_uid: 3 }
+      { announcement_title: "Announcement 3", announcement_msg: "Description of Announcement 3", announcement_uid: 3 },
+      { announcement_title: "Announcement 4", announcement_msg: "Description of Announcement 4", announcement_uid: 4 },
+      { announcement_title: "Announcement 5", announcement_msg: "Description of Announcement 5", announcement_uid: 5 }
   ];
     // const announcementList = props.announcementList
 
@@ -48,11 +50,11 @@ export default function NewCardSlider(props){
 
     return (
         <Box maxWidth="100%" sx={{ height: '100%', maxHeight: "400px", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Button onClick={handlePrev} disable={currentIndex === 0}>
+            <Button onClick={handlePrev} disable={currentIndex === 0 ? true : false} sx={{padding: "0px"}}>
                 <ArrowBackIcon />
             </Button>
             <Box sx={{overflow: 'hidden', display: "flex", width: "auto", alignItems: "center", justifyContent: "center", flexGrow: 1 }}>
-                {prevCard && (
+                {prevCard && !props.isMobile && (
                 <Card sx={{ minWidth: 300, padding: 2, margin: 2, opacity: "50%" }}>
                     <Typography sx={{color: "#000000", fontSize: "20px", fontWeight: 700}}>
                         {announcementList[prevCardIndex].announcement_title}
@@ -65,7 +67,7 @@ export default function NewCardSlider(props){
                     </Typography>
                 </Card>
                 )}
-                <Card sx={{ minWidth: 300, padding: 2, margin: 2 }}>
+                <Card sx={{ minWidth: props.isMobile ? 150 : 300, padding: 2, margin: 2 }}>
                     <Typography sx={{color: "#000000", fontSize: "20px", fontWeight: 700}}>
                         {announcementList[currentIndex].announcement_title}
                     </Typography>
@@ -76,7 +78,7 @@ export default function NewCardSlider(props){
                         {announcementList[currentIndex].announcement_uid}
                     </Typography>
                 </Card>
-                {nextCard && (
+                {nextCard && !props.isMobile && (
                 <Card sx={{ minWidth: 300, padding: 2, margin: 2, opacity: "50%" }}>
                     <Typography sx={{color: "#000000", fontSize: "20px", fontWeight: 700}}>
                         {announcementList[nextCardIndex].announcement_title}
@@ -90,7 +92,7 @@ export default function NewCardSlider(props){
                 </Card>
                 )}
             </Box>
-            <Button onClick={handleNext} disable={currentIndex === announcementList.length - 1}>
+            <Button onClick={handleNext} disable={currentIndex === announcementList.length - 1 ? true : false} sx={{padding: "0px"}}>
                 <ArrowForwardIcon />
             </Button>
         </Box>

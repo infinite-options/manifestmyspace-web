@@ -266,6 +266,7 @@ function TenantDashboard(props) {
     navigate("/viewLease", {
       state: {
         lease_id: lease_uid,
+        // property_uid: propertyId,
       },
     });
   }
@@ -278,13 +279,6 @@ function TenantDashboard(props) {
   }
 
   return (
-    // <Box
-    //   sx={{
-    //     maxWidth: '1920px', // Maximum width set here
-    //     margin: 'auto', // This centers the Box
-    //     width: '100%', // Makes the Box take full width of its container to center the content properly
-    //   }}
-    // >
     <Container maxWidth="xl">
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
@@ -551,7 +545,7 @@ function TenantDashboard(props) {
                         fontSize: "20px",
                         fontWeight: 600
                       }}
-                        onClick={() => handleViewLeaseNavigate()}
+                        onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
                       >
                         <img src={documentIcon} alt="document-icon" style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
                         <u>View Full Lease</u>
@@ -616,8 +610,7 @@ function TenantDashboard(props) {
                           </Grid>
                         </Grid>
                         {announcementsData.length > 0  ? (
-                          <NewCardSlider announcementList={announcementsData}/>
-                        // <CardSlider data={announcementsData} />
+                          <NewCardSlider announcementList={announcementsData} isMobile={isMobile}/>
                         ) : (
                           <Box sx={{display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px"}}>
                             <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }}}>
