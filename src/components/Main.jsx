@@ -328,8 +328,8 @@ function Main() {
             <Route path="settingsManagerACH5" element={<SettingsACH5 />} />
 
             <Route path="poContracts" element={<POContracts />} />
-            <Route path="managerDashboard" element={<ManagerDashboard />} />
-            <Route path="managerDashboard2" element={<ManagerDashboard2 />} />
+            <Route path="managerDashboard" element={<ManagerDashboard2 />} />
+            {/* <Route path="managerDashboard2" element={<ManagerDashboard2 />} /> */}
             <Route path="emp_waiting" element={<Emp_Waiting/>} />
 
             <Route path="quoteAccept" element={<QuoteAcceptForm />} />

@@ -263,7 +263,7 @@ return (
                     <LeaseWidget2 leaseData={leaseStatus} />                    
 
                     <Grid container item xs={12} spacing={6}>
-                        <Grid item xs={12} md={5}>
+                        <Grid item xs={12} md={5.25}>
                             {/* <OwnerList matrixData={matrixData} /> */}
                             {/* HappinessMatrixWidget */}
                             <Paper
@@ -283,7 +283,7 @@ return (
                                 <HappinessMatrixWidget data={matrixData} />
                             </Paper>
                         </Grid>
-                        <Grid item xs={0} md={0.5}>
+                        <Grid item xs={0} md={0.25}>
 
                         </Grid>
 
