@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
-const cardWidth = 300;
+
+const cardWidth = 500;
 const cardHeight = 120;
 
 export default function CardSlider(props) {
@@ -32,38 +33,10 @@ export default function CardSlider(props) {
         }
         setCardSelection(baseArray);
         setCardIndex(0);
-        setPosition((cardWidth * baseArray.length / 2) - (cardWidth / 0.75))
+        // setPosition((cardWidth * baseArray.length / 2) - (cardWidth / 0.75))
+        setPosition(10)
     }, [props.data]);
 
-    
-
-
-    // function leftClicked() {
-    //     if (0 !== cardIndex) {
-    //         for (let i = 0; i < cardSelection.length; i++) {
-    //             if (cardIndex - 1 === i) {
-    //                 cardSelection[i] = true;
-    //             } else {
-    //                 cardSelection[i] = false;
-    //             }
-    //         }
-    //         setCardIndex(cardIndex - 1);
-    //         setPosition(position + cardWidth);
-    //     }
-    // }
-    // function rightClicked() {
-    //     if (cardSelection.length - 1 !== cardIndex) {
-    //         for (let i = 0; i < cardSelection.length; i++) {
-    //             if (cardIndex + 1 === i) {
-    //                 cardSelection[i] = true;
-    //             } else {
-    //                 cardSelection[i] = false;
-    //             }
-    //         }
-    //         setCardIndex(cardIndex + 1);
-    //         setPosition(position - cardWidth);
-    //     }
-    // }
 
     function leftClicked() {
         if (0 !== cardIndex) {
@@ -73,7 +46,7 @@ export default function CardSlider(props) {
             }
             setCardSelection(newCardSelection); 
             setCardIndex(cardIndex - 1);
-            setPosition(position + cardWidth);
+            setPosition(position + cardWidth / 2);
         }
     }
     
@@ -85,22 +58,9 @@ export default function CardSlider(props) {
             }
             setCardSelection(newCardSelection);
             setCardIndex(cardIndex + 1);
-            setPosition(position - cardWidth);
+            setPosition(position - cardWidth / 2);
         }
     }
-
-    // function rightClicked() {
-    //     let newIndex = cardIndex + 1;
-    //     if (newIndex >= cardSelection.length) {
-    //         newIndex = 0; // Go back to the first card if at the last card
-    //     }
-    
-    //     const newCardSelection = cardSelection.map((_, i) => i === newIndex);
-    //     setCardSelection(newCardSelection);
-    //     setCardIndex(newIndex);
-    //     setPosition(position - cardWidth);
-    // }
-    
 
     return (
         <Box sx={{
@@ -127,23 +87,16 @@ export default function CardSlider(props) {
                     {cards.map((announcement, i) => (
                         <Card key={i} selection={[cardSelection, i, cardIndex]}>
                             <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
+                                // display: 'flex',
+                                // flexDirection: 'column',
                                 backgroundColor: '#FFFFFF',
                                 borderRadius: '5px',
                                 borderColor: '#3D5CAC',
-                                color: '#160449',
                                 padding: '5px',
-                                width: 'inherit',
-                                height: 'inherit',
-                                boxShadow: '0px 4px 4px #00000019',
+                                // width: 'auto',
+                                // height: 'auto',
+                                // boxShadow: '0px 4px 4px #00000019',
                             }}>
-                                {/* <Box sx={{
-                                    fontSize: '16px',
-                                    fontWeight: '800',
-                                }}>                                    
-                                    {i}
-                                </Box> */}
                                 <Box sx={{
                                     fontSize: '16px',
                                     fontWeight: '800',
@@ -169,26 +122,6 @@ export default function CardSlider(props) {
                                         {announcement.announcement_msg}
                                     </Box>
                                 </Box>
-                                {/* <Box sx={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    marginTop: 'auto',
-                                    marginBottom: '14px',
-                                }}>
-                                    <Box sx={{
-                                        textAlign: 'center',
-                                        fontSize: '14px',
-                                        fontWeight: '600',
-                                        borderRadius: '10px',
-                                        borderWidth: '0.3px',
-                                        borderStyle: 'solid',
-                                        backgroundColor: '#D9D9D9',
-                                        width: '120px',
-                                    }}>
-                                        Update settings 
-                                    </Box>
-                                </Box> */}
-
                             </Box>
                         </Card>
                     ))}
@@ -253,11 +186,12 @@ function Card(props) {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#99ee88',
-            width: cardWidth, // Double the width for the first card
-            height: cardHeight,
+            backgroundColor: '#FFFFFF', //'#99ee88',
+            maxWidth: "500px", // Double the width for the first card
+            height: "200px",
             margin: '2px',
             opacity: transparency,
+            boxShadow: '0px 4px 4px #00000019',
         }}>
             {props.children}
         </Box>

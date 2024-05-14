@@ -28,6 +28,7 @@ import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -111,39 +112,75 @@ const AddUtility = (props) => {
     const propertyUidArray = dropdowns.map((dropdown) => ({
       property_uid: dropdown.selectedOption.property_uid
     }));
+    try {
+      // let data = {
+      //   "pur_property_id": JSON.stringify(propertyUidArray),
+      //   "purchase_type": "utility",
+      //   "pur_cf_type": "expense",
+      //   "purchase_date": date,
+      //   "pur_due_date": date,
+      //   "pur_amount_due": Number(amount),
+      //   "purchase_status": determinePurchaseStatus(), // TODO: default to UNPAID, unless then already completed button is checked
+      //   "pur_notes": notes,
+      //   "pur_description": description,
+      //   "pur_receiver": getProfileId(),
+      //   "pur_initiator": getProfileId(),
+      //   "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
+      //   "pur_frequency": frequency
+      // };
+      var formData = new FormData();
 
-    let data = JSON.stringify({
-      "bill_description": notes,
-      "bill_created_by": getProfileId(),
-      "bill_utility_type": "maintenance",
-      "bill_amount": Number(amount),
-      "bill_split": splitMethod,
-      "bill_property_id": propertyUidArray,
-      "bill_docs": [],
-      "bill_notes": notes,
-      "bill_maintenance_quote_id": ""
-    });
+      formData.append("bill_description", notes)
+      formData.append("bill_created_by", getProfileId())
+      formData.append("bill_utility_type", type)
+      formData.append("bill_amount", Number(amount))
+      formData.append("bill_split", splitMethod)
+      formData.append("bill_property_id", JSON.stringify(propertyUidArray))
+      formData.append("bill_docs", JSON.stringify([]))
+      formData.append("bill_notes", notes)
+      formData.append("bill_maintenance_quote_id", "")
 
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills',
-      headers: {
-        'Content-Type': 'application/json'
+
+      const response = await fetch(`${APIConfig.baseURL.dev}/addExpense`,{
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json'
       },
-      data: data
-    };
-    setShowSpinner(true);
-    axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        setShowSpinner(false);
+        body: formData,
       })
-      .catch((error) => {
-        console.log(error);
-        setShowSpinner(false);
-      });
-    navigate(-1);
+
+      const responseData = await response.json();
+      if (response.status === 200){
+        console.log("success")
+        navigate("/cashflow")
+      } else {
+
+      }
+    } catch (error){
+      console.log("error", error)
+    }
+    
+    // let config = {
+    //   method: 'post',
+    //   maxBodyLength: Infinity,
+    //   url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   data: data
+    // };
+    // setShowSpinner(true);
+    // axios.request(config)
+    //   .then((response) => {
+    //     console.log(JSON.stringify(response.data));
+    //     setShowSpinner(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     setShowSpinner(false);
+    //   });
+    // navigate(-1);
+
   };
 
   // const shouldDisplaySplitMethod = dropdowns.length > 1;
