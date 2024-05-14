@@ -356,7 +356,7 @@ const ShimmerUI = () => (
             </Paper>
 
           <Grid container item xs={12} spacing={6}>
-            <Grid item xs={12} md={5}>
+            <Grid item xs={12} md={5.25}>
               <Paper
                 style={{
                   marginTop: '10px',
@@ -374,7 +374,7 @@ const ShimmerUI = () => (
                 {/* <HappinessMatrixWidget data={null} shimmer /> */}
               </Paper>
             </Grid>
-            <Grid md={0.5}></Grid>
+            <Grid md={0.25}></Grid>
             <Grid item xs={12} md={6.5} >
                 <Paper
                     style={{

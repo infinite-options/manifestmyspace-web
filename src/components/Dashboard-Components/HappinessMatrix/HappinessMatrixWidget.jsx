@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 
 export default function HappinessMatrixWidget(props) {
-  const chartWidth = 350;
+  const chartWidth = 400;
   const chartHeight = 350;
-  const chartMargin = { top: 20, right: 35, bottom:-10, left: -15 };
+  const chartMargin = { top: 20, right: 35, bottom:-10, left: -40 };
   const { data, dataSetter } = props;
   console.log("ROHIT - HappinessMatrix2 - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
