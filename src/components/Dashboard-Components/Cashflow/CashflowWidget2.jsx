@@ -293,7 +293,11 @@ return (
                 >
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Cashflow</Typography>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                    ${totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"}
+                    {/* ${totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"} */}
+                    ${totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
+                        ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
+                        : "0.00"
+                    }                    
                 </Typography>
                 </Box>
             </Grid>                        
