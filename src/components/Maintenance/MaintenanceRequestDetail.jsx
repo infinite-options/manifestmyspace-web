@@ -1,4 +1,17 @@
-import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Slider, Stack, Button, Grid } from "@mui/material";
+import {
+  ThemeProvider,
+  Typography,
+  Box,
+  Tabs,
+  Tab,
+  Paper,
+  Card,
+  CardHeader,
+  Slider,
+  Stack,
+  Button,
+  Grid,
+} from "@mui/material";
 import PropTypes from "prop-types";
 
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -28,7 +41,13 @@ import APIConfig from "../../utils/APIConfig";
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
       {value === index && (
         <Box sx={{ p: 3 }}>
           <Typography>{children}</Typography>
@@ -51,17 +70,24 @@ function a11yProps(index) {
   };
 }
 
-export function MaintenanceRequestDetail() {
+export function MaintenanceRequestDetail(props) {
   console.log("In MaintenanceRequestDetail");
   const location = useLocation();
-  const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
+  const {
+    user,
+    getProfileId,
+    roleName,
+    maintenanceRoutingBasedOnSelectedRole,
+  } = useUser();
   let navigate = useNavigate();
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
 
-  const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
+  const [fromProperty, setFromProperty] = useState(
+    location.state?.fromProperty || false
+  );
 
   function navigateToAddMaintenanceItem() {
     // console.log("navigateToAddMaintenanceItem")
@@ -116,16 +142,32 @@ export function MaintenanceRequestDetail() {
 
   const colorStatus = getColorStatusBasedOnSelectedRole();
 
-  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-  const [status, setStatus] = useState(location.state.status);
-  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
+  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(
+    isMobile 
+      ? location.state.maintenance_request_index
+      : props?.child_parent_detail_params?.state.maintenance_request_index
+  );
+  const [status, setStatus] = useState(
+    isMobile
+      ? location.state.status
+      : props?.child_parent_detail_params?.state.status
+  );
+  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(
+    isMobile
+      ? location.state.maintenanceItemsForStatus
+      : props?.child_parent_detail_params?.state.maintenanceItemsForStatus
+  );
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === status));
+  const [value, setValue] = useState(
+    colorStatus.findIndex((item) => item.status === status)
+  );
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [navParams, setNavParams] = useState({});
-  const allData = location.state.allMaintenanceData;
+  const allData = isMobile
+    ? location.state.allMaintenanceData
+    : props?.child_parent_detail_params?.state.allMaintenanceData;
 
   useEffect(() => {
     setNavParams({
@@ -156,8 +198,18 @@ export function MaintenanceRequestDetail() {
   }, [maintenanceRequestIndex, status]);
 
   useEffect(() => {
-    console.log("--DEBUG-- in useeffect for quotes", maintenanceRequestIndex, maintenanceItemsForStatus, maintenanceQuotes);
-    var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
+    console.log(
+      "--DEBUG-- in useeffect for quotes",
+      maintenanceRequestIndex,
+      maintenanceItemsForStatus,
+      maintenanceQuotes
+    );
+    var quotesFilteredById = maintenanceQuotes.filter(
+      (item) =>
+        item.quote_maintenance_request_id ===
+        maintenanceItemsForStatus[maintenanceRequestIndex]
+          .maintenance_request_uid
+    );
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
         return -1;
@@ -173,7 +225,10 @@ export function MaintenanceRequestDetail() {
     const uniqueKeys = new Set();
 
     quotesFilteredById.forEach((quote, index) => {
-      let key = quote.quote_business_id + quote.maintenance_quote_uid + quote.quote_maintenance_request_id;
+      let key =
+        quote.quote_business_id +
+        quote.maintenance_quote_uid +
+        quote.quote_maintenance_request_id;
       if (!uniqueKeys.has(key)) {
         uniqueKeys.add(key);
         uniqueQuotes.push(quote);
@@ -187,7 +242,9 @@ export function MaintenanceRequestDetail() {
 
   useEffect(() => {
     const getMaintenanceItemQuotes = async () => {
-      const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
+      const response = await fetch(
+        `${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`
+      );
       const data = await response.json();
       const quotes = data.maintenanceQuotes.result;
       setMaintenanceQuotes(quotes);
@@ -236,7 +293,10 @@ export function MaintenanceRequestDetail() {
 
       if (i >= 0) {
         let requestType = colorStatus[i].mapping.toUpperCase();
-        let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
+        let lastIndex =
+          allData[requestType] && allData[requestType].length
+            ? allData[requestType].length - 1
+            : 0;
         // console.log(requestType, lastIndex, allData[requestType])
         const keysForAllData = Object.keys(allData);
         // console.log("keysForAllData", keysForAllData)
@@ -287,21 +347,39 @@ export function MaintenanceRequestDetail() {
               paddingRight: "0px",
             }}
           >
-            <Box position="absolute" left={30}>
+           { isMobile && <Box position="absolute" left={30}>
               <Button onClick={() => handleBackButton()}>
-                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+                <ArrowBackIcon
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
               </Button>
-            </Box>
+            </Box>}
             <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+              <Typography
+                sx={{
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
                 Maintenance
               </Typography>
             </Box>
-            <Box position="absolute" right={30}>
+            {isMobile && <Box position="absolute" right={30}>
               <Button onClick={() => navigateToAddMaintenanceItem()}>
-                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+                <AddIcon
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
               </Button>
-            </Box>
+            </Box>}
           </Stack>
           <Stack
             sx={{
@@ -388,12 +466,22 @@ export function MaintenanceRequestDetail() {
                         paddingBottom: "0px",
                       }}
                     >
-                      {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
+                      {allData[item.mapping] &&
+                      allData[item.mapping][maintenanceRequestIndex] ? (
                         <MaintenanceRequestNavigator
                           requestIndex={maintenanceRequestIndex}
-                          backward_active_status={maintenanceRequestIndex === 0 && value === tabs.firstTab}
-                          forward_active_status={value === tabs.lastTab && allData[item.mapping].length - 1 === maintenanceRequestIndex}
-                          updateRequestIndex={handleMaintenaceRequestIndexChange}
+                          backward_active_status={
+                            maintenanceRequestIndex === 0 &&
+                            value === tabs.firstTab
+                          }
+                          forward_active_status={
+                            value === tabs.lastTab &&
+                            allData[item.mapping].length - 1 ===
+                              maintenanceRequestIndex
+                          }
+                          updateRequestIndex={
+                            handleMaintenaceRequestIndexChange
+                          }
                           requestData={allData[item.mapping]}
                           status={status}
                           color={item.color}
@@ -415,23 +503,61 @@ export function MaintenanceRequestDetail() {
                   paddingTop: "20px",
                 }}
               >
-                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
-                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
+                {colorStatus[value]?.status === "New Requests" &&
+                maintenanceItemsForStatus[maintenanceRequestIndex] ? (
+                  <NewRequestAction
+                    maintenanceItem={
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
+                    }
+                    navigateParams={navParams}
+                  />
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Requested" ? (
-                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <QuotesRequestAction
+                    maintenanceItem={
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
+                    }
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Accepted" ? (
-                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <QuotesAccepted
+                    maintenanceItem={
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
+                    }
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
                 {colorStatus[value]?.status === "Scheduled" ? (
-                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <ScheduleMaintenance
+                    maintenanceItem={
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
+                    }
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
-                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !== "CANCELLED" ? (
-                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === "Completed" &&
+                maintenanceItemsForStatus[maintenanceRequestIndex]
+                  .maintenance_request_status !== "CANCELLED" ? (
+                  <CompleteMaintenance
+                    maintenanceItem={
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
+                    }
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
                 {colorStatus[value]?.status === "Paid" ? (
-                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <PaidMaintenance
+                    maintenanceItem={
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
+                    }
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
               </Box>
             </Box>
