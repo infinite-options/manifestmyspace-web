@@ -51,63 +51,36 @@ const ViewLease = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [moveOut, setMoveOut] = useState("");
-
-  const [showSpinner, setShowSpinner] = useState(false);
   const { getProfileId, selectedRole } = useUser();
-  // console.log("Selected Role: ", selectedRole);
-
   
-  const [fetchData, setFetchData] = useState([]);
+  const [moveOut, setMoveOut] = useState("");
+  const [showSpinner, setShowSpinner] = useState(false);  
   const [leaseFees, setLeaseFees] = useState([])
-  const [leaseUtilities, setLeaseUtilities] = useState([])
   const [utilityString, setUtilityString] = useState("")
   const [leaseData, setLeaseData] = useState([]);
-  const [document, setDocument] = useState([]);
-
+  const [leaseDocuments, setLeaseDocuments] = useState([])
   const [endLeaseDialogOpen, setEndLeaseDialogOpen] = useState(false);
   const [confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen] = useState(false);
   const [renewLeaseDialogOpen, setRenewLeaseDialogOpen] = useState(false);
-
   const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState("");
-
   const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
+  
   useEffect(() => {
-    // console.log("Move-out Date - ", formatDate(moveOutDate));
     setMoveOut(formatDate(moveOutDate));
   }, [moveOutDate]);
-
-  // useEffect(() => {
-  //   console.log("leaseData - ", leaseData);    
-  // }, [leaseData]);  
 
   const closeEndLeaseDialog = () => {
     setEndLeaseDialogOpen(false);
   };  
   
-  const closeConfirmEndLeaseDialog = () => {
-    setConfirmEndLeaseDialogOpen(false);
-  }; 
-
   const closeRenewLeaseDialog = () => {
     setRenewLeaseDialogOpen(false);
   };
 
-  const handleBackButton = () => {
-    navigate(-1);
-  };
-
-  const handleMoveOutChange = (event) => {
-    setMoveOut(event.target.value);
-  };
-
-  const handleViewButton = (leaseData) => {
+  const handleViewButton = (link) => {
     // console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
-    let link = JSON.parse(leaseData.lease_documents)[0]?.link;
     window.open(link, "_blank", "rel=noopener noreferrer");
   };
-
 
   const handleEndLease = () => {
     const headers = {
@@ -177,12 +150,14 @@ const ViewLease = (props) => {
     // axios.get(`http://localhost:4000/leaseDetails/${getProfileId()}`).then((res) => {
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
-      setFetchData(data);
+      // setFetchData(data);
       data.forEach((lease) => {
         if (lease.lease_uid === leaseID) {
           console.log(JSON.parse(lease.lease_fees))
           console.log(JSON.parse(lease.property_utilities))
+          console.log(JSON.parse(lease.lease_documents))
           setLeaseFees(JSON.parse(lease.lease_fees))
+          setLeaseDocuments(JSON.parse(lease.lease_documents))
           const utilities = JSON.parse(lease.property_utilities)
           
           const utils = utilities.map(utility => utility.utility_desc).join(', ')
@@ -193,20 +168,12 @@ const ViewLease = (props) => {
 
           console.log("Lease data", lease);
           console.log("lease fees", lease.leaseFees)
-          setDocument(lease.lease_documents);
+          // setDocument(lease.lease_documents);
         }
       });
       setShowSpinner(false);
     });
   }, []);
-
-  useEffect(() => {
-
-  }, [leaseFees])
-
-  useEffect(() => {
-
-  }, [leaseUtilities])
 
   function getDayText(day) {
     switch (day % 10) {
@@ -231,7 +198,7 @@ const ViewLease = (props) => {
 
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{paddingBottom: "25px"}}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
@@ -240,27 +207,16 @@ const ViewLease = (props) => {
           display: "flex",
           fontFamily: "Source Sans Pro",
           justifyContent: "center",
-          width: "100%", // Take up full screen width
-          minHeight: "85vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
+          width: "100%", 
+          minHeight: "85vh",
+          marginTop: theme.spacing(2),
         }}
       >
-        <Grid container sx={{paddingTop: "50px"}}>
+        <Grid container sx={{paddingTop: "20px"}}>
           <Grid item xs={12}>
-            {/* <Box sx={{alignContent: "center", alignItems: "center", alignText: "center"}}> */}
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
               <Typography sx={{ fontSize: { xs: "36px", sm: "36px", md: "36px", lg: "36px" }, fontWeight: "bold", color: "#160449" }}>
                 Lease
-              </Typography>
-            </Box>
-            {/* <Divider sx={{ width: '100%'}}/> */}
-          </Grid>
-          <Grid item xs={12}>
-            {/* <Box sx={{display: "flex", alignContent: "center", alignItems: "center", alignText: "center"}}> */}
-            <Box sx={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }} onClick={() => handleViewButton(leaseData)}>
-              <img src={documentIcon} style={{ width: '20px', height: '25px', margin: '5px' }} />
-              <Typography sx={{ fontSize: { xs: "20px", sm: "22px", md: "24px", lg: "26px" }, fontWeight: "bold", color: "#3D5CAC" }}>
-                View Full Lease
               </Typography>
             </Box>
           </Grid>
@@ -283,7 +239,7 @@ const ViewLease = (props) => {
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{leaseData?.owner_first_name} {leaseData?.owner_last_name}</Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Utilities</Typography>
+                    <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Tenant Utilities</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{utilityString}</Typography>
                   </Grid>
                 </Grid>
@@ -294,12 +250,12 @@ const ViewLease = (props) => {
               <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
                 Rent Details
               </Typography>
-              {/* Just loop through each item in leaseFees and have the key and value displayed nicely */}
               {leaseFees.map((item, index) => (
                 <Grid container direction={"row"} key={index} sx={{paddingBottom: "10px"}}>
                   <Grid item xs={12} sx={{paddingTop: "5px", paddingBottom: "5px"}}> 
-                    <Typography sx={{color: "#3D5CAC", fontSize: "26px", fontWeight: 700}}>{item.fee_name}</Typography>
+                    <Typography sx={{color: "#3D5CAC", fontSize: "26px", fontWeight: 700}}>{item.fee_name ? item.fee_name : "None"}</Typography>
                   </Grid>
+                  <Grid container sx={{marginLeft: "15px"}}>
                   <Grid item xs={6}> 
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Amount</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {`$${item.charge}` || 'None'}</Typography>
@@ -324,6 +280,7 @@ const ViewLease = (props) => {
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Available to Pay</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>  {item.available_topay ? `${item.available_topay} days before`: "None"}</Typography>
                   </Grid>
+                  </Grid>
                 </Grid>
               ))}
             </Box>
@@ -336,7 +293,7 @@ const ViewLease = (props) => {
               <Grid container>
                   <Grid item xs={6}> 
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Move In Date</Typography>
-                    <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> { leaseData?.lease_move_in_date ?? "Null"} </Typography>
+                    <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {leaseData?.lease_move_in_date ?? "Not Specified"} </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}># of Occupants</Typography>
@@ -351,6 +308,21 @@ const ViewLease = (props) => {
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {leaseData ? (CountNoOfVehicles(leaseData) || "None"): "Null"} </Typography>
                   </Grid>
                 </Grid>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px"}}>
+            <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
+                Lease Documents
+              </Typography>
+              {leaseDocuments.map((document, index) => (
+                <Box key={index} sx={{ cursor: 'pointer', display: 'flex', alignContent: "center", alignItems: "center"}} onClick={() => handleViewButton(document.link)}>
+                  <img src={documentIcon} style={{ width: '20px', height: '25px', margin: '5px', paddingRight: "5px" }} />
+                  <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#3D5CAC" }}>
+                    {document.filename}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
           </Grid>
           <Grid item xs={12}>
@@ -464,7 +436,6 @@ const ViewLease = (props) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          {/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
           <Button
             onClick={() => handleRenewLease(leaseData)}
             sx={{
@@ -492,7 +463,7 @@ const ViewLease = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <ConfirmEndLeaseDialog leaseData = {leaseData} confirmEndLeaseDialogOpen = {confirmEndLeaseDialogOpen} setConfirmEndLeaseDialogOpen = {setConfirmEndLeaseDialogOpen} handleEndLease={handleEndLease} setEndLeaseAnnouncement={setEndLeaseAnnouncement} />      
+      <ConfirmEndLeaseDialog leaseData = {leaseData} dialogOpen = {confirmEndLeaseDialogOpen} setDialogOpen = {setConfirmEndLeaseDialogOpen} handleEndLease={handleEndLease} setEndLeaseAnnouncement={setEndLeaseAnnouncement} />      
     </Container>
   );
 };
@@ -536,7 +507,7 @@ function getTenantName(leaseData) {
 }
 export default ViewLease;
 
-const ConfirmEndLeaseDialog = ({ leaseData, confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
+const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
   // const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState('');
 
   const getConfirmEndLeaseDialogText = (leaseData) => {    
@@ -554,19 +525,19 @@ const ConfirmEndLeaseDialog = ({ leaseData, confirmEndLeaseDialogOpen, setConfir
 
     if(leaseData.lease_status === "ACTIVE"){
       if(currentDate < noticeDate){
-        setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
+        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
         return `Your lease will end on ${formatDate(leaseEndDate)} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
       } else {        
-        setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
+        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
         return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${formatDate(newLeaseEndDate)} and you will be responsible for payments through that date. Are you sure you want to end the lease?`
       }
 
     }else if(leaseData.lease_status === "ACTIVE-M2M"){      
       if(currentDate < noticeDate){
-        setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
+        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
         return `Your lease will end on ${formatDate(leaseEndDate)} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
       } else {        
-        setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
+        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
         return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${formatDate(newLeaseEndDate)} and you will be responsible for payments through that date. Are you sure you want to end the lease?`
       }
     } else{
@@ -577,8 +548,7 @@ const ConfirmEndLeaseDialog = ({ leaseData, confirmEndLeaseDialogOpen, setConfir
   const memoizedDialogText = useMemo(() => getConfirmEndLeaseDialogText(leaseData), [leaseData]);
 
   return (
-    // <Dialog open={confirmEndLeaseDialogOpen} onClose={closeConfirmEndLeaseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-    <Dialog open={confirmEndLeaseDialogOpen} onClose={() => setConfirmEndLeaseDialogOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
     <DialogTitle id="alert-dialog-title">End Lease Confirmation</DialogTitle>
     <DialogContent>
       <DialogContentText
@@ -607,8 +577,7 @@ const ConfirmEndLeaseDialog = ({ leaseData, confirmEndLeaseDialogOpen, setConfir
       </Button>
       <Button
         onClick={() => {
-          // setEndLeaseDialogOpen(false);
-          setConfirmEndLeaseDialogOpen(false);
+          setDialogOpen(false);
         }}
         sx={{
           color: "white",
