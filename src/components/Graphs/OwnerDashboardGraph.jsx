@@ -33,7 +33,7 @@ const DashboardChart = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <ResponsiveContainer>
-        <ComposedChart data={data} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
+        <ComposedChart data={data} margin={{ top: 20, right: -45, left: -10, bottom: 5 }}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="monthYear"

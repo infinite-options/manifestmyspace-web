@@ -131,21 +131,22 @@ export default function OwnerPropertyRentWidget(props) {
     //     </PieChart>
     //   </Box>
     // </Box>
-    <Grid container style={{backgroundColor: '#F2F2F2', borderRadius: '10px', }}>
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
-            <Typography sx={{fontSize: '25px', fontWeight: 600, paddingTop: '15px'         }}>
+    <Grid container style={{backgroundColor: '#F2F2F2', borderRadius: '10px', height: '100%',}}>
+        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>            
+            {/* <Typography sx={{fontSize: '25px', fontWeight: 600, paddingTop: '15px',}}> */}
+            <Typography variant="h5" sx={{ fontWeight: 'bold', paddingTop: '15px',}}>
                 Property Rent
             </Typography>
 
         </Grid>
         <Grid item xs={12}>
-            <PieChart width={400} height={300} margin={{ top: 20, right: 30, left: 50, bottom: 20 }}>
+            <PieChart width={400} height={250} margin={{ top: 40, right: 30, left: 50, bottom: 40 }}>
                 
                 <Pie
                     data={data}
                     cx={70}
                     cy={78}
-                    innerRadius={60}
+                    innerRadius={55}
                     outerRadius={80}
                     paddingAngle={0}
                     dataKey="number"
@@ -173,20 +174,20 @@ export default function OwnerPropertyRentWidget(props) {
             
                 <text
                     x={120}
-                    y={93}
+                    y={113}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     cursor="pointer"
                     style={{
-                    fontFamily: "Source Sans Pro",
-                    fontSize: "14px",
-                    fill: "#160449",
-                    fontWeight: "600",
+                        fontFamily: "Source Sans Pro",
+                        fontSize: "14px",
+                        fill: "#160449",
+                        fontWeight: "800",
                     }}
                     onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
                 >
                     View all {totalPropertiesCount}
-                    <tspan x={120} y={108}>
+                    <tspan x={120} y={125}>
                     properties
                     </tspan>
                 </text>

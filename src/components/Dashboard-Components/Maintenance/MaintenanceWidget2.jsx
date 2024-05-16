@@ -58,67 +58,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
     }
   }
 
-//   return (
-//     <>
-//         <Box sx={{
-//                 backgroundColor: '#F2F2F2',
-//                 display: 'flex',
-//                 flexDirection: 'column',
-//                 alignItems: 'center',
-//                 justifyContent: 'center',               
-//                 width: '100%',
-//                 height: '100%',        
-//                 borderRadius: '10px',
-//                 cursor: 'pointer',
-//                 position: 'relative',
-//                 padding: '10px',
-//             }}
-//             onClick={() => navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}    
-//         >    
-//             <h2 className="mt-widget-title">Maintenance</h2>      
-//             <Box sx={{                
-//                     display: 'block',
-//                     margin: 'auto',                    
-//                     width: '90%',                
-//                     borderRadius: '10px',
-                    
-//                 }}            
-//             >    
-//                 <List sx={{
-//                         // list-style-type: none;
-//                         padding: '0',
-//                         borderRadius: '20px',
-//                         margin: '0px',                        
-//                     }}
-//                 >
-//                     {colorStatus.map((item, index) => (
-//                         <ListItem 
-//                             key={index}
-//                             sx={{ 
-//                                 width: '100%',
-//                                 backgroundColor: item.color,
-//                                 color: "#FFFFFF",
-//                                 fontFamily: "Source Sans Pro",
-//                                 fontSize: "13px",
-//                                 fontWeight: 600,
-//                                 padding: '10px 10px',
-//                                 borderTopLeftRadius: index === 0 ? '10px' : '0',
-//                                 borderTopRightRadius: index === 0 ? '10px' : '0',
-//                                 borderBottomLeftRadius: index === colorStatus.length - 1 ? '10px' : '0',
-//                                 borderBottomRightRadius: index === colorStatus.length - 1 ? '10px' : '0', 
-//                             }}
-//                         >
-//                             {item.status} 
-//                             <Typography variant="body2" align="right" sx={{ marginLeft: 'auto' }}>
-//                                 {maintenanceRequestCounts[item.mapping] ? maintenanceRequestCounts[item.mapping] : "0"}
-//                             </Typography>
-//                         </ListItem>
-//                     ))}
-//                 </List>                        
-//             </Box>
-//         </Box>
-//     </>
-//   );
+
 return (
     <Grid 
       container 

@@ -300,8 +300,7 @@ function Main() {
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
-            <Route path="ownerDashboard" element={<OwnerDashboard />} />
-            <Route path="ownerDashboard2" element={<OwnerDashboard2 />} />
+            <Route path="ownerDashboard" element={<OwnerDashboard2 />} />            
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />
