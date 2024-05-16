@@ -71,6 +71,7 @@ import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 import PropertyList from "./Property/PropertyList";
 // import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard";
+import OwnerDashboard2 from "./OwnerDashboard/OwnerDashboard2";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
@@ -108,6 +109,7 @@ import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Layout/Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
+import ManagerDashboard2 from "./ManagerDashboard/ManagerDashboard2";
 import Emp_Waiting from "./PM_Emp_Dashboard/Waiting_Page"
 import MaintenanceDashboard from "./MaintenanceDashboard/MaintenanceDashboard";
 
@@ -298,7 +300,7 @@ function Main() {
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
-            <Route path="ownerDashboard" element={<OwnerDashboard />} />
+            <Route path="ownerDashboard" element={<OwnerDashboard2 />} />            
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />
@@ -325,7 +327,8 @@ function Main() {
             <Route path="settingsManagerACH5" element={<SettingsACH5 />} />
 
             <Route path="poContracts" element={<POContracts />} />
-            <Route path="managerDashboard" element={<ManagerDashboard />} />
+            <Route path="managerDashboard" element={<ManagerDashboard2 />} />
+            {/* <Route path="managerDashboard2" element={<ManagerDashboard2 />} /> */}
             <Route path="emp_waiting" element={<Emp_Waiting/>} />
 
             <Route path="quoteAccept" element={<QuoteAcceptForm />} />
