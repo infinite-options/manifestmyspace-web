@@ -42,7 +42,7 @@ export default function PropertyRentWidget2(props) {
   const [ propertyList, setPropertyList ] = useState([])
 
   useEffect(() => {
-    console.log("ROHIT - propertyList - ", propertyList);
+    console.log("PropertyRentWidget2 - propertyList - ", propertyList);
   }, [propertyList]);
   // console.log(selectedRole);
   // console.log(props.rentData);
@@ -50,12 +50,12 @@ export default function PropertyRentWidget2(props) {
   // console.log("Role: ", user);
   // console.log("Selected Role: ", selectedRole);
 
-  console.log("ROHIT - props - ", props);
+  // console.log("PropertyRentWidget2 - props - ", props);
   let rentStatusData = props.rentData;
   const property_endpoint_resp = props.propertyEndpointResp;
-  console.log("ROHIT - property_endpoint_resp - ", property_endpoint_resp);
+  // console.log("PropertyRentWidget2 - property_endpoint_resp - ", property_endpoint_resp);
   const contractRequests = props.contractRequests;
-  console.log("ROHIT - contractRequests - ", contractRequests);
+  // console.log("PropertyRentWidget2 - contractRequests - ", contractRequests);
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
   // console.log(unpaidCount);
@@ -106,7 +106,7 @@ export default function PropertyRentWidget2(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
-    console.log("ROHIT - anchorEl - ", anchorEl);
+    // console.log("PropertyRentWidget2 - anchorEl - ", anchorEl);
   }, [anchorEl]);
 
   const handleSelectPropertyClick = async (event) => {
@@ -114,11 +114,12 @@ export default function PropertyRentWidget2(props) {
     if(propertyList?.length > 0){
         return
     }
-    const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/600-000003`); //rohit
+    // const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/600-000003`);
+    const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
         try {
         
             const propertyData = await propertiesResponse.json();
-            console.log("ROHIT - propertyData - ", propertyData);
+            // console.log("PropertyRentWidget2 - propertyData - ", propertyData);
             // setPropertiesList(propertiesResponseJSON.Property.result);
                         
             const propertyList = getPropertyList(propertyData);
@@ -185,31 +186,6 @@ export default function PropertyRentWidget2(props) {
       return p;
     });
   }
-
-//   useEffect(() => {
-//     const fetchData = async () => {        
-//         // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
-//         const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/600-000003`); //rohit
-//         try {
-        
-//             const propertyData = await propertiesResponse.json();
-//             console.log("ROHIT - propertyData - ", propertyData);
-//             // setPropertiesList(propertiesResponseJSON.Property.result);
-                        
-//             const propertyList = getPropertyList(propertyData);
-//             // console.log("In Property List >> Property List: ", propertyList);
-//             // console.log("Testing Property Data", propertyData.Property.result);
-            
-//             setPropertyList([...propertyList]);
-  
-          
-//         } catch (error) {
-//           console.error(error);
-//         }
-        
-//       };
-//       fetchData();
-//   }, []);
 
   return (
     <Box

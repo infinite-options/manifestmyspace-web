@@ -144,7 +144,7 @@ return (
             rowSpacing={6}          
         >
             <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: "#160449", }}>
                     Leases Expiring: Next 12 Months
                 </Typography>
             </Grid>

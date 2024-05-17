@@ -89,7 +89,7 @@ export default function OwnerDashboard2() {
       const announcementsResponseData = await announcementsResponse.json();
       
       let announcementsReceivedData = announcementsResponseData?.received?.result;
-      console.log("ROHIT - announcementsReceivedData", announcementsReceivedData);
+      // console.log("OwnerDashboar2 - announcementsReceivedData", announcementsReceivedData);
       setAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
       // MAINTENANCE Status
@@ -116,7 +116,7 @@ return (
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Container maxWidth="lg" sx={{paddingTop: '20px', paddingBottom: '50px', }}>
+      <Container maxWidth="lg" sx={{paddingTop: '10px', paddingBottom: '50px', }}>
             
             <Grid container spacing={6}>
               <Grid item xs={12}>
@@ -140,10 +140,10 @@ return (
                       Welcome, {user.first_name}.
                     </Typography>
                   </Box>
-                </Grid>
-                <Grid item xs={12} md={4}>                    
-                    <CashflowWidget2 />
-                </Grid>
+              </Grid>
+              <Grid item xs={12} md={4}>                    
+                  <CashflowWidget2 />
+              </Grid>
                 
                 <Grid container item xs={12} md={8} columnSpacing={6}>
                     <Grid item xs={12} md={6} sx={{marginBottom: isMobile? "10px" : "1px" , }}>
@@ -176,7 +176,7 @@ return (
                             <Typography
                               sx={{
                                 color: "#160449",
-                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                fontSize: { xs: "18px", sm: "18px", md: "24px", },
                                 fontWeight: "bold",
                               }}
                             >
@@ -198,7 +198,7 @@ return (
                             <Box
                               sx={{
                                 color: "#007AFF",
-                                fontSize: "18px",
+                                fontSize: "15px",
                                 paddingRight: "25px",
                                 fontWeight: "bold",
                               }}

@@ -11,7 +11,7 @@ export default function NewTenantDashboard(){
       </Box>
       <Grid container>
         <Grid item xs={12}>
-          <p> Welcome Rohit</p>
+          <p> Welcome</p>
         </Grid>
         <Grid item xs={4}>
           <p>Account Balance</p>

@@ -16,13 +16,13 @@ export default function HappinessMatrixWidget(props) {
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 35, bottom:-10, left: -40 };
   const { data, dataSetter } = props;
-  console.log("ROHIT - HappinessMatrix2 - data -", data);
+  // console.log("HappinessMatrix2 - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
 
   const [ pointsToPlot, setPointsToPlot ] = useState([]);
 
   useEffect(() => {
-    console.log("ROHIT - pointsToPlot - ", pointsToPlot);
+    // console.log("pointsToPlot - ", pointsToPlot);
   }, [pointsToPlot]);
 
   // Function to check if two points overlap
@@ -64,20 +64,20 @@ export default function HappinessMatrixWidget(props) {
             y: y,
             ...owner,
         }
-        console.log("ROHIT - owner - ", owner.name)
-        console.log("ROHIT - pointObject - ", pointObject);
+        // console.log("getPoints - owner - ", owner.name)
+        // console.log("getPoints - pointObject - ", pointObject);
 
         points.push(pointObject);
     });
 
-    console.log("ROHIT - points - ", points);
+    // console.log("getPoints - points - ", points);
     setPointsToPlot(points)
 
    }
 
 
    useEffect(() => {
-    console.log("ROHIT - props.data -  ", props.data);
+    // console.log("props.data -  ", props.data);
     getPoints(props.data);
    }, [props.data]);
 
@@ -92,11 +92,11 @@ export default function HappinessMatrixWidget(props) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
-    console.log("ROHIT - hiddenPoints - ", hiddenPoints);
+    // console.log("hiddenPoints - ", hiddenPoints);
   }, [hiddenPoints]);
 
   useEffect(() => {
-    console.log("ROHIT - shifted_data - ", shifted_data);
+    // console.log("shifted_data - ", shifted_data);
   }, [shifted_data]);
 
   const handlePointClick = (payload) => {
@@ -262,7 +262,7 @@ export default function HappinessMatrixWidget(props) {
 const CustomImage = (props) => {
   const { cx, cy, payload, onClick, isClicked, isVisible, index } = props;
 
-//   console.log("ROHIT - CustomImage - props - ", props);
+//   console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }
