@@ -19,6 +19,9 @@ import {
 } from "../../Cashflow/CashflowFetchData";
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
+import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
+
+// "../../images/AddRevenueIcon.png"
 
 function CashflowWidget2() {
   const navigate = useNavigate();
@@ -185,7 +188,7 @@ return (
           <Grid container item xs={12} rowSpacing={0} sx={{marginTop: "15px", }}>
             <Stack direction="row" justifyContent="center" width="100%" sx={{ marginBottom: "0px",}}>
               {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: "800", fontSize: "24px", }}> */}
-              <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', color: "#160449", }}>
                 {month} {year} Cashflow
               </Typography>
             </Stack>
@@ -248,9 +251,13 @@ return (
                             marginBottom: '10px',
                             borderRadius: '5px',
                         }}
-                        // onClick={handleSelectPropertyClick}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                        }}
                     >                        
                         {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
+                        <img src={AddRevenueIcon}></img>
                         Revenue
                     </Button>
                 </Grid>
@@ -269,9 +276,13 @@ return (
                             marginBottom: '10px',
                             borderRadius: '5px',
                         }}
-                        // onClick={handleSelectPropertyClick}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                        }}
                     >                        
                         {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
+                        <img src={AddRevenueIcon}></img>
                         Expense
                     </Button>
                 </Grid>                
@@ -339,7 +350,7 @@ return (
             </Grid>
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center"}}>
             {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "24px" }}> */}
-            <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: "#160449",}}>
                 Cashflow (Act vs. Est)
             </Typography>
           </Grid>

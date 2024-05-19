@@ -7,7 +7,7 @@ export default function HappinessMatrix2(props) {
   const chartHeight = 400;
   const chartMargin = { top: 20, right: 0, bottom:30, left: 20 };
   const { data, dataSetter } = props;
-  console.log("ROHIT - HappinessMatrix2 - data -", data);
+  // console.log("HappinessMatrix2 - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
 
   // Function to check if two points overlap
@@ -49,11 +49,11 @@ export default function HappinessMatrix2(props) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
-    console.log("ROHIT - hiddenPoints - ", hiddenPoints);
+    console.log("HappinessMatrix2 - hiddenPoints - ", hiddenPoints);
   }, [hiddenPoints]);
 
   useEffect(() => {
-    console.log("ROHIT - shifted_data - ", shifted_data);
+    console.log("HappinessMatrix2 - shifted_data - ", shifted_data);
   }, [shifted_data]);
 
   const handlePointClick = (payload) => {
@@ -195,7 +195,7 @@ export default function HappinessMatrix2(props) {
 const CustomImage = (props) => {
   const { cx, cy, payload, onClick, isClicked, isVisible, index } = props;
 
-//   console.log("ROHIT - CustomImage - props - ", props);
+//   console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }

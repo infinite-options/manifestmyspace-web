@@ -27,7 +27,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import HappinessMatrix2 from './HappinessMatrix2';
 import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget";
 import { Paper } from "@mui/material";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
 // import { Container } from "react-bootstrap";
 
@@ -84,6 +84,10 @@ function ManagerDashboard2() {
   ];
 
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
+
 
   // console.log("In Manager Dashboard Step 2");
   let [matrixData, setMatrixData] = useState([]);
@@ -202,8 +206,8 @@ function ManagerDashboard2() {
     const fetchData = async () => {
       setShowSpinner(true);
 
-    //   const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`); 
-      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`); //rohit
+      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`); 
+      // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 
       // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
@@ -252,8 +256,30 @@ function ManagerDashboard2() {
 
 return (
     <ThemeProvider theme={theme}>        
-        <Container maxWidth="lg" sx={{paddingTop: '30px', paddingBottom: '50px', }}>
+        <Container maxWidth="lg" sx={{paddingTop: '10px', paddingBottom: '50px', }}>
             <Grid container spacing={6}>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: isMobile ? "column" : "row",
+                    justifyContent: isMobile ? "center" : "left",
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                    alignText: "center",
+                    alignContent: "center",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "22px", sm: "28px", md: "32px",},
+                      fontWeight: "600",
+                    }}
+                  >
+                    Welcome, {user.first_name}.
+                  </Typography>
+                </Box>
+              </Grid>
                 <Grid item xs={12} md={3}>
                     <PropertyRentWidget2 rentData={rentStatus} propertyEndpointResp={property_endpoint_resp} contractRequests={contractRequests}/>
                 </Grid>

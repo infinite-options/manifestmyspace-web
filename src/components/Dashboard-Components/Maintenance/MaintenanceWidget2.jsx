@@ -80,7 +80,7 @@ return (
 
         </Grid>
         <Grid item xs={8} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: "#160449",}}>
                 Maintenance
             </Typography>
         </Grid>

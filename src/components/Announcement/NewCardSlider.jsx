@@ -50,7 +50,17 @@ export default function NewCardSlider(props){
 
     return (
         <Box maxWidth="100%" sx={{ maxHeight: "400px", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Button onClick={handlePrev} disable={currentIndex === 0 ? true : false} sx={{padding: "0px"}}>
+            <Button 
+                onClick={handlePrev} 
+                disable={currentIndex === 0 ? true : false} 
+                sx={{
+                    padding: "0px",
+                    color: "#007AFF",
+                    "&:hover": {
+                        backgroundColor: "transparent",
+                    },
+                }}
+            >
                 <ArrowBackIcon />
             </Button>
             <Box sx={{overflow: 'hidden', display: "flex", width: "auto", alignItems: "center", justifyContent: "center", flexGrow: 1 }}>
@@ -92,7 +102,17 @@ export default function NewCardSlider(props){
                 </Card>
                 )}
             </Box>
-            <Button onClick={handleNext} disable={currentIndex === announcementList.length - 1 ? true : false} sx={{padding: "0px"}}>
+            <Button 
+                onClick={handleNext} 
+                disable={currentIndex === announcementList.length - 1 ? true : false}
+                sx={{
+                    padding: "0px",
+                    color: "#007AFF",
+                    "&:hover": {
+                        backgroundColor: "transparent",
+                    },
+                }}
+            >
                 <ArrowForwardIcon />
             </Button>
         </Box>
