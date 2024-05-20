@@ -51,7 +51,8 @@
   display: flex;
   flex-direction: row;
   width: 90%;
-  background-color: #f2f2f2;
+  /* background-color: #f2f2f2; */
+  background-color: #e0e0e0;  
   border-radius: 10px;
   margin-left: 25px;
   margin-right: 25px;
@@ -64,12 +65,12 @@
   display: flex;
   flex-direction: row;
   background-color: #a9aaab19;
-  width: 90%;
-  height: 30px;
+  width: 100%;
+  /* height: 30px; */
   align-items: center;
   border-radius: 10px;
-  margin-top: 12px;
-  padding-left: 20px;
+  /* margin-top: 12px; */
+  /* padding-left: 20px; */
 }
 .searchbar-icon {
   margin: 8px;
@@ -119,12 +120,13 @@
 .announcement-list-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  /* width: 100%; */
 }
 .announcement-list-card {
   display: flex;
   flex-direction: row;
-  background-color: #d9d9d932;
+  /* background-color: #d9d9d932; */
+  background-color: #e5e5e5;
   box-shadow: 0px 1px 4px #00000019;
   font-size: 15px;
   font-weight: bold;

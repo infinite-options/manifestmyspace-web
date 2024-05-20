@@ -7,12 +7,34 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, TextField, Typography } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
+import { Paper, Box, InputBase, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Grid } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import theme from "../../theme/theme";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { DataGrid } from "@mui/x-data-grid";
+import SearchIcon from "@mui/icons-material/Search";
 
 import APIConfig from "../../utils/APIConfig";
+
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     "& .MuiFilledInput-root": {
+//       backgroundColor: "#F2F2F2", // Update the background color here
+//       borderRadius: 10,
+//       height: 30,
+//       marginBlock: 10,
+//       paddingBottom: '15px', // Add this line for vertically center alignment
+//       "&:hover, &:focus, &:active": {
+//         backgroundColor: "#F2F2F2", // Change background color on hover, focus and active states
+//       },
+//     },
+//   },
+// }));
+
 
 export default function Announcements() {
   console.log("intial commit");
@@ -30,6 +52,9 @@ export default function Announcements() {
   //
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [annData, setAnnData] = useState("");
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -123,6 +148,11 @@ export default function Announcements() {
   // function onClick
   //
 
+  // const clearSearch = () => {
+  //   setSearchTerm("");
+  //   setFilteredItems(propertyList);
+  // };
+
   const handleAnnouncements = (announcement) => {
     if (announcement.announcement_mode == "PROPERTIES") {
       console.log(announcement.announcement_title);
@@ -140,6 +170,7 @@ export default function Announcements() {
   };
 
   return (
+    <ThemeProvider theme={theme}>
     <div className="announcement-container">
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
@@ -153,6 +184,7 @@ export default function Announcements() {
           width: "100%",
         }}
       >
+        
         <Box
           className="announcement-title-text"
           sx={{
@@ -195,7 +227,9 @@ export default function Announcements() {
             +
           </Button>
         </Box>
+
       </Box>
+
       <hr />
       {/* <div className="announcement-location">
                 <div className="announcement-location-icon">
@@ -207,23 +241,62 @@ export default function Announcements() {
                     103 N. Abel St unit #104
                 </div>
             </div> */}
+
+        <Paper
+            style={{
+              margin: "30px",
+              padding: 20,
+              borderRadius: "7px",
+              backgroundColor: theme.palette.primary.main,
+              // backgroundColor: theme.palette.primary.pink,
+              width: "85%", // Occupy full width with 25px margins on each side
+              [theme.breakpoints.down("sm")]: {
+                width: "80%",
+              },
+              [theme.breakpoints.up("sm")]: {
+                width: "50%",
+              },
+            }}
+          >
       <div className="announcement-searchbar-container">
         {/* <Searchbar /> */}
-        <div className="announcement-searchbar-container">
-          <TextField
+        
+        <div className="announcement-searchbar" >
+          <IconButton type="submit" style={{ padding: "10px", }} onClick={() => console.log("test")} aria-label="search">
+                <SearchIcon />
+          </IconButton>
+          <InputBase
+            sx={{ ml: 1, zIndex: 1000, flexGrow: 1, }}
+            placeholder="Search announcements..."
+            // inputProps={{ "aria-label": "search" }}
+            value={searchTerm}
+            // onChange={handleSearchChange}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            color={theme.typography.common.blue}
+          />
+          {/* {searchTerm && (
+            <IconButton aria-label="clear" onClick={clearSearch}>
+              <CloseIcon />
+            </IconButton>
+          )} */}
+          {/* <TextField
             type="small"
             placeholder="Search announcements..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
-              width: "80%",
+              width: "100%",
+               
               marginTop: "10px",
               "& input": {
                 height: "20px",
                 padding: "5px",
+                // opacity:"25%",
+                // backgroundColor: "#A9AAAB",
+                // borderRadius: "7px",
               },
             }}
-          />
+          /> */}
         </div>
       </div>
       <div className="announcement-menu-container">
@@ -249,11 +322,15 @@ export default function Announcements() {
             </div>
           </div>
         </div>
+        <Grid container spacing={isMobile ? 1 : 2}>
+          <Grid item xs={12} md={5.5} >
+            {/* <DashboardTab fullHeight={!isMobile ? true : false}> */}
+                    
         <div style={{ marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
           Received
         </div>
-        <div style={{ marginBottom: "30px", width: "100%", height: "420px", overflow: "auto" }}>
-          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto" }}>
+        <div style={{ marginBottom: "30px", width: "100%", height: "420px", overflow: "auto",}}> {/* backgroundColor:"#D9D9D9", opacity:"100%", borderRadius:"7px" }}>*/}
+          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto",  width:"100%"}}>
             {filteredReceivedData.length > 0
               ? filteredReceivedData.map((announcement, i) => {
                   let role = announcement?.sender_role;
@@ -301,10 +378,16 @@ export default function Announcements() {
               : "No announcements"}
           </div>
         </div>
-        <div style={{ marginBottom: "30px", fontSize: "20px" }} className="announcement-view-text">
+
+          {/* </DashboardTab> */}
+          </Grid>
+
+          <Grid item xs={12} md={5.5} style={{ marginLeft: '10px' }}>
+
+        <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
           Sent
         </div>
-        <div style={{ width: "100%", height: "420px", overflow: "auto" }}>
+        <div style={{ width: "100%", height: "420px", overflow: "auto", }}>
           <div className="announcement-list-container">
             {filteredSentData.length > 0
               ? filteredSentData.map((announcement, i) => {
@@ -346,6 +429,7 @@ export default function Announcements() {
                             sent_or_received={"Sent"}
                           />
                         }
+                        
                       </Box>
                     </div>
                   );
@@ -353,6 +437,9 @@ export default function Announcements() {
               : "No announcements"}
           </div>
         </div>
+        
+          </Grid>
+        </Grid>
       </div>
 
       {/**
@@ -366,6 +453,8 @@ export default function Announcements() {
         sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
       />
       <Box sx={{ paddingBottom: "10%", width: "100%", marginLeft: "20px", marginRight: "20px" }}></Box>
+      </Paper>
     </div>
+    </ThemeProvider>
   );
 }
