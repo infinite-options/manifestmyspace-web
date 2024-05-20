@@ -70,7 +70,7 @@ function a11yProps(index) {
   };
 }
 
-export function MaintenanceRequestDetail(props) {
+export function MaintenanceRequestDetail({child_parent_detail_params}) {
   console.log("In MaintenanceRequestDetail");
   const location = useLocation();
   const {
@@ -82,7 +82,9 @@ export function MaintenanceRequestDetail(props) {
   let navigate = useNavigate();
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  console.log('1')
+  console.log(child_parent_detail_params)
+  console.log('2')
   // console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
 
   const [fromProperty, setFromProperty] = useState(
@@ -145,17 +147,17 @@ export function MaintenanceRequestDetail(props) {
   const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(
     isMobile 
       ? location.state.maintenance_request_index
-      : props?.child_parent_detail_params?.state.maintenance_request_index
+      : child_parent_detail_params?.state.maintenance_request_index
   );
   const [status, setStatus] = useState(
     isMobile
       ? location.state.status
-      : props?.child_parent_detail_params?.state.status
+      : child_parent_detail_params?.state.status
   );
   const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(
     isMobile
       ? location.state.maintenanceItemsForStatus
-      : props?.child_parent_detail_params?.state.maintenanceItemsForStatus
+      : child_parent_detail_params?.state.maintenanceItemsForStatus
   );
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
@@ -167,12 +169,12 @@ export function MaintenanceRequestDetail(props) {
   const [navParams, setNavParams] = useState({});
   const allData = isMobile
     ? location.state.allMaintenanceData
-    : props?.child_parent_detail_params?.state.allMaintenanceData;
+    : child_parent_detail_params?.state.allMaintenanceData;
 
   useEffect(() => {
     setNavParams({
-      maintenanceRequestIndex,
-      status,
+      maintenanceRequestIndex: child_parent_detail_params?.state?.maintenanceRequestIndex || maintenanceRequestIndex,
+      status: child_parent_detail_params?.state?.status || status,
       maintenanceItemsForStatus,
       allData,
       filteredQuotes,
@@ -195,7 +197,7 @@ export function MaintenanceRequestDetail(props) {
       let lastTab = temp.lastIndexOf(0);
       setTabs({ firstTab, lastTab });
     });
-  }, [maintenanceRequestIndex, status]);
+  }, [maintenanceRequestIndex, status, child_parent_detail_params]);
 
   useEffect(() => {
     console.log(
@@ -368,6 +370,18 @@ export function MaintenanceRequestDetail(props) {
               >
                 Maintenance
               </Typography>
+              
+              
+              <Typography
+                sx={{
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
+                Maintenance2 + {JSON.stringify(child_parent_detail_params)} + {status}
+              </Typography>
+
             </Box>
             {isMobile && <Box position="absolute" right={30}>
               <Button onClick={() => navigateToAddMaintenanceItem()}>
@@ -483,7 +497,7 @@ export function MaintenanceRequestDetail(props) {
                             handleMaintenaceRequestIndexChange
                           }
                           requestData={allData[item.mapping]}
-                          status={status}
+                          status={child_parent_detail_params?.state?.status ? child_parent_detail_params?.state?.status: status}
                           color={item.color}
                           item={item}
                           allData={allData}

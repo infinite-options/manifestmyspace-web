@@ -192,6 +192,7 @@ export default function MaintenanceStatusTable({
           allMaintenanceData,
         },
       });
+      console.log('Clickeddddd')
       showDetailFromChild();
     }
   }
