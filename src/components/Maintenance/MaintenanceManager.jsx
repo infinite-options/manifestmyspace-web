@@ -161,6 +161,7 @@ export default function MaintenanceManager() {
 
   const handleParamsFromChild = (data) => {
     set_child_parent_detail_params(data);
+    console.log(child_parent_detail_params)
   };
   const handleShowDetailFromChild = () => {
     set_show_detail(true);
@@ -210,6 +211,8 @@ export default function MaintenanceManager() {
       setFilterPropertyList(propertyList);
     }
   }, [maintenanceData]);
+
+ 
 
   function convertToStandardFormat(monthName, year) {
     const months = {
@@ -307,6 +310,12 @@ export default function MaintenanceManager() {
     setRefresh(false);
   }, [refresh]);
 
+  useEffect(() => {
+    // Perform any actions here that should be triggered when child_parent_detail_params changes
+    // For example, you can update other states or perform side effects
+    console.log('child_parent_detail_params has changed:', child_parent_detail_params);
+  }, [child_parent_detail_params]); // useEffect will be triggered whenever childParentParams changes
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop
@@ -356,7 +365,9 @@ export default function MaintenanceManager() {
               >
                 Maintenance
               </Typography>
+
             </Box>
+              
             <Box position="absolute" right={0}>
               <Button onClick={() => navigateToAddMaintenanceItem()}>
                 <AddIcon
