@@ -268,6 +268,20 @@ export function RentDetailBody(props) {
               fontSize: "14px",
             }}
           >
+            {
+              property?.rent_status !== "VACANT" && (
+                <Box>Tenant: {getProperties(propertyStatus)?.length > 0 && (property?.tenant_uid === null ? "Vacant" : ` ${property?.tenant_first_name} ${property?.tenant_last_name}`)}</Box>            
+              )
+            }
+            
+          </Box>
+          <Box
+            sx={{
+              marginBottom: "0px",
+              marginTop: "auto",
+              fontSize: "14px",
+            }}
+          >
             <Box>{getProperties(propertyStatus)?.length > 0 && (due_amount === null ? "Vacant" : `$ ${due_amount}`)}</Box>
             <Box>{getProperties(propertyStatus)?.length > 0 && (due_date ? `due ${due_date.replaceAll("-", "/")}` : "No Due Date")}</Box>
             <Box>{getProperties(propertyStatus)?.length > 0 && (due_date ? `${calculateDaysDifference(due_date)} Days Overdue` : "Not Overdue")}</Box>

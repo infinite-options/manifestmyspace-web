@@ -4,14 +4,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 export default function NewCardSlider(props){
-  const announcementList = [
-      { announcement_title: "Announcement 1", announcement_msg: "Description of Announcement 1", announcement_uid: 1 },
-      { announcement_title: "Announcement 2", announcement_msg: "Description of Announcement 2", announcement_uid: 2 },
-      { announcement_title: "Announcement 3", announcement_msg: "Description of Announcement 3", announcement_uid: 3 },
-      { announcement_title: "Announcement 4", announcement_msg: "Description of Announcement 4", announcement_uid: 4 },
-      { announcement_title: "Announcement 5", announcement_msg: "Description of Announcement 5", announcement_uid: 5 }
-  ];
-    // const announcementList = props.announcementList
+//   const announcementList = [
+//       { announcement_title: "Announcement 1", announcement_msg: "Description of Announcement 1", announcement_uid: 1 },
+//       { announcement_title: "Announcement 2", announcement_msg: "Description of Announcement 2", announcement_uid: 2 },
+//       { announcement_title: "Announcement 3", announcement_msg: "Description of Announcement 3", announcement_uid: 3 },
+//       { announcement_title: "Announcement 4", announcement_msg: "Description of Announcement 4", announcement_uid: 4 },
+//       { announcement_title: "Announcement 5", announcement_msg: "Description of Announcement 5", announcement_uid: 5 }
+//   ];
+    const announcementList = props.announcementList
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -49,8 +49,18 @@ export default function NewCardSlider(props){
     };
 
     return (
-        <Box maxWidth="100%" sx={{ height: '100%', maxHeight: "400px", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Button onClick={handlePrev} disable={currentIndex === 0 ? true : false} sx={{padding: "0px"}}>
+        <Box maxWidth="100%" sx={{ maxHeight: "400px", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Button 
+                onClick={handlePrev} 
+                disable={currentIndex === 0 ? true : false} 
+                sx={{
+                    padding: "0px",
+                    color: "#007AFF",
+                    "&:hover": {
+                        backgroundColor: "transparent",
+                    },
+                }}
+            >
                 <ArrowBackIcon />
             </Button>
             <Box sx={{overflow: 'hidden', display: "flex", width: "auto", alignItems: "center", justifyContent: "center", flexGrow: 1 }}>
@@ -92,7 +102,17 @@ export default function NewCardSlider(props){
                 </Card>
                 )}
             </Box>
-            <Button onClick={handleNext} disable={currentIndex === announcementList.length - 1 ? true : false} sx={{padding: "0px"}}>
+            <Button 
+                onClick={handleNext} 
+                disable={currentIndex === announcementList.length - 1 ? true : false}
+                sx={{
+                    padding: "0px",
+                    color: "#007AFF",
+                    "&:hover": {
+                        backgroundColor: "transparent",
+                    },
+                }}
+            >
                 <ArrowForwardIcon />
             </Button>
         </Box>

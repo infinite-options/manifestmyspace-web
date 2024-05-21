@@ -348,12 +348,10 @@ function TenantDashboard(props) {
                   </Button>
                 </Box>
               </Grid>
-              
             </Grid>
-
             {selectedProperty?.lease_status === "ACTIVE" ? (
               <Grid container spacing={isMobile ? 1 : 3}>
-                <Grid item xs={12} md={4} sx={{height: !isMobile ? "100vh" : "auto"}}>
+                <Grid item xs={12} md={4} sx={{height: !isMobile ? "80vh" : "auto"}}>
                   <DashboardTab fullHeight={!isMobile ? true : false}>
                     <Box
                       sx={{
@@ -362,7 +360,6 @@ function TenantDashboard(props) {
                         justifyContent: "space-between",
                         padding: "10px",
                         paddingRight: "0px",
-                        // height: "100%",
                         flex: '1',
                       }}
                     >
@@ -498,7 +495,7 @@ function TenantDashboard(props) {
                         alignItem: "center",
                         justifyContent: "center",
                         margin: isMobile ? "10px" : "20px",
-                        paddingTop: isMobile ? "5px" : "20px",
+                        paddingTop: isMobile ? "5px" : isMedium ? "10px" : "20px",
                         paddingBottom: isMobile ? "5px" : "20px",
                       }}>
                         <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold"}}>Balance Details</Typography>
@@ -557,7 +554,7 @@ function TenantDashboard(props) {
                     <Grid item xs={12}>
                       <DashboardTab>
                         <Grid container direction="row" sx={{
-                            paddingTop: "10px",
+                            // paddingTop: "10px",
                             paddingBottom: "10px"
                         }}>
                           <Grid item xs={2}>
