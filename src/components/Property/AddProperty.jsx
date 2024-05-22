@@ -41,6 +41,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { getLatLongFromAddress } from "../../utils/geocode";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -228,6 +229,17 @@ export default function AddProperty({}) {
     const currentDate = new Date();
     // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+
+    const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
+    
+    const coordinates = await getLatLongFromAddress(fullAddress);
+
+    console.log("EditProperty2 - handleSubmit - coordinates - ", coordinates);
+    
+    if (coordinates) {
+      formData.append("property_latitude", coordinates.latitude);
+      formData.append("property_longitude", coordinates.longitude);
+    }
 
     formData.append("property_owner_id", selectedOwner ? selectedOwner : ownerId);
     formData.append("property_available_to_rent", isListed ? 1 : 0);

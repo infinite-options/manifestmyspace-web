@@ -10,6 +10,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import defaultPropertyImage from "./paintedLadies.jpeg";
+import PropertiesMap from "../Maps/PropertiesMap";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -476,6 +477,9 @@ const PropertyListings = (props) => {
             >
               {displayProperties.length} Available
             </Typography>
+          </Stack>
+          <Stack sx={{padding: 5,}}>
+            <PropertiesMap properties={displayProperties}/>
           </Stack>
           {console.log("sorted properties", displayProperties)}
           {displayProperties.length > 0 &&

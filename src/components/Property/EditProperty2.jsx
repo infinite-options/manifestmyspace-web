@@ -36,6 +36,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { getLatLongFromAddress } from "../../utils/geocode";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -333,6 +334,17 @@ export default function EditProperty({}) {
     const promises = [];
     const promises_added = []; // debug
 
+    const fullAddress = `${address}, ${city}, ${propertyState}, ${zip}`;
+    
+    const coordinates = await getLatLongFromAddress(fullAddress);
+
+    console.log("EditProperty2 - handleSubmit - coordinates - ", coordinates);
+    
+    if (coordinates) {
+      formData.append("property_latitude", coordinates.latitude);
+      formData.append("property_longitude", coordinates.longitude);
+    }
+
     formData.append("property_uid", propertyData.property_uid);
     formData.append("property_address", address);
     formData.append("property_unit", unit);
@@ -410,7 +422,8 @@ export default function EditProperty({}) {
     const putData = async () => {
       setShowSpinner(true);
       promises.push(
-        fetch(`${APIConfig.baseURL.dev}/properties`, {
+        // fetch(`${APIConfig.baseURL.dev}/properties`, { //rohit
+        fetch(`http://localhost:4000/properties`, {
           method: "PUT",
           body: formData,
         })
