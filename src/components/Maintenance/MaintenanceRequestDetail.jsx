@@ -70,7 +70,7 @@ function a11yProps(index) {
   };
 }
 
-export function MaintenanceRequestDetail({child_parent_detail_params}) {
+export function MaintenanceRequestDetail(props) {
   console.log("In MaintenanceRequestDetail");
   const location = useLocation();
   const {
@@ -82,9 +82,7 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
   let navigate = useNavigate();
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  console.log('1')
-  console.log(child_parent_detail_params)
-  console.log('2')
+
   // console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
 
   const [fromProperty, setFromProperty] = useState(
@@ -143,151 +141,52 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
   }
 
   const colorStatus = getColorStatusBasedOnSelectedRole();
-  let maintenanceRequestIndex_v=child_parent_detail_params?.state.maintenance_request_index;
-  const [maintenanceRequestIndex_s, setMaintenanceRequestIndex_s] = useState(
-    isMobile 
-      ? location.state.maintenance_request_index
-      : child_parent_detail_params?.state.maintenance_request_index
-  );
-  let status_v=child_parent_detail_params?.state?.status
-  const [status_s, set_status_s] = useState(
-    isMobile
-      ? location.state.status
-      : child_parent_detail_params?.state.status
-  );
-  var maintenanceItemsForStatus_v=child_parent_detail_params?.state?.maintenanceItemsForStatus;
+  const {child_parent_detail_params, handleParamsFromChild}=props;
+  let [maintenanceRequestIndex, set_maintenanceRequestIndex]  = useState(isMobile ? location.state.maintenance_request_index: child_parent_detail_params?.state.maintenance_request_index);
+  let status= isMobile ? location.state.status: child_parent_detail_params?.state.status
+  let [status_s, set_status_s]= useState( isMobile ? location.state.status: child_parent_detail_params?.state.status)
+  
+  let [maintenanceItemsForStatus, set_maintenanceItemsForStatus] = useState( isMobile? location.state.maintenanceItemsForStatus: child_parent_detail_params?.state.maintenanceItemsForStatus);
+  
 
-  const [maintenanceItemsForStatus_s, setMaintenanceItemsForStatus_s] = useState(
-    isMobile
-      ? location.state.maintenanceItemsForStatus
-      : child_parent_detail_params?.state?.maintenanceItemsForStatus
-  );
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [value, setValue] = useState(
-    colorStatus.findIndex((item) => item.status === (status_v || status_s))
+    colorStatus.findIndex((item) => item.status === status)
   );
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [navParams_s, setNavParams_s] = useState({});
-  let navParams_v = {}
-  const allData = isMobile
-    ? location.state.allMaintenanceData
-    : child_parent_detail_params?.state.allMaintenanceData;
+  let navParams_v= {};
+  const allData = isMobile ? location.state.allMaintenanceData : child_parent_detail_params?.state.allMaintenanceData;
 
-  useEffect(() => {
-    setNavParams_s({
-      maintenanceRequestIndex: maintenanceRequestIndex_v || maintenanceRequestIndex_s,
-      status: status_v || status_s,
-      maintenanceItemsForStatus: (maintenanceItemsForStatus_v || maintenanceItemsForStatus_s),
-      allData,
-      filteredQuotes,
-    });
-    navParams_v= {
-      maintenanceRequestIndex: maintenanceRequestIndex_v || maintenanceRequestIndex_s,
-      status: status_v || status_s,
-      maintenanceItemsForStatus: (maintenanceItemsForStatus_v || maintenanceItemsForStatus_s),
-      allData,
-      filteredQuotes,
-    }
+    console.log('R1')
+    console.log(allData)
+    console.log('R1')
 
-
-    colorStatus.find((item, index) => {
-      if (item.status === (status_v || status_s)) {
-        // console.log("status", item.status, "===", status)
-        setValue(index);
-      }
-    });
-    let j = colorStatus.map((item, index) => {
-      let key = item.mapping;
-      let isGrey = allData[key].length > 0 ? 0 : 1;
-      let temp = areTabsGrey;
-      setAreTabsGrey((prev) => {
-        temp[index] = isGrey;
-        return temp;
-      });
-      let firstTab = temp.indexOf(0);
-      let lastTab = temp.lastIndexOf(0);
-      setTabs({ firstTab, lastTab });
-    });
-  }, [maintenanceRequestIndex_s, status_s, child_parent_detail_params]);
-
-  useEffect(() => {
-    console.log(
-      "--DEBUG-- in useeffect for quotes",
-      maintenanceRequestIndex_s,
-      maintenanceItemsForStatus_s,
-      maintenanceQuotes
-    );
-    var quotesFilteredById = maintenanceQuotes.filter(
-      (item) =>
-        item.quote_maintenance_request_id ===      (maintenanceItemsForStatus_v?.length ? maintenanceItemsForStatus_v[maintenanceRequestIndex_v]?.maintenance_request_uid : maintenanceItemsForStatus_s[maintenanceRequestIndex_s].maintenance_request_uid)
-    );
-    quotesFilteredById.sort((a, b) => {
-      if (a.quote_status === "SENT") {
-        return -1;
-      } else if (b.quote_status === "SENT") {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-    // deduplicate these if they come from the same buiness id
-
-    const uniqueQuotes = [];
-    const uniqueKeys = new Set();
-
-    quotesFilteredById.forEach((quote, index) => {
-      let key =
-        quote.quote_business_id +
-        quote.maintenance_quote_uid +
-        quote.quote_maintenance_request_id;
-      if (!uniqueKeys.has(key)) {
-        uniqueKeys.add(key);
-        uniqueQuotes.push(quote);
-      }
-    });
-
-    // if quote_business_id, maintenance_quote_uid, and quote_maintenance_request_id
-
-    setFilteredQuotes(uniqueQuotes);
-  }, [maintenanceRequestIndex_s, maintenanceQuotes, maintenanceItemsForStatus_s]);
-
-  useEffect(() => {
-    const getMaintenanceItemQuotes = async () => {
-      const response = await fetch(
-        `${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`
-      );
-      const data = await response.json();
-      const quotes = data.maintenanceQuotes.result;
-      setMaintenanceQuotes(quotes);
-    };
-    getMaintenanceItemQuotes();
-  }, []);
-
-  useEffect(() => {
-    colorStatus.find((item, index) => {
-      if (item.mapping === status_s) {
-        setValue(index);
-      }
-    });
-  }, [status_s, fromProperty]);
+  
 
   const handleChange = (event, newValue) => {
-    set_status_s(colorStatus[newValue].status);
-    status_v=colorStatus[newValue].status;
+    status = colorStatus[newValue].status;
+    set_status_s (colorStatus[newValue].status);
+    child_parent_detail_params.state.status=colorStatus[newValue].status
+    handleParamsFromChild(child_parent_detail_params)
+
     setValue(newValue);
-    setMaintenanceRequestIndex_s(0);
-    maintenanceRequestIndex_v=0;
+    set_maintenanceRequestIndex(0);
+    child_parent_detail_params.state.maintenance_request_index=0
     const newStatus = colorStatus[newValue].mapping;
     const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
-    maintenanceItemsForStatus_v=maintenanceItemsForNewStatus;
-    setMaintenanceItemsForStatus_s(maintenanceItemsForNewStatus);
+    set_maintenanceItemsForStatus(maintenanceItemsForNewStatus)
+
+    child_parent_detail_params.state.maintenanceItemsForStatus = maintenanceItemsForNewStatus;
+    handleParamsFromChild(child_parent_detail_params)
   };
 
   const handleMaintenaceRequestIndexChange = (index, direction) => {
-    setMaintenanceRequestIndex_s(index);
-    maintenanceRequestIndex_v=index
+    set_maintenanceRequestIndex(index)
+    child_parent_detail_params.state.maintenance_request_index=index
+    
 
     if (direction.changeTab === "forward") {
       let i = value + 1;
@@ -319,12 +218,13 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
         // console.log("keysForAllData", keysForAllData)
         // Update the tab and maintenance request index correctly
         setValue(i); // Change tab
-        set_status_s(colorStatus[i].status);
-        status_v= colorStatus[i].status;
-        setMaintenanceRequestIndex_s(lastIndex); // Update index to the last item of the new status array
-        maintenanceRequestIndex_v= lastIndex; 
-        maintenanceItemsForStatus_v =  (allData[requestType] || []);
-        setMaintenanceItemsForStatus_s(allData[requestType] || []);
+        status = colorStatus[i].status;
+        set_status_s( colorStatus[i].status);
+        child_parent_detail_params.state.status= colorStatus[i].status
+        
+        maintenanceRequestIndex = lastIndex; // Update index to the last item of the new status array
+        child_parent_detail_params.state.maintenanceItemsForStatus= allData[requestType] || [];
+        handleParamsFromChild(child_parent_detail_params)
       }
     }
   };
@@ -335,6 +235,109 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
       "aria-controls": `full-width-tabpanel-${index}`,
     };
   }
+
+
+  useEffect(() => {
+    setNavParams_s({
+      maintenanceRequestIndex,
+      status,
+      maintenanceItemsForStatus,
+      allData,
+      filteredQuotes,
+    });
+    navParams_v={
+      maintenanceRequestIndex,
+      status,
+      maintenanceItemsForStatus,
+      allData,
+      filteredQuotes,
+    }
+    colorStatus.find((item, index) => {
+      if (item.status === status) {
+        // console.log("status", item.status, "===", status)
+        setValue(index);
+      }
+    });
+    let j = colorStatus.map((item, index) => {
+      let key = item.mapping;
+      let isGrey = allData[key].length > 0 ? 0 : 1;
+      let temp = areTabsGrey;
+      setAreTabsGrey((prev) => {
+        temp[index] = isGrey;
+        return temp;
+      });
+      let firstTab = temp.indexOf(0);
+      let lastTab = temp.lastIndexOf(0);
+      setTabs({ firstTab, lastTab });
+    });
+  }, [maintenanceRequestIndex, status_s]);
+
+  useEffect(() => {
+    console.log(
+      "--DEBUG-- in useeffect for quotes",
+      maintenanceRequestIndex,
+      maintenanceItemsForStatus,
+      maintenanceQuotes
+    );
+    var quotesFilteredById = maintenanceQuotes.filter(
+      (item) =>
+        item.quote_maintenance_request_id ===
+        maintenanceItemsForStatus[maintenanceRequestIndex]
+          ?.maintenance_request_uid
+    );
+    quotesFilteredById.sort((a, b) => {
+      if (a.quote_status === "SENT") {
+        return -1;
+      } else if (b.quote_status === "SENT") {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    // deduplicate these if they come from the same buiness id
+
+    const uniqueQuotes = [];
+    const uniqueKeys = new Set();
+
+    quotesFilteredById.forEach((quote, index) => {
+      let key =
+        quote.quote_business_id +
+        quote.maintenance_quote_uid +
+        quote.quote_maintenance_request_id;
+      if (!uniqueKeys.has(key)) {
+        uniqueKeys.add(key);
+        uniqueQuotes.push(quote);
+      }
+    });
+
+    // if quote_business_id, maintenance_quote_uid, and quote_maintenance_request_id
+
+    setFilteredQuotes(uniqueQuotes);
+  }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
+
+  useEffect(() => {
+    const getMaintenanceItemQuotes = async () => {
+      const response = await fetch(
+        `${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`
+      );
+      const data = await response.json();
+      const quotes = data.maintenanceQuotes.result;
+      setMaintenanceQuotes(quotes);
+    };
+    getMaintenanceItemQuotes();
+  }, []);
+
+  useEffect(() => {
+    colorStatus.find((item, index) => {
+      if (item.mapping === status) {
+        setValue(index);
+      }
+    });
+  }, [status_s, fromProperty]);
+
+
+
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -388,18 +391,6 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
               >
                 Maintenance
               </Typography>
-              
-              
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                }}
-              >
-                Maintenance2 + {status_v} + {status_s}
-              </Typography>
-
             </Box>
             {isMobile && <Box position="absolute" right={30}>
               <Button onClick={() => navigateToAddMaintenanceItem()}>
@@ -499,30 +490,30 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
                       }}
                     >
                       {allData[item.mapping] &&
-                      allData[item.mapping][(maintenanceRequestIndex_v || maintenanceRequestIndex_s)] ? (
+                      allData[item.mapping][maintenanceRequestIndex] ? (
                         <MaintenanceRequestNavigator
-                          requestIndex={(maintenanceRequestIndex_v || maintenanceRequestIndex_s)}
+                          requestIndex={maintenanceRequestIndex}
                           backward_active_status={
-                            (maintenanceRequestIndex_v || maintenanceRequestIndex_s) === 0 &&
+                            maintenanceRequestIndex === 0 &&
                             value === tabs.firstTab
                           }
                           forward_active_status={
                             value === tabs.lastTab &&
                             allData[item.mapping].length - 1 ===
-                              (maintenanceRequestIndex_v || maintenanceRequestIndex_s)
+                              maintenanceRequestIndex
                           }
                           updateRequestIndex={
                             handleMaintenaceRequestIndexChange
                           }
                           requestData={allData[item.mapping]}
-                          status={ status_v || status_s}
+                          status={status}
                           color={item.color}
                           item={item}
                           allData={allData}
                           maintenanceQuotes={filteredQuotes}
                           currentTabValue={value}
                           tabs={tabs}
-                          navigateParams={navParams_v || navParams_s}
+                          navigateParams={navParams_s}
                         />
                       ) : null}
                     </Grid>
@@ -536,58 +527,58 @@ export function MaintenanceRequestDetail({child_parent_detail_params}) {
                 }}
               >
                 {colorStatus[value]?.status === "New Requests" &&
-                maintenanceItemsForStatus_s[maintenanceRequestIndex_s] ? (
+                maintenanceItemsForStatus[maintenanceRequestIndex] ? (
                   <NewRequestAction
                     maintenanceItem={
-                      maintenanceItemsForStatus_s[maintenanceRequestIndex_s]
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
                     }
-                    navigateParams={navParams_v || navParams_s}
+                    navigateParams={navParams_s}
                   />
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Requested" ? (
                   <QuotesRequestAction
                     maintenanceItem={
-                      maintenanceItemsForStatus_s[(maintenanceRequestIndex_v || maintenanceRequestIndex_s)]
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
                     }
-                    navigateParams={navParams_v || navParams_s}
+                    navigateParams={navParams_s}
                     quotes={filteredQuotes}
                   />
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Accepted" ? (
                   <QuotesAccepted
                     maintenanceItem={
-                      maintenanceItemsForStatus_s[(maintenanceRequestIndex_v || maintenanceRequestIndex_s)]
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
                     }
-                    navigateParams={navParams_v || navParams_s}
+                    navigateParams={navParams_s}
                     quotes={filteredQuotes}
                   />
                 ) : null}
                 {colorStatus[value]?.status === "Scheduled" ? (
                   <ScheduleMaintenance
                     maintenanceItem={
-                      maintenanceItemsForStatus_s[(maintenanceRequestIndex_v || maintenanceRequestIndex_s)]
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
                     }
-                    navigateParams={navParams_v || navParams_s}
+                    navigateParams={navParams_s}
                     quotes={filteredQuotes}
                   />
                 ) : null}
                 {colorStatus[value]?.status === "Completed" &&
-                maintenanceItemsForStatus_s[(maintenanceRequestIndex_v || maintenanceRequestIndex_s)]
+                maintenanceItemsForStatus[maintenanceRequestIndex]
                   .maintenance_request_status !== "CANCELLED" ? (
                   <CompleteMaintenance
                     maintenanceItem={
-                      maintenanceItemsForStatus_s[(maintenanceRequestIndex_v || maintenanceRequestIndex_s)]
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
                     }
-                    navigateParams={navParams_v || navParams_s}
+                    navigateParams={navParams_s}
                     quotes={filteredQuotes}
                   />
                 ) : null}
                 {colorStatus[value]?.status === "Paid" ? (
                   <PaidMaintenance
                     maintenanceItem={
-                      maintenanceItemsForStatus_s[(maintenanceRequestIndex_v || maintenanceRequestIndex_s)]
+                      maintenanceItemsForStatus[maintenanceRequestIndex]
                     }
-                    navigateParams={navParams_v || navParams_s}
+                    navigateParams={navParams_s}
                     quotes={filteredQuotes}
                   />
                 ) : null}

@@ -583,6 +583,7 @@ export default function MaintenanceManager() {
                     {!isMobile && show_detail && (
                       <MaintenanceRequestDetail
                         child_parent_detail_params={child_parent_detail_params}
+                        handleParamsFromChild={handleParamsFromChild}
                       ></MaintenanceRequestDetail>
                     )}
                   
