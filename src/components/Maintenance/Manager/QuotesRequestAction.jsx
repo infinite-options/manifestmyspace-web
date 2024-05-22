@@ -39,8 +39,8 @@ export default function QuotesRequestAction({maintenanceItem, navigateParams, qu
     const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([])
     const [message, setMessage] = useState("");
     const [showModal, setShowModal] = useState(false);
-    const [date, setDate] = useState(maintenanceItem.earliest_available_date || "")
-    const [time, setTime] = useState(maintenanceItem.earliest_available_time || "")
+    const [date, setDate] = useState(maintenanceItem?.earliest_available_date || "")
+    const [time, setTime] = useState(maintenanceItem?.earliest_available_time || "")
     const [showSpinner, setShowSpinner] = useState(false);
 
     useEffect(() => {

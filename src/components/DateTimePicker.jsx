@@ -72,7 +72,7 @@ function DateTimePickerModal(props) {
     if (selection == "now"){
         return `Complete as of Today (${dayjs().format("MM-DD-YYYY")})`;
     } else if (selection == "schedule"){
-        return `Complete on Scheduled Date (${props.maintenanceItem.maintenance_scheduled_date !== null ? props.maintenanceItem.maintenance_scheduled_date : "N/A"})`;
+        return `Complete on Scheduled Date (${props?.maintenanceItem?.maintenance_scheduled_date !== null ? props?.maintenanceItem?.maintenance_scheduled_date : "N/A"})`;
     }
   }
   
@@ -113,7 +113,7 @@ function DateTimePickerModal(props) {
                                 name="completed-date-radio-buttons"
                             >
                                 <FormControlLabel value="now" control={<Radio onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
-                                <FormControlLabel value="schedule" control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
+                                <FormControlLabel value="schedule" control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem?.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
                                 <FormControlLabel value="select" control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
                             </RadioGroup>
                         </FormControl>

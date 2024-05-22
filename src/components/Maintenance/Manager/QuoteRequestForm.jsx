@@ -193,8 +193,8 @@ export default function QuoteRequestForm(){
         // console.log("displayContactList")
         // console.log("contactList length", contactList.length)
         // console.log("contactList", contactList)
-        if(contactList.length > 0){
-            return (contactList.map((contact, index) => (
+        if(contactList?.length > 0){
+            return (contactList?.map((contact, index) => (
                 <MenuItem key={index} value={contact}> {contact.contact_first_name} </MenuItem>
             )))
         } else{
@@ -223,7 +223,7 @@ export default function QuoteRequestForm(){
             console.log("requestedBusinessUids", requestedBusinessUids)
 
             // Filter out workers whose business_uid is in requestedBusinessUids
-            const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
+            const filteredWorkers = workers?.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
             setContactList(filteredWorkers)
             setShowSpinner(false);
         }
