@@ -249,7 +249,8 @@ export default function Announcements() {
               borderRadius: "7px",
               backgroundColor: theme.palette.primary.main,
               // backgroundColor: theme.palette.primary.pink,
-              width: "85%", // Occupy full width with 25px margins on each side
+              // width: "85%", // Occupy full width with 25px margins on each side
+              
               [theme.breakpoints.down("sm")]: {
                 width: "80%",
               },
@@ -322,10 +323,10 @@ export default function Announcements() {
             </div>
           </div>
         </div>
-        <Grid container spacing={isMobile ? 1 : 2}>
-          <Grid item xs={12} md={5.5} >
+        <Grid container spacing={isMobile ? 1 : 2} >
+          <Grid item xs={12} md={5.9} sx={{marginLeft: "5px", }}>
             {/* <DashboardTab fullHeight={!isMobile ? true : false}> */}
-                    
+        <Box width="100%">            
         <div style={{ marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
           Received
         </div>
@@ -380,9 +381,10 @@ export default function Announcements() {
         </div>
 
           {/* </DashboardTab> */}
+          </Box>
           </Grid>
 
-          <Grid item xs={12} md={5.5} style={{ marginLeft: '10px' }}>
+          <Grid item xs={12} md={5.9} style={{ marginLeft: isMobile ? '0px' : '200px', }}>
 
         <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
           Sent
