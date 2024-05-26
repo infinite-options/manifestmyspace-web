@@ -49,7 +49,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
 
   return (
     <div className="mt-widget-requests-container" onClick={() => navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}>
-      <h2 className="mt-widget-title">Maintenance</h2>
+      <h2 className="mt-widget-title">Maintenance W</h2>
       <Status colorStatus={colorStatus} maintenanceRequestCounts={maintenanceRequestCounts} selectedRole={selectedRole} />
     </div>
   );

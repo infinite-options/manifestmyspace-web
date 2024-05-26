@@ -12,7 +12,7 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import APIConfig from "../../../utils/APIConfig"
+import APIConfig from "../../../utils/APIConfig";
 
 export default function MaintenanceWorker() {
   const { user, getProfileId } = useUser();
@@ -170,7 +170,7 @@ export default function MaintenanceWorker() {
     const dataObject = {};
     const getMaintenanceData = async () => {
       setShowSpinner(true);
-      console.log("About to call maintenanceStatus endpoint Maintenance Worker");
+      console.log("About to call maintenanceStatus endpoint in MaintenanceWorker.jsx");
       const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`); // Change back to ${getProfileId()}
       const maintenanceRequestsData = await maintenanceRequests.json();
       // console.log("maintenanceRequestsData", maintenanceRequestsData)
@@ -189,7 +189,11 @@ export default function MaintenanceWorker() {
       dataObject["FINISHED"] = [...array5];
       dataObject["PAID"] = [...array6];
 
+      console.log("Items in COMPLETED: ", array2);
+      console.log("Items in dataObject: ", dataObject["SUBMITTED"]);
+
       // console.log("dataObject from new api call", dataObject)
+
       setMaintenanceData((prevData) => ({
         ...prevData,
         ...dataObject,
@@ -200,9 +204,10 @@ export default function MaintenanceWorker() {
       }));
       setShowSpinner(false);
     };
+
     getMaintenanceData();
     setRefresh(false);
-  }, [refresh]);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -236,7 +241,7 @@ export default function MaintenanceWorker() {
           <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography sx={{ color: theme.typography.propertyPage.color, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Maintenance
+                Maintenance Worker
               </Typography>
             </Box>
           </Stack>

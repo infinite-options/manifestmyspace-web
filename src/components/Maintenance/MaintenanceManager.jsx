@@ -60,7 +60,7 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
 
   const getMaintenanceData = async () => {
     setShowSpinner(true);
-
+    console.log("About to call maintenanceStatus endpoint in MaintenanceManager.jsx");
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
     const maintenanceRequestsData = await maintenanceRequests.json();
 
@@ -100,6 +100,9 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
       dataObject["PAID"].push(item);
     }
 
+    // console.log("Items in COMPLETED: ", array5);
+    // console.log("Items in dataObject: ", dataObject["COMPLETED"]);
+
     setMaintenanceData((prevData) => ({
       ...prevData,
       ...dataObject,
@@ -110,6 +113,7 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     }));
     setShowSpinner(false);
   };
+  console.log("Calling getMaintenanceData");
   getMaintenanceData();
 }
 
@@ -122,7 +126,8 @@ export default function MaintenanceManager() {
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
   const [propertyId, setPropertyId] = useState("");
   const colorStatus = theme.colorStatusPMO;
-  const [refresh, setRefresh] = useState(false || location.state?.refresh);
+  // const [refresh, setRefresh] = useState(false || location.state?.refresh);
+  const [refresh, setRefresh] = useState(false);
 
   const newDataObject = {};
   newDataObject["NEW REQUEST"] = [];
@@ -148,7 +153,7 @@ export default function MaintenanceManager() {
 
   useEffect(() => {
     if (maintenanceData) {
-      // console.log("maintenanceData", maintenanceData)
+      console.log("maintenanceData", maintenanceData);
       const propertyList = [];
       const addedAddresses = [];
       for (const key in maintenanceData) {
@@ -249,7 +254,8 @@ export default function MaintenanceManager() {
   }
 
   useEffect(() => {
-    // console.log("Maintenance useEffect")
+    console.log("MaintenanceManager in useEffect before maintenanceManagerDataCollectAndProcess");
+    console.log("Refresh Value: ", refresh);
     // getMaintenanceData();
     let profileId = getProfileId();
     maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId);
@@ -289,7 +295,7 @@ export default function MaintenanceManager() {
           <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Maintenance
+                Maintenance Manager
               </Typography>
             </Box>
             <Box position="absolute" right={0}>
@@ -298,6 +304,7 @@ export default function MaintenanceManager() {
               </Button>
             </Box>
           </Stack>
+
           <Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
             <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
               <CalendarTodayIcon
@@ -307,6 +314,7 @@ export default function MaintenanceManager() {
                 {displayFilterString(month, year)}
               </Typography>
             </Button>
+
             <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowPropertyFilter(true)}>
               <HomeWorkIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }} />
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
@@ -321,6 +329,7 @@ export default function MaintenanceManager() {
               setMonth={setMonth}
               setYear={setYear}
             ></SelectMonthComponent>
+
             <SelectPropertyFilter
               showPropertyFilter={showPropertyFilter}
               setShowPropertyFilter={setShowPropertyFilter}
@@ -328,6 +337,7 @@ export default function MaintenanceManager() {
               setFilterList={setFilterPropertyList}
             />
           </Box>
+
           <Box component="span" m={2} display="flex" justifyContent="center" alignItems="center" position="relative">
             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
               {displayFilterString(month, year)}
@@ -347,6 +357,7 @@ export default function MaintenanceManager() {
               )}
             </Typography>
           </Box>
+
           <div
             style={{
               borderRadius: "20px",

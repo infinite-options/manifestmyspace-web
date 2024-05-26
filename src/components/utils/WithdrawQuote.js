@@ -1,12 +1,12 @@
 import APIConfig from "../../utils/APIConfig";
 
-export default async function CancelTicket(maintenance_request_uid, setShowSpinner = () => {}) {
+export default async function WithdrawQuote(maintenance_quote_uid, setShowSpinner = () => {}) {
   setShowSpinner(true);
   try {
     var formData = new FormData();
-    formData.append("maintenance_request_uid", maintenance_request_uid);
-    formData.append("maintenance_request_status", "CANCELLED");
-    const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+    formData.append("maintenance_quote_uid", maintenance_quote_uid);
+    formData.append("quote_status", "WITHDRAWN");
+    const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
       method: "PUT",
       body: formData,
     });
