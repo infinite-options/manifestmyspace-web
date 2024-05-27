@@ -37,6 +37,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { getLatLongFromAddress } from "../../utils/geocode";
+import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -422,8 +423,8 @@ export default function EditProperty({}) {
     const putData = async () => {
       setShowSpinner(true);
       promises.push(
-        // fetch(`${APIConfig.baseURL.dev}/properties`, { //rohit
-        fetch(`http://localhost:4000/properties`, {
+        // fetch(`http://localhost:4000/properties`, {
+        fetch(`${APIConfig.baseURL.dev}/properties`, {
           method: "PUT",
           body: formData,
         })
@@ -550,6 +551,13 @@ export default function EditProperty({}) {
     setActiveStep(files.findIndex((file) => file.coverPhoto));
   };
 
+  const handleAddressSelect = (address) => {
+    setAddress(address.street? address.street : '');
+    setCity(address.city? address.city : '');
+    setPropertyState(address.state? address.state : '');
+    setZip(address.zip? address.zip : '');
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -653,11 +661,18 @@ export default function EditProperty({}) {
                 <Grid item xs={12}>
                   <ImageUploader selectedImageList={imageState} setSelectedImageList={setImageState} setDeletedImageList={setDeletedImageList} page={page} />
                 </Grid>
-
-                {/* Text Field for Title */}
+ 
                 <Grid item xs={12}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Address
+                  </Typography>                  
+                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} defaultValue={`${address}, ${city}, ${propertyState}`}/>
+                </Grid>
+
+                {/* Text Field for Address */}
+                {/* <Grid item xs={12}>
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                    Street Address
                   </Typography>
                   <TextField
                     onChange={(e) => setAddress(e.target.value)}
@@ -670,10 +685,9 @@ export default function EditProperty({}) {
                     value={address}
                     size="small"
                     fullWidth
-                  />
-                </Grid>
-
-                {/* Select Field for Issue and Cost Estimate */}
+                  />                  
+                </Grid> */}
+                
                 <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Unit</Typography>
                   <TextField
@@ -690,7 +704,7 @@ export default function EditProperty({}) {
                   />
                 </Grid>
 
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>City</Typography>
                   <TextField
                     onChange={(e) => setCity(e.target.value)}
@@ -704,9 +718,9 @@ export default function EditProperty({}) {
                     placeholder={propertyData.property_city}
                     value={city}
                   />
-                </Grid>
+                </Grid> */}
 
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     State
                   </Typography>
@@ -726,7 +740,7 @@ export default function EditProperty({}) {
                       <MenuItem value={st}>{st}</MenuItem>
                     ))}
                   </Select>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
@@ -742,6 +756,7 @@ export default function EditProperty({}) {
                     size="small"
                     onChange={(e) => setZip(e.target.value)}
                     value={zip}
+                    disabled
                   />
                 </Grid>
 

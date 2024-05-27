@@ -53,8 +53,8 @@ const PropertiesMap = ({ properties }) => {
           const longitude = parseFloat(property.property_longitude);
 
           if (!isNaN(latitude) && !isNaN(longitude)) {
-            console.log("ROHIT - property.property_latitude - ", parseFloat(property.property_latitude));
-            console.log("ROHIT - property.property_longitude - ", parseFloat(property.property_longitude));
+            // console.log("property.property_latitude - ", parseFloat(property.property_latitude));
+            // console.log("property.property_longitude - ", parseFloat(property.property_longitude));
             
             return (            
               <Marker
