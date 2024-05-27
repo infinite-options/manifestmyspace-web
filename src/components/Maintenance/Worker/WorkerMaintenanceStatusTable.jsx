@@ -206,7 +206,8 @@ export default function WorkerMaintenanceStatusTable({status, color, maintenance
                             initialState={{
                                 pagination: {
                                     paginationModel: {
-                                        pageSize: maintenanceItemsForStatus.length,
+                                        // pageSize: maintenanceItemsForStatus.length,
+                                        pageSize: 10,
                                     },
                                 },
                             }}
