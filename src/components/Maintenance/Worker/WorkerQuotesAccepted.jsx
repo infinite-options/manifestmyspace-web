@@ -98,6 +98,7 @@ export default function WorkerQuotesAccepted({ maintenanceItem }) {
     };
 
     const changeQuoteStatus = async () => {
+      console.log("In changeQuoteStatus");
       setShowSpinner(true);
       var formData = new FormData();
       formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
@@ -108,7 +109,7 @@ export default function WorkerQuotesAccepted({ maintenanceItem }) {
           body: formData,
         });
         const responseData = await response.json();
-        console.log(responseData);
+        console.log("changeQuoteStatus response: ", responseData);
         if (responseData.code === 200) {
           console.log("Ticket Status Changed");
           alert("Ticket Status Changed to SCHEDULED");

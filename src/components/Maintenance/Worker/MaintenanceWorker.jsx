@@ -15,6 +15,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
 export default function MaintenanceWorker() {
+  console.log("In MaintenanceWorker.jsx");
   const { user, getProfileId } = useUser();
   const location = useLocation();
   let navigate = useNavigate();
@@ -45,7 +46,7 @@ export default function MaintenanceWorker() {
 
   useEffect(() => {
     if (maintenanceData) {
-      // console.log("maintenanceData", maintenanceData)
+      console.log("maintenanceData", maintenanceData);
 
       const propertyList = [];
       const priorityList = [];
@@ -97,6 +98,7 @@ export default function MaintenanceWorker() {
   }
 
   function handleFilter(maintenanceArray, month, year, filterPropertyList, filterPriorityList) {
+    console.log("In handleFilter");
     var filteredArray = [];
 
     // Filtering by date

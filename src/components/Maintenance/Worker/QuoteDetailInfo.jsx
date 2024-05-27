@@ -109,6 +109,7 @@ function PartsTableReadOnly({ parts, setParts }) {
 }
 
 export default function QuoteDetailInfo({ maintenanceItem }) {
+  console.log("In QuoteDetails.jsx QuoteDetailInfo");
   const { roleName } = useUser();
 
   const location = useLocation();
@@ -116,6 +117,7 @@ export default function QuoteDetailInfo({ maintenanceItem }) {
 
   let costData;
   try {
+    console.log("In try block");
     if (maintenanceItem?.quote_services_expenses) {
       costData = JSON.parse(maintenanceItem?.quote_services_expenses);
     } else {
@@ -346,7 +348,7 @@ export default function QuoteDetailInfo({ maintenanceItem }) {
               variant="contained"
               onClick={() => setShowWithdrawModal(true)}
             >
-              <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Withdraw</Typography>
+              <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Withdraw 2</Typography>
             </Button>
           </Grid>
         ) : null}
