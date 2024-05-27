@@ -3,28 +3,28 @@ import { useCookies, Cookies } from "react-cookie";
 
 const UserContext = createContext();
 
+// Define a React Component
 export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const [cookies, setCookie] = useCookies(["user", "token", "selectedRole"]);
-  const [user, setUser] = useState(cookies.user);  
+  const [user, setUser] = useState(cookies.user);
   const [selectedRole, setSelectedRole] = useState(cookies.selectedRole);
   const [isLoggedIn, setLoggedIn] = useState(!!cookies.user);
   const [onboardingState, setOnboardingState] = useState();
-  const [supervisor, setSupervisor]= useState(null)
-  const setAuthData = (data) => {    
-    // setUser(data.user); 
-    setUser(prevUser => {
+  const [supervisor, setSupervisor] = useState(null);
+  const setAuthData = (data) => {
+    // setUser(data.user);
+    setUser((prevUser) => {
       return { ...prevUser, ...data.user };
     });
-    let newUserData = {...user, ...data.user}    
+    let newUserData = { ...user, ...data.user };
     setCookie("user", newUserData);
     setCookie("token", data.access_token);
-
   };
-  const selectRole = (role) => {    
+  const selectRole = (role) => {
     setSelectedRole(role);
     setCookie("selectedRole", role);
   };
-  const isBusiness = () => {    
+  const isBusiness = () => {
     return selectedRole === "MANAGER" || selectedRole === "MAINTENANCE";
   };
   const isManager = () => {
@@ -49,6 +49,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const roleName = (role = selectedRole) => {
+    console.log("in roleName ", role);
     switch (role) {
       case "MANAGER":
         return "Manager";
@@ -64,7 +65,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         return "Tenant";
     }
   };
-  const updateProfileUid = (profileUidObj) => {    
+  const updateProfileUid = (profileUidObj) => {
     if (isBusiness() || isEmployee()) {
       setUser((prev) => updateUser(prev, profileUidObj));
     } else {
@@ -97,14 +98,13 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;
   const getProfileId = () => {
-    // console.log('Raminsss', user)
-    if (selectedRole==='PM_EMPLOYEE') return user.businesses.MANAGEMENT.business_employee_id;
-    if (selectedRole==='MAINT_EMPLOYEE') return user.businesses.MAINTENANCE.business_employee_id;
+    // console.log("In getProfileID ", user);
+    if (selectedRole === "PM_EMPLOYEE") return user.businesses.MANAGEMENT.business_employee_id;
+    if (selectedRole === "MAINT_EMPLOYEE") return user.businesses.MAINTENANCE.business_employee_id;
     if (isManagement()) return getBusiness(user, "MANAGEMENT");
     if (isMaintenance()) return getBusiness(user, "MAINTENANCE");
-    if (selectedRole=== 'TENANT') return user.tenant_id; 
-    if (selectedRole=== 'OWNER') return  user.owner_id;
-
+    if (selectedRole === "TENANT") return user.tenant_id;
+    if (selectedRole === "OWNER") return user.owner_id;
   };
   const logout = () => {
     console.log("In logout as ", user);
@@ -186,6 +186,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     }
   };
 
+  // What is in the return statement is available in the Component in console.log
   return (
     <UserContext.Provider
       value={{
@@ -221,10 +222,14 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   );
 };
 
+// Define a React Hook
 export const useUser = () => {
-  // console.log("In useUser");
+  // console.log("In useUser, UserContext is: ", UserContext);
   const context = useContext(UserContext);
+  // console.log("Context is: ", context);
+  // console.log("User Context is: ", context.user);
   if (!context) {
+    // console.log("No UserContext");
     throw new Error("useUser must be used within a UserProvider");
   }
   return context;
