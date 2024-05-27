@@ -118,6 +118,7 @@ const PMContacts = (props) => {
         selectedData,
         index,
         viewData: dataDetails,
+        navigatingFrom: "PMContacts"
       },
     });
   };

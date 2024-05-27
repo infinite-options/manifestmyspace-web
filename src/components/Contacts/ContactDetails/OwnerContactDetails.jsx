@@ -7,23 +7,72 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
 import { useUser } from "../../../contexts/UserContext";
 import User_fill from "../../../images/User_fill_dark.png";
+import axios from "axios";
+import APIConfig from "../../../utils/APIConfig";
+import Cashflow from "../../Cashflow/Cashflow";
 
 const OwnerContactDetails = (props) => {
   console.log("In Onwer Contact Details", props);
-  const { selectedRole } = useUser();
+  const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const contactDetails = location.state.dataDetails;
-  const contactsTab = location.state.tab;
+
+  const navigatingFrom = location.state.navigatingFrom;
+  // const contactDetails = location.state.dataDetails;
+  const [contactDetails, setContactDetails] = useState(null);
+  const [contactsTab, setContactsTab] = useState("");
+
   // const selectedData = location.state.selectedData;
   // const index = location.state.index;
   const [index, setIndex] = useState(location.state.index);
   // const passedData = location.state.viewData;
+  const ownerUID = location.state.ownerUID;
+  const cashflowData = location.state.cashflowData;
+
+  console.log("cashflowData - ", cashflowData);
+
+  const getDataFromAPI = async () => {
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    
+    // setShowSpinner(true);
+
+    await axios
+      .get(url)
+      .then((resp) => {
+        const data = resp.data["management_contacts"];
+        const ownerContacts = data["owners"];
+        setContactDetails(ownerContacts);
+        const index = ownerContacts.findIndex( (contact) => contact.contact_uid === ownerUID)
+        setIndex(index);
+        
+        // setAllTenantsData(data["tenants"]);
+        // setAllMaintenanceData(data["maintenance"]);
+
+        // setShowSpinner(false);
+      })
+      .catch((e) => {
+        console.error(e);
+        // setShowSpinner(false);
+      });
+  };
+
+  useEffect(() => {
+    // console.log("navigatingFrom - ", navigatingFrom);
+
+    if(navigatingFrom === "HappinessMatrixWidget"){
+      getDataFromAPI();
+      setContactsTab("Owner");
+    } else if(navigatingFrom === "PMContacts"){
+      setContactDetails(location.state.dataDetails);      
+      setContactsTab(location.state.tab);
+      
+    }
+
+  }, []);
 
   useEffect(() => {
     console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
-    console.log("DATA DETAILS", contactDetails[index]);
+    contactDetails && console.log("DATA DETAILS", contactDetails[index]);
   }, [index]);
 
   //   console.log("Data details passed 1: ", contactDetails);
@@ -92,7 +141,7 @@ const OwnerContactDetails = (props) => {
                 }}
                 onClick={handleBackBtn}
               >
-                Return to Viewing All Listings
+                Return to { navigatingFrom === "HappinessMatrixWidget"? "Dashboard" : "Viewing All Contacts"}
               </Typography>
             </Stack>
           </Stack>
@@ -137,7 +186,7 @@ const OwnerContactDetails = (props) => {
                       fontWeight: theme.typography.primary.fontWeight,
                     }}
                   >
-                    {index + 1} of {contactDetails.length} Owners
+                    {index + 1} of {contactDetails?.length} Owners
                     {/* {contactsTab} */}
                   </Typography>
                 </Box>
@@ -170,8 +219,8 @@ const OwnerContactDetails = (props) => {
                   }}
                 >
                   {`
-                    ${contactDetails[index].contact_first_name ? contactDetails[index].contact_first_name : "<FIRST_NAME>"}
-                    ${contactDetails[index].contact_last_name ? contactDetails[index].contact_last_name : "<LAST_NAME>"}`}
+                    ${(contactDetails && contactDetails[index]?.contact_first_name) ? contactDetails[index]?.contact_first_name : "<FIRST_NAME>"}
+                    ${(contactDetails && contactDetails[index]?.contact_last_name) ? contactDetails[index]?.contact_last_name : "<LAST_NAME>"}`}
                 </Typography>
               </Stack>
             </Stack>
@@ -186,7 +235,7 @@ const OwnerContactDetails = (props) => {
                 }}
               >
                 <img
-                  src={contactDetails[index].contact_photo_url ? contactDetails[index].contact_photo_url : User_fill}
+                  src={(contactDetails && contactDetails[index]?.contact_photo_url) ? contactDetails[index].contact_photo_url : User_fill}
                   alt="profile placeholder"
                   style={{
                     height: "60px",
@@ -222,7 +271,7 @@ const OwnerContactDetails = (props) => {
                       fontSize: "13px",
                     }}
                   >
-                    {contactDetails[index].contact_email ? contactDetails[index].contact_email : "<EMAIL>"}
+                    {(contactDetails && contactDetails[index].contact_email) ? contactDetails[index]?.contact_email : "<EMAIL>"}
                   </Typography>
                 </Stack>
                 <Stack flexDirection="row">
@@ -238,7 +287,7 @@ const OwnerContactDetails = (props) => {
                       fontSize: "13px",
                     }}
                   >
-                    {contactDetails[index].contact_phone_number ? formattedPhoneNumber(contactDetails[index].contact_phone_number) : "<PHONE_NUMBER>"}
+                    {(contactDetails && contactDetails[index].contact_phone_number) ? formattedPhoneNumber(contactDetails[index].contact_phone_number) : "<PHONE_NUMBER>"}
                   </Typography>
                 </Stack>
               </Stack>
@@ -255,11 +304,11 @@ const OwnerContactDetails = (props) => {
                 </svg>
               </Box>
               <Typography sx={{ fontSize: "13px" }}>
-                {contactDetails[index].contact_address ? contactDetails[index].contact_address : "<ADDRESS1>"}
-                {contactDetails[index].contact_unit ? contactDetails[index].contact_unit : ""} {", "}
-                {contactDetails[index].contact_city ? contactDetails[index].contact_city : "<CITY1>"} {", "}
-                {contactDetails[index].contact_state ? contactDetails[index].contact_state : "<STATE>"} {", "}
-                {contactDetails[index].contact_zip ? contactDetails[index].contact_zip : "<ZIP>"}
+                {(contactDetails && contactDetails[index].contact_address) ? contactDetails[index].contact_address : "<ADDRESS1>"}
+                {(contactDetails && contactDetails[index].contact_unit) ? contactDetails[index].contact_unit : ""} {", "}
+                {(contactDetails && contactDetails[index].contact_city) ? contactDetails[index].contact_city : "<CITY1>"} {", "}
+                {(contactDetails && contactDetails[index].contact_state) ? contactDetails[index].contact_state : "<STATE>"} {", "}
+                {(contactDetails && contactDetails[index].contact_zip) ? contactDetails[index].contact_zip : "<ZIP>"}
               </Typography>
             </Stack>
 
@@ -270,10 +319,10 @@ const OwnerContactDetails = (props) => {
                 }}
               >
                 {/* {selectedData.property_count} Properties */}
-                {console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)}
-                {contactDetails[index].property_count ? contactDetails[index].property_count : "<PROPERTY_COUNT>"} Properties
+                {/* {console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)} */}
+                {(contactDetails && contactDetails[index].property_count) ? contactDetails[index].property_count : "<PROPERTY_COUNT>"} Properties
               </Typography>
-              {contactDetails[index].entities !== null &&
+              {contactDetails && contactDetails[index].entities !== null &&
                 JSON.parse(contactDetails[index].entities).map((entity, index) => (
                   <>
                     <Typography
@@ -323,10 +372,10 @@ const OwnerContactDetails = (props) => {
                 }}
               >
                 {/* {selectedData.property_count} Properties */}
-                {console.log("In Payment JS:", contactDetails[index].payment_method, typeof contactDetails[index].payment_method)}
+                {/* {console.log("In Payment JS:", contactDetails[index].payment_method, typeof contactDetails[index].payment_method)} */}
                 Payment Methods
               </Typography>
-              {contactDetails[index].payment_method !== null &&
+              {contactDetails && contactDetails[index].payment_method !== null &&
                 JSON.parse(contactDetails[index].payment_method).map((method, index) => (
                   <Typography
                     sx={{
@@ -344,6 +393,65 @@ const OwnerContactDetails = (props) => {
                   </Typography>
                 ))}
             </Stack>
+
+            {
+              navigatingFrom === "HappinessMatrixWidget" && (
+                <Stack sx={{ padding: "15px" }}>
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.primary.fontWeight,
+                    }}
+                  >                    
+                    Cashflow
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontSize: "13px",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      // textDecoration: "underline",
+                    }}                    
+                  >
+                    Delta Cashflow : {cashflowData.delta_cashflow}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontSize: "13px",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      // textDecoration: "underline",
+                    }}                    
+                  >
+                    Delta Cashflow Percentage : {cashflowData.delta_cashflow_perc}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontSize: "13px",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      // textDecoration: "underline",
+                    }}                    
+                  >
+                    Expected Cashflow : {cashflowData.expected_cashflow}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontSize: "13px",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      // textDecoration: "underline",
+                    }}                    
+                  >
+                    Vacancies : {cashflowData.vacancy_num}
+                  </Typography>
+                  
+                </Stack>
+              )
+            }
 
             <Stack sx={{ padding: "15px" }}>
               <Stack flexDirection="row" justifyContent="space-between" alignItems="flex-start">
@@ -365,14 +473,14 @@ const OwnerContactDetails = (props) => {
                         }}
                       >
                         {/* {selectedData.contact_paypal} */}
-                        {contactDetails[index].contact_paypal ? contactDetails[index].contact_paypal : "<PAYPAL>"}
+                        {(contactDetails && contactDetails[index].contact_paypal) ? contactDetails[index].contact_paypal : "<PAYPAL>"}
                       </Typography>
                     </Stack>
                   </Stack>
                 </Box>
 
                 <Stack justifyContent="space-between" alignItems="center" sx={{ paddingLeft: "30px" }}>
-                  {!contactDetails[index].hasOwnProperty("contact_ssn") || contactDetails[index].contact_ssn === "" ? (
+                  {contactDetails && (!contactDetails[index].hasOwnProperty("contact_ssn") || contactDetails[index].contact_ssn === "") ? (
                     <Typography
                       sx={{
                         fontSize: "13px",
@@ -388,7 +496,7 @@ const OwnerContactDetails = (props) => {
                         fontWeight: theme.typography.primary.fontWeight,
                       }}
                     >
-                      {contactDetails[index].hasOwnProperty("contact_ssn") && maskSSN(contactDetails[index].contact_ssn)}
+                      {contactDetails && contactDetails[index].hasOwnProperty("contact_ssn") && maskSSN(contactDetails[index].contact_ssn)}
                     </Typography>
                   )}
                   <Typography
@@ -418,13 +526,13 @@ const OwnerContactDetails = (props) => {
                           fontSize: "12px",
                         }}
                       >
-                        {contactDetails[index].contact_venmo ? contactDetails[index].contact_venmo : "<VENMO>"}
+                        {(contactDetails && contactDetails[index].contact_venmo) ? contactDetails[index].contact_venmo : "<VENMO>"}
                       </Typography>
                     </Stack>
                   </Stack>
                 </Box>
                 <Stack justifyContent="space-between" alignItems="center" sx={{ paddingLeft: "15px" }}>
-                  {contactDetails[index].contact_ein_number === "" ? (
+                  {(contactDetails && contactDetails[index].contact_ein_number === "") ? (
                     <Typography
                       sx={{
                         fontSize: "13px",
@@ -440,7 +548,7 @@ const OwnerContactDetails = (props) => {
                         fontWeight: theme.typography.primary.fontWeight,
                       }}
                     >
-                      {maskEIN(contactDetails[index].contact_ein_number)}
+                      {contactDetails && maskEIN(contactDetails[index].contact_ein_number)}
                     </Typography>
                   )}
                   <Typography

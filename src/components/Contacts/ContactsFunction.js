@@ -6,7 +6,7 @@ const contactsContainer = [
 ];
 const getStatusColor = (tab) => {
     for (let i = 0; i < contactsContainer.length; i++) {
-        if (contactsContainer[i].tab.toUpperCase() === tab.toUpperCase()) {
+        if (contactsContainer[i].tab?.toUpperCase() === tab?.toUpperCase()) {
             return contactsContainer[i].color;
         }
     }

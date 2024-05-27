@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
   Button,
@@ -9,12 +9,16 @@ import {
   List,
   ListItem,
   Typography,
+  Paper,
 } from "@mui/material";
+import theme from "../../../theme/theme";
+import { useNavigate } from 'react-router-dom';
 
 export default function HappinessMatrixWidget(props) {
+  const navigate = useNavigate();
   const chartWidth = 400;
   const chartHeight = 350;
-  const chartMargin = { top: 20, right: 35, bottom:-10, left: -40 };
+  const chartMargin = { top: 20, right: 30, bottom:-10, left: -30 };
   const { data, dataSetter } = props;
   // console.log("HappinessMatrix2 - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
@@ -22,7 +26,7 @@ export default function HappinessMatrixWidget(props) {
   const [ pointsToPlot, setPointsToPlot ] = useState([]);
 
   useEffect(() => {
-    // console.log("pointsToPlot - ", pointsToPlot);
+    console.log("pointsToPlot - ", pointsToPlot);
   }, [pointsToPlot]);
 
   // Function to check if two points overlap
@@ -116,150 +120,171 @@ export default function HappinessMatrixWidget(props) {
   };
 
   return (
-    <Grid container style={{padding: '15px', }}>
-      <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
-                Happiness Matrix
-            </Typography>
-        </Grid>
-      <Grid item xs={12}>
-        <ScatterChart
-          width={chartWidth}
-          height={chartHeight}
-          margin={chartMargin}
-          onClick={() => setTooltipVisible(!tooltipVisible)}
-        >
-          {/* <CartesianGrid /> */}
+    <ThemeProvider theme={theme}>        
+      <Paper
+        elevation={0}
+        style={{
+            // margin: '50p', // Add margin here
+            borderRadius: '10px',
+            backgroundColor: theme.palette.primary.main,
+            height: 400,
+            [theme.breakpoints.down('sm')]: {
+                width: '80%',
+            },
+            [theme.breakpoints.up('sm')]: {
+                width: '50%',
+            },
+        }}
+      >
+        <Grid container style={{padding: '15px', }}>
+          <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
+                    Happiness Matrix
+                </Typography>
+            </Grid>
+          <Grid item xs={12}>
+            <ResponsiveContainer width="100%" height={350}>
+              <ScatterChart
+                // width={chartWidth}
+                // height={chartHeight}          
+                margin={chartMargin}
+                onClick={() => setTooltipVisible(!tooltipVisible)}
+              >
+                {/* <CartesianGrid /> */}
 
-          <YAxis
-              type="number"
-              dataKey="y"
-              name="Delta Cashflow"
-              axisLine={false}
-              tickLine={false}
-              style={axisLabelStyle}
-              // tick={{ transform: 'translate(-10, 7.5)' }}
-              // label={{
-              //     value: 'Delta Cashflow',
-              //     angle: -90,
-              //     position: 'insideLeft',
-              //     dx: -20,
-              //     dy: 40,
-              //     style: axisLabelStyle,
-              //     fill: '#160449',
-              // }}
-              domain={[-110, 10]}
-              // ticks={[-100, -50, 0]}
-              tick={false}
-              
-          />
+                <YAxis
+                    type="number"
+                    dataKey="y"
+                    name="Delta Cashflow"
+                    axisLine={false}
+                    tickLine={false}
+                    style={axisLabelStyle}
+                    // tick={{ transform: 'translate(-10, 7.5)' }}
+                    // label={{
+                    //     value: 'Delta Cashflow',
+                    //     angle: -90,
+                    //     position: 'insideLeft',
+                    //     dx: -20,
+                    //     dy: 40,
+                    //     style: axisLabelStyle,
+                    //     fill: '#160449',
+                    // }}
+                    domain={[-110, 10]}
+                    // ticks={[-100, -50, 0]}
+                    tick={false}
+                    
+                />
 
-          <XAxis
-              type="number"
-              dataKey="x"
-              name="Vacancies"
-              axisLine={false}
-              tickLine={false}
-              style={axisLabelStyle}
-              // tick={{ transform: 'translate(0, 10)' }}
-              // label={{
-              //     value: 'Vacancies',
-              //     position: 'insideBottom',
-              //     dy: 40,
-              //     dx: 0,
-              //     style: axisLabelStyle,
-              //     fill: '#160449',
-              // }}
-              domain={[-110, 10]}
-              // ticks={[-100, -50, 0]} // Add this line
-              tick={false}
-          />
+                <XAxis
+                    type="number"
+                    dataKey="x"
+                    name="Vacancies"
+                    axisLine={false}
+                    tickLine={false}
+                    style={axisLabelStyle}
+                    // tick={{ transform: 'translate(0, 10)' }}
+                    // label={{
+                    //     value: 'Vacancies',
+                    //     position: 'insideBottom',
+                    //     dy: 40,
+                    //     dx: 0,
+                    //     style: axisLabelStyle,
+                    //     fill: '#160449',
+                    // }}
+                    domain={[-110, 10]}
+                    // ticks={[-100, -50, 0]} // Add this line
+                    tick={false}
+                />
 
-          <Tooltip
-            cursor={{ strokeDasharray: '3 3' }}
-            content={({ payload }) => {
-              if (payload && payload.length && tooltipVisible) {
-                const dataPoint = payload[0].payload;
-                return (
-                  <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
-                    <p><strong>Name:</strong> {dataPoint.name}</p>
-                    <p><strong>Delta Cashflow:</strong> {dataPoint.delta_cashflow}</p>
-                    <p><strong>Vacancies:</strong> {dataPoint.vacancy_num}</p>
-                  </div>
-                );
-              }
-              return null;
-            }}
-          />
+                <Tooltip
+                  cursor={{ strokeDasharray: '3 3' }}
+                  content={({ payload }) => {
+                    if (payload && payload.length && tooltipVisible) {
+                      const dataPoint = payload[0].payload;
+                      return (
+                        <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
+                          <p><strong>Name:</strong> {dataPoint.name}</p>
+                          <p><strong>Delta Cashflow:</strong> {dataPoint.delta_cashflow}</p>
+                          <p><strong>Vacancies:</strong> {dataPoint.vacancy_num}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
 
-          {/* <Scatter
-            name="A school"
-            data={shifted_data}
-            shape={(props) => (
-              <CustomImage
-                {...props}
-                onClick={() => handlePointClick(props.payload)}
-                isClicked={props.payload.index === clickedIndex}
-                isVisible={!hiddenPoints.includes(props.payload.index)}
-              />
-            )}
-          >
-            {shifted_data.map((point, index) => (
-              !hiddenPoints.includes(index) && (
-                <Scatter
-                  key={`hidden-${index}`}
-                  data={[point]}
+                {/* <Scatter
+                  name="A school"
+                  data={shifted_data}
                   shape={(props) => (
                     <CustomImage
                       {...props}
-                      isClicked={false}
-                      isVisible={false}
+                      onClick={() => handlePointClick(props.payload)}
+                      isClicked={props.payload.index === clickedIndex}
+                      isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
                   )}
+                >
+                  {shifted_data.map((point, index) => (
+                    !hiddenPoints.includes(index) && (
+                      <Scatter
+                        key={`hidden-${index}`}
+                        data={[point]}
+                        shape={(props) => (
+                          <CustomImage
+                            {...props}
+                            isClicked={false}
+                            isVisible={false}
+                          />
+                        )}
+                      />
+                    )
+                  ))}
+                </Scatter> */}
+
+                <Scatter 
+                    name="happiness_matrix" 
+                    data={pointsToPlot} 
+                    fill="#8884d8" 
+                    shape={(props) => (
+                        <CustomImage
+                          {...props}
+                        //   onClick={() => handlePointClick(props.payload)}                          
+                          isClicked={props.payload.index === clickedIndex}
+                          isVisible={!hiddenPoints.includes(props.payload.index)}
+                        />
+                    )}
                 />
-              )
-            ))}
-          </Scatter> */}
 
-          <Scatter 
-              name="happiness_matrix" 
-              data={pointsToPlot} 
-              fill="#8884d8" 
-              shape={(props) => (
-                  <CustomImage
-                    {...props}
-                  //   onClick={() => handlePointClick(props.payload)}
-                    isClicked={props.payload.index === clickedIndex}
-                    isVisible={!hiddenPoints.includes(props.payload.index)}
-                  />
-              )}
-          />
+                <ReferenceLine
+                  y={-50}
+                  stroke="#000000"
+                  strokeDasharray="3 3"
+                />
 
-          <ReferenceLine
-            y={-50}
-            stroke="#000000"
-            strokeDasharray="3 3"
-          />
+                <ReferenceLine
+                  x={-50}
+                  stroke="#000000"
+                  strokeDasharray="3 3"
+                />
 
-          <ReferenceLine
-            x={-50}
-            stroke="#000000"
-            strokeDasharray="3 3"
-          />
-
-          <ReferenceLine
-            segment={[{ x: -110, y: -110 }, { x: 110, y: 110 }]}
-            stroke="#000000"
-            strokeWidth={1}
-            ifOverflow="hidden"
-          />
-        </ScatterChart>
-      </Grid>
-    </Grid>
+                <ReferenceLine
+                  segment={[{ x: -110, y: -110 }, { x: 110, y: 110 }]}
+                  stroke="#000000"
+                  strokeWidth={1}
+                  ifOverflow="hidden"
+                />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </Grid>
+        </Grid>
+      </Paper>
+    </ThemeProvider>        
   );
 }
 
 const CustomImage = (props) => {
+  const navigate = useNavigate();
   const { cx, cy, payload, onClick, isClicked, isVisible, index } = props;
 
 //   console.log("CustomImage - props - ", props);
@@ -270,8 +295,20 @@ const CustomImage = (props) => {
   const diameter = 30;
   const outlineWidth = isClicked ? 4 : 2;
 
+  const handleClick = (payload) => {    
+    console.log("CustomImage - handleClick - payload - ", payload);
+    navigate(`/ownerContactDetails`, {
+      state: {
+        ownerUID: payload.owner_uid,
+        navigatingFrom: "HappinessMatrixWidget",
+        cashflowData: payload,
+      },
+    });
+  }
+
   return (
-    <g onClick={() => onClick(payload.name)}>
+    // <g onClick={() => onClick(payload.name)}>
+    <g onClick={() => handleClick(payload)}>
       <foreignObject x={cx - diameter / 2} y={cy - diameter / 2} width={diameter} height={diameter}>
         {![null, undefined, ''].includes(payload?.photo) ? (
           <img

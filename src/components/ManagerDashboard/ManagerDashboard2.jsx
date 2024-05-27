@@ -29,16 +29,13 @@ import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/Happi
 import { Paper } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
-// import { Container } from "react-bootstrap";
 
-// console.log("In Manager Dashboard");
-// console.log(window.getComputedStyle(document.body).fontFamily);
 
 const useStyles = makeStyles({
   button: {
     width: "100%",
     fontSize: "13px",
-    marginBottom: "10px", // Adjust the spacing between buttons as needed
+    marginBottom: "10px",
   },
   container: {
     width: "90%",
@@ -49,7 +46,7 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   row: {
-    marginBottom: "20px", // Adjust the spacing between rows
+    marginBottom: "20px",
   },
 });
 
@@ -69,8 +66,7 @@ function ManagerDashboard2() {
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
-  const [revenueData, setRevenueData] = useState([]);
-  // console.log("In Manager Dashboard Step 1");
+  const [revenueData, setRevenueData] = useState([]);  
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -88,8 +84,6 @@ function ManagerDashboard2() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
-
-  // console.log("In Manager Dashboard Step 2");
   let [matrixData, setMatrixData] = useState([]);
   let [p_owner, p_owner_setter] = useState()
 
@@ -101,6 +95,8 @@ function ManagerDashboard2() {
       const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_id === vacancyItem.owner_uid);
       // console.log("In Happiness Matrix before cashflow");
       const fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
+
+      const ownerUID = deltaCashflowItem.owner_id;
 
       // console.log("In Happiness Matrix before quarter");
       let quarter;
@@ -134,6 +130,7 @@ function ManagerDashboard2() {
       }
 
       return {
+        owner_uid: ownerUID,
         name: fullName.trim(),
         photo: deltaCashflowItem.owner_photo_url,
         vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
@@ -285,37 +282,13 @@ return (
                 </Grid>
                 <Grid item xs={12} md={9}>
                     <RevenueWidget revenueData={revenueData}/>
-
                     <LeaseWidget2 leaseData={leaseStatus} />                    
-
                     <Grid container item xs={12} spacing={6}>
-                        <Grid item xs={12} md={5.25}>
-                            {/* <OwnerList matrixData={matrixData} /> */}
-                            {/* HappinessMatrixWidget */}
-                            <Paper
-                                style={{
-                                    // margin: '50p', // Add margin here
-                                    borderRadius: '10px',
-                                    backgroundColor: theme.palette.primary.main,
-                                    height: 400,
-                                    [theme.breakpoints.down('sm')]: {
-                                        width: '80%',
-                                    },
-                                    [theme.breakpoints.up('sm')]: {
-                                        width: '50%',
-                                    },
-                                }}
-                            >
-                                <HappinessMatrixWidget data={matrixData} />
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={0} md={0.25}>
-
-                        </Grid>
-
-
-                        <Grid item xs={12} md={6.5} style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                            <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
+                        <Grid item xs={12} md={6}>                                                        
+                          <HappinessMatrixWidget data={matrixData} />                            
+                        </Grid>                        
+                        <Grid item xs={12} md={6} style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                          <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
                         </Grid>
                     </Grid>
                 </Grid>                
@@ -324,106 +297,124 @@ return (
     </ThemeProvider>
   );
 }
-// console.log("In Manager Dashboard Step 5");
 
-const ShimmerUI = () => (
-  <ThemeProvider theme={theme}>
-    <Container maxWidth="lg" sx={{ paddingTop: '30px', paddingBottom: '50px', }}>
-      <Grid container spacing={6}>
-        <Grid item xs={12} md={3}>
-            <Paper
-                style={{
-                  borderRadius: '10px',
-                  backgroundColor: theme.palette.primary.main,
-                  height: 780,
-                  [theme.breakpoints.down('sm')]: {
-                    width: '80%',
-                  },
-                  [theme.breakpoints.up('sm')]: {
-                    width: '50%',
-                  },
-                }}
-              >                
-              </Paper>
-        </Grid>
-        <Grid item xs={12} md={9} rowSpacing={6}>
-          {/* <RevenueWidget revenueData={null} shimmer /> */}
-          <Paper
-                style={{
-                    borderRadius: '10px',                    
-                    backgroundColor: theme.palette.primary.main,
-                    height: 162,
-                    [theme.breakpoints.down('sm')]: {
-                    width: '80%',
-                    },
-                    [theme.breakpoints.up('sm')]: {
-                    width: '50%',
-                    },
-                }}
-                >
-                {/* <HappinessMatrixWidget data={null} shimmer /> */}
-            </Paper>
-
-            <Paper
-                style={{
-                    marginTop: '10px',
+const ShimmerUI = () => {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
+  return (
+    <ThemeProvider theme={theme}>      
+      <Container maxWidth="lg" sx={{ paddingTop: '30px', paddingBottom: '50px', }}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                height: "48px",
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: isMobile ? "center" : "left",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                alignText: "center",
+                alignContent: "center",
+              }}
+            >
+              
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+              <Paper
+                  style={{
                     borderRadius: '10px',
                     backgroundColor: theme.palette.primary.main,
-                    height: 198,
+                    height: 780,
                     [theme.breakpoints.down('sm')]: {
-                    width: '80%',
+                      width: '80%',
                     },
                     [theme.breakpoints.up('sm')]: {
-                    width: '50%',
+                      width: '50%',
                     },
-                }}
-                >
-                {/* <HappinessMatrixWidget data={null} shimmer /> */}
-            </Paper>
-
-          <Grid container item xs={12} spacing={6}>
-            <Grid item xs={12} md={5.25}>
-              <Paper
-                style={{
-                  marginTop: '10px',
-                  borderRadius: '10px',
-                  backgroundColor: theme.palette.primary.main,
-                  height: 400,
-                  [theme.breakpoints.down('sm')]: {
-                    width: '80%',
-                  },
-                  [theme.breakpoints.up('sm')]: {
-                    width: '50%',
-                  },
-                }}
-              >
-                {/* <HappinessMatrixWidget data={null} shimmer /> */}
+                  }}
+                >                
+                </Paper>
+          </Grid>
+          <Grid item xs={12} md={9} rowSpacing={6}>
+            {/* <RevenueWidget revenueData={null} shimmer /> */}
+            <Paper
+                  style={{
+                      borderRadius: '10px',                    
+                      backgroundColor: theme.palette.primary.main,
+                      height: 162,
+                      [theme.breakpoints.down('sm')]: {
+                      width: '80%',
+                      },
+                      [theme.breakpoints.up('sm')]: {
+                      width: '50%',
+                      },
+                  }}
+                  >
+                  {/* <HappinessMatrixWidget data={null} shimmer /> */}
               </Paper>
-            </Grid>
-            <Grid md={0.25}></Grid>
-            <Grid item xs={12} md={6.5} >
+
+              <Paper
+                  style={{
+                      marginTop: '10px',
+                      borderRadius: '10px',
+                      backgroundColor: theme.palette.primary.main,
+                      height: 198,
+                      [theme.breakpoints.down('sm')]: {
+                      width: '80%',
+                      },
+                      [theme.breakpoints.up('sm')]: {
+                      width: '50%',
+                      },
+                  }}
+                  >
+                  {/* <HappinessMatrixWidget data={null} shimmer /> */}
+              </Paper>
+
+            <Grid container item xs={12} spacing={6}>
+              <Grid item xs={12} md={6}>
                 <Paper
-                    style={{
+                  style={{
                     marginTop: '10px',
                     borderRadius: '10px',
                     backgroundColor: theme.palette.primary.main,
                     height: 400,
                     [theme.breakpoints.down('sm')]: {
-                        width: '80%',
+                      width: '80%',
                     },
                     [theme.breakpoints.up('sm')]: {
-                        width: '50%',
+                      width: '50%',
                     },
-                    }}
+                  }}
                 >
-                    {/* <HappinessMatrixWidget data={null} shimmer /> */}
+                  {/* <HappinessMatrixWidget data={null} shimmer /> */}
                 </Paper>
+              </Grid>            
+              <Grid item xs={12} md={6} >
+                  <Paper
+                      style={{
+                      marginTop: '10px',
+                      borderRadius: '10px',
+                      backgroundColor: theme.palette.primary.main,
+                      height: 400,
+                      [theme.breakpoints.down('sm')]: {
+                          width: '80%',
+                      },
+                      [theme.breakpoints.up('sm')]: {
+                          width: '50%',
+                      },
+                      }}
+                  >
+                      {/* <HappinessMatrixWidget data={null} shimmer /> */}
+                  </Paper>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Container>
-  </ThemeProvider>
-);
+      </Container>
+    </ThemeProvider>
+  );
+};
 
 export default ManagerDashboard2;
