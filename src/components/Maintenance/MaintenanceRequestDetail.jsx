@@ -156,8 +156,12 @@ export function MaintenanceRequestDetail() {
   }, [maintenanceRequestIndex, status]);
 
   useEffect(() => {
-    console.log("--DEBUG-- in useeffect for quotes", maintenanceRequestIndex, maintenanceItemsForStatus, maintenanceQuotes);
+    console.log("--DEBUG-- in useEffect for quotes");
+    console.log("--DEBUG-- MaintenanceRequestIndex", maintenanceRequestIndex);
+    console.log("--DEBUG-- maintenanceItemsForStatus", maintenanceItemsForStatus);
+    console.log("--DEBUG-- maintenanceQuotes", maintenanceQuotes);
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
+    console.log("--DEBUG-- quotesFilteredById", quotesFilteredById);
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
         return -1;
@@ -167,17 +171,19 @@ export function MaintenanceRequestDetail() {
         return 0;
       }
     });
-    // deduplicate these if they come from the same buiness id
+    // deduplicate these if they come from the same business id
 
     const uniqueQuotes = [];
     const uniqueKeys = new Set();
 
     quotesFilteredById.forEach((quote, index) => {
       let key = quote.quote_business_id + quote.maintenance_quote_uid + quote.quote_maintenance_request_id;
+      // console.log("Generated Key: ", key);
       if (!uniqueKeys.has(key)) {
         uniqueKeys.add(key);
         uniqueQuotes.push(quote);
       }
+      // console.log("Unique Quotes: ", uniqueQuotes);
     });
 
     // if quote_business_id, maintenance_quote_uid, and quote_maintenance_request_id
@@ -294,7 +300,7 @@ export function MaintenanceRequestDetail() {
             </Box>
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Maintenance
+                Maintenance 1
               </Typography>
             </Box>
             <Box position="absolute" right={30}>
