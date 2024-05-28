@@ -210,11 +210,12 @@ export default function QuoteRequestForm(){
         const getMaintenanceWorkers = async (requestedQuotes) => {
             setShowSpinner(true);
             // const response = await fetch(`${APIConfig.baseURL.dev}/contactsMaintenance`)
-            const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`)
+            // const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/contacts/ALL`)
             const data = await response.json()
             // const workers = data.Maintenance_Contacts.result
             
-            const workers = data.management_contacts.maintenance
+            const workers = data.maintenance_businesses.result;
             
             console.log("workers",  workers)
             //workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
@@ -223,8 +224,11 @@ export default function QuoteRequestForm(){
             console.log("requestedBusinessUids", requestedBusinessUids)
 
             // Filter out workers whose business_uid is in requestedBusinessUids
-            const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
-            setContactList(filteredWorkers)
+
+            // const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
+            // setContactList(filteredWorkers)
+
+            setContactList(workers)
             setShowSpinner(false);
         }
 

@@ -90,61 +90,75 @@ function ManagerDashboard2() {
   const setting_matrix_data = (happiness_response) => {
     // console.log("In Setting Happiness Matrix", happiness_response);
     // Transforming the data
+    console.log("setting_matrix_data - happiness_response - ", happiness_response);
     const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
-      // console.log("In Happiness Matrix before vacancy");
-      const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_id === vacancyItem.owner_uid);
-      // console.log("In Happiness Matrix before cashflow");
-      const fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
+        // console.log("In Happiness Matrix before vacancy");
+        console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
+        const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
+        console.log("setting_matrix_data - deltaCashflowItem - ", deltaCashflowItem);
 
-      const ownerUID = deltaCashflowItem.owner_id;
+        let fullName = '';
+        let ownerUID = '';
+        let percent_delta_cashflow = 0;
+        let owner_photo_url = '';
+        let cashflow = 0;
+        let expected_cashflow = 0;
+        let actual_cashflow = 0;
 
-      // console.log("In Happiness Matrix before quarter");
-      let quarter;
-      if (deltaCashflowItem.delta_cashflow_perc < -50 && vacancyItem.vacancy_perc < -50) {
-        quarter = 1;
-      } else if (deltaCashflowItem.delta_cashflow_perc > -50 && vacancyItem.vacancy_perc < -50) {
-        quarter = 2;
-      } else if (deltaCashflowItem.delta_cashflow_perc < -50 && vacancyItem.vacancy_perc > -50) {
-        quarter = 3;
-      } else if (deltaCashflowItem.delta_cashflow_perc > -50 && vacancyItem.vacancy_perc > -50) {
-        quarter = 4;
-      }
+        if (deltaCashflowItem) {
+            fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
+            ownerUID = deltaCashflowItem.owner_uid;
+            percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
+            owner_photo_url = deltaCashflowItem.owner_photo_url;
+            cashflow = deltaCashflowItem.cashflow;
+            expected_cashflow = deltaCashflowItem.expected_cashflow;
+            actual_cashflow = deltaCashflowItem.actual_cashflow;
+        }
 
-      // console.log("In Happiness Matrix before boarder");
-      let borderColor;
-      switch (quarter) {
-        case 1:
-          borderColor = "#A52A2A"; // Red color
-          break;
-        case 2:
-          borderColor = "#FF8A00"; // Orange color
-          break;
-        case 3:
-          borderColor = "#FFC85C"; // Yellow color
-          break;
-        case 4:
-          borderColor = "#3D5CAC"; // Blue color
-          break;
-        default:
-          borderColor = "#000000"; // Black color
-      }
+        let quarter;
+        if (percent_delta_cashflow < -0.5 && vacancyItem.vacancy_perc < -50) {
+            quarter = 1;
+        } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc < -50) {
+            quarter = 2;
+        } else if (percent_delta_cashflow < -50 && vacancyItem.vacancy_perc > -50) {
+            quarter = 3;
+        } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc > -50) {
+            quarter = 4;
+        }
 
-      return {
-        owner_uid: ownerUID,
-        name: fullName.trim(),
-        photo: deltaCashflowItem.owner_photo_url,
-        vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
-        delta_cashflow_perc: deltaCashflowItem.delta_cashflow_perc || 0,
-        vacancy_num: vacancyItem.vacancy_num || 0,
-        cashflow: deltaCashflowItem.cashflow || 0,
-        expected_cashflow: deltaCashflowItem.expected_cashflow || 0,
-        delta_cashflow: deltaCashflowItem.cashflow - deltaCashflowItem.expected_cashflow,
-        index: i,
-        color: borderColor,
-        total_properties: vacancyItem.total_properties || 0,
-      };
+        let borderColor;
+        switch (quarter) {
+            case 1:
+                borderColor = "#A52A2A"; // Red color
+                break;
+            case 2:
+                borderColor = "#FF8A00"; // Orange color
+                break;
+            case 3:
+                borderColor = "#FFC85C"; // Yellow color
+                break;
+            case 4:
+                borderColor = "#3D5CAC"; // Blue color
+                break;
+            default:
+                borderColor = "#000000"; // Black color
+        }
+
+        return {
+            owner_uid: ownerUID,
+            name: fullName.trim(),
+            photo: owner_photo_url,
+            vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
+            delta_cashflow_perc: percent_delta_cashflow || 0,
+            vacancy_num: vacancyItem.vacancy_num || 0,
+            cashflow: cashflow || 0,
+            expected_cashflow: expected_cashflow || 0,
+            delta_cashflow: actual_cashflow - expected_cashflow,
+            index: i,
+            color: borderColor,
+            total_properties: vacancyItem.total_properties || 0,
+        };
     });
-
     // Sorting transformedData based on the color
     const sortedData = transformedData.sort((a, b) => {
       const colorOrder = {
@@ -158,7 +172,7 @@ function ManagerDashboard2() {
     });
 
     setMatrixData(sortedData);
-  };
+}
 
   // console.log("In Manager Dashboard Step 3");
 

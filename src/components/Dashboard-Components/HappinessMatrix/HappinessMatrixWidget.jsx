@@ -20,7 +20,7 @@ export default function HappinessMatrixWidget(props) {
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom:-10, left: -30 };
   const { data, dataSetter } = props;
-  // console.log("HappinessMatrix2 - data -", data);
+  console.log("HappinessMatrixWidget - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
 
   const [ pointsToPlot, setPointsToPlot ] = useState([]);
@@ -65,7 +65,7 @@ export default function HappinessMatrixWidget(props) {
 
         let pointObject = {
             x: x,
-            y: y,
+            y: -y,
             ...owner,
         }
         // console.log("getPoints - owner - ", owner.name)
@@ -159,7 +159,7 @@ export default function HappinessMatrixWidget(props) {
                     axisLine={false}
                     tickLine={false}
                     style={axisLabelStyle}
-                    // tick={{ transform: 'translate(-10, 7.5)' }}
+                    tick={{ transform: 'translate(5, 0)' }}
                     // label={{
                     //     value: 'Delta Cashflow',
                     //     angle: -90,
@@ -169,9 +169,9 @@ export default function HappinessMatrixWidget(props) {
                     //     style: axisLabelStyle,
                     //     fill: '#160449',
                     // }}
-                    domain={[-110, 10]}
-                    // ticks={[-100, -50, 0]}
-                    tick={false}
+                    domain={[-1.1, 0.1]}
+                    ticks={[-1.1, -0.5, 0.1]}
+                    // tick={false}
                     
                 />
 
@@ -182,7 +182,7 @@ export default function HappinessMatrixWidget(props) {
                     axisLine={false}
                     tickLine={false}
                     style={axisLabelStyle}
-                    // tick={{ transform: 'translate(0, 10)' }}
+                    tick={{ transform: 'translate(0, 0)' }}
                     // label={{
                     //     value: 'Vacancies',
                     //     position: 'insideBottom',
@@ -191,9 +191,9 @@ export default function HappinessMatrixWidget(props) {
                     //     style: axisLabelStyle,
                     //     fill: '#160449',
                     // }}
-                    domain={[-110, 10]}
-                    // ticks={[-100, -50, 0]} // Add this line
-                    tick={false}
+                    domain={[-100, 0]}
+                    ticks={[-100, -50, 0]} // Add this line
+                    // tick={false}
                 />
 
                 <Tooltip
@@ -206,6 +206,8 @@ export default function HappinessMatrixWidget(props) {
                           <p><strong>Name:</strong> {dataPoint.name}</p>
                           <p><strong>Delta Cashflow:</strong> {dataPoint.delta_cashflow}</p>
                           <p><strong>Vacancies:</strong> {dataPoint.vacancy_num}</p>
+                          <p><strong>x - vacancy_perc:</strong> {dataPoint.x}</p>
+                          <p><strong>y - delta_cashflow_perc:</strong> {dataPoint.y}</p>
                         </div>
                       );
                     }
@@ -257,7 +259,7 @@ export default function HappinessMatrixWidget(props) {
                 />
 
                 <ReferenceLine
-                  y={-50}
+                  y={-0.5}
                   stroke="#000000"
                   strokeDasharray="3 3"
                 />
@@ -269,7 +271,7 @@ export default function HappinessMatrixWidget(props) {
                 />
 
                 <ReferenceLine
-                  segment={[{ x: -110, y: -110 }, { x: 110, y: 110 }]}
+                  segment={[{ x: -100, y: -1.1 }, { x: 0, y: 0.1 }]}
                   stroke="#000000"
                   strokeWidth={1}
                   ifOverflow="hidden"

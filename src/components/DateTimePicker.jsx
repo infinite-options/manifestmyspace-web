@@ -37,12 +37,17 @@ function DateTimePickerModal(props) {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
-    if (availabilityDate && availabilityTime){
-        if (props.maintenanceItem.maintenance_scheduled_date && props.maintenanceItem.maintenance_scheduled_time){
-            setAvailabilityDate(props.maintenanceItem.maintenance_scheduled_date)
-            setAvailabilityTime(props.maintenanceItem.maintenance_scheduled_time)
-        }
-    }
+    // if (availabilityDate && availabilityTime){
+    //     if (props.maintenanceItem.maintenance_scheduled_date && props.maintenanceItem.maintenance_scheduled_time){
+    //         setAvailabilityDate(props.maintenanceItem.maintenance_scheduled_date)
+    //         setAvailabilityTime(props.maintenanceItem.maintenance_scheduled_time)
+    //     }        
+    // }
+    // console.log("props.maintenanceItem - ", props.maintenanceItem);
+    const scheduledDate = props.maintenanceItem.maintenance_scheduled_date;
+    const scheduledTime = props.maintenanceItem.maintenance_scheduled_time;
+    setAvailabilityDate((scheduledDate !== "" && scheduledDate !== null && scheduledDate !== undefined && scheduledDate !== "null")  ? props.maintenanceItem.maintenance_scheduled_date : props.maintenanceItem.quote_earliest_available_date);
+    setAvailabilityTime((scheduledTime !== "" && scheduledTime !== null && scheduledTime !== undefined && scheduledTime !== "null") ? props.maintenanceItem.maintenance_scheduled_time : props.maintenanceItem.quote_earliest_available_time);
     // setAvailabilityDate(props.maintenanceItem.maintenance_scheduled_date ? props.maintenanceItem.maintenance_scheduled_date : props.date)
     // setAvailabilityTime(props.maintenanceItem.maintenance_scheduled_time ? props.maintenanceItem.maintenance_scheduled_time : props.time)
   }, [])
