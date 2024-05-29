@@ -1,45 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import { Chart } from "react-google-charts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, List, ListItem, Typography, Button, Grid, Menu, MenuItem, } from "@mui/material";
+import { Box, List, ListItem, Typography, Button, Grid, Menu, MenuItem } from "@mui/material";
 import { useUser } from "../../../contexts/UserContext.jsx";
 import { makeStyles } from "@material-ui/core";
 // import home_icon from "../../../images/home_icon.svg";
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
-import APIConfig from "../../../utils/APIConfig";
+import APIConfig from "../../../utils/APIConfig.jsx";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import theme from "../../../theme/theme";
-
+import theme from "../../../theme/theme.js";
 
 const useStyles = makeStyles({
-    button: {
-      width: "100%",
-      fontSize: "13px",
-      marginBottom: "10px", // Adjust the spacing between buttons as needed
-    },
-    container: {
-      width: "90%",
-      margin: "0 auto",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    row: {
-      marginBottom: "20px", // Adjust the spacing between rows
-    },
-  });
+  button: {
+    width: "100%",
+    fontSize: "13px",
+    marginBottom: "10px", // Adjust the spacing between buttons as needed
+  },
+  container: {
+    width: "90%",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  row: {
+    marginBottom: "20px", // Adjust the spacing between rows
+  },
+});
 
-export default function PropertyRentWidget2(props) {    
+export default function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId } = useUser();
   const classes = useStyles();
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
-  const [ propertyList, setPropertyList ] = useState([])
+  const [propertyList, setPropertyList] = useState([]);
 
   useEffect(() => {
     console.log("PropertyRentWidget2 - propertyList - ", propertyList);
@@ -111,29 +110,24 @@ export default function PropertyRentWidget2(props) {
 
   const handleSelectPropertyClick = async (event) => {
     setAnchorEl(event.currentTarget);
-    if(propertyList?.length > 0){
-        return
+    if (propertyList?.length > 0) {
+      return;
     }
     // const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/600-000003`);
     const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
-        try {
-        
-            const propertyData = await propertiesResponse.json();
-            // console.log("PropertyRentWidget2 - propertyData - ", propertyData);
-            // setPropertiesList(propertiesResponseJSON.Property.result);
-                        
-            const propertyList = getPropertyList(propertyData);
-            // console.log("In Property List >> Property List: ", propertyList);
-            // console.log("Testing Property Data", propertyData.Property.result);
-            
-            setPropertyList([...propertyList]);
-            
-          
-        } catch (error) {
-          console.error(error);
-        }    
+    try {
+      const propertyData = await propertiesResponse.json();
+      // console.log("PropertyRentWidget2 - propertyData - ", propertyData);
+      // setPropertiesList(propertiesResponseJSON.Property.result);
 
-    
+      const propertyList = getPropertyList(propertyData);
+      // console.log("In Property List >> Property List: ", propertyList);
+      // console.log("Testing Property Data", propertyData.Property.result);
+
+      setPropertyList([...propertyList]);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleClose = () => {
@@ -146,14 +140,14 @@ export default function PropertyRentWidget2(props) {
     const maintenance = data["MaintenanceRequests"].result;
     //   const newContracts = data["NewPMRequests"].result;
     //   console.log(maintenance);
-  
+
     const appsMap = new Map();
     applications.forEach((a) => {
       const appsByProperty = appsMap.get(a.property_uid) || [];
       appsByProperty.push(a);
       appsMap.set(a.property_uid, appsByProperty);
     });
-  
+
     const maintMap = new Map();
     maintenance.forEach((m) => {
       // console.log("before", m);
@@ -162,7 +156,7 @@ export default function PropertyRentWidget2(props) {
       // console.log("after", maintByProperty);
       maintMap.set(m.maintenance_property_id, maintByProperty);
     });
-  
+
     //   const contractsMap = new Map();
     //   newContracts.forEach((c) => {
     //     // console.log("before", m);
@@ -171,7 +165,7 @@ export default function PropertyRentWidget2(props) {
     //     // console.log("after", maintByProperty);
     //     contractsMap.set(c.property_id, contractsByProperty);
     //   });
-  
+
     //   console.log(maintMap);
     return propertyList.map((p) => {
       p.applications = appsMap.get(p.property_uid) || [];
@@ -196,105 +190,103 @@ export default function PropertyRentWidget2(props) {
         height: "100%",
         borderRadius: "10px",
         cursor: "pointer",
-        position: "relative",        
+        position: "relative",
       }}
     >
-      <Typography className="mt-widget-title" sx={{fontSize: '25px', fontWeight: 600, paddingTop: '15px'         }}> Property Rent</Typography>
+      <Typography className="mt-widget-title" sx={{ fontSize: "25px", fontWeight: 600, paddingTop: "15px" }}>
+        {" "}
+        Property Rent
+      </Typography>
       <Grid container>
         {/* <Grid item xs={2} sm={0}></Grid> */}
         <Grid item xs={6}>
-            <Button            
-                variant="outlined"
-                id="revenue"
-                className={classes.button}
-                style={{
-                    // height: "100%",
-                    // width: '80%',
-                    // backgroundColor: '#160449',
-                    color: "#3D5CAC",
-                    fontSize: "13px",
-                    marginBottom: '10px',
-                    borderRadius: '5px',
-                }}
-                onClick={() => {            
-                    navigate(propertyRoutingBasedOnSelectedRole());
-                }}
-            >                                    
-            <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: '4px' }}/>
+          <Button
+            variant="outlined"
+            id="revenue"
+            className={classes.button}
+            style={{
+              // height: "100%",
+              // width: '80%',
+              // backgroundColor: '#160449',
+              color: "#3D5CAC",
+              fontSize: "13px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+            }}
+            onClick={() => {
+              navigate(propertyRoutingBasedOnSelectedRole());
+            }}
+          >
+            <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} />
             {!isMobile && "Last 30 days"}
-        </Button>
-
+          </Button>
         </Grid>
         <Grid item xs={6}>
-            <Button            
-                variant="outlined"
-                id="revenue"
-                className={classes.button}
-                style={{
-                    // height: "100%",
-                    // width: '80%',
-                    // backgroundColor: '#160449',
-                    color: "#3D5CAC",
-                    fontSize: "13px",
-                    marginBottom: '10px',
-                    borderRadius: '5px',
-                }}
-                onClick={handleSelectPropertyClick}
-            >                        
-                <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/>
-                {!isMobile && "Select Property"}
-            </Button>
-            <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                // anchorOrigin={{
-                //     vertical: 'bottom',
-                //     horizontal: 'left',
-                // }}
-                // transformOrigin={{
-                //     vertical: 'top',
-                //     horizontal: 'left',
-                // }}                  
-                // sx={{
-                //     '& .MuiPaper-root': {
-                //       width: anchorEl ? anchorEl.clientWidth : null,
-                //     },
-                // }}
-            >                
-                {
-                    propertyList.map((property, index) => {
-                        return (
-                            <MenuItem
-                                key={property.property_uid}
-                                onClick={() => {                                        
-                                        // console.log("navigating to propertyDetail - i, propertiesList - ",index, propertyList)
-                                        navigate(`/propertyDetail`, { state: { index, propertyList } })
-                                    }
-                                }
-                            >
-                                {property.property_address}
-                            </MenuItem>);
-                    })
-                }
+          <Button
+            variant="outlined"
+            id="revenue"
+            className={classes.button}
+            style={{
+              // height: "100%",
+              // width: '80%',
+              // backgroundColor: '#160449',
+              color: "#3D5CAC",
+              fontSize: "13px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+            }}
+            onClick={handleSelectPropertyClick}
+          >
+            <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
+            {!isMobile && "Select Property"}
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            // anchorOrigin={{
+            //     vertical: 'bottom',
+            //     horizontal: 'left',
+            // }}
+            // transformOrigin={{
+            //     vertical: 'top',
+            //     horizontal: 'left',
+            // }}
+            // sx={{
+            //     '& .MuiPaper-root': {
+            //       width: anchorEl ? anchorEl.clientWidth : null,
+            //     },
+            // }}
+          >
+            {propertyList.map((property, index) => {
+              return (
+                <MenuItem
+                  key={property.property_uid}
+                  onClick={() => {
+                    // console.log("navigating to propertyDetail - i, propertiesList - ",index, propertyList)
+                    navigate(`/propertyDetail`, { state: { index, propertyList } });
+                  }}
+                >
+                  {property.property_address}
+                </MenuItem>
+              );
+            })}
 
-                {/* <MenuItem onClick={() => handlePropertyClick('Property 1')}>Property 1</MenuItem>
+            {/* <MenuItem onClick={() => handlePropertyClick('Property 1')}>Property 1</MenuItem>
                 <MenuItem onClick={() => handlePropertyClick('Property 2')}>Property 2</MenuItem> */}
-                {/* Add more MenuItems for each property */}
-            </Menu>
-
+            {/* Add more MenuItems for each property */}
+          </Menu>
         </Grid>
         {/* <Grid item xs={2} sm={0}></Grid> */}
-
       </Grid>
-      
+
       <Box
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          marginBottom : '10px',          
+          marginBottom: "10px",
         }}
       >
         <PieChart width={250} height={250}>
@@ -307,7 +299,7 @@ export default function PropertyRentWidget2(props) {
             padding={5}
             formatter={renderColorfulLegendText}
             onClick={() => navigate("/pmRent")}
-          /> */}          
+          /> */}
           <Pie
             data={data}
             cx={125}
@@ -343,29 +335,26 @@ export default function PropertyRentWidget2(props) {
             </tspan>
           </text>
         </PieChart>
-        <CustomLegend
-            navigate={navigate}            
-            data={data}
-          />
-        <Button            
-            variant="outlined"
-            id="revenue"
-            className={classes.button}
-            style={{
-                height: "100%",
-                width: '80%',
-                backgroundColor: '#160449',
-                color: "#FFFFFF",
-                fontSize: "15px",
-                marginBottom: '10px',
-                marginTop: '25px',
-                borderRadius: '5px',
-            }}
-            onClick={() => {            
-                navigate(propertyRoutingBasedOnSelectedRole());
-            }}
-        >            
-            {/* <Box
+        <CustomLegend navigate={navigate} data={data} />
+        <Button
+          variant="outlined"
+          id="revenue"
+          className={classes.button}
+          style={{
+            height: "100%",
+            width: "80%",
+            backgroundColor: "#160449",
+            color: "#FFFFFF",
+            fontSize: "15px",
+            marginBottom: "10px",
+            marginTop: "25px",
+            borderRadius: "5px",
+          }}
+          onClick={() => {
+            navigate(propertyRoutingBasedOnSelectedRole());
+          }}
+        >
+          {/* <Box
                 sx={{
                     width: 7,
                     height: 7,
@@ -383,113 +372,111 @@ export default function PropertyRentWidget2(props) {
                 View {contractRequests?.length}
             </Box>
                 Property Listings */}
-
-            View {vacantCount} Property Listings
+          View {vacantCount} Property Listings
         </Button>
-        <Button            
-            variant="outlined"
-            id="revenue"
-            className={classes.button}
-            style={{
-                height: "100%",
-                width: '80%',
-                backgroundColor: '#160449',
-                color: "#FFFFFF",
-                fontSize: "15px",
-                borderRadius: '5px',
-            }}
-            onClick={() => {
-                console.log("New Request Clicked");
-                navigate("/pmQuotesList", { state: { property_endpoint_resp } });
-            }}
+        <Button
+          variant="outlined"
+          id="revenue"
+          className={classes.button}
+          style={{
+            height: "100%",
+            width: "80%",
+            backgroundColor: "#160449",
+            color: "#FFFFFF",
+            fontSize: "15px",
+            borderRadius: "5px",
+          }}
+          onClick={() => {
+            console.log("New Request Clicked");
+            navigate("/pmQuotesList", { state: { property_endpoint_resp } });
+          }}
         >
-            <Box
-                sx={{
-                    width: 7,
-                    height: 7,
-                    backgroundColor: '#160449',
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#FFFFFF",
-                    fontSize: "15px",
-                    paddingRight: "20px",
-                }}
-            >            
-                {contractRequests?.length}
-            </Box>
-                New Requests
+          <Box
+            sx={{
+              width: 7,
+              height: 7,
+              backgroundColor: "#160449",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#FFFFFF",
+              fontSize: "15px",
+              paddingRight: "20px",
+            }}
+          >
+            {contractRequests?.length}
+          </Box>
+          New Requests
         </Button>
       </Box>
     </Box>
   );
 }
 
+const CustomLegend = ({ data, navigate }) => {
+  const capitalize = (rentStatus) => {
+    return rentStatus
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
-const CustomLegend = ({ data, navigate, }) => {
-    const capitalize = (rentStatus) => {
-        return rentStatus
-        .split(' ') 
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    }
-    
-    return (
+  return (
+    <Box
+      sx={{
+        backgroundColor: "#F2F2F2",
+        display: "block",
+        width: "80%",
+        height: "80%",
+        borderRadius: "10px",
+        cursor: "pointer",
+        position: "relative",
+        paddingBottom: "10px",
+      }}
+      onClick={() => navigate("/pmRent")}
+    >
+      {/* <h2 className="mt-widget-title">Maintenance</h2> */}
       <Box
         sx={{
-          backgroundColor: '#F2F2F2',
-          display: 'block',
-          width: '80%',
-          height: '80%',
-          borderRadius: '10px',
-          cursor: 'pointer',
-          position: 'relative',
-          paddingBottom: '10px',
+          display: "block",
+          margin: "auto",
+          // width: '90%',
+          borderRadius: "10px",
         }}
-        onClick={() => navigate("/pmRent")}
       >
-        {/* <h2 className="mt-widget-title">Maintenance</h2> */}
-        <Box
+        <List
           sx={{
-            display: 'block',
-            margin: 'auto',
-            // width: '90%',
-            borderRadius: '10px',
+            padding: "0",
+            borderRadius: "20px",
+            margin: "0px",
           }}
         >
-          <List
-            sx={{
-              padding: '0',
-              borderRadius: '20px',
-              margin: '0px',
-            }}
-          >
-            {data.map((item, index) => (
-              <ListItem
-                key={index}
-                sx={{
-                  width: '100%',
-                  backgroundColor: item.fill,
-                  color: "#FFFFFF",
-                  fontFamily: "Source Sans Pro",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  padding: '17px 10px',
-                  borderTopLeftRadius: index === 0 ? '10px' : '0',
-                  borderTopRightRadius: index === 0 ? '10px' : '0',
-                  borderBottomLeftRadius: index === data.length - 1 ? '10px' : '0',
-                  borderBottomRightRadius: index === data.length - 1 ? '10px' : '0',
-                }}
-              >
-                {capitalize(item.rent_status)}
-                <Typography variant="body2" align="right" sx={{ marginLeft: 'auto' }}>
-                  {item.number}
-                </Typography>
-              </ListItem>
-            ))}
-          </List>
-        </Box>        
+          {data.map((item, index) => (
+            <ListItem
+              key={index}
+              sx={{
+                width: "100%",
+                backgroundColor: item.fill,
+                color: "#FFFFFF",
+                fontFamily: "Source Sans Pro",
+                fontSize: "13px",
+                fontWeight: 600,
+                padding: "17px 10px",
+                borderTopLeftRadius: index === 0 ? "10px" : "0",
+                borderTopRightRadius: index === 0 ? "10px" : "0",
+                borderBottomLeftRadius: index === data.length - 1 ? "10px" : "0",
+                borderBottomRightRadius: index === data.length - 1 ? "10px" : "0",
+              }}
+            >
+              {capitalize(item.rent_status)}
+              <Typography variant="body2" align="right" sx={{ marginLeft: "auto" }}>
+                {item.number}
+              </Typography>
+            </ListItem>
+          ))}
+        </List>
       </Box>
-    );
-  };
+    </Box>
+  );
+};

@@ -10,7 +10,7 @@ import Dollar from "../../images/Dollar.png";
 import File_dock_fill from "../../images/File_dock_fill.png";
 import User_fill_dark from "../../images/User_fill_dark.png";
 import { useUser } from "../../contexts/UserContext";
-import PropertyRentWidget2 from "../Dashboard-Components/PropertyRent/PropertyRentWidget2";
+import PropertyRentWidget2 from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import AddRevenueIcon from "../../images/AddRevenueIcon.png";
