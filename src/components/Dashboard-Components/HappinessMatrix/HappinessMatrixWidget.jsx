@@ -12,7 +12,7 @@ export default function HappinessMatrixWidget(props) {
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
   const { data, dataSetter } = props;
-  // console.log("HappinessMatrixWidget - data -", data);
+  console.log("HappinessMatrixWidget - data -", data);
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
