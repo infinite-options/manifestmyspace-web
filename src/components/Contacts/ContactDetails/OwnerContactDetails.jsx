@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import theme from "../../../theme/theme";
-import { ThemeProvider, Box, Paper, Stack, Typography, Button } from "@mui/material";
+import { ThemeProvider, Box, Paper, Stack, Typography, Button, Grid } from "@mui/material";
 import { getStatusColor } from "../ContactsFunction";
 import { Email, Message, Phone } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -405,6 +405,28 @@ const OwnerContactDetails = (props) => {
                     }}
                   >                    
                     Cashflow
+                  </Typography>                  
+
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontSize: "13px",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      // textDecoration: "underline",
+                    }}                    
+                  >
+                    Expected Cashflow : {cashflowData.expected_cashflow}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontSize: "13px",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      // textDecoration: "underline",
+                    }}                    
+                  >
+                    Actual Cashflow : {cashflowData.actual_cashflow}
                   </Typography>
 
                   <Typography
@@ -427,17 +449,6 @@ const OwnerContactDetails = (props) => {
                     }}                    
                   >
                     Delta Cashflow Percentage : {cashflowData.delta_cashflow_perc}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontSize: "13px",
-                      fontWeight: theme.typography.primary.fontWeight,
-                      // textDecoration: "underline",
-                    }}                    
-                  >
-                    Expected Cashflow : {cashflowData.expected_cashflow}
                   </Typography>
 
                   <Typography
@@ -588,7 +599,7 @@ const CashflowDataGrid = ( {data} ) => {
       )
     },
     { 
-      field: 'cf_month',
+      field: 'year_month',
       headerName: 'Month',
       width: 100,
       renderCell: (params) => (
@@ -596,7 +607,7 @@ const CashflowDataGrid = ( {data} ) => {
       ) 
     },
     { 
-      field: 'cf_year',
+      field: 'year',
       headerName: 'Year',
       width: 100,
       renderCell: (params) => (
@@ -628,17 +639,70 @@ const CashflowDataGrid = ( {data} ) => {
     }, 
     
   ];
-
-  const dataWithIds = data.map((row, index) => ({ ...row, id: index + 1 }));
   
-  const totalDeltaCashflow = dataWithIds.reduce((total, row) => {
+  
+  const monthNumbers = {
+    January: 1,
+    February: 2,
+    March: 3,
+    April: 4,
+    May: 5,
+    June: 6,
+    July: 7,
+    August: 8,
+    September: 9,
+    October: 10,
+    November: 11,
+    December: 12,
+  };
+
+  const processedData = data.map((row, index) => {
+    const monthNumber = monthNumbers[row.cf_month] || 0;
+    const yearMonth = `${row.cf_year}${String(monthNumber).padStart(2, '0')}`;
+
+    return {
+      ...row, 
+      id: index + 1,
+      // month_num: monthNumbers[row.cf_month] || 0,
+      year_month: parseInt(yearMonth, 10),
+      year: parseInt(row.cf_year, 10),
+      actual_cashflow: parseFloat(row.actual_cashflow),
+      expected_cashflow: parseFloat(row.expected_cashflow),
+      delta_cashflow: parseFloat(row.delta_cashflow),
+    }
+  });
+
+  
+  
+
+  console.log("ROHIT - processedData - ", processedData);
+  
+  
+
+  const totalActualCashflow = processedData.reduce((sum, row) => sum + row.actual_cashflow, 0);
+  const totalExpectedCashflow = processedData.reduce((sum, row) => sum + row.expected_cashflow, 0);
+  const totalDeltaCashflow = processedData.reduce((total, row) => {
     return total + (parseFloat(row.actual_cashflow) - parseFloat(row.expected_cashflow));
   }, 0);
+
+  const totalsRow = {
+    id: processedData.length + 1,
+    owner_uid: 'Totals',
+    owner_name: '',
+    year_month: '',
+    year: '',
+    actual_cashflow: totalActualCashflow,
+    expected_cashflow: totalExpectedCashflow,
+    delta_cashflow: totalDeltaCashflow,
+    percent_delta_cashflow: '',
+  };
+
+  const rowsWithTotals = [...processedData, totalsRow];
 
   return (
     <>
       <DataGrid
-        rows={dataWithIds}
+        rows={rowsWithTotals}
         columns={columns}
         // initialState={{
         //   pagination: {
@@ -648,11 +712,19 @@ const CashflowDataGrid = ( {data} ) => {
         //   },
         // }}
         // pageSizeOptions={[5]}
-        // checkboxSelection
-        // disableRowSelectionOnClick
-        footer={{
-          totalDeltaCashflow: `Total Delta Cashflow: ${totalDeltaCashflow.toFixed(2)}` // Display the total
+        
+        getRowClassName={(params) => {
+          if (params.id === totalsRow.id) {
+            return 'totals-row'; // Assign a class name to the totals row
+          }
+          return '';
         }}
+        sx={{
+          '& .totals-row': {
+            fontWeight: 'bold',
+            // backgroundColor: '#f1f1f1',
+          },
+        }}        
       />
     </>
   );
