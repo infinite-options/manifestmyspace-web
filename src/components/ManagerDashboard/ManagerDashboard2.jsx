@@ -66,6 +66,7 @@ function ManagerDashboard2() {
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
+  const [cashflowDetails, setCashflowDetails] = useState([]);
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -236,6 +237,9 @@ function ManagerDashboard2() {
         // HAPPINESS MATRIX
         setting_matrix_data(jsonData);
 
+        //CASHFLOW DETAILS
+        setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
+
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
 
@@ -297,7 +301,7 @@ function ManagerDashboard2() {
             <LeaseWidget2 leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} />
+                <HappinessMatrixWidget data={matrixData} cashflowDetails={cashflowDetails}/>
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />

@@ -19,7 +19,7 @@ export default function HappinessMatrixWidget(props) {
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom:-10, left: -30 };
-  const { data, dataSetter } = props;
+  const { data, dataSetter, cashflowDetails } = props;
   console.log("HappinessMatrixWidget - data -", data);
   let [shifted_data, shift] = useState( JSON.parse(JSON.stringify(data)));
 
@@ -127,7 +127,7 @@ export default function HappinessMatrixWidget(props) {
             // margin: '50p', // Add margin here
             borderRadius: '10px',
             backgroundColor: theme.palette.primary.main,
-            height: 400,
+            height: 450,
             [theme.breakpoints.down('sm')]: {
                 width: '80%',
             },
@@ -136,14 +136,14 @@ export default function HappinessMatrixWidget(props) {
             },
         }}
       >
-        <Grid container style={{padding: '15px', }}>
+        <Grid container style={{padding: '10px', }}>
           <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', }}>
                     Happiness Matrix
                 </Typography>
             </Grid>
           <Grid item xs={12}>
-            <ResponsiveContainer width="100%" height={350}>
+            <ResponsiveContainer width="100%" height={380}>
               <ScatterChart
                 // width={chartWidth}
                 // height={chartHeight}          
@@ -159,19 +159,19 @@ export default function HappinessMatrixWidget(props) {
                     axisLine={false}
                     tickLine={false}
                     style={axisLabelStyle}
-                    tick={{ transform: 'translate(5, 0)' }}
-                    // label={{
-                    //     value: 'Delta Cashflow',
-                    //     angle: -90,
-                    //     position: 'insideLeft',
-                    //     dx: -20,
-                    //     dy: 40,
-                    //     style: axisLabelStyle,
-                    //     fill: '#160449',
-                    // }}
+                    // tick={{ transform: 'translate(10, 0)' }}
+                    label={{
+                        value: 'Delta Cashflow',
+                        angle: -90,
+                        position: 'insideRight',
+                        dx: -10,
+                        dy: -50,
+                        style: axisLabelStyle,
+                        fill: '#160449',
+                    }}
                     domain={[-1.1, 0.1]}
-                    ticks={[-1.1, -0.5, 0.1]}
-                    // tick={false}
+                    // ticks={[-1.1, -0.5, 0.1]}
+                    tick={false}
                     
                 />
 
@@ -182,18 +182,18 @@ export default function HappinessMatrixWidget(props) {
                     axisLine={false}
                     tickLine={false}
                     style={axisLabelStyle}
-                    tick={{ transform: 'translate(0, 0)' }}
-                    // label={{
-                    //     value: 'Vacancies',
-                    //     position: 'insideBottom',
-                    //     dy: 40,
-                    //     dx: 0,
-                    //     style: axisLabelStyle,
-                    //     fill: '#160449',
-                    // }}
+                    // tick={{ transform: 'translate(0, 0)' }}
+                    label={{
+                        value: 'Vacancies',
+                        position: 'insideBottom',
+                        dy: -5,
+                        dx: 0,
+                        style: axisLabelStyle,
+                        fill: '#160449',
+                    }}
                     domain={[-100, 0]}
-                    ticks={[-100, -50, 0]} // Add this line
-                    // tick={false}
+                    // ticks={[-100, -50, 0]} // Add this line
+                    tick={false}
                 />
 
                 <Tooltip
@@ -252,6 +252,7 @@ export default function HappinessMatrixWidget(props) {
                         <CustomImage
                           {...props}
                         //   onClick={() => handlePointClick(props.payload)}                          
+                          cashflowDetails={cashflowDetails}
                           isClicked={props.payload.index === clickedIndex}
                           isVisible={!hiddenPoints.includes(props.payload.index)}
                         />
@@ -287,9 +288,9 @@ export default function HappinessMatrixWidget(props) {
 
 const CustomImage = (props) => {
   const navigate = useNavigate();
-  const { cx, cy, payload, onClick, isClicked, isVisible, index } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowDetails } = props;
 
-//   console.log("CustomImage - props - ", props);
+  console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }
@@ -304,6 +305,7 @@ const CustomImage = (props) => {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
         cashflowData: payload,
+        cashflowDetails: cashflowDetails.filter( item => item.owner_uid === payload.owner_uid),
       },
     });
   }
