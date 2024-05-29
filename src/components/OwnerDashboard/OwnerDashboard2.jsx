@@ -1,7 +1,7 @@
 import { Chart } from "react-google-charts";
 import { Button, Box, ThemeProvider, Grid, Container, Paper, Typography } from "@mui/material";
 import { PieChart, Pie, Legend, Cell } from "recharts";
-import CashflowWidget2 from "../Dashboard-Components/Cashflow/CashflowWidget2";
+import CashflowWidget from "../Dashboard-Components/Cashflow/CashflowWidget";
 import MaintenanceWidget2 from "../Dashboard-Components/Maintenance/MaintenanceWidget2";
 import "../../css/maintenance.css";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -140,7 +140,7 @@ export default function OwnerDashboard2() {
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CashflowWidget2 />
+            <CashflowWidget />
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={6}>
