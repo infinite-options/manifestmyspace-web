@@ -11,7 +11,7 @@ import { Button, Box, ThemeProvider, Typography, Grid, Container } from "@mui/ma
 import { nextMonday } from "date-fns";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-export default function LeaseWidget2(props) {
+export default function LeaseWidget(props) {
   console.log("In Lease Widget", props);
   const navigate = useNavigate();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -64,8 +64,8 @@ export default function LeaseWidget2(props) {
   });
 
   leaseStatus = leaseStatusDictionary;
-  console.log("Lease Status: ", leaseStatus);
-  console.log("Lease Status March: ", leaseStatus[3]);
+  // console.log("Lease Status: ", leaseStatus);
+  // console.log("Lease Status March: ", leaseStatus[3]);
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return (

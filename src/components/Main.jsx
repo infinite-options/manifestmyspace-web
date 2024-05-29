@@ -70,7 +70,6 @@ import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 
 import PropertyList from "./Property/PropertyList";
 // import PMProperties from "./Property/PMProperties";
-import OwnerDashboard from "./OwnerDashboard";
 import OwnerDashboard2 from "./OwnerDashboard/OwnerDashboard2";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
@@ -108,9 +107,8 @@ import CardDetailsSettingsMaintenance from "./Settings/CardDetailsSettingsMainte
 import SelectPayment from "./Settings/SelectPayment";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Layout/Footer";
-import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
 import ManagerDashboard2 from "./ManagerDashboard/ManagerDashboard2";
-import Emp_Waiting from "./PM_Emp_Dashboard/Waiting_Page"
+import Emp_Waiting from "./PM_Emp_Dashboard/Waiting_Page";
 import MaintenanceDashboard from "./MaintenanceDashboard/MaintenanceDashboard";
 
 import SettingsACH1 from "./SettingsACH/SettingsACH1";
@@ -172,8 +170,6 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
-
-
 function Main() {
   console.log("In Main Page");
   const { roleName, selectedRole } = useUser();
@@ -185,13 +181,13 @@ function Main() {
           overflow: "auto", // Enable scrolling when content overflows
         }}
       >
-        <Header role={selectedRole}/>
+        <Header role={selectedRole} />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="newUser" element={<NewUser />} />            
+            <Route path="newUser" element={<NewUser />} />
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -205,7 +201,7 @@ function Main() {
             <Route path="forbidden" element={<Forbidden />} />
             <Route path="referralSignup/:userID" element={<ReferralSignup />} />
             <Route path="referralSignupPassword" element={<ReferralSignupPassword />} />
-            <Route path="referralGoogleSignup/:userID" element={<ReferralGoogleSignup />} />                        
+            <Route path="referralGoogleSignup/:userID" element={<ReferralGoogleSignup />} />
           </Route>
 
           {/* Private Routes */}
@@ -247,7 +243,7 @@ function Main() {
             <Route path="tenantProfileEdit" element={<TenantProfileEdit />} />
             <Route path="addRole" element={<AddRole />} />
             <Route path="tenantDashboard" element={<TenantDashboard />} />
-            <Route path="newTenantDashboard" element={<NewTenantDashboard/>}/>
+            <Route path="newTenantDashboard" element={<NewTenantDashboard />} />
 
             <Route path="pmProfile" element={<PMProfile />} />
             <Route path="pmProfileEdit" element={<PMProfileEdit />} />
@@ -300,7 +296,7 @@ function Main() {
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
-            <Route path="ownerDashboard" element={<OwnerDashboard2 />} />            
+            <Route path="ownerDashboard" element={<OwnerDashboard2 />} />
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />
@@ -329,7 +325,7 @@ function Main() {
             <Route path="poContracts" element={<POContracts />} />
             <Route path="managerDashboard" element={<ManagerDashboard2 />} />
             {/* <Route path="managerDashboard2" element={<ManagerDashboard2 />} /> */}
-            <Route path="emp_waiting" element={<Emp_Waiting/>} />
+            <Route path="emp_waiting" element={<Emp_Waiting />} />
 
             <Route path="quoteAccept" element={<QuoteAcceptForm />} />
             <Route path="quoteRequest" element={<QuoteRequestForm />} />
@@ -339,7 +335,7 @@ function Main() {
 
             <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
             <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
-            <Route path="businessEditQuoteForm" element={<BusinessQuoteForm acceptBool={true} editBool={true}/>} />
+            <Route path="businessEditQuoteForm" element={<BusinessQuoteForm acceptBool={true} editBool={true} />} />
             <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
             <Route path="workerMaintenance" element={<WorkerMaintenance />} />
             <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
