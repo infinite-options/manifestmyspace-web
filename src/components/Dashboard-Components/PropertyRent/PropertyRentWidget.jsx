@@ -41,7 +41,7 @@ export default function PropertyRentWidget(props) {
   const [propertyList, setPropertyList] = useState([]);
 
   useEffect(() => {
-    console.log("PropertyRentWidget2 - propertyList - ", propertyList);
+    console.log("PropertyRentWidget - propertyList - ", propertyList);
   }, [propertyList]);
   // console.log(selectedRole);
   // console.log(props.rentData);
@@ -49,12 +49,12 @@ export default function PropertyRentWidget(props) {
   // console.log("Role: ", user);
   // console.log("Selected Role: ", selectedRole);
 
-  // console.log("PropertyRentWidget2 - props - ", props);
+  // console.log("PropertyRentWidget - props - ", props);
   let rentStatusData = props.rentData;
   const property_endpoint_resp = props.propertyEndpointResp;
-  // console.log("PropertyRentWidget2 - property_endpoint_resp - ", property_endpoint_resp);
+  // console.log("PropertyRentWidget - property_endpoint_resp - ", property_endpoint_resp);
   const contractRequests = props.contractRequests;
-  // console.log("PropertyRentWidget2 - contractRequests - ", contractRequests);
+  // console.log("PropertyRentWidget - contractRequests - ", contractRequests);
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
   // console.log(unpaidCount);
@@ -105,7 +105,7 @@ export default function PropertyRentWidget(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
-    // console.log("PropertyRentWidget2 - anchorEl - ", anchorEl);
+    // console.log("PropertyRentWidget - anchorEl - ", anchorEl);
   }, [anchorEl]);
 
   const handleSelectPropertyClick = async (event) => {
@@ -117,7 +117,7 @@ export default function PropertyRentWidget(props) {
     const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
     try {
       const propertyData = await propertiesResponse.json();
-      // console.log("PropertyRentWidget2 - propertyData - ", propertyData);
+      // console.log("PropertyRentWidget - propertyData - ", propertyData);
       // setPropertiesList(propertiesResponseJSON.Property.result);
 
       const propertyList = getPropertyList(propertyData);

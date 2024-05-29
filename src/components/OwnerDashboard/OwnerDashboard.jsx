@@ -2,7 +2,7 @@ import { Chart } from "react-google-charts";
 import { Button, Box, ThemeProvider, Grid, Container, Paper, Typography } from "@mui/material";
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import CashflowWidget from "../Dashboard-Components/Cashflow/CashflowWidget";
-import MaintenanceWidget2 from "../Dashboard-Components/Maintenance/MaintenanceWidget2";
+import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import "../../css/maintenance.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -148,7 +148,7 @@ export default function OwnerDashboard() {
               <OwnerPropertyRentWidget rentData={rentStatus} />
             </Grid>
             <Grid item xs={12} md={6} sx={{ marginBottom: "1px" }}>
-              <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
+              <MaintenanceWidget maintenanceData={maintenanceStatusData} />
             </Grid>
             <Grid item xs={12}>
               <LeaseWidget leaseData={leaseStatus} />

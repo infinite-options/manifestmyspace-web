@@ -1,5 +1,5 @@
 import { Button, Box, ThemeProvider, Grid, Typography, Container } from "@mui/material";
-import MaintenanceWidget2 from "../Dashboard-Components/Maintenance/MaintenanceWidget2";
+import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import RevenueWidget from "../Dashboard-Components/Revenue/RevenueWidget";
 import "../../css/maintenance.css";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import Dollar from "../../images/Dollar.png";
 import File_dock_fill from "../../images/File_dock_fill.png";
 import User_fill_dark from "../../images/User_fill_dark.png";
 import { useUser } from "../../contexts/UserContext";
-import PropertyRentWidget2 from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
+import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import AddRevenueIcon from "../../images/AddRevenueIcon.png";
@@ -48,7 +48,7 @@ const useStyles = makeStyles({
   },
 });
 
-function ManagerDashboard2() {
+function ManagerDashboard() {
   console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId, user, selectedRole } = useUser();
@@ -289,7 +289,7 @@ function ManagerDashboard2() {
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
-            <PropertyRentWidget2 rentData={rentStatus} propertyEndpointResp={property_endpoint_resp} contractRequests={contractRequests} />
+            <PropertyRentWidget rentData={rentStatus} propertyEndpointResp={property_endpoint_resp} contractRequests={contractRequests} />
           </Grid>
           <Grid item xs={12} md={9}>
             <RevenueWidget revenueData={revenueData} />
@@ -299,7 +299,7 @@ function ManagerDashboard2() {
                 <HappinessMatrixWidget data={matrixData} />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
+                <MaintenanceWidget maintenanceData={maintenanceStatusData} />
               </Grid>
             </Grid>
           </Grid>
@@ -425,4 +425,4 @@ const ShimmerUI = () => {
   );
 };
 
-export default ManagerDashboard2;
+export default ManagerDashboard;
