@@ -23,7 +23,7 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget2() {
+function CashflowWidget() {
   console.log("In Cashflow Widget ");
   const navigate = useNavigate();
 
@@ -364,4 +364,4 @@ function CashflowWidget2() {
   );
 }
 
-export default CashflowWidget2;
+export default CashflowWidget;
