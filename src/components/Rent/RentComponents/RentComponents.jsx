@@ -293,7 +293,9 @@ export function RentAccordion(props) {
           " " +
           property.property_state +
           " " +
-          property.property_zip;
+          property.property_zip +
+          ", Tenant ID: " +
+          property.tenant_uid;
         return (
           <AccordionDetails key={property.property_uid}>
             <Box

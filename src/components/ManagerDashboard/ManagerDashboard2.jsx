@@ -15,7 +15,6 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import AddRevenueIcon from "../../images/AddRevenueIcon.png";
 import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
-import LeaseWidget2 from "../Dashboard-Components/Lease/LeaseWidget2";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import OwnerList from "./OwnerList";
@@ -89,12 +88,12 @@ function ManagerDashboard2() {
   const setting_matrix_data = (happiness_response) => {
     // console.log("In Setting Happiness Matrix", happiness_response);
     // Transforming the data
-    console.log("setting_matrix_data - happiness_response - ", happiness_response);
+    // console.log("setting_matrix_data - happiness_response - ", happiness_response);
     const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
       // console.log("In Happiness Matrix before vacancy");
-      console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
+      // console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
       const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
-      console.log("setting_matrix_data - deltaCashflowItem - ", deltaCashflowItem);
+      // console.log("setting_matrix_data - deltaCashflowItem - ", deltaCashflowItem);
 
       let fullName = "";
       let ownerUID = "";
@@ -294,7 +293,7 @@ function ManagerDashboard2() {
           </Grid>
           <Grid item xs={12} md={9}>
             <RevenueWidget revenueData={revenueData} />
-            <LeaseWidget2 leaseData={leaseStatus} />
+            <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
                 <HappinessMatrixWidget data={matrixData} />

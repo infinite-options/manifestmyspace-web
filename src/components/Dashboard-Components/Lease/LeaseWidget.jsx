@@ -5,14 +5,16 @@ import { useUser } from "../../../contexts/UserContext.jsx";
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import { Chart } from "react-google-charts";
 // import { Box } from '@mui/material';
-import Status from "../../Templates/Status";
-import theme from "../../../theme/theme";
-import { Button, Box, ThemeProvider } from "@mui/material";
+import Status from "../../Templates/Status.jsx";
+import theme from "../../../theme/theme.js";
+import { Button, Box, ThemeProvider, Typography, Grid, Container } from "@mui/material";
 import { nextMonday } from "date-fns";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-export default function LeaseWidget(props) {
+export default function LeaseWidget2(props) {
   console.log("In Lease Widget", props);
   const navigate = useNavigate();
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
   // const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
   // console.log("Role: ", user);
@@ -20,6 +22,7 @@ export default function LeaseWidget(props) {
 
   // let date = new Date();
   let moveoutsInSixWeeks = 0;
+  let MTMCount = 0;
   let leaseStatusData = props.leaseData;
 
   // const currentYear = new Date().getFullYear();
@@ -34,44 +37,13 @@ export default function LeaseWidget(props) {
   // console.log("Today: ", today, currentDay);
   let nextMonth = today.getMonth();
   let currentMonth = today.getMonth() + 1; // Adding 1 to adjust to 1-indexed months
-  currentMonth = 1;
   if (currentMonth === 12) {
     nextMonth = 1;
   } else {
     nextMonth = currentMonth + 1;
   }
   const currentYear = new Date().getFullYear();
-  console.log("Dates: ", currentDay, currentMonth, nextMonth, currentYear);
-
-  // Date object for six weeks from now
-  // const sixWeeksLater = new Date();
-  // sixWeeksLater.setDate(today.getDate() + 6 * 7); // Adding 6 weeks worth of days
-
-  // let moveoutsInSixWeeks = 0;
-  // let diffDate = (sixWeeksLater - today) / (1000 * 60 * 60 * 24);
-
-  // OLD LEASE STATUS DATA MAPPING.  DOESN'T WORK SINCE WE'VE CHANGED THE DATA BEING RETURNED
-  // leaseStatusData.forEach((item) => {
-  //   console.log("Lease item: ", item);
-  //   console.log("Lease end date ", item.lease_end);
-  //   const leaseEndDate = new Date(item.lease_end);
-  //   console.log("leaseEndDate ", leaseEndDate);
-  //   diffDate = Math.floor((leaseEndDate - today) / (1000 * 60 * 60 * 24));
-  //   console.log("Calculated Date Difference ", Math.floor(diffDate));
-  //   console.log("Calculated Date Difference ", diffDate);
-
-  //   const cy_month = leaseEndDate.getMonth() + 1; //current year month
-  //   console.log("Lease Month: ", cy_month);
-  //   leaseStatusDictionary[cy_month] = item.num;
-  //   console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month]);
-
-  //   if (diffDate <= 56) {
-  //     moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
-  //     // console.log('The date is within the next six weeks.');
-  //   } else {
-  //     // console.log('The date is not within the next six weeks.');
-  //   }
-  // });
+  //   console.log("Dates: ", currentDay, currentMonth, nextMonth, currentYear);
 
   leaseStatusData.forEach((item) => {
     // console.log("Lease item: ", item);
@@ -86,133 +58,147 @@ export default function LeaseWidget(props) {
         moveoutsInSixWeeks = moveoutsInSixWeeks + item.move_out;
       }
     }
-    // console.log("Lease Status Dictionary: ", leaseStatusDictionary[item.lease_end_num]);
-    // console.log("Moveouts: ", moveoutsInSixWeeks);
-    // const leaseEndDate = new Date(item.lease_end);
-    // console.log("leaseEndDate ", leaseEndDate);
-    // diffDate = Math.floor((leaseEndDate - today) / (1000 * 60 * 60 * 24));
-    // console.log("Calculated Date Difference ", Math.floor(diffDate));
-    // console.log("Calculated Date Difference ", diffDate);
-
-    // const cy_month = leaseEndDate.getMonth() + 1; //current year month
-    // console.log("Lease Month: ", cy_month);
-    // leaseStatusDictionary[cy_month] = item.num;
-    // console.log("Lease Status Dictionary: ", leaseStatusDictionary[cy_month]);
-
-    // if (diffDate <= 56) {
-    //   moveoutsInSixWeeks = moveoutsInSixWeeks + item.num;
-    //   // console.log('The date is within the next six weeks.');
-    // } else {
-    //   // console.log('The date is not within the next six weeks.');
-    // }
+    if (item.lease_end_month === "MTM") {
+      MTMCount++;
+    }
   });
 
   leaseStatus = leaseStatusDictionary;
   console.log("Lease Status: ", leaseStatus);
-  console.log("Lease Status March: ", leaseStatus["03"]);
+  console.log("Lease Status March: ", leaseStatus[3]);
 
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return (
     <ThemeProvider theme={theme}>
-      {/* LEASES WIDGET */}
-      <div className="mt-widget-expiry" onClick={() => navigate("/Leases")}>
-        {/* <div className="mt-expiry-container"> */}
-        <h2 className="mt-expiry-widget-title"> Leases Expiring: Next 12 Months </h2>
-        <div className="months-and-moveouts">
-          <div className="months">
-            <div id="first-row">
-              <div className="box" style={{ backgroundColor: (currentMonth === 1 && "#F87C7A") || (currentMonth + 1 === 1 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[1] ? leaseStatus[1] : 0}</b>
-                </div>
-                <div> JAN </div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 2 && "#F87C7A") || (currentMonth + 1 === 2 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[2] ? leaseStatus[2] : 0}</b>
-                </div>
-                <div>FEB</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 3 && "#F87C7A") || (currentMonth + 1 === 3 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[3] ? leaseStatus[3] : 0}</b>
-                </div>
-                <div>MAR</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 4 && "#F87C7A") || (currentMonth + 1 === 4 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[4] ? leaseStatus[4] : 0}</b>
-                </div>
-                <div>APR</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 5 && "#F87C7A") || (currentMonth + 1 === 5 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[5] ? leaseStatus[5] : 0}</b>
-                </div>
-                <div>MAY</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 6 && "#F87C7A") || (currentMonth + 1 === 6 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[6] ? leaseStatus[6] : 0}</b>
-                </div>
-                <div>JUN</div>
-              </div>
-            </div>
-            <br />
-            <br />
-            <div id="second-row">
-              <div className="box" style={{ backgroundColor: (currentMonth === 7 && "#F87C7A") || (currentMonth + 1 === 7 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[7] ? leaseStatus[7] : 0}</b>
-                </div>
-                <div>JUL</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 8 && "#F87C7A") || (currentMonth + 1 === 8 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[8] ? leaseStatus[8] : 0}</b>
-                </div>
-                <div>AUG</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 9 && "#F87C7A") || (currentMonth + 1 === 9 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[9] ? leaseStatus[9] : 0}</b>
-                </div>
-                <div>SEP</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 10 && "#F87C7A") || (currentMonth + 1 === 10 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[10] ? leaseStatus[10] : 0}</b>
-                </div>
-                <div>OCT</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 11 && "#F87C7A") || (currentMonth + 1 === 11 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[11] ? leaseStatus[11] : 0}</b>
-                </div>
-                <div>NOV</div>
-              </div>
-              <div className="box" style={{ backgroundColor: (currentMonth === 12 && "#F87C7A") || (currentMonth + 1 === 12 && "#FFC85C") }}>
-                <div style={{ fontSize: "14px" }}>
-                  <b>{leaseStatus && leaseStatus[12] ? leaseStatus[12] : 0}</b>
-                </div>
-                <div>DEC</div>
-              </div>
-            </div>
-          </div>
-          <div className="moveouts">
-            <h2 className="move-out-title"> Move-outs</h2>
-            <div className="big-box">
-              <div> {moveoutsInSixWeeks} </div>
-              <div> IN NEXT </div>
-              <div> 6 WEEKS </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <br />
-
-      <br />
-
-      {/* } */}
+      <Grid
+        container
+        sx={{
+          backgroundColor: "#F2F2F2",
+          borderRadius: "10px",
+          marginTop: "10px",
+          marginBottom: "10px",
+        }}
+      >
+        <Grid
+          container
+          item
+          sx={{
+            // height: '200px',
+            width: "100%",
+            padding: "15px",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/Leases")}
+          xs={12}
+          rowSpacing={6}
+        >
+          <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, color: "#160449" }}>
+              Leases Expiring: Next 12 Months
+            </Typography>
+          </Grid>
+          <Grid item container xs={12}>
+            <Grid item container justifyContent="center" alignItems="center" xs={12} md={9} rowSpacing={4}>
+              {[...Array(12)].map((_, index) => (
+                <Grid item key={index} xs={2} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                  <Box
+                    sx={{
+                      width: "35px",
+                      height: "35px",
+                      backgroundColor: (currentMonth === index + 1 && "#F87C7A") || (currentMonth + 1 === index + 1 && "#FFC85C") || "#FFFFFF",
+                      color: "#160449",
+                      textAlign: "center",
+                      borderRadius: "5px",
+                      padding: "10px",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: "900", fontSize: "18px" }}>{leaseStatus && leaseStatus[index + 1] ? leaseStatus[index + 1] : 0}</Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "12px" }}>{monthNames[index].toUpperCase()}</Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+            <Grid
+              container
+              item
+              justifyContent="space-evenly"
+              alignItems="center"
+              xs={12}
+              md={3}
+              rowSpacing={3}
+              columnSpacing={6}
+              sx={{
+                marginTop: isMediumScreen ? "10px" : "0",
+              }}
+            >
+              <Grid item xs={4} md={8}>
+                <Box
+                  sx={{
+                    // width: '80%',
+                    height: "35px",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundColor: "#F87C7A",
+                    borderRadius: "5px",
+                    color: "#160449",
+                    padding: "10px",
+                    textAlign: "center",
+                  }}
+                >
+                  <Box>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "12px" }}>Move-outs</Typography>
+                    {!isMediumScreen && <Typography sx={{ fontWeight: "bold", fontSize: "12px" }}>(Next 6 Weeks)</Typography>}
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: "bold", fontSize: "30px" }}>{moveoutsInSixWeeks}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={8}>
+                <Box
+                  sx={{
+                    // width: '80%',
+                    height: "35px",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundColor: "#FFC85C",
+                    borderRadius: "5px",
+                    color: "#160449",
+                    padding: "10px",
+                    textAlign: "center",
+                  }}
+                >
+                  <Box>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "12px" }}>MTM</Typography>
+                    {!isMediumScreen && <Typography sx={{ fontWeight: "bold", fontSize: "12px" }}>(Month-To-Month)</Typography>}
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: "bold", fontSize: "30px" }}>{MTMCount}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </ThemeProvider>
   );
 }

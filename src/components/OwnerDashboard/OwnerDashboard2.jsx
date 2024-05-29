@@ -12,7 +12,7 @@ import File_dock_fill from "../../images/File_dock_fill.png";
 import User_fill_dark from "../../images/User_fill_dark.png";
 import { useUser } from "../../contexts/UserContext";
 import OwnerPropertyRentWidget from "./OwnerPropertyRentWidget";
-import LeaseWidget2 from "../Dashboard-Components/Lease/LeaseWidget2";
+import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
@@ -77,7 +77,6 @@ export default function OwnerDashboard2() {
 
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
 
-
   useEffect(() => {
     const dataObject = {};
     const fetchData = async () => {
@@ -87,7 +86,7 @@ export default function OwnerDashboard2() {
       const jsonData = await response.json();
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
-      
+
       let announcementsReceivedData = announcementsResponseData?.received?.result;
       // console.log("OwnerDashboar2 - announcementsReceivedData", announcementsReceivedData);
       setAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
@@ -103,134 +102,130 @@ export default function OwnerDashboard2() {
       setShowSpinner(false);
     };
     fetchData();
-    const signedUpWithReferral = localStorage.getItem('signedUpWithReferral');
-    if (signedUpWithReferral && signedUpWithReferral === 'true') {
-      setShowReferralWelcomeDialog(true);      
-      localStorage.removeItem('signedUpWithReferral');
+    const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
+    if (signedUpWithReferral && signedUpWithReferral === "true") {
+      setShowReferralWelcomeDialog(true);
+      localStorage.removeItem("signedUpWithReferral");
     }
   }, []);
 
-return (
+  return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Container maxWidth="lg" sx={{paddingTop: '10px', paddingBottom: '50px', }}>
-            
-            <Grid container spacing={6}>
-              <Grid item xs={12}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: isMobile ? "column" : "row",
-                      justifyContent: isMobile ? "center" : "left",
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
-                      alignText: "center",
-                      alignContent: "center",
-                    }}
-                  >
-                    <Typography
+      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: isMobile ? "center" : "left",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                alignText: "center",
+                alignContent: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                  fontWeight: "600",
+                }}
+              >
+                Welcome, {user.first_name}.
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <CashflowWidget2 />
+          </Grid>
+
+          <Grid container item xs={12} md={8} columnSpacing={6}>
+            <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>
+              <OwnerPropertyRentWidget rentData={rentStatus} />
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ marginBottom: "1px" }}>
+              <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
+            </Grid>
+            <Grid item xs={12}>
+              <LeaseWidget leaseData={leaseStatus} />
+            </Grid>
+            <Grid item xs={12}>
+              <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                <Grid
+                  container
+                  direction="row"
+                  sx={{
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
+                  }}
+                >
+                  <Grid item xs={2}></Grid>
+                  <Grid item xs={8}>
+                    <Box
                       sx={{
-                        fontSize: { xs: "22px", sm: "28px", md: "32px",},
-                        fontWeight: "600",
+                        flexGrow: 1, // Allow this Box to grow and fill space
+                        display: "flex",
+                        justifyContent: "center", // Center the content of this Box
                       }}
                     >
-                      Welcome, {user.first_name}.
-                    </Typography>
-                  </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>                    
-                  <CashflowWidget2 />
-              </Grid>
-                
-                <Grid container item xs={12} md={8} columnSpacing={6}>
-                    <Grid item xs={12} md={6} sx={{marginBottom: isMobile? "10px" : "1px" , }}>
-                        <OwnerPropertyRentWidget rentData={rentStatus} />
-
-                    </Grid>
-                    <Grid item xs={12} md={6} sx={{marginBottom: "1px", }}>
-                      <MaintenanceWidget2 maintenanceData={maintenanceStatusData} />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <LeaseWidget2 leaseData={leaseStatus} />
-                    </Grid>
-                    <Grid item xs={12}>
-                    <Grid item xs={12} sx={{backgroundColor: "#F2F2F2", paddingBottom: '40px', borderRadius: '10px', height: '100%',}}>
-                      
-                        <Grid container direction="row" sx={{
-                            paddingTop: "10px",
-                            paddingBottom: "10px",                                                        
-                        }}>
-                          <Grid item xs={2}>
-                          </Grid>
-                          <Grid item xs={8}>
-                          <Box
-                            sx={{
-                              flexGrow: 1, // Allow this Box to grow and fill space
-                              display: "flex",
-                              justifyContent: "center", // Center the content of this Box
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                color: "#160449",
-                                fontSize: { xs: "18px", sm: "18px", md: "24px", },
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Announcements
-                            </Typography>
-                          </Box>
-                          </Grid>
-                          <Grid item xs={2}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                zIndex: 1, // Look into this for all the components
-                                flex: 1,
-                                height: '100%'
-                              }}
-                            >
-                            <Box
-                              sx={{
-                                color: "#007AFF",
-                                fontSize: "15px",
-                                paddingRight: "25px",
-                                fontWeight: "bold",
-                              }}
-                              // onClick={() => {
-                              //   navigate("/announcements", { state: { announcementsData, propertyAddr } });
-                              // }}
-                            >
-                              {isMobile ? `(${announcementsData.length})`: `View all (${announcementsData.length})`}
-                              
-                            </Box>
-                          </Box>
-                          </Grid>
-                        </Grid>
-                        {announcementsData.length > 0  ? (
-                          <NewCardSlider announcementList={announcementsData} isMobile={isMobile}/>
-                        ) : (
-                          <Box sx={{display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px"}}>
-                            <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }}}>
-                              No Announcements
-                            </Typography>
-                          </Box>
-                        )}                      
-                    </Grid>
-                    </Grid>
+                      <Typography
+                        sx={{
+                          color: "#160449",
+                          fontSize: { xs: "18px", sm: "18px", md: "24px" },
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Announcements
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1, // Look into this for all the components
+                        flex: 1,
+                        height: "100%",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          color: "#007AFF",
+                          fontSize: "15px",
+                          paddingRight: "25px",
+                          fontWeight: "bold",
+                        }}
+                        // onClick={() => {
+                        //   navigate("/announcements", { state: { announcementsData, propertyAddr } });
+                        // }}
+                      >
+                        {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                      </Box>
+                    </Box>
+                  </Grid>
                 </Grid>
-                
+                {announcementsData.length > 0 ? (
+                  <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                    <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                  </Box>
+                )}
+              </Grid>
             </Grid>
+          </Grid>
+        </Grid>
       </Container>
       {/* } */}
       <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         {/* <DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle> */}
-        <DialogContent>                
+        <DialogContent>
           <DialogContentText
             id="alert-dialog-description"
             sx={{
@@ -239,7 +234,8 @@ return (
               paddingTop: "10px",
             }}
           >
-            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need to add additional details such as your SSN and address. Thank you!
+            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
+            to add additional details such as your SSN and address. Thank you!
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -256,7 +252,7 @@ return (
             autoFocus
           >
             OK
-          </Button>          
+          </Button>
         </DialogActions>
       </Dialog>
     </ThemeProvider>
