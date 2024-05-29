@@ -232,11 +232,11 @@ export default function AddProperty({}) {
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
     const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
-    
+
     const coordinates = await getLatLongFromAddress(fullAddress);
 
-    console.log("EditProperty2 - handleSubmit - coordinates - ", coordinates);
-    
+    console.log("EditProperty - handleSubmit - coordinates - ", coordinates);
+
     if (coordinates) {
       formData.append("property_latitude", coordinates.latitude);
       formData.append("property_longitude", coordinates.longitude);
@@ -409,10 +409,10 @@ export default function AddProperty({}) {
   };
 
   const handleAddressSelect = (address) => {
-    setAddress(address.street? address.street : '');
-    setCity(address.city? address.city : '');
-    setState(address.state? address.state : '');
-    setZip(address.zip? address.zip : '');
+    setAddress(address.street ? address.street : "");
+    setCity(address.city ? address.city : "");
+    setState(address.state ? address.state : "");
+    setZip(address.zip ? address.zip : "");
   };
 
   return (
@@ -534,8 +534,8 @@ export default function AddProperty({}) {
                 <Grid item xs={12}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Address
-                  </Typography>                  
-                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect}/>
+                  </Typography>
+                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} />
                 </Grid>
 
                 {/* Select Field for Issue and Cost Estimate */}
@@ -553,16 +553,13 @@ export default function AddProperty({}) {
                   />
                 </Grid>
 
-                
-
-                
                 <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Zip Code
                   </Typography>
-                  <TextField 
-                    value={zip}                   
-                    fullWidth                    
+                  <TextField
+                    value={zip}
+                    fullWidth
                     sx={{
                       backgroundColor: "white",
                       borderColor: "black",

@@ -36,23 +36,77 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Assessment } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { getLatLongFromAddress } from "../../utils/geocode";
+import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
 
 export default function EditProperty({}) {
+  console.log("In Edit Property2 - rename to Edit Property");
   const { state } = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   // const propertyData = location.state.item
   // const propertyId = location.state.propertyId;
-  let { index, propertyList } = state;
+  let { index, propertyList, page } = state;
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property Id", propertyId)
   console.log("Property Data in Edit Property", propertyData);
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
-
+  const us_states = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+  ];
   const [address, setAddress] = useState(propertyData.property_address);
   const [city, setCity] = useState(propertyData.property_city);
   const [propertyState, setPropertyState] = useState(propertyData.property_state);
@@ -85,7 +139,7 @@ export default function EditProperty({}) {
   const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
   const [unitAmenities, setUnitAmenities] = useState(propertyData.property_amenities_unit);
   const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
-  const [page, setPage] = useState("Edit");
+  // const [page, setPage] = useState("Edit");
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -275,11 +329,22 @@ export default function EditProperty({}) {
     const formData = new FormData();
     const utilitiesFormData = new FormData();
     const currentDate = new Date();
-    // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+    // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
     const promises = [];
     const promises_added = []; // debug
+
+    const fullAddress = `${address}, ${city}, ${propertyState}, ${zip}`;
+
+    const coordinates = await getLatLongFromAddress(fullAddress);
+
+    console.log("EditProperty - handleSubmit - coordinates - ", coordinates);
+
+    if (coordinates) {
+      formData.append("property_latitude", coordinates.latitude);
+      formData.append("property_longitude", coordinates.longitude);
+    }
 
     formData.append("property_uid", propertyData.property_uid);
     formData.append("property_address", address);
@@ -301,7 +366,9 @@ export default function EditProperty({}) {
     formData.append("property_featured", 0);
     formData.append("property_description", description);
     formData.append("property_notes", notes);
-    formData.append("property_available_to_rent", isListed ? 1 : 0);
+    if (page === "add_listing" || page === "edit_listing") {
+      formData.append("property_available_to_rent", isListed ? 1 : 0);
+    }
     formData.append("property_value", propertyValue);
     formData.append("property_value_year", assessmentYear);
     formData.append("property_active_date", activeDate);
@@ -356,6 +423,7 @@ export default function EditProperty({}) {
     const putData = async () => {
       setShowSpinner(true);
       promises.push(
+        // fetch(`http://localhost:4000/properties`, {
         fetch(`${APIConfig.baseURL.dev}/properties`, {
           method: "PUT",
           body: formData,
@@ -416,7 +484,7 @@ export default function EditProperty({}) {
     };
 
     const autoUpdate = async () => {
-      const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
+      const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
       // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
       const updatedJson = await updateResponse.json();
       const updatedProperty = updatedJson.result[0];
@@ -483,6 +551,13 @@ export default function EditProperty({}) {
     setActiveStep(files.findIndex((file) => file.coverPhoto));
   };
 
+  const handleAddressSelect = (address) => {
+    setAddress(address.street ? address.street : "");
+    setCity(address.city ? address.city : "");
+    setPropertyState(address.state ? address.state : "");
+    setZip(address.zip ? address.zip : "");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -517,9 +592,23 @@ export default function EditProperty({}) {
         >
           <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
             <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Edit Property
-              </Typography>
+              {page === "edit_property" && (
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Edit Property
+                </Typography>
+              )}
+
+              {page === "add_listing" && (
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Create Listing
+                </Typography>
+              )}
+
+              {page === "edit_listing" && (
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Edit Listing
+                </Typography>
+              )}
             </Box>
             <Box position="absolute" right={0}>
               <Button onClick={() => handleBackButton()}>
@@ -548,7 +637,7 @@ export default function EditProperty({}) {
                     <CardMedia
                       component="img"
                       // image={selectedImageList[activeStep]}
-                      image={selectedImageList[activeStep] ? `${selectedImageList[activeStep]}?${Date.now()}` : defaultHouseImage}
+                      image={selectedImageList[activeStep] ? `${selectedImageList[activeStep]}?${Date.now()}` : selectedImageList[0] || defaultHouseImage}
                       sx={{
                         elevation: "0",
                         boxShadow: "none",
@@ -573,10 +662,17 @@ export default function EditProperty({}) {
                   <ImageUploader selectedImageList={imageState} setSelectedImageList={setImageState} setDeletedImageList={setDeletedImageList} page={page} />
                 </Grid>
 
-                {/* Text Field for Title */}
                 <Grid item xs={12}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Address
+                  </Typography>
+                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} defaultValue={`${address}, ${city}, ${propertyState}`} />
+                </Grid>
+
+                {/* Text Field for Address */}
+                {/* <Grid item xs={12}>
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                    Street Address
                   </Typography>
                   <TextField
                     onChange={(e) => setAddress(e.target.value)}
@@ -589,10 +685,9 @@ export default function EditProperty({}) {
                     value={address}
                     size="small"
                     fullWidth
-                  />
-                </Grid>
+                  />                  
+                </Grid> */}
 
-                {/* Select Field for Issue and Cost Estimate */}
                 <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Unit</Typography>
                   <TextField
@@ -609,7 +704,7 @@ export default function EditProperty({}) {
                   />
                 </Grid>
 
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>City</Typography>
                   <TextField
                     onChange={(e) => setCity(e.target.value)}
@@ -623,9 +718,9 @@ export default function EditProperty({}) {
                     placeholder={propertyData.property_city}
                     value={city}
                   />
-                </Grid>
+                </Grid> */}
 
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     State
                   </Typography>
@@ -641,61 +736,11 @@ export default function EditProperty({}) {
                     onChange={(e) => setPropertyState(e.target.value)}
                     value={propertyState}
                   >
-                    <MenuItem value={"AL"}>AL</MenuItem>
-                    <MenuItem value={"AK"}>AK</MenuItem>
-                    <MenuItem value={"AZ"}>AZ</MenuItem>
-                    <MenuItem value={"AR"}>AR</MenuItem>
-                    <MenuItem value={"CA"}>CA</MenuItem>
-                    <MenuItem value={"CO"}>CO</MenuItem>
-                    <MenuItem value={"CT"}>CT</MenuItem>
-                    <MenuItem value={"DE"}>DE</MenuItem>
-                    <MenuItem value={"DC"}>DC</MenuItem>
-                    <MenuItem value={"FL"}>FL</MenuItem>
-                    <MenuItem value={"GA"}>GA</MenuItem>
-                    <MenuItem value={"HI"}>HI</MenuItem>
-                    <MenuItem value={"ID"}>ID</MenuItem>
-                    <MenuItem value={"IL"}>IL</MenuItem>
-                    <MenuItem value={"IN"}>IN</MenuItem>
-                    <MenuItem value={"IA"}>IA</MenuItem>
-                    <MenuItem value={"KS"}>KS</MenuItem>
-                    <MenuItem value={"KY"}>KY</MenuItem>
-                    <MenuItem value={"LA"}>LA</MenuItem>
-                    <MenuItem value={"ME"}>ME</MenuItem>
-                    <MenuItem value={"MD"}>MD</MenuItem>
-                    <MenuItem value={"MA"}>MA</MenuItem>
-                    <MenuItem value={"MI"}>MI</MenuItem>
-                    <MenuItem value={"MN"}>MN</MenuItem>
-                    <MenuItem value={"MS"}>MS</MenuItem>
-                    <MenuItem value={"MO"}>MO</MenuItem>
-                    <MenuItem value={"MT"}>MT</MenuItem>
-                    <MenuItem value={"NE"}>NE</MenuItem>
-                    <MenuItem value={"NV"}>NV</MenuItem>
-                    <MenuItem value={"NH"}>NH</MenuItem>
-                    <MenuItem value={"NJ"}>NJ</MenuItem>
-                    <MenuItem value={"NM"}>NM</MenuItem>
-                    <MenuItem value={"NY"}>NY</MenuItem>
-                    <MenuItem value={"NC"}>NC</MenuItem>
-                    <MenuItem value={"ND"}>ND</MenuItem>
-                    <MenuItem value={"OH"}>OH</MenuItem>
-                    <MenuItem value={"OK"}>OK</MenuItem>
-                    <MenuItem value={"OR"}>OR</MenuItem>
-                    <MenuItem value={"PA"}>PA</MenuItem>
-                    <MenuItem value={"PR"}>PR</MenuItem>
-                    <MenuItem value={"RI"}>RI</MenuItem>
-                    <MenuItem value={"SC"}>SC</MenuItem>
-                    <MenuItem value={"SD"}>SD</MenuItem>
-                    <MenuItem value={"TN"}>TN</MenuItem>
-                    <MenuItem value={"TX"}>TX</MenuItem>
-                    <MenuItem value={"UT"}>UT</MenuItem>
-                    <MenuItem value={"VT"}>VT</MenuItem>
-                    <MenuItem value={"VA"}>VA</MenuItem>
-                    <MenuItem value={"VI"}>VI</MenuItem>
-                    <MenuItem value={"WA"}>WA</MenuItem>
-                    <MenuItem value={"WV"}>WV</MenuItem>
-                    <MenuItem value={"WI"}>WI</MenuItem>
-                    <MenuItem value={"WY"}>WY</MenuItem>
+                    {us_states.map((st) => (
+                      <MenuItem value={st}>{st}</MenuItem>
+                    ))}
                   </Select>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
@@ -711,6 +756,7 @@ export default function EditProperty({}) {
                     size="small"
                     onChange={(e) => setZip(e.target.value)}
                     value={zip}
+                    disabled
                   />
                 </Grid>
 
@@ -845,6 +891,15 @@ export default function EditProperty({}) {
                     onChange={(e) => setNotes(e.target.value)}
                     value={notes}
                   />
+                </Grid>
+                <Grid item xs={12}>
+                  {page === "add_listing" || page === "edit_listing" ? (
+                    <Stack direction="column" justifyContent="left" padding="15px" width="85%">
+                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label="Available to rent" />
+                    </Stack>
+                  ) : (
+                    <div></div>
+                  )}
                 </Grid>
               </Grid>
             </Box>
@@ -1180,8 +1235,17 @@ export default function EditProperty({}) {
             <Grid container>
               <Grid item xs={12}>
                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
+
                 <Button variant="contained" type="submit" form="editPropertyForm" sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Property</Typography>
+                  {page === "edit_property" && (
+                    <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Property</Typography>
+                  )}
+                  {page === "add_listing" && (
+                    <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Create Listing</Typography>
+                  )}
+                  {page === "edit_listing" && (
+                    <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Listing</Typography>
+                  )}
                 </Button>
               </Grid>
             </Grid>

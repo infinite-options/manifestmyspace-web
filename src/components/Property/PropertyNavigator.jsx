@@ -388,11 +388,11 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     // console.log("next property id", nextId)
     setCurrentId(nextId);
     setProperty(propertyData[nextIndex]);
-    
-    // setImages(JSON.parse(propertyData[nextIndex].property_images));    
+
+    // setImages(JSON.parse(propertyData[nextIndex].property_images));
     const parsedPropertyImages = propertyData[nextIndex].property_images ? JSON.parse(propertyData[nextIndex].property_images) : [];
     console.log("parsedImages:", parsedPropertyImages);
-    console.log("parsedImages.length:", parsedPropertyImages.length);    
+    console.log("parsedImages.length:", parsedPropertyImages.length);
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
     setActiveStep(0);
@@ -410,7 +410,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
     // setImages(JSON.parse(propertyData[previousIndex].property_images));
     const parsedPropertyImages = propertyData[previousIndex].property_images ? JSON.parse(propertyData[previousIndex].property_images) : [];
     console.log("parsedImages:", parsedPropertyImages);
-    console.log("parsedImages.length:", parsedPropertyImages.length);    
+    console.log("parsedImages.length:", parsedPropertyImages.length);
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
     setActiveStep(0);
@@ -733,7 +733,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                         }}
                         size="small"
                         onClick={() => {
-                          navigate("/editProperty2", {
+                          navigate("/editProperty", {
                             state: {
                               index: currentIndex,
                               propertyList: propertyData,
@@ -1061,7 +1061,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                         }}
                         size="small"
                         onClick={() => {
-                          navigate("/editProperty2", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
+                          navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
                         }}
                       >
                         <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
@@ -1085,7 +1085,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                         }}
                         size="small"
                         onClick={() => {
-                          navigate("/editProperty2", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
+                          navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
                         }}
                       >
                         <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />

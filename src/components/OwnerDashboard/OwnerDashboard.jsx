@@ -46,7 +46,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function OwnerDashboard2() {
+export default function OwnerDashboard() {
   const { user, getProfileId } = useUser();
   const classes = useStyles();
   const navigate = useNavigate();
