@@ -23,7 +23,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import HappinessMatrix2 from "./HappinessMatrix2";
 import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget";
 import { Paper } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
