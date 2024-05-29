@@ -2,12 +2,13 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
-import {CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 // import * as ReactBootStrap from "react-bootstrap";
 import { get } from "../utils/api";
 import TransactionHistory from "./TransactionHistory";
 
 export default function TransactionsOwnerData(props) {
+  console.log("In TransactionsOwnerData.jsx");
   const selectedProperty = props.selectedProperty;
   const setShowSpinner = props.setShowSpinner;
   const { user, getProfileId } = useUser();
@@ -31,26 +32,27 @@ export default function TransactionsOwnerData(props) {
 
   const filterOwnerTransactions = async () => {
     let tl = transactionsResult;
-    const filteredTransactions = tl.filter(txn => txn.property_address===selectedProperty.property_address && txn.property_unit===selectedProperty.property_unit && txn.property_city===selectedProperty.property_city && txn.property_state===selectedProperty.property_state && txn.property_zip===selectedProperty.property_zip)
+    const filteredTransactions = tl.filter(
+      (txn) =>
+        txn.property_address === selectedProperty.property_address &&
+        txn.property_unit === selectedProperty.property_unit &&
+        txn.property_city === selectedProperty.property_city &&
+        txn.property_state === selectedProperty.property_state &&
+        txn.property_zip === selectedProperty.property_zip
+    );
     props.setTransactionList(filteredTransactions);
-  }
+  };
   useEffect(() => {
     // console.log("in use effect");
-    if(transactionsResult.length===0)
-      {
-        fetchOwnerTransactions();
+    if (transactionsResult.length === 0) {
+      fetchOwnerTransactions();
+    } else {
+      if (Object.keys(selectedProperty).length === 0) {
+        props.setTransactionList(transactionsResult);
+      } else {
+        filterOwnerTransactions();
       }
-    else{
-        if(Object.keys(selectedProperty).length === 0){
-          props.setTransactionList(transactionsResult);
-        }
-        else{
-          filterOwnerTransactions();
-        }
-      }
+    }
   }, [selectedProperty]);
-  return (
-    <>
-    </>
-  );
+  return <></>;
 }

@@ -93,7 +93,7 @@ export default function RevenueWidget({ revenueData }) {
                 },
               }}
             >
-              Transactions
+              Transactions!
             </Button>
           </Grid>
         </Grid>
