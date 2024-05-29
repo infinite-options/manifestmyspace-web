@@ -48,6 +48,8 @@ import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
+import PropertyDetail from "./PropertyDetail";
+import PropertyDetail2 from "./PropertyDetail2"
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -185,7 +187,7 @@ function getPropertyList(data) {
   });
 }
 
-export default function PropertyList({}) {
+export default function PropertyList({ }) {
   console.log("In Property List");
   let navigate = useNavigate();
   const { getProfileId, isManagement, isOwner } = useUser();
@@ -202,6 +204,7 @@ export default function PropertyList({}) {
   const [addressSortOrder, setAddressSortOrder] = useState("asc");
   const [statusSortOrder, setStatusSortOrder] = useState("asc");
   const [zipSortOrder, setZipSortOrder] = useState("asc");
+  const [propertyIndex, setPropertyIndex] = useState(0);
   // console.log("getProfileId information", getProfileId());
 
   function numberOfMaintenanceItems(maintenanceItems) {
@@ -224,7 +227,7 @@ export default function PropertyList({}) {
       // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
 
-      
+
       const propertyData = await response.json();
       console.log("In Property List >> Property Data: ", propertyData); // This has Applications, MaintenanceRequests, NewPMRequests and Property info from endpoint
       const propertyList = getPropertyList(propertyData);
@@ -306,7 +309,8 @@ export default function PropertyList({}) {
     // console.log("theoretically property", property)
     // console.log("handlePropertyDetailNavigation");
     // navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
-    navigate(`/propertyDetail`, { state: { index, propertyList } });
+    // navigate(`/propertyDetail`, { state: { index, propertyList } });
+    setPropertyIndex(index);
   }
 
   function getBadgeContent(property) {
@@ -382,238 +386,248 @@ export default function PropertyList({}) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
-        }}
-      >
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-        <Paper
-          sx={{
-            margin: "30px",
-            padding: theme.spacing(2),
-            backgroundColor: theme.palette.primary.main,
-            width: "100%", // Occupy full width with 25px margins on each side
-            maxWidth: "800px", // You can set a maxWidth if needed
-          }}
-        >
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
-            <Box sx={{ flex: 1 }} />
-            <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
-              <Typography
+      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop:theme.spacing(2)}}>
+        <Grid container>
+          <Grid item xs={12} md={propertyList.length > 0 ? 4 : 12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%", // Take up full screen width
+                minHeight: "100vh", // Set the Box height to full height
+                height:"100%",
+              }}
+            >
+              <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+                <CircularProgress color="inherit" />
+              </Backdrop>
+              <Paper
                 sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
+                  margin: "10px",
+                  backgroundColor: theme.palette.primary.main,
+                  width: "100%", // Occupy full width with 25px margins on each side
+                  maxWidth: "800px", // You can set a maxWidth if needed
                 }}
               >
-                All Properties 1
-              </Typography>
-            </Box>
-            <Button
-              position="absolute"
-              right={0}
-              sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }}
-              onClick={() =>
-                navigate("/addProperty", {
-                  state: {
-                    property_endpoint_resp: rawPropertyData,
-                  },
-                })
-              }
-            >
-              <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-            </Button>
-          </Stack>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
-            {/* New Buttons */}
-            <Typography> Sort by</Typography>
-            <Button onClick={sortByZip} color="inherit">
-              Zip
-            </Button>
-            <Button onClick={sortByState} color="inherit">
-              State
-            </Button>
-            <Button onClick={sortByAddress} color="inherit">
-              Address
-            </Button>
-            <Button onClick={sortByCity} color="inherit">
-              City
-            </Button>
-            <Button onClick={sortByStatus} color="inherit">
-              Rent Status
-            </Button>
-            <Box sx={{ flex: 1 }} />
-            <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                }}
-              ></Typography>
-            </Box>
-          </Stack>
-          <Box sx={{ padding: "10px" }}>
-            <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
-
-            <List>
-              {displayedItems.map((property, index) => (
-                <ListItem
-                  key={index}
-                  style={{
-                    justifyContent: "space-between",
-                    display: "flex",
-                    height: "100%",
-                    alignItems: "flex-start",
-                    backgroundColor: theme.palette.form.main,
-                    paddingLeft: "10px",
-                    paddingRight: "10px",
-                  }}
-                  onClick={() => {
-                    let i = propertyList.findIndex((p) => p.property_uid === property.property_uid);
-                    {
-                      console.log("List Item Clicked", property, i, propertyList);
-                    }
-                    handlePropertyDetailNavigation(i, propertyList);
-                  }}
-                >
-                  <Avatar
-                    // src={getCoverPhoto(property)}  Adding the Date.now forces the cache to refresh the image
-                    src={`${getCoverPhoto(property)}?${Date.now()}`}
-                    alt="property image"
-                    sx={{
-                      borderRadius: "0",
-                      marginRight: "10px",
-                      width: "75px",
-                      height: "75px",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center", // vertically align items to the center
-                      justifyContent: "center", // horizontally align items to the center
-                      height: "100%", // to take full height of its parent
-                      width: "50%", // to take full width of its parent
-                    }}
-                  >
-                    {displayAddress(property)}
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center", // vertically align items to the center
-                      justifyContent: "center", // horizontally align items to the center
-                      height: "100%", // to take full height of its parent
-                      width: "50%", // to take full width of its parent
-                    }}
-                  >
-                    <Stack>
-                      <Typography
-                        sx={{
-                          color: "#000000",
-                          fontWeight: 700,
-                          fontSize: "15px",
-                          margin: "0px", // Ensure no margin
-                          padding: "0px", // Ensure no padding
-                          textAlign: "center", // Ensure text is centered within itself
-                          verticalAlign: "middle", // Vertically align text in the middle
-                          alignItems: "center", // vertically align items to the center
-                        }}
-                      >
-                        {property.tenant_first_name} {property.tenant_last_name}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "#000000",
-                          fontWeight: 700,
-                          fontSize: "15px",
-                          margin: "0px", // Ensure no margin
-                          padding: "0px", // Ensure no padding
-                          textAlign: "center", // Ensure text is centered within itself
-                          verticalAlign: "middle", // Vertically align text in the middle
-                          alignItems: "center", // vertically align items to the center
-                        }}
-                      >
-                        {property.lease_uid}
-                      </Typography>
-                    </Stack>
-                  </Box>
-                  <Box
-                    sx={{
-                      backgroundColor: getPaymentStatusColor(property.rent_status),
-                      width: "25%", // Ensure it takes up full width of its parent
-                      height: "100%", // Ensure it takes up full height of its parent
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: "0px",
-                      border: "none",
-                      margin: "0px",
-                    }}
-                  >
-                    <Badge
-                      overlap="circular"
-                      color="success"
-                      badgeContent={getNumOfApplications(property)}
-                      invisible={!getNumOfApplications(property)}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      style={{
-                        color: "#000000",
-                        width: "100%",
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
+                  <Box sx={{ flex: 1 }} />
+                  <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.largeFont,
                       }}
                     >
-                      <Typography
-                        sx={{
-                          color: theme.palette.primary.main,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          margin: "0px", // Ensure no margin
-                          padding: "0px", // Ensure no padding
-                          height: "50px",
+                      All Properties 1
+                    </Typography>
+                  </Box>
+                  <Button
+                    position="absolute"
+                    right={0}
+                    sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }}
+                    onClick={() =>
+                      navigate("/addProperty", {
+                        state: {
+                          property_endpoint_resp: rawPropertyData,
+                        },
+                      })
+                    }
+                  >
+                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+                  </Button>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
+                  {/* New Buttons */}
+                  <Typography> Sort by</Typography>
+                  <Button onClick={sortByZip} color="inherit">
+                    Zip
+                  </Button>
+                  <Button onClick={sortByState} color="inherit">
+                    State
+                  </Button>
+                  <Button onClick={sortByAddress} color="inherit">
+                    Address
+                  </Button>
+                  <Button onClick={sortByCity} color="inherit">
+                    City
+                  </Button>
+                  <Button onClick={sortByStatus} color="inherit">
+                    Rent Status
+                  </Button>
+                  <Box sx={{ flex: 1 }} />
+                  <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                      }}
+                    ></Typography>
+                  </Box>
+                </Stack>
+                <Box sx={{ padding: "10px" }}>
+                  <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
+
+                  <List>
+                    {displayedItems.map((property, index) => (
+                      <ListItem
+                        key={index}
+                        style={{
+                          justifyContent: "space-between",
                           display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: "100%",
+                          height: "100%",
+                          alignItems: "flex-start",
+                          backgroundColor: theme.palette.form.main,
+                          paddingLeft: "10px",
+                          paddingRight: "10px",
+                        }}
+                        onClick={() => {
+                          let i = propertyList.findIndex((p) => p.property_uid === property.property_uid);
+                          {
+                            console.log("List Item Clicked", property, i, propertyList);
+                          }
+                          handlePropertyDetailNavigation(i, propertyList);
                         }}
                       >
-                        {getPaymentStatus(property.rent_status)}
-                      </Typography>
-                    </Badge>
-                  </Box>
-                  <Badge
-                    overlap="circular"
-                    color="error"
-                    badgeContent={getNumOfMaintenanceReqs(property)}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    style={{
-                      color: "#000000",
-                      // color: theme.palette.custom.blue,
-                    }}
-                  >
-                    <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" } }}>
-                      <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
-                    </Button>
-                  </Badge>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Paper>
-      </Box>
+                        <Avatar
+                          // src={getCoverPhoto(property)}  Adding the Date.now forces the cache to refresh the image
+                          src={`${getCoverPhoto(property)}?${Date.now()}`}
+                          alt="property image"
+                          sx={{
+                            borderRadius: "0",
+                            marginRight: "10px",
+                            width: "75px",
+                            height: "75px",
+                          }}
+                        />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center", // vertically align items to the center
+                            justifyContent: "center", // horizontally align items to the center
+                            height: "100%", // to take full height of its parent
+                            width: "50%", // to take full width of its parent
+                          }}
+                        >
+                          {displayAddress(property)}
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center", // vertically align items to the center
+                            justifyContent: "center", // horizontally align items to the center
+                            height: "100%", // to take full height of its parent
+                            width: "50%", // to take full width of its parent
+                          }}
+                        >
+                          <Stack>
+                            <Typography
+                              sx={{
+                                color: "#000000",
+                                fontWeight: 700,
+                                fontSize: "15px",
+                                margin: "0px", // Ensure no margin
+                                padding: "0px", // Ensure no padding
+                                textAlign: "center", // Ensure text is centered within itself
+                                verticalAlign: "middle", // Vertically align text in the middle
+                                alignItems: "center", // vertically align items to the center
+                              }}
+                            >
+                              {property.tenant_first_name} {property.tenant_last_name}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                color: "#000000",
+                                fontWeight: 700,
+                                fontSize: "15px",
+                                margin: "0px", // Ensure no margin
+                                padding: "0px", // Ensure no padding
+                                textAlign: "center", // Ensure text is centered within itself
+                                verticalAlign: "middle", // Vertically align text in the middle
+                                alignItems: "center", // vertically align items to the center
+                              }}
+                            >
+                              {property.lease_uid}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                        <Box
+                          sx={{
+                            backgroundColor: getPaymentStatusColor(property.rent_status),
+                            width: "25%", // Ensure it takes up full width of its parent
+                            height: "100%", // Ensure it takes up full height of its parent
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: "0px",
+                            border: "none",
+                            margin: "0px",
+                          }}
+                        >
+                          <Badge
+                            overlap="circular"
+                            color="success"
+                            badgeContent={getNumOfApplications(property)}
+                            invisible={!getNumOfApplications(property)}
+                            anchorOrigin={{
+                              vertical: "top",
+                              horizontal: "right",
+                            }}
+                            style={{
+                              color: "#000000",
+                              width: "100%",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                color: theme.palette.primary.main,
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                margin: "0px", // Ensure no margin
+                                padding: "0px", // Ensure no padding
+                                height: "50px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+                              }}
+                            >
+                              {getPaymentStatus(property.rent_status)}
+                            </Typography>
+                          </Badge>
+                        </Box>
+                        <Badge
+                          overlap="circular"
+                          color="error"
+                          badgeContent={getNumOfMaintenanceReqs(property)}
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                          style={{
+                            color: "#000000",
+                            // color: theme.palette.custom.blue,
+                          }}
+                        >
+                          <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" } }}>
+                            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
+                          </Button>
+                        </Badge>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </Paper>
+            </Box>
+          </Grid>
+          {propertyList.length > 0 &&
+          <Grid xs={12} md={8}>
+              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} />
+          </Grid>
+           }
+        </Grid>
+      </Container>
     </ThemeProvider>
   );
 }
