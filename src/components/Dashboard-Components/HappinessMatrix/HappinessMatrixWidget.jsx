@@ -132,7 +132,7 @@ export default function HappinessMatrixWidget(props) {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <ResponsiveContainer width="100%" height={350}>
+            <ResponsiveContainer width="100%" height={380}>
               <ScatterChart
                 // width={chartWidth}
                 // height={chartHeight}
@@ -148,19 +148,19 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  tick={{ transform: "translate(5, 0)" }}
-                  // label={{
-                  //     value: 'Delta Cashflow',
-                  //     angle: -90,
-                  //     position: 'insideLeft',
-                  //     dx: -20,
-                  //     dy: 40,
-                  //     style: axisLabelStyle,
-                  //     fill: '#160449',
-                  // }}
+                  // tick={{ transform: 'translate(10, 0)' }}
+                  label={{
+                    value: "Delta Cashflow",
+                    angle: -90,
+                    position: "insideRight",
+                    dx: -10,
+                    dy: -50,
+                    style: axisLabelStyle,
+                    fill: "#160449",
+                  }}
                   domain={[-1.1, 0.1]}
-                  ticks={[-1.1, -0.5, 0.1]}
-                  // tick={false}
+                  // ticks={[-1.1, -0.5, 0.1]}
+                  tick={false}
                 />
 
                 <XAxis
@@ -170,18 +170,18 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  tick={{ transform: "translate(0, 0)" }}
-                  // label={{
-                  //     value: 'Vacancies',
-                  //     position: 'insideBottom',
-                  //     dy: 40,
-                  //     dx: 0,
-                  //     style: axisLabelStyle,
-                  //     fill: '#160449',
-                  // }}
+                  // tick={{ transform: 'translate(0, 0)' }}
+                  label={{
+                    value: "Vacancies",
+                    position: "insideBottom",
+                    dy: -5,
+                    dx: 0,
+                    style: axisLabelStyle,
+                    fill: "#160449",
+                  }}
                   domain={[-100, 0]}
-                  ticks={[-100, -50, 0]} // Add this line
-                  // tick={false}
+                  // ticks={[-100, -50, 0]} // Add this line
+                  tick={false}
                 />
 
                 <Tooltip
@@ -280,7 +280,7 @@ export default function HappinessMatrixWidget(props) {
 
 const CustomImage = (props) => {
   const navigate = useNavigate();
-  const { cx, cy, payload, onClick, isClicked, isVisible, index } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowDetails } = props;
 
   //   console.log("CustomImage - props - ", props);
   if (!isVisible) {
@@ -297,6 +297,7 @@ const CustomImage = (props) => {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
         cashflowData: payload,
+        cashflowDetails: cashflowDetails.filter((item) => item.owner_uid === payload.owner_uid),
       },
     });
   };

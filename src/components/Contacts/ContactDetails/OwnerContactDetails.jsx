@@ -10,6 +10,7 @@ import User_fill from "../../../images/User_fill_dark.png";
 import axios from "axios";
 import APIConfig from "../../../utils/APIConfig";
 import Cashflow from "../../Cashflow/Cashflow";
+import { DataGrid } from '@mui/x-data-grid';
 
 const OwnerContactDetails = (props) => {
   console.log("In Onwer Contact Details", props);
@@ -28,6 +29,7 @@ const OwnerContactDetails = (props) => {
   // const passedData = location.state.viewData;
   const ownerUID = location.state.ownerUID;
   const cashflowData = location.state.cashflowData;
+  const cashflowDetails = location.state.cashflowDetails;
 
   console.log("cashflowData - ", cashflowData);
 
@@ -448,6 +450,8 @@ const OwnerContactDetails = (props) => {
                   >
                     Vacancies : {cashflowData.vacancy_num}
                   </Typography>
+
+                  <CashflowDataGrid data={cashflowDetails} />
                   
                 </Stack>
               )
@@ -567,5 +571,91 @@ const OwnerContactDetails = (props) => {
     </ThemeProvider>
   );
 };
+
+const CashflowDataGrid = ( {data} ) => {
+  const columns = [
+    { 
+      field: 'owner_uid',
+      headerName: 'DEBUG - Owner UID',
+      width: 100 
+    },    
+    {
+      field: 'owner_name',
+      headerName: 'DEBUG - Owner Name', 
+      width: 150, 
+      renderCell: (params) => (
+        <span>{params.row.owner_first_name} {params.row.owner_last_name}</span>
+      )
+    },
+    { 
+      field: 'cf_month',
+      headerName: 'Month',
+      width: 100,
+      renderCell: (params) => (
+        <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>
+      ) 
+    },
+    { 
+      field: 'cf_year',
+      headerName: 'Year',
+      width: 100,
+      renderCell: (params) => (
+        <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>
+      ) 
+    },
+    { 
+      field: 'actual_cashflow',
+      headerName: 'Actual Cashflow',
+      width: 100 
+    }, 
+    { 
+      field: 'expected_cashflow',
+      headerName: 'Expected Cashflow',
+      width: 100 
+    }, 
+    { 
+      field: 'delta_cashflow',
+      headerName: 'Delta Cashflow',
+      width: 100,
+      renderCell: (params) => (
+        <span>{parseFloat(params.row.actual_cashflow) - parseFloat(params.row.expected_cashflow)}</span>
+      ) 
+    }, 
+    { 
+      field: 'percent_delta_cashflow',
+      headerName: 'Delta Cashflow %',
+      width: 150 
+    }, 
+    
+  ];
+
+  const dataWithIds = data.map((row, index) => ({ ...row, id: index + 1 }));
+  
+  const totalDeltaCashflow = dataWithIds.reduce((total, row) => {
+    return total + (parseFloat(row.actual_cashflow) - parseFloat(row.expected_cashflow));
+  }, 0);
+
+  return (
+    <>
+      <DataGrid
+        rows={dataWithIds}
+        columns={columns}
+        // initialState={{
+        //   pagination: {
+        //     paginationModel: {
+        //       pageSize: 5,
+        //     },
+        //   },
+        // }}
+        // pageSizeOptions={[5]}
+        // checkboxSelection
+        // disableRowSelectionOnClick
+        footer={{
+          totalDeltaCashflow: `Total Delta Cashflow: ${totalDeltaCashflow.toFixed(2)}` // Display the total
+        }}
+      />
+    </>
+  );
+}
 
 export default OwnerContactDetails;
