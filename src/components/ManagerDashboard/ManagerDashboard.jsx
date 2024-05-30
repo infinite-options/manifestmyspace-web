@@ -120,7 +120,7 @@ function ManagerDashboard() {
 
       let quarter;
       let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
-      let delta_cf_perc = parseFloat(percent_delta_cashflow);
+      let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
       // if (percent_delta_cashflow < -0.5 && vacancyItem.vacancy_perc < -50) {
       //   quarter = 1;
       // } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc < -50) {
@@ -170,7 +170,7 @@ function ManagerDashboard() {
           borderColor = "#FF8A00"; // Orange color
           break;
         case 3:
-          borderColor = "#FF6347"; // Red color
+          borderColor = "#D22B2B"; // Red color
           break;
         case 4:
           borderColor = "#FFC85C"; // Yellow color
