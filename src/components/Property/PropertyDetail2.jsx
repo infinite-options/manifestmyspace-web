@@ -3,7 +3,7 @@ import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Sli
 import theme from "../../theme/theme";
 import PropertyNavigator from "../Property/PropertyNavigator";
 
-export default function PropertyDetail({ index, propertyList }) {
+export default function PropertyDetail({ index, propertyList, allRentStatus }) {
   console.log("In Property Detail");
   return (
     <ThemeProvider theme={theme}>
@@ -15,7 +15,7 @@ export default function PropertyDetail({ index, propertyList }) {
           minHeight: "100vh", // Set the Box height to full height
         }}
       >
-        <PropertyNavigator index={index} propertyList={propertyList} />
+        <PropertyNavigator index={index} propertyList={propertyList} allRentStatus={allRentStatus} />
       </Box>
     </ThemeProvider>
   );
