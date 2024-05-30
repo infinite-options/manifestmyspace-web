@@ -65,10 +65,16 @@ function ManagerDashboard() {
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
   const [cashflowDetails, setCashflowDetails] = useState([]);
+  const [cashflowData, setCashflowData] = useState([]);
 
   useEffect(() => {
-    console.log("ROHIT - cashflowDetails - ", cashflowDetails);
+    console.log("ROHIT - ManagerDashboard - cashflowDetails - ", cashflowDetails);
   }, [cashflowDetails]);
+
+  useEffect(() => {
+    console.log("ROHIT -  ManagerDashboard - cashflowData - ", cashflowData);
+  }, [cashflowData]);
+
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -278,6 +284,9 @@ function ManagerDashboard() {
         setRevenueData(jsonData.Profitability);
 
         //CASHFLOW DETAILS
+        setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
+
+        //CASHFLOW DETAILS
         setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
 
         // NEW PM REQUESTS
@@ -338,7 +347,7 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} cashflowDetails={cashflowDetails} />
+                <HappinessMatrixWidget data={matrixData} cashflowData={cashflowData} cashflowDetails={cashflowDetails} />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />

@@ -11,6 +11,7 @@ import axios from "axios";
 import APIConfig from "../../../utils/APIConfig";
 import Cashflow from "../../Cashflow/Cashflow";
 import { DataGrid } from '@mui/x-data-grid';
+import { useGridRegisterPipeApplier } from "@mui/x-data-grid/hooks/core/pipeProcessing";
 
 const OwnerContactDetails = (props) => {
   console.log("In Onwer Contact Details", props);
@@ -28,10 +29,26 @@ const OwnerContactDetails = (props) => {
   const [index, setIndex] = useState(location.state.index);
   // const passedData = location.state.viewData;
   const ownerUID = location.state.ownerUID;
+  
   const cashflowData = location.state.cashflowData;
+  const [ filteredCashflowData, setFilteredCashflowData ] = useState(cashflowData);
   const cashflowDetails = location.state.cashflowDetails;
+  const [ filteredCashflowDetails, setFilteredCashflowDetails ] = useState(cashflowDetails);
+  // .filter((item) => item.owner_uid === ownerUID)
 
   console.log("cashflowData - ", cashflowData);
+
+  useEffect(() => {
+    console.log("ROHIT - cashflowData - ", cashflowData);
+  }, [cashflowData]);
+
+  useEffect(() => {
+    console.log("ROHIT - filteredCashflowData - ", filteredCashflowData);
+  }, [filteredCashflowData]);
+
+  useEffect(() => {
+    console.log("ROHIT - filteredCashflowDetails - ", filteredCashflowDetails);
+  }, [filteredCashflowDetails]);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    
@@ -75,6 +92,9 @@ const OwnerContactDetails = (props) => {
     console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
     contactDetails && console.log("DATA DETAILS", contactDetails[index]);
+    setFilteredCashflowDetails(contactDetails != null? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
+    setFilteredCashflowData(contactDetails != null? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
+
   }, [index]);
 
   //   console.log("Data details passed 1: ", contactDetails);
@@ -397,7 +417,7 @@ const OwnerContactDetails = (props) => {
             </Stack>
 
             {
-              navigatingFrom === "HappinessMatrixWidget" && (
+              navigatingFrom === "HappinessMatrixWidget" && filteredCashflowData.length > 0 && (
                 <Stack sx={{ padding: "15px" }}>
                   <Typography
                     sx={{
@@ -415,7 +435,7 @@ const OwnerContactDetails = (props) => {
                       // textDecoration: "underline",
                     }}                    
                   >
-                    Expected Cashflow : {cashflowData.expected_cashflow}
+                    Expected Cashflow : {filteredCashflowData[0]?.expected_cashflow}
                   </Typography>
 
                   <Typography
@@ -426,7 +446,7 @@ const OwnerContactDetails = (props) => {
                       // textDecoration: "underline",
                     }}                    
                   >
-                    Actual Cashflow : {cashflowData.actual_cashflow}
+                    Actual Cashflow : {filteredCashflowData[0]?.actual_cashflow}
                   </Typography>
 
                   <Typography
@@ -437,7 +457,7 @@ const OwnerContactDetails = (props) => {
                       // textDecoration: "underline",
                     }}                    
                   >
-                    Delta Cashflow : {cashflowData.delta_cashflow}
+                    Delta Cashflow : {filteredCashflowData[0]?.delta_cashflow}
                   </Typography>
 
                   <Typography
@@ -448,10 +468,10 @@ const OwnerContactDetails = (props) => {
                       // textDecoration: "underline",
                     }}                    
                   >
-                    Delta Cashflow Percentage : {cashflowData.delta_cashflow_perc}
+                    Delta Cashflow Percentage : {filteredCashflowData[0]?.percent_delta_cashflow}
                   </Typography>
 
-                  <Typography
+                  {/* <Typography
                     sx={{
                       color: theme.typography.common.blue,
                       fontSize: "13px",
@@ -459,11 +479,19 @@ const OwnerContactDetails = (props) => {
                       // textDecoration: "underline",
                     }}                    
                   >
-                    Vacancies : {cashflowData.vacancy_num}
-                  </Typography>
+                    Vacancies : {filteredCashflowData[0]?.vacancy_num}
+                  </Typography> */}
 
-                  <CashflowDataGrid data={cashflowDetails} />
                   
+                  
+                </Stack>
+              )
+            }
+
+            {
+              navigatingFrom === "HappinessMatrixWidget" && filteredCashflowDetails.length > 0 && (
+                <Stack  sx={{ padding: "15px" }}>
+                  <CashflowDataGrid data={filteredCashflowDetails} />
                 </Stack>
               )
             }

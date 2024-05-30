@@ -11,8 +11,10 @@ export default function HappinessMatrixWidget(props) {
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { data, dataSetter, cashflowDetails } = props;
+  const { data, dataSetter, cashflowDetails, cashflowData } = props;
   console.log("HappinessMatrixWidget - data -", data);
+  console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
@@ -251,6 +253,7 @@ export default function HappinessMatrixWidget(props) {
                       {...props}
                       //   onClick={() => handlePointClick(props.payload)}
                       cashflowDetails={cashflowDetails}
+                      cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
@@ -281,9 +284,9 @@ export default function HappinessMatrixWidget(props) {
 
 const CustomImage = (props) => {
   const navigate = useNavigate();
-  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowDetails } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowData, cashflowDetails } = props;
 
-  //   console.log("CustomImage - props - ", props);
+    console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }
@@ -297,8 +300,8 @@ const CustomImage = (props) => {
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
-        cashflowData: payload,
-        cashflowDetails: cashflowDetails.filter((item) => item.owner_uid === payload.owner_uid),
+        cashflowData: cashflowData,
+        cashflowDetails: cashflowDetails,
       },
     });
   };
