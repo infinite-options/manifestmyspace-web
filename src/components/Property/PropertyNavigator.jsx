@@ -75,7 +75,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
   const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid);
 
   // console.log(propertyId)
-  console.log("Maintenance Request Data2: ", maintenanceReqData);
+  console.log("Maintenance Request Data: ", maintenanceReqData);
 
   let data = "";
   const role = roleName();
@@ -859,7 +859,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                           }}
                           size="small"
                           onClick={() => {
-                            navigate("/editProperty2", {
+                            navigate("/editProperty", {
                               state: {
                                 index: currentIndex,
                                 propertyList: propertyData,
@@ -1104,7 +1104,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                             }}
                             size="small"
                             onClick={() => {
-                              navigate("/editProperty2", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
+                              navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
                             }}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
@@ -1128,7 +1128,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                             }}
                             size="small"
                             onClick={() => {
-                              navigate("/editProperty2", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
+                              navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
                             }}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
@@ -1293,7 +1293,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                               }}
                               size="small"
                               onClick={() => {
-                                navigate("/editProperty2", {
+                                navigate("/editProperty", {
                                   state: {
                                     index: currentIndex,
                                     propertyList: propertyData,
@@ -1621,7 +1621,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                               }}
                               size="small"
                               onClick={() => {
-                                navigate("/editProperty2", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
+                                navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
                               }}
                             >
                               <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
@@ -1645,7 +1645,7 @@ export default function PropertyNavigator({ index, propertyList, contracts, prop
                               }}
                               size="small"
                               onClick={() => {
-                                navigate("/editProperty2", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
+                                navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
                               }}
                             >
                               <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
