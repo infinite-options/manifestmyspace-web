@@ -64,6 +64,11 @@ function ManagerDashboard() {
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
+  const [cashflowDetails, setCashflowDetails] = useState([]);
+
+  useEffect(() => {
+    console.log("ROHIT - cashflowDetails - ", cashflowDetails);
+  }, [cashflowDetails]);
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -103,6 +108,7 @@ function ManagerDashboard() {
       let actual_cashflow = 0;
 
       if (deltaCashflowItem) {
+        console.log("ROHIT - deltaCashflowItem - ", deltaCashflowItem);
         fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
         ownerUID = deltaCashflowItem.owner_uid;
         percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
@@ -113,29 +119,61 @@ function ManagerDashboard() {
       }
 
       let quarter;
-      if (percent_delta_cashflow < -0.5 && vacancyItem.vacancy_perc < -50) {
+      let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
+      let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
+      // if (percent_delta_cashflow < -0.5 && vacancyItem.vacancy_perc < -50) {
+      //   quarter = 1;
+      // } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc < -50) {
+      //   quarter = 2;
+      // } else if (percent_delta_cashflow < -50 && vacancyItem.vacancy_perc > -50) {
+      //   quarter = 3;
+      // } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc > -50) {
+      //   quarter = 4;
+      // }
+
+      if (delta_cf_perc > -0.5 && vacancy_perc > -50) {
         quarter = 1;
-      } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc < -50) {
+      } else if (delta_cf_perc < -0.5 && vacancy_perc > -50) {
         quarter = 2;
-      } else if (percent_delta_cashflow < -50 && vacancyItem.vacancy_perc > -50) {
+      } else if (delta_cf_perc < -0.5 && vacancy_perc < -50) {
         quarter = 3;
-      } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc > -50) {
+      } else if (delta_cf_perc > -0.5 && vacancy_perc < -50) {
         quarter = 4;
       }
 
+      console.log("ROHIT - delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
+      console.log("ROHIT - quarter - ", fullName, quarter);
+
       let borderColor;
+      // switch (quarter) {
+      //   case 1:
+      //     borderColor = "#A52A2A"; // Red color
+      //     break;
+      //   case 2:
+      //     borderColor = "#FF8A00"; // Orange color
+      //     break;
+      //   case 3:
+      //     borderColor = "#FFC85C"; // Yellow color
+      //     break;
+      //   case 4:
+      //     borderColor = "#3D5CAC"; // Blue color
+      //     break;
+      //   default:
+      //     borderColor = "#000000"; // Black color
+      // }
+
       switch (quarter) {
         case 1:
-          borderColor = "#A52A2A"; // Red color
+          borderColor = "#00FA9A"; // Green
           break;
         case 2:
           borderColor = "#FF8A00"; // Orange color
           break;
         case 3:
-          borderColor = "#FFC85C"; // Yellow color
+          borderColor = "#D22B2B"; // Red color
           break;
         case 4:
-          borderColor = "#3D5CAC"; // Blue color
+          borderColor = "#FFC85C"; // Yellow color
           break;
         default:
           borderColor = "#000000"; // Black color
@@ -150,25 +188,27 @@ function ManagerDashboard() {
         vacancy_num: vacancyItem.vacancy_num || 0,
         cashflow: cashflow || 0,
         expected_cashflow: expected_cashflow || 0,
+        actual_cashflow: actual_cashflow || 0,
         delta_cashflow: actual_cashflow - expected_cashflow,
         index: i,
         color: borderColor,
         total_properties: vacancyItem.total_properties || 0,
       };
     });
-    // Sorting transformedData based on the color
-    const sortedData = transformedData.sort((a, b) => {
-      const colorOrder = {
-        "#A52A2A": 1,
-        "#FF8A00": 2,
-        "#FFC85C": 3,
-        "#3D5CAC": 4,
-        "#000000": 5,
-      };
-      return colorOrder[a.color] - colorOrder[b.color];
-    });
+    // // Sorting transformedData based on the color
+    // const sortedData = transformedData.sort((a, b) => {
+    //   const colorOrder = {
+    //     "#A52A2A": 1,
+    //     "#FF8A00": 2,
+    //     "#FFC85C": 3,
+    //     "#3D5CAC": 4,
+    //     "#000000": 5,
+    //   };
+    //   return colorOrder[a.color] - colorOrder[b.color];
+    // });
 
-    setMatrixData(sortedData);
+    // setMatrixData(sortedData);
+    setMatrixData(transformedData);
   };
 
   // console.log("In Manager Dashboard Step 3");
@@ -237,6 +277,9 @@ function ManagerDashboard() {
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
 
+        //CASHFLOW DETAILS
+        setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
+
         // NEW PM REQUESTS
         // set_property_endpoint_resp(propertiesResponseJSON);
         // setContractRequests(propertiesResponseJSON.NewPMRequests.result);
@@ -295,7 +338,7 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} />
+                <HappinessMatrixWidget data={matrixData} cashflowDetails={cashflowDetails} />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />

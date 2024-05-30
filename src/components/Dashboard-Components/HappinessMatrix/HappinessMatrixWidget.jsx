@@ -11,8 +11,8 @@ export default function HappinessMatrixWidget(props) {
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { data, dataSetter } = props;
-  // console.log("HappinessMatrixWidget - data -", data);
+  const { data, dataSetter, cashflowDetails } = props;
+  console.log("HappinessMatrixWidget - data -", data);
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
@@ -116,7 +116,7 @@ export default function HappinessMatrixWidget(props) {
           // margin: '50p', // Add margin here
           borderRadius: "10px",
           backgroundColor: theme.palette.primary.main,
-          height: 400,
+          height: 450,
           [theme.breakpoints.down("sm")]: {
             width: "80%",
           },
@@ -125,7 +125,7 @@ export default function HappinessMatrixWidget(props) {
           },
         }}
       >
-        <Grid container style={{ padding: "15px" }}>
+        <Grid container style={{ padding: "10px" }}>
           <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Happiness Matrix
@@ -148,19 +148,19 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  // tick={{ transform: 'translate(10, 0)' }}
-                  label={{
-                    value: "Delta Cashflow",
-                    angle: -90,
-                    position: "insideRight",
-                    dx: -10,
-                    dy: -50,
-                    style: axisLabelStyle,
-                    fill: "#160449",
-                  }}
+                  tick={{ transform: 'translate(10, 0)' }}
+                  // label={{
+                  //   value: "Delta Cashflow",
+                  //   angle: -90,
+                  //   position: "insideRight",
+                  //   dx: -10,
+                  //   dy: -50,
+                  //   style: axisLabelStyle,
+                  //   fill: "#160449",
+                  // }}
                   domain={[-1.1, 0.1]}
-                  // ticks={[-1.1, -0.5, 0.1]}
-                  tick={false}
+                  ticks={[-1.1, -0.5, 0.1]}
+                  // tick={false}
                 />
 
                 <XAxis
@@ -170,18 +170,18 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  // tick={{ transform: 'translate(0, 0)' }}
-                  label={{
-                    value: "Vacancies",
-                    position: "insideBottom",
-                    dy: -5,
-                    dx: 0,
-                    style: axisLabelStyle,
-                    fill: "#160449",
-                  }}
+                  tick={{ transform: 'translate(0, 0)' }}
+                  // label={{
+                  //   value: "Vacancies",
+                  //   position: "insideBottom",
+                  //   dy: -5,
+                  //   dx: 0,
+                  //   style: axisLabelStyle,
+                  //   fill: "#160449",
+                  // }}
                   domain={[-100, 0]}
-                  // ticks={[-100, -50, 0]} // Add this line
-                  tick={false}
+                  ticks={[-100, -50, 0]} // Add this line
+                  // tick={false}
                 />
 
                 <Tooltip
@@ -250,6 +250,7 @@ export default function HappinessMatrixWidget(props) {
                     <CustomImage
                       {...props}
                       //   onClick={() => handlePointClick(props.payload)}
+                      cashflowDetails={cashflowDetails}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
