@@ -100,6 +100,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
       style={{
         borderRadius: "10px",
         margin: "20px",
+        padding: '20px'
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -107,32 +108,25 @@ export default function MaintenanceWorkerDashboardWidget(props) {
       </Backdrop>
       <Grid container spacing={4} sx={{ paddingLeft: "5px" }}>
         <Grid item xs={12}>
-          <Box sx={{ paddingLeft: "5px" }}>
-            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Work Orders</Typography>
+          <Box sx={{ paddingLeft: "5px", marginBottom:'10px' }}>
+          <Typography sx={{ 
+                            color: '#160449', 
+                            fontWeight: 'bold', 
+                            fontSize: "35px", 
+                            textAlign: 'center',
+                            fontFamily: 'Inter, sans-serif', // Add the Inter font family
+                            marginBottom:'1%',
+                        }}>
+                  Work Orders
+              </Typography>
           </Box>
         </Grid>
         <Grid item xs={2}>
           <Box sx={{ paddingLeft: "5px", alignContent: "center", alignItems: "center" }}>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "darkgrey", // Set the dark grey background
-                borderRadius: "25px", // Set border radius to half of the height to create an oval shape
-                height: "40px", // Set height
-                width: "100px", // Set width
-                "&:hover": {
-                  backgroundColor: "grey", // Set a different color on hover if desired
-                },
-              }}
-              onClick={() => {
-                setQuery("All");
-              }}
-            >
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>All</Typography>
-            </Button>
+            
           </Box>
         </Grid>
-        <Grid item xs={10} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Paper component="form" style={{ padding: "2px 4px", display: "flex", alignItems: "center", width: 400, alignContent: "center" }}>
             <InputBase style={{ marginLeft: "8px", flex: 1 }} placeholder="Search" inputProps={{ "aria-label": "search" }} value={query} onChange={handleInputChange} />
             <IconButton type="submit" style={{ padding: "10px" }} onClick={() => console.log("test")} aria-label="search">
@@ -140,7 +134,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
             </IconButton>
           </Paper>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{marginTop:'20px'}}>
           {colorStatus.map((item, index) => {
             let mappingKey = item.mapping;
 
@@ -156,7 +150,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
                 color={item.color}
                 maintenanceItemsForStatus={maintenanceArray}
                 allMaintenanceData={maintenanceRequests}
-                maintenanceRequestsCount={maintenanceArray}
+                maintenanceRequestsCount={maintenanceArray.length}
               />
             );
           })}
