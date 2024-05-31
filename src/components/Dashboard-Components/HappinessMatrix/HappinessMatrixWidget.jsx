@@ -296,7 +296,7 @@ const CustomImage = (props) => {
 
   const handleClick = (payload) => {
     console.log("CustomImage - handleClick - payload - ", payload);
-    navigate(`/ownerContactDetails`, {
+    navigate(`/ownerContactDetails2`, { //rohit
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
