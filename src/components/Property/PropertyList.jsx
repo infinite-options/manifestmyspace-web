@@ -47,6 +47,7 @@ import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import PropertyDetail from "./PropertyDetail";
 import PropertyDetail2 from "./PropertyDetail2"
@@ -248,16 +249,16 @@ export default function PropertyList({ }) {
 
   const propertyRentDetails = async () => {
     try {
-    //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-    const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-    if (!response.ok) {
-      console.log("Error fetching rent Details data");
+      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      if (!response.ok) {
+        console.log("Error fetching rent Details data");
+      }
+      const rentResponse = await response.json();
+      return rentResponse;
+    } catch (error) {
+      console.error("Failed to fetch rent details:", error);
     }
-    const rentResponse = await response.json();
-    return rentResponse;
-  }catch(error){
-    console.error("Failed to fetch rent details:", error);
-  }
   }
 
   //   useEffect(() => {
@@ -367,7 +368,7 @@ export default function PropertyList({ }) {
           sx={{
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
-            fontSize: theme.typography.smallFont,
+            fontSize: "13px",
             margin: "0px", // Ensure no margin
             padding: "0px", // Ensure no padding
             textAlign: "center", // Ensure text is centered within itself
@@ -386,7 +387,7 @@ export default function PropertyList({ }) {
           sx={{
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
-            fontSize: theme.typography.smallFont,
+            fontSize: "13px",
             margin: "0px", // Ensure no margin
             padding: "0px", // Ensure no padding
             textAlign: "center", // Ensure text is centered within itself
@@ -401,9 +402,150 @@ export default function PropertyList({ }) {
     }
   }
 
+  const columns = [
+    {
+      field: 'avatar',
+      headerName: '',
+      flex: 0.5,
+      renderCell: (params) => (
+        <Avatar
+          src={`${getCoverPhoto(params.row)}?${Date.now()}`}
+          alt="property image"
+          sx={{
+            borderRadius: '0',
+            width: '50px',
+            height: '50px',
+            margin: '0px',
+          }}
+        />
+      ),
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) => (
+        // <Box
+        //   sx={{
+        //     display: 'flex',
+        //     alignItems: 'center',
+        //     justifyContent: 'center',
+        //     height: '100%',
+        //     width: '100%',
+        //     overflowWrap: 'break-word',
+        //     whiteSpace: 'break-spaces',
+        //   }}
+        // >
+          displayAddress(params.row)
+        // </Box>
+      ),
+    },
+    {
+      field: 'paymentStatus',
+      headerName: 'Status',
+      headerAlign: 'center',  
+      flex: 0.7,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            backgroundColor: getPaymentStatusColor(params.row.rent_status),
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '0px',
+            border: 'none',
+            margin: '0px',
+          }}
+        >
+          <Badge
+            overlap="circular"
+            color="success"
+            badgeContent={getNumOfApplications(params.row)}
+            invisible={!getNumOfApplications(params.row)}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            style={{
+              color: '#000000',
+              width: '100%',
+            }}
+          >
+            <Typography
+              sx={{
+                color: theme.palette.primary.main,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: "13px",
+                margin: '0px',
+                padding: '0px',
+                height: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                textAlign: "center",
+              }}
+            >
+              {getPaymentStatus(params.row.rent_status)}
+            </Typography>
+          </Badge>
+        </Box>
+      ),
+    },
+    {
+      field: 'maintenanceIcon',
+      headerName: 'Issues',
+      headerAlign: 'center',
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box sx={{ margin: "0px", }}>
+          <Badge
+            overlap="circular"
+            color="error"
+            badgeContent={getNumOfMaintenanceReqs(params.row)}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            style={{
+              color: '#000000',
+              width: '50px'
+            }}
+          >
+            <Button
+              onClick={() => navigate('/maintenance')}
+              sx={{ border: 'none', '&:hover, &:focus, &:active': { backgroundColor: '#d6d5da' }, alignContent: "left", justifyContent: "left" }}
+            >
+              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '40px', height: '40px' }} />
+            </Button>
+          </Badge>
+        </Box>
+      ),
+    },
+  ];
+
+  function convertDataToRows(displayedItems) {
+    return displayedItems.map((property, index) => ({
+      id: index,
+      ...property,
+    }));
+  }
+
+  const rows = convertDataToRows(displayedItems);
+
+  const onPropertyClick = (params) => {
+    const property = params.row;
+    const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
+    console.log('List Item Clicked', property, i, displayedItems);
+    handlePropertyDetailNavigation(i, displayedItems);
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop:theme.spacing(2)}}>
+      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop: theme.spacing(2) }}>
         <Grid container>
           <Grid item xs={12} md={propertyList.length > 0 ? 4 : 12}>
             <Box
@@ -412,7 +554,7 @@ export default function PropertyList({ }) {
                 justifyContent: "center",
                 width: "100%", // Take up full screen width
                 minHeight: "100vh", // Set the Box height to full height
-                height:"100%",
+                height: "100%",
               }}
             >
               <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -436,7 +578,7 @@ export default function PropertyList({ }) {
                         fontSize: theme.typography.largeFont,
                       }}
                     >
-                      All Properties 1
+                      All Properties
                     </Typography>
                   </Box>
                   <Button
@@ -456,18 +598,13 @@ export default function PropertyList({ }) {
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
                   {/* New Buttons */}
-                  <Typography> Sort by</Typography>
+                  <Box sx={{ paddingLeft: "10px", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <Typography>Quick Sort</Typography>
                   <Button onClick={sortByZip} color="inherit">
                     Zip
                   </Button>
-                  <Button onClick={sortByState} color="inherit">
-                    State
-                  </Button>
                   <Button onClick={sortByAddress} color="inherit">
                     Address
-                  </Button>
-                  <Button onClick={sortByCity} color="inherit">
-                    City
                   </Button>
                   <Button onClick={sortByStatus} color="inherit">
                     Rent Status
@@ -482,167 +619,41 @@ export default function PropertyList({ }) {
                       }}
                     ></Typography>
                   </Box>
+                  </Box>
                 </Stack>
                 <Box sx={{ padding: "10px" }}>
                   <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
-
-                  <List>
-                    {displayedItems.map((property, index) => (
-                      <ListItem
-                        key={index}
-                        style={{
-                          justifyContent: "space-between",
-                          display: "flex",
-                          height: "100%",
-                          alignItems: "flex-start",
-                          backgroundColor: theme.palette.form.main,
-                          paddingLeft: "10px",
-                          paddingRight: "10px",
-                        }}
-                        onClick={() => {
-                          let i = propertyList.findIndex((p) => p.property_uid === property.property_uid);
-                          {
-                            console.log("List Item Clicked", property, i, propertyList);
-                          }
-                          handlePropertyDetailNavigation(i, propertyList);
-                        }}
-                      >
-                        <Avatar
-                          // src={getCoverPhoto(property)}  Adding the Date.now forces the cache to refresh the image
-                          src={`${getCoverPhoto(property)}?${Date.now()}`}
-                          alt="property image"
-                          sx={{
-                            borderRadius: "0",
-                            marginRight: "10px",
-                            width: "75px",
-                            height: "75px",
-                          }}
-                        />
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center", // vertically align items to the center
-                            justifyContent: "center", // horizontally align items to the center
-                            height: "100%", // to take full height of its parent
-                            width: "50%", // to take full width of its parent
-                          }}
-                        >
-                          {displayAddress(property)}
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center", // vertically align items to the center
-                            justifyContent: "center", // horizontally align items to the center
-                            height: "100%", // to take full height of its parent
-                            width: "50%", // to take full width of its parent
-                          }}
-                        >
-                          <Stack>
-                            <Typography
-                              sx={{
-                                color: "#000000",
-                                fontWeight: 700,
-                                fontSize: "15px",
-                                margin: "0px", // Ensure no margin
-                                padding: "0px", // Ensure no padding
-                                textAlign: "center", // Ensure text is centered within itself
-                                verticalAlign: "middle", // Vertically align text in the middle
-                                alignItems: "center", // vertically align items to the center
-                              }}
-                            >
-                              {property.tenant_first_name} {property.tenant_last_name}
-                            </Typography>
-                            <Typography
-                              sx={{
-                                color: "#000000",
-                                fontWeight: 700,
-                                fontSize: "15px",
-                                margin: "0px", // Ensure no margin
-                                padding: "0px", // Ensure no padding
-                                textAlign: "center", // Ensure text is centered within itself
-                                verticalAlign: "middle", // Vertically align text in the middle
-                                alignItems: "center", // vertically align items to the center
-                              }}
-                            >
-                              {property.lease_uid}
-                            </Typography>
-                          </Stack>
-                        </Box>
-                        <Box
-                          sx={{
-                            backgroundColor: getPaymentStatusColor(property.rent_status),
-                            width: "25%", // Ensure it takes up full width of its parent
-                            height: "100%", // Ensure it takes up full height of its parent
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            padding: "0px",
-                            border: "none",
-                            margin: "0px",
-                          }}
-                        >
-                          <Badge
-                            overlap="circular"
-                            color="success"
-                            badgeContent={getNumOfApplications(property)}
-                            invisible={!getNumOfApplications(property)}
-                            anchorOrigin={{
-                              vertical: "top",
-                              horizontal: "right",
-                            }}
-                            style={{
-                              color: "#000000",
-                              width: "100%",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                color: theme.palette.primary.main,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                margin: "0px", // Ensure no margin
-                                padding: "0px", // Ensure no padding
-                                height: "50px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: "100%",
-                              }}
-                            >
-                              {getPaymentStatus(property.rent_status)}
-                            </Typography>
-                          </Badge>
-                        </Box>
-                        <Badge
-                          overlap="circular"
-                          color="error"
-                          badgeContent={getNumOfMaintenanceReqs(property)}
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          style={{
-                            color: "#000000",
-                            // color: theme.palette.custom.blue,
-                          }}
-                        >
-                          <Button onClick={() => navigate("/maintenance")} sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" } }}>
-                            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "50px", height: "50px" }} />
-                          </Button>
-                        </Badge>
-                      </ListItem>
-                    ))}
-                  </List>
+                  <Box sx={{ marginTop: "20px" }}>
+                    <DataGrid
+                      getRowHeight={() => 'auto'}
+                      rows={rows}
+                      columns={columns}
+                      autoHeight
+                      pageSizeOptions={[10]}
+                      initialState={{
+                        pagination: {
+                          paginationModel: {
+                            pageSize: 10,
+                          },
+                        },
+                      }}
+                      onRowClick={onPropertyClick}
+                      sx={{ '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
+                      '& .MuiDataGrid-row:hover': {
+                        cursor: 'pointer',
+                      },
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Paper>
             </Box>
           </Grid>
-          {propertyList.length > 0 && allRentStatus.length>0 &&
-          <Grid item xs={12} md={8}>
-              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus}/>
-          </Grid>
-           }
+          {propertyList.length > 0 && allRentStatus.length > 0 &&
+            <Grid item xs={12} md={8}>
+              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} />
+            </Grid>
+          }
         </Grid>
       </Container>
     </ThemeProvider>
