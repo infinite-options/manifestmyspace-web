@@ -205,6 +205,7 @@ export default function PropertyList({ }) {
   const [statusSortOrder, setStatusSortOrder] = useState("asc");
   const [zipSortOrder, setZipSortOrder] = useState("asc");
   const [propertyIndex, setPropertyIndex] = useState(0);
+  const [allRentStatus, setAllRentStatus] = useState([]);
   // console.log("getProfileId information", getProfileId());
 
   function numberOfMaintenanceItems(maintenanceItems) {
@@ -224,7 +225,7 @@ export default function PropertyList({ }) {
       //   console.log("GetProfile: ", getProfileId);
       setShowSpinner(true);
       // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
+      //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
 
 
@@ -238,10 +239,26 @@ export default function PropertyList({ }) {
 
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
+      const propertyRent = await propertyRentDetails();
+      setAllRentStatus(propertyRent.RentStatus.result);
       setShowSpinner(false);
     };
     fetchData();
   }, []);
+
+  const propertyRentDetails = async () => {
+    try {
+    //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+    const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+    if (!response.ok) {
+      console.log("Error fetching rent Details data");
+    }
+    const rentResponse = await response.json();
+    return rentResponse;
+  }catch(error){
+    console.error("Failed to fetch rent details:", error);
+  }
+  }
 
   //   useEffect(() => {
   //     const getContractsForOwner = async () => {
@@ -621,9 +638,9 @@ export default function PropertyList({ }) {
               </Paper>
             </Box>
           </Grid>
-          {propertyList.length > 0 &&
-          <Grid xs={12} md={8}>
-              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} />
+          {propertyList.length > 0 && allRentStatus.length>0 &&
+          <Grid item xs={12} md={8}>
+              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus}/>
           </Grid>
            }
         </Grid>
