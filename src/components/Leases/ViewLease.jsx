@@ -22,6 +22,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { darken } from '@mui/material/styles';
 import documentIcon from '../documentIcon.png'
 import Divider from '@mui/material/Divider';
+import { DataGrid } from '@mui/x-data-grid';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -58,6 +59,7 @@ const ViewLease = (props) => {
   const [leaseFees, setLeaseFees] = useState([])
   const [utilityString, setUtilityString] = useState("")
   const [leaseData, setLeaseData] = useState([]);
+  const [tenantsData, setTenantsData] = useState([]);
   const [leaseDocuments, setLeaseDocuments] = useState([])
   const [endLeaseDialogOpen, setEndLeaseDialogOpen] = useState(false);
   const [confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen] = useState(false);
@@ -165,6 +167,7 @@ const ViewLease = (props) => {
           setUtilityString(utils)
           
           setLeaseData(lease);
+          setTenantsData(lease.tenants? JSON.parse(lease?.tenants) : []);
 
           console.log("Lease data", lease);
           console.log("lease fees", lease.leaseFees)
@@ -291,6 +294,9 @@ const ViewLease = (props) => {
                 Occupancy Details
               </Typography>
               <Grid container>
+                  <Grid item xs={12}>
+                    <TenantsDataGrid data={tenantsData} />
+                  </Grid>
                   <Grid item xs={6}> 
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Move In Date</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {leaseData?.lease_move_in_date ?? "Not Specified"} </Typography>
@@ -593,3 +599,40 @@ const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEnd
   </Dialog>
   );
 };
+
+const TenantsDataGrid = ( {data} ) => {
+  const columns = [
+    { 
+      field: 'tenant_uid',
+      headerName: 'UID',
+      width: 100 
+    },    
+    {
+      field: 'tenant_first_name',
+      headerName: 'First Name', 
+      width: 150,       
+    },
+    { 
+      field: 'tenant_last_name',
+      headerName: 'Last Name',
+      width: 150,      
+    },            
+  ];      
+  
+  console.log(
+    "ROHIT - data - ", data
+  );
+  
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(row) => row.tenant_uid}
+        columns={columns}                
+        sx={{          
+          border: '0px',
+        }}        
+      />
+    </>
+  );
+}
