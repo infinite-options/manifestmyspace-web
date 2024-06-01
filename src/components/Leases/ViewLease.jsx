@@ -620,7 +620,7 @@ const TenantsDataGrid = ( {data} ) => {
   ];      
   
   console.log(
-    "ROHIT - data - ", data
+    "TenantsDataGrid - props.data - ", data
   );
   
   return (
