@@ -59,6 +59,7 @@ const ViewLease = (props) => {
   const [leaseFees, setLeaseFees] = useState([]);
   const [utilityString, setUtilityString] = useState("");
   const [leaseData, setLeaseData] = useState([]);
+  const [tenantData, setTenantData] = useState([]);
   const [leaseDocuments, setLeaseDocuments] = useState([]);
   const [endLeaseDialogOpen, setEndLeaseDialogOpen] = useState(false);
   const [confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen] = useState(false);
@@ -168,6 +169,8 @@ const ViewLease = (props) => {
 
           console.log("In UseEffect ", lease);
           setLeaseData(lease);
+          // setTenantData(lease.tenants);
+          setTenantData(lease.tenants ? JSON.parse(lease?.tenants) : []);
 
           console.log("Lease data", lease);
           console.log("Lease Fees: ", JSON.parse(lease.lease_fees));
@@ -197,13 +200,17 @@ const ViewLease = (props) => {
     console.log("PM leaseData in UseEffect", leaseData);
   }, [leaseData]);
 
+  useEffect(() => {
+    console.log("PM tenantData in UseEffect", tenantData);
+  }, [tenantData]);
+
   const columns = [
     { field: "tenant_uid", headerName: "UID", width: 150 },
     { field: "tenant_first_name", headerName: "First Name", width: 150 },
     { field: "tenant_last_name", headerName: "Last Name", width: 150 },
-    { field: "tenant_email", headerName: "Email", width: 200 },
-    { field: "tenant_phone_number", headerName: "Phone Number", width: 150 },
-    { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
+    // { field: "tenant_email", headerName: "Email", width: 200 },
+    // { field: "tenant_phone_number", headerName: "Phone Number", width: 150 },
+    // { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
   ];
 
   console.log("leaseData : ", leaseData);
@@ -211,19 +218,19 @@ const ViewLease = (props) => {
   console.log("leaseData  fees", leaseData.lease_fees);
   console.log("leaseData  tenants", leaseData.tenants);
   // console.log("leaseData tenants 23", JSON.parse(leaseData?.tenants));
-  let tenantItems = [
-    {
-      tenant_uid: "350-000045",
-      tenant_email: "katerosalik@gmail.com",
-      tenant_last_name: "Rosalik",
-      lt_responsibility: null,
-      tenant_first_name: "Kathryn",
-      tenant_phone_number: "(520) 609-2159",
-    },
-  ];
+  // let tenantItems = [
+  //   {
+  //     tenant_uid: "350-000045",
+  //     tenant_email: "katerosalik@gmail.com",
+  //     tenant_last_name: "Rosalik",
+  //     lt_responsibility: null,
+  //     tenant_first_name: "Kathryn",
+  //     tenant_phone_number: "(520) 609-2159",
+  //   },
+  // ];
   // tenantItems = JSON.parse(leaseData.tenants);
   // tenantItems = leaseData?.tenants;
-  console.log("Tenant Items: ", tenantItems);
+  // console.log("Tenant Items: ", tenantItems);
 
   // const App = () => {
   //   return (
@@ -349,58 +356,60 @@ const ViewLease = (props) => {
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
               <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Occupancy Details</Typography>
               <Grid container>
-                <DataGrid
-                  rows={tenantItems}
-                  columns={columns}
-                  rowHeight={50}
-                  // initialState={{
-                  //   pagination: {
-                  //     paginationModel: {
-                  //       pageSize: tenantItems.length,
-                  //     },
-                  //   },
-                  // }}
-                  hideFooter={true}
-                  sx={{
-                    "& .MuiDataGrid-cell": {
-                      fontSize: "14px", // Change the font size
-                      fontWeight: theme.typography.common.fontWeight, // Change the font weight
-                      color: theme.typography.secondary.white,
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                      fontSize: "16px", // Change the font size
-                      fontWeight: theme.typography.common.fontWeight, // Change the font weight
-                      color: theme.typography.secondary.white, // Change the font color of the headers
-                    },
-                    border: 0,
-                    "& .MuiDataGrid-main": {
-                      border: 0, // Removes the inner border
-                    },
-                    "& .MuiDataGrid-row:last-child .MuiDataGrid-cell": {
-                      borderBottom: "none", // Removes the border of the last row
-                    },
-                    "& .MuiDataGrid-columnSeparator": {
-                      display: "none", // Remove vertical borders in the header
-                    },
-                    // "& .highlighted-row": {
-                    //   backgroundColor: lighten(color, 0.4), //'#f0f0f0', // Use the same color as in your CSS
-                    // },
-                  }}
-                  disableExtendRowFullWidth={true}
-                  getRowId={(row) => row.tenant_uid}
-                  pageSizeOptions={[5]}
-                  onRowClick={(params) => {
-                    const index = tenantItems.findIndex((row) => row.tenant_uid === params.row.tenant_uid);
-                    console.log("Onclick", index);
-                    // handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
-                  }}
-                  getRowClassName={(params) => {
-                    return ["SCHEDULED", "COMPLETED", "PAID"].includes(params.row.maintenance_request_status) &&
-                      !["ACCEPTED", "SCHEDULED", "FINISHED"].includes(params.row.quote_status)
-                      ? "highlighted-row"
-                      : "";
-                  }}
-                />
+                <Grid>
+                  <DataGrid
+                    rows={tenantData}
+                    getRowId={(row) => row.tenant_uid}
+                    columns={columns}
+                    rowHeight={50}
+                    // initialState={{
+                    //   pagination: {
+                    //     paginationModel: {
+                    //       pageSize: tenantItems.length,
+                    //     },
+                    //   },
+                    // }}
+                    hideFooter={true}
+                    sx={{
+                      "& .MuiDataGrid-cell": {
+                        fontSize: "14px", // Change the font size
+                        fontWeight: theme.typography.common.fontWeight, // Change the font weight
+                        color: theme.typography.secondary.white,
+                      },
+                      "& .MuiDataGrid-columnHeaders": {
+                        fontSize: "16px", // Change the font size
+                        fontWeight: theme.typography.common.fontWeight, // Change the font weight
+                        color: theme.typography.secondary.white, // Change the font color of the headers
+                      },
+                      border: 0,
+                      "& .MuiDataGrid-main": {
+                        border: 0, // Removes the inner border
+                      },
+                      "& .MuiDataGrid-row:last-child .MuiDataGrid-cell": {
+                        borderBottom: "none", // Removes the border of the last row
+                      },
+                      "& .MuiDataGrid-columnSeparator": {
+                        display: "none", // Remove vertical borders in the header
+                      },
+                      // "& .highlighted-row": {
+                      //   backgroundColor: lighten(color, 0.4), //'#f0f0f0', // Use the same color as in your CSS
+                      // },
+                    }}
+                    // disableExtendRowFullWidth={true}
+                    // pageSizeOptions={[5]}
+                    // onRowClick={(params) => {
+                    //   const index = tenantItems.findIndex((row) => row.tenant_uid === params.row.tenant_uid);
+                    //   console.log("Onclick", index);
+                    //   // handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
+                    // }}
+                    // getRowClassName={(params) => {
+                    //   return ["SCHEDULED", "COMPLETED", "PAID"].includes(params.row.maintenance_request_status) &&
+                    //     !["ACCEPTED", "SCHEDULED", "FINISHED"].includes(params.row.quote_status)
+                    //     ? "highlighted-row"
+                    //     : "";
+                    // }}
+                  />
+                </Grid>
 
                 <Grid item xs={6}>
                   <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Move In Date</Typography>
