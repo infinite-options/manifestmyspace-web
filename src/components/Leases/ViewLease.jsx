@@ -59,6 +59,8 @@ const ViewLease = (props) => {
   const [leaseFees, setLeaseFees] = useState([]);
   const [utilityString, setUtilityString] = useState("");
   const [leaseData, setLeaseData] = useState([]);
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantsData, setTenantsData] = useState([]);
   const [leaseDocuments, setLeaseDocuments] = useState([]);
   const [endLeaseDialogOpen, setEndLeaseDialogOpen] = useState(false);
   const [confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen] = useState(false);
@@ -168,6 +170,8 @@ const ViewLease = (props) => {
 
           console.log("In UseEffect ", lease);
           setLeaseData(lease);
+          setTenantData(JSON.parse(lease?.tenants));
+          setTenantsData(lease.tenants ? JSON.parse(lease?.tenants) : []);
 
           console.log("Lease data", lease);
           console.log("Lease Fees: ", JSON.parse(lease.lease_fees));
@@ -194,8 +198,9 @@ const ViewLease = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log("PM leaseData in UseEffect", leaseData);
-  }, [leaseData]);
+    // console.log("PM leaseData in UseEffect", JSON.parse(leaseData?.tenants));
+    console.log("PM leaseData in UseEffect", tenantData);
+  }, [leaseData, tenantData]);
 
   const columns = [
     { field: "tenant_uid", headerName: "UID", width: 150 },
@@ -206,24 +211,24 @@ const ViewLease = (props) => {
     { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
   ];
 
-  console.log("leaseData : ", leaseData);
+  // console.log("leaseData : ", leaseData);
   // console.log("leaseData  Fees: ", JSON.parse(leaseData.lease_fees));
-  console.log("leaseData  fees", leaseData.lease_fees);
-  console.log("leaseData  tenants", leaseData.tenants);
+  // console.log("leaseData  fees", leaseData.lease_fees);
+  // console.log("leaseData  tenants", leaseData.tenants);
   // console.log("leaseData tenants 23", JSON.parse(leaseData?.tenants));
-  let tenantItems = [
-    {
-      tenant_uid: "350-000045",
-      tenant_email: "katerosalik@gmail.com",
-      tenant_last_name: "Rosalik",
-      lt_responsibility: null,
-      tenant_first_name: "Kathryn",
-      tenant_phone_number: "(520) 609-2159",
-    },
-  ];
+  // let tenantItems = [
+  //   {
+  //     tenant_uid: "350-000045",
+  //     tenant_email: "katerosalik@gmail.com",
+  //     tenant_last_name: "Rosalik",
+  //     lt_responsibility: null,
+  //     tenant_first_name: "Kathryn",
+  //     tenant_phone_number: "(520) 609-2159",
+  //   },
+  // ];
   // tenantItems = JSON.parse(leaseData.tenants);
   // tenantItems = leaseData?.tenants;
-  console.log("Tenant Items: ", tenantItems);
+  // console.log("Tenant Items: ", tenantItems);
 
   // const App = () => {
   //   return (
@@ -349,8 +354,12 @@ const ViewLease = (props) => {
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
               <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Occupancy Details</Typography>
               <Grid container>
-                <DataGrid
-                  rows={tenantItems}
+                <Grid item xs={12}>
+                  <TenantsDataGrid data={tenantsData} />
+                </Grid>
+
+                {/* <DataGrid
+                  rows={tenantData}
                   columns={columns}
                   rowHeight={50}
                   // initialState={{
@@ -390,17 +399,11 @@ const ViewLease = (props) => {
                   getRowId={(row) => row.tenant_uid}
                   pageSizeOptions={[5]}
                   onRowClick={(params) => {
-                    const index = tenantItems.findIndex((row) => row.tenant_uid === params.row.tenant_uid);
+                    const index = tenantData.findIndex((row) => row.tenant_uid === params.row.tenant_uid);
                     console.log("Onclick", index);
                     // handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
                   }}
-                  getRowClassName={(params) => {
-                    return ["SCHEDULED", "COMPLETED", "PAID"].includes(params.row.maintenance_request_status) &&
-                      !["ACCEPTED", "SCHEDULED", "FINISHED"].includes(params.row.quote_status)
-                      ? "highlighted-row"
-                      : "";
-                  }}
-                />
+                /> */}
 
                 <Grid item xs={6}>
                   <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Move In Date</Typography>
@@ -600,7 +603,6 @@ function countNoOfOccupents(leaseData) {
   }
   return no_of_occupants;
 }
-
 function CountNoOfPets(leaseData) {
   let pets = leaseData.lease_pets ? JSON.parse(leaseData.lease_pets) : [];
   return pets.length;
@@ -609,7 +611,6 @@ function CountNoOfVehicles(leaseData) {
   let vehicles = leaseData.lease_vehicles ? JSON.parse(leaseData.lease_vehicles) : [];
   return vehicles.length;
 }
-
 function getTenantName(leaseData) {
   let name = "";
 
@@ -624,8 +625,6 @@ function getTenantName(leaseData) {
 
   return name;
 }
-export default ViewLease;
-
 const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
   // const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState('');
 
@@ -718,3 +717,38 @@ const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEnd
     </Dialog>
   );
 };
+const TenantsDataGrid = ({ data }) => {
+  const columns = [
+    {
+      field: "tenant_uid",
+      headerName: "UID",
+      width: 100,
+    },
+    {
+      field: "tenant_first_name",
+      headerName: "First Name",
+      width: 150,
+    },
+    {
+      field: "tenant_last_name",
+      headerName: "Last Name",
+      width: 150,
+    },
+  ];
+
+  console.log("ROHIT - data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(row) => row.tenant_uid}
+        columns={columns}
+        sx={{
+          border: "0px",
+        }}
+      />
+    </>
+  );
+};
+export default ViewLease;
