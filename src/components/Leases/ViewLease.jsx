@@ -170,7 +170,8 @@ const ViewLease = (props) => {
 
           console.log("In UseEffect ", lease);
           setLeaseData(lease);
-          setTenantData(JSON.parse(lease?.tenants));
+          // setTenantData(JSON.parse(lease?.tenants));
+          setTenantData(lease.tenants ? JSON.parse(lease?.tenants) : []); //One change
           setTenantsData(lease.tenants ? JSON.parse(lease?.tenants) : []);
 
           console.log("Lease data", lease);
@@ -206,9 +207,9 @@ const ViewLease = (props) => {
     { field: "tenant_uid", headerName: "UID", width: 150 },
     { field: "tenant_first_name", headerName: "First Name", width: 150 },
     { field: "tenant_last_name", headerName: "Last Name", width: 150 },
-    { field: "tenant_email", headerName: "Email", width: 200 },
-    { field: "tenant_phone_number", headerName: "Phone Number", width: 150 },
-    { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
+    // { field: "tenant_email", headerName: "Email", width: 200 },
+    // { field: "tenant_phone_number", headerName: "Phone Number", width: 150 },
+    // { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
   ];
 
   // console.log("leaseData : ", leaseData);
@@ -357,18 +358,60 @@ const ViewLease = (props) => {
                 <Grid item xs={12}>
                   <TenantsDataGrid data={tenantsData} />
                 </Grid>
+                <Grid item xs={12}>
+                  <TenantDataGrid data={tenantData} />
+                </Grid>
 
-                {/* <DataGrid
+                <Grid>
+                  <DataGrid
+                    rows={tenantData}
+                    getRowId={(row) => row.tenant_uid}
+                    columns={columns}
+                    rowHeight={50}
+                    // hideFooter={true}
+                    sx={{
+                      border: "0px",
+                    }}
+                    // sx={{
+                    //   "& .MuiDataGrid-cell": {
+                    //     fontSize: "14px", // Change the font size
+                    //     fontWeight: theme.typography.common.fontWeight, // Change the font weight
+                    //     color: theme.typography.secondary.white,
+                    //   },
+                    //   "& .MuiDataGrid-columnHeaders": {
+                    //     fontSize: "16px", // Change the font size
+                    //     fontWeight: theme.typography.common.fontWeight, // Change the font weight
+                    //     color: theme.typography.secondary.white, // Change the font color of the headers
+                    //   },
+                    //   border: 0,
+                    //   "& .MuiDataGrid-main": {
+                    //     border: 0, // Removes the inner border
+                    //   },
+                    //   "& .MuiDataGrid-row:last-child .MuiDataGrid-cell": {
+                    //     borderBottom: "none", // Removes the border of the last row
+                    //   },
+                    //   "& .MuiDataGrid-columnSeparator": {
+                    //     display: "none", // Remove vertical borders in the header
+                    //   },
+                    //   // "& .highlighted-row": {
+                    //   //   backgroundColor: lighten(color, 0.4), //'#f0f0f0', // Use the same color as in your CSS
+                    //   // },
+                    // }}
+                    // disableExtendRowFullWidth={true}
+                    // getRowId={(row) => row.tenant_uid}
+                    // pageSizeOptions={[5]}
+                    // onRowClick={(params) => {
+                    //   const index = tenantData.findIndex((row) => row.tenant_uid === params.row.tenant_uid);
+                    //   console.log("Onclick", index);
+                    // handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
+                    // }}
+                  />
+                </Grid>
+
+                <DataGrid
                   rows={tenantData}
                   columns={columns}
                   rowHeight={50}
-                  // initialState={{
-                  //   pagination: {
-                  //     paginationModel: {
-                  //       pageSize: tenantItems.length,
-                  //     },
-                  //   },
-                  // }}
                   hideFooter={true}
                   sx={{
                     "& .MuiDataGrid-cell": {
@@ -403,8 +446,7 @@ const ViewLease = (props) => {
                     console.log("Onclick", index);
                     // handleRequestDetailPage(index, params.row.property_uid, params.row.maintenance_request_uid);
                   }}
-                /> */}
-
+                />
                 <Grid item xs={6}>
                   <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Move In Date</Typography>
                   <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {leaseData?.lease_move_in_date ?? "Not Specified"} </Typography>
@@ -734,6 +776,50 @@ const TenantsDataGrid = ({ data }) => {
       headerName: "Last Name",
       width: 150,
     },
+  ];
+
+  console.log("ROHIT - data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(row) => row.tenant_uid}
+        columns={columns}
+        sx={{
+          border: "0px",
+        }}
+      />
+    </>
+  );
+};
+
+const TenantDataGrid = ({ data }) => {
+  // const columns = [
+  //   {
+  //     field: "tenant_uid",
+  //     headerName: "UID",
+  //     width: 100,
+  //   },
+  //   {
+  //     field: "tenant_first_name",
+  //     headerName: "First Name",
+  //     width: 150,
+  //   },
+  //   {
+  //     field: "tenant_last_name",
+  //     headerName: "Last Name",
+  //     width: 150,
+  //   },
+  // ];
+
+  const columns = [
+    { field: "tenant_uid", headerName: "UID", width: 150 },
+    { field: "tenant_first_name", headerName: "First Name", width: 150 },
+    { field: "tenant_last_name", headerName: "Last Name", width: 150 },
+    // { field: "tenant_email", headerName: "Email", width: 200 },
+    // { field: "tenant_phone_number", headerName: "Phone Number", width: 150 },
+    // { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
   ];
 
   console.log("ROHIT - data - ", data);
