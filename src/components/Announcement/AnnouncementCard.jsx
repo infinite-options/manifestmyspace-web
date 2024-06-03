@@ -2,17 +2,36 @@ import { calculateAge } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
+import { useEffect, useState } from "react";
 
 function AnnouncementCard(props) {
   console.log("In Announcements", props);
   const { selectedRole } = useUser();
-  const { data, pageToNavigate, navigationParams, sent_or_received } = props;
+  const { data, pageToNavigate, navigationParams, sent_or_received, readAllChecked, showCheckbox  } = props;
   const navigate = useNavigate();
   const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
+  // const handleAnnouncements = () => {
+  //   console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
+  // };
+
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setChecked(readAllChecked);
+  }, [readAllChecked]);
+
   const handleAnnouncements = () => {
     console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
+    setChecked(true); // Set checkbox to checked state when announcement is handled
+    // Add any additional logic for handling announcements here
   };
+
+  const handleCheckboxChange = (e) => {
+    setChecked(e.target.checked);
+    e.stopPropagation();
+  };
+
 
   const getBorderColor = () => {
     // return data.sender_role === 'admin' ? 'blue' : 'green';
@@ -67,7 +86,7 @@ function AnnouncementCard(props) {
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + (data?.receiver_first_name + data?.receiver_last_name) : "From: " + (data?.sender_first_name + data?.sender_last_name)}</div>
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + data.announcement_receiver : "From: " + data.announcement_sender}</div>
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "Role: " + data?.receiver_role : "Role: " + data?.sender_role}</div>
-        <div className="announcement-list-card-text-contents">{"Title: " + data.announcement_title}</div>
+        <div className="announcement-list-card-text-contents">{"Title: " + data.announcement_title.substring(0, 20) + "..."}</div>
         <div className="announcement-list-card-text-contents">{data.announcement_msg.substring(0, 20) + "..."}</div>
         <div className="announcement-list-card-text-date">{"Added: " + calculateAge(data.announcement_date)}</div>
       </div>
@@ -89,14 +108,18 @@ function AnnouncementCard(props) {
             />
           </svg>
         </div> */}
-        <div
+        {showCheckbox && (
+          <div className="announcement-list-card-checkbox">
+            <input type="checkbox" checked={checked} onChange={handleCheckboxChange} />
+          </div>
+        )}
+        {/* <div
           className="announcement-list-card-checkbox"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
+          checked={checked}
+          onChange={handleCheckboxChange}
         >
           <input type="checkbox" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

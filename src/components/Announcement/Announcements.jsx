@@ -42,8 +42,10 @@ export default function Announcements() {
   const [announcementData, setAnnouncementData] = useState([]);
   const [sentData, setSentData] = useState([]);
   const [receivedData, setReceivedData] = useState([]);
+  const [readData, setReadData] = useState([]);
   const [filteredSentData, setFilteredSentData] = useState([]);
   const [filteredReceivedData, setFilteredReceivedData] = useState([]);
+  const [filteredReadData, setFilteredReadData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const navigate = useNavigate();
   // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
@@ -52,9 +54,15 @@ export default function Announcements() {
   //
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [annData, setAnnData] = useState("");
+  const [readAllChecked, setReadAllChecked] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [clickedAnnouncementUid, setClickedAnnouncementUid] = useState(null);
+
+  // const [announcementClicked, setAnnouncementClicked] = useState(false);
+  const [announcementClicked, setAnnouncementClicked] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -62,11 +70,13 @@ export default function Announcements() {
     if (searchTerm === "") {
       setFilteredSentData(sentData);
       setFilteredReceivedData(receivedData);
+      setFilteredReadData(readData);
     } else {
       setFilteredSentData(sentData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
       setFilteredReceivedData(receivedData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
+      setFilteredReadData(readData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
     }
-  }, [searchTerm, sentData, receivedData]);
+  }, [searchTerm, sentData, receivedData, readData]);
 
 
   useEffect(() => {
@@ -74,13 +84,29 @@ export default function Announcements() {
     axios.get(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`).then((res) => {
       //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
       // setAnnouncementData(res.data);
+
+      // let sent_data = (!res.data.sent.result.announcement_read) ? res.data.sent.result : null;
+      // let received_data = (!res.data.received.result.announcement_read) ? res.data.received.result : null;
       let sent_data = res.data.sent.result;
-      let received_data = res.data.received.result;
+      let received_data = res.data.received.result.filter(item => item.announcement_read === null);
+      let read_data = res.data.received.result.filter(item => item.announcement_read != null);
+
+      console.log("res.data?",res.data)
+      console.log("received_data before filter???", received_data)
+      console.log("sent_data before filter???", sent_data)
+      console.log("read_data before filter???", read_data)
+      console.log("owner_uid_filter}",typeof(owner_uid_filter))
       if (owner_uid_filter) {
+        console.log("inside owner_uid_filter>>");
         // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
         received_data = received_data.filter((record) => record.announcement_sender === owner_uid_filter);
+        read_data = read_data.filter((record) => record.announcement_sender === owner_uid_filter);
         sent_data = sent_data.filter((record) => record.announcement_receiver === owner_uid_filter);
+        console.log("received_data after filter???", received_data)
+        console.log("sent_data after filter???", sent_data)
+        console.log("read_data after filter???", read_data)
       }
+      
       sent_data.sort((a, b) => {
         if (a.announcement_uid < b.announcement_uid) return 1;
         if (a.announcement_uid > b.announcement_uid) return -1;
@@ -91,20 +117,22 @@ export default function Announcements() {
         if (a.announcement_uid > b.announcement_uid) return -1;
         return 0;
       });
+      read_data.sort((a, b) => {
+        if (a.announcement_uid < b.announcement_uid) return 1;
+        if (a.announcement_uid > b.announcement_uid) return -1;
+        return 0;
+      });
       setSentData(sent_data);
       setReceivedData(received_data);
-
+      setReadData(read_data);
       setShowSpinner(false);
     });
-  }, []);
+  }, [owner_uid_filter, getProfileId]);
 
   // Handle Navigation to the Contacts
 
   const [dataDetails, setDataDetails] = useState({});
 
-  // useEffect(() => {
-  //     console.log("dataDetails - ", dataDetails);
-  // }, [dataDetails]);
 
   const fetchContactData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -153,7 +181,59 @@ export default function Announcements() {
   //   setFilteredItems(propertyList);
   // };
 
-  const handleAnnouncements = (announcement) => {
+  //Function called when any announcement item is clicked 
+  const handleAnnouncements = async (announcement) => {
+    console.log("inside handleAnnouncements")
+    console.log(announcement)
+    const currentTimestamp = new Date().toISOString();
+    // setAnnouncementClicked(true);
+    setAnnouncementClicked(announcement);
+    console.log("announcementClicked>>>", announcementClicked)
+
+    if (receivedData.some(item => item.announcement_uid === announcement.announcement_uid)) {
+      try {
+        console.log("inside 1st try block,,,")
+        const response = await fetch(`${APIConfig.baseURL.dev}/announcements`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body : JSON.stringify({
+                      "announcement_uid": [announcement.announcement_uid]
+                      // announcement_uid: announcement.announcement_uid,
+                      // announcement_read: currentTimestamp,
+                    }),
+                  });
+        // const response = await axios.put(`${APIConfig.baseURL.dev}/announcements`, {
+        //   announcement_uid: announcement.announcement_uid,
+        //   announcement_read: currentTimestamp,
+        // });
+
+      //   // If the update is successful, update the state accordingly
+        if (response.status === 200) {
+          console.log("response success")
+          console.log("before mapping date receivedData.....",receivedData)
+          console.log("before mapping date sentData.....",sentData)
+          console.log("announcement.announcement_uid>>",announcement.announcement_uid)
+          // console.log("prevData>>",prevData)
+          // console.log("ann.announcement_uid",ann.announcement_uid);
+           setReceivedData((prevData) => 
+            prevData.map((ann) => 
+              ann.announcement_uid === announcement.announcement_uid ? { ...ann, announcement_read: currentTimestamp } : ann
+        )
+          );
+          
+          
+        }
+      } catch (error) {
+        console.error("Error updating announcement:", error);
+      }
+    }
+      // console.log("after mapping date receivedData.....",receivedData)
+      // console.log("after mapping date sentData.....",sentData)
+
+
+
     if (announcement.announcement_mode == "PROPERTIES") {
       console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
@@ -167,6 +247,12 @@ export default function Announcements() {
       setAnnData(announcement);
       setShowAnnouncement(true);
     }
+  };
+
+  const handleAnnouncementClick = (announcement) => {
+    setClickedAnnouncementUid(announcement.announcement_uid);
+    // Handle additional logic when an announcement is clicked
+    handleAnnouncements(announcement);
   };
 
   return (
@@ -318,22 +404,143 @@ export default function Announcements() {
           </div>
           <div className="announcement-readall">
             <div className="announcement-readall-text">Read All</div>
-            <div className="announcement-readall-checkbox">
+            <div className="announcement-readall-checkbox" onChange={(e) => {  setReadAllChecked(e.target.checked);}}>
               <input type="checkbox" />
+              
+
             </div>
           </div>
         </div>
-        <Grid container spacing={isMobile ? 1 : 2} >
-          <Grid item xs={12} md={5.9} sx={{marginLeft: "5px", }}>
+        <Grid container spacing={isMobile ? 1 : 3}  >
+          <Grid item xs={16} md={3.9} sx={{marginLeft: "5px", height: "100%",}}className="announcement-category">
             {/* <DashboardTab fullHeight={!isMobile ? true : false}> */}
-        <Box width="100%">            
-        <div style={{ marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
+        <Box width="100%" >            
+        <div style={{  marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
           Received
         </div>
-        <div style={{ marginBottom: "30px", width: "100%", height: "420px", overflow: "auto",}}> {/* backgroundColor:"#D9D9D9", opacity:"100%", borderRadius:"7px" }}>*/}
-          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto",  width:"100%"}}>
+        <div style={{  marginBottom: "30px", width: "100%", overflow: "auto",}}> {/* backgroundColor:"#D9D9D9", opacity:"100%", borderRadius:"7px" }}>*/}
+          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto",  width:"100%"}} >
+          {/* <div className={`announcement-list-container ${announcementClicked ? 'clicked' : ''}`} style={{ maxHeight: "100%", overflowY: "auto", width: "100%" }}> */}
+          {/* <div className="announcement-list-card" style={{ maxHeight: "100%", overflowY: "auto",  width:"100%", backgroundColor: announcementClicked ? "red" : "transparent",}}> */}
             {filteredReceivedData.length > 0
               ? filteredReceivedData.map((announcement, i) => {
+                  let role = announcement?.sender_role;
+                  let pageToNavigate;
+                  let navigationParams;
+                  try {
+                    let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_sender);
+                    if (indx >= 0) {
+                      pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
+                      navigationParams = {
+                        state: {
+                          dataDetails: dataDetails[role],
+                          tab: role,
+                          index: indx,
+                          viewData: dataDetails[role],
+                        },
+                      };
+                    }
+                  } catch (e) {
+                    // console.log(e);
+                  }
+
+                  return (
+
+                    // {receivedData.map((announcement) => (
+                    //   <div key={announcement.announcement_uid} onClick={() => handleAnnouncements(announcement)}>
+                    //     <input
+                    //       type="checkbox"
+                    //       id={`checkbox-${announcement.announcement_uid}`}
+                    //       checked={announcement.announcement_read !== null}
+                    //       readOnly
+                    //     />
+                    //     <span>{announcement.announcement_title}</span>
+                    //     {/* other elements */}
+                    //   </div>
+                    // ))}
+
+
+                    // <div className="announcement-cards">
+                    //     {receivedData.length > 0 ? (
+                    //       receivedData.map((announcement, index) => (
+                    //         <div
+                    //           key={index}
+                    //           onClick={() => handleAnnouncements(announcement)}
+                    //           style={{
+                    //             cursor: "pointer",
+                    //             backgroundColor: announcement.announcement_read ? "#E0E0E0" : announcementClicked === announcement ? "#ADD8E6" : "white",
+                    //           }}
+                    //         >
+                    //           <AnnouncementCard
+                    //             title={announcement.announcement_title}
+                    //             message={announcement.announcement_message}
+                    //             date={announcement.announcement_date}
+                    //             checked={announcement.announcement_read || announcementClicked === announcement}
+                    //           />
+                    //         </div>
+                    //       ))
+                    //     ) : (
+                    //       <div className="no-announcements">No Announcements</div>
+                    //     )}
+                    //   </div>
+
+                    <div key={i} className={`announcement-card-content ${announcementClicked && announcementClicked === announcement.announcement_uid ? 'announcement-clicked' : ''}`}
+                    onClick={() => handleAnnouncements(announcement)}
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: announcement.announcement_read ? "#E0E0E0" : announcementClicked === announcement ? "#ADD8E6" : "white",
+                              }}
+                    >
+                      {/* <Box
+                        onClick={() => {
+                           handleAnnouncements(announcement);
+                        }}
+                        sx={{
+                          backgroundColor: announcement === announcementClicked ? 'blue' : 'transparent',
+                          transition: 'background-color 0.3s ease',
+                          borderRadius: '7px',
+                          cursor: 'pointer',
+                        }}
+                      > */}
+                        {
+                          <AnnouncementCard 
+                          // key={announcement.announcement_uid}
+                          // announcement={{ ...announcement, isClicked: announcement.announcement_uid === clickedAnnouncementUid }}
+                          // onAnnouncementClick={handleAnnouncementClick}
+                            data={announcement}
+                            role={getProfileId}
+                            isContract={announcement.announcement_mode == "CONTRACT"}
+                            isLease={announcement.announcement_mode == "LEASE"}
+                            pageToNavigate={pageToNavigate}
+                            navigationParams={navigationParams}
+                            sent_or_received={"Received"}
+                            readAllChecked={readAllChecked}
+                            showCheckbox={true}
+                          />
+                        }
+
+                      {/* </Box> */}
+                    </div>
+                  );
+                })
+              : "No announcements"}
+          </div>
+        {/* </div> */}
+        </div>
+
+          {/* </DashboardTab> */}
+          </Box>
+          </Grid>
+
+          <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category">
+
+        <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
+          Read
+        </div>
+        <div style={{ width: "100%", height: "420px", overflow: "auto",}}>
+          <div className="announcement-list-container">
+            {filteredReadData.length > 0
+              ? filteredReadData.map((announcement, i) => {
                   let role = announcement?.sender_role;
                   let pageToNavigate;
                   let navigationParams;
@@ -362,7 +569,7 @@ export default function Announcements() {
                         }}
                       >
                         {
-                          <AnnouncementCard
+                          <AnnouncementCard 
                             data={announcement}
                             role={getProfileId}
                             isContract={announcement.announcement_mode == "CONTRACT"}
@@ -370,8 +577,10 @@ export default function Announcements() {
                             pageToNavigate={pageToNavigate}
                             navigationParams={navigationParams}
                             sent_or_received={"Received"}
+                            showCheckbox={false}
                           />
                         }
+                        
                       </Box>
                     </div>
                   );
@@ -379,17 +588,15 @@ export default function Announcements() {
               : "No announcements"}
           </div>
         </div>
-
-          {/* </DashboardTab> */}
-          </Box>
+        
           </Grid>
 
-          <Grid item xs={12} md={5.9} style={{ marginLeft: isMobile ? '0px' : '200px', }}>
+          <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category">
 
         <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
           Sent
         </div>
-        <div style={{ width: "100%", height: "420px", overflow: "auto", }}>
+        <div style={{ width: "100%", height: "420px", overflow: "auto",}}>
           <div className="announcement-list-container">
             {filteredSentData.length > 0
               ? filteredSentData.map((announcement, i) => {
@@ -429,6 +636,7 @@ export default function Announcements() {
                             pageToNavigate={pageToNavigate}
                             navigationParams={navigationParams}
                             sent_or_received={"Sent"}
+                            showCheckbox={true}
                           />
                         }
                         
