@@ -50,7 +50,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import PropertyDetail from "./PropertyDetail";
-import PropertyDetail2 from "./PropertyDetail2"
+import PropertyDetail2 from "./PropertyDetail2";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -188,7 +188,7 @@ function getPropertyList(data) {
   });
 }
 
-export default function PropertyList({ }) {
+export default function PropertyList({}) {
   console.log("In Property List");
   let navigate = useNavigate();
   const { getProfileId, isManagement, isOwner } = useUser();
@@ -229,7 +229,6 @@ export default function PropertyList({ }) {
       //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
 
-
       const propertyData = await response.json();
       console.log("In Property List >> Property Data: ", propertyData); // This has Applications, MaintenanceRequests, NewPMRequests and Property info from endpoint
       const propertyList = getPropertyList(propertyData);
@@ -249,8 +248,8 @@ export default function PropertyList({ }) {
 
   const propertyRentDetails = async () => {
     try {
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+      // const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
       if (!response.ok) {
         console.log("Error fetching rent Details data");
       }
@@ -259,7 +258,7 @@ export default function PropertyList({ }) {
     } catch (error) {
       console.error("Failed to fetch rent details:", error);
     }
-  }
+  };
 
   //   useEffect(() => {
   //     const getContractsForOwner = async () => {
@@ -404,28 +403,28 @@ export default function PropertyList({ }) {
 
   const columns = [
     {
-      field: 'avatar',
-      headerName: '',
+      field: "avatar",
+      headerName: "",
       flex: 0.5,
       renderCell: (params) => (
         <Avatar
           src={`${getCoverPhoto(params.row)}?${Date.now()}`}
           alt="property image"
           sx={{
-            borderRadius: '0',
-            width: '50px',
-            height: '50px',
-            margin: '0px',
+            borderRadius: "0",
+            width: "50px",
+            height: "50px",
+            margin: "0px",
           }}
         />
       ),
     },
     {
-      field: 'address',
-      headerName: 'Address',
-      headerAlign: 'center',
+      field: "address",
+      headerName: "Address",
+      headerAlign: "center",
       flex: 1,
-      renderCell: (params) => (
+      renderCell: (params) =>
         // <Box
         //   sx={{
         //     display: 'flex',
@@ -437,27 +436,26 @@ export default function PropertyList({ }) {
         //     whiteSpace: 'break-spaces',
         //   }}
         // >
-          displayAddress(params.row)
+        displayAddress(params.row),
         // </Box>
-      ),
     },
     {
-      field: 'paymentStatus',
-      headerName: 'Status',
-      headerAlign: 'center',  
+      field: "paymentStatus",
+      headerName: "Status",
+      headerAlign: "center",
       flex: 0.7,
       renderCell: (params) => (
         <Box
           sx={{
             backgroundColor: getPaymentStatusColor(params.row.rent_status),
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '0px',
-            border: 'none',
-            margin: '0px',
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "0px",
+            border: "none",
+            margin: "0px",
           }}
         >
           <Badge
@@ -466,12 +464,12 @@ export default function PropertyList({ }) {
             badgeContent={getNumOfApplications(params.row)}
             invisible={!getNumOfApplications(params.row)}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             style={{
-              color: '#000000',
-              width: '100%',
+              color: "#000000",
+              width: "100%",
             }}
           >
             <Typography
@@ -479,13 +477,13 @@ export default function PropertyList({ }) {
                 color: theme.palette.primary.main,
                 fontWeight: theme.typography.primary.fontWeight,
                 fontSize: "13px",
-                margin: '0px',
-                padding: '0px',
-                height: '50px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
+                margin: "0px",
+                padding: "0px",
+                height: "50px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
                 textAlign: "center",
               }}
             >
@@ -496,30 +494,30 @@ export default function PropertyList({ }) {
       ),
     },
     {
-      field: 'maintenanceIcon',
-      headerName: 'Issues',
-      headerAlign: 'center',
+      field: "maintenanceIcon",
+      headerName: "Issues",
+      headerAlign: "center",
       flex: 0.5,
       renderCell: (params) => (
-        <Box sx={{ margin: "0px", }}>
+        <Box sx={{ margin: "0px" }}>
           <Badge
             overlap="circular"
             color="error"
             badgeContent={getNumOfMaintenanceReqs(params.row)}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             style={{
-              color: '#000000',
-              width: '50px'
+              color: "#000000",
+              width: "50px",
             }}
           >
             <Button
-              onClick={() => navigate('/maintenance')}
-              sx={{ border: 'none', '&:hover, &:focus, &:active': { backgroundColor: '#d6d5da' }, alignContent: "left", justifyContent: "left" }}
+              onClick={() => navigate("/maintenance")}
+              sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}
             >
-              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '40px', height: '40px' }} />
+              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "40px", height: "40px" }} />
             </Button>
           </Badge>
         </Box>
@@ -539,13 +537,13 @@ export default function PropertyList({ }) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    console.log('List Item Clicked', property, i, displayedItems);
+    console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop: theme.spacing(2) }}>
+      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: theme.spacing(2) }}>
         <Grid container>
           <Grid item xs={12} md={propertyList.length > 0 ? 4 : 12}>
             <Box
@@ -598,34 +596,34 @@ export default function PropertyList({ }) {
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
                   {/* New Buttons */}
-                  <Box sx={{ paddingLeft: "10px", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <Typography>Quick Sort</Typography>
-                  <Button onClick={sortByZip} color="inherit">
-                    Zip
-                  </Button>
-                  <Button onClick={sortByAddress} color="inherit">
-                    Address
-                  </Button>
-                  <Button onClick={sortByStatus} color="inherit">
-                    Rent Status
-                  </Button>
-                  <Box sx={{ flex: 1 }} />
-                  <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: theme.typography.largeFont,
-                      }}
-                    ></Typography>
-                  </Box>
+                  <Box sx={{ paddingLeft: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Typography>Quick Sort</Typography>
+                    <Button onClick={sortByZip} color="inherit">
+                      Zip
+                    </Button>
+                    <Button onClick={sortByAddress} color="inherit">
+                      Address
+                    </Button>
+                    <Button onClick={sortByStatus} color="inherit">
+                      Rent Status
+                    </Button>
+                    <Box sx={{ flex: 1 }} />
+                    <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.largeFont,
+                        }}
+                      ></Typography>
+                    </Box>
                   </Box>
                 </Stack>
                 <Box sx={{ padding: "10px" }}>
                   <SearchBar propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
                   <Box sx={{ marginTop: "20px" }}>
                     <DataGrid
-                      getRowHeight={() => 'auto'}
+                      getRowHeight={() => "auto"}
                       rows={rows}
                       columns={columns}
                       autoHeight
@@ -638,10 +636,11 @@ export default function PropertyList({ }) {
                         },
                       }}
                       onRowClick={onPropertyClick}
-                      sx={{ '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
-                      '& .MuiDataGrid-row:hover': {
-                        cursor: 'pointer',
-                      },
+                      sx={{
+                        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                        "& .MuiDataGrid-row:hover": {
+                          cursor: "pointer",
+                        },
                       }}
                     />
                   </Box>
@@ -649,11 +648,11 @@ export default function PropertyList({ }) {
               </Paper>
             </Box>
           </Grid>
-          {propertyList.length > 0 && allRentStatus.length > 0 &&
+          {propertyList.length > 0 && allRentStatus.length > 0 && (
             <Grid item xs={12} md={8}>
               <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} />
             </Grid>
-          }
+          )}
         </Grid>
       </Container>
     </ThemeProvider>
