@@ -87,7 +87,8 @@ const ViewLease = (props) => {
   const [confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen] = useState(false);
   const [renewLeaseDialogOpen, setRenewLeaseDialogOpen] = useState(false);
   const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState("");
-  const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
+  // const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
+  const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -228,6 +229,136 @@ const ViewLease = (props) => {
 
   const handleToggleAccordion = () => {
     setExpanded(!expanded);
+  };
+
+  const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
+    // const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState('');
+
+    const getConfirmEndLeaseDialogText = (leaseData) => {
+      const currentDate = new Date();
+      const currentDateFormatted = dayjs(currentDate).format("MM-DD-YYYY");
+      const noticePeriod = leaseData.lease_end_notice_period ? leaseData.lease_end_notice_period : 30; //30 by default
+      const leaseEndDate = new Date(leaseData.lease_end);
+      const leaseEndDateFormatted = dayjs(leaseEndDate).format("MM-DD-YYYY");
+
+      console.log("Current Date: ", currentDate);
+      console.log("Notice Period: ", noticePeriod);
+      console.log("Lease End Date: ", leaseEndDate);
+
+      console.log("MoveOutDate In: ", moveOutDate.$d);
+      // moveOutDate = new Date(moveOutDate)
+      // console.log("MoveOutDate Out: ", moveOutDate);
+
+      const noticeDate = new Date(leaseEndDate);
+      noticeDate.setDate(leaseEndDate.getDate() - noticePeriod);
+      const noticeDateFormatted = dayjs(noticeDate).format("MM-DD-YYYY");
+      console.log("Notice Date: ", noticeDate);
+      const futureDate = new Date(currentDate);
+      console.log("Future Date 1: ", noticeDate);
+      futureDate.setDate(currentDate.getDate() + noticePeriod);
+      console.log("Future Notice Date: ", noticeDate);
+      const newLeaseEndDate = new Date(futureDate.getFullYear(), futureDate.getMonth() + 1, 0);
+      console.log("New Lease End Date: ", newLeaseEndDate);
+
+      console.log("Lease Status: ", leaseData.lease_status);
+      console.log("Dialog Box Open or Closed: ", confirmEndLeaseDialogOpen);
+      console.log("EndLeaseDialogOpen Open or Closed: ", endLeaseDialogOpen);
+      if (leaseData.lease_status === "ACTIVE") {
+        console.log("In IF Statement", currentDate, noticeDate, moveOutDate.$d, leaseEndDate, newLeaseEndDate);
+        console.log("In IF Statement", currentDateFormatted, noticeDateFormatted, moveOut, leaseEndDateFormatted);
+
+        if (currentDate <= noticeDate) {
+          console.log("Current Date is before Notice Date");
+          if (moveOutDate.$d >= leaseEndDate) {
+            // Lease Ending at End of Lease Term
+            console.log("Lease Ending at End of Lease Term");
+            return `Your lease will end on ${moveOutDate.format(
+              "dddd MMM DD YYYY"
+            )} and you are responsible for rent payments until the end of the lease. Are you sure you want to end the lease?`;
+          }
+          if (moveOutDate.$d < leaseEndDate) {
+            // Lease Ending Before End of Lease Term
+            console.log("Lease Ending Before End of Lease Term");
+            return `Ending the lease early will require approval from the Property Manager. Your application to end the lease on ${moveOutDate.format(
+              "dddd MMM DD YYYY"
+            )} will be sent to the Property Manager for approval.  Please note that until you receive approval from the Property Manager, you are responsible for rent payments until the end of the lease ${dayjs(
+              leaseEndDate
+            ).format("dddd MMM DD YYYY")}. Are you sure you want to end the lease?`;
+          }
+        } else {
+          // Lease Ending After End of Lease Term
+          console.log("Lease Ending After End of Lease Term");
+          return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${dayjs(newLeaseEndDate).format(
+            "dddd MMM DD YYYY"
+          )} and you will be responsible for payments through that date. Are you sure you want to end the lease?`;
+        }
+      } else if (leaseData.lease_status === "ACTIVE-M2M") {
+        if (currentDate < noticeDate) {
+          // M2M Lease Ending Before Notice Date
+          console.log("M2M Lease Ending");
+          return `Your lease will end on ${moveOutDate.format(
+            "dddd MMM DD YYYY"
+          )} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
+        } else {
+          // M2M Lease Ending After Notice Date
+          console.log("Lease Ending After End of Lease Term");
+          return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${dayjs(newLeaseEndDate).format(
+            "dddd MMM DD YYYY"
+          )} and you will be responsible for payments through that date. Are you sure you want to end the lease?`;
+        }
+      } else {
+        return 'ERROR: lease status is not "ACTIVE" or "ACTIVE-M2M"';
+      }
+    };
+    console.log("Exit Notifications");
+
+    const memoizedDialogText = useMemo(() => getConfirmEndLeaseDialogText(leaseData), [leaseData]);
+
+    return (
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">End Lease Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.common.fontWeight,
+            }}
+          >
+            {memoizedDialogText}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => handleEndLease()}
+            sx={{
+              color: "white",
+              backgroundColor: "#3D5CAC80",
+              ":hover": {
+                backgroundColor: "#3D5CAC",
+              },
+            }}
+            autoFocus
+          >
+            Yes
+          </Button>
+          <Button
+            onClick={() => {
+              setDialogOpen(false);
+            }}
+            sx={{
+              color: "white",
+              backgroundColor: "#3D5CAC80",
+              ":hover": {
+                backgroundColor: "#3D5CAC",
+              },
+            }}
+          >
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
   };
 
   return (
@@ -472,9 +603,10 @@ const ViewLease = (props) => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DatePicker", "DatePicker"]}>
               <DatePicker
-                value={moveOutDate}
+                // value={moveOutDate}
+                value={dayjs(leaseData.lease_end)}
                 onChange={(newValue) => setMoveOutDate(newValue)}
-                disablePast={true}
+                disablePast={selectedRole !== "MANAGER"}
                 sx={{
                   paddingTop: "10px",
                   paddingBottom: "10px",
@@ -604,100 +736,8 @@ function getTenantName(leaseData) {
 
   return name;
 }
+
 export default ViewLease;
-
-const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
-  // const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState('');
-
-  const getConfirmEndLeaseDialogText = (leaseData) => {
-    const currentDate = new Date();
-    const noticePeriod = leaseData.lease_end_notice_period ? leaseData.lease_end_notice_period : 30; //30 by default
-    // const moveOutDate = new Date(moveOut);
-    const leaseEndDate = new Date(leaseData.lease_end);
-
-    const noticeDate = new Date(leaseEndDate);
-    noticeDate.setDate(leaseEndDate.getDate() - noticePeriod);
-    const futureDate = new Date(currentDate);
-    futureDate.setDate(currentDate.getDate() + noticePeriod);
-    const newLeaseEndDate = new Date(futureDate.getFullYear(), futureDate.getMonth() + 1, 0);
-
-    if (leaseData.lease_status === "ACTIVE") {
-      if (currentDate < noticeDate) {
-        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
-        return `Your lease will end on ${formatDate(
-          leaseEndDate
-        )} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
-      } else {
-        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
-        return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${formatDate(
-          newLeaseEndDate
-        )} and you will be responsible for payments through that date. Are you sure you want to end the lease?`;
-      }
-    } else if (leaseData.lease_status === "ACTIVE-M2M") {
-      if (currentDate < noticeDate) {
-        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
-        return `Your lease will end on ${formatDate(
-          leaseEndDate
-        )} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
-      } else {
-        // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
-        return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${formatDate(
-          newLeaseEndDate
-        )} and you will be responsible for payments through that date. Are you sure you want to end the lease?`;
-      }
-    } else {
-      return 'ERROR: lease status is not "ACTIVE" or "ACTIVE-M2M"';
-    }
-  };
-
-  const memoizedDialogText = useMemo(() => getConfirmEndLeaseDialogText(leaseData), [leaseData]);
-
-  return (
-    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">End Lease Confirmation</DialogTitle>
-      <DialogContent>
-        <DialogContentText
-          id="alert-dialog-description"
-          sx={{
-            color: theme.typography.common.blue,
-            fontWeight: theme.typography.common.fontWeight,
-          }}
-        >
-          {memoizedDialogText}
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => handleEndLease()}
-          sx={{
-            color: "white",
-            backgroundColor: "#3D5CAC80",
-            ":hover": {
-              backgroundColor: "#3D5CAC",
-            },
-          }}
-          autoFocus
-        >
-          Yes
-        </Button>
-        <Button
-          onClick={() => {
-            setDialogOpen(false);
-          }}
-          sx={{
-            color: "white",
-            backgroundColor: "#3D5CAC80",
-            ":hover": {
-              backgroundColor: "#3D5CAC",
-            },
-          }}
-        >
-          No
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
 
 const TenantsDataGrid = ({ data }) => {
   const columns = [
