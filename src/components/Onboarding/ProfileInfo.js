@@ -34,6 +34,9 @@ import {
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
+import { getLatLongFromAddress } from "../../utils/geocode";
+import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,6 +109,16 @@ const ProfileInfo = () => {
     'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
 ]
+
+
+
+  const handleAddressSelect = (address) => {
+    setAddress(address.street ? address.street : "");
+    setCity(address.city ? address.city : "");
+    setState(address.state ? address.state : "");
+    setZip(address.zip ? address.zip : "");
+  };
+
 
   const addServiceRow = () => {
     setServices((prev) => [
@@ -357,10 +370,6 @@ const ProfileInfo = () => {
     setPhoneNumber(formatPhoneNumber(event.target.value));
   };
 
-  const handleAddressChange = (event) => {
-    setAddress(event.target.value);
-  };
-
   const handleUnitChange = (event) => {
     setUnit(event.target.value);
   };
@@ -531,14 +540,15 @@ const ProfileInfo = () => {
             >
               {`${isBusiness() ? "Business" : ""} Address`}
             </Typography>
-            <TextField
+            {/* <TextField
               value={address}
               onChange={handleAddressChange}
               variant="filled"
               fullWidth
               placeholder="Enter street address"
               className={classes.root}
-            ></TextField>
+            ></TextField> */}
+            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
           </Stack>
           <Grid
             container
@@ -596,15 +606,17 @@ const ProfileInfo = () => {
                 >
                   {"State"}
                 </Typography>
-                <Select
-                  value={state}
-                  onChange={handleStateChange}
-                  size="small"
-                  fullWidth
-                  className={classes.select}
-                >
-                {us_states.map(val=> <MenuItem value={val}>{val}</MenuItem>)}
-                </Select>
+
+
+                <TextField
+              value={state}
+              onChange={handleStateChange}
+              variant="filled"
+              fullWidth
+              placeholder="Enter street address"
+              className={classes.root}
+            ></TextField>
+
               </Stack>
             </Grid>
             <Grid item xs={6}>
