@@ -41,6 +41,10 @@ import {
   } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import theme from '../../../theme/theme';
+import SearchIcon from '@mui/icons-material/Search';
+import HappinessMatrixWidget from '../../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget';
+import CommentIcon from "@mui/icons-material/Comment";
+
 
 const OwnerContactDetails2 = (props) => {
 
@@ -50,6 +54,8 @@ const OwnerContactDetails2 = (props) => {
   const location = useLocation();
 
   const navigatingFrom = location.state.navigatingFrom;
+  const happinessMatrixData = location.state.happinessMatrixData;
+  console.log("ROHIT - location.state.happinessMatrixData - ", location.state.happinessMatrixData);
   // const contactDetails = location.state.dataDetails;
   const [contactDetails, setContactDetails] = useState(null);
   const [contactsTab, setContactsTab] = useState("");
@@ -155,7 +161,7 @@ const OwnerContactDetails2 = (props) => {
                                     // margin: '50p', // Add margin here
                                     borderRadius: "10px",                                
                                     backgroundColor: '#D6D5DA',
-                                    height: "100%",
+                                    // height: "400px",
                                     // [theme.breakpoints.down("sm")]: {
                                     //     width: "80%",
                                     // },
@@ -165,7 +171,7 @@ const OwnerContactDetails2 = (props) => {
                                     width: "100%",
                                 }}
                             >
-                                Happiness Matrix
+                                <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} setIndex={setIndex} contactDetails={contactDetails}/>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
@@ -175,7 +181,7 @@ const OwnerContactDetails2 = (props) => {
                                     // margin: '50p', // Add margin here
                                     borderRadius: "10px",
                                     backgroundColor: "#FFFFFF",
-                                    height: "100%",
+                                    // height: "500px",
                                     // [theme.breakpoints.down("sm")]: {
                                     //     width: "80%",
                                     // },
@@ -185,7 +191,7 @@ const OwnerContactDetails2 = (props) => {
                                     width: "100%",
                                 }}
                             >
-                                All owner Contacts
+                                <AllContacts data={contactDetails} currentIndex={index} setIndex={setIndex}/>
                             </Paper>
                         </Grid>
                     </Grid>
@@ -197,6 +203,129 @@ const OwnerContactDetails2 = (props) => {
         </ThemeProvider>
     </>
   );
+}
+
+const AllContacts = ({ data, currentIndex, setIndex }) => {
+  console.log("ROHIT - AllContacts - data -", data);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [contactsData, setContactsData] = useState([]);
+  const [filteredContactsData, setFilteredContactsData] = useState([]);
+
+
+  useEffect(() => {
+    const processedData = data?.map((contact) => {
+      return {
+        ...contact,
+        entities: contact.entities != null? JSON.parse(contact.entities) : [],
+      }
+    });
+    console.log("ROHIT - AllContacts - processedData -", processedData);
+    setContactsData(processedData);
+    setFilteredContactsData(processedData);
+  }, [data]);
+    
+  useEffect( () => {
+    const filteredValues = contactsData?.filter( (item) => {
+      return item.contact_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.contact_last_name.toLowerCase().includes(searchTerm.toLowerCase())
+    });
+
+    console.log("ROHIT - handleSearch - filteredValues - ", filteredValues);
+    setFilteredContactsData(filteredValues);
+  }, [searchTerm]);
+  
+  return (
+    <> 
+      <Container sx={{padding: '5px', }}>     
+        <Grid container justifyContent='center' sx={{padding: '10px 10px'}}>
+          <Typography sx={{ fontSize: '35px', color: '#160449', fontWeight: 'bold', }}>
+            All Owner Contacts
+          </Typography>
+          <Grid container item xs={12} justifyContent='center'>
+            <TextField 
+              value={searchTerm}
+              placeholder='Search Keyword'
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{ 
+                width: '100%',       
+                marginBottom: '10px',      
+                '& input': {
+                  height: '15px', 
+                  padding: '10px 14px',
+                  borderRadius: '15px',
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: '#3D5CAC', fontSize: '1.5rem',  }}/>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid container item xs={12} justifyContent="center" sx={{ height: '380px', overflow: 'auto' }}>                      
+            {
+              filteredContactsData?.map(( contact, index ) => {
+                return (
+                  <Grid item xs={12} sx={{ marginBottom : '5px', }} onClick={ () => setIndex(index)}>
+                    <Paper
+                      elevation={0}
+                      style={{
+                          // margin: '50p', // Add margin here
+                          borderRadius: "10px",
+                          backgroundColor: index === currentIndex? '#9EAED6' : '#D6D5DA',
+                          // height: "100%",
+                          // [theme.breakpoints.down("sm")]: {
+                          //     width: "80%",
+                          // },
+                          // [theme.breakpoints.up("sm")]: {
+                          //     width: "50%",
+                          // },
+                          width: "100%",
+                      }}
+                    >
+                      <Grid container sx={{padding: '10px', }}>
+                        <Grid item xs={11}>
+                          <Typography 
+                            sx={{
+                              fontWeight: 'bold',
+                              color: '#160449',
+                              fontSize: '20px', 
+                            }}
+                          >
+                            { contact?.contact_first_name + ' ' + contact.contact_last_name}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={1}>
+                          <CommentIcon sx={{ color: '#3D5CAC' }}/>
+                        </Grid>
+                        <Grid item xs={12}>                        
+                          <Typography sx={{fontWeight: '600', color: '#160449', fontSize: '15px',}}>
+                            { `${contact?.entities[0]?.property_count} properties` }
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>                        
+                          <Typography sx={{color: '#160449', fontSize: '15px',}}>
+                            { contact?.contact_email }
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>                        
+                          <Typography sx={{color: '#160449', fontSize: '15px',}}>
+                            { contact?.contact_phone_number }
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                  </Grid>
+                );
+              })
+            }
+          </Grid>
+        </Grid>
+      </Container>
+    </>
+  )
 }
 
 const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails }) => {
@@ -283,7 +412,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                     </Grid>
                 </Grid>
                 <Grid container item xs={12} columnSpacing={5} sx={{marginBottom: '10px', }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <Paper
                             elevation={0}
                             style={{
@@ -301,10 +430,10 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                                 padding: '10px',
                             }}
                         >
-                            <OwnerInformation />
+                            <OwnerInformation contactDetails={contactDetails} index={index} />
                         </Paper>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item  xs={12} md={6}>
                         <Paper
                             elevation={0}
                             style={{
@@ -362,17 +491,17 @@ const OwnerInformation = ({ contactDetails, index }) => {
       </Grid>
       <Grid item xs={12}>
         <Typography sx={{color: '#160449', }}>
-          email
+          { contactDetails && contactDetails[index]?.contact_email}
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <Typography sx={{color: '#160449', }}>
-          phone
+        { contactDetails && contactDetails[index]?.contact_phone_number}
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <Typography sx={{color: '#160449', }}>
-          address
+        { contactDetails && contactDetails[index]?.contact_address + ', ' + contactDetails[index]?.contact_city + ', ' + contactDetails[index]?.contact_state + ', ' + contactDetails[index]?.contact_zip }
         </Typography>
       </Grid>
       <Grid item xs={12} sx={{ marginTop: '10px', }}>

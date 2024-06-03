@@ -11,7 +11,7 @@ export default function HappinessMatrixWidget(props) {
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { data, dataSetter, cashflowDetails, cashflowData } = props;
+  const { page, setIndex, data, dataSetter, cashflowDetails, cashflowData, contactDetails } = props;
   console.log("HappinessMatrixWidget - data -", data);
   console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
   
@@ -128,12 +128,12 @@ export default function HappinessMatrixWidget(props) {
         }}
       >
         <Grid container style={{ padding: "10px" }}>
-          <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+          <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: '10px', }}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Happiness Matrix
             </Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{backgroundColor: page === "OwnerContactDetails" ? "#D6D5DA" : "", borderRadius: '15px', }}>
             <ResponsiveContainer width="100%" height={380}>
               <ScatterChart
                 // width={chartWidth}
@@ -150,7 +150,7 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  tick={{ transform: 'translate(10, 0)' }}
+                  // tick={{ transform: 'translate(10, 0)' }}
                   // label={{
                   //   value: "Delta Cashflow",
                   //   angle: -90,
@@ -161,8 +161,8 @@ export default function HappinessMatrixWidget(props) {
                   //   fill: "#160449",
                   // }}
                   domain={[-1.1, 0.1]}
-                  ticks={[-1.1, -0.5, 0.1]}
-                  // tick={false}
+                  // ticks={[-1.1, -0.5, 0.1]}
+                  tick={false}
                 />
 
                 <XAxis
@@ -172,7 +172,7 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  tick={{ transform: 'translate(0, 0)' }}
+                  // tick={{ transform: 'translate(0, 0)' }}
                   // label={{
                   //   value: "Vacancies",
                   //   position: "insideBottom",
@@ -182,8 +182,8 @@ export default function HappinessMatrixWidget(props) {
                   //   fill: "#160449",
                   // }}
                   domain={[-100, 0]}
-                  ticks={[-100, -50, 0]} // Add this line
-                  // tick={false}
+                  // ticks={[-100, -50, 0]} // Add this line
+                  tick={false}
                 />
 
                 <Tooltip
@@ -252,6 +252,10 @@ export default function HappinessMatrixWidget(props) {
                     <CustomImage
                       {...props}
                       //   onClick={() => handlePointClick(props.payload)}
+                      data={data}
+                      page={page}
+                      contactDetails={contactDetails}
+                      setIndex={setIndex}
                       cashflowDetails={cashflowDetails}
                       cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
@@ -284,9 +288,9 @@ export default function HappinessMatrixWidget(props) {
 
 const CustomImage = (props) => {
   const navigate = useNavigate();
-  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowData, cashflowDetails } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowData, cashflowDetails, data, page, setIndex, contactDetails } = props;
 
-    console.log("CustomImage - props - ", props);
+  // console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }
@@ -295,13 +299,21 @@ const CustomImage = (props) => {
   const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
-    console.log("CustomImage - handleClick - payload - ", payload);
+    console.log("ROHIT - CustomImage - handleClick - payload - ", payload);
+    console.log("ROHIT - CustomImage - handleClick - page - ", page);
+    if(page === "OwnerContactDetails"){      
+      const idx = contactDetails.findIndex(contact => contact.contact_uid === payload?.owner_uid)
+      console.log("ROHIT - idx - ", idx);
+      setIndex(idx);
+      return;
+    }    
     navigate(`/ownerContactDetails2`, { //rohit
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
         cashflowData: cashflowData,
         cashflowDetails: cashflowDetails,
+        happinessMatrixData: data,
       },
     });
   };

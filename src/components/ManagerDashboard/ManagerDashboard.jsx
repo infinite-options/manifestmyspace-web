@@ -170,7 +170,7 @@ function ManagerDashboard() {
 
       switch (quarter) {
         case 1:
-          borderColor = "#00FA9A"; // Green
+          borderColor = "#006400"; // Green
           break;
         case 2:
           borderColor = "#FF8A00"; // Orange color
