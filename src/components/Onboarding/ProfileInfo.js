@@ -34,7 +34,6 @@ import {
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
-import { getLatLongFromAddress } from "../../utils/geocode";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 
 
@@ -104,11 +103,7 @@ const ProfileInfo = () => {
       { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" },
     ]);
   };
-  const us_states = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-]
+  
 
 
 
@@ -575,50 +570,7 @@ const ProfileInfo = () => {
                 ></TextField>
               </Stack>
             </Grid>
-            <Grid item xs={6}>
-              <Stack spacing={-2} m={5}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                  }}
-                >
-                  {"City"}
-                </Typography>
-                <TextField
-                  value={city}
-                  onChange={handleCityChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="San Jose"
-                  className={classes.root}
-                ></TextField>
-              </Stack>
-            </Grid>
-            <Grid item xs={6}>
-              <Stack spacing={-2} m={5}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    paddingBottom: "10px",
-                  }}
-                >
-                  {"State"}
-                </Typography>
-
-
-                <TextField
-              value={state}
-              onChange={handleStateChange}
-              variant="filled"
-              fullWidth
-              placeholder="Enter street address"
-              className={classes.root}
-            ></TextField>
-
-              </Stack>
-            </Grid>
+            
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography
