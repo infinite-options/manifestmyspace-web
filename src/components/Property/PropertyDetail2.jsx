@@ -2,10 +2,9 @@ import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Sli
 
 import theme from "../../theme/theme";
 import PropertyNavigator from "../Property/PropertyNavigator";
-import { Padding } from "@mui/icons-material";
 
-export default function PropertyDetail({ index, propertyList, allRentStatus }) {
-  console.log("In Property Detail");
+export default function PropertyDetail({ index, propertyList, allRentStatus, isDesktop }) {
+  console.log("In Property Detail Desktop");
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -17,7 +16,7 @@ export default function PropertyDetail({ index, propertyList, allRentStatus }) {
           height:"100%",
         }}
       >
-        <PropertyNavigator index={index} propertyList={propertyList} allRentStatus={allRentStatus} />
+        <PropertyNavigator index={index} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop}/>
       </Box>
     </ThemeProvider>
   );

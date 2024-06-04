@@ -28,7 +28,7 @@ import APIConfig from "../../utils/APIConfig";
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 // export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
-export default function PropertyNavigator({ index, propertyList, allRentStatus, contracts, props }) {
+export default function PropertyNavigator({ index, propertyList, allRentStatus, isDesktop, rawPropertyData, contracts, props }) {
   console.log("In Property Navigator");
   console.log(index, propertyList);
   console.log(contracts);
@@ -491,7 +491,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
       return theme.palette.priority.medium;
     } else if (value === "PAID LATE" || "NO MANAGER") {
       return theme.palette.priority.low
-    } 
+    }
   };
 
   const rentStatusColumns = [
@@ -526,11 +526,13 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
       flex: 1,
       renderCell: (params) => {
         return <Box
-          sx={{  width: '100%',
-          margin: "0px", textAlign: "center", 
-          color: "#F2F2F2", backgroundColor: paymentStatusColorMap(params.value), 
-          overflowWrap: 'break-word',
-          whiteSpace:'break-spaces',
+          sx={{
+            width: '100%',
+            margin: "0px", textAlign: "center",
+            color: "#F2F2F2", backgroundColor: paymentStatusColorMap(params.value),
+            overflowWrap: 'break-word',
+            whiteSpace: 'break-spaces',
+            fontSize: "13px",
           }}>
           {params.value}
         </Box>;
@@ -541,10 +543,10 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   return (
     <Paper
       style={{
-        margin: "10px",
+        marginTop: "10px",
         backgroundColor: theme.palette.primary.main,
         width: "100%", // Occupy full width with 25px margins on each side
-        paddingBottom: "30px",
+        paddingBottom: "10px",
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -597,10 +599,10 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
             sx={{
               alignItems: "center",
               justifyContent: "center",
-              width: "95%",
+              width: "98%",
             }}
           >
-            <Grid container rowSpacing={6} columnSpacing={6}>
+            <Grid container rowSpacing={4} columnSpacing={4}>
               <Grid item xs={12} md={12}>
                 <Card
                   sx={{
@@ -711,7 +713,6 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       flexDirection: "column",
                       alignItems: "left",
                       justifyContent: "left",
-                      width: "90%",
                     }}
                   >
                     <Grid container spacing={2}>
@@ -879,7 +880,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         </Typography>
                       </Grid>
 
-                      <Grid item xs={5} md={4}>
+                      <Grid item xs={4} md={4}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -902,7 +903,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           ${property.property_value}
                         </Typography>
                       </Grid>
-                      <Grid item xs={3} md={3}>
+                      <Grid item xs={4} md={3}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -927,41 +928,44 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       </Grid>
                       <Grid item xs={4} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
                         <Box>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            textTransform: "none",
-                            minWidth: "110px", // Fixed width for the button
-                            minHeight: "35px",
-                          }}
-                          size="small"
-                          onClick={() => {
-                            navigate("/editProperty", {
-                              state: {
-                                index: currentIndex,
-                                propertyList: propertyData,
-                                page: "edit_property",
-                              },
-                            });
-                          }}
-                        >
-                          <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-                          <Typography
+                          <Button
+                            variant="outlined"
                             sx={{
+                              background: "#3D5CAC",
+                              color: theme.palette.background.default,
+                              cursor: "pointer",
                               textTransform: "none",
-                              color: "#FFFFFF",
-                              fontWeight: theme.typography.secondary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                              whiteSpace: "nowrap",
-                              marginLeft: "1%", // Adjusting margin for icon and text
+                              minWidth: "110px", // Fixed width for the button
+                              minHeight: "35px",
+                            }}
+                            size="small"
+                            onClick={() => {
+                              navigate("/editProperty", {
+                                state: {
+                                  index: currentIndex,
+                                  propertyList: propertyData,
+                                  page: "edit_property",
+                                  isDesktop,
+                                  allRentStatus,
+                                  rawPropertyData
+                                },
+                              });
                             }}
                           >
-                            {"Edit Property"}
-                          </Typography>
-                        </Button>
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                            <Typography
+                              sx={{
+                                textTransform: "none",
+                                color: "#FFFFFF",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                whiteSpace: "nowrap",
+                                marginLeft: "1%", // Adjusting margin for icon and text
+                              }}
+                            >
+                              {"Edit Property"}
+                            </Typography>
+                          </Button>
                         </Box>
                       </Grid>
 
@@ -981,28 +985,34 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               {"Applications"}
                             </Typography>
                           </Grid>
-                          {property.applications.map((app, index) => (
-                            <Grid item xs={6}>
-                              <Button
-                                onClick={() => handleAppClick(index)}
-                                sx={{
-                                  backgroundColor: getAppColor(app),
-                                  color: "#FFFFFF",
-                                  textTransform: "none",
-                                  width: "100%",
-                                  "&:hover, &:focus, &:active": {
+                         
+                            {property.applications.map((app, index) => (
+                              <Grid item xs={6} key={index} sx={{ display: 'flex' }}>
+                                <Button
+                                  onClick={() => handleAppClick(index)}
+                                  sx={{
                                     backgroundColor: getAppColor(app),
-                                  },
-                                  height: "100%",
-                                }}
-                              >
-                                <Stack>
-                                  <Typography>{app.tenant_first_name + " " + app.tenant_last_name}</Typography>
-                                  <Typography sx={{ fontWeight: "bold" }}>{app.lease_status}</Typography>
-                                </Stack>
-                              </Button>
-                            </Grid>
-                          ))}
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    "&:hover, &:focus, &:active": {
+                                      backgroundColor: getAppColor(app),
+                                    },
+                                  }}
+                                >
+                                  <Stack>
+                                    <Typography sx={{ fontSize: theme.typography.smallFont,}}>{app.tenant_first_name + " " + app.tenant_last_name}</Typography>
+                                    <Typography sx={{ fontWeight: "bold",  fontSize: theme.typography.smallFont, }}>{app.lease_status}</Typography>
+                                  </Stack>
+                                </Button>
+                              </Grid>
+                            ))}
+                         
                         </>
                       )}
                       <Grid item xs={11}>
@@ -1186,7 +1196,13 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             }}
                             size="small"
                             onClick={() => {
-                              navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing" } });
+                              navigate("/editProperty", {
+                                state: {
+                                  currentId, property, index: currentIndex, propertyList: propertyData, page: "add_listing", isDesktop,
+                                  allRentStatus,
+                                  rawPropertyData
+                                }
+                              });
                             }}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
@@ -1210,7 +1226,13 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             }}
                             size="small"
                             onClick={() => {
-                              navigate("/editProperty", { state: { currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing" } });
+                              navigate("/editProperty", {
+                                state: {
+                                  currentId, property, index: currentIndex, propertyList: propertyData, page: "edit_listing", isDesktop,
+                                  allRentStatus,
+                                  rawPropertyData
+                                }
+                              });
                             }}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
@@ -1248,6 +1270,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                     <DataGrid
                       rows={propertyRentStatus}
                       columns={rentStatusColumns}
+                      autoHeight
                       initialState={{
                         pagination: {
                           paginationModel: {

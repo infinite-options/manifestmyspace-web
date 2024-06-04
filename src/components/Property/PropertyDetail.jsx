@@ -1,4 +1,4 @@
-import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Slider, Stack, Button, Grid } from "@mui/material";
+import { ThemeProvider, Typography, Box, Paper, Stack, Button,} from "@mui/material";
 
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,13 +10,16 @@ import PropertyNavigator from "../Property/PropertyNavigator";
 import refundIcon from "./refundIcon.png";
 
 export default function PropertyDetail({}) {
-  console.log("In Property Detail");
+  console.log("In Property Detail Mobile");
   const location = useLocation();
   let navigate = useNavigate();
   //   const [contractsForProperty, setContractsForProperty] = useState([]);
   //   const contracts = location.state.contracts;
   const propertyList = location.state.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
   const index = location.state.index;
+  const allRentStatus = location.state.allRentStatus;
+  const rawPropertyData = location.state.rawPropertyData;
+  const isDesktop = location.state.isDesktop;
   //   const [index, setIndex] = useState(location.state.index);
 
   // console.log("--debug-- all contracts PropertyDetail", contracts)
@@ -40,7 +43,7 @@ export default function PropertyDetail({}) {
 
   function navigateToAddProperty() {
     console.log("navigateToAddProperty");
-    navigate("/addProperty");
+    navigate("/addProperty", {state:{property_endpoint_resp: rawPropertyData}});
   }
 
   function navigateToAddListing() {
@@ -54,7 +57,7 @@ export default function PropertyDetail({}) {
         style={{
           display: "flex",
           justifyContent: "center",
-          // alignItems: 'center',
+          alignItems: 'center',
           width: "100%", // Take up full screen width
           minHeight: "100vh", // Set the Box height to full height
           marginTop: theme.spacing(2), // Set the margin to 20px
@@ -81,7 +84,7 @@ export default function PropertyDetail({}) {
           >
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                All Properties 1
+                All Properties
               </Typography>
             </Box>
             <Box position="absolute" right={30}>
@@ -112,12 +115,15 @@ export default function PropertyDetail({}) {
             <Box
               sx={{
                 borderBottom: 0,
-                width: "75%",
+                width: "90%",
+                alignItems:"center",
+                justifyContent:"center"
               }}
             >
               {/* <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} contracts={contractsForProperty} /> */}
               {/* <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} /> */}
-              <PropertyNavigator index={index} propertyList={propertyList} />
+              <PropertyNavigator index={index} propertyList={propertyList} 
+              allRentStatus={allRentStatus} isDesktop={isDesktop} rawPropertyData={rawPropertyData}/>
             </Box>
           </Stack>
         </Paper>

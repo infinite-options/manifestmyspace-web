@@ -207,6 +207,9 @@ export default function PropertyList({}) {
   const [zipSortOrder, setZipSortOrder] = useState("asc");
   const [propertyIndex, setPropertyIndex] = useState(0);
   const [allRentStatus, setAllRentStatus] = useState([]);
+  const location = useLocation();
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
+  const [dataReady, setDataReady] = useState(false);
   // console.log("getProfileId information", getProfileId());
 
   function numberOfMaintenanceItems(maintenanceItems) {
@@ -241,15 +244,34 @@ export default function PropertyList({}) {
       setDisplayedItems([...propertyList]);
       const propertyRent = await propertyRentDetails();
       setAllRentStatus(propertyRent.RentStatus.result);
-      setShowSpinner(false);
+      if (location.state) {
+        if (location.state.isBack === true) {
+          setPropertyIndex(propertyList.length - 1);
+          navigate(location.pathname, { replace: true, state: {} });
+        } else {
+          setPropertyIndex(location.state.index);
+          navigate(location.pathname, { replace: true, state: {} });
+        }
+      }
+      if (propertyList.length > 0 || propertyRent.RentStatus.code==200) {
+        setDataReady(true);
+      }
     };
     fetchData();
+    // Check screen size on initial load
+    handleResize();
+    setShowSpinner(false);
+    // Optionally, add a resize event listener
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const propertyRentDetails = async () => {
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-      // const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
       if (!response.ok) {
         console.log("Error fetching rent Details data");
       }
@@ -326,8 +348,11 @@ export default function PropertyList({}) {
     // console.log("theoretically property", property)
     // console.log("handlePropertyDetailNavigation");
     // navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
-    // navigate(`/propertyDetail`, { state: { index, propertyList } });
-    setPropertyIndex(index);
+    if (isDesktop) {
+      setPropertyIndex(index);
+    } else {
+      navigate(`/propertyDetail`, { state: { index, propertyList, allRentStatus, rawPropertyData: rawPropertyData, isDesktop } });
+    }
   }
 
   function getBadgeContent(property) {
@@ -367,7 +392,7 @@ export default function PropertyList({}) {
           sx={{
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "13px",
+            fontSize: "11px",
             margin: "0px", // Ensure no margin
             padding: "0px", // Ensure no padding
             textAlign: "center", // Ensure text is centered within itself
@@ -386,7 +411,7 @@ export default function PropertyList({}) {
           sx={{
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "13px",
+            fontSize: "11px",
             margin: "0px", // Ensure no margin
             padding: "0px", // Ensure no padding
             textAlign: "center", // Ensure text is centered within itself
@@ -403,18 +428,19 @@ export default function PropertyList({}) {
 
   const columns = [
     {
-      field: "avatar",
-      headerName: "",
-      flex: 0.5,
+      field: 'avatar',
+      headerName: '',
+      flex: 0.4,
       renderCell: (params) => (
         <Avatar
           src={`${getCoverPhoto(params.row)}?${Date.now()}`}
           alt="property image"
           sx={{
-            borderRadius: "0",
-            width: "50px",
-            height: "50px",
-            margin: "0px",
+            borderRadius: '0',
+            width: '60px',
+            height: '60px',
+            margin: '0px',
+            padding: '0px',
           }}
         />
       ),
@@ -424,25 +450,14 @@ export default function PropertyList({}) {
       headerName: "Address",
       headerAlign: "center",
       flex: 1,
-      renderCell: (params) =>
-        // <Box
-        //   sx={{
-        //     display: 'flex',
-        //     alignItems: 'center',
-        //     justifyContent: 'center',
-        //     height: '100%',
-        //     width: '100%',
-        //     overflowWrap: 'break-word',
-        //     whiteSpace: 'break-spaces',
-        //   }}
-        // >
-        displayAddress(params.row),
-        // </Box>
+      renderCell: (params) => (
+        displayAddress(params.row)
+      ),
     },
     {
-      field: "paymentStatus",
-      headerName: "Status",
-      headerAlign: "center",
+      field: 'paymentStatus',
+      headerName: 'Status',
+      headerAlign: 'center',
       flex: 0.7,
       renderCell: (params) => (
         <Box
@@ -476,14 +491,13 @@ export default function PropertyList({}) {
               sx={{
                 color: theme.palette.primary.main,
                 fontWeight: theme.typography.primary.fontWeight,
-                fontSize: "13px",
-                margin: "0px",
-                padding: "0px",
-                height: "50px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
+                fontSize: "11px",
+                margin: '0px',
+                height: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
                 textAlign: "center",
               }}
             >
@@ -499,7 +513,15 @@ export default function PropertyList({}) {
       headerAlign: "center",
       flex: 0.5,
       renderCell: (params) => (
-        <Box sx={{ margin: "0px" }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+          }}
+        >
           <Badge
             overlap="circular"
             color="error"
@@ -508,16 +530,23 @@ export default function PropertyList({}) {
               vertical: "top",
               horizontal: "right",
             }}
-            style={{
-              color: "#000000",
-              width: "50px",
+            sx={{
+              color: '#000000',
             }}
           >
             <Button
-              onClick={() => navigate("/maintenance")}
-              sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}
+              onClick={() => navigate('/ownerMaintenance')}
+              sx={{
+                border: 'none',
+                '&:hover, &:focus, &:active': { backgroundColor: '#d6d5da' },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                minWidth: 0,
+              }}
             >
-              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "40px", height: "40px" }} />
+              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '35px', height: '35px' }} />
             </Button>
           </Badge>
         </Box>
@@ -541,11 +570,25 @@ export default function PropertyList({}) {
     handlePropertyDetailNavigation(i, displayedItems);
   };
 
+  const handleResize = () => {
+    if (window.innerWidth >= 950) {
+      setIsDesktop(true);
+    } else {
+      setIsDesktop(false);
+    }
+  };
+
+
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: theme.spacing(2) }}>
-        <Grid container>
-          <Grid item xs={12} md={propertyList.length > 0 ? 4 : 12}>
+      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop: theme.spacing(2) }}>
+      {showSpinner || !dataReady ? (
+          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : (
+        <Grid container spacing={6}>
+          <Grid item xs={12} md={propertyList.length > 0 && isDesktop ? 4 : 12}>
             <Box
               sx={{
                 display: "flex",
@@ -555,12 +598,9 @@ export default function PropertyList({}) {
                 height: "100%",
               }}
             >
-              <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-                <CircularProgress color="inherit" />
-              </Backdrop>
               <Paper
                 sx={{
-                  margin: "10px",
+                  marginTop: "10px",
                   backgroundColor: theme.palette.primary.main,
                   width: "100%", // Occupy full width with 25px margins on each side
                   maxWidth: "800px", // You can set a maxWidth if needed
@@ -594,29 +634,46 @@ export default function PropertyList({}) {
                     <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
                   </Button>
                 </Stack>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: theme.spacing(2), position: "relative" }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ position: "relative" }}>
                   {/* New Buttons */}
-                  <Box sx={{ paddingLeft: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Typography>Quick Sort</Typography>
-                    <Button onClick={sortByZip} color="inherit">
+                  <Box sx={{ display: 'flex', width: '100%', alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
+                    <Button onClick={sortByZip} sx={{
+                      background: "#3D5CAC",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "100px", // Fixed width for the button
+                      minHeight: "35px",
+                    }}
+                      size="small">
                       Zip
                     </Button>
-                    <Button onClick={sortByAddress} color="inherit">
+                    <Button onClick={sortByAddress} variant="outlined" sx={{
+                      background: "#3D5CAC",
+                      color: theme.palette.background.default,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "100px", // Fixed width for the button
+                      minHeight: "35px",
+                    }}
+                      size="small">
                       Address
                     </Button>
-                    <Button onClick={sortByStatus} color="inherit">
+                    <Button onClick={sortByStatus} sx={{
+                      background: "#3D5CAC",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "100px", // Fixed width for the button
+                      minHeight: "35px",
+                    }}
+                      size="small">
                       Rent Status
                     </Button>
-                    <Box sx={{ flex: 1 }} />
-                    <Box position="absolute" left="50%" sx={{ transform: "translateX(-50%)" }}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.largeFont,
-                        }}
-                      ></Typography>
-                    </Box>
                   </Box>
                 </Stack>
                 <Box sx={{ padding: "10px" }}>
@@ -637,9 +694,15 @@ export default function PropertyList({}) {
                       }}
                       onRowClick={onPropertyClick}
                       sx={{
-                        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                        "& .MuiDataGrid-row:hover": {
-                          cursor: "pointer",
+                        '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
+                        '& .MuiDataGrid-row:hover': {
+                          cursor: 'pointer',
+                        },
+                        '& .MuiDataGrid-cell': {
+                          padding: '0px 5px',
+                          margin: '0px',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         },
                       }}
                     />
@@ -648,12 +711,12 @@ export default function PropertyList({}) {
               </Paper>
             </Box>
           </Grid>
-          {propertyList.length > 0 && allRentStatus.length > 0 && (
+          {propertyList.length > 0 && allRentStatus.length > 0 && isDesktop === true &&
             <Grid item xs={12} md={8}>
-              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} />
+              <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} />
             </Grid>
-          )}
-        </Grid>
+          }
+        </Grid>)}
       </Container>
     </ThemeProvider>
   );
