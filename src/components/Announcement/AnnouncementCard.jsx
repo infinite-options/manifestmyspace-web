@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 function AnnouncementCard(props) {
   console.log("In Announcements", props);
   const { selectedRole } = useUser();
-  const { data, pageToNavigate, navigationParams, sent_or_received, readAllChecked, showCheckbox  } = props;
+  const { data, pageToNavigate, navigationParams, sent_or_received, readAllChecked, showCheckbox, checked1,  } = props;
   const navigate = useNavigate();
   const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
@@ -110,7 +110,7 @@ function AnnouncementCard(props) {
         </div> */}
         {showCheckbox && (
           <div className="announcement-list-card-checkbox">
-            <input type="checkbox" checked={checked} onChange={handleCheckboxChange} />
+            <input type="checkbox" checked={checked || checked1} onChange={handleCheckboxChange} />
           </div>
         )}
         {/* <div

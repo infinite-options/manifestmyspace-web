@@ -637,6 +637,7 @@ export default function Announcements() {
                             navigationParams={navigationParams}
                             sent_or_received={"Sent"}
                             showCheckbox={true}
+                            checked1={announcement.announcement_read !== null}
                           />
                         }
                         
