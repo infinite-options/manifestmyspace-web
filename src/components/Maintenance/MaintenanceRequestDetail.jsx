@@ -172,10 +172,7 @@ export function MaintenanceRequestDetail({
   }, [maintenanceRequestIndex, currentStatus]);
 
   useEffect(() => {
-    console.log('--DEBUG-- in useEffect for quotes');
-    console.log('--DEBUG-- MaintenanceRequestIndex', maintenanceRequestIndex);
-    console.log('--DEBUG-- maintenanceItemsForStatus', maintenanceItemsForStatus);
-    console.log('--DEBUG-- maintenanceQuotes', maintenanceQuotes);
+    console.log("allData",allData);
     var quotesFilteredById = maintenanceQuotes.filter(
       (item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid
     );

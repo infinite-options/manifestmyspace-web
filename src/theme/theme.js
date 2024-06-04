@@ -233,7 +233,7 @@ const theme = createTheme({
     { color: "#DEA19C", status: "Processing", mapping: "PROCESSING" },
     { color: "#92A9CB", status: "Scheduled", mapping: "SCHEDULED" },
     { color: "#6788B3", status: "Completed", mapping: "COMPLETED" },
-    { color: "#173C8D", status: "Cancelled", mapping: "CANCELLED" },
+    { color: "#3D5CAC", status: "Cancelled", mapping: "CANCELLED" },
   ],
   colorStatusTenant: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },
