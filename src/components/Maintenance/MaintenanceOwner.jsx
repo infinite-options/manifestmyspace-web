@@ -226,7 +226,7 @@ export function MaintenanceOwner() {
 		<ThemeProvider theme={theme}>
 			<Grid container sx={{ padding: '10px' }}>
 				{/* Sidebar */}
-				<Grid item xs={4} style={{
+				<Grid item xs={5} style={{
           display: 'flex',
           justifyContent: 'center',
           width: '100%',
@@ -351,7 +351,7 @@ export function MaintenanceOwner() {
 				</Grid>
 
 				{/* Main Content */}
-				<Grid item xs={8}>
+				<Grid item xs={7}>
 					{/* Ensure that maintenanceData is populated before rendering MaintenanceRequestDetail */}
 					{Object.keys(maintenanceData).length > 0 && (
 						<MaintenanceRequestDetail
