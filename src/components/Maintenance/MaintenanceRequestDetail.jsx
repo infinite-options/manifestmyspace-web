@@ -1,34 +1,50 @@
-import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Slider, Stack, Button, Grid } from "@mui/material";
-import PropTypes from "prop-types";
+import {
+  ThemeProvider,
+  Typography,
+  Box,
+  Tabs,
+  Tab,
+  Paper,
+  Grid,
+  Stack,
+  Button
+} from '@mui/material';
+import PropTypes from 'prop-types';
 
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import theme from "../../theme/theme";
-import RequestCard from "./MaintenanceRequestCard";
-import MaintenanceRequestNavigator from "./MaintenanceRequestNavigator";
-import AddIcon from "@mui/icons-material/Add";
-import SelectMonthComponent from "../SelectMonthComponent";
-import HomeWorkIcon from "@mui/icons-material/HomeWork";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import NewRequestAction from "./Manager/NewRequestAction";
-import QuotesRequestAction from "./Manager/QuotesRequestAction";
-import QuotesAccepted from "./Manager/QuotesAccepted";
-import ScheduleMaintenance from "./Manager/ScheduleMaintenance";
-import RescheduleMaintenance from "./Manager/RescheduleMaintenance";
-import CompleteMaintenance from "./Manager/CompleteMaintenance";
-import PaidMaintenance from "./Manager/PaidMaintenance";
-import { useUser } from "../../contexts/UserContext";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import theme from '../../theme/theme';
+import RequestCard from './MaintenanceRequestCard';
+import MaintenanceRequestNavigator from './MaintenanceRequestNavigator';
+import AddIcon from '@mui/icons-material/Add';
+import SelectMonthComponent from '../SelectMonthComponent';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import NewRequestAction from './Manager/NewRequestAction';
+import QuotesRequestAction from './Manager/QuotesRequestAction';
+import QuotesAccepted from './Manager/QuotesAccepted';
+import ScheduleMaintenance from './Manager/ScheduleMaintenance';
+import RescheduleMaintenance from './Manager/RescheduleMaintenance';
+import CompleteMaintenance from './Manager/CompleteMaintenance';
+import PaidMaintenance from './Manager/PaidMaintenance';
+import { useUser } from '../../contexts/UserContext';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-import APIConfig from "../../utils/APIConfig";
+import APIConfig from '../../utils/APIConfig';
 
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
       {value === index && (
         <Box sx={{ p: 3 }}>
           <Typography>{children}</Typography>
@@ -47,29 +63,30 @@ CustomTabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
   };
 }
 
-export function MaintenanceRequestDetail() {
-  console.log("In MaintenanceRequestDetail");
+export function MaintenanceRequestDetail({
+  maintenance_request_index,
+  status: initialStatus,
+  maintenanceItemsForStatus: initialMaintenanceItemsForStatus,
+  allMaintenanceData,
+}) {
+  console.log('In MaintenanceRequestDetail');
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
   let profileId = getProfileId();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  // console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
 
   function navigateToAddMaintenanceItem() {
-    // console.log("navigateToAddMaintenanceItem")
-    navigate("/addMaintenanceItem", { state: { month, year } });
+    navigate('/addMaintenanceItem', { state: { month, year } });
   }
 
   function handleBackButton() {
-    // console.log("handleBackButton")
     if (fromProperty) {
       navigate(-1);
     } else {
@@ -84,11 +101,12 @@ export function MaintenanceRequestDetail() {
       return true;
     }
   }
-  let [areTabsGrey, setAreTabsGrey] = useState([0, 0, 0, 0, 0, 0]);
 
+  let [areTabsGrey, setAreTabsGrey] = useState([0, 0, 0, 0, 0, 0]);
   let [tabs, setTabs] = useState({});
+
   function greyOutTab(key, maintenanceData, color) {
-    let greyColor = "#D9D9D9";
+    let greyColor = '#D9D9D9';
     if (maintenanceData[key]) {
       return maintenanceData[key].length > 0 ? color : greyColor;
     } else {
@@ -98,50 +116,48 @@ export function MaintenanceRequestDetail() {
 
   function getColorStatusBasedOnSelectedRole() {
     const role = roleName();
-
-    if (role === "Manager") {
+    if (role === 'Manager') {
       return theme.colorStatusPMO;
-    } else if (role === "Owner") {
+    } else if (role === 'Owner') {
       return theme.colorStatusO;
-    } else if (role === "Maintenance") {
+    } else if (role === 'Maintenance') {
       return theme.colorStatusMM;
-    } else if (role === "PM Employee") {
+    } else if (role === 'PM Employee') {
       return theme.colorStatusPMO;
-    } else if (role === "Maintenance Employee") {
+    } else if (role === 'Maintenance Employee') {
       return theme.colorStatusMM;
-    } else if (role === "Tenant") {
+    } else if (role === 'Tenant') {
       return theme.colorStatusTenant;
     }
   }
 
   const colorStatus = getColorStatusBasedOnSelectedRole();
 
-  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-  const [status, setStatus] = useState(location.state.status);
-  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
+  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(maintenance_request_index);
+  const [currentStatus, setCurrentStatus] = useState(initialStatus);
+  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(initialMaintenanceItemsForStatus);
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === status));
+  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === initialStatus));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [navParams, setNavParams] = useState({});
-  const allData = location.state.allMaintenanceData;
+  const allData = allMaintenanceData;
 
   useEffect(() => {
     setNavParams({
       maintenanceRequestIndex,
-      status,
+      status: currentStatus,
       maintenanceItemsForStatus,
       allData,
       filteredQuotes,
     });
     colorStatus.find((item, index) => {
-      if (item.status === status) {
-        // console.log("status", item.status, "===", status)
+      if (item.status === currentStatus) {
         setValue(index);
       }
     });
-    let j = colorStatus.map((item, index) => {
+    colorStatus.map((item, index) => {
       let key = item.mapping;
       let isGrey = allData[key].length > 0 ? 0 : 1;
       let temp = areTabsGrey;
@@ -153,40 +169,37 @@ export function MaintenanceRequestDetail() {
       let lastTab = temp.lastIndexOf(0);
       setTabs({ firstTab, lastTab });
     });
-  }, [maintenanceRequestIndex, status]);
+  }, [maintenanceRequestIndex, currentStatus]);
 
   useEffect(() => {
-    console.log("--DEBUG-- in useEffect for quotes");
-    console.log("--DEBUG-- MaintenanceRequestIndex", maintenanceRequestIndex);
-    console.log("--DEBUG-- maintenanceItemsForStatus", maintenanceItemsForStatus);
-    console.log("--DEBUG-- maintenanceQuotes", maintenanceQuotes);
-    var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
-    console.log("--DEBUG-- quotesFilteredById", quotesFilteredById);
+    console.log('--DEBUG-- in useEffect for quotes');
+    console.log('--DEBUG-- MaintenanceRequestIndex', maintenanceRequestIndex);
+    console.log('--DEBUG-- maintenanceItemsForStatus', maintenanceItemsForStatus);
+    console.log('--DEBUG-- maintenanceQuotes', maintenanceQuotes);
+    var quotesFilteredById = maintenanceQuotes.filter(
+      (item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid
+    );
+    console.log('--DEBUG-- quotesFilteredById', quotesFilteredById);
     quotesFilteredById.sort((a, b) => {
-      if (a.quote_status === "SENT") {
+      if (a.quote_status === 'SENT') {
         return -1;
-      } else if (b.quote_status === "SENT") {
+      } else if (b.quote_status === 'SENT') {
         return 1;
       } else {
         return 0;
       }
     });
-    // deduplicate these if they come from the same business id
 
     const uniqueQuotes = [];
     const uniqueKeys = new Set();
 
     quotesFilteredById.forEach((quote, index) => {
       let key = quote.quote_business_id + quote.maintenance_quote_uid + quote.quote_maintenance_request_id;
-      // console.log("Generated Key: ", key);
       if (!uniqueKeys.has(key)) {
         uniqueKeys.add(key);
         uniqueQuotes.push(quote);
       }
-      // console.log("Unique Quotes: ", uniqueQuotes);
     });
-
-    // if quote_business_id, maintenance_quote_uid, and quote_maintenance_request_id
 
     setFilteredQuotes(uniqueQuotes);
   }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
@@ -203,14 +216,14 @@ export function MaintenanceRequestDetail() {
 
   useEffect(() => {
     colorStatus.find((item, index) => {
-      if (item.mapping === status) {
+      if (item.mapping === currentStatus) {
         setValue(index);
       }
     });
-  }, [status, fromProperty]);
+  }, [currentStatus, fromProperty]);
 
   const handleChange = (event, newValue) => {
-    setStatus(colorStatus[newValue].status);
+    setCurrentStatus(colorStatus[newValue].status);
     setValue(newValue);
     setMaintenanceRequestIndex(0);
     const newStatus = colorStatus[newValue].mapping;
@@ -221,66 +234,51 @@ export function MaintenanceRequestDetail() {
   const handleMaintenaceRequestIndexChange = (index, direction) => {
     setMaintenanceRequestIndex(index);
 
-    if (direction.changeTab === "forward") {
+    if (direction.changeTab === 'forward') {
       let i = value + 1;
-
       while (areTabsGrey[i] === 1) {
         i++;
         if (i > 5) break;
       }
-
       if (i <= 5) {
-        handleChange(null, i); // Re-use handleChange to ensure consistent state update
+        handleChange(null, i);
       }
-    } else if (direction.changeTab === "backward") {
+    } else if (direction.changeTab === 'backward') {
       let i = value - 1;
-
       while (areTabsGrey[i] === 1) {
         i--;
         if (i < 0) break;
       }
-
       if (i >= 0) {
         let requestType = colorStatus[i].mapping.toUpperCase();
-        let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
-        // console.log(requestType, lastIndex, allData[requestType])
-        const keysForAllData = Object.keys(allData);
-        // console.log("keysForAllData", keysForAllData)
-        // Update the tab and maintenance request index correctly
-        setValue(i); // Change tab
-        setStatus(colorStatus[i].status);
-        setMaintenanceRequestIndex(lastIndex); // Update index to the last item of the new status array
+        let lastIndex =
+          allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
+        setValue(i);
+        setCurrentStatus(colorStatus[i].status);
+        setMaintenanceRequestIndex(lastIndex);
         setMaintenanceItemsForStatus(allData[requestType] || []);
       }
     }
   };
 
-  function a11yProps(index) {
-    return {
-      id: `full-width-tab-${index}`,
-      "aria-controls": `full-width-tabpanel-${index}`,
-    };
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <Box
         style={{
-          display: "flex",
-          justifyContent: "center",
-          // alignItems: 'center',
-          width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          minHeight: '100vh',
+          marginTop: theme.spacing(2),
         }}
       >
         <Paper
           style={{
-            margin: "10px",
+            margin: '10px',
             backgroundColor: theme.palette.primary.main,
-            width: "100%", // Occupy full width with 25px margins on each side
-            paddingTop: "10px",
-            paddingBottom: "30px",
+            width: '100%',
+            paddingTop: '10px',
+            paddingBottom: '30px',
           }}
         >
           <Stack
@@ -288,38 +286,34 @@ export function MaintenanceRequestDetail() {
             justifyContent="center"
             alignItems="center"
             sx={{
-              paddingBottom: "20px",
-              paddingLeft: "0px",
-              paddingRight: "0px",
+              paddingBottom: '20px',
+              paddingLeft: '0px',
+              paddingRight: '0px',
             }}
           >
-            <Box position="absolute" left={30}>
-              <Button onClick={() => handleBackButton()}>
-                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-              </Button>
-            </Box>
             <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Maintenance 1
+              <Typography
+                sx={{
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
+                Request #XX-Xx
               </Typography>
-            </Box>
-            <Box position="absolute" right={30}>
-              <Button onClick={() => navigateToAddMaintenanceItem()}>
-                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-              </Button>
             </Box>
           </Stack>
           <Stack
             sx={{
-              justifyContent: "center",
-              alignItems: "center",
-              paddingBottom: "20px",
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingBottom: '20px',
             }}
           >
             <Box
               sx={{
                 borderBottom: 0,
-                width: "95%",
+                width: '95%',
               }}
             >
               <Tabs
@@ -328,16 +322,16 @@ export function MaintenanceRequestDetail() {
                 onChange={handleChange}
                 TabIndicatorProps={{
                   style: {
-                    backgroundColor: "transparent",
-                    border: "0px",
-                    minWidth: "5px",
-                    height: "10px",
-                    padding: "0px",
+                    backgroundColor: 'transparent',
+                    border: '0px',
+                    minWidth: '5px',
+                    height: '10px',
+                    padding: '0px',
                   },
                 }}
                 sx={{
-                  [theme.breakpoints.up("sm")]: {
-                    height: "5px", // padding for screens wider than 'sm'
+                  [theme.breakpoints.up('sm')]: {
+                    height: '5px',
                   },
                 }}
               >
@@ -352,11 +346,11 @@ export function MaintenanceRequestDetail() {
                       {...a11yProps(index)}
                       sx={{
                         backgroundColor: color,
-                        borderTopLeftRadius: "10px",
-                        borderTopRightRadius: "10px",
-                        height: "10%",
-                        minWidth: "5px",
-                        padding: "0px",
+                        borderTopLeftRadius: '10px',
+                        borderTopRightRadius: '10px',
+                        height: '10%',
+                        minWidth: '5px',
+                        padding: '0px',
                       }}
                       label={
                         <Typography
@@ -381,27 +375,32 @@ export function MaintenanceRequestDetail() {
                     index={index}
                     style={{
                       backgroundColor: item.color,
-                      borderBottomRightRadius: "10px",
-                      borderBottomLeftRadius: "10px",
+                      borderBottomRightRadius: '10px',
+                      borderBottomLeftRadius: '10px',
                     }}
                   >
                     <Grid
                       sx={{
                         backgroundColor: item.color,
-                        justifyContent: "center",
-                        marginLeft: "25px",
-                        marginRight: "25px",
-                        paddingBottom: "0px",
+                        justifyContent: 'center',
+                        marginLeft: '25px',
+                        marginRight: '25px',
+                        paddingBottom: '0px',
                       }}
                     >
                       {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
                         <MaintenanceRequestNavigator
                           requestIndex={maintenanceRequestIndex}
-                          backward_active_status={maintenanceRequestIndex === 0 && value === tabs.firstTab}
-                          forward_active_status={value === tabs.lastTab && allData[item.mapping].length - 1 === maintenanceRequestIndex}
+                          backward_active_status={
+                            maintenanceRequestIndex === 0 && value === tabs.firstTab
+                          }
+                          forward_active_status={
+                            value === tabs.lastTab &&
+                            allData[item.mapping].length - 1 === maintenanceRequestIndex
+                          }
                           updateRequestIndex={handleMaintenaceRequestIndexChange}
                           requestData={allData[item.mapping]}
-                          status={status}
+                          status={currentStatus}
                           color={item.color}
                           item={item}
                           allData={allData}
@@ -417,27 +416,53 @@ export function MaintenanceRequestDetail() {
               ))}
               <Box
                 sx={{
-                  paddingBottom: "20px",
-                  paddingTop: "20px",
+                  paddingBottom: '20px',
+                  paddingTop: '20px',
                 }}
               >
-                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
-                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
+                {colorStatus[value]?.status === 'New Requests' &&
+                maintenanceItemsForStatus[maintenanceRequestIndex] ? (
+                  <NewRequestAction
+                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
+                    navigateParams={navParams}
+                  />
                 ) : null}
-                {colorStatus[value]?.status === "Quotes Requested" ? (
-                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === 'Quotes Requested' ? (
+                  <QuotesRequestAction
+                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
-                {colorStatus[value]?.status === "Quotes Accepted" ? (
-                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === 'Quotes Accepted' ? (
+                  <QuotesAccepted
+                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
-                {colorStatus[value]?.status === "Scheduled" ? (
-                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === 'Scheduled' ? (
+                  <ScheduleMaintenance
+                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
-                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !== "CANCELLED" ? (
-                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === 'Completed' &&
+                maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !==
+                  'CANCELLED' ? (
+                  <CompleteMaintenance
+                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
-                {colorStatus[value]?.status === "Paid" ? (
-                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === 'Paid' ? (
+                  <PaidMaintenance
+                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
+                    navigateParams={navParams}
+                    quotes={filteredQuotes}
+                  />
                 ) : null}
               </Box>
             </Box>
@@ -447,3 +472,10 @@ export function MaintenanceRequestDetail() {
     </ThemeProvider>
   );
 }
+
+MaintenanceRequestDetail.propTypes = {
+  maintenance_request_index: PropTypes.number.isRequired,
+  status: PropTypes.string.isRequired,
+  maintenanceItemsForStatus: PropTypes.array.isRequired,
+  allMaintenanceData: PropTypes.object.isRequired,
+};
