@@ -259,7 +259,7 @@ export function MaintenanceOwner() {
 										fontSize: theme.typography.largeFont,
 									}}
 								>
-									Maintainance
+									Maintenance
 								</Typography>
 							</Box>
 						</Stack>
