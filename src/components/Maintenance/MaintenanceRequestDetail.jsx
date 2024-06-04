@@ -269,12 +269,11 @@ export function MaintenanceRequestDetail({
           justifyContent: 'center',
           width: '100%',
           minHeight: '100vh',
-          marginTop: theme.spacing(2),
         }}
       >
         <Paper
           style={{
-            margin: '10px',
+            margin: '5px',
             backgroundColor: theme.palette.primary.main,
             width: '100%',
             paddingTop: '10px',

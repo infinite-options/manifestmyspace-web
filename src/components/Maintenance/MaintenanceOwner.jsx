@@ -224,142 +224,145 @@ export function MaintenanceOwner() {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<Box sx={{ display: 'flex', minHeight: '50vh' }}>
-				<Grid container>
-					{/* Sidebar */}
-					<Grid item xs={4} sx={{ backgroundColor: '#F0F0F0', padding: '10px' }}>
-						
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            sx={{
-              paddingBottom: '20px',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-          >
-            <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                }}
-              >
-                Maintainance
-              </Typography>
-            </Box>
-          </Stack>
-          
-							<Box
-								component="span"
-								m={2}
-								display="flex"
-								justifyContent="space-between"
-								alignItems="center"
-							>
-								<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
-									<CalendarTodayIcon
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.common.fontWeight,
-											fontSize: theme.typography.smallFont,
-											margin: '5px',
-										}}
-									/>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.common.fontWeight,
-											fontSize: theme.typography.smallFont,
-										}}
-									>
-										{displayFilterString(month, year)}
-									</Typography>
-								</Button>
-								<Button
-									sx={{ textTransform: 'capitalize' }}
-									onClick={() => setShowPropertyFilter(true)}
+			<Grid container sx={{ padding: '10px' }}>
+				{/* Sidebar */}
+				<Grid item xs={4} style={{
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          minHeight: '100vh',
+        }}>
+					<Paper
+						style={{
+							margin: '5px',
+							backgroundColor: theme.palette.primary.main,
+							width: '95%',
+							paddingTop: '10px',
+							paddingBottom: '30px',
+						}}
+					>
+						<Stack
+							direction="row"
+							justifyContent="center"
+							alignItems="center"
+							sx={{
+								paddingBottom: '20px',
+								paddingLeft: '0px',
+								paddingRight: '0px',
+							}}
+						>
+							<Box direction="row" justifyContent="center" alignItems="center">
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.largeFont,
+									}}
 								>
-									<HomeWorkIcon
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.common.fontWeight,
-											fontSize: theme.typography.smallFont,
-											margin: '5px',
-										}}
-									/>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.common.fontWeight,
-											fontSize: theme.typography.smallFont,
-										}}
-									>
-										{displayPropertyFilterTitle(filterPropertyList)}
-									</Typography>
-								</Button>
-
-								<SelectMonthComponent
-									month={month}
-									showSelectMonth={showSelectMonth}
-									setShowSelectMonth={setShowSelectMonth}
-									setMonth={setMonth}
-									setYear={setYear}
-								></SelectMonthComponent>
-								<SelectPropertyFilter
-									showPropertyFilter={showPropertyFilter}
-									setShowPropertyFilter={setShowPropertyFilter}
-									filterList={filterPropertyList}
-									setFilterList={setFilterPropertyList}
-								/>
+									Maintainance
+								</Typography>
 							</Box>
+						</Stack>
 
-							<div
-								style={{
-									borderRadius: '10px',
+						<Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
+							<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
+								<CalendarTodayIcon
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.common.fontWeight,
+										fontSize: theme.typography.smallFont,
+										margin: '5px',
+									}}
+								/>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.common.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									{displayFilterString(month, year)}
+								</Typography>
+							</Button>
+							<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
+								<HomeWorkIcon
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.common.fontWeight,
+										fontSize: theme.typography.smallFont,
+										margin: '5px',
+									}}
+								/>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.common.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									{displayPropertyFilterTitle(filterPropertyList)}
+								</Typography>
+							</Button>
 
-									margin: '20px',
-								}}
-							>
-								{colorStatus.map((item, index) => {
-									let mappingKey = item.mapping;
-
-									let maintenanceArray = maintenanceData[mappingKey] || [];
-
-									let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
-
-									return (
-										<MaintenanceStatusTable
-											key={index}
-											status={item.status}
-											color={item.color}
-											maintenanceItemsForStatus={filteredArray}
-											allMaintenanceData={maintenanceData}
-											maintenanceRequestsCount={maintenanceArray}
-
-											// maintenanceItemQuotes={maintenanceItemQuotes}
-										/>
-									);
-								})}
-							</div>
-					</Grid>
-
-					{/* Main Content */}
-					<Grid item xs={8} sx={{ padding: '10px' }}>
-						{/* Ensure that maintenanceData is populated before rendering MaintenanceRequestDetail */}
-						{Object.keys(maintenanceData).length > 0 && (
-							<MaintenanceRequestDetail
-								maintenance_request_index={selectedRequestIndex}
-								status={selectedStatus}
-								maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-								allMaintenanceData={maintenanceData}
+							<SelectMonthComponent
+								month={month}
+								showSelectMonth={showSelectMonth}
+								setShowSelectMonth={setShowSelectMonth}
+								setMonth={setMonth}
+								setYear={setYear}
+							></SelectMonthComponent>
+							<SelectPropertyFilter
+								showPropertyFilter={showPropertyFilter}
+								setShowPropertyFilter={setShowPropertyFilter}
+								filterList={filterPropertyList}
+								setFilterList={setFilterPropertyList}
 							/>
-						)}
-					</Grid>
+						</Box>
+
+						<div
+							style={{
+								borderRadius: '10px',
+
+								margin: '20px',
+							}}
+						>
+							{colorStatus.map((item, index) => {
+								let mappingKey = item.mapping;
+
+								let maintenanceArray = maintenanceData[mappingKey] || [];
+
+								let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
+
+								return (
+									<MaintenanceStatusTable
+										key={index}
+										status={item.status}
+										color={item.color}
+										maintenanceItemsForStatus={filteredArray}
+										allMaintenanceData={maintenanceData}
+										maintenanceRequestsCount={maintenanceArray}
+
+										// maintenanceItemQuotes={maintenanceItemQuotes}
+									/>
+								);
+							})}
+						</div>
+					</Paper>
 				</Grid>
-			</Box>
+
+				{/* Main Content */}
+				<Grid item xs={8}>
+					{/* Ensure that maintenanceData is populated before rendering MaintenanceRequestDetail */}
+					{Object.keys(maintenanceData).length > 0 && (
+						<MaintenanceRequestDetail
+							maintenance_request_index={selectedRequestIndex}
+							status={selectedStatus}
+							maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+							allMaintenanceData={maintenanceData}
+						/>
+					)}
+				</Grid>
+			</Grid>
 		</ThemeProvider>
 	);
 }
