@@ -281,7 +281,13 @@ export function MaintenanceRequestDetail({
             paddingTop: '10px',
             paddingBottom: '30px',
           }}
-        >
+        >{isMobile && (
+          <Box position="absolute">
+            <Button onClick={() => handleBackButton()}>
+              <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+            </Button>
+          </Box>
+        )}
           <Stack
             direction="row"
             justifyContent="center"
