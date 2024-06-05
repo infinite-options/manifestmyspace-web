@@ -161,7 +161,8 @@ export default function MaintenanceRequestNavigator({
       console.log(data);
     }
   }
-
+  console.log("********",currentIndex);
+  console.log("------",requestData);
   const data = requestData[currentIndex];
   //   console.log("This is the data passed to Quotes Table: ", data);
 
