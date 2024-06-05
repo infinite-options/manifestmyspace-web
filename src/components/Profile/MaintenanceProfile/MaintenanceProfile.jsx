@@ -20,7 +20,7 @@ import APIConfig from '../../../utils/APIConfig';
 
 function MaintenanceProfile() {
     const navigate = useNavigate();
-    const { getProfileId } = useUser();
+    const { getProfileId, isEmployee } = useUser();
   
     const [showSpinner, setShowSpinner] = useState(false);
     const [profileData, setProfileData] = useState([]);
@@ -30,21 +30,40 @@ function MaintenanceProfile() {
   
     useEffect( () => {
       setShowSpinner(true);
-      axios
-        .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
-        .then((res) => {
-          setProfileData(res.data.result[0]);
-          setShowSpinner(false);
-          try {
-                const  parsedFees = JSON.parse(res.data.result[0]?.business_services_fees);
-                const  parsedLocations = JSON.parse(res.data.result[0]?.business_locations);
-                set_business_service_fees(parsedFees);
-                set_business_locations(parsedLocations);
-          } catch (e) {
-            set_business_service_fees([]);
-            set_business_locations([]);
-          }
-        });
+      if (!isEmployee()) {
+        axios
+          .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
+          .then((res) => {
+            setProfileData(res.data.profile.result[0]);
+            setShowSpinner(false);
+            try {
+              const parsedFees = JSON.parse(res.data.profile.result[0]?.business_services_fees);
+              const parsedLocations = JSON.parse(res.data.profile.result[0]?.business_locations);
+              set_business_service_fees(parsedFees);
+              set_business_locations(parsedLocations);
+            } catch (e) {
+              set_business_service_fees([]);
+              set_business_locations([]);
+            }
+          });
+      } else {
+        axios
+          .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
+          .then((res) => {
+            setProfileData(res.data.result[0]);
+            setShowSpinner(false);
+            try {
+              const parsedFees = JSON.parse(res.data.result[0]?.business_services_fees);
+              const parsedLocations = JSON.parse(res.data.result[0]?.business_locations);
+              set_business_service_fees(parsedFees);
+              set_business_locations(parsedLocations);
+            } catch (e) {
+              set_business_service_fees([]);
+              set_business_locations([]);
+            }
+          });
+      }
+      
 
         const fetchPaymentData = async () => {
             try {
