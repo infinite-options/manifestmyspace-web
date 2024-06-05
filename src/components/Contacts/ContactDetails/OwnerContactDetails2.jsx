@@ -47,10 +47,11 @@ import CommentIcon from "@mui/icons-material/Comment";
 import EmailIcon from "../../Property/messageIconDark.png";
 import PhoneIcon from "../../Property/phoneIconDark.png";
 import AddressIcon from "../../Property/addressIconDark.png";
-
+import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
 import CryptoJS from "crypto-js";
 import AES from "crypto-js/aes";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const OwnerContactDetails2 = (props) => {
 
@@ -59,9 +60,10 @@ const OwnerContactDetails2 = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const navigatingFrom = location.state.navigatingFrom;
-  const happinessMatrixData = location.state.happinessMatrixData;
-  console.log("ROHIT - location.state.happinessMatrixData - ", location.state.happinessMatrixData);
+  const happinessMatrixData = location.state.happinessMatrixData;  
   // const contactDetails = location.state.dataDetails;
   const [contactDetails, setContactDetails] = useState(null);
   const [contactsTab, setContactsTab] = useState("");
@@ -80,21 +82,21 @@ const OwnerContactDetails2 = (props) => {
   
   console.log("cashflowData - ", cashflowData);
 
-  useEffect(() => {
-    console.log("ROHIT - cashflowData - ", cashflowData);
-  }, [cashflowData]);
+  // useEffect(() => {
+  //   console.log("cashflowData - ", cashflowData);
+  // }, [cashflowData]);
 
-  useEffect(() => {
-    console.log("ROHIT - filteredCashflowData - ", filteredCashflowData);
-  }, [filteredCashflowData]);
+  // useEffect(() => {
+  //   console.log("filteredCashflowData - ", filteredCashflowData);
+  // }, [filteredCashflowData]);
 
-  useEffect(() => {
-    console.log("ROHIT - filteredCashflowDetails - ", filteredCashflowDetails);
-  }, [filteredCashflowDetails]);
+  // useEffect(() => {
+  //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
+  // }, [filteredCashflowDetails]);
 
   const getDataFromAPI = async () => {
-    // const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    //rohit
-    const url = `http://localhost:4000/contacts/${getProfileId()}`;    
+    // const url = `http://localhost:4000/contacts/${getProfileId()}`;    
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // setShowSpinner(true);
 
     await axios
@@ -162,49 +164,54 @@ const OwnerContactDetails2 = (props) => {
         <ThemeProvider theme={theme}>
             <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop: '10px', backgroundColor: '#FFFFFF' }}>
                 <Grid container columnSpacing={5} sx={{marginTop: '10px',}}>
-                    <Grid container item xs={12} md={4}  sx={{ padding: '10px', backgroundColor: theme.palette.primary.main,  borderRadius: '10px',  }}>                        
-                        <Grid item xs={12} sx={{marginBottom: '10px',}}>
-                            <Paper
-                                elevation={0}
-                                style={{
-                                    // margin: '50p', // Add margin here
-                                    borderRadius: "10px",                                
-                                    backgroundColor: '#D6D5DA',
-                                    // height: "400px",
-                                    // [theme.breakpoints.down("sm")]: {
-                                    //     width: "80%",
-                                    // },
-                                    // [theme.breakpoints.up("sm")]: {
-                                    //     width: "50%",
-                                    // },
-                                    width: "100%",
-                                }}
-                            >
-                                <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} setIndex={setIndex} contactDetails={contactDetails}/>
-                            </Paper>
+                    {
+                      !isMobile && (
+                        <Grid container item xs={12} md={4}  sx={{ padding: '10px', backgroundColor: theme.palette.primary.main,  borderRadius: '10px',  }}>                        
+                          <Grid item xs={12} sx={{marginBottom: '10px',}}>
+                              <Paper
+                                  elevation={0}
+                                  style={{
+                                      // margin: '50p', // Add margin here
+                                      borderRadius: "10px",                                
+                                      backgroundColor: '#D6D5DA',
+                                      // height: "400px",
+                                      // [theme.breakpoints.down("sm")]: {
+                                      //     width: "80%",
+                                      // },
+                                      // [theme.breakpoints.up("sm")]: {
+                                      //     width: "50%",
+                                      // },
+                                      width: "100%",
+                                  }}
+                              >
+                                  <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} setIndex={setIndex} contactDetails={contactDetails}/>
+                              </Paper>
+                          </Grid>
+                          <Grid item xs={12}>
+                              <Paper
+                                  elevation={0}
+                                  style={{
+                                      // margin: '50p', // Add margin here
+                                      borderRadius: "10px",
+                                      backgroundColor: "#FFFFFF",
+                                      // height: "500px",
+                                      // [theme.breakpoints.down("sm")]: {
+                                      //     width: "80%",
+                                      // },
+                                      // [theme.breakpoints.up("sm")]: {
+                                      //     width: "50%",
+                                      // },
+                                      width: "100%",
+                                  }}
+                              >
+                                  <AllContacts data={contactDetails} currentIndex={index} setIndex={setIndex}/>
+                              </Paper>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Paper
-                                elevation={0}
-                                style={{
-                                    // margin: '50p', // Add margin here
-                                    borderRadius: "10px",
-                                    backgroundColor: "#FFFFFF",
-                                    // height: "500px",
-                                    // [theme.breakpoints.down("sm")]: {
-                                    //     width: "80%",
-                                    // },
-                                    // [theme.breakpoints.up("sm")]: {
-                                    //     width: "50%",
-                                    // },
-                                    width: "100%",
-                                }}
-                            >
-                                <AllContacts data={contactDetails} currentIndex={index} setIndex={setIndex}/>
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                    <Grid id="rohit" container item xs={12} md={8} >
+                      )
+                    }
+                    
+                    <Grid container item xs={12} md={8} >
                         <OwnerContactDetail contactDetails={contactDetails} index={index} setIndex={setIndex} filteredCashflowDetails={filteredCashflowDetails} />
                     </Grid>
                 </Grid>
@@ -215,7 +222,7 @@ const OwnerContactDetails2 = (props) => {
 }
 
 const AllContacts = ({ data, currentIndex, setIndex }) => {
-  console.log("ROHIT - AllContacts - data -", data);
+  // console.log("AllContacts - data -", data);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [contactsData, setContactsData] = useState([]);
@@ -229,21 +236,20 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
         entities: contact.entities != null? JSON.parse(contact.entities) : [],
       }
     });
-    console.log("ROHIT - AllContacts - processedData -", processedData);
+    // console.log("AllContacts - processedData -", processedData);
     setContactsData(processedData);
     setFilteredContactsData(processedData);
   }, [data]);
 
-  useEffect( () => {
-    console.log("ROHIT - contactsData - ", contactsData);
-  }, [contactsData]);
+  // useEffect( () => {
+  //   console.log("contactsData - ", contactsData);
+  // }, [contactsData]);
     
   useEffect( () => {
     const filteredValues = contactsData?.filter( (item) => {
       return item.contact_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.contact_last_name.toLowerCase().includes(searchTerm.toLowerCase())
     });
-
-    console.log("ROHIT - handleSearch - filteredValues - ", filteredValues);
+    
     setFilteredContactsData(filteredValues);
   }, [searchTerm]);
   
@@ -367,9 +373,9 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
 
   }
 
-  const getContractsData = async () => {
-    // const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;    
-    const url = `http://localhost:4000/contracts/${getProfileId()}`;    //rohit
+  const getContractsData = async () => {    
+    // const url = `http://localhost:4000/contracts/${getProfileId()}`;
+    const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;    
     // setShowSpinner(true);
 
     await axios
@@ -475,7 +481,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                 </Box>
             </Grid>
         </Grid>
-        <Grid container item xs={12} columnSpacing={5} sx={{marginBottom: '10px', }}>
+        <Grid container item xs={12} columnSpacing={5} rowSpacing={5} sx={{marginBottom: '10px', }}>
             <Grid item xs={12} md={6}>
                 <Paper
                     elevation={0}
@@ -483,7 +489,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                         // margin: '50p', // Add margin here
                         borderRadius: "10px",
                         backgroundColor: "#D6D5DA",
-                        height: 330,
+                        height: 370,
                         // [theme.breakpoints.down("sm")]: {
                         //     width: "80%",
                         // },
@@ -504,7 +510,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                         // margin: '50p', // Add margin here
                         borderRadius: "10px",
                         backgroundColor: "#D6D5DA",
-                        height: 350,
+                        height: 390,
                         // [theme.breakpoints.down("sm")]: {
                         //     width: "80%",
                         // },
@@ -517,7 +523,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                     <PropertiesInformation 
                       propertiesData={propertiesData} 
                       contractsData={contractsData}
-                      ownerUID={contactDetails && index >= 0 && index < contactDetails.length ? contactDetails[index]?.contact_uid : null} 
+                      ownerUID={contactDetails && index >= 0 && index < contactDetails.length ? contactDetails[index]?.contact_uid : null}                       
                     />
                 </Paper>
             </Grid>
@@ -530,7 +536,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                         // margin: '50p', // Add margin here
                         borderRadius: "10px",
                         backgroundColor: "#D6D5DA",
-                        height: 350,
+                        height: 355,
                         // [theme.breakpoints.down("sm")]: {
                         //     width: "80%",
                         // },
@@ -555,14 +561,14 @@ const OwnerInformation = ({ contactDetails, index }) => {
   useEffect( () => {
     
     if(contactDetails){
-      console.log("ROHIT - contactDetails.payment_method - ", contactDetails[index]?.payment_method);
+      // console.log("contactDetails.payment_method - ", contactDetails[index]?.payment_method);
       setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method))
     }
   }, [contactDetails]);
 
-  useEffect( () => {        
-    console.log("ROHIT - paymentMethods - ", paymentMethods);        
-  }, [paymentMethods]);
+  // useEffect( () => {        
+  //   console.log("paymentMethods - ", paymentMethods);        
+  // }, [paymentMethods]);
 
   const formatPaymentMethodType = (type) => {
     return type
@@ -570,17 +576,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-  };
-
-  const getDecryptedSSN = async (data) => {
-    if(data == null){
-      return ""
-    }
-    console.log("ROHIT - getDecryptedSSN - data - ", data);
-    console.log("ROHIT - getDecryptedSSN - ret val - ", await CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8));
-    
-    return CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
-  }
+  };  
   
   return (
     <Grid container>
@@ -624,7 +620,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
               
             } */}
             {
-              contactDetails && 
+              contactDetails &&             
               ("***-**-" +
               AES.decrypt(
                 contactDetails[index]?.contact_ssn,
@@ -658,9 +654,10 @@ const OwnerInformation = ({ contactDetails, index }) => {
           </Typography>
           {paymentMethods
             .filter( method => method.paymentMethod_status === "Active")
-            .map( method => {
+            .map( (method, index) => {
+              // console.log("payment method - ", method);
               return (
-                <Typography sx={{ fontSize: '15px', color: '#160449',}}>
+                <Typography key={index} sx={{ fontSize: '15px', color: '#160449',}}>
                   {formatPaymentMethodType(method.paymentMethod_type)}
                 </Typography>
               )
@@ -690,21 +687,38 @@ const OwnerInformation = ({ contactDetails, index }) => {
 
 }
 
-const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {    
-    
-    console.log("ROHIT - propertiesData - ", propertiesData);
-    // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method))    
+const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {  
+    // console.log("PropertiesInformation - propertiesData - ", propertiesData);    
 
     const activeProperties = propertiesData?.Property?.result
                               .filter( property => property.owner_uid === ownerUID);    
-    // const activePropertyUIDs = activeProperties?.map( property => property.property_uid);
-    console.log("ROHIT - activeProperties - ", activeProperties);
-    
-    const sentContracts = contractsData?.filter( contract => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
-    console.log("ROHIT - sentContracts - ", sentContracts);
+    const activePropertyUIDs = activeProperties?.map( property => property.property_uid);
+    // console.log("PropertiesInformation - activeProperties - ", activeProperties);
 
-    const newContracts = contractsData?.filter( contract => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
-    console.log("ROHIT - newContracts - ", newContracts);
+    const maintenanceRequests = propertiesData?.MaintenanceRequests?.result.filter( request => activePropertyUIDs.includes(request.maintenance_property_id))
+    // console.log("PropertiesInformation - maintenanceRequests - ", maintenanceRequests);
+
+    const mapPropertiesToMaintenanceRequests = (maintenanceRequests)  => {
+      const propertyToRequests = {};
+  
+      maintenanceRequests?.forEach(request => {
+          const propertyId = request.maintenance_property_id;
+          if (!propertyToRequests[propertyId]) {
+              propertyToRequests[propertyId] = [];
+          }
+          propertyToRequests[propertyId].push(request);
+      });
+  
+      return propertyToRequests;
+    }
+
+    const maintenanceReqsByProperty = mapPropertiesToMaintenanceRequests(maintenanceRequests);
+    // console.log("maintenanceReqsByProperty - ", maintenanceReqsByProperty);
+
+    
+    const sentContracts = contractsData?.filter( contract => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");    
+
+    const newContracts = contractsData?.filter( contract => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");    
 
 
   return (
@@ -716,12 +730,13 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container sx={{padding: '10px', maxHeight: '230px', overflow: 'auto',}}>        
-        <Grid item xs={12}>
-          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
+      <Grid item xs={12}>
+          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', marginLeft: '20px', }}>
             Active {`(${activeProperties?.length})`}
           </Typography>
-        </Grid>
+      </Grid>
+      <Grid container sx={{padding: '10px', maxHeight: '250px', overflow: 'auto',}}>        
+        
         {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
           {
             activeProperties?.map( (property) => {
@@ -734,14 +749,23 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           }            
         </Grid> */}
         <Grid item xs={12}>
-          <PropertiesDataGrid data={activeProperties} />
+          <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty}/>
         </Grid>        
       </Grid>
       <Grid container direction='row' sx={{padding: '10px', }}>
         <Grid container item xs={6}  justifyContent='center'>
-          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
-            New  {`(${newContracts?.length})`}
-          </Typography>
+          <Button 
+            sx={{ 
+              textTransform: 'none', 
+              '&:hover': {
+                backgroundColor: '#9EAED6',
+              }             
+            }}
+          >
+            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
+              New  {`(${newContracts?.length})`}
+            </Typography>
+          </Button>
         </Grid>
         {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
           {
@@ -755,9 +779,18 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           }  
         </Grid> */}
         <Grid container item xs={6}  justifyContent='center'>
-          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
-            Sent  {`(${sentContracts?.length})`}
-          </Typography>
+          <Button 
+            sx={{ 
+              textTransform: 'none', 
+              '&:hover': {
+                backgroundColor: '#9EAED6',
+              }, 
+            }}
+          >
+            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
+              Sent  {`(${sentContracts?.length})`}
+            </Typography>
+          </Button>          
         </Grid>
         {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
           {
@@ -777,16 +810,137 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 }
 
 
-const PropertiesDataGrid = ( {data} ) => {
+const PropertiesDataGrid = ({ data, maintenanceRequests}) => {
+  const paymentStatusColorMap = {
+    "Paid On Time": theme.palette.priority.clear,
+    "Partially Paid": theme.palette.priority.medium,
+    "Paid Late": theme.palette.priority.low,
+    "Not Paid": theme.palette.priority.high,
+    Vacant: "#160449",
+    "No Manager": theme.palette.priority.low,
+  };
+  
+  const paymentStatusMap = {
+    UNPAID: "Not Paid",
+    "PAID LATE": "Paid Late",
+    PAID: "Paid On Time",
+    Partial: "Partially Paid",
+    VACANT: "Vacant",
+    "NO MANAGER": "No Manager",
+  };
+  
+  function getPaymentStatusColor(paymentStatus) {
+    if (paymentStatus === null || paymentStatus === undefined) {
+      return paymentStatusColorMap["Vacant"];
+    } else {
+      const status = paymentStatusMap[paymentStatus];
+      return paymentStatusColorMap[status];
+    }
+  }
+
+  const getNumOfMaintenanceReqs = (property_uid) => {
+    const count = maintenanceRequests[property_uid]?.length
+    if (count == null){
+      return 0;
+    }
+    return count;
+  }
+
   const columns = [
     { 
       field: 'property_address',      
-      width: 150 
+      // width: 200,
+      flex: 1,
+      renderCell: (params) => (
+        <Typography sx={{ fontSize: '14px', color: '#160449', }}>
+          {`${params.row.property_address}, Unit - ${params.row.property_unit}`}
+        </Typography>
+      )
+    },    
+    {
+      field: "rent_status",
+      // width: 100,
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            backgroundColor: getPaymentStatusColor(params.row.rent_status),
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "0px",
+            border: "none",
+            margin: "0px",
+          }}
+        >
+          {/* <Badge
+            overlap="circular"
+            color="success"
+            badgeContent={getNumOfApplications(params.row)}
+            invisible={!getNumOfApplications(params.row)}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            style={{
+              color: "#000000",
+              width: "100%",
+            }}
+          > */}
+            <Typography
+              sx={{
+                color: theme.palette.primary.main,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: "12px",
+                margin: "0px",
+                padding: "0px",
+                height: "35px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              {params.row.rent_status}
+            </Typography>
+          {/* </Badge> */}
+        </Box>
+      ),
     },
-    { 
-      field: 'rent_status',      
-      width: 200 
-    },          
+    {
+      field: "maintenance",      
+      // width: 100,
+      flex: 0.3,
+      renderCell: (params) => (
+        <Box sx={{ margin: "0px" }}>
+          <Badge
+            overlap="circular"
+            color="error"
+            badgeContent={getNumOfMaintenanceReqs(params.row.property_uid)}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            style={{
+              color: "#000000",
+              width: "35px",
+              height: "20px",
+              fontSize: "5px", 
+            }}
+          >
+            <Button
+              // onClick={() => navigate("/maintenance")}
+              sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}
+            >
+              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "30px", height: "30px" }} />
+            </Button>
+          </Badge>
+        </Box>
+      ),
+    },         
     
   ];
 
@@ -801,6 +955,7 @@ const PropertiesDataGrid = ( {data} ) => {
       <DataGrid
         rows={data}
         columns={columns}
+        getRowHeight={() => 'auto'}
         slots={{
           columnHeaders: () => null,
         }}      
@@ -828,11 +983,11 @@ const CashflowDataGrid = ( {data} ) => {
     { 
       field: 'owner_uid',
       headerName: 'Owner UID - DEBUG',
-      width: 100 
+      width: 100,      
     },    
     {
       field: 'owner_name',
-      headerName: 'Owner Name - DEBUG', 
+      headerName: 'Owner Name - DEBUG',       
       width: 150, 
       renderCell: (params) => (
         <span>{params.row.owner_first_name} {params.row.owner_last_name}</span>
@@ -840,7 +995,7 @@ const CashflowDataGrid = ( {data} ) => {
     },
     { 
       field: 'year_month',
-      headerName: 'Month',
+      headerName: 'Month',      
       width: 100,
       renderCell: (params) => (
         <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>
@@ -848,7 +1003,7 @@ const CashflowDataGrid = ( {data} ) => {
     },
     { 
       field: 'year',
-      headerName: 'Year',
+      headerName: 'Year',      
       width: 100,
       renderCell: (params) => (
         <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>
@@ -856,17 +1011,17 @@ const CashflowDataGrid = ( {data} ) => {
     },
     { 
       field: 'actual_cashflow',
-      headerName: 'Actual Cashflow',
+      headerName: 'Actual Cashflow',      
       width: 100 
     }, 
     { 
       field: 'expected_cashflow',
-      headerName: 'Expected Cashflow',
+      headerName: 'Expected Cashflow',      
       width: 100 
     }, 
     { 
       field: 'delta_cashflow',
-      headerName: 'Delta Cashflow',
+      headerName: 'Delta Cashflow',      
       width: 100,
       renderCell: (params) => (
         <span>{parseFloat(params.row.actual_cashflow) - parseFloat(params.row.expected_cashflow)}</span>
@@ -874,7 +1029,7 @@ const CashflowDataGrid = ( {data} ) => {
     }, 
     { 
       field: 'percent_delta_cashflow',
-      headerName: '% Delta Cashflow',
+      headerName: '% Delta Cashflow',      
       width: 100 
     }, 
     
@@ -915,7 +1070,7 @@ const CashflowDataGrid = ( {data} ) => {
   
   
 
-  console.log("ROHIT - processedData - ", processedData);
+  // console.log("processedData - ", processedData);
   
   
 
@@ -962,9 +1117,12 @@ const CashflowDataGrid = ( {data} ) => {
         sx={{
           '& .totals-row': {
             fontWeight: 'bold',
-            // backgroundColor: '#f1f1f1',
+            // backgroundColor: '#f1f1f1',            
           },
-          border: '0px',
+          border: '0px',                    
+          '& .MuiDataGrid-columnHeaderTitle': {
+            fontWeight: 'bold',
+          },
         }}        
       />
     </>

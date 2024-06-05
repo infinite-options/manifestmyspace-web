@@ -127,9 +127,9 @@ export default function HappinessMatrixWidget(props) {
           },
         }}
       >
-        <Grid container style={{ padding: "10px" }}>
+        <Grid container style={{ paddingTop: "10px" }}>
           <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: '10px', }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            <Typography variant="h5" sx={{fontSize: page === "OwnerContactDetails" ? '35px': '24px', fontWeight: "bold", color: "#160449" }}>
               Happiness Matrix
             </Typography>
           </Grid>
@@ -299,11 +299,9 @@ const CustomImage = (props) => {
   const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
-    console.log("ROHIT - CustomImage - handleClick - payload - ", payload);
-    console.log("ROHIT - CustomImage - handleClick - page - ", page);
+    // console.log("CustomImage - handleClick - payload - ", payload);    
     if(page === "OwnerContactDetails"){      
-      const idx = contactDetails.findIndex(contact => contact.contact_uid === payload?.owner_uid)
-      console.log("ROHIT - idx - ", idx);
+      const idx = contactDetails.findIndex(contact => contact.contact_uid === payload?.owner_uid)      
       setIndex(idx);
       return;
     }    

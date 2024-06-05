@@ -67,13 +67,13 @@ function ManagerDashboard() {
   const [cashflowDetails, setCashflowDetails] = useState([]);
   const [cashflowData, setCashflowData] = useState([]);
 
-  useEffect(() => {
-    console.log("ROHIT - ManagerDashboard - cashflowDetails - ", cashflowDetails);
-  }, [cashflowDetails]);
+  // useEffect(() => {
+  //   console.log("ManagerDashboard - cashflowDetails - ", cashflowDetails);
+  // }, [cashflowDetails]);
 
-  useEffect(() => {
-    console.log("ROHIT -  ManagerDashboard - cashflowData - ", cashflowData);
-  }, [cashflowData]);
+  // useEffect(() => {
+  //   console.log("ManagerDashboard - cashflowData - ", cashflowData);
+  // }, [cashflowData]);
 
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
@@ -114,7 +114,7 @@ function ManagerDashboard() {
       let actual_cashflow = 0;
 
       if (deltaCashflowItem) {
-        console.log("ROHIT - deltaCashflowItem - ", deltaCashflowItem);
+        // console.log("deltaCashflowItem - ", deltaCashflowItem);
         fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
         ownerUID = deltaCashflowItem.owner_uid;
         percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
@@ -147,8 +147,8 @@ function ManagerDashboard() {
         quarter = 4;
       }
 
-      console.log("ROHIT - delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
-      console.log("ROHIT - quarter - ", fullName, quarter);
+      // console.log("delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
+      // console.log("quarter - ", fullName, quarter);
 
       let borderColor;
       // switch (quarter) {

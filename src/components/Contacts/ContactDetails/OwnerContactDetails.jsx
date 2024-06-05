@@ -38,18 +38,6 @@ const OwnerContactDetails = (props) => {
 
   console.log("cashflowData - ", cashflowData);
 
-  useEffect(() => {
-    console.log("ROHIT - cashflowData - ", cashflowData);
-  }, [cashflowData]);
-
-  useEffect(() => {
-    console.log("ROHIT - filteredCashflowData - ", filteredCashflowData);
-  }, [filteredCashflowData]);
-
-  useEffect(() => {
-    console.log("ROHIT - filteredCashflowDetails - ", filteredCashflowDetails);
-  }, [filteredCashflowDetails]);
-
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    
     // setShowSpinner(true);
@@ -702,8 +690,7 @@ const CashflowDataGrid = ( {data} ) => {
 
   
   
-
-  console.log("ROHIT - processedData - ", processedData);
+  
   
   
 
