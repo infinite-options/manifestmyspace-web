@@ -224,18 +224,22 @@ export function MaintenanceOwner() {
     }, []);
 
     const handleRowClick = (index, row) => {
+		console.log("=====", row);
         if (isMobile) {
+
+			console.log("=====if====", index);
             navigate(`/maintenance/detail`, {
                 state: {
                     maintenance_request_index: index,
-                    status: selectedStatus,
-                    maintenanceItemsForStatus: maintenanceData[selectedStatus],
+                    status: row.maintenance_status,
+                    maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
                     allMaintenanceData: maintenanceData,
                 }
             });
         } else {
+			console.log("=====else====", index);
             setSelectedRequestIndex(index);
-            setSelectedStatus(selectedStatus);
+            setSelectedStatus(row.maintenance_status);
         }
     };
 
