@@ -253,7 +253,7 @@ export default function PropertyList({}) {
           navigate(location.pathname, { replace: true, state: {} });
         }
       }
-      if (propertyList.length > 0 || propertyRent.RentStatus.code==200) {
+      if (propertyData.Property.code == 200 && propertyRent.RentStatus.code == 200) {
         setDataReady(true);
       }
     };
@@ -348,9 +348,8 @@ export default function PropertyList({}) {
     // console.log("theoretically property", property)
     // console.log("handlePropertyDetailNavigation");
     // navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
-    if (isDesktop) {
-      setPropertyIndex(index);
-    } else {
+    setPropertyIndex(index);
+    if (!isDesktop) {
       navigate(`/propertyDetail`, { state: { index, propertyList, allRentStatus, rawPropertyData: rawPropertyData, isDesktop } });
     }
   }
@@ -458,7 +457,7 @@ export default function PropertyList({}) {
       field: 'paymentStatus',
       headerName: 'Status',
       headerAlign: 'center',
-      flex: 0.7,
+      flex: 0.6,
       renderCell: (params) => (
         <Box
           sx={{
@@ -684,25 +683,31 @@ export default function PropertyList({}) {
                       rows={rows}
                       columns={columns}
                       autoHeight
-                      pageSizeOptions={[10]}
+                      pageSizeOptions={[15]}
                       initialState={{
                         pagination: {
                           paginationModel: {
-                            pageSize: 10,
+                            pageSize: 15,
                           },
                         },
                       }}
                       onRowClick={onPropertyClick}
-                      sx={{
+                                            sx={{
                         '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
                         '& .MuiDataGrid-row:hover': {
                           cursor: 'pointer',
                         },
                         '& .MuiDataGrid-cell': {
-                          padding: '0px 5px',
+                          padding: '0px',
                           margin: '0px',
                           alignItems: 'center',
                           justifyContent: 'center',
+                        },
+                        '& .MuiDataGrid-row.Mui-selected': {
+                          backgroundColor: '#D1D1D1', 
+                          '&:hover': {
+                            backgroundColor: '#D1D1D1', 
+                          },
                         },
                       }}
                     />

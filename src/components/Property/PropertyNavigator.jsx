@@ -36,7 +36,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
   const [propertyData, setPropertyData] = useState(propertyList);
-  const [currentIndex, setCurrentIndex] = useState(index);
+  const [currentIndex, setCurrentIndex] = useState(index !== undefined ? index : 0);
   // console.log(currentIndex);
   // const [item, setItem] = useState(propertyData[currentIndex]);
   const [property, setProperty] = useState(propertyData[currentIndex]);
@@ -128,7 +128,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   }
 
   useEffect(() => {
-    const nextIndex = index;
+    const nextIndex = index !== undefined ? index : 0;
     setCurrentIndex(nextIndex);
     const nextId = propertyData[nextIndex].property_uid;
     setCurrentId(nextId);
@@ -312,6 +312,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
           maintenanceItemsForStatus: maintenanceReqData[status],
           allMaintenanceData: maintenanceReqData,
           fromProperty: true,
+          index: currentIndex,
+          isDesktop:isDesktop
         },
         // try {
         //   navigate("/maintenance/detail", {
@@ -448,11 +450,12 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
           managerData: property,
           propertyData: propertyData,
           index: currentIndex,
+          isDesktop: isDesktop,
         },
       });
     } else {
       // console.log("--debug--", index, propertyData)
-      navigate("/searchManager", { state: { index: index, propertyData } });
+      navigate("/searchManager", { state: { index: index, propertyData, isDesktop } });
     }
   };
 
@@ -498,7 +501,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "cf_monthName",
       headerName: "Month",
-      flex: 0.7,
+      sortable:isDesktop,
+      flex: 0.8,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -506,6 +510,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "latest_date_formatted",
       headerName: "Paid",
+      sortable:isDesktop,
       flex: 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
@@ -514,6 +519,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "total_paid_formatted",
       headerName: "Amount",
+      sortable:isDesktop,
       flex: 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
@@ -523,6 +529,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "rent_status",
       headerName: "Rent Status",
+      sortable:isDesktop,
       flex: 1,
       renderCell: (params) => {
         return <Box
@@ -1151,6 +1158,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                                     index: currentIndex,
                                     propertyData: propertyData,
                                     contracts: contractsData,
+                                    isDesktop: isDesktop,
                                   },
                                 });
                               }}
@@ -1283,17 +1291,27 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       sx={{
                         '& .MuiDataGrid-cell': {
                           justifyContent: 'center',
+                          alignItems: 'center',
                         },
                         '& .MuiDataGrid-columnHeader': {
                           justifyContent: 'center',
+                          alignItems: 'center',
                           color: "#3D5CAC",
                           textAlign: "center",
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                           textAlign: 'center',
                           font: "bold",
+                          width: '100%',
                         },
                         '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
+                        '@media (max-width: 600px)': {
+                          '& .MuiDataGrid-columnHeaderTitle': {
+                            width:'100%',
+                            margin:'0px',
+                            padding:'0px',
+                          },
+                        },
                       }}
                     />
                   </CardContent>

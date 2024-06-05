@@ -23,7 +23,7 @@ import { useUser } from "../../contexts/UserContext";
 const ManagerDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { ownerId, managerBusinessId, managerData, propertyData, index } = location.state;
+  const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = location.state;
   const { user, selectedRole } = useUser();
 
   console.log("ownerId", ownerId);
@@ -131,6 +131,14 @@ const ManagerDetails = () => {
     setCancelContractDialogOpen(false);
   };
 
+  const navigateToPrev = () => {
+    if(isDesktop === true){
+      navigate('/properties', {state:{index:index}});
+    }else{
+      navigate(-1);
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -181,7 +189,7 @@ const ManagerDetails = () => {
                 flexDirection: "row",
                 alignItems: "center",
               }}
-              onClick={() => navigate("/propertyDetail", { state: { index, propertyList: propertyData } })} // need to pass in the index and the propertyData
+              onClick={navigateToPrev} // need to pass in the index and the propertyData
             >
               <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
               <Box>

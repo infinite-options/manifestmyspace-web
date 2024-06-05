@@ -759,7 +759,7 @@ const TenantApplicationNav = () => {
                                 <Box>Filename</Box>
                                 <Box>Type</Box>                                                                
                             </Box>
-                            {[...applicationDocuments].map((doc, i) => (
+                            {applicationDocuments && [...applicationDocuments].map((doc, i) => (
                                 <>                                
                                     <Box
                                         key={i} 

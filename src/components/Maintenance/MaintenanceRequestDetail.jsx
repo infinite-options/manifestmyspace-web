@@ -62,6 +62,8 @@ export function MaintenanceRequestDetail() {
   // console.log("--DEBUG-- MaintenanceRequestDetail location.state", location.state)
 
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
+  const isDesktop = location.state?.isDesktop || false;
+  const propertyIndex = location.state?.index || -1;
 
   function navigateToAddMaintenanceItem() {
     // console.log("navigateToAddMaintenanceItem")
@@ -71,7 +73,11 @@ export function MaintenanceRequestDetail() {
   function handleBackButton() {
     // console.log("handleBackButton")
     if (fromProperty) {
-      navigate(-1);
+      if(isDesktop === true){
+        navigate('/properties', {state:{index:propertyIndex}});
+      }else{
+        navigate(-1);
+      }
     } else {
       navigate(maintenanceRoutingBasedOnSelectedRole());
     }
