@@ -44,7 +44,13 @@ import theme from '../../../theme/theme';
 import SearchIcon from '@mui/icons-material/Search';
 import HappinessMatrixWidget from '../../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget';
 import CommentIcon from "@mui/icons-material/Comment";
+import EmailIcon from "../../Property/messageIconDark.png";
+import PhoneIcon from "../../Property/phoneIconDark.png";
+import AddressIcon from "../../Property/addressIconDark.png";
 
+import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
+import CryptoJS from "crypto-js";
+import AES from "crypto-js/aes";
 
 const OwnerContactDetails2 = (props) => {
 
@@ -71,7 +77,7 @@ const OwnerContactDetails2 = (props) => {
   const cashflowDetails = location.state.cashflowDetails;
   const [ filteredCashflowDetails, setFilteredCashflowDetails ] = useState(cashflowDetails);
   // .filter((item) => item.owner_uid === ownerUID)
-
+  
   console.log("cashflowData - ", cashflowData);
 
   useEffect(() => {
@@ -87,7 +93,8 @@ const OwnerContactDetails2 = (props) => {
   }, [filteredCashflowDetails]);
 
   const getDataFromAPI = async () => {
-    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    
+    // const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    //rohit
+    const url = `http://localhost:4000/contacts/${getProfileId()}`;    
     // setShowSpinner(true);
 
     await axios
@@ -110,11 +117,13 @@ const OwnerContactDetails2 = (props) => {
       });
   };
 
+  
+
   useEffect(() => {
     // console.log("navigatingFrom - ", navigatingFrom);
 
     if(navigatingFrom === "HappinessMatrixWidget"){
-      getDataFromAPI();
+      getDataFromAPI();      
       setContactsTab("Owner");
     } else if(navigatingFrom === "PMContacts"){
       setContactDetails(location.state.dataDetails);      
@@ -224,6 +233,10 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
     setContactsData(processedData);
     setFilteredContactsData(processedData);
   }, [data]);
+
+  useEffect( () => {
+    console.log("ROHIT - contactsData - ", contactsData);
+  }, [contactsData]);
     
   useEffect( () => {
     const filteredValues = contactsData?.filter( (item) => {
@@ -302,7 +315,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
                         </Grid>
                         <Grid item xs={12}>                        
                           <Typography sx={{fontWeight: '600', color: '#160449', fontSize: '15px',}}>
-                            { `${contact?.entities[0]?.property_count} properties` }
+                            { `${contact?.property_count} properties` }
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>                        
@@ -328,183 +341,274 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   )
 }
 
-const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails }) => {
-    return (
-            <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', }}>                
-                <Grid item xs={12} container justifyContent="center" sx={{ height: '50px',  }}>
-                    <Typography sx={{fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>
-                        Owner Contact
-                    </Typography>
+const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, }) => {
+
+  const { selectedRole, getProfileId } = useUser();
+  const [ propertiesData, setPropertiesData ] = useState([]);
+  const [ contractsData, setContractsData ] = useState([]);
+
+
+  const getPropertiesData = async () => {
+    const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;    
+    // setShowSpinner(true);
+
+    await axios
+      .get(url)
+      .then((resp) => {
+        const data = resp.data;
+        console.log("properties endpoint - data - ", data);
+        setPropertiesData(data);        
+        // setShowSpinner(false);
+      })
+      .catch((e) => {
+        console.error(e);
+        // setShowSpinner(false);
+      });
+
+  }
+
+  const getContractsData = async () => {
+    // const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;    
+    const url = `http://localhost:4000/contracts/${getProfileId()}`;    //rohit
+    // setShowSpinner(true);
+
+    await axios
+      .get(url)
+      .then((resp) => {
+        const data = resp.data?.result;
+        console.log("properties endpoint - data - ", data);
+        setContractsData(data);        
+        // setShowSpinner(false);
+      })
+      .catch((e) => {
+        console.error(e);
+        // setShowSpinner(false);
+      });
+
+  }
+
+  useEffect( () => {
+    getPropertiesData();
+    getContractsData();
+  }, []);
+
+
+  return (
+    <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', }}>                
+        <Grid item xs={12} container justifyContent="center" sx={{ height: '50px',  }}>
+            <Typography sx={{fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>
+                Owner Contact
+            </Typography>
+        </Grid>
+        <Grid item xs={12} container justifyContent="center" >
+            <Typography sx={{fontSize: '20px', color: '#3D5CAC'}}>
+              {index + 1} of {contactDetails?.length} Owners
+            </Typography>                    
+        </Grid>                
+        <Grid container item xs={12} direction='row' alignContent='space-between' sx={{backgroundColor: '#3D5CAC', borderRadius: '10px', marginBottom: '10px', paddingTop: '5px', paddingBottom: '10px', }}>                            
+            <Grid item xs={1}>
+                <Box
+                    onClick={() => {
+                      console.log("Previous button clicked", index, contactDetails.length);
+                      index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
+                    }}
+                    sx={{
+                      paddingLeft: '10px',
+                    }}
+                >
+                    <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                        d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
+                        fill={theme.typography.secondary.white}
+                        />
+                    </svg>
+                </Box>
+            </Grid>
+            <Grid container direction='row' item xs={10} >
+                <Grid item xs={12} container justifyContent="center">
+                  <Typography sx={{fontSize: '25px', fontWeight: 'bold', color: '#F2F2F2' }}>
+                  {`
+                    ${(contactDetails && contactDetails[index]?.contact_first_name) ? contactDetails[index]?.contact_first_name : "<FIRST_NAME>"}
+                    ${(contactDetails && contactDetails[index]?.contact_last_name) ? contactDetails[index]?.contact_last_name : "<LAST_NAME>"}
+                  `}
+                  </Typography>
                 </Grid>
-                <Grid item xs={12} container justifyContent="center" >
-                    <Typography sx={{fontSize: '20px', color: '#3D5CAC'}}>
-                      {index + 1} of {contactDetails?.length} Owners
-                    </Typography>                    
-                </Grid>                
-                <Grid container item xs={12} direction='row' alignContent='space-between' sx={{backgroundColor: '#3D5CAC', borderRadius: '10px', marginBottom: '10px', paddingTop: '5px', paddingBottom: '10px', }}>                            
-                    <Grid item xs={1}>
-                        <Box
-                            onClick={() => {
-                              console.log("Previous button clicked", index, contactDetails.length);
-                              index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
-                            }}
-                            sx={{
-                              paddingLeft: '10px',
-                            }}
-                        >
-                            <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
-                                fill={theme.typography.secondary.white}
-                                />
-                            </svg>
-                        </Box>
-                    </Grid>
-                    <Grid container direction='row' item xs={10} >
-                        <Grid item xs={12} container justifyContent="center">
-                          <Typography sx={{fontSize: '25px', fontWeight: 'bold', color: '#F2F2F2' }}>
-                          {`
-                            ${(contactDetails && contactDetails[index]?.contact_first_name) ? contactDetails[index]?.contact_first_name : "<FIRST_NAME>"}
-                            ${(contactDetails && contactDetails[index]?.contact_last_name) ? contactDetails[index]?.contact_last_name : "<LAST_NAME>"}
-                          `}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} container justifyContent="center">
-                          <Box
-                            sx={{
-                              backgroundColor: "#A9A9A9",
-                              height: "68px",
-                              width: "68px",
-                              borderRadius: "68px",
-                              // marginTop: "-34px",
-                            }}
-                          >
-                          <img
-                            src={(contactDetails && contactDetails[index]?.contact_photo_url) ? contactDetails[index].contact_photo_url : User_fill}
-                            alt="profile placeholder"
-                            style={{
-                              height: "60px",
-                              width: "60px",
-                              borderRadius: "68px",
-                              margin: "4px",
-                            }}
-                          />
-                          </Box>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={1}  container justifyContent='flex-end'>
-                        <Box
-                            onClick={() => {
-                              console.log("Next button clicked");
-                              index < contactDetails.length - 1 ? setIndex(index + 1) : setIndex(0);
-                            }}
-                            sx={{
-                              paddingRight: '10px',
-                            }}
-                        >
-                            <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
-                                fill={theme.typography.secondary.white}
-                                />
-                            </svg>
-                        </Box>
-                    </Grid>
+                <Grid item xs={12} container justifyContent="center">
+                  <Box
+                    sx={{
+                      backgroundColor: "#A9A9A9",
+                      height: "68px",
+                      width: "68px",
+                      borderRadius: "68px",
+                      // marginTop: "-34px",
+                    }}
+                  >
+                  <img
+                    src={(contactDetails && contactDetails[index]?.contact_photo_url) ? contactDetails[index].contact_photo_url : User_fill}
+                    alt="profile placeholder"
+                    style={{
+                      height: "60px",
+                      width: "60px",
+                      borderRadius: "68px",
+                      margin: "4px",
+                    }}
+                  />
+                  </Box>
                 </Grid>
-                <Grid container item xs={12} columnSpacing={5} sx={{marginBottom: '10px', }}>
-                    <Grid item xs={12} md={6}>
-                        <Paper
-                            elevation={0}
-                            style={{
-                                // margin: '50p', // Add margin here
-                                borderRadius: "10px",
-                                backgroundColor: "#D6D5DA",
-                                height: 330,
-                                // [theme.breakpoints.down("sm")]: {
-                                //     width: "80%",
-                                // },
-                                // [theme.breakpoints.up("sm")]: {
-                                //     width: "50%",
-                                // },
-                                // width: "100%",
-                                padding: '10px',
-                            }}
-                        >
-                            <OwnerInformation contactDetails={contactDetails} index={index} />
-                        </Paper>
-                    </Grid>
-                    <Grid item  xs={12} md={6}>
-                        <Paper
-                            elevation={0}
-                            style={{
-                                // margin: '50p', // Add margin here
-                                borderRadius: "10px",
-                                backgroundColor: "#D6D5DA",
-                                height: 350,
-                                // [theme.breakpoints.down("sm")]: {
-                                //     width: "80%",
-                                // },
-                                // [theme.breakpoints.up("sm")]: {
-                                //     width: "50%",
-                                // },
-                                width: "100%",
-                            }}
-                        >
-                            Properties
-                        </Paper>
-                    </Grid>
-                </Grid>         
-                <Grid container item xs={12} columnSpacing={10}>
-                    <Grid item xs={12}>
-                        <Paper
-                            elevation={0}
-                            style={{
-                                // margin: '50p', // Add margin here
-                                borderRadius: "10px",
-                                backgroundColor: "#D6D5DA",
-                                height: 350,
-                                // [theme.breakpoints.down("sm")]: {
-                                //     width: "80%",
-                                // },
-                                // [theme.breakpoints.up("sm")]: {
-                                //     width: "50%",
-                                // },
-                                width: "100%",
-                            }}
-                        >                            
-                            <CashflowDataGrid data={filteredCashflowDetails} />
-                        </Paper>
-                    </Grid>
-                </Grid>       
-            </Grid>    
-    
-    );
+            </Grid>
+            <Grid item xs={1}  container justifyContent='flex-end'>
+                <Box
+                    onClick={() => {
+                      console.log("Next button clicked");
+                      index < contactDetails.length - 1 ? setIndex(index + 1) : setIndex(0);
+                    }}
+                    sx={{
+                      paddingRight: '10px',
+                    }}
+                >
+                    <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                        d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
+                        fill={theme.typography.secondary.white}
+                        />
+                    </svg>
+                </Box>
+            </Grid>
+        </Grid>
+        <Grid container item xs={12} columnSpacing={5} sx={{marginBottom: '10px', }}>
+            <Grid item xs={12} md={6}>
+                <Paper
+                    elevation={0}
+                    style={{
+                        // margin: '50p', // Add margin here
+                        borderRadius: "10px",
+                        backgroundColor: "#D6D5DA",
+                        height: 330,
+                        // [theme.breakpoints.down("sm")]: {
+                        //     width: "80%",
+                        // },
+                        // [theme.breakpoints.up("sm")]: {
+                        //     width: "50%",
+                        // },
+                        // width: "100%",
+                        padding: '10px',
+                    }}
+                >
+                    <OwnerInformation contactDetails={contactDetails} index={index} />
+                </Paper>
+            </Grid>
+            <Grid item  xs={12} md={6}>
+                <Paper
+                    elevation={0}
+                    style={{
+                        // margin: '50p', // Add margin here
+                        borderRadius: "10px",
+                        backgroundColor: "#D6D5DA",
+                        height: 350,
+                        // [theme.breakpoints.down("sm")]: {
+                        //     width: "80%",
+                        // },
+                        // [theme.breakpoints.up("sm")]: {
+                        //     width: "50%",
+                        // },
+                        width: "100%",
+                    }}
+                >
+                    <PropertiesInformation 
+                      propertiesData={propertiesData} 
+                      contractsData={contractsData}
+                      ownerUID={contactDetails && index >= 0 && index < contactDetails.length ? contactDetails[index]?.contact_uid : null} 
+                    />
+                </Paper>
+            </Grid>
+        </Grid>         
+        <Grid container item xs={12} columnSpacing={10}>
+            <Grid item xs={12}>
+                <Paper
+                    elevation={0}
+                    style={{
+                        // margin: '50p', // Add margin here
+                        borderRadius: "10px",
+                        backgroundColor: "#D6D5DA",
+                        height: 350,
+                        // [theme.breakpoints.down("sm")]: {
+                        //     width: "80%",
+                        // },
+                        // [theme.breakpoints.up("sm")]: {
+                        //     width: "50%",
+                        // },
+                        width: "100%",
+                    }}
+                >                            
+                    <CashflowDataGrid data={filteredCashflowDetails} />
+                </Paper>
+            </Grid>
+        </Grid>       
+    </Grid>    
+  
+  );
 }
 
 const OwnerInformation = ({ contactDetails, index }) => {
+  const [ paymentMethods, setPaymentMethods ] = useState([]);
+
+  useEffect( () => {
+    
+    if(contactDetails){
+      console.log("ROHIT - contactDetails.payment_method - ", contactDetails[index]?.payment_method);
+      setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method))
+    }
+  }, [contactDetails]);
+
+  useEffect( () => {        
+    console.log("ROHIT - paymentMethods - ", paymentMethods);        
+  }, [paymentMethods]);
+
+  const formatPaymentMethodType = (type) => {
+    return type
+      .toLowerCase()
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const getDecryptedSSN = async (data) => {
+    if(data == null){
+      return ""
+    }
+    console.log("ROHIT - getDecryptedSSN - data - ", data);
+    console.log("ROHIT - getDecryptedSSN - ret val - ", await CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8));
+    
+    return CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
+  }
+  
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }}>
+        <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
           CONTACT INFORMATION
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid container direction='row' item xs={12} alignContent='center' >
+        <img src={EmailIcon} alt="email" />        
         <Typography sx={{color: '#160449', }}>
           { contactDetails && contactDetails[index]?.contact_email}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid container direction='row' item xs={12} alignContent='center' >
+        <img src={PhoneIcon} alt="phone" />        
         <Typography sx={{color: '#160449', }}>
-        { contactDetails && contactDetails[index]?.contact_phone_number}
+          { contactDetails && contactDetails[index]?.contact_phone_number}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <Typography sx={{color: '#160449', }}>
-        { contactDetails && contactDetails[index]?.contact_address + ', ' + contactDetails[index]?.contact_city + ', ' + contactDetails[index]?.contact_state + ', ' + contactDetails[index]?.contact_zip }
+      <Grid container direction='row' item xs={12} alignItems='center' >
+        <img src={AddressIcon} alt="address" />
+           
+        <Typography sx={{color: '#160449', }}>          
+          { contactDetails && contactDetails[index]?.contact_address + ', ' + contactDetails[index]?.contact_city + ', ' + contactDetails[index]?.contact_state + ', ' + contactDetails[index]?.contact_zip }
         </Typography>
       </Grid>
-      <Grid item xs={12} sx={{ marginTop: '10px', }}>
+      <Grid item xs={12} sx={{ marginTop: '15px', }}>
         <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }}>
           CONFIDENTIAL INFORMATION
         </Typography>
@@ -515,7 +619,20 @@ const OwnerInformation = ({ contactDetails, index }) => {
             SSN
           </Typography>
           <Typography sx={{ fontSize: '15px', color: '#160449',}}>
-            No SSN provided
+            {/* {
+              contactDetails && contactDetails[index]?.contact_ssn? maskSSN(getDecryptedSSN(contactDetails[index]?.contact_ssn)) : "No SSN provided"
+              
+            } */}
+            {
+              contactDetails && 
+              ("***-**-" +
+              AES.decrypt(
+                contactDetails[index]?.contact_ssn,
+                process.env.REACT_APP_ENKEY
+              )
+                .toString()
+                .slice(-4))
+            }
           </Typography>
           
         </Grid>
@@ -524,12 +641,12 @@ const OwnerInformation = ({ contactDetails, index }) => {
             EIN
           </Typography>
           <Typography sx={{ fontSize: '15px', color: '#160449',}}>
-            {"<EIN>"}
+            {contactDetails && contactDetails[index]?.contact_ein_number? maskEIN(contactDetails[index]?.contact_ein_number) : "No EIN provided"}
           </Typography>
           
         </Grid>
       </Grid>
-      <Grid item xs={12} sx={{ marginTop: '10px', }}>
+      <Grid item xs={12} sx={{ marginTop: '15px', }}>
         <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }}>
           PAYMENT METHODS
         </Typography>
@@ -537,20 +654,33 @@ const OwnerInformation = ({ contactDetails, index }) => {
       <Grid container item xs={12}>
         <Grid item xs={6}>
           <Typography sx={{fontSize: '15px', fontWeight: '600', color: '#160449', }}>
-            Active
+            Active {`(${paymentMethods.filter( method => method.paymentMethod_status === "Active").length})`}
           </Typography>
-          <Typography sx={{ fontSize: '15px', color: '#160449',}}>
-            {"<methods>"}
-          </Typography>
+          {paymentMethods
+            .filter( method => method.paymentMethod_status === "Active")
+            .map( method => {
+              return (
+                <Typography sx={{ fontSize: '15px', color: '#160449',}}>
+                  {formatPaymentMethodType(method.paymentMethod_type)}
+                </Typography>
+              )
+          })}
+          
           
         </Grid>
         <Grid item xs={6}>
           <Typography sx={{fontSize: '15px', color: '#160449', fontWeight: '600', }}>
-            Inactive
+            Inactive {`(${paymentMethods.filter( method => method.paymentMethod_status === "Inactive").length})`}
           </Typography>
-          <Typography sx={{ fontSize: '15px', color: '#160449',}}>
-            {"<methods>"}
-          </Typography>
+          {paymentMethods
+            .filter( method => method.paymentMethod_status === "Inactive")
+            .map( method => {
+              return (
+                <Typography sx={{ fontSize: '15px', color: '#160449',}}>
+                  {formatPaymentMethodType(method.paymentMethod_type)}
+                </Typography>
+              )
+          })}
           
         </Grid>
       </Grid>
@@ -559,6 +689,139 @@ const OwnerInformation = ({ contactDetails, index }) => {
   )
 
 }
+
+const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {    
+    
+    console.log("ROHIT - propertiesData - ", propertiesData);
+    // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method))    
+
+    const activeProperties = propertiesData?.Property?.result
+                              .filter( property => property.owner_uid === ownerUID);    
+    // const activePropertyUIDs = activeProperties?.map( property => property.property_uid);
+    console.log("ROHIT - activeProperties - ", activeProperties);
+    
+    const sentContracts = contractsData?.filter( contract => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
+    console.log("ROHIT - sentContracts - ", sentContracts);
+
+    const newContracts = contractsData?.filter( contract => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
+    console.log("ROHIT - newContracts - ", newContracts);
+
+
+  return (
+    <>
+      <Grid container sx={{padding: '10px', }}>
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '18px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
+            YOU MANAGE {activeProperties?.length} OF THEIR PROPERTIES
+          </Typography>
+        </Grid>
+      </Grid>
+      <Grid container sx={{padding: '10px', maxHeight: '230px', overflow: 'auto',}}>        
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
+            Active {`(${activeProperties?.length})`}
+          </Typography>
+        </Grid>
+        {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
+          {
+            activeProperties?.map( (property) => {
+              return (
+                <Grid item xs={12} sx={{ fontSize: '15px', color: '#160449'}}>
+                  {property.property_address}
+                </Grid>
+              )
+            })
+          }            
+        </Grid> */}
+        <Grid item xs={12}>
+          <PropertiesDataGrid data={activeProperties} />
+        </Grid>        
+      </Grid>
+      <Grid container direction='row' sx={{padding: '10px', }}>
+        <Grid container item xs={6}  justifyContent='center'>
+          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
+            New  {`(${newContracts?.length})`}
+          </Typography>
+        </Grid>
+        {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
+          {
+            newContracts?.map( (contract) => {
+              return (
+                <Grid item xs={12} sx={{ fontSize: '15px', color: '#160449'}}>
+                  {contract.property_address}
+                </Grid>
+              )
+            })
+          }  
+        </Grid> */}
+        <Grid container item xs={6}  justifyContent='center'>
+          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
+            Sent  {`(${sentContracts?.length})`}
+          </Typography>
+        </Grid>
+        {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
+          {
+            sentContracts?.map( (contract) => {
+              return (
+                <Grid item xs={12} sx={{ fontSize: '15px', color: '#160449'}}>
+                  {contract.property_address}
+                </Grid>
+              )
+            })
+          }  
+        </Grid> */}
+      </Grid>
+    </>
+  )
+
+}
+
+
+const PropertiesDataGrid = ( {data} ) => {
+  const columns = [
+    { 
+      field: 'property_address',      
+      width: 150 
+    },
+    { 
+      field: 'rent_status',      
+      width: 200 
+    },          
+    
+  ];
+
+  if(!data){
+    return <></>;
+  }
+  
+  
+  
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        columns={columns}
+        slots={{
+          columnHeaders: () => null,
+        }}      
+        getRowId={ row => row.property_uid}
+        // initialState={{
+        //   pagination: {
+        //     paginationModel: {
+        //       pageSize: 5,
+        //     },
+        //   },
+        // }}
+        // pageSizeOptions={[5]}              
+        sx={{          
+          border: '0px',
+        }}
+        hideFooter={true}                
+      />
+    </>
+  );
+}
+
 
 const CashflowDataGrid = ( {data} ) => {
   const columns = [
