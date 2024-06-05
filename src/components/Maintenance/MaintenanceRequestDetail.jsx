@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   ThemeProvider,
   Typography,
@@ -14,7 +15,6 @@ import PropTypes from 'prop-types';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import theme from '../../theme/theme';
 import RequestCard from './MaintenanceRequestCard';
@@ -73,46 +73,11 @@ export function MaintenanceRequestDetail({
   maintenanceItemsForStatus: initialMaintenanceItemsForStatus,
   allMaintenanceData,
 }) {
-  console.log('In MaintenanceRequestDetail');
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
-
-  function navigateToAddMaintenanceItem() {
-    navigate('/addMaintenanceItem', { state: { month, year } });
-  }
-
-  function handleBackButton() {
-    if (fromProperty) {
-      navigate(-1);
-    } else {
-      navigate(maintenanceRoutingBasedOnSelectedRole());
-    }
-  }
-
-  function deactivateTab(key, maintenanceData) {
-    if (maintenanceData[key]) {
-      return maintenanceData[key].length > 0 ? false : true;
-    } else {
-      return true;
-    }
-  }
-
-  let [areTabsGrey, setAreTabsGrey] = useState([0, 0, 0, 0, 0, 0]);
-  let [tabs, setTabs] = useState({});
-
-  function greyOutTab(key, maintenanceData, color) {
-    let greyColor = '#D9D9D9';
-    if (maintenanceData[key]) {
-      return maintenanceData[key].length > 0 ? color : greyColor;
-    } else {
-      return greyColor;
-    }
-  }
 
   function getColorStatusBasedOnSelectedRole() {
     const role = roleName();
@@ -133,16 +98,58 @@ export function MaintenanceRequestDetail({
 
   const colorStatus = getColorStatusBasedOnSelectedRole();
 
-  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(maintenance_request_index);
-  const [currentStatus, setCurrentStatus] = useState(initialStatus);
-  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(initialMaintenanceItemsForStatus);
+  const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
+  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(
+    isMobile ? location.state.maintenance_request_index : maintenance_request_index
+  );
+  const [currentStatus, setCurrentStatus] = useState(
+    isMobile ? location.state.status : initialStatus
+  );
+  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(
+    isMobile ? location.state.maintenanceItemsForStatus : initialMaintenanceItemsForStatus
+  );
+
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === initialStatus));
+  const [value, setValue] = useState(
+    colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : initialStatus))
+  );
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [navParams, setNavParams] = useState({});
-  const allData = allMaintenanceData;
+  const allData = isMobile ? location.state.allMaintenanceData : allMaintenanceData;
+
+  function navigateToAddMaintenanceItem() {
+    navigate('/addMaintenanceItem', { state: { month, year } });
+  }
+
+  function handleBackButton() {
+    if (fromProperty) {
+      navigate(-1);
+    } else {
+      navigate(maintenanceRoutingBasedOnSelectedRole());
+    }
+  }
+
+  function deactivateTab(key, maintenanceData) {
+    if (maintenanceData && maintenanceData[key]) {
+      return maintenanceData[key].length > 0 ? false : true;
+    } else {
+      return true;
+    }
+  }
+
+  let [areTabsGrey, setAreTabsGrey] = useState([0, 0, 0, 0, 0, 0]);
+  let [tabs, setTabs] = useState({});
+
+  function greyOutTab(key, maintenanceData, color) {
+    let greyColor = '#D9D9D9';
+    if (maintenanceData && maintenanceData[key]) {
+      return maintenanceData[key].length > 0 ? color : greyColor;
+    } else {
+      return greyColor;
+    }
+  }
 
   useEffect(() => {
     setNavParams({
@@ -159,7 +166,7 @@ export function MaintenanceRequestDetail({
     });
     colorStatus.map((item, index) => {
       let key = item.mapping;
-      let isGrey = allData[key].length > 0 ? 0 : 1;
+      let isGrey = allData[key] && allData[key].length > 0 ? 0 : 1;
       let temp = areTabsGrey;
       setAreTabsGrey((prev) => {
         temp[index] = isGrey;
@@ -172,11 +179,9 @@ export function MaintenanceRequestDetail({
   }, [maintenanceRequestIndex, currentStatus]);
 
   useEffect(() => {
-    console.log("allData",allData);
     var quotesFilteredById = maintenanceQuotes.filter(
       (item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid
     );
-    console.log('--DEBUG-- quotesFilteredById', quotesFilteredById);
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === 'SENT') {
         return -1;
@@ -217,7 +222,7 @@ export function MaintenanceRequestDetail({
         setValue(index);
       }
     });
-  }, [currentStatus, fromProperty]);
+  }, [currentStatus]);
 
   const handleChange = (event, newValue) => {
     setCurrentStatus(colorStatus[newValue].status);
