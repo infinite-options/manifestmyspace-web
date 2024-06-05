@@ -926,6 +926,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         </Typography>
                       </Grid>
                       <Grid item xs={4} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Box>
                         <Button
                           variant="outlined"
                           sx={{
@@ -961,6 +962,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             {"Edit Property"}
                           </Typography>
                         </Button>
+                        </Box>
                       </Grid>
 
                       {/* {isManager() && item.applications.length > 0 && */}
@@ -1249,12 +1251,12 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       initialState={{
                         pagination: {
                           paginationModel: {
-                            pageSize: 5,
+                            pageSize: 12,
                           },
                         },
                       }}
                       getRowId={(row) => row.rent_detail_index}
-                      pageSizeOptions={[5]}
+                      pageSizeOptions={[12]}
                       sx={{
                         '& .MuiDataGrid-cell': {
                           justifyContent: 'center',
@@ -1268,6 +1270,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           textAlign: 'center',
                           font: "bold",
                         },
+                        '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
                       }}
                     />
                   </CardContent>
