@@ -482,7 +482,8 @@ const ViewLease = (props) => {
                     Show All Tenant Details
                   </Typography>
                 </Grid> */}
-                <Accordion expanded={expanded} onChange={handleToggleAccordion}>
+                {/* <Accordion expanded={expanded} onChange={handleToggleAccordion}> */}
+                <Accordion expanded={expanded} onChange={handleToggleAccordion} sx={{ backgroundColor: "#F2F2F2" }}>
                   <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel1a-content" id="panel1a-header">
                     <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700, cursor: "pointer" }} onClick={handleToggleAccordion}>
                       Show All Tenant Details
