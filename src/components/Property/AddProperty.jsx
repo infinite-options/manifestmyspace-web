@@ -404,7 +404,7 @@ export default function AddProperty({}) {
     setActiveStep(0);
     setShowSpinner(false);
     if (selectedRole === "OWNER") {
-      navigate("/properties");
+      navigate("/properties", {state:{isBack:true}});
     }
   };
 

@@ -42,6 +42,7 @@ import { darken } from "@mui/material/styles";
 import documentIcon from "../documentIcon.png";
 import Divider from "@mui/material/Divider";
 import { DataGrid } from "@mui/x-data-grid";
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -166,6 +167,8 @@ const ViewLease = (props) => {
   };
   const leaseID = location.state.lease_id; //'300-000005';
   const propertyUID = location.state.property_uid;
+  const isDesktop = location.state.isDesktop;
+  const index = location.state.index;
 
   // console.log(location.state)
   // console.log("leaseID", leaseID)
@@ -225,6 +228,15 @@ const ViewLease = (props) => {
         leaseData: leaseData,
       },
     });
+  };
+
+  const handleCloseButton = (e) => {
+    e.preventDefault();
+    if (isDesktop === true) {
+      navigate("/properties", { state: { index: index } });
+    } else {
+      navigate(-1);
+    }
   };
 
   const handleToggleAccordion = () => {
@@ -380,6 +392,11 @@ const ViewLease = (props) => {
           <Grid item xs={12}>
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
               <Typography sx={{ fontSize: { xs: "36px", sm: "36px", md: "36px", lg: "36px" }, fontWeight: "bold", color: "#160449" }}>Lease</Typography>
+              <Box position="absolute" right={20}>
+                <Button onClick={(e) => handleCloseButton(e)}>
+                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                </Button>
+              </Box>
             </Box>
           </Grid>
           <Grid item xs={12}>

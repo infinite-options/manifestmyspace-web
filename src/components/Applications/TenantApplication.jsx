@@ -829,7 +829,8 @@ export default function TenantApplication(){
                                 <Box>{' '}</Box>
                                 
                             </Box>
-                            {[...tenantDocuments].map((doc, i) => (
+                            {   
+                                (Array.isArray(tenantDocuments) ? tenantDocuments : []).map((doc, i) => (
                                 <>                                
                                     <Box
                                         key={i} 

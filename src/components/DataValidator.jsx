@@ -5,6 +5,12 @@ class DataValidator {
     const ssnRegex = /^\d{9}$/;
     return ssnRegex.test(ssn);
   }
+  static ein_validate(ein) {
+    // Implement EIN validation logic here
+    // For example, a basic validation could be checking if the SSN is a 9-digit number
+    const ssnRegex = /^\d{9}$/;
+    return ssnRegex.test(ein);
+  }
 
   static phone_validate(phoneNumber) {
     // Implement phone number validation logic here
