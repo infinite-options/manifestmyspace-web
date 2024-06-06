@@ -65,6 +65,8 @@ function ManagerDashboard() {
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
   const [cashflowDetails, setCashflowDetails] = useState([]);
+  const [cashflowDetailsByProperty, setCashflowDetailsByProperty] = useState([]);
+  const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
   const [cashflowData, setCashflowData] = useState([]);
 
   // useEffect(() => {
@@ -289,6 +291,13 @@ function ManagerDashboard() {
         //CASHFLOW DETAILS
         setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
 
+        //CASHFLOW DETAILS
+        setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
+
+        //CASHFLOW DETAILS
+        setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
+
+
         // NEW PM REQUESTS
         // set_property_endpoint_resp(propertiesResponseJSON);
         // setContractRequests(propertiesResponseJSON.NewPMRequests.result);
@@ -347,7 +356,7 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} cashflowData={cashflowData} cashflowDetails={cashflowDetails} />
+                <HappinessMatrixWidget data={matrixData} cashflowData={cashflowData} cashflowDetails={cashflowDetails} cashflowDetailsByProperty={cashflowDetailsByProperty} cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth} />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />

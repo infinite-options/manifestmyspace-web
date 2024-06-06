@@ -6,22 +6,22 @@ import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 
 export default function HappinessMatrixWidget(props) {
-  console.log("In HappinessMatrixWidget");
+  // console.log("In HappinessMatrixWidget");
   const navigate = useNavigate();
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { page, setIndex, data, dataSetter, cashflowDetails, cashflowData, contactDetails } = props;
-  console.log("HappinessMatrixWidget - data -", data);
-  console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  const { page, setIndex, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
+  // console.log("HappinessMatrixWidget - data -", data);
+  // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
   
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
-  useEffect(() => {
-    console.log("pointsToPlot - ", pointsToPlot);
-  }, [pointsToPlot]);
+  // useEffect(() => {
+  //   console.log(" HappinessMatrixWidget - pointsToPlot - ", pointsToPlot);
+  // }, [pointsToPlot]);
 
   // Function to check if two points overlap
   function overlap(owner1, owner2, margin = 5) {
@@ -257,6 +257,8 @@ export default function HappinessMatrixWidget(props) {
                       contactDetails={contactDetails}
                       setIndex={setIndex}
                       cashflowDetails={cashflowDetails}
+                      cashflowDetailsByProperty={cashflowDetailsByProperty}
+                      cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
                       cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
@@ -288,7 +290,7 @@ export default function HappinessMatrixWidget(props) {
 
 const CustomImage = (props) => {
   const navigate = useNavigate();
-  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowData, cashflowDetails, data, page, setIndex, contactDetails } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowData, data, page, setIndex, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
 
   // console.log("CustomImage - props - ", props);
   if (!isVisible) {
@@ -305,12 +307,14 @@ const CustomImage = (props) => {
       setIndex(idx);
       return;
     }    
-    navigate(`/ownerContactDetails2`, { //rohit
+    navigate(`/ownerContactDetailsHappinessMatrix`, { //rohit
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
         cashflowData: cashflowData,
         cashflowDetails: cashflowDetails,
+        cashflowDetailsByProperty, cashflowDetailsByProperty,
+        cashflowDetailsByPropertyByMonth: cashflowDetailsByPropertyByMonth,
         happinessMatrixData: data,
       },
     });

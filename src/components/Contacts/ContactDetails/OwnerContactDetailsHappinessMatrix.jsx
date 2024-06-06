@@ -53,7 +53,7 @@ import CryptoJS from "crypto-js";
 import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const OwnerContactDetails2 = (props) => {
+const OwnerContactDetailsHappinessMatrix = (props) => {
 
   // console.log("In Owner Contact Details", props);
   const { selectedRole, getProfileId } = useUser();
@@ -77,10 +77,27 @@ const OwnerContactDetails2 = (props) => {
   const cashflowData = location.state.cashflowData;
   const [ filteredCashflowData, setFilteredCashflowData ] = useState(cashflowData);
   const cashflowDetails = location.state.cashflowDetails;
+  const cashflowDetailsByProperty = location.state.cashflowDetailsByProperty;
+  const cashflowDetailsByPropertyByMonth = location.state.cashflowDetailsByPropertyByMonth;
   const [ filteredCashflowDetails, setFilteredCashflowDetails ] = useState(cashflowDetails);
-  // .filter((item) => item.owner_uid === ownerUID)
+  const [ filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty ] = useState(cashflowDetailsByProperty);
+  const [ filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth ] = useState(cashflowDetailsByPropertyByMonth);
+
+  // console.log("cashflowData - ", cashflowData);
+
+  // useEffect(() => {
+  //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
+  // }, [filteredCashflowDetails]);
+
+  // useEffect(() => {
+  //   console.log("filteredCashflowDetailsByProperty", filteredCashflowDetailsByProperty)
+  // }, [filteredCashflowDetailsByProperty]);
+
+  // useEffect(() => {
+  //   console.log("filteredCashflowDetailsByPropertyByMonth", filteredCashflowDetailsByPropertyByMonth)
+  // }, [filteredCashflowDetailsByPropertyByMonth]);  
   
-  console.log("cashflowData - ", cashflowData);
+  
 
   // useEffect(() => {
   //   console.log("cashflowData - ", cashflowData);
@@ -90,9 +107,7 @@ const OwnerContactDetails2 = (props) => {
   //   console.log("filteredCashflowData - ", filteredCashflowData);
   // }, [filteredCashflowData]);
 
-  // useEffect(() => {
-  //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
-  // }, [filteredCashflowDetails]);
+  
 
   const getDataFromAPI = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;    
@@ -136,10 +151,12 @@ const OwnerContactDetails2 = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log("INDEX UPDATED - ", index);
+    // console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
-    contactDetails && console.log("DATA DETAILS", contactDetails[index]);
+    // contactDetails && console.log("DATA DETAILS", contactDetails[index]);
     setFilteredCashflowDetails(contactDetails != null? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
+    setFilteredCashflowDetailsByProperty(contactDetails != null? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
+    setFilteredCashflowDetailsByPropertyByMonth(contactDetails != null? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
     setFilteredCashflowData(contactDetails != null? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
 
   }, [index]);
@@ -150,8 +167,8 @@ const OwnerContactDetails2 = (props) => {
   //   console.log("Data details passed 4: ", contactDetails[3].entities);
 
   // console.log(selectedData);
-  console.log("INDEX", index);
-  console.log("SELECTED ROLE - ", selectedRole);
+  // console.log("INDEX", index);
+  // console.log("SELECTED ROLE - ", selectedRole);
 
   const handleBackBtn = () => {
     // navigate('/PMContacts');
@@ -212,7 +229,14 @@ const OwnerContactDetails2 = (props) => {
                     }
                     
                     <Grid container item xs={12} md={8} >
-                        <OwnerContactDetail contactDetails={contactDetails} index={index} setIndex={setIndex} filteredCashflowDetails={filteredCashflowDetails} />
+                        <OwnerContactDetail 
+                          contactDetails={contactDetails} 
+                          index={index} 
+                          setIndex={setIndex} 
+                          filteredCashflowDetails={filteredCashflowDetails}
+                          filteredCashflowDetailsByProperty={filteredCashflowDetailsByProperty} 
+                          filteredCashflowDetailsByPropertyByMonth={filteredCashflowDetailsByPropertyByMonth}
+                        />
                     </Grid>
                 </Grid>
             </Container>
@@ -287,7 +311,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
             {
               filteredContactsData?.map(( contact, index ) => {
                 return (
-                  <Grid item xs={12} sx={{ marginBottom : '5px', }} onClick={ () => setIndex(index)}>
+                  <Grid item xs={12} key={index} sx={{ marginBottom : '5px', }} onClick={ () => setIndex(index)}>
                     <Paper
                       elevation={0}
                       style={{
@@ -347,7 +371,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   )
 }
 
-const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, }) => {
+const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, filteredCashflowDetailsByProperty, filteredCashflowDetailsByPropertyByMonth }) => {
 
   const { selectedRole, getProfileId } = useUser();
   const [ propertiesData, setPropertiesData ] = useState([]);
@@ -362,7 +386,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
       .get(url)
       .then((resp) => {
         const data = resp.data;
-        console.log("properties endpoint - data - ", data);
+        // console.log("properties endpoint - data - ", data);
         setPropertiesData(data);        
         // setShowSpinner(false);
       })
@@ -382,7 +406,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
       .get(url)
       .then((resp) => {
         const data = resp.data?.result;
-        console.log("properties endpoint - data - ", data);
+        // console.log("properties endpoint - data - ", data);
         setContractsData(data);        
         // setShowSpinner(false);
       })
@@ -546,7 +570,11 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                         width: "100%",
                     }}
                 >                            
-                    <CashflowDataGrid data={filteredCashflowDetails} />
+                    <CashflowDataGrid 
+                      cashflowDetails={filteredCashflowDetails} //by month
+                      cashflowDetailsByProperty={filteredCashflowDetailsByProperty}
+                      cashflowDetailsByPropertyByMonth={filteredCashflowDetailsByPropertyByMonth} 
+                    />
                 </Paper>
             </Grid>
         </Grid>       
@@ -671,9 +699,9 @@ const OwnerInformation = ({ contactDetails, index }) => {
           </Typography>
           {paymentMethods
             .filter( method => method.paymentMethod_status === "Inactive")
-            .map( method => {
+            .map( (method, index) => {
               return (
-                <Typography sx={{ fontSize: '15px', color: '#160449',}}>
+                <Typography key={index} sx={{ fontSize: '15px', color: '#160449',}}>
                   {formatPaymentMethodType(method.paymentMethod_type)}
                 </Typography>
               )
@@ -978,7 +1006,29 @@ const PropertiesDataGrid = ({ data, maintenanceRequests}) => {
 }
 
 
-const CashflowDataGrid = ( {data} ) => {
+const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth }) => {
+
+  // console.log("CashflowDataGrid - props.cashflowDetails - ", cashflowDetails);
+  const [ data, setData ] = useState(cashflowDetails.map( (row, index) => {return {...row, index}}))
+  const [ tab, setTab ] = useState("by_month")
+
+  // useEffect(() => {
+  //   console.log("CashflowDataGrid - data - ", data);
+  // }, [data]);
+
+  useEffect(() => {
+    if(tab === "by_month"){
+      setData(cashflowDetails.map( (row, index) => {return {...row, index}}));
+    } 
+    else if( tab === "by_property"){
+      setData(cashflowDetailsByProperty.map( (row, index) => {return {...row, index}}));
+    }
+    else if( tab === "by_property_by_month"){
+      setData(cashflowDetailsByPropertyByMonth.map( (row, index) => {return {...row, index}}));
+    }
+    
+  }, [tab, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth]);
+
   const columns = [
     { 
       field: 'owner_uid',
@@ -993,22 +1043,42 @@ const CashflowDataGrid = ( {data} ) => {
         <span>{params.row.owner_first_name} {params.row.owner_last_name}</span>
       )
     },
-    { 
-      field: 'year_month',
-      headerName: 'Month',      
-      width: 100,
+    // { 
+    //   field: 'property_address',
+    //   headerName: 'Address',      
+    //   width: 100,
+    //   renderCell: (params) => (
+    //     <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>
+    //   ) 
+    // },
+    ...(tab !== 'by_month' ? [{
+      field: 'property_address',
+      headerName: 'Address',
+      width: 150,
       renderCell: (params) => (
-        <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>
+        <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>
       ) 
-    },
-    { 
-      field: 'year',
-      headerName: 'Year',      
-      width: 100,
-      renderCell: (params) => (
-        <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>
-      ) 
-    },
+    }] : []),    
+    ...(tab !== 'by_property' ? [
+      { 
+        field: 'year_month',
+        headerName: 'Month',      
+        width: 100,
+        renderCell: (params) => (
+          <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>
+        ) 
+      }
+    ] : []),
+    ...(tab !== 'by_property' ? [
+      { 
+        field: 'year',
+        headerName: 'Year',      
+        width: 100,
+        renderCell: (params) => (
+          <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>
+        ) 
+      }
+    ] : []),    
     { 
       field: 'actual_cashflow',
       headerName: 'Actual Cashflow',      
@@ -1036,97 +1106,161 @@ const CashflowDataGrid = ( {data} ) => {
   ];
   
   
-  const monthNumbers = {
-    January: 1,
-    February: 2,
-    March: 3,
-    April: 4,
-    May: 5,
-    June: 6,
-    July: 7,
-    August: 8,
-    September: 9,
-    October: 10,
-    November: 11,
-    December: 12,
-  };
+  // const monthNumbers = {
+  //   January: 1,
+  //   February: 2,
+  //   March: 3,
+  //   April: 4,
+  //   May: 5,
+  //   June: 6,
+  //   July: 7,
+  //   August: 8,
+  //   September: 9,
+  //   October: 10,
+  //   November: 11,
+  //   December: 12,
+  // };
 
-  const processedData = data.map((row, index) => {
-    const monthNumber = monthNumbers[row.cf_month] || 0;
-    const yearMonth = `${row.cf_year}${String(monthNumber).padStart(2, '0')}`;
+  // const processedData = data.map((row, index) => {
+  //   const monthNumber = monthNumbers[row.cf_month] || 0;
+  //   const yearMonth = `${row.cf_year}${String(monthNumber).padStart(2, '0')}`;
 
-    return {
-      ...row, 
-      id: index + 1,
-      // month_num: monthNumbers[row.cf_month] || 0,
-      year_month: parseInt(yearMonth, 10),
-      year: parseInt(row.cf_year, 10),
-      actual_cashflow: parseFloat(row.actual_cashflow),
-      expected_cashflow: parseFloat(row.expected_cashflow),
-      delta_cashflow: parseFloat(row.delta_cashflow),
-    }
-  });
+  //   return {
+  //     ...row, 
+  //     id: index + 1,
+  //     // month_num: monthNumbers[row.cf_month] || 0,
+  //     year_month: parseInt(yearMonth, 10),
+  //     year: parseInt(row.cf_year, 10),
+  //     actual_cashflow: parseFloat(row.actual_cashflow),
+  //     expected_cashflow: parseFloat(row.expected_cashflow),
+  //     delta_cashflow: parseFloat(row.delta_cashflow),
+  //   }
+  // });
 
   
   
 
-  // console.log("processedData - ", processedData);
+  // // console.log("processedData - ", processedData);
   
   
 
-  const totalActualCashflow = processedData.reduce((sum, row) => sum + row.actual_cashflow, 0);
-  const totalExpectedCashflow = processedData.reduce((sum, row) => sum + row.expected_cashflow, 0);
-  const totalDeltaCashflow = processedData.reduce((total, row) => {
-    return total + (parseFloat(row.actual_cashflow) - parseFloat(row.expected_cashflow));
-  }, 0);
+  // const totalActualCashflow = processedData.reduce((sum, row) => sum + row.actual_cashflow, 0);
+  // const totalExpectedCashflow = processedData.reduce((sum, row) => sum + row.expected_cashflow, 0);
+  // const totalDeltaCashflow = processedData.reduce((total, row) => {
+  //   return total + (parseFloat(row.actual_cashflow) - parseFloat(row.expected_cashflow));
+  // }, 0);
 
-  const totalsRow = {
-    id: processedData.length + 1,
-    owner_uid: 'Totals',
-    owner_name: '',
-    year_month: '',
-    year: '',
-    actual_cashflow: totalActualCashflow,
-    expected_cashflow: totalExpectedCashflow,
-    delta_cashflow: totalDeltaCashflow,
-    percent_delta_cashflow: '',
-  };
+  // const totalsRow = {
+  //   id: processedData.length + 1,
+  //   owner_uid: 'Totals',
+  //   owner_name: '',
+  //   year_month: '',
+  //   year: '',
+  //   actual_cashflow: totalActualCashflow,
+  //   expected_cashflow: totalExpectedCashflow,
+  //   delta_cashflow: totalDeltaCashflow,
+  //   percent_delta_cashflow: '',
+  // };
 
-  const rowsWithTotals = [...processedData, totalsRow];
+  // const rowsWithTotals = [...processedData, totalsRow];
+
+  const handleSelectTab = (tabName) => {
+    console.log("tabName - ", tabName);    
+    setTab(tabName);
+  }
 
   return (
     <>
-      <DataGrid
-        rows={rowsWithTotals}
-        columns={columns}
-        // initialState={{
-        //   pagination: {
-        //     paginationModel: {
-        //       pageSize: 5,
-        //     },
-        //   },
-        // }}
-        // pageSizeOptions={[5]}
-        
-        getRowClassName={(params) => {
-          if (params.id === totalsRow.id) {
-            return 'totals-row'; // Assign a class name to the totals row
-          }
-          return '';
-        }}
-        sx={{
-          '& .totals-row': {
-            fontWeight: 'bold',
-            // backgroundColor: '#f1f1f1',            
-          },
-          border: '0px',                    
-          '& .MuiDataGrid-columnHeaderTitle': {
-            fontWeight: 'bold',
-          },
-        }}        
-      />
+      <Grid container item xs={12} sx={{padding: '10px',}}>        
+        <Grid container justifyContent='center' item  xs={4}>
+          <Button 
+            sx={{  
+              width: '200px',             
+              backgroundColor: tab === "by_month"? '#3D5CAC' : '#9EAED6',
+              textTransform: 'none', 
+              '&:hover': {
+                backgroundColor: tab === "by_month"? '#3D5CAC' : '#9EAED6',
+              }             
+            }}
+            onClick={ () => handleSelectTab("by_month")}
+          >
+            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
+              By Month  
+            </Typography>
+          </Button>
+        </Grid>    
+        <Grid container justifyContent='center' item  xs={4}>
+          <Button 
+            sx={{ 
+              width: '200px',
+              backgroundColor: tab === "by_property"? '#3D5CAC' : '#9EAED6',
+              textTransform: 'none', 
+              '&:hover': {
+                backgroundColor: tab === "by_property"? '#3D5CAC' : '#9EAED6',
+              }             
+            }}
+            onClick={ () => handleSelectTab("by_property")}
+          >
+            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
+              By Property  
+            </Typography>
+          </Button>
+        </Grid>    
+        <Grid container justifyContent='center' item  xs={4}>
+          <Button 
+            sx={{ 
+              width: '200px',
+              backgroundColor: tab === "by_property_by_month"? '#3D5CAC' : '#9EAED6',
+              textTransform: 'none', 
+              '&:hover': {
+                backgroundColor: tab === "by_property_by_month"? '#3D5CAC' : '#9EAED6',
+              }             
+            }}
+            onClick={ () => handleSelectTab("by_property_by_month")}
+          >
+            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
+              By Property By Month  
+            </Typography>
+          </Button>
+        </Grid>        
+      </Grid>
+      <Grid item xs={12}>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          getRowId={(row) => row.index }
+          // initialState={{
+          //   pagination: {
+          //     paginationModel: {
+          //       pageSize: 5,
+          //     },
+          //   },
+          // }}
+          // pageSizeOptions={[5]}
+          
+          // getRowClassName={(params) => {
+          //   if (params.id === totalsRow.id) {
+          //     return 'totals-row'; // Assign a class name to the totals row
+          //   }
+          //   return '';
+          // }}
+          sx={{
+            height: '300px',
+            overflow: 'auto',
+            '& .totals-row': {
+              fontWeight: 'bold',
+              // backgroundColor: '#f1f1f1',            
+            },
+            border: '0px',                    
+            '& .MuiDataGrid-columnHeaderTitle': {
+              fontWeight: 'bold',
+            },
+          }}        
+        />
+      </Grid>
+      
     </>
   );
 }
 
-export default OwnerContactDetails2
+export default OwnerContactDetailsHappinessMatrix
