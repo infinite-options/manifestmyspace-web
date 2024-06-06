@@ -143,7 +143,7 @@ export default function MaintenanceRequestNavigator({
     console.log("displayScheduledDate from this one:", data);
     // console.log("display quote info", JSON.parse(data.quote_info))
     if (data.maintenance_request_closed_date) {
-      return data.maintenance_request_closed_date !== "null" ? `Closed: ${data.maintenance_request_closed_date}` : 'Not yet closed';
+      return data.maintenance_request_closed_date !== "null" ? `Closed: ${data.maintenance_request_closed_date}` : `Closed: `;
 
     }
     if (!data.maintenance_scheduled_date || !data.maintenance_scheduled_time || data.maintenance_scheduled_time === "null" || data.maintenance_scheduled_date === "null") {
