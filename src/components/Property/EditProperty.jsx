@@ -48,7 +48,7 @@ export default function EditProperty({}) {
   const { getProfileId } = useUser();
   // const propertyData = location.state.item
   // const propertyId = location.state.propertyId;
-  let { index, propertyList, page } = state;
+  let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state;
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property Id", propertyId)
   console.log("Property Data in Edit Property", propertyData);
@@ -314,9 +314,14 @@ export default function EditProperty({}) {
     setUnit(event.target.value);
   };
 
-  const handleBackButton = () => {
+  const handleBackButton = (e) => {
+    e.preventDefault();
     console.log("handleBackButton");
-    navigate(-1);
+    if(isDesktop == true){
+      navigate('/properties', {state:{index:index}});
+    }else{
+      navigate(-1);
+    }
   };
 
   const handleListedChange = (event) => {
@@ -510,7 +515,11 @@ export default function EditProperty({}) {
       await autoUpdate();
 
       console.log("propertyList after autoUpdate - ", propertyList);
-      navigate("/propertyDetail", { state: { index, propertyList } });
+      if(isDesktop == true){
+        navigate('/properties', {state:{index:index}});
+      }else{
+        navigate("/propertyDetail", { state: { index:index, propertyList:propertyList, allRentStatus:allRentStatus, isDesktop:isDesktop, rawPropertyData:rawPropertyData } });
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -611,7 +620,7 @@ export default function EditProperty({}) {
               )}
             </Box>
             <Box position="absolute" right={0}>
-              <Button onClick={() => handleBackButton()}>
+              <Button onClick={(e) => handleBackButton(e)}>
                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>

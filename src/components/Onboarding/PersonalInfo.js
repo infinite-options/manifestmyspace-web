@@ -24,6 +24,8 @@ import { formatPhoneNumber, headers, maskNumber } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
+import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,12 +79,6 @@ const PersonalInfo = () => {
     setFirstName(event.target.value);
   };
 
-  const us_states = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-]
-
   const handleLastNameChange = (event) => {
     setLastName(event.target.value);
   };
@@ -101,14 +97,6 @@ const PersonalInfo = () => {
 
   const handleUnitChange = (event) => {
     setUnit(event.target.value);
-  };
-
-  const handleCityChange = (event) => {
-    setCity(event.target.value);
-  };
-
-  const handleStateChange = (event) => {
-    setState(event.target.value);
   };
 
   const handleZipChange = (event) => {
@@ -133,6 +121,12 @@ const PersonalInfo = () => {
     }
   };
 
+  const handleAddressSelect = (address) => {
+    setAddress(address.street ? address.street : "");
+    setCity(address.city ? address.city : "");
+    setState(address.state ? address.state : "");
+    setZip(address.zip ? address.zip : "");
+  };
   const validate_form= () =>{
     if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
       
@@ -396,15 +390,7 @@ const PersonalInfo = () => {
               {" "}
               Address
             </Typography>
-            <TextField
-              name="address"
-              value={address}
-              onChange={handleAddressChange}
-              variant="filled"
-              fullWidth
-              placeholder="Enter street address"
-              className={classes.root}
-            ></TextField>
+            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
           </Stack>
           <Grid
             container
@@ -432,51 +418,8 @@ const PersonalInfo = () => {
                 ></TextField>
               </Stack>
             </Grid>
-            <Grid item xs={6}>
-              <Stack spacing={-2} m={5}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                  }}
-                >
-                  City
-                </Typography>
-                <TextField
-                  name="city"
-                  value={city}
-                  onChange={handleCityChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="San Jose"
-                  className={classes.root}
-                ></TextField>
-              </Stack>
-            </Grid>
-            <Grid item xs={6}>
-              <Stack spacing={-2} m={5}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    paddingBottom: "10px",
-                  }}
-                >
-                  State
-                </Typography>
-                <Select
-                  name="state"
-                  value={state}
-                  onChange={handleStateChange}
-                  size="small"
-                  fullWidth
-                  className={classes.select}
-                >
-                  {us_states.map((val,index)=> <MenuItem value={val}>{val}</MenuItem> )  }
-
-                </Select>
-              </Stack>
-            </Grid>
+       
+            
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography

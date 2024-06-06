@@ -37,6 +37,7 @@ export default function PMQuotesRequested({}){
     const property = location.state.propertyData;
     const propertyId= property[location.state.index]?.property_uid
     const index = location.state.index;
+    const isDesktop = location.state.isDesktop;
 
     const statusList = ["New Quotes", "Contracts"];
     const statusColor = ['#3D5CAC', '#160449'];
@@ -310,6 +311,14 @@ export default function PMQuotesRequested({}){
         }
     }
 
+    const viewAllProperties = () => {
+        if(isDesktop == true){
+            navigate('/properties', {state:{index:index}});
+          }else{
+            navigate(-1);
+          }
+    }
+
     return( 
         <ThemeProvider theme={theme}>
             <Box
@@ -359,7 +368,7 @@ export default function PMQuotesRequested({}){
                         alignItems="center"
                     >
                         <Box 
-                        onClick={() => navigate(-1)}>
+                        onClick={viewAllProperties}>
                             <Button  sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '16px', "&:hover, &:focus, &:active": {background: theme.palette.primary.main}}}>
 
                                 {/* <UTurnLeftIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px', transform: 'rotate(90deg)', fontWeight: theme.typography.common.fontWeight}}/> */}

@@ -29,6 +29,14 @@ const maskNumber = (value) => {
   return mask.slice(0, len + 2);
 };
 
+const maskEin = (value) => {
+  const len = value.length;
+  const mask = "**-*******";
+  if (len < 3) return mask.slice(0, len);
+  return mask.slice(0, len + 1);
+};
+
+
 const headers = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "*",
@@ -70,6 +78,7 @@ export {
   formatPhoneNumber,
   headers,
   maskNumber,
+  maskEin,
   roleMap,
   photoFields,
 };

@@ -31,6 +31,7 @@ const RequestQuotes = () => {
   const managerData = location.state.managerData;
   const propertyData = location.state.propertyData;
   const index = location.state.index;
+  const isDesktop = location.state.isDesktop;
 
   const requestingPropertyId = propertyData[index].property_uid;
 
@@ -133,13 +134,7 @@ const RequestQuotes = () => {
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
-
-    navigate("/propertyDetail", {
-      state: {
-        propertyList: propertyData,
-        index: index,
-      },
-    });
+    navigateToPrev();
   };
 
   let propertyDisplayValue = "";
@@ -151,6 +146,14 @@ const RequestQuotes = () => {
   const handleMsgChange = (event) => {
     setAnnouncementMsg(event.target.value);
   };
+
+  const navigateToPrev = () => {
+    if(isDesktop === true){
+      navigate('/properties', {state:{index:index}});
+    }else{
+      navigate(-1);
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
