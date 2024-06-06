@@ -88,7 +88,8 @@ export default function Announcements() {
       // let sent_data = (!res.data.sent.result.announcement_read) ? res.data.sent.result : null;
       // let received_data = (!res.data.received.result.announcement_read) ? res.data.received.result : null;
       let sent_data = res.data.sent.result;
-      let received_data = res.data.received.result.filter(item => item.announcement_read === null);
+      let received_data = res.data.received.result;
+      // let received_data = res.data.received.result.filter(item => item.announcement_read === null);
       let read_data = res.data.received.result.filter(item => item.announcement_read != null);
 
       console.log("res.data?",res.data)
@@ -246,6 +247,13 @@ export default function Announcements() {
       console.log(announcement.announcement_title);
       setAnnData(announcement);
       setShowAnnouncement(true);
+    }
+  };
+
+  const handleCloseAnnouncement = () => {
+    setShowAnnouncement(false);
+    if (clickedAnnouncementUid) {
+      document.querySelector(`.announcement-card-${clickedAnnouncementUid}`).classList.add("announcement-red");
     }
   };
 
@@ -532,7 +540,7 @@ export default function Announcements() {
           </Box>
           </Grid>
 
-          <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category">
+          {/* <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category">
 
         <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
           Read
@@ -589,7 +597,7 @@ export default function Announcements() {
           </div>
         </div>
         
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category">
 
@@ -638,6 +646,7 @@ export default function Announcements() {
                             sent_or_received={"Sent"}
                             showCheckbox={true}
                             checked1={announcement.announcement_read !== null}
+
                           />
                         }
                         
@@ -661,6 +670,7 @@ export default function Announcements() {
         showAnnouncement={showAnnouncement}
         setShowAnnouncement={setShowAnnouncement}
         annData={annData}
+        onClose={handleCloseAnnouncement}
         sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
       />
       <Box sx={{ paddingBottom: "10%", width: "100%", marginLeft: "20px", marginRight: "20px" }}></Box>

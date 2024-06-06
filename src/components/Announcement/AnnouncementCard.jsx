@@ -7,10 +7,12 @@ import { useEffect, useState } from "react";
 function AnnouncementCard(props) {
   console.log("In Announcements", props);
   const { selectedRole } = useUser();
-  const { data, pageToNavigate, navigationParams, sent_or_received, readAllChecked, showCheckbox, checked1,  } = props;
+  const { data, pageToNavigate, navigationParams, sent_or_received, readAllChecked, showCheckbox, checked1, onCloseClick } = props;
   const navigate = useNavigate();
   const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
+  const [clicked, setClicked] = useState(false);
+  const [isRead, setIsRead] = useState(data.announcement_read !== null);
   // const handleAnnouncements = () => {
   //   console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
   // };
@@ -25,12 +27,24 @@ function AnnouncementCard(props) {
     console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
     setChecked(true); // Set checkbox to checked state when announcement is handled
     // Add any additional logic for handling announcements here
+    setClicked(true); // Set the clicked state to true when the card is clicked
+    if (sent_or_received === "Received" && data.announcement_read !== null) {
+      setIsRead(true);
+    }
   };
 
   const handleCheckboxChange = (e) => {
     setChecked(e.target.checked);
     e.stopPropagation();
   };
+
+  useEffect(() => {
+    if (onCloseClick) {
+      if (sent_or_received === "Received" && data.announcement_read !== null) {
+        setIsRead(true);
+      }
+    }
+  }, [onCloseClick]);
 
 
   const getBorderColor = () => {
@@ -52,7 +66,7 @@ function AnnouncementCard(props) {
         break;
       case "Maintenance":
         color = "#FF8A00";
-        break;
+        break; 
       default:
         color = "#A9AAAB";
         break;
@@ -62,8 +76,8 @@ function AnnouncementCard(props) {
   };
 
   return (
-    <div className="announcement-list-card" onClick={handleAnnouncements}>
-      <div className="announcement-list-card-picture-container">
+    <div className={`announcement-list-card  ${clicked ? "announcement-clicked" : ""} ${isRead ? "announcement-read" : ""}`}  onClick={handleAnnouncements}>
+      <div className={"announcement-list-card-picture-container" } >
         <div
           className="announcement-list-card-picture"
           style={{ width: "40px", height: "40px", border: "4px solid transparent", borderRadius: "50%", borderColor: getBorderColor(), overflow: "hidden" }}
@@ -108,18 +122,18 @@ function AnnouncementCard(props) {
             />
           </svg>
         </div> */}
-        {showCheckbox && (
+        {/* {showCheckbox && (
           <div className="announcement-list-card-checkbox">
             <input type="checkbox" checked={checked || checked1} onChange={handleCheckboxChange} />
           </div>
-        )}
-        {/* <div
+        )} */}
+        <div
           className="announcement-list-card-checkbox"
           checked={checked}
           onChange={handleCheckboxChange}
         >
           <input type="checkbox" />
-        </div> */}
+        </div>
       </div>
     </div>
   );
