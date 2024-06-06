@@ -102,8 +102,7 @@ export function MaintenanceRequestDetail({
   const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(
     isMobile ? location.state.maintenance_request_index : maintenance_request_index
   );
-  const [currentStatus, setCurrentStatus] = useState(
-    isMobile ? location.state.status : initialStatus
+  const [currentStatus, setCurrentStatus] = useState(''
   );
   const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(
     isMobile ? location.state.maintenanceItemsForStatus : initialMaintenanceItemsForStatus
@@ -152,6 +151,16 @@ export function MaintenanceRequestDetail({
   }
 
   useEffect(() => {
+
+    const stat = isMobile ? location.state.status : initialStatus;
+    setCurrentStatus(stat);
+    const selectedIndex = isMobile ? location.state.maintenance_request_index : maintenance_request_index;
+    setMaintenanceRequestIndex(selectedIndex);
+
+  },[initialStatus, maintenance_request_index, isMobile, location.state])
+
+  useEffect(() => {
+    console.log("------useeffect 1------");
     setNavParams({
       maintenanceRequestIndex,
       status: currentStatus,
@@ -179,6 +188,7 @@ export function MaintenanceRequestDetail({
   }, [maintenanceRequestIndex, currentStatus]);
 
   useEffect(() => {
+    console.log("------useeffect 2------");
     var quotesFilteredById = maintenanceQuotes.filter(
       (item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid
     );
@@ -207,6 +217,7 @@ export function MaintenanceRequestDetail({
   }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
 
   useEffect(() => {
+    console.log("------useeffect 3------");
     const getMaintenanceItemQuotes = async () => {
       const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
       const data = await response.json();
@@ -217,6 +228,7 @@ export function MaintenanceRequestDetail({
   }, []);
 
   useEffect(() => {
+    console.log("------useeffect 4------");
     colorStatus.find((item, index) => {
       if (item.mapping === currentStatus) {
         setValue(index);
