@@ -16,17 +16,18 @@ import Grid from "@mui/material/Grid";
 import EmailIcon from "../Property/messageIconDark.png";
 import PhoneIcon from "../Property/phoneIconDark.png";
 import AES from "crypto-js/aes";
+import CloseIcon from "@mui/icons-material/Close";
 
 const TenantApplicationNav = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { index, property } = state;
+  const { index, property, isDesktop } = state;
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
-//   useEffect(() => {
-//     console.log("application - ", application);
-// }, [application]);
+  //   useEffect(() => {
+  //     console.log("application - ", application);
+  // }, [application]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(
     JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]')
@@ -48,18 +49,18 @@ const TenantApplicationNav = () => {
   // }, [applicationDocuments]);
   function formatDocumentType(type) {
     switch(type){            
-        case "income_proof": return "Proof of Income";
-        case "bank_statement": return "Bank Statement";
-        case "id": return "ID";
-        case "renters_insurance_proof": return "Proof of Renter's Insurance";
-        case "ssn": return "SSN";
-        case "credit_report": return "Credit Report";
-        case "reference": return "Reference";
-        case "other": return "Other";
-        
-        default: return "";            
+      case "income_proof": return "Proof of Income";
+      case "bank_statement": return "Bank Statement";
+      case "id": return "ID";
+      case "renters_insurance_proof": return "Proof of Renter's Insurance";
+      case "ssn": return "SSN";
+      case "credit_report": return "Credit Report";
+      case "reference": return "Reference";
+      case "other": return "Other";
+
+      default: return "";
     }
-}
+  }
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
   };
@@ -89,7 +90,7 @@ const TenantApplicationNav = () => {
     navigate("/tenantLease", { state: { page: "create_lease", application, property } });
   }
 
-  const handleEditLease = () => {    
+  const handleEditLease = () => {
     navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
   }
 
@@ -128,6 +129,16 @@ const TenantApplicationNav = () => {
       JSON.parse(currApp?.tenant_children_occupants || '["No Child Occupants"]')
     );
   }, [currentIndex, applications]);
+
+  const handleCloseButton = (e) => {
+    e.preventDefault();
+    if (isDesktop === true) {
+      navigate('/properties', { state: { index: index } });
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop
@@ -148,7 +159,7 @@ const TenantApplicationNav = () => {
         }}
       >
         <Paper
-          style={{            
+          style={{
             backgroundColor: theme.palette.primary.main,
             width: "100%",
             paddingTop: "10px",
@@ -237,7 +248,7 @@ const TenantApplicationNav = () => {
                           >
                             {`${currentIndex + 1} of ${
                               applications.length
-                            } Applicants`}
+                              } Applicants`}
                           </Typography>
                         </Stack>
                         <Button
@@ -263,6 +274,11 @@ const TenantApplicationNav = () => {
                             />
                           )}
                         </Button>
+                        <Box position="absolute" right={0}>
+                          <Button onClick={(e) => handleCloseButton(e)}>
+                            <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
+                          </Button>
+                        </Box>
                       </Stack>
                       <Typography
                         align="center"
@@ -328,7 +344,7 @@ const TenantApplicationNav = () => {
                       </Grid>
                       <Grid item xs={4}></Grid>
                       <Grid item xs={12}>
-                          {/* <Typography
+                        {/* <Typography
                             sx={{
                               fontSize: 13,
                               fontFamily: "Source Sans Pro, sans-serif",
@@ -352,7 +368,7 @@ const TenantApplicationNav = () => {
                       }}>
                         <Stack sx={{
                           marginLeft: '0px',
-                        }}>                          
+                        }}>
                           <Typography
                             sx={{
                               fontSize: 13,
@@ -372,12 +388,12 @@ const TenantApplicationNav = () => {
                             sx={{
                               fontSize: 13,
                               fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",                              
+                              color: "#160449",
                             }}
                           >
                             {"SSN"}
                           </Typography>
-                          
+
                         </Stack>
                         <Stack sx={{marginRight: '40px',}}>                                                    
                           <Typography
@@ -736,60 +752,60 @@ const TenantApplicationNav = () => {
                       <Grid item xs={12} sx={{
                         marginRight: '30px',
                       }}>
-                            <Typography
-                                sx={{
-                                    justifySelf: 'center',
-                                    color: theme.typography.common.blue,                                    
-                                    fontSize: 13,
-                                }}
-                            >
-                                Application Documents:
-                            </Typography>
-                            <Box
-                                sx={{
+                        <Typography
+                          sx={{
+                            justifySelf: 'center',
+                            color: theme.typography.common.blue,
+                            fontSize: 13,
+                          }}
+                        >
+                          Application Documents:
+                        </Typography>
+                        <Box
+                          sx={{
                                     display:'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    paddingTop: '5px',
-                                    color: theme.typography.common.blue,
-                                    fontSize: 13,
-                                }}
-                            >
-                                <Box>Filename</Box>
-                                <Box>Type</Box>                                                                
-                            </Box>
-                            {applicationDocuments && [...applicationDocuments].map((doc, i) => (
-                                <>                                
-                                    <Box
-                                        key={i} 
-                                        sx={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            paddingTop: '5px',
+                            color: theme.typography.common.blue,
+                            fontSize: 13,
+                          }}
+                        >
+                          <Box>Filename</Box>
+                          <Box>Type</Box>
+                        </Box>
+                        {applicationDocuments && [...applicationDocuments].map((doc, i) => (
+                          <>
+                            <Box
+                              key={i}
+                              sx={{
                                             display:'flex',
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            fontSize: 13
-                                        }}
-                                    >
-                                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
-                                            <Box
-                                                sx={{
-                                                    // height: '16px',
-                                                    width: '100%',                                                                                                         
-                                                    cursor: 'pointer', // Change cursor to indicate clickability
-                                                    color: "#160449",
-                                                }}
-                                            >
-                                            {doc.filename}
-                                            </Box>
-                                        </a>
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                fontSize: 13
+                              }}
+                            >
+                              <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                <Box
+                                  sx={{
+                                    // height: '16px',
+                                    width: '100%',
+                                    cursor: 'pointer', // Change cursor to indicate clickability
+                                    color: "#160449",
+                                  }}
+                                >
+                                  {doc.filename}
+                                </Box>
+                              </a>
                                         <Box sx={{color: "#160449",}}>
-                                        {formatDocumentType(doc.type)}                                                                                
-                                        </Box>
-                                    </Box>
-                                </>                                        
-                            ))}
-                        </Grid>
+                                {formatDocumentType(doc.type)}
+                              </Box>
+                            </Box>
+                          </>
+                        ))}
+                      </Grid>
                     </Grid>
                     <Stack
                       direction="row"
@@ -815,7 +831,7 @@ const TenantApplicationNav = () => {
                       )}
                       {application.lease_status === "PROCESSING" && (
                         <div>
-                        <Button
+                          <Button
                             onClick={handleWithdrawLease}
                             sx={{
                               backgroundColor: "#CB8E8E",
@@ -846,7 +862,7 @@ const TenantApplicationNav = () => {
                           >
                             {"Edit Lease"}
                           </Button>
-                          
+
                         </div>
                       )}
                       {application.lease_status !== "PROCESSING" && (
@@ -864,7 +880,7 @@ const TenantApplicationNav = () => {
                         >
                           {"New Lease"}
                         </Button>
-                      )}                    
+                      )}
                     </Stack>
                   </Box>
                 </Box>

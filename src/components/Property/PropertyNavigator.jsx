@@ -42,7 +42,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const [property, setProperty] = useState(propertyData[currentIndex]);
   const [currentId, setCurrentId] = useState(property.property_uid);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
-  const [propertyRentStatus, setpropertyRentStatus] = useState([]);
+  const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
 
   // Parse property images once outside the component
   const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
@@ -339,6 +339,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
         <DataGrid
           rows={property.maintenance}
           columns={maintenanceColumns}
+          disableColumnMenu={!isDesktop}
           initialState={{
             pagination: {
               paginationModel: {
@@ -455,12 +456,12 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
       });
     } else {
       // console.log("--debug--", index, propertyData)
-      navigate("/searchManager", { state: { index: index, propertyData, isDesktop } });
+      navigate("/searchManager", { state: { index: currentIndex, propertyData, isDesktop } });
     }
   };
 
   const handleAppClick = (index) => {
-    navigate("/tenantApplicationNav", { state: { index: index, property: property } });
+    navigate("/tenantApplicationNav", { state: { index: currentIndex, property: property, isDesktop:isDesktop } });
   };
 
   const getRentStatus = () => {
@@ -831,6 +832,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                                 navigate("/viewLease", {
                                   state: {
                                     lease_id: property.lease_uid,
+                                    index: currentIndex,
+                                    isDesktop: isDesktop,
                                   },
                                 })
                               }
@@ -1278,6 +1281,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                     <DataGrid
                       rows={propertyRentStatus}
                       columns={rentStatusColumns}
+                      disableColumnMenu={!isDesktop}
                       autoHeight
                       initialState={{
                         pagination: {

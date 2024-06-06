@@ -22,7 +22,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { darken } from '@mui/material/styles';
 import documentIcon from '../documentIcon.png'
 import Divider from '@mui/material/Divider';
-
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,9 +52,9 @@ const ViewLease = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
-  
+
   const [moveOut, setMoveOut] = useState("");
-  const [showSpinner, setShowSpinner] = useState(false);  
+  const [showSpinner, setShowSpinner] = useState(false);
   const [leaseFees, setLeaseFees] = useState([])
   const [utilityString, setUtilityString] = useState("")
   const [leaseData, setLeaseData] = useState([]);
@@ -64,15 +64,15 @@ const ViewLease = (props) => {
   const [renewLeaseDialogOpen, setRenewLeaseDialogOpen] = useState(false);
   const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState("");
   const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
-  
+
   useEffect(() => {
     setMoveOut(formatDate(moveOutDate));
   }, [moveOutDate]);
 
   const closeEndLeaseDialog = () => {
     setEndLeaseDialogOpen(false);
-  };  
-  
+  };
+
   const closeRenewLeaseDialog = () => {
     setRenewLeaseDialogOpen(false);
   };
@@ -105,41 +105,43 @@ const ViewLease = (props) => {
           console.log(error.response.data);
         }
       });
-      const sendAnnouncement = async () => {
-        try {
-          const receiverPropertyMapping = {
-            [leaseData.business_uid]: [leaseData.lease_property_id],
-          };
-  
-          await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              announcement_title: "End Lease Request from Tenant",
-              // announcement_msg: `Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease.`,
+    const sendAnnouncement = async () => {
+      try {
+        const receiverPropertyMapping = {
+          [leaseData.business_uid]: [leaseData.lease_property_id],
+        };
+
+        await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            announcement_title: "End Lease Request from Tenant",
+            // announcement_msg: `Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease.`,
               announcement_msg: endLeaseAnnouncement? endLeaseAnnouncement : "",
-              announcement_sender: getProfileId(),
-              announcement_date: new Date().toDateString(),
-              // announcement_properties: property.property_uid,
-              announcement_properties: JSON.stringify(receiverPropertyMapping),
-              announcement_mode: "LEASE",
-              announcement_receiver: [leaseData.business_uid],
-              announcement_type: ["Text", "Email"],
-            }),
-          });
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      sendAnnouncement();
-      setEndLeaseDialogOpen(false);
-      setConfirmEndLeaseDialogOpen(false);
-      navigate(-1);
+            announcement_sender: getProfileId(),
+            announcement_date: new Date().toDateString(),
+            // announcement_properties: property.property_uid,
+            announcement_properties: JSON.stringify(receiverPropertyMapping),
+            announcement_mode: "LEASE",
+            announcement_receiver: [leaseData.business_uid],
+            announcement_type: ["Text", "Email"],
+          }),
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    sendAnnouncement();
+    setEndLeaseDialogOpen(false);
+    setConfirmEndLeaseDialogOpen(false);
+    navigate(-1);
   };
   const leaseID = location.state.lease_id; //'300-000005';
-  const propertyUID = location.state.property_uid 
+  const propertyUID = location.state.property_uid
+  const isDesktop = location.state.isDesktop;
+  const index = location.state.index;
 
   // console.log(location.state)
   // console.log("leaseID", leaseID)
@@ -159,11 +161,11 @@ const ViewLease = (props) => {
           setLeaseFees(JSON.parse(lease.lease_fees))
           setLeaseDocuments(JSON.parse(lease.lease_documents))
           const utilities = JSON.parse(lease.property_utilities)
-          
+
           const utils = utilities.map(utility => utility.utility_desc).join(', ')
           // console.log(utils)
           setUtilityString(utils)
-          
+
           setLeaseData(lease);
 
           console.log("Lease data", lease);
@@ -196,6 +198,14 @@ const ViewLease = (props) => {
     });
   };
 
+  const handleCloseButton = (e) => {
+    e.preventDefault();
+    if (isDesktop === true) {
+      navigate('/properties', { state: { index: index } });
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <Container maxWidth="xl" sx={{paddingBottom: "25px"}}>
@@ -207,43 +217,48 @@ const ViewLease = (props) => {
           display: "flex",
           fontFamily: "Source Sans Pro",
           justifyContent: "center",
-          width: "100%", 
+          width: "100%",
           minHeight: "85vh",
           marginTop: theme.spacing(2),
         }}
       >
-        <Grid container sx={{paddingTop: "20px"}}>
+        <Grid container sx={{ paddingTop: "20px" }}>
           <Grid item xs={12}>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
               <Typography sx={{ fontSize: { xs: "36px", sm: "36px", md: "36px", lg: "36px" }, fontWeight: "bold", color: "#160449" }}>
                 Lease
               </Typography>
+              <Box position="absolute" right={20}>
+                <Button onClick={(e) => handleCloseButton(e)}>
+                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", }} />
+                </Button>
+              </Box>
             </Box>
           </Grid>
           <Grid item xs={12}>
-              <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-                <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
-                  Lease Details
-                </Typography>
-                <Grid container>
-                  <Grid item xs={6}> 
+            <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
+                Lease Details
+              </Typography>
+              <Grid container>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Start Date</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>  {leaseData.lease_start}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>End Date</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>  {leaseData.lease_end}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Landlord</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{leaseData?.owner_first_name} {leaseData?.owner_last_name}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Tenant Utilities</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{utilityString}</Typography>
-                  </Grid>
                 </Grid>
-              </Box>
+              </Grid>
+            </Box>
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
@@ -256,30 +271,30 @@ const ViewLease = (props) => {
                     <Typography sx={{color: "#3D5CAC", fontSize: "26px", fontWeight: 700}}>{item.fee_name ? item.fee_name : "None"}</Typography>
                   </Grid>
                   <Grid container sx={{marginLeft: "15px"}}>
-                  <Grid item xs={6}> 
+                    <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Amount</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {`$${item.charge}` || 'None'}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Frequency</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {item.frequency ? item.frequency : "None"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Late Fee After</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{item.late_by ? `${item.late_by} days` : "None"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Late Fee After Per Day</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{`$${item.late_fee}` ?? 'None'}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Rent Due Date</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>{item.due_by ? `${item.due_by} of month` : "None"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Available to Pay</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>  {item.available_topay ? `${item.available_topay} days before`: "None"}</Typography>
-                  </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               ))}
@@ -291,28 +306,28 @@ const ViewLease = (props) => {
                 Occupancy Details
               </Typography>
               <Grid container>
-                  <Grid item xs={6}> 
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}>Move In Date</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {leaseData?.lease_move_in_date ?? "Not Specified"} </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}># of Occupants</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {leaseData ? (countNoOfOccupents(leaseData) || "None"): "Null"} </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}># of Pets </Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}>   {leaseData ? (CountNoOfPets(leaseData) || 'None') : "Null"} </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <Typography sx={{color: "#3D5CAC", fontSize: "18px", fontWeight: 700}}># of Vehicles</Typography>
                     <Typography sx={{color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%"}}> {leaseData ? (CountNoOfVehicles(leaseData) || "None"): "Null"} </Typography>
-                  </Grid>
                 </Grid>
+              </Grid>
             </Box>
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px"}}>
-            <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
                 Lease Documents
               </Typography>
               {leaseDocuments.map((document, index) => (
@@ -326,44 +341,44 @@ const ViewLease = (props) => {
             </Box>
           </Grid>
           <Grid item xs={12}>
-          {(selectedRole === "MANAGER" || selectedRole === "TENANT") && (
-            <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ paddingTop: "15px" }}>
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.common.fontWeight,
-                  backgroundColor: theme.palette.custom.pink,
-                  margin: "10px",
-                  ":hover": {
-                    backgroundColor: darken(theme.palette.custom.pink, 0.2),
-                  },
-                }}
-                onClick={() => setEndLeaseDialogOpen(true)}
-              >
-                End Lease
-              </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.common.fontWeight,
-                  backgroundColor: theme.palette.custom.blue,
-                  margin: "10px",
-                  ":hover": {
-                    backgroundColor: darken(theme.palette.custom.blue, 0.2),
-                  },
-                }}
-                onClick={() => {
-                  setRenewLeaseDialogOpen(true);
-                }}
-              >
-                Renew Lease
-              </Button>
-            </Stack>
-          )}
+            {(selectedRole === "MANAGER" || selectedRole === "TENANT") && (
+              <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ paddingTop: "15px" }}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    backgroundColor: theme.palette.custom.pink,
+                    margin: "10px",
+                    ":hover": {
+                      backgroundColor: darken(theme.palette.custom.pink, 0.2),
+                    },
+                  }}
+                  onClick={() => setEndLeaseDialogOpen(true)}
+                >
+                  End Lease
+                </Button>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    backgroundColor: theme.palette.custom.blue,
+                    margin: "10px",
+                    ":hover": {
+                      backgroundColor: darken(theme.palette.custom.blue, 0.2),
+                    },
+                  }}
+                  onClick={() => {
+                    setRenewLeaseDialogOpen(true);
+                  }}
+                >
+                  Renew Lease
+                </Button>
+              </Stack>
+            )}
           </Grid>
         </Grid>
       </Box>
@@ -423,7 +438,7 @@ const ViewLease = (props) => {
       </Dialog>
       <Dialog open={renewLeaseDialogOpen} onClose={closeRenewLeaseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Renew Lease</DialogTitle>
-        <DialogContent>                
+        <DialogContent>
           <DialogContentText
             id="alert-dialog-description"
             sx={{
@@ -510,12 +525,12 @@ export default ViewLease;
 const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
   // const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState('');
 
-  const getConfirmEndLeaseDialogText = (leaseData) => {    
+  const getConfirmEndLeaseDialogText = (leaseData) => {
     const currentDate = new Date();
     const noticePeriod = leaseData.lease_end_notice_period ? leaseData.lease_end_notice_period : 30; //30 by default
     // const moveOutDate = new Date(moveOut);
     const leaseEndDate = new Date(leaseData.lease_end);
-    
+
 
     const noticeDate = new Date(leaseEndDate);
     noticeDate.setDate(leaseEndDate.getDate() - noticePeriod);
@@ -527,7 +542,7 @@ const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEnd
       if(currentDate < noticeDate){
         // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
         return `Your lease will end on ${formatDate(leaseEndDate)} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
-      } else {        
+      } else {
         // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
         return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${formatDate(newLeaseEndDate)} and you will be responsible for payments through that date. Are you sure you want to end the lease?`
       }
@@ -536,60 +551,60 @@ const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEnd
       if(currentDate < noticeDate){
         // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(leaseEndDate)}`);
         return `Your lease will end on ${formatDate(leaseEndDate)} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
-      } else {        
+      } else {
         // setEndLeaseAnnouncement(`Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease on ${formatDate(newLeaseEndDate)}`);
         return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${formatDate(newLeaseEndDate)} and you will be responsible for payments through that date. Are you sure you want to end the lease?`
       }
     } else{
       return "ERROR: lease status is not \"ACTIVE\" or \"ACTIVE-M2M\"";
-    }               
+    }
   }
 
   const memoizedDialogText = useMemo(() => getConfirmEndLeaseDialogText(leaseData), [leaseData]);
 
   return (
     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-    <DialogTitle id="alert-dialog-title">End Lease Confirmation</DialogTitle>
-    <DialogContent>
-      <DialogContentText
-        id="alert-dialog-description"
-        sx={{
-          color: theme.typography.common.blue,
-          fontWeight: theme.typography.common.fontWeight,
-        }}
-      >
-        {memoizedDialogText}
-      </DialogContentText>
-    </DialogContent>
-    <DialogActions>      
-      <Button
-        onClick={() => handleEndLease()}
-        sx={{
-          color: "white",
-          backgroundColor: "#3D5CAC80",
-          ":hover": {
-            backgroundColor: "#3D5CAC",
-          },
-        }}
-        autoFocus
-      >
-        Yes
-      </Button>
-      <Button
-        onClick={() => {
-          setDialogOpen(false);
-        }}
-        sx={{
-          color: "white",
-          backgroundColor: "#3D5CAC80",
-          ":hover": {
-            backgroundColor: "#3D5CAC",
-          },
-        }}
-      >
-        No
-      </Button>
-    </DialogActions>
-  </Dialog>
+      <DialogTitle id="alert-dialog-title">End Lease Confirmation</DialogTitle>
+      <DialogContent>
+        <DialogContentText
+          id="alert-dialog-description"
+          sx={{
+            color: theme.typography.common.blue,
+            fontWeight: theme.typography.common.fontWeight,
+          }}
+        >
+          {memoizedDialogText}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => handleEndLease()}
+          sx={{
+            color: "white",
+            backgroundColor: "#3D5CAC80",
+            ":hover": {
+              backgroundColor: "#3D5CAC",
+            },
+          }}
+          autoFocus
+        >
+          Yes
+        </Button>
+        <Button
+          onClick={() => {
+            setDialogOpen(false);
+          }}
+          sx={{
+            color: "white",
+            backgroundColor: "#3D5CAC80",
+            ":hover": {
+              backgroundColor: "#3D5CAC",
+            },
+          }}
+        >
+          No
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
