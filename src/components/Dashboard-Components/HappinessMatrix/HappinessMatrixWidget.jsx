@@ -6,20 +6,22 @@ import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 
 export default function HappinessMatrixWidget(props) {
-  console.log("In HappinessMatrixWidget");
+  // console.log("In HappinessMatrixWidget");
   const navigate = useNavigate();
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { data, dataSetter, cashflowDetails } = props;
-  console.log("HappinessMatrixWidget - data -", data);
+  const { page, setIndex, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
+  // console.log("HappinessMatrixWidget - data -", data);
+  // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
-  useEffect(() => {
-    console.log("pointsToPlot - ", pointsToPlot);
-  }, [pointsToPlot]);
+  // useEffect(() => {
+  //   console.log(" HappinessMatrixWidget - pointsToPlot - ", pointsToPlot);
+  // }, [pointsToPlot]);
 
   // Function to check if two points overlap
   function overlap(owner1, owner2, margin = 5) {
@@ -125,13 +127,13 @@ export default function HappinessMatrixWidget(props) {
           },
         }}
       >
-        <Grid container style={{ padding: "10px" }}>
-          <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+        <Grid container style={{ paddingTop: "10px" }}>
+          <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: '10px', }}>
+            <Typography variant="h5" sx={{fontSize: page === "OwnerContactDetails" ? '35px': '24px', fontWeight: "bold", color: "#160449" }}>
               Happiness Matrix
             </Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{backgroundColor: page === "OwnerContactDetails" ? "#D6D5DA" : "", borderRadius: '15px', }}>
             <ResponsiveContainer width="100%" height={380}>
               <ScatterChart
                 // width={chartWidth}
@@ -148,7 +150,7 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  tick={{ transform: 'translate(10, 0)' }}
+                  // tick={{ transform: 'translate(10, 0)' }}
                   // label={{
                   //   value: "Delta Cashflow",
                   //   angle: -90,
@@ -159,8 +161,8 @@ export default function HappinessMatrixWidget(props) {
                   //   fill: "#160449",
                   // }}
                   domain={[-1.1, 0.1]}
-                  ticks={[-1.1, -0.5, 0.1]}
-                  // tick={false}
+                  // ticks={[-1.1, -0.5, 0.1]}
+                  tick={false}
                 />
 
                 <XAxis
@@ -170,7 +172,7 @@ export default function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  tick={{ transform: 'translate(0, 0)' }}
+                  // tick={{ transform: 'translate(0, 0)' }}
                   // label={{
                   //   value: "Vacancies",
                   //   position: "insideBottom",
@@ -180,8 +182,8 @@ export default function HappinessMatrixWidget(props) {
                   //   fill: "#160449",
                   // }}
                   domain={[-100, 0]}
-                  ticks={[-100, -50, 0]} // Add this line
-                  // tick={false}
+                  // ticks={[-100, -50, 0]} // Add this line
+                  tick={false}
                 />
 
                 <Tooltip
@@ -250,7 +252,14 @@ export default function HappinessMatrixWidget(props) {
                     <CustomImage
                       {...props}
                       //   onClick={() => handlePointClick(props.payload)}
+                      data={data}
+                      page={page}
+                      contactDetails={contactDetails}
+                      setIndex={setIndex}
                       cashflowDetails={cashflowDetails}
+                      cashflowDetailsByProperty={cashflowDetailsByProperty}
+                      cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
+                      cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
@@ -281,9 +290,9 @@ export default function HappinessMatrixWidget(props) {
 
 const CustomImage = (props) => {
   const navigate = useNavigate();
-  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowDetails } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, cashflowData, data, page, setIndex, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
 
-  //   console.log("CustomImage - props - ", props);
+  // console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }
@@ -292,13 +301,21 @@ const CustomImage = (props) => {
   const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
-    console.log("CustomImage - handleClick - payload - ", payload);
-    navigate(`/ownerContactDetails`, {
+    // console.log("CustomImage - handleClick - payload - ", payload);    
+    if(page === "OwnerContactDetails"){      
+      const idx = contactDetails.findIndex(contact => contact.contact_uid === payload?.owner_uid)      
+      setIndex(idx);
+      return;
+    }    
+    navigate(`/ownerContactDetailsHappinessMatrix`, { //rohit
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
-        cashflowData: payload,
-        cashflowDetails: cashflowDetails.filter((item) => item.owner_uid === payload.owner_uid),
+        cashflowData: cashflowData,
+        cashflowDetails: cashflowDetails,
+        cashflowDetailsByProperty, cashflowDetailsByProperty,
+        cashflowDetailsByPropertyByMonth: cashflowDetailsByPropertyByMonth,
+        happinessMatrixData: data,
       },
     });
   };

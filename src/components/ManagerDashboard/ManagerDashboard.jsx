@@ -65,10 +65,18 @@ function ManagerDashboard() {
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
   const [cashflowDetails, setCashflowDetails] = useState([]);
+  const [cashflowDetailsByProperty, setCashflowDetailsByProperty] = useState([]);
+  const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
+  const [cashflowData, setCashflowData] = useState([]);
 
-  useEffect(() => {
-    console.log("ROHIT - cashflowDetails - ", cashflowDetails);
-  }, [cashflowDetails]);
+  // useEffect(() => {
+  //   console.log("ManagerDashboard - cashflowDetails - ", cashflowDetails);
+  // }, [cashflowDetails]);
+
+  // useEffect(() => {
+  //   console.log("ManagerDashboard - cashflowData - ", cashflowData);
+  // }, [cashflowData]);
+
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -108,7 +116,7 @@ function ManagerDashboard() {
       let actual_cashflow = 0;
 
       if (deltaCashflowItem) {
-        console.log("ROHIT - deltaCashflowItem - ", deltaCashflowItem);
+        // console.log("deltaCashflowItem - ", deltaCashflowItem);
         fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
         ownerUID = deltaCashflowItem.owner_uid;
         percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
@@ -141,8 +149,8 @@ function ManagerDashboard() {
         quarter = 4;
       }
 
-      console.log("ROHIT - delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
-      console.log("ROHIT - quarter - ", fullName, quarter);
+      // console.log("delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
+      // console.log("quarter - ", fullName, quarter);
 
       let borderColor;
       // switch (quarter) {
@@ -164,7 +172,7 @@ function ManagerDashboard() {
 
       switch (quarter) {
         case 1:
-          borderColor = "#00FA9A"; // Green
+          borderColor = "#006400"; // Green
           break;
         case 2:
           borderColor = "#FF8A00"; // Orange color
@@ -278,7 +286,17 @@ function ManagerDashboard() {
         setRevenueData(jsonData.Profitability);
 
         //CASHFLOW DETAILS
+        setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
+
+        //CASHFLOW DETAILS
         setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
+
+        //CASHFLOW DETAILS
+        setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
+
+        //CASHFLOW DETAILS
+        setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
+
 
         // NEW PM REQUESTS
         // set_property_endpoint_resp(propertiesResponseJSON);
@@ -338,7 +356,7 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} cashflowDetails={cashflowDetails} />
+                <HappinessMatrixWidget data={matrixData} cashflowData={cashflowData} cashflowDetails={cashflowDetails} cashflowDetailsByProperty={cashflowDetailsByProperty} cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth} />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />

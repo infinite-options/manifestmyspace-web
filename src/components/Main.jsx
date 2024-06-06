@@ -67,6 +67,7 @@ import TenantContactDetails from "./Contacts/ContactDetails/TenantContactDetails
 import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetails";
 import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails";
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
+import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerContactDetailsHappinessMatrix";
 
 import PropertyList from "./Property/PropertyList";
 // import PMProperties from "./Property/PMProperties";
@@ -292,6 +293,7 @@ function Main() {
             <Route path="managerContactDetails" element={<ManagerContactDetails />} />
             <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
             <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
+            <Route path="ownerContactDetailsHappinessMatrix" element={<OwnerContactDetailsHappinessMatrix />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />

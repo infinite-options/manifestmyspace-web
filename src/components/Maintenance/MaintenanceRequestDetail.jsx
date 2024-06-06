@@ -1,50 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ThemeProvider,
-  Typography,
-  Box,
-  Tabs,
-  Tab,
-  Paper,
-  Grid,
-  Stack,
-  Button
-} from '@mui/material';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Grid, Stack, Button } from "@mui/material";
+import PropTypes from "prop-types";
 
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import { useLocation, useNavigate } from 'react-router-dom';
-import theme from '../../theme/theme';
-import RequestCard from './MaintenanceRequestCard';
-import MaintenanceRequestNavigator from './MaintenanceRequestNavigator';
-import AddIcon from '@mui/icons-material/Add';
-import SelectMonthComponent from '../SelectMonthComponent';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import NewRequestAction from './Manager/NewRequestAction';
-import QuotesRequestAction from './Manager/QuotesRequestAction';
-import QuotesAccepted from './Manager/QuotesAccepted';
-import ScheduleMaintenance from './Manager/ScheduleMaintenance';
-import RescheduleMaintenance from './Manager/RescheduleMaintenance';
-import CompleteMaintenance from './Manager/CompleteMaintenance';
-import PaidMaintenance from './Manager/PaidMaintenance';
-import { useUser } from '../../contexts/UserContext';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useLocation, useNavigate } from "react-router-dom";
+import theme from "../../theme/theme";
+import RequestCard from "./MaintenanceRequestCard";
+import MaintenanceRequestNavigator from "./MaintenanceRequestNavigator";
+import AddIcon from "@mui/icons-material/Add";
+import SelectMonthComponent from "../SelectMonthComponent";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import NewRequestAction from "./Manager/NewRequestAction";
+import QuotesRequestAction from "./Manager/QuotesRequestAction";
+import QuotesAccepted from "./Manager/QuotesAccepted";
+import ScheduleMaintenance from "./Manager/ScheduleMaintenance";
+import RescheduleMaintenance from "./Manager/RescheduleMaintenance";
+import CompleteMaintenance from "./Manager/CompleteMaintenance";
+import PaidMaintenance from "./Manager/PaidMaintenance";
+import { useUser } from "../../contexts/UserContext";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-import APIConfig from '../../utils/APIConfig';
+import APIConfig from "../../utils/APIConfig";
 
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
+    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
         <Box sx={{ p: 3 }}>
           <Typography>{children}</Typography>
@@ -63,35 +47,30 @@ CustomTabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
-export function MaintenanceRequestDetail({
-  maintenance_request_index,
-  status: initialStatus,
-  maintenanceItemsForStatus: initialMaintenanceItemsForStatus,
-  allMaintenanceData,
-}) {
+export function MaintenanceRequestDetail({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
   let profileId = getProfileId();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   function getColorStatusBasedOnSelectedRole() {
     const role = roleName();
-    if (role === 'Manager') {
+    if (role === "Manager") {
       return theme.colorStatusPMO;
-    } else if (role === 'Owner') {
+    } else if (role === "Owner") {
       return theme.colorStatusO;
-    } else if (role === 'Maintenance') {
+    } else if (role === "Maintenance") {
       return theme.colorStatusMM;
-    } else if (role === 'PM Employee') {
+    } else if (role === "PM Employee") {
       return theme.colorStatusPMO;
-    } else if (role === 'Maintenance Employee') {
+    } else if (role === "Maintenance Employee") {
       return theme.colorStatusMM;
-    } else if (role === 'Tenant') {
+    } else if (role === "Tenant") {
       return theme.colorStatusTenant;
     }
   }
@@ -99,32 +78,31 @@ export function MaintenanceRequestDetail({
   const colorStatus = getColorStatusBasedOnSelectedRole();
 
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
-  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(
-    isMobile ? location.state.maintenance_request_index : maintenance_request_index
-  );
-  const [currentStatus, setCurrentStatus] = useState(''
-  );
-  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(
-    isMobile ? location.state.maintenanceItemsForStatus : initialMaintenanceItemsForStatus
-  );
+  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(isMobile ? location.state.maintenance_request_index : maintenance_request_index);
+  const [currentStatus, setCurrentStatus] = useState("");
+  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : initialMaintenanceItemsForStatus);
 
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
-  const [value, setValue] = useState(
-    colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : initialStatus))
-  );
+  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : initialStatus)));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [navParams, setNavParams] = useState({});
   const allData = isMobile ? location.state.allMaintenanceData : allMaintenanceData;
+  const isDesktop = location.state?.isDesktop || false;
+  const propertyIndex = location.state?.index || -1;
 
   function navigateToAddMaintenanceItem() {
-    navigate('/addMaintenanceItem', { state: { month, year } });
+    navigate("/addMaintenanceItem", { state: { month, year } });
   }
 
   function handleBackButton() {
     if (fromProperty) {
-      navigate(-1);
+      if (isDesktop === true) {
+        navigate("/properties", { state: { index: propertyIndex } });
+      } else {
+        navigate(-1);
+      }
     } else {
       navigate(maintenanceRoutingBasedOnSelectedRole());
     }
@@ -142,7 +120,7 @@ export function MaintenanceRequestDetail({
   let [tabs, setTabs] = useState({});
 
   function greyOutTab(key, maintenanceData, color) {
-    let greyColor = '#D9D9D9';
+    let greyColor = "#D9D9D9";
     if (maintenanceData && maintenanceData[key]) {
       return maintenanceData[key].length > 0 ? color : greyColor;
     } else {
@@ -151,13 +129,11 @@ export function MaintenanceRequestDetail({
   }
 
   useEffect(() => {
-
     const stat = isMobile ? location.state.status : initialStatus;
     setCurrentStatus(stat);
     const selectedIndex = isMobile ? location.state.maintenance_request_index : maintenance_request_index;
     setMaintenanceRequestIndex(selectedIndex);
-
-  },[initialStatus, maintenance_request_index, isMobile, location.state])
+  }, [initialStatus, maintenance_request_index, isMobile, location.state]);
 
   useEffect(() => {
     console.log("------useeffect 1------");
@@ -189,13 +165,11 @@ export function MaintenanceRequestDetail({
 
   useEffect(() => {
     console.log("------useeffect 2------");
-    var quotesFilteredById = maintenanceQuotes.filter(
-      (item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid
-    );
+    var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
     quotesFilteredById.sort((a, b) => {
-      if (a.quote_status === 'SENT') {
+      if (a.quote_status === "SENT") {
         return -1;
-      } else if (b.quote_status === 'SENT') {
+      } else if (b.quote_status === "SENT") {
         return 1;
       } else {
         return 0;
@@ -248,7 +222,7 @@ export function MaintenanceRequestDetail({
   const handleMaintenaceRequestIndexChange = (index, direction) => {
     setMaintenanceRequestIndex(index);
 
-    if (direction.changeTab === 'forward') {
+    if (direction.changeTab === "forward") {
       let i = value + 1;
       while (areTabsGrey[i] === 1) {
         i++;
@@ -257,7 +231,7 @@ export function MaintenanceRequestDetail({
       if (i <= 5) {
         handleChange(null, i);
       }
-    } else if (direction.changeTab === 'backward') {
+    } else if (direction.changeTab === "backward") {
       let i = value - 1;
       while (areTabsGrey[i] === 1) {
         i--;
@@ -265,8 +239,7 @@ export function MaintenanceRequestDetail({
       }
       if (i >= 0) {
         let requestType = colorStatus[i].mapping.toUpperCase();
-        let lastIndex =
-          allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
+        let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
         setValue(i);
         setCurrentStatus(colorStatus[i].status);
         setMaintenanceRequestIndex(lastIndex);
@@ -279,35 +252,36 @@ export function MaintenanceRequestDetail({
     <ThemeProvider theme={theme}>
       <Box
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          width: '100%',
-          minHeight: '100vh',
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          minHeight: "100vh",
         }}
       >
         <Paper
           style={{
-            margin: '5px',
+            margin: "5px",
             backgroundColor: theme.palette.primary.main,
-            width: '100%',
-            paddingTop: '10px',
-            paddingBottom: '30px',
+            width: "100%",
+            paddingTop: "10px",
+            paddingBottom: "30px",
           }}
-        >{isMobile && (
-          <Box position="absolute">
-            <Button onClick={() => handleBackButton()}>
-              <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-            </Button>
-          </Box>
-        )}
+        >
+          {isMobile && (
+            <Box position="absolute">
+              <Button onClick={() => handleBackButton()}>
+                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+              </Button>
+            </Box>
+          )}
           <Stack
             direction="row"
             justifyContent="center"
             alignItems="center"
             sx={{
-              paddingBottom: '20px',
-              paddingLeft: '0px',
-              paddingRight: '0px',
+              paddingBottom: "20px",
+              paddingLeft: "0px",
+              paddingRight: "0px",
             }}
           >
             <Box direction="row" justifyContent="center" alignItems="center">
@@ -324,15 +298,15 @@ export function MaintenanceRequestDetail({
           </Stack>
           <Stack
             sx={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingBottom: '20px',
+              justifyContent: "center",
+              alignItems: "center",
+              paddingBottom: "20px",
             }}
           >
             <Box
               sx={{
                 borderBottom: 0,
-                width: '95%',
+                width: "95%",
               }}
             >
               <Tabs
@@ -341,16 +315,16 @@ export function MaintenanceRequestDetail({
                 onChange={handleChange}
                 TabIndicatorProps={{
                   style: {
-                    backgroundColor: 'transparent',
-                    border: '0px',
-                    minWidth: '5px',
-                    height: '10px',
-                    padding: '0px',
+                    backgroundColor: "transparent",
+                    border: "0px",
+                    minWidth: "5px",
+                    height: "10px",
+                    padding: "0px",
                   },
                 }}
                 sx={{
-                  [theme.breakpoints.up('sm')]: {
-                    height: '5px',
+                  [theme.breakpoints.up("sm")]: {
+                    height: "5px",
                   },
                 }}
               >
@@ -365,11 +339,11 @@ export function MaintenanceRequestDetail({
                       {...a11yProps(index)}
                       sx={{
                         backgroundColor: color,
-                        borderTopLeftRadius: '10px',
-                        borderTopRightRadius: '10px',
-                        height: '10%',
-                        minWidth: '5px',
-                        padding: '0px',
+                        borderTopLeftRadius: "10px",
+                        borderTopRightRadius: "10px",
+                        height: "10%",
+                        minWidth: "5px",
+                        padding: "0px",
                       }}
                       label={
                         <Typography
@@ -394,29 +368,24 @@ export function MaintenanceRequestDetail({
                     index={index}
                     style={{
                       backgroundColor: item.color,
-                      borderBottomRightRadius: '10px',
-                      borderBottomLeftRadius: '10px',
+                      borderBottomRightRadius: "10px",
+                      borderBottomLeftRadius: "10px",
                     }}
                   >
                     <Grid
                       sx={{
                         backgroundColor: item.color,
-                        justifyContent: 'center',
-                        marginLeft: '25px',
-                        marginRight: '25px',
-                        paddingBottom: '0px',
+                        justifyContent: "center",
+                        marginLeft: "25px",
+                        marginRight: "25px",
+                        paddingBottom: "0px",
                       }}
                     >
                       {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
                         <MaintenanceRequestNavigator
                           requestIndex={maintenanceRequestIndex}
-                          backward_active_status={
-                            maintenanceRequestIndex === 0 && value === tabs.firstTab
-                          }
-                          forward_active_status={
-                            value === tabs.lastTab &&
-                            allData[item.mapping].length - 1 === maintenanceRequestIndex
-                          }
+                          backward_active_status={maintenanceRequestIndex === 0 && value === tabs.firstTab}
+                          forward_active_status={value === tabs.lastTab && allData[item.mapping].length - 1 === maintenanceRequestIndex}
                           updateRequestIndex={handleMaintenaceRequestIndexChange}
                           requestData={allData[item.mapping]}
                           status={currentStatus}
@@ -435,53 +404,27 @@ export function MaintenanceRequestDetail({
               ))}
               <Box
                 sx={{
-                  paddingBottom: '20px',
-                  paddingTop: '20px',
+                  paddingBottom: "20px",
+                  paddingTop: "20px",
                 }}
               >
-                {colorStatus[value]?.status === 'New Requests' &&
-                maintenanceItemsForStatus[maintenanceRequestIndex] ? (
-                  <NewRequestAction
-                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
-                    navigateParams={navParams}
-                  />
+                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
+                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
                 ) : null}
-                {colorStatus[value]?.status === 'Quotes Requested' ? (
-                  <QuotesRequestAction
-                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
-                    navigateParams={navParams}
-                    quotes={filteredQuotes}
-                  />
+                {colorStatus[value]?.status === "Quotes Requested" ? (
+                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
-                {colorStatus[value]?.status === 'Quotes Accepted' ? (
-                  <QuotesAccepted
-                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
-                    navigateParams={navParams}
-                    quotes={filteredQuotes}
-                  />
+                {colorStatus[value]?.status === "Quotes Accepted" ? (
+                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
-                {colorStatus[value]?.status === 'Scheduled' ? (
-                  <ScheduleMaintenance
-                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
-                    navigateParams={navParams}
-                    quotes={filteredQuotes}
-                  />
+                {colorStatus[value]?.status === "Scheduled" ? (
+                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
-                {colorStatus[value]?.status === 'Completed' &&
-                maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !==
-                  'CANCELLED' ? (
-                  <CompleteMaintenance
-                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
-                    navigateParams={navParams}
-                    quotes={filteredQuotes}
-                  />
+                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !== "CANCELLED" ? (
+                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
-                {colorStatus[value]?.status === 'Paid' ? (
-                  <PaidMaintenance
-                    maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}
-                    navigateParams={navParams}
-                    quotes={filteredQuotes}
-                  />
+                {colorStatus[value]?.status === "Paid" ? (
+                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
               </Box>
             </Box>

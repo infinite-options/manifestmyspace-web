@@ -28,13 +28,13 @@ import {
   formatPhoneNumber,
   headers,
   maskNumber,
+  maskEin,
   roleMap,
   photoFields,
 } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
-import { getLatLongFromAddress } from "../../utils/geocode";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 
 
@@ -95,6 +95,7 @@ const ProfileInfo = () => {
   const [locations, setLocations] = useState([
     { id: 1, address: "", city: "", state: "", miles: "" },
   ]);
+  const [ein_mask, setEinMask] = useState("");
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
 
@@ -104,11 +105,7 @@ const ProfileInfo = () => {
       { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" },
     ]);
   };
-  const us_states = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-]
+  
 
 
 
@@ -259,7 +256,7 @@ const ProfileInfo = () => {
               alert("Please enter a valid zip code");
               return false;}
             
-              if (!DataValidator.ssn_validate(ein )) {
+              if (!DataValidator.ein_validate(ein )) {
 
                 alert("Please enter a valid EIN");
                 return false;
@@ -278,7 +275,7 @@ const ProfileInfo = () => {
           business_photo_url: photo,
           business_phone_number: phoneNumber,
           business_email: email,
-          business_ein_number: ein,
+          business_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
           business_services_fees: JSON.stringify(fees),
           business_locations: JSON.stringify(locations),
           business_address: address,
@@ -295,7 +292,7 @@ const ProfileInfo = () => {
           business_photo: photo,
           business_phone_number: phoneNumber,
           business_email: email,
-          business_ein_number: ein,
+          business_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
           business_services_fees: JSON.stringify(services),
           business_locations: JSON.stringify(locations),
           business_address: address,
@@ -311,7 +308,7 @@ const ProfileInfo = () => {
           owner_last_name: lastName,
           owner_phone_number: phoneNumber,
           owner_email: email,
-          owner_ein_number: ein,
+          owner_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
           owner_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
           owner_address: address,
           owner_unit: unit,
@@ -387,7 +384,24 @@ const ProfileInfo = () => {
   };
 
   const handleEinChange = (event) => {
-    setEin(event.target.value);
+    const value = event.target.value;
+    const lastChar = value.charAt(value.length - 1);
+    const isDeleting = event.nativeEvent.inputType === "deleteContentBackward" || event.nativeEvent.inputType === "deleteContentForward";
+  
+    if (isDeleting) {
+      setEin(ein.slice(0, -1));
+      setEinMask(maskEin(ein.slice(0, -1)));
+    } else {
+      if (!value) {
+        setEin("");
+        setEinMask("");
+        return;
+      }
+      if (value.length > 10) return;
+  
+      setEin(ein + lastChar);
+      setEinMask(maskEin(ein + lastChar));
+    }
   };
 
   const handleSsnChange = (event) => {
@@ -575,50 +589,7 @@ const ProfileInfo = () => {
                 ></TextField>
               </Stack>
             </Grid>
-            <Grid item xs={6}>
-              <Stack spacing={-2} m={5}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                  }}
-                >
-                  {"City"}
-                </Typography>
-                <TextField
-                  value={city}
-                  onChange={handleCityChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="San Jose"
-                  className={classes.root}
-                ></TextField>
-              </Stack>
-            </Grid>
-            <Grid item xs={6}>
-              <Stack spacing={-2} m={5}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    paddingBottom: "10px",
-                  }}
-                >
-                  {"State"}
-                </Typography>
-
-
-                <TextField
-              value={state}
-              onChange={handleStateChange}
-              variant="filled"
-              fullWidth
-              placeholder="Enter street address"
-              className={classes.root}
-            ></TextField>
-
-              </Stack>
-            </Grid>
+            
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography
@@ -1014,13 +985,14 @@ const ProfileInfo = () => {
                     {"EIN/SSN"}
                   </Typography>
                   <TextField
-                    value={ein}
+                    name="ein"
+                    value={ein_mask}
                     onChange={handleEinChange}
                     variant="filled"
                     fullWidth
-                    placeholder="Enter EIN"
+                    placeholder="**-*******"
                     className={classes.root}
-                  ></TextField>
+                ></TextField>
                 </Stack>
               </Grid>
             ) : (

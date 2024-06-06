@@ -37,7 +37,7 @@ const SearchManager = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { index, propertyData } = location.state;
+  const { index, propertyData, isDesktop } = location.state;
   const [displayed_managers, set_displayed_managers] = useState([]);
   const [all_managers, set_all_managers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,6 +70,14 @@ const SearchManager = () => {
     set_displayed_managers(managers);
 
   };
+
+  const navigateToPrev = () => {
+    if(isDesktop === true){
+      navigate('/properties', {state:{index:index}});
+    }else{
+      navigate(-1);
+    }
+  }
 
   // ... (Rest of the component code)
 
@@ -144,7 +152,7 @@ const SearchManager = () => {
                     alignItems: 'center', // This ensures vertical alignment with the image
                     paddingLeft: "5px",
                   }}
-                  onClick={() => navigate(-1)}
+                  onClick={navigateToPrev}
                 >
                   <img src={ReturnArrow} style={{ verticalAlign: 'middle', paddingRight: "5px" }} alt="back" />
                   <Typography
@@ -219,6 +227,7 @@ function DocumentCard(props) {
   const ownerId = props.ownerId;
   const propertyData = props.propertyData;
   const index = props.index;
+  const isDesktop = props.isDesktop;
   const navigate = useNavigate();
 
   console.log("BUSINESS Locations - ", obj.business_locations);
@@ -241,6 +250,7 @@ function DocumentCard(props) {
         managerData: obj,
         propertyData: propertyData,
         index: index,
+        isDesktop: isDesktop,
       }
     }
     );    
