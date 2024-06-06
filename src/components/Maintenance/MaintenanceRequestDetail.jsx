@@ -318,7 +318,7 @@ export function MaintenanceRequestDetail({
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                Details
+                Maintenance Details
               </Typography>
             </Box>
           </Stack>

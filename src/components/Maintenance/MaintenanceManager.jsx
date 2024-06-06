@@ -1,26 +1,40 @@
-import { Typography, Box, Stack, Paper, Button, ThemeProvider } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import theme from "../../theme/theme";
-import MaintenanceStatusTable from "./MaintenanceStatusTable";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AddIcon from "@mui/icons-material/Add";
-import SelectMonthComponent from "../SelectMonthComponent";
-import SelectPropertyFilter from "../SelectPropertyFilter/SelectPropertyFilter";
-import CloseIcon from "@mui/icons-material/Close";
-import HomeWorkIcon from "@mui/icons-material/HomeWork";
-import { useUser } from "../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+import React, { useEffect, useState } from 'react';
+import {
+  Typography,
+  Box,
+  Stack,
+  Paper,
+  Button,
+  ThemeProvider,
+  Grid,
+  Tabs,
+  Tab,
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
+import theme from '../../theme/theme';
+import MaintenanceStatusTable from './MaintenanceStatusTable';
+import { MaintenanceRequestDetail } from './MaintenanceRequestDetail';
+import SelectMonthComponent from '../SelectMonthComponent';
+import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
+import { useUser } from '../../contexts/UserContext';
+import APIConfig from '../../utils/APIConfig';
 
-import APIConfig from "../../utils/APIConfig";
-
-export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId) {
+export async function maintenanceManagerDataCollectAndProcess(
+  setMaintenanceData,
+  setShowSpinner,
+  setDisplayMaintenanceData,
+  profileId
+) {
   const dataObject = {};
 
   function dedupeQuotes(array) {
-    // we want to find all the quotes that have the same maintenance_request_uid
-
     const mapping = {};
     const dedupeArray = [];
 
@@ -35,19 +49,15 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
       if (mapping[key].length > 0) {
         const quotes = [];
         for (const item of mapping[key]) {
-          const keys = Object.keys(item).filter((key) => key.startsWith("quote_"));
+          const keys = Object.keys(item).filter((key) => key.startsWith('quote_'));
           const quoteObject = {};
           for (const key of keys) {
             quoteObject[key] = item[key];
           }
           quotes.push(quoteObject);
         }
-        // console.log("quotes", quotes)
-
         mapping[key][0].quotes = quotes;
-        // delete all keys that start with quote_
-        const keysToDelete = Object.keys(mapping[key][0]).filter((key) => key.startsWith("quote_"));
-        // console.log(keysToDelete)
+        const keysToDelete = Object.keys(mapping[key][0]).filter((key) => key.startsWith('quote_'));
         keysToDelete.forEach((e) => delete mapping[key][0][e]);
         for (const keyToDelete in keysToDelete) {
           delete mapping[key][0][keyToDelete];
@@ -61,43 +71,40 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
   const getMaintenanceData = async () => {
     setShowSpinner(true);
 
-    const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`); // Change back to ${getProfileId()}
+    const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
-    console.log("[DEBUG] Data returned from maintenanceStatus endpoint:", maintenanceRequestsData);
+    let array1 = maintenanceRequestsData.result['NEW REQUEST'].maintenance_items;
+    let array2 = dedupeQuotes(maintenanceRequestsData.result['QUOTES REQUESTED'].maintenance_items);
+    let array3 = maintenanceRequestsData.result['QUOTES ACCEPTED'].maintenance_items;
+    let array4 = maintenanceRequestsData.result['SCHEDULED'].maintenance_items;
+    let array5 = maintenanceRequestsData.result['COMPLETED'].maintenance_items;
+    let array6 = maintenanceRequestsData.result['PAID'].maintenance_items;
 
-    let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
-    let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items);
-    let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items;
-    let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items;
-    let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items;
-    let array6 = maintenanceRequestsData.result["PAID"].maintenance_items;
-
-    dataObject["NEW REQUEST"] = [];
-    dataObject["QUOTES REQUESTED"] = [];
-    dataObject["QUOTES ACCEPTED"] = [];
-    dataObject["SCHEDULED"] = [];
-    dataObject["COMPLETED"] = [];
-    dataObject["PAID"] = [];
+    dataObject['NEW REQUEST'] = [];
+    dataObject['QUOTES REQUESTED'] = [];
+    dataObject['QUOTES ACCEPTED'] = [];
+    dataObject['SCHEDULED'] = [];
+    dataObject['COMPLETED'] = [];
+    dataObject['PAID'] = [];
 
     for (const item of array1) {
-      // console.log(item.maintenance_request_uid)
-      dataObject["NEW REQUEST"].push(item);
+      dataObject['NEW REQUEST'].push(item);
     }
     for (const item of array2) {
-      dataObject["QUOTES REQUESTED"].push(item);
+      dataObject['QUOTES REQUESTED'].push(item);
     }
     for (const item of array3) {
-      dataObject["QUOTES ACCEPTED"].push(item);
+      dataObject['QUOTES ACCEPTED'].push(item);
     }
     for (const item of array4) {
-      dataObject["SCHEDULED"].push(item);
+      dataObject['SCHEDULED'].push(item);
     }
     for (const item of array5) {
-      dataObject["COMPLETED"].push(item);
+      dataObject['COMPLETED'].push(item);
     }
     for (const item of array6) {
-      dataObject["PAID"].push(item);
+      dataObject['PAID'].push(item);
     }
 
     setMaintenanceData((prevData) => ({
@@ -114,23 +121,22 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
 }
 
 export default function MaintenanceManager() {
-  // console.log("In MaintenanceManager");
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId } = useUser();
   const [maintenanceData, setMaintenanceData] = useState({});
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
-  const [propertyId, setPropertyId] = useState("");
+  const [propertyId, setPropertyId] = useState('');
   const colorStatus = theme.colorStatusPMO;
   const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
   const newDataObject = {};
-  newDataObject["NEW REQUEST"] = [];
-  newDataObject["QUOTES REQUESTED"] = [];
-  newDataObject["QUOTES ACCEPTED"] = [];
-  newDataObject["SCHEDULED"] = [];
-  newDataObject["COMPLETED"] = [];
-  newDataObject["PAID"] = [];
+  newDataObject['NEW REQUEST'] = [];
+  newDataObject['QUOTES REQUESTED'] = [];
+  newDataObject['QUOTES ACCEPTED'] = [];
+  newDataObject['SCHEDULED'] = [];
+  newDataObject['COMPLETED'] = [];
+  newDataObject['PAID'] = [];
 
   const [showSelectMonth, setShowSelectMonth] = useState(false);
   const [showPropertyFilter, setShowPropertyFilter] = useState(false);
@@ -142,13 +148,17 @@ export default function MaintenanceManager() {
 
   const businessId = user.businesses.MAINTENANCE.business_uid;
 
+  const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
+  const [selectedStatus, setSelectedStatus] = useState('NEW REQUEST');
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   function navigateToAddMaintenanceItem() {
-    navigate("/addMaintenanceItem");
+    navigate('/addMaintenanceItem');
   }
 
   useEffect(() => {
     if (maintenanceData) {
-      // console.log("maintenanceData", maintenanceData)
       const propertyList = [];
       const addedAddresses = [];
       for (const key in maintenanceData) {
@@ -164,26 +174,24 @@ export default function MaintenanceManager() {
           }
         }
       }
-
-      // console.log("filterPropertyList", propertyList)
       setFilterPropertyList(propertyList);
     }
   }, [maintenanceData]);
 
   function convertToStandardFormat(monthName, year) {
     const months = {
-      January: "01",
-      February: "02",
-      March: "03",
-      April: "04",
-      May: "05",
-      June: "06",
-      July: "07",
-      August: "08",
-      September: "09",
-      October: "10",
-      November: "11",
-      December: "12",
+      January: '01',
+      February: '02',
+      March: '03',
+      April: '04',
+      May: '05',
+      June: '06',
+      July: '07',
+      August: '08',
+      September: '09',
+      October: '10',
+      November: '11',
+      December: '12',
     };
 
     return `${year}-${months[monthName]}`;
@@ -191,7 +199,6 @@ export default function MaintenanceManager() {
 
   function handleFilter(maintenanceArray, month, year, filterPropertyList) {
     var filteredArray = [];
-    // Filtering by date
     if (month && year) {
       const filterFormatDate = convertToStandardFormat(month, year);
       for (const item of maintenanceArray) {
@@ -203,9 +210,7 @@ export default function MaintenanceManager() {
       filteredArray = maintenanceArray;
     }
 
-    // Filtering by property
     if (filterPropertyList?.length > 0) {
-      //filteredArray = filteredArray.filter(item => filterPropertyList.includes(item.property_address));
       filteredArray = filteredArray.filter((item) => {
         for (const filterItem of filterPropertyList) {
           if (filterItem.address === item.property_address && filterItem.checked) {
@@ -215,16 +220,14 @@ export default function MaintenanceManager() {
         return false;
       });
     }
-
-    //setDisplayMaintenanceData(filteredArray);
     return filteredArray;
   }
 
   function displayFilterString(month, year) {
     if (month && year) {
-      return month + " " + year;
+      return month + ' ' + year;
     } else {
-      return "Last 30 Days";
+      return 'Last 30 Days';
     }
   }
 
@@ -236,9 +239,9 @@ export default function MaintenanceManager() {
       }
     }
     if (count === filterPropertyList.length) {
-      return "All Properties";
+      return 'All Properties';
     } else {
-      return "Selected " + count + " Properties";
+      return 'Selected ' + count + ' Properties';
     }
   }
 
@@ -249,136 +252,213 @@ export default function MaintenanceManager() {
   }
 
   useEffect(() => {
-    // console.log("Maintenance useEffect")
-    // getMaintenanceData();
     let profileId = getProfileId();
-    maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId);
+    maintenanceManagerDataCollectAndProcess(
+      setMaintenanceData,
+      setShowSpinner,
+      setDisplayMaintenanceData,
+      profileId
+    );
     setRefresh(false);
   }, [refresh]);
 
+  const handleRowClick = (index, row) => {
+    if (isMobile) {
+      navigate(`/maintenance/detail`, {
+        state: {
+          maintenance_request_index: index,
+          status: row.maintenance_status,
+          maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
+          allMaintenanceData: maintenanceData,
+        }
+      });
+    } else {
+      setSelectedRequestIndex(index);
+      setSelectedStatus(row.maintenance_status);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
-          // marginTop: theme.spacing(2), // Set the margin to 20px
-          marginTop: "25px",
-        }}
-      >
-        <Paper
+      <Grid container sx={{ padding: '10px' }}>
+        <Grid
+          item
+          xs={12}
+          sm={5}
           style={{
-            padding: theme.spacing(2),
-            backgroundColor: theme.palette.primary.main,
-            width: "95%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-            paddingTop: "10px",
-            borderRadius: "10px",
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            minHeight: '100vh',
           }}
         >
-          <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
-            <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                Maintenance
-              </Typography>
-            </Box>
-            <Box position="absolute" right={0}>
-              <Button onClick={() => navigateToAddMaintenanceItem()}>
-                <AddIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
-              </Button>
-            </Box>
-          </Stack>
-          <Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
-              <CalendarTodayIcon
-                sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }}
-              />
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-                {displayFilterString(month, year)}
-              </Typography>
-            </Button>
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowPropertyFilter(true)}>
-              <HomeWorkIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }} />
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-                {displayPropertyFilterTitle(filterPropertyList)}
-              </Typography>
-            </Button>
-
-            <SelectMonthComponent
-              month={month}
-              showSelectMonth={showSelectMonth}
-              setShowSelectMonth={setShowSelectMonth}
-              setMonth={setMonth}
-              setYear={setYear}
-            ></SelectMonthComponent>
-            <SelectPropertyFilter
-              showPropertyFilter={showPropertyFilter}
-              setShowPropertyFilter={setShowPropertyFilter}
-              filterList={filterPropertyList}
-              setFilterList={setFilterPropertyList}
-            />
-          </Box>
-          <Box component="span" m={2} display="flex" justifyContent="center" alignItems="center" position="relative">
-            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-              {displayFilterString(month, year)}
-              {displayFilterString(month, year) === "Last 30 Days" ? null : (
-                <Button
-                  onClick={() => clearFilters()}
-                  sx={{
-                    padding: "0px",
-                    position: "absolute",
-                    right: 0,
-                    opacity: displayFilterString(month, year) === "Last 30 Days" ? 0 : 1, // Adjust opacity based on condition
-                    pointerEvents: displayFilterString(month, year) === "Last 30 Days" ? "none" : "auto", // Ensure the button is not clickable when hidden
-                  }}
-                >
-                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "14px" }} />
-                </Button>
-              )}
-            </Typography>
-          </Box>
-          <div
+          <Paper
             style={{
-              borderRadius: "20px",
-              margin: "10px",
+              margin: '5px',
+              backgroundColor: theme.palette.primary.main,
+              width: '95%',
+              paddingTop: '10px',
+              paddingBottom: '30px',
             }}
           >
-            {colorStatus.map((item, index) => {
-              let mappingKey = item.mapping;
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                paddingBottom: '20px',
+                paddingLeft: '0px',
+                paddingRight: '0px',
+              }}
+            >
+              <Box direction="row" justifyContent="center" alignItems="center">
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                  }}
+                >
+                  Maintenance
+                </Typography>
+              </Box>
+            </Stack>
 
-              let maintenanceArray = maintenanceData[mappingKey] || [];
-
-              let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
-
-              for (const item of filteredArray) {
-                newDataObject[mappingKey].push(item);
-              }
-
-              return (
-                <MaintenanceStatusTable
-                  key={index}
-                  status={item.status}
-                  color={item.color}
-                  maintenanceItemsForStatus={filteredArray}
-                  allMaintenanceData={newDataObject}
-                  maintenanceRequestsCount={filteredArray}
-                  // maintenanceItemQuotes={maintenanceItemQuotes}
+            <Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
+              <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
+                <CalendarTodayIcon
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    margin: '5px',
+                  }}
                 />
-              );
-            })}
-          </div>
-        </Paper>
-      </Box>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {displayFilterString(month, year)}
+                </Typography>
+              </Button>
+              <Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
+                <HomeWorkIcon
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    margin: '5px',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {displayPropertyFilterTitle(filterPropertyList)}
+                </Typography>
+              </Button>
+
+              <SelectMonthComponent
+                month={month}
+                showSelectMonth={showSelectMonth}
+                setShowSelectMonth={setShowSelectMonth}
+                setMonth={setMonth}
+                setYear={setYear}
+              ></SelectMonthComponent>
+              <SelectPropertyFilter
+                showPropertyFilter={showPropertyFilter}
+                setShowPropertyFilter={setShowPropertyFilter}
+                filterList={filterPropertyList}
+                setFilterList={setFilterPropertyList}
+              />
+            </Box>
+            <Box
+              component="span"
+              m={2}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              position="relative"
+            >
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {displayFilterString(month, year)}
+                {displayFilterString(month, year) === 'Last 30 Days' ? null : (
+                  <Button
+                    onClick={() => clearFilters()}
+                    sx={{
+                      padding: '0px',
+                      position: 'absolute',
+                      right: 0,
+                      opacity: displayFilterString(month, year) === 'Last 30 Days' ? 0 : 1,
+                      pointerEvents: displayFilterString(month, year) === 'Last 30 Days' ? 'none' : 'auto',
+                    }}
+                  >
+                    <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: '14px' }} />
+                  </Button>
+                )}
+              </Typography>
+            </Box>
+            <div
+              style={{
+                borderRadius: '20px',
+                margin: '10px',
+              }}
+            >
+              {colorStatus.map((item, index) => {
+                let mappingKey = item.mapping;
+
+                let maintenanceArray = maintenanceData[mappingKey] || [];
+
+                let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
+
+                for (const item of filteredArray) {
+                  newDataObject[mappingKey].push(item);
+                }
+
+                return (
+                  <MaintenanceStatusTable
+                    key={index}
+                    status={item.status}
+                    color={item.color}
+                    maintenanceItemsForStatus={filteredArray}
+                    allMaintenanceData={newDataObject}
+                    maintenanceRequestsCount={filteredArray}
+                    onRowClick={handleRowClick}
+                  />
+                );
+              })}
+            </div>
+          </Paper>
+        </Grid>
+
+        {!isMobile && (
+          <Grid item xs={7}>
+            {Object.keys(maintenanceData).length > 0 && (
+              <MaintenanceRequestDetail
+                maintenance_request_index={selectedRequestIndex}
+                status={selectedStatus}
+                maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+                allMaintenanceData={maintenanceData}
+              />
+            )}
+          </Grid>
+        )}
+      </Grid>
     </ThemeProvider>
   );
 }

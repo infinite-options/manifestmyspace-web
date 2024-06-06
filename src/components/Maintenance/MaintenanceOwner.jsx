@@ -224,10 +224,7 @@ export function MaintenanceOwner() {
     }, []);
 
     const handleRowClick = (index, row) => {
-		console.log("=====", row);
         if (isMobile) {
-
-			console.log("=====if====", index);
             navigate(`/maintenance/detail`, {
                 state: {
                     maintenance_request_index: index,
@@ -237,7 +234,6 @@ export function MaintenanceOwner() {
                 }
             });
         } else {
-			console.log("=====else====", index);
             setSelectedRequestIndex(index);
             setSelectedStatus(row.maintenance_status);
         }
