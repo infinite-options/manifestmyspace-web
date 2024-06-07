@@ -724,7 +724,7 @@ export default function PropertyList({}) {
             </Grid>
             {propertyList.length > 0 && allRentStatus.length > 0 && isDesktop === true &&
               <Grid item xs={12} md={8}>
-                <PropertyDetail2 index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} />
+                <PropertyDetail2 index={propertyIndex} propertyList={displayedItems} allRentStatus={allRentStatus} isDesktop={isDesktop} />
               </Grid>
             }
           </Grid>)}

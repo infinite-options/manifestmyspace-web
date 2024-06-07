@@ -128,6 +128,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   }
 
   useEffect(() => {
+    setPropertyData(propertyList);
     const nextIndex = index !== undefined ? index : 0;
     setCurrentIndex(nextIndex);
     const nextId = propertyData[nextIndex].property_uid;
@@ -305,26 +306,31 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     console.log(maintenanceReqData);
 
     try {
-      navigate("/maintenance/detail", {
-        state: {
-          maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
-          status: status,
-          maintenanceItemsForStatus: maintenanceReqData[status],
-          allMaintenanceData: maintenanceReqData,
-          fromProperty: true,
-          index: currentIndex,
-          isDesktop:isDesktop
-        },
-        // try {
-        //   navigate("/maintenance/detail", {
-        //     state: {
-        //       maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
-        //       status: status,
-        //       maintenanceItemsForStatus: maintenanceReqData[status],
-        //       allMaintenanceData: maintenanceReqData,
-        //       fromProperty: true,
-        //     },
-      });
+      if (!isDesktop) {
+        navigate("/maintenance/detail", {
+          state: {
+            maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
+            status: status,
+            maintenanceItemsForStatus: maintenanceReqData[status],
+            allMaintenanceData: maintenanceReqData,
+            fromProperty: true,
+            index: currentIndex,
+            isDesktop: isDesktop
+          },
+        });
+      } else {
+        navigate("/ownerMaintenance", {
+          state: {
+            maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
+            status: status,
+            maintenanceItemsForStatus: maintenanceReqData[status],
+            allMaintenanceData: maintenanceReqData,
+            fromProperty: true,
+            index: currentIndex,
+            propertyId: propertyId,
+          },
+        });
+      }
     } catch (error) {
       console.log(error);
       alert("Error navigating to maintenance detail", error);
@@ -461,7 +467,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   };
 
   const handleAppClick = (index) => {
-    navigate("/tenantApplicationNav", { state: { index: currentIndex, property: property, isDesktop:isDesktop } });
+    navigate("/tenantApplicationNav", { state: { index: currentIndex, property: property, isDesktop: isDesktop } });
   };
 
   const getRentStatus = () => {
@@ -489,7 +495,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const paymentStatusColorMap = (value) => {
     if (value === "PAID") {
       return theme.palette.priority.clear;
-    }else if (value === "UNPAID") {
+    } else if (value === "UNPAID") {
       return theme.palette.priority.high;
     } else if (value === "PARTAILLY PAID") {
       return theme.palette.priority.medium;
@@ -502,7 +508,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "cf_monthName",
       headerName: "Month",
-      sortable:isDesktop,
+      sortable: isDesktop,
       flex: 0.8,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
@@ -511,7 +517,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "latest_date_formatted",
       headerName: "Paid",
-      sortable:isDesktop,
+      sortable: isDesktop,
       flex: 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
@@ -520,7 +526,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "total_paid_formatted",
       headerName: "Amount",
-      sortable:isDesktop,
+      sortable: isDesktop,
       flex: 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
@@ -530,7 +536,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     {
       field: "rent_status",
       headerName: "Rent Status",
-      sortable:isDesktop,
+      sortable: isDesktop,
       flex: 1,
       renderCell: (params) => {
         return <Box
@@ -995,34 +1001,34 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               {"Applications"}
                             </Typography>
                           </Grid>
-                         
-                            {property.applications.map((app, index) => (
-                              <Grid item xs={6} key={index} sx={{ display: 'flex' }}>
-                                <Button
-                                  onClick={() => handleAppClick(index)}
-                                  sx={{
+
+                          {property.applications.map((app, index) => (
+                            <Grid item xs={6} key={index} sx={{ display: 'flex' }}>
+                              <Button
+                                onClick={() => handleAppClick(index)}
+                                sx={{
+                                  backgroundColor: getAppColor(app),
+                                  color: "#FFFFFF",
+                                  textTransform: "none",
+                                  width: "100%",
+                                  height: "70px",
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  "&:hover, &:focus, &:active": {
                                     backgroundColor: getAppColor(app),
-                                    color: "#FFFFFF",
-                                    textTransform: "none",
-                                    width: "100%",
-                                    height: "70px",
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    "&:hover, &:focus, &:active": {
-                                      backgroundColor: getAppColor(app),
-                                    },
-                                  }}
-                                >
-                                  <Stack>
-                                    <Typography sx={{ fontSize: theme.typography.smallFont,}}>{app.tenant_first_name + " " + app.tenant_last_name}</Typography>
-                                    <Typography sx={{ fontWeight: "bold",  fontSize: theme.typography.smallFont, }}>{app.lease_status}</Typography>
-                                  </Stack>
-                                </Button>
-                              </Grid>
-                            ))}
-                         
+                                  },
+                                }}
+                              >
+                                <Stack>
+                                  <Typography sx={{ fontSize: theme.typography.smallFont, }}>{app.tenant_first_name + " " + app.tenant_last_name}</Typography>
+                                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.smallFont, }}>{app.lease_status}</Typography>
+                                </Stack>
+                              </Button>
+                            </Grid>
+                          ))}
+
                         </>
                       )}
                       <Grid item xs={11}>
@@ -1311,9 +1317,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
                         '@media (max-width: 600px)': {
                           '& .MuiDataGrid-columnHeaderTitle': {
-                            width:'100%',
-                            margin:'0px',
-                            padding:'0px',
+                            width: '100%',
+                            margin: '0px',
+                            padding: '0px',
                           },
                         },
                       }}
