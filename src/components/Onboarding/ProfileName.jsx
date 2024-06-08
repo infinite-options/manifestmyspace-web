@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Paper,
-  Box,
-  Stack,
-  ThemeProvider,
-  Button,
-  Typography,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Paper, Box, Stack, ThemeProvider, Button, Typography, Select, MenuItem } from "@mui/material";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -50,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfileName = () => {
   const classes = useStyles();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [statusImg, setStatusImg] = useState();
   const [title, setTitle] = useState();
   const [addPhotoImg, setAddPhotoImg] = useState();
@@ -60,42 +51,49 @@ const ProfileName = () => {
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
 
-  const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee, selectedRole } =
-    useUser();
-  const {
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
-    businessName,
-    setBusinessName,
-    photo,
-    setPhoto,
-  } = useOnboardingContext();
-  const personalInfoPage= isLoggedIn? "/privatePersonalInfo" : "/personalInfo" 
-  const profileInfoPage= isLoggedIn ? "/privateProfileInfo" : "/profileInfo"
+  const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee, selectedRole } = useUser();
+  // Print out the values
+  console.log("User:", user);
+  console.log("Is Logged In:", isLoggedIn);
+  // console.log("Is Business:", isBusiness);
+  // console.log("Is Employee:", isEmployee);
+  // console.log("Role Name:", roleName);
+  // console.log("Is Management Employee:", isManagementEmployee);
+  console.log("Selected Role:", selectedRole);
 
-  const validate_form= () =>{
-    if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
-      if (! selectedBusiness){
+  const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
+
+  // Print out the values
+  console.log("PN First Name:", firstName);
+  console.log("PN Last Name:", lastName);
+  console.log("PN Email:", email);
+  console.log("PN Phone:", phoneNumber);
+  console.log("PN Business Name:", businessName);
+  console.log("PN Photo:", photo);
+
+  const personalInfoPage = isLoggedIn ? "/privatePersonalInfo" : "/personalInfo";
+  const profileInfoPage = isLoggedIn ? "/privateProfileInfo" : "/profileInfo";
+
+  console.log("User Info: ", user);
+
+  const validate_form = () => {
+    if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(selectedRole)) {
+      if (!selectedBusiness) {
         alert("Please select a business");
         return false;
       }
 
-      if (! selectedBizRole){
+      if (!selectedBizRole) {
         alert("Please select a role");
         return false;
       }
-        
     }
-}
-
+  };
 
   const handleNextStep = () => {
-    if (validate_form() === false)
-      return;
+    if (validate_form() === false) return;
 
-    setCookie("default_form_vals", {...cookiesData, firstName, lastName, businessName });
+    setCookie("default_form_vals", { ...cookiesData, firstName, lastName, businessName });
     if (isBusiness() && businessName === "") {
       alert("Please enter a name");
       return;
@@ -112,9 +110,9 @@ const ProfileName = () => {
     }
     if (isEmployee())
       navigate(personalInfoPage, {
-        state: { businessId: selectedBusiness?.business_uid},
+        state: { businessId: selectedBusiness?.business_uid },
       });
-    else navigate(profileInfoPage)
+    else navigate(profileInfoPage);
   };
 
   const handleNameChange = (event) => {
@@ -172,6 +170,8 @@ const ProfileName = () => {
     } else {
       setFirstName(user.first_name);
       setLastName(user.last_name);
+      setEmail(user.email);
+      setPhoneNumber(user.phone_number);
       setAddPhotoImg(NewProfilePicture);
     }
   };
@@ -179,23 +179,21 @@ const ProfileName = () => {
   const handleFetchBusinesses = async () => {
     const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
     const args = {
-      "business_type": isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE",
-    }
-    const response = await axios.get(url+objToQueryString(args));
+      business_type: isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE",
+    };
+    const response = await axios.get(url + objToQueryString(args));
     setBusinesses(response.data.result);
   };
 
   useEffect(() => {
-    
-    
-    setFirstName(cookiesData?.firstName ?? '');
-    setLastName(cookiesData?.lastName ?? '');
-    setBusinessName(cookiesData?.businessName ?? '');
+    console.log("Data in Cookies: ", cookiesData);
+    setFirstName(cookiesData?.firstName ?? "");
+    setLastName(cookiesData?.lastName ?? "");
+    setBusinessName(cookiesData?.businessName ?? "");
     handleRoleSpecifics();
-    if(isEmployee || isManagementEmployee){
+    if (isEmployee || isManagementEmployee) {
       handleFetchBusinesses();
     }
-    
   }, []);
 
   return (
@@ -218,14 +216,7 @@ const ProfileName = () => {
             width: "85%",
           }}
         >
-          <Box
-            component="span"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            position="relative"
-            flexDirection="column"
-          >
+          <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" flexDirection="column">
             <Stack direction="row" justifyContent="center">
               <Box
                 sx={{
@@ -262,15 +253,7 @@ const ProfileName = () => {
           </Box>
           <Stack direction="row">
             {isBusiness() ? (
-              <TextField
-                name="businessName"
-                value={businessName}
-                onChange={handleNameChange}
-                variant="filled"
-                fullWidth
-                placeholder="Business name"
-                className={classes.root}
-              />
+              <TextField name="businessName" value={businessName} onChange={handleNameChange} variant="filled" fullWidth placeholder="Business name" className={classes.root} />
             ) : isEmployee() ? (
               <Stack spacing={2} sx={{ width: "100%", padding: "10px 10px" }}>
                 <Typography
@@ -281,13 +264,7 @@ const ProfileName = () => {
                 >
                   {"Select Business"}
                 </Typography>
-                <Select
-                  value={selectedBusiness}
-                  onChange={handleBusinessChange}
-                  size="small"
-                  fullWidth
-                  className={classes.select}
-                >
+                <Select value={selectedBusiness} onChange={handleBusinessChange} size="small" fullWidth className={classes.select}>
                   {businesses.map((row) => (
                     <MenuItem value={row}>{row.business_name}</MenuItem>
                   ))}
@@ -300,36 +277,14 @@ const ProfileName = () => {
                 >
                   {"Role"}
                 </Typography>
-                <Select
-                  value={selectedBizRole}
-                  onChange={handleBizRoleChange}
-                  size="small"
-                  fullWidth
-                  className={classes.select}
-                >
+                <Select value={selectedBizRole} onChange={handleBizRoleChange} size="small" fullWidth className={classes.select}>
                   <MenuItem value="EMPLOYEE">{"Employee"}</MenuItem>
                 </Select>
               </Stack>
             ) : (
               <>
-                <TextField
-                  name="firstName"
-                  value={firstName}
-                  onChange={handleFirstNameChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="First name"
-                  className={classes.root}
-                />
-                <TextField
-                  name="lastName"
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="Last name"
-                  className={classes.root}
-                />
+                <TextField name="firstName" value={firstName} onChange={handleFirstNameChange} variant="filled" fullWidth placeholder="First name" className={classes.root} />
+                <TextField name="lastName" value={lastName} onChange={handleLastNameChange} variant="filled" fullWidth placeholder="Last name" className={classes.root} />
               </>
             )}
           </Stack>
@@ -348,11 +303,7 @@ const ProfileName = () => {
                 alt="profile"
               />
             ) : (
-              <img
-                src={DefaultProfileImg}
-                alt="default"
-                style={{ width: "121px", height: "121px", borderRadius: "50%" }}
-              />
+              <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
             )}
           </Stack>
           <Box sx={{ paddingTop: "8%" }} />
@@ -375,22 +326,10 @@ const ProfileName = () => {
                 },
               }}
             >
-              <input
-                type="file"
-                hidden
-                accept="image/*"
-                onChange={handlePhotoChange}
-              />
+              <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
             </Button>
           </Box>
-          <Box
-            component="span"
-            display="flex"
-            justifyContent="center"
-            position="relative"
-            flexDirection="column"
-            height="15.2vh"
-          >
+          <Box component="span" display="flex" justifyContent="center" position="relative" flexDirection="column" height="15.2vh">
             <Button
               variant="contained"
               sx={{
