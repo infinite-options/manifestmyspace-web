@@ -16,7 +16,7 @@ import {
     Select,
     Chip,
 } from "@mui/material";
-
+import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
@@ -32,16 +32,22 @@ import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
 import APIConfig from '../../../utils/APIConfig';
 
-export default function QuoteRequestForm(){
+export default  function QuoteRequestForm(){
 
-    
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const location = useLocation();
     const navigate = useNavigate();
     const { roleName, maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
+    let maintenanceItem;
+    let navigationParams;
 
-    const maintenanceItem = location.state.maintenanceItem;
-
-    const navigationParams = location.state.navigateParams;
+    if (!isMobile && sessionStorage.getItem('desktopView') === 'true') {
+        maintenanceItem =  JSON.parse(sessionStorage.getItem('maintenanceItem'));
+        navigationParams =  JSON.parse(sessionStorage.getItem('navigateParams'));
+    } else {
+        maintenanceItem = location.state.maintenanceItem;
+        navigationParams = location.state.navigateParams;
+    }
 
     const alreadyRequestedQuotes = location.state?.quotes || [];
 
@@ -79,14 +85,21 @@ export default function QuoteRequestForm(){
         let status = navigationParams.status
         let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
         let allMaintenanceData = navigationParams.allData
-        navigate("/maintenance/detail", {
-            state: {
-                maintenance_request_index,
-                status,
-                maintenanceItemsForStatus,
-                allMaintenanceData
-            }
-        }); 
+        if(isMobile){
+            navigate("/maintenance/detail", {
+                state: {
+                    maintenance_request_index,
+                    status,
+                    maintenanceItemsForStatus,
+                    allMaintenanceData
+                }
+            }); 
+        } else {
+            sessionStorage.removeItem('maintenanceItem');
+            sessionStorage.removeItem('navigateParams');
+            sessionStorage.removeItem('desktopView');
+            window.dispatchEvent(new Event('storage'));
+        }
     }
 
 
