@@ -64,12 +64,12 @@ const ProfileName = () => {
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
 
   // Print out the values
-  console.log("PN First Name:", firstName);
-  console.log("PN Last Name:", lastName);
-  console.log("PN Email:", email);
-  console.log("PN Phone:", phoneNumber);
-  console.log("PN Business Name:", businessName);
-  console.log("PN Photo:", photo);
+  // console.log("PN First Name:", firstName);
+  // console.log("PN Last Name:", lastName);
+  // console.log("PN Email:", email);
+  // console.log("PN Phone:", phoneNumber);
+  // console.log("PN Business Name:", businessName);
+  // console.log("PN Photo:", photo);
 
   const personalInfoPage = isLoggedIn ? "/privatePersonalInfo" : "/personalInfo";
   const profileInfoPage = isLoggedIn ? "/privateProfileInfo" : "/profileInfo";
