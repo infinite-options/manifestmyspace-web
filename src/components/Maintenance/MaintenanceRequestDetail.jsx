@@ -51,7 +51,13 @@ function a11yProps(index) {
   };
 }
 
-export function MaintenanceRequestDetail({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
+// export function MaintenanceRequestDetail({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
+export function MaintenanceRequestDetail(props) {
+  console.log("In Maintenance");
+  const maintenance_request_index = props.maintenance_request_index;
+  const initialStatus = props.status;
+  const initialMaintenanceItemsForStatus = props.maintenanceItemsForStatus;
+  const allMaintenanceData = props.allMaintenanceData;
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
@@ -165,7 +171,10 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
 
   useEffect(() => {
     console.log("------useeffect 2------");
+    console.log("Quotes to Filter: ", maintenanceQuotes);
+    console.log("Filter Quotes by: ", maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
+    console.log("Quotes Filtered by ID: ", quotesFilteredById);
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
         return -1;
@@ -186,6 +195,8 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
         uniqueQuotes.push(quote);
       }
     });
+
+    console.log("Unique Quotes: ", uniqueQuotes);
 
     setFilteredQuotes(uniqueQuotes);
   }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
