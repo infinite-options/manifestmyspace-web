@@ -17,7 +17,13 @@ import { getPaymentStatusColor, getPaymentStatus } from "./PropertyList.jsx";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from "@mui/x-data-grid";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useUser } from "../../contexts/UserContext";
 
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
@@ -39,7 +45,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const [currentIndex, setCurrentIndex] = useState(index !== undefined ? index : 0);
   // console.log(currentIndex);
   // const [item, setItem] = useState(propertyData[currentIndex]);
-  const [property, setProperty] = useState(propertyData[currentIndex]);
+  const [property, setProperty] = useState(propertyList[currentIndex]);
+  console.log('prop data', propertyData);
+  console.log('prop', property);
   const [currentId, setCurrentId] = useState(property.property_uid);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
   const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
@@ -131,10 +139,10 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     setPropertyData(propertyList);
     const nextIndex = index !== undefined ? index : 0;
     setCurrentIndex(nextIndex);
-    const nextId = propertyData[nextIndex].property_uid;
+    const nextId = propertyList[nextIndex].property_uid;
     setCurrentId(nextId);
-    setProperty(propertyData[nextIndex]);
-    const parsedPropertyImages = propertyData[nextIndex].property_images ? JSON.parse(propertyData[nextIndex].property_images) : [];
+    setProperty(propertyList[nextIndex]);
+    const parsedPropertyImages = propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
     setActiveStep(0);
   }, [index, propertyList]);
@@ -171,7 +179,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   }, [currentIndex, propertyId]);
 
   //const [propertyId, setPropertyId] = useState('200-000028')
-  const tenant_detail = property.lease_start && property.tenant_uid ? `${property.lease_start}: ${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
+  const tenant_detail = property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
   const manager_detail = property.business_uid ? `${property.business_name}` : "No Manager";
   const [arrowButton1_color, set_arrow1_color] = useState(
     tenant_detail === "No Tenant" && manager_detail === "No Manager" ? theme.typography.common.gray : theme.typography.common.blue
@@ -560,7 +568,6 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
         marginTop: "10px",
         backgroundColor: theme.palette.primary.main,
         width: "100%", // Occupy full width with 25px margins on each side
-        paddingBottom: "10px",
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -571,178 +578,156 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
           flexDirection: "column", // Added this to stack children vertically
           justifyContent: "center",
           width: "100%", // Take up full screen width
+          height: '100%',
         }}
       >
-        <Stack direction="row" justifyContent="center" alignItems="center" spacing={2}>
-          <Button onClick={handlePreviousCard} disabled={currentIndex == 0}>
-            {currentIndex === 0 ? (
-              // <img src={ArrowLeft} style={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
-              <ArrowBackIcon sx={{ color: "#A0A0A0", width: "25px", height: "25px", margin: "0px" }} />
-            ) : (
-              // <img src={ArrowLeft} style={{width: '25px', height: '25px', margin:'0px'}}/>
-              <ArrowBackIcon sx={{ color: "#000000", width: "25px", height: "25px", margin: "0px" }} />
-            )}
-          </Button>
-          <Stack direction="column" margin="0px" justifyContent="center" alignItems="center" spacing={2}>
-            <Typography sx={{ color: theme.typography.propertyPage.color, fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+        <Grid container sx={{ marginTop: '15px', alignItems: 'center', justifyContent: 'center' }}>
+          <Grid item md={1} xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button onClick={handlePreviousCard} disabled={currentIndex == 0}>
+              {currentIndex === 0 ? (
+                <ArrowBackIcon sx={{ color: "#A0A0A0", width: "25px", height: "25px", margin: "0px" }} />
+              ) : (
+                <ArrowBackIcon sx={{ color: "#000000", width: "25px", height: "25px", margin: "0px" }} />
+              )}
+            </Button>
+          </Grid>
+          <Grid item md={8} xs={8} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+                textAlign: 'center'
+              }}
+              paddingBottom="10px"
+            >
+              {property.property_address} {property.property_unit}, {property.property_city} {property.property_state} {property.property_zip}
+            </Typography>
+            <Typography sx={{ color: '#3D5CAC', fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px", textAlign: 'center' }}>
               {currentIndex + 1} of {propertyData.length} Properties
             </Typography>
-          </Stack>
-          <Button onClick={handleNextCard} disabled={currentIndex == propertyData.length - 1}>
-            {currentIndex == propertyData.length - 1 ? (
-              // <img src={ArrowRight} style={{color: '#A0A0A0', width: '25px', height: '25px', margin:'0px'}}/>
-              <ArrowForwardIcon sx={{ color: "#A0A0A0", width: "25px", height: "25px", margin: "0px" }} />
-            ) : (
-              // <img src={ArrowRight} style={{width: '25px', height: '25px', margin:'0px'}}/>
-              <ArrowForwardIcon sx={{ color: "#000000", width: "25px", height: "25px", margin: "0px" }} />
-            )}
-          </Button>
-        </Stack>
-        <Stack alignItems="center" justifyContent="center">
-          <Typography
-            sx={{
-              color: theme.typography.primary.black,
-              fontWeight: theme.typography.primary.fontWeight,
-              fontSize: theme.typography.largeFont,
-            }}
-            paddingBottom="20px"
-          >
-            {property.property_address} {property.property_unit}, {property.property_city} {property.property_state} {property.property_zip}
-          </Typography>
-          <Box
-            sx={{
-              alignItems: "center",
-              justifyContent: "center",
-              width: "98%",
-            }}
-          >
-            <Grid container rowSpacing={4} columnSpacing={4}>
-              <Grid item xs={12} md={12}>
-                <Card
-                  sx={{
-                    backgroundColor: color,
-                    boxShadow: "none",
-                    elevation: "0",
-                    // width: "95%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Box
+          </Grid>
+          <Grid item md={1} xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button onClick={handleNextCard} disabled={currentIndex == propertyData.length - 1}>
+              {currentIndex == propertyData.length - 1 ? (
+                <ArrowForwardIcon sx={{ color: "#A0A0A0", width: "25px", height: "25px", margin: "0px" }} />
+              ) : (
+                <ArrowForwardIcon sx={{ color: "#000000", width: "25px", height: "25px", margin: "0px" }} />
+              )}
+            </Button>
+          </Grid>
+        </Grid>
+
+        <Box
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            margin: '10px'
+          }}
+        >
+          <Grid container rowSpacing={4} columnSpacing={4} justify="space-between" alignItems="stretch">
+            <Grid item xs={12} md={12}>
+              <Card
+                sx={{
+                  backgroundColor: color,
+                  boxShadow: "none",
+                  elevation: "0",
+                  padding: '16px',
+                }}
+              >
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={3}>
+                    <Card
                       sx={{
-                        // display: "flex",
+                        backgroundColor: color,
+                        boxShadow: "none",
+                        elevation: "0",
+                        display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        // width: "50%",
+                        height: '100%', // Ensure card takes full height of its container
                       }}
                     >
-                      <CardMedia
-                        component="img"
-                        image={images[activeStep]}
+                      <CardContent
                         sx={{
-                          elevation: "0",
-                          boxShadow: "none",
-                          maxWidth: "500px",
-                          minWidth: "200px",
-                          maxHeight: "500px",
-                          minHeight: "100px",
-                          height: "300px",
-                          objectFit: "cover",
-                          center: "true",
-                          alignContent: "center",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
                           justifyContent: "center",
+                          width: "100%",
+                          height: '100%',
+                          padding: '0 !important',
                         }}
-                      />
-                    </Box>
-                    <MobileStepper
-                      steps={maxSteps}
-                      position="static"
-                      activeStep={activeStep}
-                      variant="text"
-                      sx={{
-                        backgroundColor: color,
-                        width: "100%",
-                        justifyContent: "center",
-                        alignContent: "center",
-                        alignItems: "center",
-                        elevation: "0",
-                        boxShadow: "none",
-                      }}
-                      nextButton={
-                        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                          {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                        </Button>
-                      }
-                      backButton={
-                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                          {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                        </Button>
-                      }
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12} md={12} sx={{}}>
-                <Box
-                  sx={{
-                    backgroundColor: getPaymentStatusColor(property.rent_status),
-                    color: theme.typography.common.blue,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px", textAlign: "center" }}>
-                    <b>Rent Status:</b> {getPaymentStatus(property.rent_status)}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ backgroundColor: color, height: "100%" }}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                      textAlign: "center",
-                    }}
-                  >
-                    Property Details
-                  </Typography>
-                  <CardContent
-                    sx={{
-                      flexDirection: "column",
-                      alignItems: "left",
-                      justifyContent: "left",
-                    }}
-                  >
-                    <Grid container spacing={2}>
-                      <Grid item xs={4}>
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            height: '200px',
+                            width: '100%',
+                          }}
+                        >
+                          <CardMedia
+                            component="img"
+                            image={images[activeStep]}
+                            sx={{
+                              elevation: "0",
+                              boxShadow: "none",
+                              flexGrow: 1,
+                              objectFit: "fill",
+                              width: '100%',
+                              height: '100px',
+                            }}
+                          />
+                          <MobileStepper
+                            steps={maxSteps}
+                            position="static"
+                            activeStep={activeStep}
+                            variant="text"
+                            sx={{
+                              backgroundColor: color,
+                              width: "100%",
+                              justifyContent: "center",
+                              alignContent: "center",
+                              alignItems: "center",
+                              elevation: "0",
+                              boxShadow: "none",
+                            }}
+                            nextButton={
+                              <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1} sx={{ minWidth: '40px', width: '40px' }}>
+                                {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                              </Button>
+                            }
+                            backButton={
+                              <Button size="small" onClick={handleBack} disabled={activeStep === 0} sx={{ minWidth: '40px', width: '40px' }}>
+                                {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                              </Button>
+                            }
+                          />
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={0} md={0.5} />
+                  <Grid item xs={12} md={5}>
+                    <Grid container spacing={2} sx={{ height: '100%' }}>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            paddingRight: "10px",
                             textAlign: "left",
                           }}
                         >
                           Type
                         </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -755,7 +740,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           {property.property_type}
                         </Typography>
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -767,6 +752,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         >
                           Sqft
                         </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -779,7 +766,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           {property.property_area}
                         </Typography>
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -789,8 +776,10 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             textAlign: "left",
                           }}
                         >
-                          Bed
+                          Bedrooms
                         </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -803,7 +792,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           {property.property_num_beds}
                         </Typography>
                       </Grid>
-                      <Grid item xs={2}>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -813,8 +802,10 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             textAlign: "left",
                           }}
                         >
-                          Bath
+                          Bathrooms
                         </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -827,87 +818,19 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           {property.property_num_baths}
                         </Typography>
                       </Grid>
-                      {property?.lease_uid && (
-                        <Grid item xs={6}>
-                          <Box sx={{ display: "flex", width: "100%", justifyContent: "left", alignItems: "left" }}>
-                            <Button
-                              sx={{
-                                padding: "0px",
-                              }}
-                              onClick={() =>
-                                navigate("/viewLease", {
-                                  state: {
-                                    lease_id: property.lease_uid,
-                                    index: currentIndex,
-                                    isDesktop: isDesktop,
-                                  },
-                                })
-                              }
-                            >
-                              <Typography
-                                sx={{
-                                  textTransform: "none",
-                                  color: theme.typography.primary.black,
-                                  fontWeight: theme.typography.secondary.fontWeight,
-                                  fontSize: theme.typography.smallFont,
-                                  paddingRight: "10px",
-                                }}
-                              >
-                                View Lease
-                              </Typography>
-                              <img src={LeaseIcon} />
-                            </Button>
-                          </Box>
-                        </Grid>
-                      )}
-                      <Grid item xs={property?.lease_uid ? 6 : 12}>
-                        <Typography
-                          sx={{
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          Rent: {property.property_listed_rent ? "$" + property.property_listed_rent : "No Rent Listed"}
-                        </Typography>
-                      </Grid>
                       <Grid item xs={6}>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.light.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          Expiring: {property.lease_end ? property.lease_end : "No Lease"}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography
-                          sx={{
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.light.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            paddingBottom: "10px",
-                          }}
-                        >
-                          Due: {property.lease_rent_due_by ? property.lease_rent_due_by : "No Due Date Listed"}
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={4} md={4}>
                         <Typography
                           sx={{
                             textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            paddingRight: "10px",
                           }}
                         >
                           Property Value
                         </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -919,18 +842,19 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           ${property.property_value}
                         </Typography>
                       </Grid>
-                      <Grid item xs={4} md={3}>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            // paddingRight: "10px",
                           }}
                         >
                           $ Per Sqft
                         </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
                         <Typography
                           sx={{
                             textTransform: "none",
@@ -942,7 +866,77 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           ${(property.property_value / property.property_area).toFixed(2)}
                         </Typography>
                       </Grid>
-                      <Grid item xs={4} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={3.5}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        {property.property_available_to_rent === 1 ? (
+                          <Box>
+                            <Button
+                              variant="outlined"
+                              sx={{
+                                background: "#3D5CAC",
+                                backgroundColor: theme.palette.success.main,
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%",
+                                '&:hover': {
+                                  backgroundColor: theme.palette.success.dark,
+                                }
+                              }}
+                              size="small"
+                            >
+                              <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {"Listed For Rent"}
+                              </Typography>
+                            </Button>
+                          </Box>
+                        ) : (
+                          <Box>
+                            <Button
+                              variant="outlined"
+                              sx={{
+                                background: "#3D5CAC",
+                                backgroundColor: theme.palette.priority.high,
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%"
+                              }}
+                              size="small"
+                            >
+                              <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {"Not Listed"}
+                              </Typography>
+                            </Button>
+                          </Box>
+                        )}
+                      </Grid>
+                      <Grid item xs={12}>
                         <Box>
                           <Button
                             variant="outlined"
@@ -951,8 +945,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               color: theme.palette.background.default,
                               cursor: "pointer",
                               textTransform: "none",
-                              minWidth: "110px", // Fixed width for the button
+                              minWidth: "150px", // Fixed width for the button
                               minHeight: "35px",
+                              width: "100%"
                             }}
                             size="small"
                             onClick={() => {
@@ -984,224 +979,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           </Button>
                         </Box>
                       </Grid>
-
-                      {/* {isManager() && item.applications.length > 0 && */}
-                      {property.applications.length > 0 && (
-                        <>
-                          <Grid item xs={12}>
-                            <Typography
-                              sx={{
-                                textTransform: "none",
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                paddingRight: "10px",
-                              }}
-                            >
-                              {"Applications"}
-                            </Typography>
-                          </Grid>
-
-                          {property.applications.map((app, index) => (
-                            <Grid item xs={6} key={index} sx={{ display: 'flex' }}>
-                              <Button
-                                onClick={() => handleAppClick(index)}
-                                sx={{
-                                  backgroundColor: getAppColor(app),
-                                  color: "#FFFFFF",
-                                  textTransform: "none",
-                                  width: "100%",
-                                  height: "70px",
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  "&:hover, &:focus, &:active": {
-                                    backgroundColor: getAppColor(app),
-                                  },
-                                }}
-                              >
-                                <Stack>
-                                  <Typography sx={{ fontSize: theme.typography.smallFont, }}>{app.tenant_first_name + " " + app.tenant_last_name}</Typography>
-                                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.smallFont, }}>{app.lease_status}</Typography>
-                                </Stack>
-                              </Button>
-                            </Grid>
-                          ))}
-
-                        </>
-                      )}
-                      <Grid item xs={11}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <Typography
-                            sx={{
-                              textTransform: "none",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.secondary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                              paddingRight: "10px",
-                            }}
-                          >
-                            Open Maintenance Tickets
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => navigate("/ownerMaintenance", { state: { propertyId: propertyId } })}
-                          >
-                            <Badge
-                              badgeContent={property.maintenanceCount}
-                              color="error"
-                              sx={{
-                                paddingRight: "10px",
-                              }}
-                            />
-                          </Box>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={1}>
-                        <Box onClick={() => navigate("/ownerMaintenance", { state: { propertyId: propertyId } })}>
-                          {maintenanceData && maintenanceData.length > 0 && maintenanceData[0].maintenance_request_uid && (
-                            <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue }} />
-                          )}
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box>
-                          <Typography
-                            sx={{
-                              textTransform: "none",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.light.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                            {displayTopMaintenanceItem()}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            paddingRight: "10px",
-                          }}
-                        >
-                          Tenant
-                        </Typography>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.light.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          {tenant_detail}
-                        </Typography>
-                      </Grid>
-                      {/* {console.log("--debug-- this is contractsData", contractsData)}
-                                    {console.log("--debug-- contractsNewSent", contractsNewSent)} */}
-                      {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
-                        <>
-                          <Grid item xs={11}>
-                            <Box sx={{ display: "flex", alignItems: "center" }}>
-                              <Typography
-                                sx={{
-                                  textTransform: "none",
-                                  color: theme.typography.primary.black,
-                                  fontWeight: theme.typography.secondary.fontWeight,
-                                  fontSize: theme.typography.smallFont,
-                                  paddingRight: "10px",
-                                  width: "400px",
-                                }}
-                              >
-                                PM Quotes Requested
-                              </Typography>
-                              <Grid container>
-                                <Typography
-                                  sx={{
-                                    textTransform: "none",
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.light.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                  }}
-                                >
-                                  {contractsData.length > 0
-                                    ? contractsData.map((index, contract) => {
-                                      if (contract.contract_status === "NEW" || contract.contract_status === "SENT") {
-                                        return <Contract contract={contract} key={index} />;
-                                      }
-                                    })
-                                    : "No PM Quotes"}
-                                </Typography>
-                                <Badge
-                                  overlap="circular"
-                                  color="success"
-                                  badgeContent={contractsNewSent}
-                                  // invisible={!contractsNewSent}
-                                  anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                  }}
-                                  style={{
-                                    color: "#000000",
-                                    width: "100%",
-                                  }}
-                                />
-                              </Grid>
-                            </Box>
-                          </Grid>
-                          <Grid item xs={1} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <KeyboardArrowRightIcon
-                              sx={{ color: arrowButton1_color, cursor: "pointer" }}
-                              onClick={() => {
-                                navigate("/pmQuotesRequested", {
-                                  state: {
-                                    index: currentIndex,
-                                    propertyData: propertyData,
-                                    contracts: contractsData,
-                                    isDesktop: isDesktop,
-                                  },
-                                });
-                              }}
-                            />
-                          </Grid>
-                        </>
-                      ) : null}
-                      <Grid item xs={11}>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            paddingRight: "10px",
-                          }}
-                        >
-                          {property.business_uid ? "Property Manager" : "Find A Property Manager"}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.light.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          {property.business_uid ? `${property.business_name}` : "No Manager Selected"}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={1} sx={{ display: "flex", flexWrap: "wrap", alignContent: "end" }}>
-                        <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)} />
-                      </Grid>
-                      {property.property_available_to_rent !== 1 && (
+                      {selectedRole === "MANAGER" && property.property_available_to_rent !== 1 && (
                         <Grid item xs={12}>
                           <Button
                             variant="outlined"
@@ -1210,6 +988,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               color: theme.palette.background.default,
                               cursor: "pointer",
                               textTransform: "none",
+                              minWidth: "150px",
+                              minHeight: "35px",
+                              width: "100%"
                             }}
                             size="small"
                             onClick={() => {
@@ -1229,7 +1010,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           </Button>
                         </Grid>
                       )}
-                      {selectedRole == "MANAGER" && property.property_available_to_rent === 1 && (
+                      {selectedRole === "MANAGER" && property.property_available_to_rent === 1 && (
                         <Grid item xs={12}>
                           <Button
                             variant="outlined"
@@ -1238,8 +1019,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               color: theme.palette.background.default,
                               cursor: "pointer",
                               textTransform: "none",
-                              minWidth: "110px", // Fixed width for the button
+                              minWidth: "150px",
                               minHeight: "35px",
+                              width: "100%"
                             }}
                             size="small"
                             onClick={() => {
@@ -1253,19 +1035,30 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             }}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
-                            <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.smallFont }}>
+                            <Typography sx={{
+                              textTransform: "none",
+                              color: "#FFFFFF",
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                              whiteSpace: "nowrap",
+                              marginLeft: "1%", // Adjusting margin for icon and text
+                            }}>
                               {"Edit Listing"}
                             </Typography>
                           </Button>
                         </Grid>
                       )}
                     </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </Grid>
+                </Grid>
 
-              <Grid item xs={12} md={6}>
-                <Card sx={{ backgroundColor: color, height: "100%" }}>
+              </Card>
+            </Grid>
+
+            {/* Lease Detais grid */}
+            <Grid item xs={12} md={6}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: '10px' }}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -1274,62 +1067,460 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       textAlign: "center",
                     }}
                   >
-                    Rent History
+                    Lease Details
                   </Typography>
-                  <CardContent
-                    sx={{
-                      flexDirection: "column",
-                      alignItems: "left",
-                      justifyContent: "left",
-                      width: "90%",
-                    }}
-                  >
-                    <DataGrid
-                      rows={propertyRentStatus}
-                      columns={rentStatusColumns}
-                      disableColumnMenu={!isDesktop}
-                      autoHeight
-                      initialState={{
-                        pagination: {
-                          paginationModel: {
-                            pageSize: 12,
-                          },
-                        },
-                      }}
-                      getRowId={(row) => row.rent_detail_index}
-                      pageSizeOptions={[12]}
+                  {property?.lease_uid && (
+                    <Button
                       sx={{
-                        '& .MuiDataGrid-cell': {
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                        '& .MuiDataGrid-columnHeader': {
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          color: "#3D5CAC",
-                          textAlign: "center",
-                        },
-                        '& .MuiDataGrid-columnHeaderTitle': {
-                          textAlign: 'center',
-                          font: "bold",
-                          width: '100%',
-                        },
-                        '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
-                        '@media (max-width: 600px)': {
-                          '& .MuiDataGrid-columnHeaderTitle': {
-                            width: '100%',
-                            margin: '0px',
-                            padding: '0px',
-                          },
+                        padding: "0px",
+                        '&:hover': {
+                          backgroundColor: theme.palette.form.main,
                         },
                       }}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
+                      className=".MuiButton-icon"
+                      onClick={() =>
+                        navigate("/viewLease", {
+                          state: {
+                            lease_id: property.lease_uid,
+                            index: currentIndex,
+                            isDesktop: isDesktop,
+                          },
+                        })
+                      }
+                    >
+                      <img src={LeaseIcon} />
+                    </Button>
+                  )}
+                </Box>
+                <CardContent
+                  sx={{
+                    flexDirection: "column",
+                    alignItems: "left",
+                    justifyContent: "left",
+                  }}
+                >
+                  <Grid container spacing={4}>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Rent:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {property.property_listed_rent ? "$" + property.property_listed_rent : "No Rent Listed"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Due:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {property.lease_rent_due_by ? property.lease_rent_due_by : "No Due Date Listed"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Available To Pay:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        10 days before
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Frequency:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Monthly
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Lease Expires (or Vacant):
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {property.lease_end ? property.lease_end : "No Lease"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                          paddingRight: "10px",
+                        }}
+                      >
+                        Tenant:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {tenant_detail}
+                      </Typography>
+                    </Grid>
+                    {selectedRole == "OWNER" && (<>
+                      <Grid item xs={6} md={6}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Property Manager:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} md={6}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography
+                            sx={{
+                              textTransform: "none",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.light.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            {property.business_uid ? `${property.business_name}` : "No Manager Selected"}
+                          </Typography>
+
+                          <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)} />
+                        </Box>
+                      </Grid>
+                    </>
+                    )}
+
+                    {selectedRole == "MANAGER" && (<>
+                      <Grid item xs={6} md={6}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Owner:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} md={6}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography
+                            sx={{
+                              textTransform: "none",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.light.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            {`${property.owner_first_name}  ${property.owner_last_name}`}
+                          </Typography>
+
+                          <KeyboardArrowRightIcon sx={{ color: theme.typography.common.blue, cursor: "pointer" }} onClick={() => handleManagerChange(currentIndex)} />
+                        </Box>
+                      </Grid>
+                    </>
+                    )}
+
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            paddingRight: "5px",
+                          }}
+                        >
+                          Open Maintenance Tickets:
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => { if (property.maintenanceCount > 0) { navigate("/ownerMaintenance", { state: { propertyId: propertyId } }) } }}
+                        >
+                          <Badge
+                            badgeContent={property.maintenanceCount}
+                            showZero
+                            color="error"
+                            sx={{
+                              paddingRight: "10px",
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    </Grid>
+                    {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
+                      <>
+                        <Grid item xs={6} md={6}>
+                          <Typography
+                            sx={{
+                              textTransform: 'none',
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            PM Quotes Requested:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6} md={6}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0px 0px 0px 8px' }}>
+                            <Badge
+                              color="success"
+                              badgeContent={contractsNewSent}
+                              showZero
+                            />
+                            <KeyboardArrowRightIcon
+                              sx={{ color: arrowButton1_color, cursor: 'pointer' }}
+                              onClick={() => {
+                                navigate('/pmQuotesRequested', {
+                                  state: {
+                                    index: currentIndex,
+                                    propertyData: propertyData,
+                                    contracts: contractsData,
+                                    isDesktop: isDesktop,
+                                  },
+                                });
+                              }}
+                            />
+                          </Box>
+                        </Grid>
+                      </>
+                    ) : null}
+                    {/* {isManager() && item.applications.length > 0 && */}
+                    {property.applications.length > 0 && (
+                      <>
+                        <Grid item xs={6} md={6}>
+                          <Typography
+                            sx={{
+                              textTransform: "none",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            Applications
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                          <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: '-5px' }}>
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="panel1-content"
+                              id="panel1-header"
+                            >
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              > View All Applications
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                padding: '0px 5px 5px 5px',
+                              }}
+                            >
+                              {property.applications.map((app, index) => (
+                                <Button
+                                  key={index}
+                                  onClick={() => handleAppClick(index)}
+                                  sx={{
+                                    backgroundColor: getAppColor(app),
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginBottom: 2, // Add some space between buttons
+                                    "&:hover, &:focus, &:active": {
+                                      backgroundColor: getAppColor(app),
+                                    },
+                                  }}
+                                >
+                                  <Box sx={{ display: 'flex' }}>
+                                    <Typography sx={{ fontSize: theme.typography.smallFont, mr: 1 }}>
+                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.smallFont, mr: 1 }}>
+                                      {app.lease_status + " "}
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.smallFont }}>
+                                      {app.lease_application_date}
+                                    </Typography>
+                                  </Box>
+                                </Button>
+                              ))}
+                            </AccordionDetails>
+                          </Accordion>
+                        </Grid>
+                      </>
+                    )}
+
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
-          </Box>
-        </Stack>
+
+            {/* Rent history grid*/}
+            <Grid item xs={12} md={6}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                    textAlign: "center",
+                    marginTop: '10px',
+                  }}
+                >
+                  Rent History
+                </Typography>
+                <CardContent
+                  sx={{
+                    flexDirection: "column",
+                    alignItems: "left",
+                    justifyContent: "left",
+                    width: "90%",
+                  }}
+                >
+                  <DataGrid
+                    rows={propertyRentStatus}
+                    columns={rentStatusColumns}
+                    disableColumnMenu={!isDesktop}
+                    autoHeight
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 12,
+                        },
+                      },
+                    }}
+                    getRowId={(row) => row.rent_detail_index}
+                    pageSizeOptions={[12]}
+                    sx={{
+                      '& .MuiDataGrid-cell': {
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                      '& .MuiDataGrid-columnHeader': {
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: "#3D5CAC",
+                        textAlign: "center",
+                      },
+                      '& .MuiDataGrid-columnHeaderTitle': {
+                        textAlign: 'center',
+                        font: "bold",
+                        width: '100%',
+                      },
+                      '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
+                      '@media (max-width: 600px)': {
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                          width: '100%',
+                          margin: '0px',
+                          padding: '0px',
+                        },
+                      },
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
     </Paper>
   );

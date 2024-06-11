@@ -47,7 +47,7 @@ import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import PropertyDetail from "./PropertyDetail";
 import PropertyDetail2 from "./PropertyDetail2";
@@ -188,7 +188,7 @@ function getPropertyList(data) {
   });
 }
 
-export default function PropertyList({}) {
+export default function PropertyList({ }) {
   console.log("In Property List");
   let navigate = useNavigate();
   const { getProfileId, isManagement, isOwner } = useUser();
@@ -270,8 +270,8 @@ export default function PropertyList({}) {
 
   const propertyRentDetails = async () => {
     try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
       if (!response.ok) {
         console.log("Error fetching rent Details data");
       }
@@ -350,7 +350,7 @@ export default function PropertyList({}) {
     // navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
     // setPropertyIndex(index);
     if (!isDesktop) {
-      navigate(`/propertyDetail`, { state: { index, propertyList:displayedItems, allRentStatus, rawPropertyData: rawPropertyData, isDesktop } });
+      navigate(`/propertyDetail`, { state: { index, propertyList: displayedItems, allRentStatus, rawPropertyData: rawPropertyData, isDesktop } });
     }
   }
 
@@ -577,10 +577,17 @@ export default function PropertyList({}) {
     }
   };
 
+  const getRowSpacing = React.useCallback((params) => {
+    return {
+      top: params.isFirstVisible ? 0 : 3,
+      bottom: params.isLastVisible ? 0 : 3,
+    };
+  });
+
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px', marginTop: theme.spacing(2) }}>
+      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '20px', marginTop: theme.spacing(2) }}>
         {showSpinner || !dataReady ? (
           <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
             <CircularProgress color="inherit" />
@@ -593,7 +600,7 @@ export default function PropertyList({}) {
                   display: "flex",
                   justifyContent: "center",
                   width: "100%", // Take up full screen width
-                  minHeight: "100vh", // Set the Box height to full height
+                  // minHeight: "100vh", // Set the Box height to full height
                   height: "100%",
                 }}
               >
@@ -698,6 +705,7 @@ export default function PropertyList({}) {
                             setPropertyIndex(newSelection[0]);
                           }
                         }}
+                        getRowSpacing={getRowSpacing}
                         sx={{
                           '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
                           '& .MuiDataGrid-row:hover': {
@@ -710,11 +718,21 @@ export default function PropertyList({}) {
                             justifyContent: 'center',
                           },
                           '& .MuiDataGrid-row.Mui-selected': {
-                            backgroundColor: '#D1D1D1',
-                            '&:hover': {
-                              backgroundColor: '#D1D1D1',
-                            },
+                            backgroundColor: '#949494',
                           },
+                          [`& .${gridClasses.row}`]: {
+                            bgcolor: theme.palette.form.main, // Row background color
+                            '&:before': {
+                              content: '""',
+                              display: 'block',
+                              height: '100%',
+                              backgroundColor: '#ffffff',
+                              position: 'absolute',
+                              left: '0',
+                              right: '0',
+                              zIndex: '-1',
+                          },
+                        },
                         }}
                       />
                     </Box>
