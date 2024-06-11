@@ -105,8 +105,11 @@ export default function QuoteRequestForm() {
 
 			window.dispatchEvent(new Event('storage'));
 			// Dispatch the custom event
-			setTimeout(() => {
+            setTimeout(() => {
 				window.dispatchEvent(new Event('maintenanceRequestSelected'));
+			}, 0);
+			setTimeout(() => {
+				window.dispatchEvent(new Event('maintenanceUpdate'));
 			}, 0);
 		}
 	}

@@ -225,6 +225,21 @@ export function MaintenanceOwner() {
         maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId);
     }, []);
 
+    useEffect(() => {
+        const handleMaintenanceUpdate = () => {
+            // Using a closure to capture the current profileId when the effect runs
+            const currentProfileId = profileId;
+            maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, currentProfileId);
+        };
+    
+        window.addEventListener('maintenanceUpdate', handleMaintenanceUpdate);
+    
+        return () => {
+            window.removeEventListener('maintenanceUpdate', handleMaintenanceUpdate);
+        };
+    }, []); // Empty dependency array ensures this runs only once when the component mounts
+    
+
 
     const handleRowClick = (index, row) => {
         if (isMobile) {
