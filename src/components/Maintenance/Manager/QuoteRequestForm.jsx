@@ -314,7 +314,7 @@ export default function QuoteRequestForm() {
 							paddingRight: '0px',
 						}}
 					>
-						<Box position="absolute" left={30}>
+						<Box position="absolute" left={isMobile ? 30 : 480}>
 							<Button onClick={() => handleBackButton()}>
 								<ArrowBackIcon
 									sx={{ color: theme.typography.primary.black, fontSize: '30px', margin: '5px' }}
