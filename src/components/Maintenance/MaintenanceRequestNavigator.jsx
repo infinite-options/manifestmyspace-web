@@ -42,6 +42,7 @@ export default function MaintenanceRequestNavigator({
   tabs,
   navigateParams,
 }) {
+  console.log('----inside maintainance navigator---', requestIndex, updateRequestIndex);
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
 
   const [activeStep, setActiveStep] = useState(0);
@@ -79,6 +80,9 @@ export default function MaintenanceRequestNavigator({
   function navigateToEditMaintenanceItem(testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID) {
     navigate("/editMaintenanceItem", { state: { testIssue, testProperty, testIssueItem, testCost, testTitle, testPriority, completionStatus, requestUid, propID, month, year } });
   }
+  useEffect(() => {
+    setCurrentIndex(requestIndex);
+  }, [requestIndex]);
 
   useEffect(() => {
     const initialImages = getInitialImages(requestData, currentIndex);
@@ -162,6 +166,8 @@ export default function MaintenanceRequestNavigator({
       console.log(data);
     }
   }
+  console.log("This is the requestData passed to Quotes Table: ", requestData);
+  console.log("This is the currentIndex to Quotes Table: ", currentIndex);
   const data = requestData[currentIndex];
   console.log("This is the data passed to Quotes Table: ", data);
 
