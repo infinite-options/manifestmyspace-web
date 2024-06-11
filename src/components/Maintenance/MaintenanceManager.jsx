@@ -273,9 +273,18 @@ export default function MaintenanceManager() {
         }
       });
     } else {
+      // Save data to session storage
+      sessionStorage.setItem('selectedRequestIndex', index);
+      sessionStorage.setItem('selectedStatus', row.maintenance_status);
+      sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceData[row.maintenance_status]));
+      sessionStorage.setItem('allMaintenanceData', JSON.stringify(maintenanceData));
+
       setSelectedRequestIndex(index);
       setSelectedStatus(row.maintenance_status);
-    }
+
+      // Trigger the custom event
+      window.dispatchEvent(new Event('maintenanceRequestSelected'));
+  }
   };
 
   return (

@@ -163,7 +163,7 @@ export default function MaintenanceRequestNavigator({
     }
   }
   const data = requestData[currentIndex];
-  //   console.log("This is the data passed to Quotes Table: ", data);
+  console.log("This is the data passed to Quotes Table: ", data);
 
   let propertyAddress = " ";
   propertyAddress = propertyAddress.concat(" ", data?.property_address, " ", data?.property_unit, " ", data?.property_city, " ", data?.property_state, " ", data?.property_zip);
