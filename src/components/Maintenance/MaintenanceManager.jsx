@@ -26,6 +26,10 @@ import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 
+import QuoteRequestForm from './Manager/QuoteRequestForm';
+import useSessionStorage from './useSessionStorage';
+import { useCookies } from "react-cookie";
+
 export async function maintenanceManagerDataCollectAndProcess(
   setMaintenanceData,
   setShowSpinner,
@@ -152,6 +156,9 @@ export default function MaintenanceManager() {
   const [selectedStatus, setSelectedStatus] = useState('NEW REQUEST');
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [desktopView] = useSessionStorage('desktopView', false);
+  const [cookies] = useCookies(['selectedRole']);
+  const selectedRole = cookies.selectedRole;
 
   function navigateToAddMaintenanceItem() {
     navigate('/addMaintenanceItem');
@@ -457,13 +464,24 @@ export default function MaintenanceManager() {
 
         {!isMobile && (
           <Grid item xs={7}>
-            {Object.keys(maintenanceData).length > 0 && (
-              <MaintenanceRequestDetail
-                maintenance_request_index={selectedRequestIndex}
-                status={selectedStatus}
-                maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                allMaintenanceData={maintenanceData}
-              />
+            
+            {desktopView && selectedRole === 'MANAGER' ? (
+                            <>
+                                <QuoteRequestForm
+                                    maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+                                    navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+                                />
+                            </>
+                        ) : (
+                            Object.keys(maintenanceData).length > 0 && (
+                                <MaintenanceRequestDetail
+                                    maintenance_request_index={selectedRequestIndex}
+                                    status={selectedStatus}
+                                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+                                    allMaintenanceData={maintenanceData}
+                                />
+                            )
+                
             )}
           </Grid>
         )}

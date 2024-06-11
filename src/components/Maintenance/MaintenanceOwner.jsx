@@ -31,6 +31,8 @@ import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 import QuoteRequestForm from './Manager/QuoteRequestForm';
 import useSessionStorage from './useSessionStorage';
+import { useCookies, Cookies } from "react-cookie";
+
 export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId) {
     const dataObject = {};
 
@@ -106,6 +108,8 @@ export function MaintenanceOwner() {
 
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [desktopView] = useSessionStorage('desktopView', false);
+    const [cookies] = useCookies(['selectedRole']);
+    const selectedRole = cookies.selectedRole;
 
     function navigateToAddMaintenanceItem() {
         navigate('/addMaintenanceItem', { state: { month, year, propertyId } });
@@ -400,7 +404,7 @@ export function MaintenanceOwner() {
 
                 {!isMobile && (
                     <Grid item xs={7}>
-                        {desktopView ? (
+                        {desktopView && selectedRole === 'OWNER' ? (
                             <>
                                 <QuoteRequestForm
                                     maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
