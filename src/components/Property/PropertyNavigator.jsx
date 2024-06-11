@@ -475,7 +475,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   };
 
   const handleAppClick = (index) => {
-    navigate("/tenantApplicationNav", { state: { index: currentIndex, property: property, isDesktop: isDesktop } });
+    navigate("/tenantApplicationNav", { state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop } });
   };
 
   const getRentStatus = () => {
@@ -1383,7 +1383,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               fontSize: theme.typography.smallFont,
                             }}
                           >
-                            Applications
+                            Applications:
                           </Typography>
                         </Grid>
                         <Grid item xs={12} md={12}>
