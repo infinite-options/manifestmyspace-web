@@ -16,7 +16,7 @@
   margin-right: auto;
 }
 .announcement-title-emptybox {
-  width: 19;
+  width: 19px;
   margin-right: 18px;
   margin-left: auto;
 }
@@ -50,8 +50,10 @@
 .announcement-searchbar-container {
   display: flex;
   flex-direction: row;
-  width: 90%;
-  background-color: #f2f2f2;
+  /* width: 90%; */
+  /* background-color: #f2f2f2; */
+  background-color: #e0e0e0;  
+  /* background-color: red; */
   border-radius: 10px;
   margin-left: 25px;
   margin-right: 25px;
@@ -64,12 +66,14 @@
   display: flex;
   flex-direction: row;
   background-color: #a9aaab19;
-  width: 90%;
-  height: 30px;
+  /* background-color: pink; */
+  width: 100%;
+  /* width: 90%; */
+  /* height: 30px; */
   align-items: center;
   border-radius: 10px;
-  margin-top: 12px;
-  padding-left: 20px;
+  /* margin-top: 12px; */
+  /* padding-left: 20px; */
 }
 .searchbar-icon {
   margin: 8px;
@@ -116,21 +120,60 @@
 .announcement-readall-text {
   font-size: 10px;
 }
+
+.announcement-category {
+  /* background-color: red; */
+  /* border: 1px solid #ddd; */
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  flex: 1 1 30%;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+
 .announcement-list-container {
+  /* background-color: red; */
+  /* background-color: lightseagreen; */
   display: flex;
   flex-direction: column;
-  width: 100%;
+  /* width: 100%; */
 }
 .announcement-list-card {
   display: flex;
   flex-direction: row;
-  background-color: #d9d9d932;
-  box-shadow: 0px 1px 4px #00000019;
+  /* background-color: #d9d9d932; */
+  /* background-color: #e5e5e5; */
+  background-color: #D6D5DA;
+  /* background-color: burlywood; */
+  /* box-shadow: 0px 1px 4px #00000019; */
+  box-shadow: 1px 2px 8px #00000019;
   font-size: 15px;
+  border-radius: 10px;
   font-weight: bold;
   margin-bottom: 10px;
   padding: 10px;
 }
+.announcement-read {
+  background-color: #f2f2f2;
+  font-weight: normal
+  
+}
+.announcement-clicked {
+  background-color: #9eaed6;
+  font-weight: normal
+}
+
+.announcement-red{
+  background-color: #f2f2f2;
+  font-weight: normal
+  
+}
+
+.announcement-list-container.clicked {
+  background-color: blue;
+}
+
 .announcement-list-card-text-container {
   display: flex;
   flex-direction: column;
@@ -157,6 +200,6 @@
 }
 
 .search-filter-container {
-  fontfamily: "Source Sans Pro";
+  font-family: "Source Sans Pro";
   color: #160449;
 }

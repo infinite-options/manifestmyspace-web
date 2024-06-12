@@ -2,17 +2,89 @@ import { calculateAge } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
+import { useEffect, useState, useRef } from "react";
 
 function AnnouncementCard(props) {
   console.log("In Announcements", props);
   const { selectedRole } = useUser();
-  const { data, pageToNavigate, navigationParams, sent_or_received } = props;
+  const { data, pageToNavigate, navigationParams, sent_or_received, readAllChecked, showCheckbox, checked1, onCloseClick,announcementClosed  } = props;
   const navigate = useNavigate();
   const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
+  const [clicked, setClicked] = useState(false);
+  const [isRead, setIsRead] = useState(data.announcement_read !== null);
+  // const handleAnnouncements = () => {
+  //   console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
+  // };
+
+  const [checked, setChecked] = useState(false);
+  const cardRef = useRef(null);
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        setClicked(false);
+      }
+    };
+
+    if (readAllChecked) {
+      setIsRead(true) 
+    }
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+
+
+    
+  }, [readAllChecked]);
+
+  // useEffect(() => {
+  //   console.log("Inside the use effect of the announcementCarddddddd");
+  //   console.log("clicked before setting in useEffect",clicked);
+    
+  //   setClicked(false);
+  //   console.log("clicked after useEffect",clicked)
+  //   setChecked(readAllChecked);
+  // }, [readAllChecked]);
+
   const handleAnnouncements = () => {
     console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
+    setChecked(true); // Set checkbox to checked state when announcement is handled
+    // Add any additional logic for handling announcements here
+    
+  //   if (!event.target.closest('.announcement-list-card')) {
+  //     setClicked(false);
+  // }
+    setClicked(true); // Set the clicked state to true when the card is clicked
+    // if (sent_or_received === "Received" && data.announcement_read !== null) {
+    //   setIsRead(true);
+    // }
+    if (onCloseClick) {
+      console.log("printing onCloseClick prop",onCloseClick)
+      onCloseClick();
+      if (sent_or_received === "Received" && data.announcement_read !== null) {
+        setIsRead(true);
+      }
+    }
   };
+
+  const handleCheckboxChange = (e) => {
+    setChecked(e.target.checked);
+    e.stopPropagation();
+  };
+
+  // useEffect(() => {
+  //   if (onCloseClick) {
+  //     if (sent_or_received === "Received" && data.announcement_read !== null) {
+  //       setIsRead(true);
+  //     }
+  //   }
+  // }, [onCloseClick]);
+
 
   const getBorderColor = () => {
     // return data.sender_role === 'admin' ? 'blue' : 'green';
@@ -33,7 +105,7 @@ function AnnouncementCard(props) {
         break;
       case "Maintenance":
         color = "#FF8A00";
-        break;
+        break; 
       default:
         color = "#A9AAAB";
         break;
@@ -43,8 +115,15 @@ function AnnouncementCard(props) {
   };
 
   return (
-    <div className="announcement-list-card" onClick={handleAnnouncements}>
-      <div className="announcement-list-card-picture-container">
+    <div ref={cardRef} className={`announcement-list-card  ${clicked ? "announcement-clicked" : ""} ${isRead ? "announcement-read" : ""}`} 
+    // style={{
+    //   backgroundColor: announcementClosed ? 'white' : announcement.announcement_read ? "#E0E0E0" : announcementClicked === announcement ? "#ADD8E6" : "white",
+    // }}
+    // style={{
+    //   backgroundColor: announcementClosed ? "green" : data.announcement_read ? "#E0E0E0" : "white",
+    // }}
+    onClick={handleAnnouncements}>
+      <div className={"announcement-list-card-picture-container" } >
         <div
           className="announcement-list-card-picture"
           style={{ width: "40px", height: "40px", border: "4px solid transparent", borderRadius: "50%", borderColor: getBorderColor(), overflow: "hidden" }}
@@ -67,7 +146,7 @@ function AnnouncementCard(props) {
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + (data?.receiver_first_name + data?.receiver_last_name) : "From: " + (data?.sender_first_name + data?.sender_last_name)}</div>
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + data.announcement_receiver : "From: " + data.announcement_sender}</div>
         <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "Role: " + data?.receiver_role : "Role: " + data?.sender_role}</div>
-        <div className="announcement-list-card-text-contents">{"Title: " + data.announcement_title}</div>
+        <div className="announcement-list-card-text-contents">{"Title: " + data.announcement_title.substring(0, 20) + "..."}</div>
         <div className="announcement-list-card-text-contents">{data.announcement_msg.substring(0, 20) + "..."}</div>
         <div className="announcement-list-card-text-date">{"Added: " + calculateAge(data.announcement_date)}</div>
       </div>
@@ -89,14 +168,19 @@ function AnnouncementCard(props) {
             />
           </svg>
         </div> */}
-        <div
+        {showCheckbox && (
+          <div className="announcement-list-card-checkbox">
+            <input type="checkbox" checked={checked1} onChange={handleCheckboxChange} />
+          </div>
+        )}
+        {/* <div
           className="announcement-list-card-checkbox"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
+          checked={checked}
+          //condition to check if it only in sent
+          onChange={handleCheckboxChange}
         >
           <input type="checkbox" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

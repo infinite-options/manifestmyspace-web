@@ -7,12 +7,35 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, TextField, Typography } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
+import { Paper, Box, InputBase, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Grid, DialogTitle, DialogContent,  } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import theme from "../../theme/theme";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { DataGrid } from "@mui/x-data-grid";
+import SearchIcon from "@mui/icons-material/Search";
 
 import APIConfig from "../../utils/APIConfig";
+import { Message} from '@mui/icons-material';
+import DefaultProfileImg from "../../images/defaultProfileImg.svg";
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     "& .MuiFilledInput-root": {
+//       backgroundColor: "#F2F2F2", // Update the background color here
+//       borderRadius: 10,
+//       height: 30,
+//       marginBlock: 10,
+//       paddingBottom: '15px', // Add this line for vertically center alignment
+//       "&:hover, &:focus, &:active": {
+//         backgroundColor: "#F2F2F2", // Change background color on hover, focus and active states
+//       },
+//     },
+//   },
+// }));
+
 
 export default function Announcements() {
   console.log("intial commit");
@@ -20,9 +43,12 @@ export default function Announcements() {
   const [announcementData, setAnnouncementData] = useState([]);
   const [sentData, setSentData] = useState([]);
   const [receivedData, setReceivedData] = useState([]);
+  const [readData, setReadData] = useState([]);
   const [filteredSentData, setFilteredSentData] = useState([]);
   const [filteredReceivedData, setFilteredReceivedData] = useState([]);
+  const [filteredReadData, setFilteredReadData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [hasUnreadAnnouncements, setHasUnreadAnnouncements] = useState(false);
   const navigate = useNavigate();
   // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
   const location = useLocation();
@@ -30,18 +56,35 @@ export default function Announcements() {
   //
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [annData, setAnnData] = useState("");
+  const [readAllChecked, setReadAllChecked] = useState(false);
+  const [isRead, setIsRead] = useState(false);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [announcementPopupClosed, setAnnouncementPopupClosed] = useState(false);
+
+  const [clickedAnnouncementUid, setClickedAnnouncementUid] = useState(null);
+
+  // const [announcementClicked, setAnnouncementClicked] = useState(false);
+  const [announcementClicked, setAnnouncementClicked] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [dataDetails, setDataDetails] = useState({});
+  const [announcementClosed, setAnnouncementClosed] = useState(false);
 
   useEffect(() => {
     if (searchTerm === "") {
       setFilteredSentData(sentData);
       setFilteredReceivedData(receivedData);
+      setFilteredReadData(readData);
     } else {
       setFilteredSentData(sentData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
       setFilteredReceivedData(receivedData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
+      setFilteredReadData(readData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
     }
-  }, [searchTerm, sentData, receivedData]);
+  }, [searchTerm, sentData, receivedData, readData]);
 
 
   useEffect(() => {
@@ -49,13 +92,31 @@ export default function Announcements() {
     axios.get(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`).then((res) => {
       //   setAnnouncementData(res.data?.received?.result || res.data?.result || []);
       // setAnnouncementData(res.data);
+
+      setIsRead(false);
+      // let sent_data = (!res.data.sent.result.announcement_read) ? res.data.sent.result : null;
+      // let received_data = (!res.data.received.result.announcement_read) ? res.data.received.result : null;
       let sent_data = res.data.sent.result;
       let received_data = res.data.received.result;
+      // let received_data = res.data.received.result.filter(item => item.announcement_read === null);
+      let read_data = res.data.received.result.filter(item => item.announcement_read != null);
+
+      console.log("res.data?",res.data)
+      console.log("received_data before filter???", received_data)
+      console.log("sent_data before filter???", sent_data)
+      console.log("read_data before filter???", read_data)
+      console.log("owner_uid_filter}",typeof(owner_uid_filter))
       if (owner_uid_filter) {
+        console.log("inside owner_uid_filter>>");
         // If announcements need to be filtered by owner_uid after navigation from PmQuotesLists.jsx
         received_data = received_data.filter((record) => record.announcement_sender === owner_uid_filter);
+        read_data = read_data.filter((record) => record.announcement_sender === owner_uid_filter);
         sent_data = sent_data.filter((record) => record.announcement_receiver === owner_uid_filter);
+        console.log("received_data after filter???", received_data)
+        console.log("sent_data after filter???", sent_data)
+        console.log("read_data after filter???", read_data)
       }
+      
       sent_data.sort((a, b) => {
         if (a.announcement_uid < b.announcement_uid) return 1;
         if (a.announcement_uid > b.announcement_uid) return -1;
@@ -66,20 +127,59 @@ export default function Announcements() {
         if (a.announcement_uid > b.announcement_uid) return -1;
         return 0;
       });
+      read_data.sort((a, b) => {
+        if (a.announcement_uid < b.announcement_uid) return 1;
+        if (a.announcement_uid > b.announcement_uid) return -1;
+        return 0;
+      });
       setSentData(sent_data);
       setReceivedData(received_data);
+      setReadData(read_data);
 
+      setHasUnreadAnnouncements(received_data.some((announcement) => announcement.announcement_read === null));
       setShowSpinner(false);
     });
-  }, []);
+  }, [owner_uid_filter, getProfileId, isRead]);
 
   // Handle Navigation to the Contacts
 
-  const [dataDetails, setDataDetails] = useState({});
+  useEffect(() => {
+    if (readAllChecked) {
+      const currentTimestamp = new Date().toISOString();
+      const updatedReceivedData = receivedData.map((item) =>
+        item.announcement_read === null ? { ...item, announcement_read: currentTimestamp } : item
+      );
 
-  // useEffect(() => {
-  //     console.log("dataDetails - ", dataDetails);
-  // }, [dataDetails]);
+      setReceivedData(updatedReceivedData);
+
+      // Make API call to update announcements as read
+      const unreadAnnouncementUids = updatedReceivedData.filter((item) => item.announcement_read === currentTimestamp).map((item) => item.announcement_uid);
+      if (unreadAnnouncementUids.length > 0) {
+        fetch(`${APIConfig.baseURL.dev}/announcements`, {
+          method: "PUT",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            announcement_uid: unreadAnnouncementUids,
+          }),
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            console.log("Announcements marked as read successfully");
+          } else {
+            console.error("Error marking announcements as read");
+          }
+        })
+        .catch((error) => {
+          console.error("Error marking announcements as read:", error);
+        });
+      }
+    }
+  }, [readAllChecked]);
+
+
+
 
   const fetchContactData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -120,10 +220,76 @@ export default function Announcements() {
     fetchContactData();
   }, []);
 
+  
+  useEffect(() => {
+    if (announcementPopupClosed) {
+      setAnnouncementPopupClosed(false); // Reset the state variable
+    }
+  }, [announcementPopupClosed]);
+  
   // function onClick
   //
 
-  const handleAnnouncements = (announcement) => {
+  // const clearSearch = () => {
+  //   setSearchTerm("");
+  //   setFilteredItems(propertyList);
+  // };
+
+  //Function called when any announcement item is clicked 
+  const handleAnnouncements = async (announcement) => {
+    console.log("inside handleAnnouncements")
+    console.log(announcement)
+    setIsRead(true);
+    setAnnouncementPopupClosed(true);
+    const currentTimestamp = new Date().toISOString();
+    // setAnnouncementClicked(true);
+    setAnnouncementClicked(announcement);
+    console.log("announcementClicked>>>", announcementClicked)
+    
+    if (receivedData.some(item => item.announcement_uid === announcement.announcement_uid)) {
+      try {
+        console.log("inside 1st try block,,,")
+        const response = await fetch(`${APIConfig.baseURL.dev}/announcements`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body : JSON.stringify({
+                      "announcement_uid": [announcement.announcement_uid]
+                      // announcement_uid: announcement.announcement_uid,
+                      // announcement_read: currentTimestamp,
+                    }),
+                  });
+        // const response = await axios.put(`${APIConfig.baseURL.dev}/announcements`, {
+        //   announcement_uid: announcement.announcement_uid,
+        //   announcement_read: currentTimestamp,
+        // });
+
+      //   // If the update is successful, update the state accordingly
+        if (response.status === 200) {
+          console.log("response success")
+          console.log("before mapping date receivedData.....",receivedData)
+          console.log("before mapping date sentData.....",sentData)
+          console.log("announcement.announcement_uid>>",announcement.announcement_uid)
+          // console.log("prevData>>",prevData)
+          // console.log("ann.announcement_uid",ann.announcement_uid);
+           setReceivedData((prevData) => 
+            prevData.map((ann) => 
+              ann.announcement_uid === announcement.announcement_uid ? { ...ann, announcement_read: currentTimestamp } : ann
+        )
+          );
+          
+          
+        }
+      } catch (error) {
+        console.error("Error updating announcement:", error);
+      }
+    }
+      // console.log("after mapping date receivedData.....",receivedData)
+      // console.log("after mapping date sentData.....",sentData)
+
+
+
     if (announcement.announcement_mode == "PROPERTIES") {
       console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
@@ -139,7 +305,34 @@ export default function Announcements() {
     }
   };
 
+  const handleCloseAnnouncementCard = (announcementUid) => {
+    // Logic to handle the closing of the announcement
+    // For example, updating state or performing any other necessary actions
+    console.log("Closing announcement with UID:", announcementUid);
+  };
+  
+  const handleCloseAnnouncement = () => {
+    console.log("inside announcements.jsx handleCloseAnnouncement>>")
+    setShowAnnouncement(false);
+    setAnnouncementClosed(true); 
+    const announcementCard = document.querySelector('.announcement-list-card'); // Select the announcement card
+    if (announcementCard) {
+      announcementCard.classList.add('announcement-read'); // Add the announcement-yellow class to change background color
+    }
+
+    // if (clickedAnnouncementUid) {
+    //   document.querySelector(`.announcement-card-${clickedAnnouncementUid}`).classList.add("announcement-red");
+    // }
+  };
+
+  const handleAnnouncementClick = (announcement) => {
+    setClickedAnnouncementUid(announcement.announcement_uid);
+    // Handle additional logic when an announcement is clicked
+    handleAnnouncements(announcement);
+  };
+
   return (
+    <ThemeProvider theme={theme}>
     <div className="announcement-container">
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
@@ -153,6 +346,7 @@ export default function Announcements() {
           width: "100%",
         }}
       >
+        
         <Box
           className="announcement-title-text"
           sx={{
@@ -195,7 +389,9 @@ export default function Announcements() {
             +
           </Button>
         </Box>
+
       </Box>
+
       <hr />
       {/* <div className="announcement-location">
                 <div className="announcement-location-icon">
@@ -207,23 +403,66 @@ export default function Announcements() {
                     103 N. Abel St unit #104
                 </div>
             </div> */}
+
+      <Grid container spacing={isMobile ? 1 : 3}  >
+      <Grid item xs={12} md={4}  className="announcement-category">
+        <Paper
+            style={{
+              // margin: "30px",
+              marginLeft: "10px",
+              padding: 20,
+              borderRadius: "7px",
+              backgroundColor: theme.palette.primary.main,
+              // backgroundColor: theme.palette.primary.pink,
+              // width: "85%", // Occupy full width with 25px margins on each side
+              
+              [theme.breakpoints.down("sm")]: {
+                width: "80%",
+              },
+              [theme.breakpoints.up("sm")]: {
+                width: "50%",
+              },
+            }}
+          >
       <div className="announcement-searchbar-container">
         {/* <Searchbar /> */}
-        <div className="announcement-searchbar-container">
-          <TextField
+        
+        <div className="announcement-searchbar" >
+          <IconButton type="submit" style={{ padding: "10px", }} onClick={() => console.log("test")} aria-label="search">
+                <SearchIcon />
+          </IconButton>
+          <InputBase
+            sx={{ ml: 1, zIndex: 1000, flexGrow: 1, }}
+            placeholder="Search announcements..."
+            // inputProps={{ "aria-label": "search" }}
+            value={searchTerm}
+            // onChange={handleSearchChange}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            color={theme.typography.common.blue}
+          />
+          {/* {searchTerm && (
+            <IconButton aria-label="clear" onClick={clearSearch}>
+              <CloseIcon />
+            </IconButton>
+          )} */}
+          {/* <TextField
             type="small"
             placeholder="Search announcements..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
-              width: "80%",
+              width: "100%",
+               
               marginTop: "10px",
               "& input": {
                 height: "20px",
                 padding: "5px",
+                // opacity:"25%",
+                // backgroundColor: "#A9AAAB",
+                // borderRadius: "7px",
               },
             }}
-          />
+          /> */}
         </div>
       </div>
       <div className="announcement-menu-container">
@@ -240,22 +479,156 @@ export default function Announcements() {
                 <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
-            <div className="announcement-view-text">View Last 30 Days</div>
+            <div className="announcement-view-text" style={{ fontSize: "18px" }}>View Last 30 Days</div>
           </div>
+
+          {hasUnreadAnnouncements && (
+
           <div className="announcement-readall">
-            <div className="announcement-readall-text">Read All</div>
-            <div className="announcement-readall-checkbox">
-              <input type="checkbox" />
+            <div className="announcement-readall-text" style={{ fontSize: "18px" }}>Read All</div>
+            <div className="announcement-readall-checkbox" style={{ fontSize: "18px" }} onChange={(e) => {  setReadAllChecked(e.target.checked);}}>
+              <input type="checkbox" />              
             </div>
           </div>
+          )}
         </div>
-        <div style={{ marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
+        {/* <Grid container spacing={isMobile ? 1 : 3}  > */}
+          {/* <Grid item xs={16} md={3.9} sx={{marginLeft: "5px", height: "100%",}}className="announcement-category"> */}
+          {/* <Grid item xs={12} md={4} sx={{height: !isMobile ? "200vh" : "auto"}} className="announcement-category"> */}
+          
+            {/* <DashboardTab fullHeight={!isMobile ? true : false}> */}
+        
+        {/* <Box width="100%" >             */}
+        <div style={{  marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
           Received
         </div>
-        <div style={{ marginBottom: "30px", width: "100%", height: "420px", overflow: "auto" }}>
-          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto" }}>
+        <div style={{  marginBottom: "30px", width: "100%", overflow: "auto",}}> {/* backgroundColor:"#D9D9D9", opacity:"100%", borderRadius:"7px" }}>*/}
+          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto",  width:"100%"}} >
+          {/* <div className={`announcement-list-container ${announcementClicked ? 'clicked' : ''}`} style={{ maxHeight: "100%", overflowY: "auto", width: "100%" }}> */}
+          {/* <div className="announcement-list-card" style={{ maxHeight: "100%", overflowY: "auto",  width:"100%", backgroundColor: announcementClicked ? "red" : "transparent",}}> */}
             {filteredReceivedData.length > 0
               ? filteredReceivedData.map((announcement, i) => {
+                  let role = announcement?.sender_role;
+                  let pageToNavigate;
+                  let navigationParams;
+                  try {
+                    let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_sender);
+                    if (indx >= 0) {
+                      pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
+                      navigationParams = {
+                        state: {
+                          dataDetails: dataDetails[role],
+                          tab: role,
+                          index: indx,
+                          viewData: dataDetails[role],
+                        },
+                      };
+                    }
+                  } catch (e) {
+                    // console.log(e);
+                  }
+
+                  return (
+
+                    // {receivedData.map((announcement) => (
+                    //   <div key={announcement.announcement_uid} onClick={() => handleAnnouncements(announcement)}>
+                    //     <input
+                    //       type="checkbox"
+                    //       id={`checkbox-${announcement.announcement_uid}`}
+                    //       checked={announcement.announcement_read !== null}
+                    //       readOnly
+                    //     />
+                    //     <span>{announcement.announcement_title}</span>
+                    //     {/* other elements */}
+                    //   </div>
+                    // ))}
+
+
+                    // <div className="announcement-cards">
+                    //     {receivedData.length > 0 ? (
+                    //       receivedData.map((announcement, index) => (
+                    //         <div
+                    //           key={index}
+                    //           onClick={() => handleAnnouncements(announcement)}
+                    //           style={{
+                    //             cursor: "pointer",
+                    //             backgroundColor: announcement.announcement_read ? "#E0E0E0" : announcementClicked === announcement ? "#ADD8E6" : "white",
+                    //           }}
+                    //         >
+                    //           <AnnouncementCard
+                    //             title={announcement.announcement_title}
+                    //             message={announcement.announcement_message}
+                    //             date={announcement.announcement_date}
+                    //             checked={announcement.announcement_read || announcementClicked === announcement}
+                    //           />
+                    //         </div>
+                    //       ))
+                    //     ) : (
+                    //       <div className="no-announcements">No Announcements</div>
+                    //     )}
+                    //   </div>
+
+                    <div key={i} className={`announcement-card-content ${announcementClicked && announcementClicked === announcement.announcement_uid ? 'announcement-clicked' : ''}`}
+                    onClick={() => handleAnnouncements(announcement)}
+                              // style={{
+                              //   cursor: "pointer",
+                              //   backgroundColor: announcement.announcement_read ? "#E0E0E0" : announcementClicked === announcement ? "#ADD8E6" : "white",
+                              // }}
+                    >
+                      {/* <Box
+                        onClick={() => {
+                           handleAnnouncements(announcement);
+                        }}
+                        sx={{
+                          backgroundColor: announcement === announcementClicked ? 'blue' : 'transparent',
+                          transition: 'background-color 0.3s ease',
+                          borderRadius: '7px',
+                          cursor: 'pointer',
+                        }}
+                      > */}
+                        {
+                          <AnnouncementCard 
+                          // key={announcement.announcement_uid}
+                          // announcement={{ ...announcement, isClicked: announcement.announcement_uid === clickedAnnouncementUid }}
+                          // onAnnouncementClick={handleAnnouncementClick}
+                            data={announcement}
+                            role={getProfileId}
+                            isContract={announcement.announcement_mode == "CONTRACT"}
+                            isLease={announcement.announcement_mode == "LEASE"}
+                            pageToNavigate={pageToNavigate}
+                            navigationParams={navigationParams}
+                            sent_or_received={"Received"}
+                            readAllChecked={readAllChecked}
+                            showCheckbox={false}
+                            checked1={announcement.announcement_read !== null}
+                            // onCloseClick={true}
+                            onCloseClick={() => handleCloseAnnouncementCard(announcement.announcement_uid)}
+                            announcementClosed={announcementClosed}
+                          />
+                        }
+
+                      {/* </Box> */}
+                    </div>
+                  );
+                })
+              : "No announcements"}
+          </div>
+        {/* </div> */}
+        </div>
+
+          {/* </DashboardTab> */}
+          {/* </Box> */}
+          {/* </Grid> */}
+
+          {/* <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category">
+
+        <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
+          Read
+        </div>
+        <div style={{ width: "100%", height: "420px", overflow: "auto",}}>
+          <div className="announcement-list-container">
+            {filteredReadData.length > 0
+              ? filteredReadData.map((announcement, i) => {
                   let role = announcement?.sender_role;
                   let pageToNavigate;
                   let navigationParams;
@@ -284,7 +657,7 @@ export default function Announcements() {
                         }}
                       >
                         {
-                          <AnnouncementCard
+                          <AnnouncementCard 
                             data={announcement}
                             role={getProfileId}
                             isContract={announcement.announcement_mode == "CONTRACT"}
@@ -292,8 +665,10 @@ export default function Announcements() {
                             pageToNavigate={pageToNavigate}
                             navigationParams={navigationParams}
                             sent_or_received={"Received"}
+                            showCheckbox={false}
                           />
                         }
+                        
                       </Box>
                     </div>
                   );
@@ -301,10 +676,15 @@ export default function Announcements() {
               : "No announcements"}
           </div>
         </div>
-        <div style={{ marginBottom: "30px", fontSize: "20px" }} className="announcement-view-text">
+        
+          </Grid> */}
+
+          {/* <Grid item xs={16} md={3.9} style={{ marginLeft: isMobile ? '0px' : '10px', }} className="announcement-category"> */}
+
+        <div style={{ marginBottom: "20px", fontSize: "20px", }} className="announcement-view-text">
           Sent
         </div>
-        <div style={{ width: "100%", height: "420px", overflow: "auto" }}>
+        <div style={{ width: "100%", height: "420px", overflow: "auto",}}>
           <div className="announcement-list-container">
             {filteredSentData.length > 0
               ? filteredSentData.map((announcement, i) => {
@@ -344,8 +724,12 @@ export default function Announcements() {
                             pageToNavigate={pageToNavigate}
                             navigationParams={navigationParams}
                             sent_or_received={"Sent"}
+                            showCheckbox={true}
+                            checked1={announcement.announcement_read !== null}
+
                           />
                         }
+                        
                       </Box>
                     </div>
                   );
@@ -353,19 +737,141 @@ export default function Announcements() {
               : "No announcements"}
           </div>
         </div>
-      </div>
+        </div>
+        </Paper>
+          </Grid>
+          {/* second grid item.......................................................... */}
+          {!isMobile && (
+
+          <Grid item xs={12} md={8}>
+          <Paper
+            style={{
+              // margin: "30px",
+              marginRight: "10px",
+              padding: 20,
+              borderRadius: "7px",
+              backgroundColor: theme.palette.primary.main,
+              // backgroundColor: theme.palette.primary.pink,
+              // width: "85%", // Occupy full width with 25px margins on each side
+              
+              [theme.breakpoints.down("sm")]: {
+                width: "80%",
+              },
+              [theme.breakpoints.up("sm")]: {
+                width: "50%",
+              },
+            }}
+          >
+            <DialogTitle sx={{
+                p: 4,
+                textAlign: 'Center',
+                
+            }}>
+                <Typography variant="h6" fontFamily="Source Sans Pro" fontWeight="600" color="#160449">{annData?.announcement_title}</Typography>
+                {/* <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', width: '80%', margin: '10px auto 0px auto'}} /> */}
+
+
+            </DialogTitle>
+            {/* {annData?.announcement_title || "AnnouncementsName"} */}
+            <Box
+                className="announcement-large-window"
+                sx={{
+                  // border: "1px solid #ddd",
+                  backgroundColor:"#e0e0e0",
+                  borderRadius: "5px",
+                  padding: "15px",
+                  // minHeight: "200vh",
+                }}
+              >
+                <Box
+                  className="announcement-name"
+                  sx={{
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                    marginBottom: "15px",
+                  }}
+                >
+                   <Box
+            // open={showAnnouncement}
+            // onClose={handleClose}
+            // onClose={() => setShowAnnouncement(false)}
+            maxWidth="lg"
+            sx={{
+                '& .MuiDialog-paper': {
+                    width: '340px',
+                    height: '360px',
+                    borderRadius: '10px',
+                },
+            }}
+        >
+            
+            <DialogContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom:'20px', }}>
+                    <img
+                        src={annData?.sender_photo_url || annData?.receiver_photo_url || DefaultProfileImg}
+                        alt="Sender/Receiver Photo"
+                        style={{
+                          backgroundColor:"lightblue",
+                            borderRadius: '50%',
+                            width: '100px',
+                            height: '100px',
+                            objectFit: 'cover',
+                            marginRight: '40px',
+                        }}
+                    />
+                    <Box>
+                        <Typography  fontFamily="Source Sans Pro" color="#160449"  fontWeight="900" >{`${annData?.sender_first_name || 'Click on an item'} ${annData?.sender_last_name || ''}`}</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom:"10px" }}>
+                            <Typography  fontFamily="Source Sans Pro" color="#160449"  >{annData?.sender_role || ''}</Typography>
+                            <Message
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    // fontSize: '19px',
+                                    marginLeft: '20px',
+                                }}
+                            />
+                        </Box>
+                        <Typography  fontFamily="Source Sans Pro" color="#160449"  fontWeight="600">{annData?.announcement_date}</Typography>
+                    </Box>
+                    
+                </Box>
+                <Box >
+                        {/* <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" fontWeight="600">{annData?.announcement_title || 'No Title'}</Typography> */}
+                        <Typography variant="body1" fontFamily="Source Sans Pro" color="#160449"  >{annData?.announcement_msg || 'No Message'}</Typography>
+                </Box>
+            </DialogContent>
+           
+        </Box>
+
+
+                </Box>
+
+                {/* <Box className="announcement-content">{annData?.announcement_content || "Select an announcement to view its content."}</Box> */}
+              </Box>
+            </Paper>
+          </Grid>
+          )}
+          
+
+        </Grid>
+      {/* </div> */}
 
       {/**
             <hr/>
             <SearchFilter/>
              */}
+       {isMobile && (       
       <AnnouncementPopUp
         showAnnouncement={showAnnouncement}
         setShowAnnouncement={setShowAnnouncement}
         annData={annData}
+        onClose={handleCloseAnnouncement}
         sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
       />
+    )}
       <Box sx={{ paddingBottom: "10%", width: "100%", marginLeft: "20px", marginRight: "20px" }}></Box>
+    
     </div>
+    </ThemeProvider>
   );
 }

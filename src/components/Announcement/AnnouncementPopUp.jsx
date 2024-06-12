@@ -11,6 +11,7 @@ import { Message} from '@mui/icons-material';
 import theme from '../../theme/theme';
 import CloseIcon from '@mui/icons-material/Close';
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
+import React, { useState } from 'react';
 
 export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement, annData}) {
     const first_name = annData?.sender_first_name || annData?.receiver_first_name || 'Unknown';
@@ -27,13 +28,21 @@ export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement
     
         return `${month}/${day}/${year}`;
     }
-    
+    const [bgColor, setBgColor] = useState('#D6D5DA');
+    const [isClosed, setIsClosed] = useState(false);
     const formatted_announcement_date = formatDate(announcement_date);
     
+    const handleClose = () => {
+        setBgColor('yellow'); // Change background color to yellow
+        setIsClosed(true);
+        setShowAnnouncement(false);
+    };
+
     return (
         <Dialog
             open={showAnnouncement}
-            onClose={() => setShowAnnouncement(false)}
+            onClose={handleClose}
+            // onClose={() => setShowAnnouncement(false)}
             maxWidth="lg"
             sx={{
                 '& .MuiDialog-paper': {
@@ -55,7 +64,8 @@ export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement
                     top: 1,
                     color: (theme) => theme.palette.grey[500]
                 }} 
-                    onClick={() => setShowAnnouncement(false)}
+                onClick={handleClose}
+                    // onClick={() => setShowAnnouncement(false)}
                 >
 
                     <CloseIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
