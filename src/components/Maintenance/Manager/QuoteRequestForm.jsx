@@ -105,7 +105,7 @@ export default function QuoteRequestForm() {
 
 			window.dispatchEvent(new Event('storage'));
 			// Dispatch the custom event
-            setTimeout(() => {
+			setTimeout(() => {
 				window.dispatchEvent(new Event('maintenanceRequestSelected'));
 			}, 0);
 			setTimeout(() => {
@@ -183,12 +183,12 @@ export default function QuoteRequestForm() {
 				if (response.status === 200) {
 					// console.log("success");
 					changeMaintenanceRequestStatus();
-                    if (isMobile){
-                        navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
-                    } else{
-                        handleBackButton();
-                    }
+					if (isMobile) {
+						navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
 					} else {
+						handleBackButton();
+					}
+				} else {
 					console.error(`Request failed with status: ${response.status}`);
 				}
 			} catch (error) {
@@ -314,7 +314,12 @@ export default function QuoteRequestForm() {
 							paddingRight: '0px',
 						}}
 					>
-						<Box position="absolute" left="43%">
+						<Box
+							sx={{
+								position: 'absolute',
+								left: isMobile ? '30px' : '43%',
+							}}
+						>
 							<Button onClick={() => handleBackButton()}>
 								<ArrowBackIcon
 									sx={{ color: theme.typography.primary.black, fontSize: '30px', margin: '5px' }}

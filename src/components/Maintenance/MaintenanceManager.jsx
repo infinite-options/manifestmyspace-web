@@ -27,6 +27,7 @@ import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 
 import QuoteRequestForm from './Manager/QuoteRequestForm';
+import QuoteAcceptForm from './Manager/QuoteAcceptForm';
 import useSessionStorage from './useSessionStorage';
 import { useCookies } from "react-cookie";
 
@@ -157,6 +158,8 @@ export default function MaintenanceManager() {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [desktopView] = useSessionStorage('desktopView', false);
+
+  const [quoteAcceptView] = useSessionStorage('quoteAcceptView', false);
   const [cookies] = useCookies(['selectedRole']);
   const selectedRole = cookies.selectedRole;
 
@@ -472,7 +475,14 @@ export default function MaintenanceManager() {
                                     navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
                                 />
                             </>
-                        ) : (
+                        ) : quoteAcceptView && selectedRole === 'MANAGER' ? (
+                          <>
+                              <QuoteAcceptForm
+                                  maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+                                  navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+                              />
+                          </>
+                      ) :(
                             Object.keys(maintenanceData).length > 0 && (
                                 <MaintenanceRequestDetail
                                     maintenance_request_index={selectedRequestIndex}

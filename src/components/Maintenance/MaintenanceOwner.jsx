@@ -30,6 +30,8 @@ import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 import QuoteRequestForm from './Manager/QuoteRequestForm';
+import QuoteAcceptForm from './Manager/QuoteAcceptForm';
+import RescheduleMaintenance from './Manager/RescheduleMaintenance';
 import useSessionStorage from './useSessionStorage';
 import { useCookies, Cookies } from "react-cookie";
 
@@ -110,7 +112,8 @@ export function MaintenanceOwner() {
     const [desktopView] = useSessionStorage('desktopView', false);
     const [cookies] = useCookies(['selectedRole']);
     const selectedRole = cookies.selectedRole;
-
+    const [quoteAcceptView] = useSessionStorage('quoteAcceptView', false);
+    const [rescheduleView] = useSessionStorage('rescheduleView', false);
     function navigateToAddMaintenanceItem() {
         navigate('/addMaintenanceItem', { state: { month, year, propertyId } });
     }
@@ -411,7 +414,22 @@ export function MaintenanceOwner() {
                                     navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
                                 />
                             </>
-                        ) : (
+                        ) : quoteAcceptView && selectedRole === 'OWNER' ? (
+                            <>
+                                <QuoteAcceptForm
+                                    maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+                                    navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+                                />
+                            </>
+                        ): rescheduleView && selectedRole === 'OWNER' ? (
+                            <>
+                                <RescheduleMaintenance
+                                    maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+                                    navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+                                    quotes={JSON.parse(sessionStorage.getItem('quotes'))}
+                                />
+                            </>
+                        ): (
                             Object.keys(maintenanceData).length > 0 && (
                                 <MaintenanceRequestDetail
                                     maintenance_request_index={selectedRequestIndex}
