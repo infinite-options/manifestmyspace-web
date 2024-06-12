@@ -28,7 +28,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../../utils/APIConfig";
 
 export default function ScheduleMaintenance({maintenanceItem, navigateParams, quotes}){
@@ -40,7 +40,8 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
     const [showMessage, setShowMessage] = useState(false);
     const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
     const [message, setMessage] = useState("");
-
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    
     useEffect(() => {
         setMaintenanceItemQuotes(quotes);
     }, [quotes])
@@ -67,13 +68,40 @@ export default function ScheduleMaintenance({maintenanceItem, navigateParams, qu
     }
 
     function handleNavigateToQuotesRequested(){
-        navigate("/quoteRequest", {
+        if (isMobile) {navigate("/quoteRequest", {
             state:{
                 maintenanceItem,
                 navigateParams,
                 quotes
             }
         });
+    } else{
+        if (maintenanceItem && navigateParams && quotes) {
+            try {
+                const maintenanceItemStr = JSON.stringify(maintenanceItem);
+                const navigateParamsStr = JSON.stringify(navigateParams);
+                const quotesStr = JSON.stringify(quotes);
+                console.log('Storing data in sessionStorage for quote request : ', maintenanceItemStr, navigateParamsStr);
+
+                // Save data to sessionStorage
+                sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
+                sessionStorage.setItem('navigateParams', navigateParamsStr);
+                sessionStorage.setItem('quotes', quotesStr);
+                sessionStorage.setItem('desktopView', 'true');
+                sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
+                sessionStorage.setItem('selectedStatus', navigateParams.status);
+                    
+                window.dispatchEvent(new Event('storage'));
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('maintenanceRequestSelected'));
+                }, 0);
+            } catch (error) {
+                console.error("Error setting sessionStorage: ", error);
+            }
+        } else {
+            console.error("maintenanceItem or navigateParams is undefined");
+        }
+    }
     }
 
 

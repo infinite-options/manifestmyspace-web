@@ -215,12 +215,12 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }, [currentStatus]);
 
   useEffect(() => {
-    console.log('---new useEffect-----');
     const handleMaintenanceRequestSelected = () => {
         const index = sessionStorage.getItem('selectedRequestIndex');
         const status = sessionStorage.getItem('selectedStatus');
         const maintenanceItemsForStatus = JSON.parse(sessionStorage.getItem('maintenanceItemsForStatus'));
 
+      console.log('---new useEffect-----', index, status);
         // Update state with the new values
         setMaintenanceRequestIndex(Number(index));
         setCurrentStatus(status);
@@ -230,7 +230,7 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
         const statusIndex = colorStatus.findIndex(item => item.status === status);
         if (statusIndex !== -1) {
             setValue(statusIndex);
-            handleChange(null, statusIndex);
+            handleChange(null, statusIndex, Number(index));
         }
     };
 
@@ -242,11 +242,11 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
     };
 }, []);
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (event, newValue, index=0) => {
     console.log('----Handle change in req detail---', newValue);
     setCurrentStatus(colorStatus[newValue].status);
     setValue(newValue);
-    setMaintenanceRequestIndex(0);
+    setMaintenanceRequestIndex(index);
     const newStatus = colorStatus[newValue].mapping;
     const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
     setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
