@@ -26,7 +26,7 @@ import userFillIcon from './User_fill.png'
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import CreateChargeModal from "../../CreateChargeModal";
-
+import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
 import { useUser } from "../../../contexts/UserContext";
 
@@ -34,8 +34,17 @@ export default function PayMaintenanceForm(){
 
     const navigate = useNavigate();
     const location = useLocation();
-    const maintenanceItem = location.state.maintenanceItem;
-    const navigationParams = location.state.navigateParams;
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    let maintenanceItem;
+	let navigationParams;
+
+	if (!isMobile) {
+		maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
+		navigationParams = JSON.parse(sessionStorage.getItem('navigateParams'));
+	} else {
+		maintenanceItem = location.state.maintenanceItem;
+		navigationParams = location.state.navigateParams;
+	}
     const [displayImages, setDisplayImages] = useState([])
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
@@ -43,6 +52,7 @@ export default function PayMaintenanceForm(){
     const [showModal, setShowModal] = useState(false);
     const [businessProfile, setBusinessProfile] = useState({});
     const { getProfileId } = useUser();
+    
 
     // const [amount, setAmount] = useState(props.maintenanceItem.bill_amount || '');
     let maintenance_request_index = navigationParams.maintenanceRequestIndex
@@ -156,8 +166,14 @@ export default function PayMaintenanceForm(){
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
-        navigate("/maintenance/detail", {
+        console.log("handleBackButton");
+        sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
+		sessionStorage.setItem('selectedStatus', status);
+		sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceItemsForStatus));
+		sessionStorage.setItem('allMaintenanceData', JSON.stringify(allMaintenanceData));
+    
+        if (isMobile){
+            navigate("/maintenance/detail", {
             state: {
                 maintenance_request_index,
                 status,
@@ -165,6 +181,20 @@ export default function PayMaintenanceForm(){
                 allMaintenanceData,
             }
         }); 
+    }else{
+        sessionStorage.removeItem('maintenanceItem');
+                sessionStorage.removeItem('navigateParams');
+                sessionStorage.removeItem('payMaintenanceView');
+    
+                window.dispatchEvent(new Event('storage'));
+                // Dispatch the custom event
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('maintenanceRequestSelected'));
+                }, 0);
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('maintenanceUpdate'));
+                }, 0);
+      }
     }
 
     return (
@@ -213,7 +243,10 @@ export default function PayMaintenanceForm(){
                             paddingRight: "0px",
                         }}
                     >
-                        <Box position="absolute" left={30}>
+                        <Box sx={{
+								position: 'absolute',
+								left: isMobile ? '30px' : '43%',
+							}}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
                             </Button>

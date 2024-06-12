@@ -97,7 +97,7 @@ export default function QuoteAcceptForm() {
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus;
     let allMaintenanceData = navigationParams.allData;
     let maintenanceQuotes = navigationParams.maintenanceQuotes;
-    console.log('-----', navigationParams);
+    
     // Set the necessary session storage items
 		sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
 		sessionStorage.setItem('selectedStatus', status);

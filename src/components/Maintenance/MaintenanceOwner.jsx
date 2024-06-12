@@ -31,6 +31,7 @@ import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 import QuoteRequestForm from './Manager/QuoteRequestForm';
 import QuoteAcceptForm from './Manager/QuoteAcceptForm';
+import PayMaintenanceForm from './Manager/PayMaintenanceForm';
 import RescheduleMaintenance from './Manager/RescheduleMaintenance';
 import useSessionStorage from './useSessionStorage';
 import { useCookies, Cookies } from "react-cookie";
@@ -114,6 +115,7 @@ export function MaintenanceOwner() {
     const selectedRole = cookies.selectedRole;
     const [quoteAcceptView] = useSessionStorage('quoteAcceptView', false);
     const [rescheduleView] = useSessionStorage('rescheduleView', false);
+    const [payMaintenanceView] = useSessionStorage('payMaintenanceView', false);
     function navigateToAddMaintenanceItem() {
         navigate('/addMaintenanceItem', { state: { month, year, propertyId } });
     }
@@ -429,7 +431,14 @@ export function MaintenanceOwner() {
                                     quotes={JSON.parse(sessionStorage.getItem('quotes'))}
                                 />
                             </>
-                        ): (
+                        ): payMaintenanceView && selectedRole === 'OWNER' ? (
+                            <>
+                                <PayMaintenanceForm
+                                    maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+                                    navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+                                />
+                            </>
+                        ):(
                             Object.keys(maintenanceData).length > 0 && (
                                 <MaintenanceRequestDetail
                                     maintenance_request_index={selectedRequestIndex}
