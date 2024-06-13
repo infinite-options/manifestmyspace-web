@@ -1320,7 +1320,15 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                             alignItems: "center",
                             cursor: "pointer",
                           }}
-                          onClick={() => { if (property.maintenanceCount > 0) { navigate("/ownerMaintenance", { state: { propertyId: propertyId } }) } }}
+                          onClick={() => {
+                            if (property.maintenanceCount > 0) {
+                              if (selectedRole === "OWNER") {
+                                navigate("/ownerMaintenance", { state: { propertyId: propertyId, fromProperty: true,  } });
+                              } else {
+                                navigate("/managerMaintenance", { state: { propertyId: propertyId, fromProperty: true, } });
+                              }
+                            }
+                          }}
                         >
                           <Badge
                             badgeContent={property.maintenanceCount}

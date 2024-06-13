@@ -277,8 +277,8 @@ export default function PropertyList({ }) {
 
   const propertyRentDetails = async () => {
     try {
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
       if (!response.ok) {
         console.log("Error fetching rent Details data");
       }

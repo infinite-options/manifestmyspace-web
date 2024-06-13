@@ -1,22 +1,43 @@
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Paper } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import theme from "../../../theme/theme";
 import AllOwnerIcon from "./AllOwnerIcon.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export function MainContainer(props) {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Box
       sx={{
-        backgroundColor: "#F2F2F2",
-        borderRadius: "10px",
-        margin: "25px",
-        padding: "15px",
+        // backgroundColor: "#F2F2F2",
+        // borderRadius: "10px",
+        // margin: "25px",
+        // padding: "15px",
+        // fontFamily: "Source Sans Pro",
+        // height: "100%"
+
+        backgroundColor: isMobile ? "#F2F2F2" : "",
+        margin: isMobile ? "25px" : "0px",
         fontFamily: "Source Sans Pro",
+        display: "flex",
+        justifyContent: "center",
+        height: "100%",
       }}
     >
+       <Paper
+        sx={{
+          marginTop: "10px",
+          backgroundColor: theme.palette.primary.main,
+          width: "100%", // Occupy full width with 25px margins on each side
+          maxWidth: "800px", // You can set a maxWidth if needed
+          padding: "15px",
+        }}
+      >
       {props.children}
+      </Paper>
     </Box>
   );
 }
@@ -262,13 +283,18 @@ export function RentAccordion(props) {
     });
   }
   return (
-    <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), fontFamily: "Source Sans Pro", color: "#FFFFFF" }}>
+    <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), fontFamily: "Source Sans Pro", color: "#FFFFFF", minHeight:"48px" }}>
       <AccordionSummary
         expandIcon={
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" strokeWidth="2.5" />
           </svg>
         }
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          minHeight: "48px",
+        }}
       >
         <Box
           sx={{
