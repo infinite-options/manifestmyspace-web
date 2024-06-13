@@ -31,7 +31,7 @@ import APIConfig from "../../../utils/APIConfig";
 import { useUser } from "../../../contexts/UserContext";
 
 export default function PayMaintenanceForm(){
-
+    console.log('--payment maintenance form--');
     const navigate = useNavigate();
     const location = useLocation();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -40,6 +40,7 @@ export default function PayMaintenanceForm(){
 
 	if (!isMobile) {
 		maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
+        console.log('---inside pay form maintenanceItem', maintenanceItem);
 		navigationParams = JSON.parse(sessionStorage.getItem('navigateParams'));
 	} else {
 		maintenanceItem = location.state.maintenanceItem;
@@ -63,7 +64,7 @@ export default function PayMaintenanceForm(){
     // console.log("[DEBUG] maintenance item with payment info?", maintenanceItem)
 
     useEffect(() => {
-        console.log(maintenanceItem)
+        console.log("--inside pay form useEffect--", maintenanceItem)
         const getBusinessProfile = async (profileId) => {
             const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${profileId}`);
             const data2 = await businessProfileResult.json();
@@ -73,9 +74,9 @@ export default function PayMaintenanceForm(){
         }
         if (maintenanceItem.bill_uid !== null){
             getBusinessProfile(maintenanceItem.bill_created_by)
-        } else if(maintenanceItem.quote_status !== 'FINISHED' && maintenanceItem.quote_status !== 'COMPLETED' && maintenanceItem.maintenance_request_status === 'COMPLETED'){
+        } else if(maintenanceItem.quote_status_ranked !== 'FINISHED' && maintenanceItem.quote_status_ranked !== 'COMPLETED' && maintenanceItem.maintenance_request_status === 'COMPLETED'){
             // getBusinessProfile(maintenanceItem.owner_uid)
-            console.log(maintenanceItem)
+           
             setBusinessProfile({
                 business_apple_pay: maintenanceItem.owner_apple_pay,
                 business_venmo: maintenanceItem.owner_venmo,
@@ -88,7 +89,7 @@ export default function PayMaintenanceForm(){
         console.log("calling determinePayerAndPayee")
         determinePayerAndPayee()
         console.log("after determinePayerAndPayee")
-    }, [maintenanceItem])
+    }, [])
 
     const determinePayerAndPayee = () => {
         if(maintenanceItem.maintenance_assigned_business === getProfileId()){
@@ -411,10 +412,10 @@ export default function PayMaintenanceForm(){
                                         fontSize: '16px',
                                     }}
                                 >
-                                    {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === 'FINISHED'
+                                    {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status_ranked === 'FINISHED'
                                         ? `$${maintenanceItem.bill_amount}`
                                         : (
-                                                maintenanceItem.quote_status !== 'FINISHED' && maintenanceItem.quote_status !== 'COMPLETED' &&
+                                                maintenanceItem.quote_status_ranked !== 'FINISHED' && maintenanceItem.quote_status_ranked !== 'COMPLETED' &&
                                                 maintenanceItem.maintenance_request_status === 'COMPLETED' ? (
                                                     <Grid item xs={12}>
                                                         <Button variant="contained" color="primary" type="submit" sx={{backgroundColor: "#3D5CAC", pointerEvents: "auto"}} onClick={() => setShowModal(true)}>
@@ -428,7 +429,7 @@ export default function PayMaintenanceForm(){
                                 </Typography>
                             </Container>
                         </Grid>
-                        {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status === "FINISHED" ? (
+                        {maintenanceItem.bill_amount !== null && maintenanceItem.quote_status_ranked === "FINISHED" ? (
                             <>
                                 <Grid item xs={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Typography
