@@ -11,23 +11,43 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
-
+import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
 
 export default function QuoteAcceptForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const { maintenanceRoutingBasedOnSelectedRole } = useUser();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  let maintenanceItem;
+	let navigationParams;
 
-  const maintenanceItem = location.state.maintenanceItem;
-  const navigationParams = location.state.navigateParams;
+	if (!isMobile && sessionStorage.getItem('quoteAcceptView') === 'true') {
+		maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
+		navigationParams = JSON.parse(sessionStorage.getItem('navigateParams'));
+	} else {
+		maintenanceItem = location.state.maintenanceItem;
+		navigationParams = location.state.navigateParams;
+	}
 
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [displayImages, setDisplayImages] = useState([]);
   const [quoteImages, setQuoteImages] = useState([]);
-  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(location.state.index || 0);
-  const [maintenanceQuotes, setMaintenanceQuotes] = useState(location.state.quotes);
+  
+  
+  // Determine the initial state based on the condition
+  const initialQuoteIndex = isMobile ? (location.state.index || 0) : 0;
+
+  // Use the determined initial state value
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(initialQuoteIndex);
+  
+  // Determine the initial state value based on the condition
+  const initialQuotes = isMobile ? location.state.quotes : JSON.parse(sessionStorage.getItem('quotes')) || [];
+  console.log('Is it here before----', initialQuotes);
+  // Use the determined initial state value
+  const [maintenanceQuotes, setMaintenanceQuotes] = useState(initialQuotes);
+  console.log('Is it here after----', maintenanceQuotes);
   const [showSpinner, setShowSpinner] = useState(false);
   const [estimatedTotalCost, setEstimatedTotalCost] = useState(0);
   const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
@@ -77,8 +97,16 @@ export default function QuoteAcceptForm() {
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus;
     let allMaintenanceData = navigationParams.allData;
     let maintenanceQuotes = navigationParams.maintenanceQuotes;
+    
+    // Set the necessary session storage items
+		sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
+		sessionStorage.setItem('selectedStatus', status);
+		sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceItemsForStatus));
+		sessionStorage.setItem('allMaintenanceData', JSON.stringify(allMaintenanceData));
+    sessionStorage.setItem('maintenanceQuotes', JSON.stringify(maintenanceQuotes));
 
-    navigate("/maintenance/detail", {
+
+    if (isMobile) {navigate("/maintenance/detail", {
       state: {
         maintenance_request_index,
         status,
@@ -87,6 +115,21 @@ export default function QuoteAcceptForm() {
         maintenanceQuotes,
       },
     });
+  } else{
+    sessionStorage.removeItem('maintenanceItem');
+			sessionStorage.removeItem('navigateParams');
+      sessionStorage.removeItem('quotes');
+			sessionStorage.removeItem('quoteAcceptView');
+
+			window.dispatchEvent(new Event('storage'));
+			// Dispatch the custom event
+            setTimeout(() => {
+				window.dispatchEvent(new Event('maintenanceRequestSelected'));
+			}, 0);
+			setTimeout(() => {
+				window.dispatchEvent(new Event('maintenanceUpdate'));
+			}, 0);
+  }
   }
 
   const handleSubmit = (quoteStatusParam) => {
@@ -133,7 +176,11 @@ export default function QuoteAcceptForm() {
         console.log(responseData);
         if (response.status === 200) {
           console.log("success");
-          navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
+          if (isMobile){
+            navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
+          }else{
+            handleBackButton();
+          }
         } else {
           console.log("error changing maintenance assigned business");
         }
@@ -156,6 +203,7 @@ export default function QuoteAcceptForm() {
 
   useEffect(() => {
     try {
+      console.log('inside accept form--', maintenanceQuotes, currentQuoteIndex);
       let imageArray = JSON.parse(maintenanceItem?.maintenance_images || "[]");
       let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || "[]");
       setDisplayImages(imageArray);
@@ -201,7 +249,10 @@ export default function QuoteAcceptForm() {
             paddingRight: "0px",
           }}
         >
-          <Box position="absolute" left={30}>
+          <Box sx={{
+								position: 'absolute',
+								left: isMobile ? '30px' : '43%',
+							}}>
             <Button onClick={() => handleBackButton()}>
               <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
             </Button>

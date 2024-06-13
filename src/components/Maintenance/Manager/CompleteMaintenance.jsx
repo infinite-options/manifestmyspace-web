@@ -21,12 +21,14 @@ import CompleteButton from "../MaintenanceComponents/CompleteButton";
 import { useUser } from "../../../contexts/UserContext";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 export default function CompleteMaintenance({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     console.log("COMPLETE MAINTENANCE QUOTES", quotes)
 
@@ -35,22 +37,72 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
 
-        navigate("/payMaintenance", {
+        if (isMobile) {
+            navigate("/payMaintenance", {
             state:{
                 maintenanceItem,
                 navigateParams
             }
         })
+    } else {
+        if (maintenanceItem && navigateParams) {
+            try {
+                const maintenanceItemStr = JSON.stringify(maintenanceItem);
+                const navigateParamsStr = JSON.stringify(navigateParams);
+
+                // Save data to sessionStorage
+                sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
+                sessionStorage.setItem('navigateParams', navigateParamsStr);
+                sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
+                sessionStorage.setItem('selectedStatus', navigateParams.status);
+                sessionStorage.setItem('payMaintenanceView', 'true');
+                window.dispatchEvent(new Event('storage'));
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('maintenanceRequestSelected'));
+                }, 0);
+            } catch (error) {
+                console.error('Error setting sessionStorage: ', error);
+            }
+        } else {
+            console.error('maintenanceItem or navigateParams is undefined');
+        }
+    }
     }
 
     function handleNavigateToQuotesAccept(){
-        navigate("/quoteAccept", {
+        if (isMobile) {navigate("/quoteAccept", {
             state:{
                 maintenanceItem,
                 navigateParams,
                 quotes
             }
         });
+    }else {
+        if (maintenanceItem && navigateParams) {
+            try {
+                const maintenanceItemStr = JSON.stringify(maintenanceItem);
+                const navigateParamsStr = JSON.stringify(navigateParams);
+                const quotesStr = JSON.stringify(quotes);
+                console.log('Storing data in sessionStorage: ', quotesStr);
+
+                // Save data to sessionStorage
+                sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
+                sessionStorage.setItem('navigateParams', navigateParamsStr);
+                sessionStorage.setItem('quotes', quotesStr);
+                sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
+                sessionStorage.setItem('selectedStatus', navigateParams.status);
+                sessionStorage.setItem('quoteAcceptView', 'true');
+                window.dispatchEvent(new Event('storage'));
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('maintenanceRequestSelected'));
+                }, 0);
+            } catch (error) {
+                console.error('Error setting sessionStorage: ', error);
+            }
+        } else {
+            console.error('maintenanceItem or navigateParams is undefined');
+        }
+    }
     }
 
     return(

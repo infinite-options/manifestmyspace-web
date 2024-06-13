@@ -57,13 +57,18 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
                     const maintenanceItemStr = JSON.stringify(maintenanceItem);
                     const navigateParamsStr = JSON.stringify(navigateParams);
 
-                    console.log('Storing data in sessionStorage: ', maintenanceItemStr, navigateParamsStr);
+                    console.log('Storing data in sessionStorage: ', navigateParams);
 
                     // Save data to sessionStorage
                     sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
                     sessionStorage.setItem('navigateParams', navigateParamsStr);
+                    sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
+                    sessionStorage.setItem('selectedStatus', navigateParams.status);
                     sessionStorage.setItem('desktopView', 'true');
                     window.dispatchEvent(new Event('storage'));
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('maintenanceRequestSelected'));
+                    }, 0);
                 } catch (error) {
                     console.error("Error setting sessionStorage: ", error);
                 }
