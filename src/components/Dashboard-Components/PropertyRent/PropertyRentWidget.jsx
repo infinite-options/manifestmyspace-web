@@ -415,6 +415,7 @@ export default function PropertyRentWidget(props) {
 }
 
 const CustomLegend = ({ data, navigate }) => {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const capitalize = (rentStatus) => {
     return rentStatus
       .split(" ")
@@ -434,7 +435,14 @@ const CustomLegend = ({ data, navigate }) => {
         position: "relative",
         paddingBottom: "10px",
       }}
-      onClick={() => navigate("/pmRent")}
+      onClick={() => {
+        if (isMobile){
+        navigate("/pmRent");
+      }else{
+        navigate("/properties", {state:{from:"rentWidget"}})
+      }
+      }
+      }
     >
       {/* <h2 className="mt-widget-title">Maintenance</h2> */}
       <Box

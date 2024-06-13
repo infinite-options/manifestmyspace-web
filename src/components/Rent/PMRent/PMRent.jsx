@@ -78,7 +78,7 @@ function PMRent(props) {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <RentTitle>Property Rent 1</RentTitle>
+      <RentTitle>Property Rent</RentTitle>
       <ViewOptionContainer>
         <Box
           sx={{
