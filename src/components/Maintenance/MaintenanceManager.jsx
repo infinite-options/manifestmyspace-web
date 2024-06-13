@@ -25,6 +25,7 @@ import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import QuoteRequestForm from './Manager/QuoteRequestForm';
 import QuoteAcceptForm from './Manager/QuoteAcceptForm';
@@ -32,6 +33,7 @@ import PayMaintenanceForm from './Manager/PayMaintenanceForm';
 import RescheduleMaintenance from './Manager/RescheduleMaintenance';
 import useSessionStorage from './useSessionStorage';
 import { useCookies } from 'react-cookie';
+import AddMaintenanceItem from './AddMaintenanceItem';
 
 export async function maintenanceManagerDataCollectAndProcess(
 	setMaintenanceData,
@@ -39,7 +41,7 @@ export async function maintenanceManagerDataCollectAndProcess(
 	setDisplayMaintenanceData,
 	profileId
 ) {
-  console.log('----inside maintenanceManagerDataCollectAndProcess--', setMaintenanceData);
+	console.log('----inside maintenanceManagerDataCollectAndProcess--', setMaintenanceData);
 	const dataObject = {};
 
 	function dedupeQuotes(array) {
@@ -87,7 +89,7 @@ export async function maintenanceManagerDataCollectAndProcess(
 		let array3 = maintenanceRequestsData.result['QUOTES ACCEPTED'].maintenance_items;
 		let array4 = maintenanceRequestsData.result['SCHEDULED'].maintenance_items;
 		let array5 = maintenanceRequestsData.result['COMPLETED'].maintenance_items;
-    console.log('----inside manager---', array5);
+		console.log('----inside manager---', array5);
 		let array6 = maintenanceRequestsData.result['PAID'].maintenance_items;
 
 		dataObject['NEW REQUEST'] = [];
@@ -168,13 +170,18 @@ export default function MaintenanceManager() {
 	const [quoteAcceptView] = useSessionStorage('quoteAcceptView', false);
 	const [rescheduleView] = useSessionStorage('rescheduleView', false);
 	const [payMaintenanceView] = useSessionStorage('payMaintenanceView', false);
+	const [showNewMaintenance, setshowNewMaintenance] = useState(false);
 
 	function navigateToAddMaintenanceItem() {
-		navigate('/addMaintenanceItem');
+		if (isMobile) {
+			navigate('/addMaintenanceItem');
+		} else {
+			setshowNewMaintenance(true);
+		}
 	}
 
 	useEffect(() => {
-    console.log('----inside useEffect---', maintenanceData);
+		console.log('----inside useEffect---', maintenanceData);
 		if (maintenanceData) {
 			const propertyList = [];
 			const addedAddresses = [];
@@ -279,20 +286,25 @@ export default function MaintenanceManager() {
 		setRefresh(false);
 	}, [refresh]);
 
-  useEffect(() => {
-    const handleMaintenanceUpdate = () => {
-      let profileId = getProfileId();
-        // Using a closure to capture the current profileId when the effect runs
-        const currentProfileId = profileId;
-        maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData,currentProfileId);
-    };
+	useEffect(() => {
+		const handleMaintenanceUpdate = () => {
+			let profileId = getProfileId();
+			// Using a closure to capture the current profileId when the effect runs
+			const currentProfileId = profileId;
+			maintenanceManagerDataCollectAndProcess(
+				setMaintenanceData,
+				setShowSpinner,
+				setDisplayMaintenanceData,
+				currentProfileId
+			);
+		};
 
-    window.addEventListener('maintenanceUpdate', handleMaintenanceUpdate);
+		window.addEventListener('maintenanceUpdate', handleMaintenanceUpdate);
 
-    return () => {
-        window.removeEventListener('maintenanceUpdate', handleMaintenanceUpdate);
-    };
-}, []);
+		return () => {
+			window.removeEventListener('maintenanceUpdate', handleMaintenanceUpdate);
+		};
+	}, []);
 
 	const handleRowClick = (index, row) => {
 		if (isMobile) {
@@ -321,7 +333,9 @@ export default function MaintenanceManager() {
 			window.dispatchEvent(new Event('maintenanceRequestSelected'));
 		}
 	};
-
+	const handleBackButton = () => {
+		navigate(-1); // Fallback to default behavior if onBack is not provided
+	};
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -358,6 +372,13 @@ export default function MaintenanceManager() {
 								paddingRight: '0px',
 							}}
 						>
+							<Box position="absolute" left={30}>
+								<Button onClick={handleBackButton}>
+									<ArrowBackIcon
+										sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
+									/>
+								</Button>
+							</Box>
 							<Box direction="row" justifyContent="center" alignItems="center">
 								<Typography
 									sx={{
@@ -368,6 +389,18 @@ export default function MaintenanceManager() {
 								>
 									Maintenance
 								</Typography>
+							</Box>
+							<Box
+								sx={{
+									position: 'absolute',
+									right: isMobile ? '10px' : '60%',
+								}}
+							>
+								<Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
+									<AddIcon
+										sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
+									/>
+								</Button>
 							</Box>
 						</Stack>
 
@@ -493,7 +526,9 @@ export default function MaintenanceManager() {
 
 				{!isMobile && (
 					<Grid item xs={7}>
-						{desktopView && selectedRole === 'MANAGER' ? (
+						{showNewMaintenance ? (
+							<AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
+						) : desktopView && selectedRole === 'MANAGER' ? (
 							<>
 								<QuoteRequestForm
 									maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
