@@ -34,6 +34,8 @@ import RescheduleMaintenance from './Manager/RescheduleMaintenance';
 import useSessionStorage from './useSessionStorage';
 import { useCookies } from 'react-cookie';
 import AddMaintenanceItem from './AddMaintenanceItem';
+import EditMaintenanceItem from './EditMaintenanceItem';
+
 
 export async function maintenanceManagerDataCollectAndProcess(
 	setMaintenanceData,
@@ -171,6 +173,7 @@ export default function MaintenanceManager() {
 	const [rescheduleView] = useSessionStorage('rescheduleView', false);
 	const [payMaintenanceView] = useSessionStorage('payMaintenanceView', false);
 	const [showNewMaintenance, setshowNewMaintenance] = useState(false);
+	const [editMaintenanceView] = useSessionStorage('editMaintenanceView', false);
 
 	function navigateToAddMaintenanceItem() {
 		if (isMobile) {
@@ -526,7 +529,9 @@ export default function MaintenanceManager() {
 
 				{!isMobile && (
 					<Grid item xs={7}>
-						{showNewMaintenance ? (
+						{editMaintenanceView && selectedRole === 'MANAGER'? (
+							<EditMaintenanceItem />
+						) :showNewMaintenance ? (
 							<AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
 						) : desktopView && selectedRole === 'MANAGER' ? (
 							<>
