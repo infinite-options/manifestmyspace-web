@@ -27,7 +27,7 @@ export function MainContainer(props) {
         height: "100%",
       }}
     >
-       <Paper
+      <Paper
         sx={{
           marginTop: "10px",
           backgroundColor: theme.palette.primary.main,
@@ -36,7 +36,7 @@ export function MainContainer(props) {
           padding: "15px",
         }}
       >
-      {props.children}
+        {props.children}
       </Paper>
     </Box>
   );
@@ -235,11 +235,11 @@ export function RentAccordionView(props) {
         boxShadow: "0px 4px 4px #00000040",
       }}
     >
-      <RentAccordion status={"UNPAID"} data={[rentData, unpaid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"PAID PARTIALLY"} data={[rentData, partial]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"PAID LATE"} data={[rentData, late]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"PAID"} data={[rentData, paid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"VACANT"} data={[rentData, vacant]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
+      <RentAccordion status={"UNPAID"} data={[rentData, unpaid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+      <RentAccordion status={"PAID PARTIALLY"} data={[rentData, partial]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+      <RentAccordion status={"PAID LATE"} data={[rentData, late]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
+      <RentAccordion status={"PAID"} data={[rentData, paid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl}  onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+      <RentAccordion status={"VACANT"} data={[rentData, vacant]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
     </Box>
   );
 }
@@ -249,6 +249,7 @@ export function RentAccordion(props) {
   const [rentData, properties] = props.data;
   const rentDetailUrl = props.link;
   const rentDetailIndexList = props.rentDetailIndexList;
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log("In Rent Accordian: ", props.data);
   console.log("In Rent Accordian Links: ", props.link);
   console.log("In Rent Accordian Status: ", props.status);
@@ -283,7 +284,7 @@ export function RentAccordion(props) {
     });
   }
   return (
-    <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), fontFamily: "Source Sans Pro", color: "#FFFFFF", minHeight:"48px" }}>
+    <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), fontFamily: "Source Sans Pro", color: "#FFFFFF", minHeight: "48px" }}>
       <AccordionSummary
         expandIcon={
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -331,23 +332,29 @@ export function RentAccordion(props) {
                 alignItems: "center",
                 fontSize: "13px",
                 fontWeight: "600",
+                cursor: "pointer",
               }}
               onClick={() => {
-                navigateTo(rentDetailUrl, index);
+                if (isMobile) {
+                  navigateTo(rentDetailUrl, index);
+                } else {
+                  props.onPropertyInRentWidgetClicked(property.property_uid);
+                }
+              }
+              }
+            >
+            <Box
+              sx={{
+                textDecoration: "underline",
               }}
             >
-              <Box
-                sx={{
-                  textDecoration: "underline",
-                }}
-              >
-                {address}
-              </Box>
-              <Box>${property.pur_amount_due}</Box>
+              {address}
             </Box>
+            <Box>${property.pur_amount_due}</Box>
+          </Box>
           </AccordionDetails>
-        );
-      })}
-    </Accordion>
+  );
+})}
+    </Accordion >
   );
 }
