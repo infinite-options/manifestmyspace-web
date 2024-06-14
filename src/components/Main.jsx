@@ -14,6 +14,7 @@ import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
 import Leases from "./Leases/Leases";
+import LeasesDashboard from "./Leases/LeasesDashboard";
 import { PropertyListings } from "./Property/PropertyListings";
 
 import Announcements from "./Announcement/Announcements";
@@ -218,7 +219,7 @@ function Main() {
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
             <Route path="leaseDocument" element={<LeasePDF />} />
-            <Route path="Leases" element={<Leases />} />
+            <Route path="Leases" element={<LeasesDashboard />} />
 
             <Route path="PrivateprofileName" element={<ProfileName />} />
             <Route path="PrivateprofileInfo" element={<ProfileInfo />} />
