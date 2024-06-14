@@ -1,22 +1,43 @@
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Paper } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import theme from "../../../theme/theme";
 import AllOwnerIcon from "./AllOwnerIcon.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export function MainContainer(props) {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Box
       sx={{
-        backgroundColor: "#F2F2F2",
-        borderRadius: "10px",
-        margin: "25px",
-        padding: "15px",
+        // backgroundColor: "#F2F2F2",
+        // borderRadius: "10px",
+        // margin: "25px",
+        // padding: "15px",
+        // fontFamily: "Source Sans Pro",
+        // height: "100%"
+
+        backgroundColor: isMobile ? "#F2F2F2" : "",
+        margin: isMobile ? "25px" : "0px",
         fontFamily: "Source Sans Pro",
+        display: "flex",
+        justifyContent: "center",
+        height: "100%",
       }}
     >
-      {props.children}
+      <Paper
+        sx={{
+          marginTop: "10px",
+          backgroundColor: theme.palette.primary.main,
+          width: "100%", // Occupy full width with 25px margins on each side
+          maxWidth: "800px", // You can set a maxWidth if needed
+          padding: "15px",
+        }}
+      >
+        {props.children}
+      </Paper>
     </Box>
   );
 }
@@ -214,11 +235,11 @@ export function RentAccordionView(props) {
         boxShadow: "0px 4px 4px #00000040",
       }}
     >
-      <RentAccordion status={"UNPAID"} data={[rentData, unpaid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"PAID PARTIALLY"} data={[rentData, partial]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"PAID LATE"} data={[rentData, late]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"PAID"} data={[rentData, paid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
-      <RentAccordion status={"VACANT"} data={[rentData, vacant]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} />
+      <RentAccordion status={"UNPAID"} data={[rentData, unpaid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+      <RentAccordion status={"PAID PARTIALLY"} data={[rentData, partial]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+      <RentAccordion status={"PAID LATE"} data={[rentData, late]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
+      <RentAccordion status={"PAID"} data={[rentData, paid]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl}  onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+      <RentAccordion status={"VACANT"} data={[rentData, vacant]} rentDetailIndexList={rentDetailIndexList} link={rentDetailUrl} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
     </Box>
   );
 }
@@ -228,6 +249,7 @@ export function RentAccordion(props) {
   const [rentData, properties] = props.data;
   const rentDetailUrl = props.link;
   const rentDetailIndexList = props.rentDetailIndexList;
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log("In Rent Accordian: ", props.data);
   console.log("In Rent Accordian Links: ", props.link);
   console.log("In Rent Accordian Status: ", props.status);
@@ -262,13 +284,18 @@ export function RentAccordion(props) {
     });
   }
   return (
-    <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), fontFamily: "Source Sans Pro", color: "#FFFFFF" }}>
+    <Accordion theme={theme} style={{ backgroundColor: getStatusColor(status), fontFamily: "Source Sans Pro", color: "#FFFFFF", minHeight: "48px" }}>
       <AccordionSummary
         expandIcon={
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" strokeWidth="2.5" />
           </svg>
         }
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          minHeight: "48px",
+        }}
       >
         <Box
           sx={{
@@ -305,23 +332,29 @@ export function RentAccordion(props) {
                 alignItems: "center",
                 fontSize: "13px",
                 fontWeight: "600",
+                cursor: "pointer",
               }}
               onClick={() => {
-                navigateTo(rentDetailUrl, index);
+                if (isMobile) {
+                  navigateTo(rentDetailUrl, index);
+                } else {
+                  props.onPropertyInRentWidgetClicked(property.property_uid);
+                }
+              }
+              }
+            >
+            <Box
+              sx={{
+                textDecoration: "underline",
               }}
             >
-              <Box
-                sx={{
-                  textDecoration: "underline",
-                }}
-              >
-                {address}
-              </Box>
-              <Box>${property.pur_amount_due}</Box>
+              {address}
             </Box>
+            <Box>${property.pur_amount_due}</Box>
+          </Box>
           </AccordionDetails>
-        );
-      })}
-    </Accordion>
+  );
+})}
+    </Accordion >
   );
 }

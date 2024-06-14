@@ -12,23 +12,17 @@ export default function UserDoesNotExistModal(props) {
   const navigate = useNavigate();
   return (
     <div>
-      <Dialog
-        open={isOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
+      <Dialog open={isOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">User Does Not Exists</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            The user {email} does not exist! Please Signup!
-          </DialogContentText>
+          <DialogContentText id="alert-dialog-description">The user {email} does not exist! Please Signup!</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button type="submit" onClick={onCancel}>
             Cancel
           </Button>
 
-          <Button type="submit" onClick={() => navigate("/signup")}>
+          <Button type="submit" onClick={() => navigate("/newUser")}>
             Signup
           </Button>
         </DialogActions>

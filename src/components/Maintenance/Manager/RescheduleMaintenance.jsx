@@ -33,7 +33,7 @@ import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg"
 import dayjs from "dayjs";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DateTimePickerModal from '../../../components/DateTimePicker';
-
+import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
 
 export default function RescheduleMaintenance(){
@@ -41,9 +41,18 @@ export default function RescheduleMaintenance(){
     // console.log("RescheduleMaintenance")
     const location = useLocation();
     const navigate = useNavigate();
-    const maintenanceItem = location.state.maintenanceItem;
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    let maintenanceItem;
+    let navigationParams;
+    if (isMobile) {
+        maintenanceItem = location.state.maintenanceItem;
+        navigationParams = location.state.navigateParams;
+    
+    } else {
+        maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
+		navigationParams = JSON.parse(sessionStorage.getItem('navigateParams'));
+    }
     // console.log("maintenanceItem", maintenanceItem)
-    const navigationParams = location.state.navigateParams;
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
@@ -56,7 +65,7 @@ export default function RescheduleMaintenance(){
     let status = navigationParams.status
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus
     let allMaintenanceData = navigationParams.allData
-
+    
 
 
 
@@ -81,7 +90,7 @@ export default function RescheduleMaintenance(){
     }, [])
 
 
-    function handleSubmit(availabilityDate, availabilityTime) {
+    async function handleSubmit(availabilityDate, availabilityTime) {
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             
@@ -103,14 +112,7 @@ export default function RescheduleMaintenance(){
         }
         
         changeMaintenanceRequestStatus()
-        navigate("/maintenance/detail", {
-            state: {
-                maintenance_request_index,
-                status,
-                maintenanceItemsForStatus,
-                allMaintenanceData,
-            }
-        });
+        handleBackButton()
     }
 
     function numImages(){
@@ -146,8 +148,13 @@ export default function RescheduleMaintenance(){
     }
 
     function handleBackButton(){
-        console.log("handleBackButton")
-        navigate("/maintenance/detail", {
+        console.log("handleBackButton");
+        sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
+		sessionStorage.setItem('selectedStatus', status);
+		sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceItemsForStatus));
+		sessionStorage.setItem('allMaintenanceData', JSON.stringify(allMaintenanceData));
+
+        if (isMobile) {navigate("/maintenance/detail", {
             state: {
                 maintenance_request_index,
                 status,
@@ -155,6 +162,21 @@ export default function RescheduleMaintenance(){
                 allMaintenanceData,
             }
         }); 
+    }else {
+        sessionStorage.removeItem('maintenanceItem');
+        sessionStorage.removeItem('navigateParams');
+        sessionStorage.removeItem('quotes');
+        sessionStorage.removeItem('rescheduleView');
+
+        window.dispatchEvent(new Event('storage'));
+        // Dispatch the custom event
+        setTimeout(() => {
+            window.dispatchEvent(new Event('maintenanceRequestSelected'));
+        }, 0);
+        setTimeout(() => {
+            window.dispatchEvent(new Event('maintenanceUpdate'));
+        }, 0);
+    }
     }
 
     function navigateToAddMaintenanceItem(){
@@ -208,7 +230,10 @@ export default function RescheduleMaintenance(){
                             paddingRight: "0px",
                         }}
                     >
-                        <Box position="absolute" left={30}>
+                        <Box sx={{
+								position: 'absolute',
+								left: isMobile ? '30px' : '43%',
+							}}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
                             </Button>

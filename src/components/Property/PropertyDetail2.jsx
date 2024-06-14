@@ -12,7 +12,7 @@ export default function PropertyDetail({ index, propertyList, allRentStatus, isD
           display: "flex",
           justifyContent: "center",
           width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
+          // minHeight: "100vh", // Set the Box height to full height
           height:"100%",
         }}
       >

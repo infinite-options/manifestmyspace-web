@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
 const TenantApplicationNav = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { index, property, isDesktop } = state;
+  const { index, property, isDesktop, propertyIndex } = state;
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
@@ -133,7 +133,7 @@ const TenantApplicationNav = () => {
   const handleCloseButton = (e) => {
     e.preventDefault();
     if (isDesktop === true) {
-      navigate('/properties', { state: { index: index } });
+      navigate('/properties', { state: { index: propertyIndex } });
     } else {
       navigate(-1);
     }
@@ -276,7 +276,7 @@ const TenantApplicationNav = () => {
                         </Button>
                         <Box position="absolute" right={0}>
                           <Button onClick={(e) => handleCloseButton(e)}>
-                            <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
+                            <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px",color: "#FFFFFF" }} />
                           </Button>
                         </Box>
                       </Stack>

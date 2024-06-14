@@ -1,42 +1,21 @@
 import React, { useState, useEffect } from "react";
-import {
-  Paper,
-  Box,
-  Stack,
-  ThemeProvider,
-  Button,
-  Typography,
-  Backdrop,
-  CircularProgress,
-  TextField,
-  Select,
-  Grid,
-  MenuItem,
-} from "@mui/material";
+import { Paper, Box, Stack, ThemeProvider, Button, Typography, Backdrop, CircularProgress, TextField, Select, Grid, MenuItem } from "@mui/material";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import { useUser } from "../../contexts/UserContext";
-import Status24 from "../../images/status_2_4.svg"; 
+import Status24 from "../../images/status_2_4.svg";
 //import Status23 from "../../images/status_2_3.svg";
 import Status23 from "../../images/status_bar_6.png";
 import axios from "axios";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
 import AddLocationRowImg from "../../images/AddLocationRowImg.svg";
-import {
-  formatPhoneNumber,
-  headers,
-  maskNumber,
-  maskEin,
-  roleMap,
-  photoFields,
-} from "./helper";
+import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,15 +41,7 @@ const ProfileInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [statusImg, setStatusImg] = useState();
-  const {
-    user,
-    isBusiness,
-    isManager,
-    roleName,
-    selectedRole,
-    updateProfileUid,
-    isLoggedIn
-  } = useUser();
+  const { user, isBusiness, isManager, roleName, selectedRole, updateProfileUid, isLoggedIn } = useUser();
   //   {
   //     user: { user_uid: "" },
   //     isBusiness: () => true,
@@ -79,35 +50,56 @@ const ProfileInfo = () => {
   //     roleName: () => "Property Manager",
   //     selectedRole: "MANAGER",
   //   };
-  
 
-  const {
-    firstName, lastName, businessName, photo, phoneNumber, setPhoneNumber, email, setEmail, ein, setEin,ssn,
-    setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip,setZip,
-  } = useOnboardingContext();
+  // const {
+  //   firstName,
+  //   lastName,
+  //   businessName,
+  //   photo,
+  //   phoneNumber,
+  //   setPhoneNumber,
+  //   email,
+  //   setEmail,
+  //   ein,
+  //   setEin,
+  //   ssn,
+  //   setSsn,
+  //   mask,
+  //   setMask,
+  //   address,
+  //   setAddress,
+  //   unit,
+  //   setUnit,
+  //   city,
+  //   setCity,
+  //   state,
+  //   setState,
+  //   zip,
+  //   setZip,
+  // } = useOnboardingContext();
+
+  const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
+  const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
+
+  // Print out the values
+  // console.log("PI First Name:", firstName);
+  // console.log("PI Last Name:", lastName);
+  // console.log("PI Email:", email);
+  // console.log("PI Phone:", phoneNumber);
+  // console.log("PI Business Name:", businessName);
+  // console.log("PI Photo:", photo);
+
   const [showSpinner, setShowSpinner] = useState(false);
-  const [fees, setFees] = useState([
-    { id: 1, fee_name: "", frequency: "", charge: "", of: "" },
-  ]);
-  const [services, setServices] = useState([
-    { id: 1, service_name: "", hours: "", charge: "", total_cost: "" },
-  ]);
-  const [locations, setLocations] = useState([
-    { id: 1, address: "", city: "", state: "", miles: "" },
-  ]);
+  const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
+  const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
+  const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
   const [ein_mask, setEinMask] = useState("");
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
 
   const addFeeRow = () => {
-    setFees((prev) => [
-      ...prev,
-      { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" },
-    ]);
+    setFees((prev) => [...prev, { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   };
-  
-
-
 
   const handleAddressSelect = (address) => {
     setAddress(address.street ? address.street : "");
@@ -115,7 +107,6 @@ const ProfileInfo = () => {
     setState(address.state ? address.state : "");
     setZip(address.zip ? address.zip : "");
   };
-
 
   const addServiceRow = () => {
     setServices((prev) => [
@@ -131,10 +122,7 @@ const ProfileInfo = () => {
   };
 
   const addLocationRow = () => {
-    setLocations((prev) => [
-      ...prev,
-      { id: prev.length + 1, address: "", city: "", state: "", miles: "" },
-    ]);
+    setLocations((prev) => [...prev, { id: prev.length + 1, address: "", city: "", state: "", miles: "" }]);
   };
 
   const handleFeeChange = (e, index) => {
@@ -166,8 +154,7 @@ const ProfileInfo = () => {
   };
 
   const handleNextStep = async () => {
-    if (validate_form() === false)
-      return;
+    if (validate_form() === false) return;
 
     setShowSpinner(true);
     const payload = getPayload(selectedRole);
@@ -175,34 +162,28 @@ const ProfileInfo = () => {
     const data = await createProfile(form, selectedRole);
     setShowSpinner(false);
     handleUpdateProfileUid(data);
-    setCookie("default_form_vals", {...cookiesData, phoneNumber, email, address, unit, city, state, zip, ein, locations });
-    
-    
+    setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ein, locations });
 
-    let role_id={}
-    if (selectedRole==='OWNER')
-      role_id={owner_id:data.owner_uid}
-    
-    if (selectedRole==='TENANT')
-      role_id={tenant_id:data.tenant_uid}
-    
-    if (selectedRole==='MANAGER'){
-      let businesses=  user.businesses
-      businesses['MANAGEMENT'].business_uid=data.business_uid
-      role_id={businesses}
+    let role_id = {};
+    if (selectedRole === "OWNER") role_id = { owner_id: data.owner_uid };
+
+    if (selectedRole === "TENANT") role_id = { tenant_id: data.tenant_uid };
+
+    if (selectedRole === "MANAGER") {
+      let businesses = user.businesses;
+      businesses["MANAGEMENT"].business_uid = data.business_uid;
+      role_id = { businesses };
     }
 
-    if (selectedRole==='MAINTENANCE'){
-      let businesses=  user.businesses
-      businesses['MAINTENANCE'].business_uid=data.business_uid
-      role_id={businesses}
+    if (selectedRole === "MAINTENANCE") {
+      let businesses = user.businesses;
+      businesses["MAINTENANCE"].business_uid = data.business_uid;
+      role_id = { businesses };
     }
-    
-    setCookie("user", {...user, ...role_id})
 
+    setCookie("user", { ...user, ...role_id });
 
-
-    const profilePaymentPage= isLoggedIn ? "/privateProfilePayment" : "/profilePayment"
+    const profilePaymentPage = isLoggedIn ? "/privateProfilePayment" : "/profilePayment";
     navigate(profilePaymentPage, {
       state: {
         profileId: data.business_uid || data.owner_uid || data.tenant_uid,
@@ -221,49 +202,51 @@ const ProfileInfo = () => {
       updateProfileUid({ business_uid: data.business_uid });
     }
   };
-  const validate_form= () =>{
-    if (['OWNER', 'TENANT'].includes(selectedRole) ){
-      
-          if (!DataValidator.email_validate(email )){
-            alert("Please enter a valid email");
-            return false;}
+  const validate_form = () => {
+    if (["OWNER", "TENANT"].includes(selectedRole)) {
+      if (!DataValidator.email_validate(email)) {
+        alert("Please enter a valid email");
+        return false;
+      }
 
-          if (!DataValidator.phone_validate(phoneNumber )){
-            alert("Please enter a valid phone number");
-            return false;}
-          
-          if (!DataValidator.zipCode_validate(zip )){
-            alert("Please enter a valid zip code");
-            return false;}
-          
-            if (!DataValidator.ssn_validate(ssn )) {
-              alert("Please enter a valid SSN");
-              return false;
-            }
-          }
+      if (!DataValidator.phone_validate(phoneNumber)) {
+        alert("Please enter a valid phone number");
+        return false;
+      }
 
-          if (['MANAGER', 'MAINTENANCE'].includes(selectedRole) ){
-      
-            if (!DataValidator.email_validate(email )){
-              alert("Please enter a valid email");
-              return false;}
+      if (!DataValidator.zipCode_validate(zip)) {
+        alert("Please enter a valid zip code");
+        return false;
+      }
 
-            if (!DataValidator.phone_validate(phoneNumber )){
-              alert("Please enter a valid phone number");
-              return false;}
-            
-            if (!DataValidator.zipCode_validate(zip )){
-              alert("Please enter a valid zip code");
-              return false;}
-            
-              if (!DataValidator.ein_validate(ein )) {
+      if (!DataValidator.ssn_validate(ssn)) {
+        alert("Please enter a valid SSN");
+        return false;
+      }
+    }
 
-                alert("Please enter a valid EIN");
-                return false;
-              }
-            }
+    if (["MANAGER", "MAINTENANCE"].includes(selectedRole)) {
+      if (!DataValidator.email_validate(email)) {
+        alert("Please enter a valid email");
+        return false;
+      }
 
-  }
+      if (!DataValidator.phone_validate(phoneNumber)) {
+        alert("Please enter a valid phone number");
+        return false;
+      }
+
+      if (!DataValidator.zipCode_validate(zip)) {
+        alert("Please enter a valid zip code");
+        return false;
+      }
+
+      if (!DataValidator.ein_validate(ein)) {
+        alert("Please enter a valid EIN");
+        return false;
+      }
+    }
+  };
 
   const getPayload = (type) => {
     switch (type) {
@@ -339,11 +322,7 @@ const ProfileInfo = () => {
 
   const createProfile = async (form, type) => {
     const { profileApi } = roleMap[type];
-    const { data } = await axios.post(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
-      form,
-      headers
-    );
+    const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
     return data;
   };
 
@@ -387,7 +366,7 @@ const ProfileInfo = () => {
     const value = event.target.value;
     const lastChar = value.charAt(value.length - 1);
     const isDeleting = event.nativeEvent.inputType === "deleteContentBackward" || event.nativeEvent.inputType === "deleteContentForward";
-  
+
     if (isDeleting) {
       setEin(ein.slice(0, -1));
       setEinMask(maskEin(ein.slice(0, -1)));
@@ -398,7 +377,7 @@ const ProfileInfo = () => {
         return;
       }
       if (value.length > 10) return;
-  
+
       setEin(ein + lastChar);
       setEinMask(maskEin(ein + lastChar));
     }
@@ -428,28 +407,74 @@ const ProfileInfo = () => {
   };
 
   useEffect(() => {
-    setEmail(cookiesData?.email ?? '');
-    setPhoneNumber(cookiesData?.phoneNumber ?? '');
-    setLocations(prev=>([... prev, {id: prev.length + 1,city: cookiesData?.city ?? '', state: cookiesData?.state ?? '', miles: cookiesData?.state ?? ''}]) );
-    setAddress(cookiesData?.address ?? '');
-    setUnit(cookiesData?.unit ?? '');
-    setCity(cookiesData?.city ?? '');
-    setState(cookiesData?.state ?? '');
-    setZip(cookiesData?.zip ?? '');
-    setEin(cookiesData?.Ein ?? '');
+    // setEmail(cookiesData?.email ?? "");
+    // setPhoneNumber(cookiesData?.phoneNumber ?? "");
+    // setLocations((prev) => [...prev, { id: prev.length + 1, city: cookiesData?.city ?? "", state: cookiesData?.state ?? "", miles: cookiesData?.state ?? "" }]);
+    // setAddress(cookiesData?.address ?? "");
+    // setUnit(cookiesData?.unit ?? "");
+    // setCity(cookiesData?.city ?? "");
+    // setState(cookiesData?.state ?? "");
+    // setZip(cookiesData?.zip ?? "");
+    // setEin(cookiesData?.Ein ?? "");
+
+    if (cookiesData?.phoneNumber) {
+      setPhoneNumber(cookiesData.phoneNumber);
+    }
+
+    // if (cookiesData?.city || cookiesData?.state || cookiesData?.miles) {
+    //   setLocations((prev) => [
+    //     ...prev,
+    //     {
+    //       id: prev.length + 1,
+    //       city: cookiesData.city || "",
+    //       state: cookiesData.state || "",
+    //       miles: cookiesData.miles || "",
+    //     },
+    //   ]);
+    // }
+
+    if (cookiesData?.city && cookiesData?.state && cookiesData?.miles) {
+      setLocations((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          city: cookiesData.city,
+          state: cookiesData.state,
+          miles: cookiesData.miles,
+        },
+      ]);
+    }
+
+    if (cookiesData?.address) {
+      setAddress(cookiesData.address);
+    }
+
+    if (cookiesData?.unit) {
+      setUnit(cookiesData.unit);
+    }
+
+    if (cookiesData?.city) {
+      setCity(cookiesData.city);
+    }
+
+    if (cookiesData?.state) {
+      setState(cookiesData.state);
+    }
+
+    if (cookiesData?.zip) {
+      setZip(cookiesData.zip);
+    }
+
+    if (cookiesData?.Ein) {
+      setEin(cookiesData.Ein);
+    }
 
     handleRoleSpecifics();
-    
-    
-    
   }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={showSpinner}
-      >
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <Box
@@ -470,14 +495,7 @@ const ProfileInfo = () => {
             width: "85%",
           }}
         >
-          <Box
-            component="span"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            position="relative"
-            flexDirection="column"
-          >
+          <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" flexDirection="column">
             <>
               <Stack direction="row" justifyContent="center">
                 <Box
@@ -497,9 +515,7 @@ const ProfileInfo = () => {
                     fontSize: theme.typography.largeFont,
                   }}
                 >
-                  {`${roleName()} ${
-                    isBusiness() ? "Business" : "Profile"
-                  } Info`}
+                  {`${roleName()} ${isBusiness() ? "Business" : "Profile"} Info`}
                 </Typography>
               </Stack>
             </>
@@ -514,14 +530,7 @@ const ProfileInfo = () => {
             >
               {`${isBusiness() ? "Business" : ""} Email Address`}
             </Typography>
-            <TextField
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="email@site.com"
-              variant="filled"
-              fullWidth
-              className={classes.root}
-            ></TextField>
+            <TextField value={email} onChange={handleEmailChange} placeholder="email@site.com" variant="filled" fullWidth className={classes.root}></TextField>
           </Stack>
 
           <Stack spacing={-2} m={5}>
@@ -564,11 +573,7 @@ const ProfileInfo = () => {
             ></TextField> */}
             <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
           </Stack>
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography
@@ -579,17 +584,10 @@ const ProfileInfo = () => {
                 >
                   {"Unit #"}
                 </Typography>
-                <TextField
-                  value={unit}
-                  onChange={handleUnitChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="3"
-                  className={classes.root}
-                ></TextField>
+                <TextField value={unit} onChange={handleUnitChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
               </Stack>
             </Grid>
-            
+
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography
@@ -600,14 +598,14 @@ const ProfileInfo = () => {
                 >
                   {"Zip Code"}
                 </Typography>
-                <TextField value={zip} onChange={handleZipChange} variant="filled" fullWidth placeholder="90234" className={classes.root} ></TextField>
+                <TextField value={zip} onChange={handleZipChange} variant="filled" fullWidth placeholder="90234" className={classes.root}></TextField>
               </Stack>
             </Grid>
           </Grid>
           {isBusiness() && (
             <>
               <hr />
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -620,11 +618,7 @@ const ProfileInfo = () => {
               {isManager()
                 ? fees.map((row) => (
                     <div key={row.id}>
-                      <Grid
-                        container
-                        rowSpacing={1}
-                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                      >
+                      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>
                           <Stack spacing={-2} m={5}>
                             <Typography
@@ -725,10 +719,7 @@ const ProfileInfo = () => {
                             justifyContent: "right",
                           }}
                         >
-                          <div
-                            onClick={addFeeRow}
-                            style={{ cursor: "pointer" }}
-                          >
+                          <div onClick={addFeeRow} style={{ cursor: "pointer" }}>
                             <img src={AddFeeRowImg} alt="add fee text" />
                           </div>
                         </Stack>
@@ -739,11 +730,7 @@ const ProfileInfo = () => {
                   ))
                 : services.map((row) => (
                     <div key={row.id}>
-                      <Grid
-                        container
-                        rowSpacing={1}
-                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                      >
+                      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={12}>
                           <Stack spacing={-2} m={5}>
                             <Typography
@@ -774,14 +761,7 @@ const ProfileInfo = () => {
                             >
                               {"# of Hours"}
                             </Typography>
-                            <TextField
-                              name="hours"
-                              value={row.hours}
-                              variant="filled"
-                              fullWidth
-                              className={classes.root}
-                              onChange={(e) => handleServiceChange(e, row.id)}
-                            />
+                            <TextField name="hours" value={row.hours} variant="filled" fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
@@ -794,14 +774,7 @@ const ProfileInfo = () => {
                             >
                               {"Charge/Hr."}
                             </Typography>
-                            <TextField
-                              name="charge"
-                              value={row.charge}
-                              variant="filled"
-                              fullWidth
-                              className={classes.root}
-                              onChange={(e) => handleServiceChange(e, row.id)}
-                            />
+                            <TextField name="charge" value={row.charge} variant="filled" fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
@@ -833,10 +806,7 @@ const ProfileInfo = () => {
                             justifyContent: "right",
                           }}
                         >
-                          <div
-                            onClick={addServiceRow}
-                            style={{ cursor: "pointer" }}
-                          >
+                          <div onClick={addServiceRow} style={{ cursor: "pointer" }}>
                             <img src={AddFeeRowImg} alt="add service" />
                           </div>
                         </Stack>
@@ -846,7 +816,7 @@ const ProfileInfo = () => {
                     </div>
                   ))}
               <hr />
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -859,11 +829,7 @@ const ProfileInfo = () => {
               {console.log(locations)}
               {locations.map((row) => (
                 <div key={row.id}>
-                  <Grid
-                    container
-                    rowSpacing={1}
-                    columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                  >
+                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={12}>
                       <Stack spacing={-2} m={5}>
                         <Typography
@@ -874,14 +840,7 @@ const ProfileInfo = () => {
                         >
                           {"Location"}
                         </Typography>
-                        <TextField
-                          name="location"
-                          value={row.location}
-                          variant="filled"
-                          fullWidth
-                          className={classes.root}
-                          onChange={(e) => handleLocationChange(e, row.id)}
-                        />
+                        <TextField name="location" value={row.location} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
@@ -894,14 +853,7 @@ const ProfileInfo = () => {
                         >
                           {"City"}
                         </Typography>
-                        <TextField
-                          name="city"
-                          value={row.city}
-                          variant="filled"
-                          fullWidth
-                          className={classes.root}
-                          onChange={(e) => handleLocationChange(e, row.id)}
-                        />
+                        <TextField name="city" value={row.city} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
@@ -914,14 +866,7 @@ const ProfileInfo = () => {
                         >
                           {"State"}
                         </Typography>
-                        <TextField
-                          name="state"
-                          value={row.state}
-                          variant="filled"
-                          fullWidth
-                          className={classes.root}
-                          onChange={(e) => handleLocationChange(e, row.id)}
-                        />
+                        <TextField name="state" value={row.state} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
@@ -934,14 +879,7 @@ const ProfileInfo = () => {
                         >
                           {"Miles"}
                         </Typography>
-                        <TextField
-                          name="miles"
-                          value={row.miles}
-                          variant="filled"
-                          fullWidth
-                          className={classes.root}
-                          onChange={(e) => handleLocationChange(e, row.id)}
-                        />
+                        <TextField name="miles" value={row.miles} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                   </Grid>
@@ -953,10 +891,7 @@ const ProfileInfo = () => {
                         justifyContent: "right",
                       }}
                     >
-                      <div
-                        onClick={addLocationRow}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <div onClick={addLocationRow} style={{ cursor: "pointer" }}>
                         <img src={AddLocationRowImg} alt="add location" />
                       </div>
                     </Stack>
@@ -968,11 +903,7 @@ const ProfileInfo = () => {
             </>
           )}
           {/* <hr /> */}
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             {isBusiness() ? (
               <Grid item xs={12}>
                 <Stack spacing={-2} m={5}>
@@ -984,15 +915,7 @@ const ProfileInfo = () => {
                   >
                     {"EIN/SSN"}
                   </Typography>
-                  <TextField
-                    name="ein"
-                    value={ein_mask}
-                    onChange={handleEinChange}
-                    variant="filled"
-                    fullWidth
-                    placeholder="**-*******"
-                    className={classes.root}
-                ></TextField>
+                  <TextField name="ein" value={ein_mask} onChange={handleEinChange} variant="filled" fullWidth placeholder="**-*******" className={classes.root}></TextField>
                 </Stack>
               </Grid>
             ) : (
@@ -1007,14 +930,7 @@ const ProfileInfo = () => {
                     >
                       {"EIN"}
                     </Typography>
-                    <TextField
-                      value={ein}
-                      onChange={handleEinChange}
-                      variant="filled"
-                      fullWidth
-                      placeholder="Enter EIN"
-                      className={classes.root}
-                    ></TextField>
+                    <TextField value={ein} onChange={handleEinChange} variant="filled" fullWidth placeholder="Enter EIN" className={classes.root}></TextField>
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
@@ -1027,14 +943,7 @@ const ProfileInfo = () => {
                     >
                       {"SSN"}
                     </Typography>
-                    <TextField
-                      value={mask}
-                      onChange={handleSsnChange}
-                      variant="filled"
-                      fullWidth
-                      placeholder="Enter SSN"
-                      className={classes.root}
-                    ></TextField>
+                    <TextField value={mask} onChange={handleSsnChange} variant="filled" fullWidth placeholder="Enter SSN" className={classes.root}></TextField>
                   </Stack>
                 </Grid>
               </>

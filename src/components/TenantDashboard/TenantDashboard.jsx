@@ -1,4 +1,22 @@
-import { Chip, Box, Button, Container, Typography, Stack, Grid, MenuItem, Menu, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, ListItemAvatar } from "@mui/material";
+import {
+  Chip,
+  Box,
+  Button,
+  Container,
+  Typography,
+  Stack,
+  Grid,
+  MenuItem,
+  Menu,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  Paper,
+  TableRow,
+  ListItemAvatar,
+} from "@mui/material";
 import CardSlider from "./CardSlider";
 import PlaceholderImage from "./MaintenanceIcon.png"; // "./PlaceholderImage.png";
 import MaintenanceIcon from "./MaintenanceIcon.png";
@@ -45,17 +63,18 @@ function TenantDashboard(props) {
   const [announcementsData, setAnnouncementsData] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [propertyAddr, setPropertyAddr] = useState();
-  const [paymentHistory, setPaymentHistory] = useState([])
-  const [paymentExpected, setPaymentExpected] = useState([])
-  const [filteredPaymentHistory, setFilteredPaymentHistory] = useState([])
+  const [paymentHistory, setPaymentHistory] = useState([]);
+  const [paymentExpected, setPaymentExpected] = useState([]);
+  const [filteredPaymentHistory, setFilteredPaymentHistory] = useState([]);
 
-  const [rentFees, setRentFees] = useState([])
-  const [lateFees, setLateFees] = useState([])
-  const [utilityFees, setUtilityFees] = useState([])
+  const [rentFees, setRentFees] = useState([]);
+  const [lateFees, setLateFees] = useState([]);
+  const [utilityFees, setUtilityFees] = useState([]);
 
   const [propertyId, setPropertyId] = useState("");
   const [tenantId, setTenantId] = useState(`${getProfileId()}`);
   const [total, setTotal] = useState("0.00");
+  const [addMaintenance, setAddMaintenance] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -103,15 +122,16 @@ function TenantDashboard(props) {
   };
 
   useEffect(() => {
-    // console.log("In UseEffect")
+    console.log("In Tenant Dashboard UseEffect");
+    setAddMaintenance(false);
     if (!getProfileId()) navigate("/PrivateprofileName");
     const getTenantData = async () => {
       setShowSpinner(true);
       try {
-        // console.log("Call endpoints")
+        console.log("Call endpoints");
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
         const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
-        const paymentsReponse = await fetch(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`)
+        const paymentsReponse = await fetch(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
 
         const tenantRequestsData = await tenantRequests.json();
         const announcementsResponseData = await announcementsResponse.json();
@@ -121,9 +141,9 @@ function TenantDashboard(props) {
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
         let leaseDetailsData = tenantRequestsData?.leaseDetails?.result;
         let announcementsReceivedData = announcementsResponseData?.received?.result;
-        console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData)
-        let paymentsReceivedData = paymentsResponseData?.MoneyPaid?.result
-        let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result
+        console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
+        let paymentsReceivedData = paymentsResponseData?.MoneyPaid?.result;
+        let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result;
 
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
 
@@ -148,8 +168,8 @@ function TenantDashboard(props) {
         setLeaseDetails(leaseDetailsData || []);
         setAllMaintenanceRequests(maintenanceRequestsData);
         setMaintenanceRequests(maintenanceRequestsData || []);
-        setPaymentHistory(paymentsReceivedData || [])
-        setPaymentExpected(paymentsExpectedData || [])
+        setPaymentHistory(paymentsReceivedData || []);
+        setPaymentExpected(paymentsExpectedData || []);
 
         // setAnnouncementsData(announcementsData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
         setAllAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
@@ -174,8 +194,7 @@ function TenantDashboard(props) {
     };
     getTenantData();
     // setRefresh(false);
-  }, [getProfileId, location.state?.propertyId, navigate, user.first_name]); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
-
+  }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance]); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
 
   useEffect(() => {
     const navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
@@ -212,32 +231,32 @@ function TenantDashboard(props) {
       });
 
       filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));
-      console.log("filteredAnnouncements", filteredAnnouncements)
+      console.log("filteredAnnouncements", filteredAnnouncements);
       setAnnouncementsData(filteredAnnouncements);
     }
-    if (paymentHistory && paymentExpected){
-      let filteredPaymentHistory = paymentHistory.filter((payment) => payment.pur_property_id === selectedProperty.property_uid)
-      let filteredPaymentExpected = paymentExpected.filter((payment) => payment.pur_property_id === selectedProperty.property_uid)
-      var rentFeeSum = 0
-      var utilityFeeSum = 0
-      var lateFeeSum = 0
+    if (paymentHistory && paymentExpected) {
+      let filteredPaymentHistory = paymentHistory.filter((payment) => payment.pur_property_id === selectedProperty.property_uid);
+      let filteredPaymentExpected = paymentExpected.filter((payment) => payment.pur_property_id === selectedProperty.property_uid);
+      var rentFeeSum = 0;
+      var utilityFeeSum = 0;
+      var lateFeeSum = 0;
       filteredPaymentExpected.forEach((payment) => {
-        if (payment.purchase_type === "Rent"){
-          rentFeeSum += parseInt(payment.pur_amount_due)
+        if (payment.purchase_type === "Rent") {
+          rentFeeSum += parseInt(payment.pur_amount_due);
         }
-        if (payment.purchase_type === "Utility"){
-          utilityFeeSum += parseInt(payment.pur_amount_due)
+        if (payment.purchase_type === "Utility") {
+          utilityFeeSum += parseInt(payment.pur_amount_due);
         }
-        if (payment.purchase_type === "Late Fee"){
-          console.log("I found something that says Late Fees", payment)
-          lateFeeSum += parseInt(payment.pur_amount_due)
+        if (payment.purchase_type === "Late Fee") {
+          console.log("I found something that says Late Fees", payment);
+          lateFeeSum += parseInt(payment.pur_amount_due);
         }
-      })
-      setRentFees(rentFeeSum)
-      setUtilityFees(utilityFeeSum)
-      setLateFees(lateFeeSum)
-      console.log("ALL SUMMED FEES", rentFeeSum, utilityFeeSum, lateFeeSum)
-      setFilteredPaymentHistory(filteredPaymentHistory)
+      });
+      setRentFees(rentFeeSum);
+      setUtilityFees(utilityFeeSum);
+      setLateFees(lateFeeSum);
+      console.log("ALL SUMMED FEES", rentFeeSum, utilityFeeSum, lateFeeSum);
+      setFilteredPaymentHistory(filteredPaymentHistory);
     }
   }, [allAnnouncementsData, allMaintenanceRequests, propertyData, selectedProperty, paymentHistory]);
 
@@ -260,6 +279,7 @@ function TenantDashboard(props) {
     navigate("/addTenantMaintenanceItem", {
       state: { propertyData: navPropertyData, leaseData: propertyLeaseData },
     });
+    setAddMaintenance(true);
   }
 
   function handleViewLeaseNavigate(lease_uid) {
@@ -272,7 +292,6 @@ function TenantDashboard(props) {
   }
 
   const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
-
 
   function NonActiveLeaseDashboardTab({ property, leaseStatus, lease }) {
     return <PropertyCard data={property} status={leaseStatus} leaseData={lease} />;
@@ -321,7 +340,6 @@ function TenantDashboard(props) {
                   </Typography>
                 </Box>
               </Grid>
-              
 
               <Grid item xs={4} md={6} lg={6}>
                 <Box
@@ -351,7 +369,7 @@ function TenantDashboard(props) {
             </Grid>
             {selectedProperty?.lease_status === "ACTIVE" ? (
               <Grid container spacing={isMobile ? 1 : 3}>
-                <Grid item xs={12} md={4} sx={{height: !isMobile ? "80vh" : "auto"}}>
+                <Grid item xs={12} md={4} sx={{ height: !isMobile ? "80vh" : "auto" }}>
                   <DashboardTab fullHeight={!isMobile ? true : false}>
                     <Box
                       sx={{
@@ -360,7 +378,7 @@ function TenantDashboard(props) {
                         justifyContent: "space-between",
                         padding: "10px",
                         paddingRight: "0px",
-                        flex: '1',
+                        flex: "1",
                       }}
                     >
                       <Box
@@ -375,9 +393,7 @@ function TenantDashboard(props) {
                             alignItems: "center",
                           }}
                         >
-                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>
-                            Account Balance
-                          </Typography>
+                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
                           <Box
                             sx={{
                               display: "flex",
@@ -450,7 +466,16 @@ function TenantDashboard(props) {
                               </Box>
                             </Box>
                           </Box>
-                          <Box sx={{fontSize: { xs: "35px", sm: "35px", md: "35px", lg: "55px" }, fontWeight: "bold", color: "#3D5CAC", margin: "10px", alignItems: "center", alignContent: "center" }}>
+                          <Box
+                            sx={{
+                              fontSize: { xs: "35px", sm: "35px", md: "35px", lg: "55px" },
+                              fontWeight: "bold",
+                              color: "#3D5CAC",
+                              margin: "10px",
+                              alignItems: "center",
+                              alignContent: "center",
+                            }}
+                          >
                             ${total}
                           </Box>
                           <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
@@ -458,38 +483,38 @@ function TenantDashboard(props) {
                           </Box>
                         </Box>
                       </Box>
-                      </Box>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItem: "center",
+                        justifyContent: "center",
+                        margin: "20px",
+                      }}
+                    >
                       <Box
                         sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItem: "center",
-                          justifyContent: "center",
-                          margin: "20px",
+                          backgroundColor: "#3D5CAC",
+                          borderRadius: "10px",
+                          color: "#FFFFFF",
+                          fontWeight: "bold",
+                          fontSize: "22px",
+                          padding: "10px",
+                          paddingRight: "20px",
+                          paddingLeft: "20px",
+                          cursor: "pointer",
+                          textAlign: "center",
+                        }}
+                        onClick={() => {
+                          navigate("/payments");
                         }}
                       >
-                        <Box
-                          sx={{
-                            backgroundColor: "#3D5CAC",
-                            borderRadius: "10px",
-                            color: "#FFFFFF",
-                            fontWeight: "bold",
-                            fontSize: "22px",
-                            padding: "10px",
-                            paddingRight: "20px",
-                            paddingLeft: "20px",
-                            cursor: "pointer",
-                            textAlign: "center",
-
-                          }}
-                          onClick={() => {
-                            navigate("/payments");
-                          }}
-                        >
-                          Make a Payment
-                        </Box>
+                        Make a Payment
                       </Box>
-                      <Box sx={{
+                    </Box>
+                    <Box
+                      sx={{
                         display: "flex",
                         flexDirection: "column",
                         alignItem: "center",
@@ -497,21 +522,47 @@ function TenantDashboard(props) {
                         margin: isMobile ? "10px" : "20px",
                         paddingTop: isMobile ? "5px" : isMedium ? "10px" : "20px",
                         paddingBottom: isMobile ? "5px" : "20px",
-                      }}>
-                        <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold"}}>Balance Details</Typography>
-                        
-                        <Grid container>
-                          <Grid item xs={6} sx={{color: "#3D5CAC", fontSize: "20px", fontWeight: 700}}> Description </Grid>
-                          <Grid item xs={6} sx={{color: "#3D5CAC", fontSize: "20px", fontWeight: 700, textAlign: "right"}}> Amount </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> Rent </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> ${rentFees} </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> Late Fees </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> ${lateFees} </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> Utility </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> ${utilityFees} </Grid>
+                      }}
+                    >
+                      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold" }}>Balance Details</Typography>
+
+                      <Grid container>
+                        <Grid item xs={6} sx={{ color: "#3D5CAC", fontSize: "20px", fontWeight: 700 }}>
+                          {" "}
+                          Description{" "}
                         </Grid>
-                      </Box>
-                      <Box sx={{
+                        <Grid item xs={6} sx={{ color: "#3D5CAC", fontSize: "20px", fontWeight: 700, textAlign: "right" }}>
+                          {" "}
+                          Amount{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Rent{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          ${rentFees}{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Late Fees{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          ${lateFees}{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Utility{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          ${utilityFees}{" "}
+                        </Grid>
+                      </Grid>
+                    </Box>
+                    <Box
+                      sx={{
                         display: "flex",
                         flexDirection: "column",
                         alignItem: "center",
@@ -519,18 +570,38 @@ function TenantDashboard(props) {
                         margin: isMobile ? "10px" : "20px",
                         paddingTop: isMobile ? "5px" : "20px",
                         paddingBottom: isMobile ? "5px" : "20px",
-                      }}>
-                        <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold"}}>Lease Details</Typography>
-                        <Grid container>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> Start Date </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> {selectedLease?.lease_start ? selectedLease?.lease_start : ""} </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> End Date</Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> {selectedLease?.lease_end ? selectedLease?.lease_end : ""} </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%"}}> Address </Grid>
-                          <Grid item xs={6} sx={{color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right"}}> {selectedLease?.property_address ? selectedLease?.property_address : ""} {selectedLease?.property_unit ? selectedLease?.property_unit : ""}</Grid>
+                      }}
+                    >
+                      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold" }}>Lease Details</Typography>
+                      <Grid container>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Start Date{" "}
                         </Grid>
-                      </Box>
-                      <Box sx={{
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          {selectedLease?.lease_start ? selectedLease?.lease_start : ""}{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          End Date
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          {selectedLease?.lease_end ? selectedLease?.lease_end : ""}{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Address{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          {selectedLease?.property_address ? selectedLease?.property_address : ""} {selectedLease?.property_unit ? selectedLease?.property_unit : ""}
+                        </Grid>
+                      </Grid>
+                    </Box>
+                    <Box
+                      sx={{
                         display: "flex",
                         flexDirection: "row",
                         alignItem: "left",
@@ -540,43 +611,46 @@ function TenantDashboard(props) {
                         cursor: "pointer",
                         color: "#3D5CAC",
                         fontSize: "20px",
-                        fontWeight: 600
+                        fontWeight: 600,
                       }}
-                        onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
-                      >
-                        <img src={documentIcon} alt="document-icon" style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-                        <u>View Full Lease</u>
-                      </Box>
+                      onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
+                    >
+                      <img src={documentIcon} alt="document-icon" style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+                      <u>View Full Lease</u>
+                    </Box>
                   </DashboardTab>
                 </Grid>
                 <Grid item xs={12} md={8}>
                   <Grid container>
                     <Grid item xs={12}>
                       <DashboardTab>
-                        <Grid container direction="row" sx={{
+                        <Grid
+                          container
+                          direction="row"
+                          sx={{
                             // paddingTop: "10px",
-                            paddingBottom: "10px"
-                        }}>
-                          <Grid item xs={2}>
-                          </Grid>
+                            paddingBottom: "10px",
+                          }}
+                        >
+                          <Grid item xs={2}></Grid>
                           <Grid item xs={8}>
-                          <Box
-                            sx={{
-                              flexGrow: 1, // Allow this Box to grow and fill space
-                              display: "flex",
-                              justifyContent: "center", // Center the content of this Box
-                            }}
-                          >
-                            <Typography
+                            <Box
                               sx={{
-                                color: "#160449",
-                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
-                                fontWeight: "bold",
+                                flexGrow: 1, // Allow this Box to grow and fill space
+                                display: "flex",
+                                justifyContent: "center", // Center the content of this Box
                               }}
                             >
-                              Announcements
-                            </Typography>
-                          </Box>
+                              <Typography
+                                sx={{
+                                  color: "#160449",
+                                  fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Announcements
+                              </Typography>
+                            </Box>
                           </Grid>
                           <Grid item xs={2}>
                             <Box
@@ -586,75 +660,68 @@ function TenantDashboard(props) {
                                 alignItems: "center",
                                 zIndex: 1, // Look into this for all the components
                                 flex: 1,
-                                height: '100%'
+                                height: "100%",
                               }}
                             >
-                            <Box
-                              sx={{
-                                color: "#007AFF",
-                                fontSize: "18px",
-                                paddingRight: "25px",
-                                fontWeight: "bold",
-                              }}
-                              onClick={() => {
-                                navigate("/announcements", { state: { announcementsData, propertyAddr } });
-                              }}
-                            >
-                              {isMobile ? `(${announcementsData.length})`: `View all (${announcementsData.length})`}
-                              
+                              <Box
+                                sx={{
+                                  color: "#007AFF",
+                                  fontSize: "18px",
+                                  paddingRight: "25px",
+                                  fontWeight: "bold",
+                                }}
+                                onClick={() => {
+                                  navigate("/announcements", { state: { announcementsData, propertyAddr } });
+                                }}
+                              >
+                                {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                              </Box>
                             </Box>
-                          </Box>
                           </Grid>
                         </Grid>
-                        {announcementsData.length > 0  ? (
-                          <NewCardSlider announcementList={announcementsData} isMobile={isMobile}/>
+                        {announcementsData.length > 0 ? (
+                          <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
                         ) : (
-                          <Box sx={{display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px"}}>
-                            <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }}}>
-                              No Announcements
-                            </Typography>
+                          <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
                           </Box>
                         )}
                       </DashboardTab>
                     </Grid>
                     <Grid item xs={12}>
                       <DashboardTab>
-                      <Grid container direction="row" sx={{paddingTop: "10px", paddingBottom: "10px"}}>
+                        <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
                           <Grid item xs={2}></Grid>
                           <Grid item xs={8}>
-                          <Box
-                            sx={{
-                              flexGrow: 1, // Allow this Box to grow and fill space
-                              display: "flex",
-                              justifyContent: "center", // Center the content of this Box
-                            }}
-                          >
-                            <Typography
+                            <Box
                               sx={{
-                                color: "#160449",
-                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
-                                fontWeight: "bold",
+                                flexGrow: 1, // Allow this Box to grow and fill space
+                                display: "flex",
+                                justifyContent: "center", // Center the content of this Box
                               }}
                             >
-                              Payment History
-                            </Typography>
+                              <Typography
+                                sx={{
+                                  color: "#160449",
+                                  fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Payment History
+                              </Typography>
                             </Box>
                           </Grid>
-                          <Grid item xs={2}>
-                          </Grid>
+                          <Grid item xs={2}></Grid>
                         </Grid>
                         <Stack>
-                          <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium}/>
+                          <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium} />
                         </Stack>
                       </DashboardTab>
                     </Grid>
                     <Grid item xs={12}>
                       <DashboardTab>
-                        <Grid container direction="row" sx={{                                 paddingTop: "10px",
-                                paddingBottom: "10px"}}>
-                          <Grid item xs={2}>
-
-                          </Grid>
+                        <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                          <Grid item xs={2}></Grid>
                           <Grid item xs={8}>
                             <Box
                               sx={{
@@ -665,14 +732,15 @@ function TenantDashboard(props) {
                                 flex: 1,
                               }}
                             >
-                                <Typography sx={{ 
-                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  Maintenance ({maintenanceRequests.length})
-                                </Typography>
-                              </Box>
+                              <Typography
+                                sx={{
+                                  fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Maintenance ({maintenanceRequests.length})
+                              </Typography>
+                            </Box>
                           </Grid>
                           <Grid item xs={2}>
                             <Box
@@ -682,7 +750,7 @@ function TenantDashboard(props) {
                                 alignItems: "center",
                                 zIndex: 1, // Look into this for all the components
                                 flex: 1,
-                                height: '100%',
+                                height: "100%",
                               }}
                             >
                               <Box
@@ -695,7 +763,7 @@ function TenantDashboard(props) {
                                   color: "#FFFFFF",
                                   textTransform: "none",
                                   fontSize: isMobile ? "8px" : "16px",
-                                  '&:hover': {
+                                  "&:hover": {
                                     backgroundColor: "#3457A0", // Optional: Darken on hover
                                   },
                                   padding: isMobile ? "0px" : "10px",
@@ -704,19 +772,18 @@ function TenantDashboard(props) {
                                   cursor: "pointer",
                                   alignItems: "center",
                                   fontWeight: "bold",
-                                  fontSize: "18px"
+                                  fontSize: "18px",
                                 }}
-                                
                                 onClick={() => handleTenantMaintenanceNavigate()}
                               >
                                 <AddIcon />
-                                {!isMobile && !isMedium && <span style={{ marginLeft: "8px" }}>New Request</span>} 
+                                {!isMobile && !isMedium && <span style={{ marginLeft: "8px" }}>New Request</span>}
                               </Box>
                             </Box>
                           </Grid>
                         </Grid>
                         <Stack>
-                          <TenantMaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate} isMobile={isMobile} isMedium={isMedium}/>
+                          <TenantMaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate} isMobile={isMobile} isMedium={isMedium} />
                         </Stack>
                       </DashboardTab>
                     </Grid>
@@ -733,7 +800,7 @@ function TenantDashboard(props) {
       ) : (
         <></>
       )}
-    {/* </Box> */}
+      {/* </Box> */}
     </Container>
   );
 }
@@ -775,7 +842,7 @@ function DashboardTab(props) {
         marginTop: "7px",
         marginBottom: "7px",
         boxShadow: "0px 2px 4px #00000040",
-        height: props.fullHeight ? "90%" : "auto"
+        height: props.fullHeight ? "90%" : "auto",
       }}
     >
       {props.children}
@@ -785,9 +852,9 @@ function DashboardTab(props) {
 
 export default TenantDashboard;
 
-function TenantPaymentHistoryTable(props){
-  const isMobile = props.isMobile
-  const isMedium = props.isMedium
+function TenantPaymentHistoryTable(props) {
+  const isMobile = props.isMobile;
+  const isMedium = props.isMedium;
 
   const mobileColumnsList = [
     {
@@ -814,7 +881,7 @@ function TenantPaymentHistoryTable(props){
         <Box
           // label={params.value} // This value is all caps, so I need to convert it to regular cased
           sx={{
-            backgroundColor: theme.colorStatusPaymentHistoryTenant.find(item => item.status === params.value)?.color,
+            backgroundColor: theme.colorStatusPaymentHistoryTenant.find((item) => item.status === params.value)?.color,
             textTransform: "none",
             fontWeight: "bold",
             width: "100px",
@@ -823,13 +890,13 @@ function TenantPaymentHistoryTable(props){
             alignItems: "center",
             textAlign: "center",
             alignContent: "center",
-            color: "#FFFFFF"
+            color: "#FFFFFF",
           }}
         >
           {params.value}
         </Box>
         // <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>
-      )
+      ),
     },
 
     {
@@ -922,56 +989,53 @@ function TenantPaymentHistoryTable(props){
       align: "right",
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value.slice(-4)}</Box>,
     },
-  ]
+  ];
 
   const columnList = () => {
     if (isMobile || isMedium) {
-      return mobileColumnsList
+      return mobileColumnsList;
     } else {
-      return mobileColumnsList.concat(desktopColumnsList)
+      return mobileColumnsList.concat(desktopColumnsList);
     }
-  }
+  };
 
-  if (props.data && props.data.length > 0){
+  if (props.data && props.data.length > 0) {
     return (
-        <DataGrid
-          rows={props.data}
-          columns={columnList()}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
+      <DataGrid
+        rows={props.data}
+        columns={columnList()}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
             },
-          }}
-          getRowId={(row) => row.purchase_uid}
-          pageSizeOptions={[5, 10, 25, 100]}
-        /> 
-    )
-  } else{
+          },
+        }}
+        getRowId={(row) => row.purchase_uid}
+        pageSizeOptions={[5, 10, 25, 100]}
+      />
+    );
+  } else {
     return (
-      <Box sx={{display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "331px"}}>
-        <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }}}>
-          No Payment History Available
-        </Typography>
+      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "331px" }}>
+        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Payment History Available</Typography>
       </Box>
-    )
+    );
   }
 }
 
 function TenantMaintenanceRequestsTable(props) {
   // console.log("In Maintenance Request Table from Stack")
   const data = props.data;
-  const isMobile = props.isMobile
-  const isMedium = props.isMedium
-  console.log("TenantMaintenanceRequestTable", isMobile)
+  const isMobile = props.isMobile;
+  const isMedium = props.isMedium;
+  console.log("TenantMaintenanceRequestTable", isMobile);
   // console.log("Data in MRD from props: ", data)
   // console.log( theme.colorStatusMaintenanceTenant.find(item => item.status === "NEW REQUEST") )
   const location = useLocation();
   let navigate = useNavigate();
 
-  const [openModal, setOpenModal] = useState(false)
-
+  const [openModal, setOpenModal] = useState(false);
 
   function formatTime(time) {
     if (time == null || !time.includes(":")) {
@@ -1013,14 +1077,16 @@ function TenantMaintenanceRequestsTable(props) {
       headerName: "Title",
       flex: 1,
       renderCell: (params) => (
-        <Box sx={{ 
-          fontWeight: "bold", 
-          textAlign: "center",
-          backgroundColor: theme.colorStatusMaintenanceTenant.find(item => item.status === params.row.maintenance_request_status)?.color || "#FFFFFF",
-          padding: "5px",
-          color: "#FFFFFF",
-          borderRadius: "4px",
-        }}>
+        <Box
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            backgroundColor: theme.colorStatusMaintenanceTenant.find((item) => item.status === params.row.maintenance_request_status)?.color || "#000000",
+            padding: "5px",
+            color: "#FFFFFF",
+            borderRadius: "4px",
+          }}
+        >
           {params.value}
         </Box>
       ),
@@ -1036,7 +1102,7 @@ function TenantMaintenanceRequestsTable(props) {
       // align: "center",
       renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? params.value : "-"}</Box>,
       headerAlign: "center",
-    }
+    },
   ];
 
   const columnsListDesktop = [
@@ -1051,9 +1117,7 @@ function TenantMaintenanceRequestsTable(props) {
       field: "maintenance_priority",
       headerName: "Priority",
       flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>
-      ),
+      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>,
       headerAlign: "center",
     },
     {
@@ -1077,17 +1141,16 @@ function TenantMaintenanceRequestsTable(props) {
       },
       renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? formatTime(params.value) : "-"}</Box>,
       headerAlign: "center",
-    }
-  ]
+    },
+  ];
 
   const columnList = () => {
-    if (isMobile || isMedium){
-      return columnsListDefault
-    } else{
-      return columnsListDefault.concat(columnsListDesktop)
+    if (isMobile || isMedium) {
+      return columnsListDefault;
+    } else {
+      return columnsListDefault.concat(columnsListDesktop);
     }
-  }
-
+  };
 
   if (data.length > 0) {
     // console.log("Passed Data ", data);
@@ -1107,22 +1170,20 @@ function TenantMaintenanceRequestsTable(props) {
           pageSizeOptions={[5, 10, 25, 100]}
           onRowClick={(row) => {
             console.log("Row =", row);
-              navigate(`/tenantMaintenanceItemDetail`, {
-                state: {
-                    item: row.row
-                }
-            })
+            navigate(`/tenantMaintenanceItemDetail`, {
+              state: {
+                item: row.row,
+              },
+            });
           }}
-        /> 
-      </>      
+        />
+      </>
     );
-  } else{
+  } else {
     return (
-      <Box sx={{display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "331px"}}>
-        <Typography sx={{fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }}}>
-          No Maintenance Requests Available
-        </Typography>
+      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "331px" }}>
+        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Maintenance Requests Available</Typography>
       </Box>
-    )
+    );
   }
 }

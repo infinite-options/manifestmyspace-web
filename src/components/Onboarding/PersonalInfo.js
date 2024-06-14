@@ -1,18 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Paper,
-  Box,
-  Stack,
-  ThemeProvider,
-  Button,
-  Typography,
-  Backdrop,
-  CircularProgress,
-  TextField,
-  Select,
-  Grid,
-  MenuItem,
-} from "@mui/material";
+import { Paper, Box, Stack, ThemeProvider, Button, Typography, Backdrop, CircularProgress, TextField, Select, Grid, MenuItem } from "@mui/material";
 import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,7 +12,6 @@ import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,20 +36,19 @@ const useStyles = makeStyles((theme) => ({
 const PersonalInfo = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const {user, setUser, isLoggedIn, isEmployee, roleName, updateProfileUid, isBusiness, selectedRole } = useUser();
+  const { user, setUser, isLoggedIn, isEmployee, roleName, updateProfileUid, isBusiness, selectedRole } = useUser();
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
   const location = useLocation();
   const { businessId } = location.state;
   const [emp_cookie, set_emp_cookie] = useCookies(["user"]);
   const emp_cookiesData = emp_cookie["user"];
-  
-  
+
   const [showSpinner, setShowSpinner] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [statusImg, setStatusImg] = useState();
-  
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -73,8 +58,8 @@ const PersonalInfo = () => {
   const [zip, setZip] = useState("");
   const [ssn, setSsn] = useState("");
   const [mask, setMask] = useState("");
-  const profilePage= isLoggedIn? "/privateProfilePayment" :"/profilePayment";
-  const onBoaringPage= isLoggedIn? "/privateOnboardingRouter" : "/onboardingRouter";
+  const profilePage = isLoggedIn ? "/privateProfilePayment" : "/profilePayment";
+  const onBoaringPage = isLoggedIn ? "/privateOnboardingRouter" : "/onboardingRouter";
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
   };
@@ -127,37 +112,35 @@ const PersonalInfo = () => {
     setState(address.state ? address.state : "");
     setZip(address.zip ? address.zip : "");
   };
-  const validate_form= () =>{
-    if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
-      
-          if (!DataValidator.email_validate(email )){
-            alert("Please enter a valid email");
-            return false;}
+  const validate_form = () => {
+    if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(selectedRole)) {
+      if (!DataValidator.email_validate(email)) {
+        alert("Please enter a valid email");
+        return false;
+      }
 
-          if (!DataValidator.phone_validate(phoneNumber )){
-            alert("Please enter a valid phone number");
-            return false;}
-          
-          if (!DataValidator.zipCode_validate(zip )){
-            console.log(zip)
-            alert("Please enter a valid zip code");
-            return false;}
-          
-            if (!DataValidator.ssn_validate(ssn )) {
-              console.log(ssn)
-              console.log('ssn')
-              alert("Please enter a valid SSN");
-              return false;
-            }
-          }
+      if (!DataValidator.phone_validate(phoneNumber)) {
+        alert("Please enter a valid phone number");
+        return false;
+      }
 
+      if (!DataValidator.zipCode_validate(zip)) {
+        console.log(zip);
+        alert("Please enter a valid zip code");
+        return false;
+      }
 
-  }
-
+      if (!DataValidator.ssn_validate(ssn)) {
+        console.log(ssn);
+        console.log("ssn");
+        alert("Please enter a valid SSN");
+        return false;
+      }
+    }
+  };
 
   const handleNextStep = async () => {
-    if (validate_form() === false)
-      return;
+    if (validate_form() === false) return;
 
     setShowSpinner(true);
     const payload = {
@@ -175,50 +158,42 @@ const PersonalInfo = () => {
       employee_zip: zip,
       employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
     };
-    
-    
-    
-
 
     const formPayload = new FormData();
     for (const key of Object.keys(payload)) {
-      if (key === "employee_photo" && payload[key])
-        formPayload.append(key, payload[key].file);
+      if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
       else formPayload.append(key, payload[key]);
     }
-    const { data } = await axios.post(
-      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee",
-      formPayload,
-      headers
-    );
-    setCookie("default_form_vals", {...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
+    const { data } = await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
+    setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
     handleUpdateProfileUid(data);
-        
-      if (['PM_EMPLOYEE', 'MAINT_EMPLOYEE'].includes(selectedRole)){
-        let role_id={}
-        let businesses=  user.businesses
-        
-        if (selectedRole === 'PM_EMPLOYEE') {
-          businesses['MANAGEMENT'].business_employee_id=data.employee_uid
-          role_id={businesses}
-          setCookie("user", {...user, ...role_id, pm_supervisor:businessId})
-          setUser(prev=>{return {...prev,...role_id, pm_supervisor:businessId }})
-        }
-          
-        else {
-          businesses['MAINTENANCE'].business_employee_id=data.employee_uid
-          role_id={businesses}
-          setCookie("user", {...user, ...role_id, maint_supervisor:businessId})
-          setUser(prev=>{return {...prev,...role_id, maint_supervisor:businessId }})
-        }
 
-      role_id={businesses}
+    if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(selectedRole)) {
+      let role_id = {};
+      let businesses = user.businesses;
+
+      if (selectedRole === "PM_EMPLOYEE") {
+        businesses["MANAGEMENT"].business_employee_id = data.employee_uid;
+        role_id = { businesses };
+        setCookie("user", { ...user, ...role_id, pm_supervisor: businessId });
+        setUser((prev) => {
+          return { ...prev, ...role_id, pm_supervisor: businessId };
+        });
+      } else {
+        businesses["MAINTENANCE"].business_employee_id = data.employee_uid;
+        role_id = { businesses };
+        setCookie("user", { ...user, ...role_id, maint_supervisor: businessId });
+        setUser((prev) => {
+          return { ...prev, ...role_id, maint_supervisor: businessId };
+        });
       }
 
+      role_id = { businesses };
+    }
+
     setShowSpinner(false);
-    if (isEmployee())
-      navigate(profilePage, { state: { profileId: businessId } });
-    else navigate(onBoaringPage );
+    if (isEmployee()) navigate(profilePage, { state: { profileId: businessId } });
+    else navigate(onBoaringPage);
   };
   const handleUpdateProfileUid = (data) => {
     if (isEmployee()) {
@@ -229,18 +204,16 @@ const PersonalInfo = () => {
   };
 
   useEffect(() => {
-    
-    setFirstName(cookiesData?.firstName ?? '')
-    setLastName(cookiesData?.lastName ?? '')
-    setPhoneNumber(cookiesData?.phoneNumber ?? '')
-    setEmail(cookiesData?.email ?? '')
-    setAddress(cookiesData?.address ?? '')
-    setCity(cookiesData?.city ?? '')
-    setState(cookiesData?.state ?? '')
-    setUnit(cookiesData?.unit ?? '')
-    setZip(cookiesData?.zip ?? '')
+    setFirstName(cookiesData?.firstName ?? "");
+    setLastName(cookiesData?.lastName ?? "");
+    // setPhoneNumber(cookiesData?.phoneNumber ?? '')
+    // setEmail(cookiesData?.email ?? '')
+    setAddress(cookiesData?.address ?? "");
+    setCity(cookiesData?.city ?? "");
+    setState(cookiesData?.state ?? "");
+    setUnit(cookiesData?.unit ?? "");
+    setZip(cookiesData?.zip ?? "");
     handleRoleSpecifics();
-
   }, []);
 
   const handleRoleSpecifics = () => {
@@ -250,10 +223,7 @@ const PersonalInfo = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={showSpinner}
-      >
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <Box
@@ -274,14 +244,7 @@ const PersonalInfo = () => {
             width: "85%",
           }}
         >
-          <Box
-            component="span"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            position="relative"
-            flexDirection="column"
-          >
+          <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" flexDirection="column">
             <>
               <Stack direction="row" justifyContent="center">
                 <Box
@@ -289,7 +252,7 @@ const PersonalInfo = () => {
                     paddingTop: "10%",
                   }}
                 >
-                  <img src={statusImg } alt="status" />
+                  <img src={statusImg} alt="status" />
                 </Box>
               </Stack>
               <Stack direction="row" justifyContent="center">
@@ -325,15 +288,7 @@ const PersonalInfo = () => {
                 fullWidth
                 className={classes.root}
               ></TextField>
-              <TextField
-                name="lastname"
-                value={lastName}
-                onChange={handleLastNameChange}
-                placeholder="Last Name"
-                variant="filled"
-                fullWidth
-                className={classes.root}
-              ></TextField>
+              <TextField name="lastname" value={lastName} onChange={handleLastNameChange} placeholder="Last Name" variant="filled" fullWidth className={classes.root}></TextField>
             </Stack>
           </Stack>
           <Stack spacing={-2} m={5}>
@@ -345,15 +300,7 @@ const PersonalInfo = () => {
             >
               Email Address
             </Typography>
-            <TextField
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="email@site.com"
-              variant="filled"
-              fullWidth
-              className={classes.root}
-            ></TextField>
+            <TextField name="email" value={email} onChange={handleEmailChange} placeholder="email@site.com" variant="filled" fullWidth className={classes.root}></TextField>
           </Stack>
 
           <Stack spacing={-2} m={5}>
@@ -370,9 +317,7 @@ const PersonalInfo = () => {
               value={phoneNumber}
               type="tel"
               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-              onChange={(e) =>
-                handlePhoneNumberChange(formatPhoneNumber(e.target.value))
-              }
+              onChange={(e) => handlePhoneNumberChange(formatPhoneNumber(e.target.value))}
               placeholder="(000)000-0000"
               variant="filled"
               fullWidth
@@ -392,11 +337,7 @@ const PersonalInfo = () => {
             </Typography>
             <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
           </Stack>
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography
@@ -407,19 +348,10 @@ const PersonalInfo = () => {
                 >
                   Unit #
                 </Typography>
-                <TextField
-                  name="nit"
-                  value={unit}
-                  onChange={handleUnitChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="3"
-                  className={classes.root}
-                ></TextField>
+                <TextField name="nit" value={unit} onChange={handleUnitChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
               </Stack>
             </Grid>
-       
-            
+
             <Grid item xs={6}>
               <Stack spacing={-2} m={5}>
                 <Typography
@@ -430,24 +362,12 @@ const PersonalInfo = () => {
                 >
                   Zip Code
                 </Typography>
-                <TextField
-                  name="zip"
-                  value={zip}
-                  onChange={handleZipChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="90234"
-                  className={classes.root}
-                ></TextField>
+                <TextField name="zip" value={zip} onChange={handleZipChange} variant="filled" fullWidth placeholder="90234" className={classes.root}></TextField>
               </Stack>
             </Grid>
           </Grid>
           <hr />
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12}>
               <Stack spacing={-2} m={5}>
                 <Typography
@@ -458,15 +378,7 @@ const PersonalInfo = () => {
                 >
                   SSN
                 </Typography>
-                <TextField
-                  name="ssn"
-                  value={mask}
-                  onChange={handleSsnChange}
-                  variant="filled"
-                  fullWidth
-                  placeholder="***-**-****"
-                  className={classes.root}
-                ></TextField>
+                <TextField name="ssn" value={mask} onChange={handleSsnChange} variant="filled" fullWidth placeholder="***-**-****" className={classes.root}></TextField>
               </Stack>
             </Grid>
           </Grid>

@@ -29,7 +29,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 import DateTimePickerModal from "../../DateTimePicker";
-
+import { useMediaQuery } from '@mui/material';
 
 import APIConfig from "../../../utils/APIConfig";
 
@@ -42,6 +42,11 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
     const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([])
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    if (!isMobile && sessionStorage.getItem('quoteAcceptView') === 'true') {
+		maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
+		quotes = JSON.parse(sessionStorage.getItem('quoteAcceptView'));
+	} 
     let maintenanceQuoteInfo = JSON.parse(maintenanceItem.quote_info).find((quote) => quote.quote_status === maintenanceItem.quote_status_ranked)
     console.log(maintenanceQuoteInfo)
     const [date, setDate] = useState(maintenanceQuoteInfo.quote_earliest_available_date || "")
@@ -50,6 +55,9 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
     const [showModal, setShowModal] = useState(false);
 
     let business_name = maintenanceItem?.maint_business_name || "Business Name Not Available";
+    
+	
+    
 
     async function handleScheduleStatusChange(id, date, time){
         const changeMaintenanceRequestStatus = async () => {

@@ -24,6 +24,7 @@ function PMRent(props) {
   const [rentData, setRentData] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
   const [rentDetailIndexList, setRentDetailIndexList] = useState([]);
+  console.log("checking", props.onPropertyInRentWidgetClicked)
 
   // useEffect(() => {
   //   console.log("rentDetailIndexList - ", rentDetailIndexList);
@@ -78,7 +79,7 @@ function PMRent(props) {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <RentTitle>Property Rent 1</RentTitle>
+      <RentTitle>Property Rent</RentTitle>
       <ViewOptionContainer>
         <Box
           sx={{
@@ -118,7 +119,7 @@ function PMRent(props) {
           marginTop: "20px",
         }}
       >
-        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} />
+        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
       </Box>
     </MainContainer>
   );

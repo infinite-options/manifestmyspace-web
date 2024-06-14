@@ -8,11 +8,14 @@ export default function RevenueWidget({ revenueData }) {
   const revenue = revenueData?.revenue?.result[0]?.received_expected;
   const expenses = revenueData?.expense?.result[0]?.paid_expected;
   const profit = revenue - expenses;
+  const revenueReceived = revenueData?.revenue?.result[0]?.received_actual;
+  const expensesReceived = revenueData?.expense?.result[0]?.paid_actual;
+  const profitReceived = revenueReceived - expensesReceived;
 
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px" }}>
-        <Grid container item xs={12} md={9} sx={{ padding: "20px" }}>
+        <Grid container item xs={12} md={9} spacing={2} sx={{ padding: "20px" }}>
           <Grid
             item
             xs={12}
@@ -24,13 +27,19 @@ export default function RevenueWidget({ revenueData }) {
               marginBottom: "10px",
               borderRadius: "5px",
               padding: "5px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
             }}
           >
-            <Typography sx={{ height: "10%", fontWeight: "bold" }}>Expected Monthly Profit</Typography>
-            <Typography sx={{ height: "10%", fontWeight: "bold" }}>{profit.toFixed(2)}</Typography>
+            <Grid container>
+              <Grid item xs={8}>
+                <Typography sx={{ fontWeight: "bold" }}>Monthly Profit (Expected vs Actual)</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: "bold" }}>{profit.toFixed(2)}</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: "bold" }}>{profitReceived.toFixed(2)}</Typography>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid
             item
@@ -41,23 +50,44 @@ export default function RevenueWidget({ revenueData }) {
               marginBottom: "10px",
               borderRadius: "5px",
               padding: "5px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
             }}
           >
-            <Typography sx={{ height: "10%", fontWeight: "bold" }}>Expected Monthly Revenue</Typography>
-            <Typography sx={{ height: "10%", fontWeight: "bold" }}>{revenue}</Typography>
+            <Grid container>
+              <Grid item xs={8}>
+                <Typography sx={{ fontWeight: "bold" }}>Monthly Revenue (Expected vs Actual)</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: "bold" }}>{revenue}</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: "bold" }}>{revenueReceived}</Typography>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid
             item
             xs={12}
-            sx={{ width: "100%", backgroundColor: "#979797", borderRadius: "5px", padding: "5px", display: "flex", flexDirection: "row", justifyContent: "space-between" }}
+            sx={{
+              width: "100%",
+              backgroundColor: "#979797",
+              borderRadius: "5px",
+              padding: "5px",
+            }}
           >
-            <Typography sx={{ height: "10%", fontWeight: "bold" }}>Expected Monthly Expenses</Typography>
-            <Typography sx={{ height: "10%", fontWeight: "bold" }}>{expenses}</Typography>
+            <Grid container>
+              <Grid item xs={8}>
+                <Typography sx={{ fontWeight: "bold" }}>Monthly Expenses (Expected vs Actual)</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: "bold" }}>{expenses}</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: "bold" }}>{expensesReceived}</Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
+
         <Grid container item xs={12} md={3} direction="row" justifyContent="center" alignItems="center" sx={{ padding: "10px" }}>
           <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button

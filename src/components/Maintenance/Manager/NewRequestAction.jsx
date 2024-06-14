@@ -29,11 +29,10 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../../utils/APIConfig";
 
-
-export default function NewRequestAction({maintenanceItem, navigateParams, quotes}){
+export default function NewRequestAction({ maintenanceItem, navigateParams, quotes }) {
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
     const [schedulerDate, setSchedulerDate] = useState();
@@ -42,20 +41,44 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    // console.log("maintenanceItem NewRequestAction", maintenanceItem)
+    function handleNavigateToQuotesRequested() {
+        if (isMobile) {
+            navigate("/quoteRequest", {
+                state: {
+                    maintenanceItem,
+                    navigateParams
+                }
+            });
+        } else {
+            if (maintenanceItem && navigateParams) {
+                try {
+                    const maintenanceItemStr = JSON.stringify(maintenanceItem);
+                    const navigateParamsStr = JSON.stringify(navigateParams);
 
-    function handleNavigateToQuotesRequested(){
-        navigate("/quoteRequest", {
-            state:{
-                maintenanceItem,
-                navigateParams
+                    console.log('Storing data in sessionStorage: ', navigateParams);
+
+                    // Save data to sessionStorage
+                    sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
+                    sessionStorage.setItem('navigateParams', navigateParamsStr);
+                    sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
+                    sessionStorage.setItem('selectedStatus', navigateParams.status);
+                    sessionStorage.setItem('desktopView', 'true');
+                    window.dispatchEvent(new Event('storage'));
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('maintenanceRequestSelected'));
+                    }, 0);
+                } catch (error) {
+                    console.error("Error setting sessionStorage: ", error);
+                }
+            } else {
+                console.error("maintenanceItem or navigateParams is undefined");
             }
-        });
+        }
     }
 
-    async function handleSubmit(maintenanceItemUID, date, time){
-        // console.log(maintenanceItemUID, date, time)
+    async function handleSubmit(maintenanceItemUID, date, time) {
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             const formData = new FormData();
@@ -77,14 +100,13 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
             setShowSpinner(false);
         }
         await changeMaintenanceRequestStatus();
-        // setShowScheduler(false);
         navigate(maintenanceRoutingBasedOnSelectedRole())
     }
 
-    return(
+    return (
         <Box 
             sx={{
-                display: "flex" ,
+                display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
@@ -106,7 +128,6 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                     }}>
                     <Button
                         variant="contained"
-                        
                         sx={{
                             backgroundColor: "#D6D5DA",
                             textTransform: "none",
@@ -128,7 +149,6 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 }}>
                     <Button
                         variant="contained"
-                        
                         sx={{
                             backgroundColor: "#9EAED6",
                             textTransform: "none",
@@ -150,7 +170,6 @@ export default function NewRequestAction({maintenanceItem, navigateParams, quote
                 }}>
                     <Button
                         variant="contained"
-                        
                         sx={{
                             backgroundColor: "#C06A6A",
                             textTransform: "none",
