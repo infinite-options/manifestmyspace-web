@@ -439,7 +439,8 @@ const CustomLegend = ({ data, navigate }) => {
         if (isMobile){
         navigate("/pmRent");
       }else{
-        navigate("/properties", {state:{from:"rentWidget"}})
+        sessionStorage.setItem('isrent', 'true');
+        navigate("/properties")
       }
       }
       }

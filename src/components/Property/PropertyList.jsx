@@ -255,13 +255,15 @@ export default function PropertyList({ }) {
           setPropertyIndex(location.state.index);
           navigate(location.pathname, { replace: true, state: {} });
         }
-
-        if (location.state.from === "rentWidget") {
-          setFromRentWidget(true);
-        }
       }
       if (propertyData.Property.code == 200 && propertyRent.RentStatus.code == 200) {
         setDataReady(true);
+      }
+      if (selectedRole == "MANAGER" && sessionStorage.getItem('isrent') == "true") {
+        setFromRentWidget(true);
+      } else {
+        setFromRentWidget(false);
+        sessionStorage.removeItem('isrent')
       }
     };
     fetchData();
