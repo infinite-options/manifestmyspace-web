@@ -171,6 +171,7 @@ export default function MaintenanceManager() {
 	const [rescheduleView] = useSessionStorage('rescheduleView', false);
 	const [payMaintenanceView] = useSessionStorage('payMaintenanceView', false);
 	const [showNewMaintenance, setshowNewMaintenance] = useState(false);
+	const propertyIdFromPropertyDetail = location.state?.propertyId || null;
 
 	function navigateToAddMaintenanceItem() {
 		if (isMobile) {
@@ -198,6 +199,15 @@ export default function MaintenanceManager() {
 					}
 				}
 			}
+
+			if (propertyIdFromPropertyDetail) {
+				for (const property of propertyList) {
+					if (property.property_uid !== propertyIdFromPropertyDetail) {
+						property.checked = false;
+					}
+				}
+			}
+
 			setFilterPropertyList(propertyList);
 		}
 	}, [maintenanceData]);
