@@ -255,13 +255,15 @@ export default function PropertyList({ }) {
           setPropertyIndex(location.state.index);
           navigate(location.pathname, { replace: true, state: {} });
         }
-
-        if (location.state.from === "rentWidget") {
-          setFromRentWidget(true);
-        }
       }
       if (propertyData.Property.code == 200 && propertyRent.RentStatus.code == 200) {
         setDataReady(true);
+      }
+      if (selectedRole == "MANAGER" && sessionStorage.getItem('isrent') == "true") {
+        setFromRentWidget(true);
+      } else {
+        setFromRentWidget(false);
+        sessionStorage.removeItem('isrent')
       }
     };
     fetchData();
@@ -596,6 +598,12 @@ export default function PropertyList({ }) {
     handlePropertyDetailNavigation(i, displayedItems);
   };
 
+  const onPropertyInRentWidgetClicked = (property_uid) => {
+    const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
+    console.log("onPropertyInRentWidgetClicked Clicked", i, displayedItems);
+    setPropertyIndex(i);
+  };
+
   const handleResize = () => {
     if (window.innerWidth >= 950) {
       setIsDesktop(true);
@@ -623,7 +631,7 @@ export default function PropertyList({ }) {
           <Grid container spacing={6}>
             {isFromRentWidget === true ? (
               <Grid item xs={12} md={4}>
-                <PMRent />
+                <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked}/>
               </Grid>) : (
               <Grid item xs={12} md={propertyList.length > 0 && isDesktop ? 4 : 12}>
                 <Box
