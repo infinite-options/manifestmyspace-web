@@ -284,9 +284,13 @@ export function MaintenanceOwner() {
 		}
 	};
 
-    const handleBackButton = () => {
-        navigate(-1); // Fallback to default behavior if onBack is not provided
-        
+	const handleBackButton = () => {
+		const { index, fromProperty } = location.state;
+		if (location.state && fromProperty === true) {
+			navigate('/properties', { state: { index } });
+		} else {
+			navigate(-1); // Fallback to default behavior if onBack is not provided
+		}
 	};
 
 	return (
