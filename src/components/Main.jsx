@@ -58,7 +58,7 @@ import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWid
 
 import Contacts from "./Contacts/Contacts";
 import OwnerContacts from "./Contacts/OwnerContacts";
-import PMContacts from "./Contacts/PMContacts";
+import PMContacts from "./Contacts/PMContacts/PMContacts";
 import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
