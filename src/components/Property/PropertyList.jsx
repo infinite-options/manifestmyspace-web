@@ -541,41 +541,31 @@ export default function PropertyList({ }) {
             sx={{
               color: '#000000',
             }}
+            onClick={(e) => {
+              //console.log('selected in', params)
+              if (selectedRole === "OWNER") {
+                navigate('/ownerMaintenance', {
+                  state: {
+                    fromProperty: true,
+                    index: params.id,
+                    propertyId: displayedItems[params.id].property_uid,
+                  },
+                });
+              } else {
+                navigate('/managerMaintenance', {
+                  state: {
+                    fromProperty: true,
+                    index: params.id,
+                    propertyId: displayedItems[params.id].property_uid,
+                  },
+                });
+              };
+            }
+            }
           >
-            <Button
-              onClick={(e) => {
-                //console.log('selected in', params)
-                if (selectedRole === "OWNER") {
-                  navigate('/ownerMaintenance', {
-                    state: {
-                      fromProperty: true,
-                      index: params.id,
-                      propertyId: displayedItems[params.id].property_uid,
-                    },
-                });
-                } else {
-                  navigate('/managerMaintenance', {
-                    state: {
-                      fromProperty: true,
-                      index: params.id,
-                      propertyId: displayedItems[params.id].property_uid,
-                    },
-                });
-                };
-              }
-              }
-              sx={{
-                border: 'none',
-                '&:hover, &:focus, &:active': { backgroundColor: '#d6d5da' },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0,
-                minWidth: 0,
-              }}
-            >
-              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '35px', height: '35px' }} />
-            </Button>
+            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '35px', height: '35px' }} onClick={(e) => {
+              onPropertyClick(params)
+            }} />
           </Badge>
         </Box>
       ),
@@ -631,7 +621,7 @@ export default function PropertyList({ }) {
           <Grid container spacing={6}>
             {isFromRentWidget === true ? (
               <Grid item xs={12} md={4}>
-                <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked}/>
+                <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} />
               </Grid>) : (
               <Grid item xs={12} md={propertyList.length > 0 && isDesktop ? 4 : 12}>
                 <Box
@@ -729,11 +719,11 @@ export default function PropertyList({ }) {
                           rows={rows}
                           columns={columns}
                           autoHeight
-                          pageSizeOptions={[5]}
+                          pageSizeOptions={[15]}
                           initialState={{
                             pagination: {
                               paginationModel: {
-                                pageSize: 5,
+                                pageSize: 15,
                               },
                             },
                           }}
