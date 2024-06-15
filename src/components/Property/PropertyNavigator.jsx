@@ -488,7 +488,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
             ...item,
             cf_monthName: monthNames[item.cf_month - 1],
             total_paid_formatted: item.total_paid ? `$${item.total_paid}` : "-",
-            latest_date_formatted: item.latest_date || "-"
+            latest_date_formatted: item.latest_date || "-",
+            fees: "-",
           };
         });
       };
@@ -558,6 +559,15 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
           }}>
           {params.value}
         </Box>;
+      },
+    },
+    {
+      field: "fees",
+      headerName: "Fees",
+      sortable: isDesktop,
+      flex: 0.5,
+      renderCell: (params) => {
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
   ];

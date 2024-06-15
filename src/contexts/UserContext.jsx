@@ -174,6 +174,7 @@ const propertyRoutingBasedOnSelectedRole = () => {
 // console.log("routingWithSelectedRole selectedRole", selectedRole)
 const role = roleName();
 if (role === "Manager") {
+  sessionStorage.removeItem('isrent');
 return "/properties";
 } else if (role === "Owner") {
 return "/properties";
