@@ -207,6 +207,10 @@ export default function Leases(props) {
     set_owner_checkbox_items(uniqueOwners);
 
     setLeaseDate(leases);
+    const firstEntry = [...leases.entries()][0];
+    const firstLeaseUid = firstEntry ? firstEntry[1][0].lease_uid : null;
+    props.setSelectedLeaseId(firstLeaseUid);
+    // console.log('after sort', firstLeaseUid); 
     setMoveoutCount(moveoutNum);
     setOriginalLeaseDate(leases); // Save original lease dates
     setShowSpinner(false);
@@ -414,7 +418,7 @@ export default function Leases(props) {
             } else if (Number(currentMonth + 1) === Number(endMonth + 1)) {
               tabColor = "#FFC614";
             }
-            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} />;
+            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId}/>;
           })}
         </Box>
         <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
@@ -540,7 +544,7 @@ function LeaseMonth(props) {
         }}
       >
         {leaseData.map((lease, i) => (
-          <LeaseComponent key={i} data={lease} />
+          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId}/>
         ))}
       </Box>
     </Box>
@@ -603,13 +607,17 @@ function LeaseComponent(props) {
         sx={{
           marginLeft: "0px",
           marginRight: "auto",
+          cursor:"pointer",
         }}
-        onClick={() => {
-          navigate("/viewLease", {
-            state: {
-              lease_id: leaseData.lease_uid,
-            },
-          });
+        onClick={(e) => {
+          // navigate("/viewLease", {
+          //   state: {
+          //     lease_id: leaseData.lease_uid,
+          //   },
+          // });
+          console.log('click event', props.setSelectedLeaseId);
+
+          props.setSelectedLeaseId(leaseData.lease_uid);
         }}
       >
         <Box
