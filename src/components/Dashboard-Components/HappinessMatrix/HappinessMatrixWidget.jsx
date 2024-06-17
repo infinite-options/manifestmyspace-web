@@ -307,7 +307,7 @@ const CustomImage = (props) => {
       setIndex(idx);
       return;
     }    
-    navigate(`/ownerContactDetailsHappinessMatrix`, { //rohit
+    navigate(`/ownerContactDetailsHappinessMatrix`, { 
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
