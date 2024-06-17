@@ -1333,9 +1333,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           onClick={() => {
                             if (property.maintenanceCount > 0) {
                               if (selectedRole === "OWNER") {
-                                navigate("/ownerMaintenance", { state: { propertyId: propertyId, fromProperty: true,  } });
+                                navigate("/ownerMaintenance", { state: { propertyId: propertyId, fromProperty: true, index: currentIndex } });
                               } else {
-                                navigate("/managerMaintenance", { state: { propertyId: propertyId, fromProperty: true, } });
+                                navigate("/managerMaintenance", { state: { propertyId: propertyId, fromProperty: true, index: currentIndex } });
                               }
                             }
                           }}

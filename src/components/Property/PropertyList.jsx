@@ -520,7 +520,9 @@ export default function PropertyList({ }) {
       headerName: "Issues",
       headerAlign: "center",
       flex: 0.5,
-      renderCell: (params) => (
+      renderCell: (params) => {
+        const numOfMaintenanceReqs = getNumOfMaintenanceReqs(params.row);
+        return (
         <Box
           sx={{
             display: 'flex',
@@ -533,7 +535,7 @@ export default function PropertyList({ }) {
           <Badge
             overlap="circular"
             color="error"
-            badgeContent={getNumOfMaintenanceReqs(params.row)}
+            badgeContent={numOfMaintenanceReqs}
             anchorOrigin={{
               vertical: "top",
               horizontal: "right",
@@ -543,6 +545,7 @@ export default function PropertyList({ }) {
             }}
             onClick={(e) => {
               //console.log('selected in', params)
+              if (numOfMaintenanceReqs > 0){
               if (selectedRole === "OWNER") {
                 navigate('/ownerMaintenance', {
                   state: {
@@ -562,13 +565,12 @@ export default function PropertyList({ }) {
               };
             }
             }
+            }
           >
-            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '35px', height: '35px' }} onClick={(e) => {
-              onPropertyClick(params)
-            }} />
+            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '35px', height: '35px' }} />
           </Badge>
         </Box>
-      ),
+      )}
     },
   ];
 
