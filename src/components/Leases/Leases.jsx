@@ -502,6 +502,7 @@ function LeaseMonth(props) {
         display: "flex",
         flexDirection: "row",
         marginBottom: "20px",
+        marginTop:"20px",
       }}
     >
       <Box
