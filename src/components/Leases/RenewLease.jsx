@@ -4,6 +4,7 @@ import { ThemeProvider, Typography, Box, Paper, Grid, FormControlLabel, Radio, R
 import { DataGrid } from "@mui/x-data-grid";
 import theme from "../../theme/theme";
 
+
 export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
