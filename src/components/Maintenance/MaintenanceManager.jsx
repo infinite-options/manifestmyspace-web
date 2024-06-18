@@ -34,6 +34,8 @@ import RescheduleMaintenance from './Manager/RescheduleMaintenance';
 import useSessionStorage from './useSessionStorage';
 import { useCookies } from 'react-cookie';
 import AddMaintenanceItem from './AddMaintenanceItem';
+import EditMaintenanceItem from './EditMaintenanceItem';
+
 
 export async function maintenanceManagerDataCollectAndProcess(
 	setMaintenanceData,
@@ -171,7 +173,7 @@ export default function MaintenanceManager() {
 	const [rescheduleView] = useSessionStorage('rescheduleView', false);
 	const [payMaintenanceView] = useSessionStorage('payMaintenanceView', false);
 	const [showNewMaintenance, setshowNewMaintenance] = useState(false);
-	const propertyIdFromPropertyDetail = location.state?.propertyId || null;
+	const [editMaintenanceView] = useSessionStorage('editMaintenanceView', false);
 
 	function navigateToAddMaintenanceItem() {
 		if (isMobile) {
@@ -182,6 +184,7 @@ export default function MaintenanceManager() {
 	}
 
 	useEffect(() => {
+		console.log('----inside useEffect---', maintenanceData);
 		if (maintenanceData) {
 			const propertyList = [];
 			const addedAddresses = [];
@@ -191,7 +194,6 @@ export default function MaintenanceManager() {
 						addedAddresses.push(item.property_address);
 						if (!propertyList.includes(item.property_address)) {
 							propertyList.push({
-								property_uid: item.property_id,
 								address: item.property_address,
 								checked: true,
 							});
@@ -199,15 +201,6 @@ export default function MaintenanceManager() {
 					}
 				}
 			}
-
-			if (propertyIdFromPropertyDetail) {
-				for (const property of propertyList) {
-					if (property.property_uid !== propertyIdFromPropertyDetail) {
-						property.checked = false;
-					}
-				}
-			}
-
 			setFilterPropertyList(propertyList);
 		}
 	}, [maintenanceData]);
@@ -267,19 +260,14 @@ export default function MaintenanceManager() {
 
 	function displayPropertyFilterTitle(filterPropertyList) {
 		var count = 0;
-		var displayList = [];
 		for (const item of filterPropertyList) {
 			if (item.checked) {
 				count++;
-				displayList.push(item.address);
 			}
 		}
 		if (count === filterPropertyList.length) {
 			return 'All Properties';
-		} else if (count < 3) {
-			return displayList.join(', ');
-		}
-		else {
+		} else {
 			return 'Selected ' + count + ' Properties';
 		}
 	}
@@ -313,7 +301,7 @@ export default function MaintenanceManager() {
 				currentProfileId
 			);
 		};
-		console.log('initial maintenance data', maintenanceData)
+
 		window.addEventListener('maintenanceUpdate', handleMaintenanceUpdate);
 
 		return () => {
@@ -349,12 +337,7 @@ export default function MaintenanceManager() {
 		}
 	};
 	const handleBackButton = () => {
-		const { fromProperty, index } = location.state;
-		if (location.state && fromProperty === true) {
-			navigate('/properties', { state: { index } });
-		} else {
-			navigate(-1); // Fallback to default behavior if onBack is not provided
-		}
+		navigate(-1); // Fallback to default behavior if onBack is not provided
 	};
 	return (
 		<ThemeProvider theme={theme}>
@@ -546,7 +529,9 @@ export default function MaintenanceManager() {
 
 				{!isMobile && (
 					<Grid item xs={7}>
-						{showNewMaintenance ? (
+						{editMaintenanceView && selectedRole === 'MANAGER'? (
+							<EditMaintenanceItem />
+						) :showNewMaintenance ? (
 							<AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
 						) : desktopView && selectedRole === 'MANAGER' ? (
 							<>

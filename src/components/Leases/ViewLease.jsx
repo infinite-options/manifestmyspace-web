@@ -157,7 +157,9 @@ const ViewLease = (props) => {
           }),
         });
       } catch (error) {
-        console.log(error);
+        console.log("Error in View Lease sending announcements:", error);
+        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+            
       }
     };
     sendAnnouncement();

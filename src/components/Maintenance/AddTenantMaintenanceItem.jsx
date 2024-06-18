@@ -190,7 +190,9 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
             setShowSpinner(false);
         }
 
-        const sendAnnouncement = async () => {            
+        const sendAnnouncement = async () => {
+            try{
+                        
             const receiverPropertyMapping = {            
                 [lease.business_uid]: [property.property_uid],
             };
@@ -214,7 +216,12 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
                     "announcement_type": ["Text", "Email", "App"]
                 })
             })
-        }
+       
+        } catch (error) {
+            console.log("Error in Tenant Maintainance announcements:", error);
+            alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+                
+          }}
 
         postData();
         sendAnnouncement();
