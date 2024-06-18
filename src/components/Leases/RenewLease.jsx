@@ -1,12 +1,17 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { ThemeProvider, Typography, Box, Paper, Grid } from "@mui/material";
+import { ThemeProvider, Typography, Box, Paper, Grid, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import theme from "../../theme/theme";
+
 
 export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
+    const [utilities, setUtilities] = useState([]);
+    const [newUtilities, setNewUtilities] = useState([]);
+    const [leaseFees, setLeaseFees] = useState([]);
+    const [rent, setRent] = useState([]);
     const color = theme.palette.form.main;
 
     useEffect(() => {
@@ -15,6 +20,14 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         console.log('In Renew Lease', leaseDetails, selectedLeaseId, currentLease);
         const tenantsRow = JSON.parse(filtered.tenants);
         setTenantWithId(tenantsRow);
+        const utils = JSON.parse(filtered.property_utilities);
+        setUtilities(utils);
+        setNewUtilities(utils);
+        const fees = JSON.parse(filtered.lease_fees);
+        setLeaseFees(fees)
+        const rentFee = fees.find(fee => fee.fee_name === "Rent");
+        console.log('feess', rentFee)
+        setRent(rentFee);
     }, [leaseDetails, selectedLeaseId])
 
     const tenantColumns = [
@@ -50,6 +63,26 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         },
     ]
 
+    const utilitiesMap = new Map([
+        ["050-000001", "Electricity"],
+        ["050-000002", "Water"],
+        ["050-000003", "Gas"],
+        ["050-000004", "Trash"],
+        ["050-000005", "Sewer"],
+        ["050-000006", "Internet"],
+        ["050-000007", "Cable"],
+        ["050-000008", "HOA Dues"],
+        ["050-000009", "Security System"],
+        ["050-000010", "Pest Control"],
+        ["050-000011", "Gardener"],
+        ["050-000012", "Maintenance"],
+    ]);
+
+    const entitiesMap = new Map([
+        ["050-000041", "owner"],
+        ["050-000043", "tenant"],
+    ]);
+
     return (
         <Box
             style={{
@@ -81,7 +114,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Typography>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "10px", backgroundColor: color }}>
+                        <Paper sx={{ margin: "10px 10px 15px 10px", backgroundColor: color }}>
                             <Typography
                                 sx={{
                                     color: theme.typography.primary.black,
@@ -98,7 +131,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     rows={tenantWithId}
                                     columns={tenantColumns}
                                     pageSize={5}
-                                    pageSizeOptions={[5]}
+                                    rowsPerPageOptions={[5]}
                                     getRowId={(row) => row.tenant_uid}
                                     sx={{
                                         '& .MuiDataGrid-columnHeader': {
@@ -124,7 +157,253 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "10px", backgroundColor: color }}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                            <Box sx={{ color: "#3D5CAC", fontSize: "14px" }}>
+                                <Grid container spacing={2} alignItems="center" sx={{ padding: "10px" }}>
+                                    <Grid item xs={12}>
+                                        <Grid container>
+                                            <Grid item xs={1} />
+                                            <Grid item xs={4} />
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>CURRENT</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>NEW</Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid item xs={1} />
+                                            <Grid item xs={4}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Start Date</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_start}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>NEW</Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid item xs={1} />
+                                            <Grid item xs={4}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>End Date</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_end}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>NEW</Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid item xs={1} />
+                                            <Grid item xs={4}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-In Date</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} />
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid item xs={1} />
+                                            <Grid item xs={4}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{currentLease.move_out_date}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} />
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid item xs={1} />
+                                            <Grid item xs={4}>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Utilities Responsibilities</Typography>
+                                            </Grid>
+                                            <Grid item xs={7} />
+
+                                            <Grid item xs={5} />
+                                            <Grid item xs={3}>
+                                                <Grid container>
+                                                    <Grid item xs={4} md={4}>
+                                                        <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={4} md={4}>
+                                                        <Typography sx={{ fontSize: "14px" }}>Tenant</Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Grid container sx={{marginBottom:"5px"}}>
+                                                    <Grid item xs={4} md={4}>
+                                                        <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={4} md={4}>
+                                                        <Typography sx={{ fontSize: "14px" }}>Tenant</Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            {/* utilities map */}
+                                            {utilities.map((utility) =>
+                                                <React.Fragment key={utility.utility_type_id}>
+                                                    <Grid item xs={2} />
+                                                    <Grid item xs={3} container alignItems="center">
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{utilitiesMap.get(utility.utility_type_id)}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                                            name="row-radio-buttons-group"
+                                                            value={utility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
+                                                        >
+                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
+                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
+                                                        </RadioGroup>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                                            name="row-radio-buttons-group"
+                                                        >
+                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
+                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
+                                                        </RadioGroup>
+                                                    </Grid>
+                                                </React.Fragment>
+                                            )}
+                                            {/* Utilities map end */}
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Rent</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.charge}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Frequency</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Due Date</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by_date ? rent.due_by_date : "-"}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Available to Pay</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.available_topay}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee After</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_by}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_fee}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee Per Day</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.perDay_late_fee}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Typography
                                 sx={{
                                     color: theme.typography.primary.black,
@@ -139,7 +418,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "10px", backgroundColor: color }}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Typography
                                 sx={{
                                     color: theme.typography.primary.black,
@@ -154,7 +433,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "10px", backgroundColor: color }}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Typography
                                 sx={{
                                     color: theme.typography.primary.black,
