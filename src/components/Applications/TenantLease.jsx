@@ -449,6 +449,8 @@ const TenantLease = () => {
   };
 
   const handleCreateLease = async () => {
+    try{
+
     setShowMissingFieldsPrompt(false);
     if (!checkRequiredFields()) {
       setShowMissingFieldsPrompt(true);
@@ -532,7 +534,15 @@ const TenantLease = () => {
     });
     navigate("/managerDashboard");
     setShowSpinner(false);
-  };
+ 
+    }catch (error) {
+      console.log("Error Creating Lease:", error);
+      alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+
+      navigate("/managerDashboard");
+      setShowSpinner(false);
+  }
+   };
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>

@@ -72,19 +72,21 @@ function TenantLeases(props) {
 
       const properties_with_details = leaseData.Lease_Details.result;
       console.log("properties_with_details", properties_with_details);
-
+      console.log("Lease id: ", lease.lease_uid);
       let detailed_property = properties_with_details.filter((p) => p.lease_uid === lease.lease_uid);
       console.log("Lease: ", lease);
       console.log("detailed_property", detailed_property);
 
-      if (Array.isArray(detailed_property)) detailed_property = detailed_property[0];
-      console.log("Detailed Property: ", detailed_property);
-      setPets(JSON.parse(detailed_property?.lease_pets) ?? []);
-      setVehicles(JSON.parse(detailed_property?.lease_vehicles) ?? []);
-      setAdultOccupants(JSON.parse(detailed_property?.lease_adults) ?? []);
-      setChildrenOccupants(JSON.parse(detailed_property?.lease_children) ?? []);
-      setFees(JSON.parse(detailed_property?.leaseFees) ?? []);
-      setStatus(detailed_property?.lease_effective_date ?? []);
+      if (Array.isArray(detailed_property) && detailed_property.length > 0) {
+        detailed_property = detailed_property[0];
+        console.log("inside if Detailed Property: ", detailed_property);
+        setPets(JSON.parse(detailed_property?.lease_pets) ?? []);
+        setVehicles(JSON.parse(detailed_property?.lease_vehicles) ?? []);
+        setAdultOccupants(JSON.parse(detailed_property?.lease_adults) ?? []);
+        setChildrenOccupants(JSON.parse(detailed_property?.lease_children) ?? []);
+        setFees(JSON.parse(detailed_property?.leaseFees) ?? []);
+        setStatus(detailed_property?.lease_effective_date ?? []);
+      }
     }
 
     fetchData();
@@ -179,7 +181,9 @@ function TenantLeases(props) {
           }),
         });
       } catch (error) {
-        console.log(error);
+        console.log("Error in Tenant refuse announcements:", error);
+        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+            
       }
     };
     sendAnnouncement();
@@ -255,7 +259,9 @@ function TenantLeases(props) {
           }),
         });
       } catch (error) {
-        console.log(error);
+        console.log("Error in Tenant accept announcements:", error);
+        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+            
       }
     };
     sendAnnouncement();
