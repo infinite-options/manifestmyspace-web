@@ -4,7 +4,6 @@ import { ThemeProvider, Typography, Box, Paper, Grid, FormControlLabel, Radio, R
 import { DataGrid } from "@mui/x-data-grid";
 import theme from "../../theme/theme";
 
-
 export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
@@ -12,6 +11,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [newUtilities, setNewUtilities] = useState([]);
     const [leaseFees, setLeaseFees] = useState([]);
     const [rent, setRent] = useState([]);
+    const [documents, setDocuments] = useState([]);
     const color = theme.palette.form.main;
 
     useEffect(() => {
@@ -28,6 +28,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         const rentFee = fees.find(fee => fee.fee_name === "Rent");
         console.log('feess', rentFee)
         setRent(rentFee);
+        setDocuments(JSON.parse(filtered.lease_documents));
     }, [leaseDetails, selectedLeaseId])
 
     const tenantColumns = [
@@ -82,6 +83,39 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         ["050-000041", "owner"],
         ["050-000043", "tenant"],
     ]);
+
+    const feesColumns = [
+        {
+            field: "leaseFees_uid",
+            headerName: "UID",
+            flex: 1,
+        },
+        {
+            field: "fee_type",
+            headerName: "Type",
+            flex: 1,
+        },
+        {
+            field: "frequency",
+            headerName: "Frequency",
+            flex: 1,
+        },
+        {
+            field: "fee_name",
+            headerName: "Description",
+            flex: 1,
+        },
+        {
+            field: "charge",
+            headerName: "Amount",
+            flex: 1,
+        },
+        {
+            field: "late_by",
+            headerName: "Late",
+            flex: 1,
+        },
+    ]
 
     return (
         <Box
@@ -174,7 +208,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{marginBottom:"5px"}}>
+                                        <Grid container sx={{ marginBottom: "5px" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Start Date</Typography>
@@ -189,7 +223,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{marginBottom:"5px"}}>
+                                        <Grid container sx={{ marginBottom: "5px" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>End Date</Typography>
@@ -204,33 +238,33 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{marginBottom:"5px"}}>
+                                        <Grid container sx={{ marginBottom: "5px" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-In Date</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date}</Typography>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date ? currentLease.lease_move_in_date : "-"}</Typography>
                                             </Grid>
                                             <Grid item xs={3} />
                                         </Grid>
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{marginBottom:"5px"}}>
+                                        <Grid container sx={{ marginBottom: "5px" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{currentLease.move_out_date}</Typography>
+                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{currentLease.move_out_date ? currentLease.move_out_date : "-"}</Typography>
                                             </Grid>
                                             <Grid item xs={3} />
                                         </Grid>
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{marginBottom:"5px"}}>
+                                        <Grid container sx={{ marginBottom: "5px" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Utilities Responsibilities</Typography>
@@ -249,7 +283,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 </Grid>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Grid container sx={{marginBottom:"5px"}}>
+                                                <Grid container sx={{ marginBottom: "5px" }}>
                                                     <Grid item xs={4} md={4}>
                                                         <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
                                                     </Grid>
@@ -293,7 +327,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Rent</Typography>
@@ -308,7 +342,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Frequency</Typography>
@@ -323,7 +357,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Due Date</Typography>
@@ -338,7 +372,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Available to Pay</Typography>
@@ -353,7 +387,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee After</Typography>
@@ -368,7 +402,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee</Typography>
@@ -383,7 +417,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{marginBottom:"5px"}}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee Per Day</Typography>
@@ -415,6 +449,35 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                             >
                                 Fee Details
                             </Typography>
+                            
+                            {leaseFees && 
+                            <DataGrid
+                                rows={leaseFees}
+                                columns={feesColumns}
+                                pageSize={10}
+                                rowsPerPageOptions={[10]}
+                                getRowId={(row) => row.leaseFees_uid}
+                                sx={{
+                                    '& .MuiDataGrid-columnHeader': {
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        color: "#3D5CAC",
+                                    },
+                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                        font: "bold",
+                                        width: '100%',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontWeight: "bold",
+                                    },
+                                    '& .MuiDataGrid-cell': {
+                                        color: "#3D5CAC",
+                                        fontWeight: "bold",
+                                    },
+
+                                }}
+                            />
+                        }
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
@@ -449,7 +512,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     </Grid>
                 </Grid>
             </Paper>
-        </Box>
+        </Box >
 
     );
 }
