@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import { makeStyles } from "@material-ui/core/styles";
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
+import LeaseIcon from "../Property/leaseIcon.png";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,6 +34,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [leaseFees, setLeaseFees] = useState([]);
     const [rent, setRent] = useState([]);
     const [documents, setDocuments] = useState([]);
+    const [signedLease, setSignedLease] = useState(null);
     const [remainingUtils, setRemainingUtils] = useState([]);
     const [selectedAddUtil, setSelectedAddUtil] = useState(null);
     const color = theme.palette.form.main;
@@ -40,7 +42,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     useEffect(() => {
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
         setCurrentLease(filtered);
-        console.log('In Renew Lease', leaseDetails, selectedLeaseId, currentLease);
+        console.log('In Renew Lease', leaseDetails, selectedLeaseId, filtered);
         const tenantsRow = JSON.parse(filtered.tenants);
         setTenantWithId(tenantsRow);
         const utils = JSON.parse(filtered.property_utilities);
@@ -67,7 +69,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
 
         setRemainingUtils(missingUtilitiesMap);
         console.log('missing', typeof (missingUtilitiesMap));
-        setDocuments(JSON.parse(filtered.lease_documents));
+        const docs = JSON.parse(filtered.lease_documents)
+        setDocuments(docs);
+        const leaseDoc = docs.find(doc => doc.description.trim().toLowerCase() === "modified unsigned lease".trim().toLowerCase());
+        console.log('leaselink', leaseDoc);
+        setSignedLease(leaseDoc);
     }, [leaseDetails, selectedLeaseId])
 
     const tenantColumns = [
@@ -206,6 +212,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             >
                 <Grid container sx={{ marginTop: '15px', alignItems: 'center', justifyContent: 'center' }}>
                     <Grid item xs={12} md={12}>
+                        <Box sx = {{display:"flex", alignItems:"center", justifyContent:"center", paddingBottom:"10px"}}>
                         <Typography
                             sx={{
                                 color: theme.typography.primary.black,
@@ -213,10 +220,24 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 fontSize: theme.typography.largeFont,
                                 textAlign: 'center'
                             }}
-                            paddingBottom="10px"
                         >
                             {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
                         </Typography>
+                        {signedLease !== null && <Button
+                            sx={{
+                                padding: "0px",
+                                '&:hover': {
+                                    backgroundColor: theme.palette.form.main,
+                                },
+                            }}
+                            className=".MuiButton-icon"
+                          onClick={() =>
+                            window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
+                          }
+                        >
+                            <img src={LeaseIcon} />
+                        </Button>}
+                        </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "10px 10px 15px 10px", backgroundColor: color }}>
