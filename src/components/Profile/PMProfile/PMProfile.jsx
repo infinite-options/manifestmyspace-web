@@ -20,7 +20,8 @@ import APIConfig from "../../../utils/APIConfig";
 
 function PMProfile() {
   const navigate = useNavigate();
-  const { getProfileId } = useUser();
+  const { selectedRole, getProfileId } = useUser();
+  
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [profileData, setProfileData] = useState([]);
@@ -30,10 +31,17 @@ function PMProfile() {
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
-      //   console.log("Res 1: ", res);
-      //   console.log("Res 2: ", res.data.profile);
-      //   console.log("Res 3: ", res.data.profile.result[0]);
-      setProfileData(res.data.profile.result[0]);
+        console.log(getProfileId());
+        console.log("selectedRole is ",(selectedRole==="PM_EMPLOYEE"));
+        console.log("Res 1: ", res);
+        // console.log("Res 2: ", res.data.profile);
+        // console.log("Res 3: ", res.data.profile.result[0]);
+      
+       
+        (selectedRole==="PM_EMPLOYEE" )? 
+        setProfileData(res.data.result[0]): 
+        setProfileData(res.data.profile.result[0]);
+      
       setShowSpinner(false);
       try {
         const parsedFees = JSON.parse(res.data.profile.result[0]?.business_services_fees);
@@ -70,6 +78,7 @@ function PMProfile() {
       : "No Address Is Not Available";
 
   let paymentElements = {
+    bank:{ icon: <img src={ChaseIcon} alt="Chase Icon" width="25" height="25" /> },
     zelle: { icon: <img src={ZelleIcon} alt="Zelle Icon" width="25" height="25" /> },
     apple_pay: { icon: <img src={ApplePayIcon} alt="ApplePay Icon" width="25" height="25" /> },
     stripe: { icon: <img src={StripeIcon} alt="Stripe Icon" width="25" height="25" /> },
@@ -292,7 +301,7 @@ function PMProfile() {
                 Account Details
               </Typography>
             </Stack>
-
+            {console.log("payment_account",payment_accounts)}
             {payment_accounts.map((payment_account) => (
               <Box
                 sx={{
@@ -309,6 +318,7 @@ function PMProfile() {
                     height: "25px",
                   }}
                 >
+                  {console.log("payment_account.paymentMethod_type",payment_account.paymentMethod_type)}
                   {paymentElements[payment_account.paymentMethod_type].icon}
                 </Box>
                 <Typography
