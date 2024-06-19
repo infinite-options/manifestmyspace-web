@@ -37,6 +37,7 @@ import useSessionStorage from './useSessionStorage';
 import { useCookies, Cookies } from 'react-cookie';
 import AddMaintenanceItem from './AddMaintenanceItem';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditMaintenanceItem from './EditMaintenanceItem';
 
 export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId) {
 	const dataObject = {};
@@ -118,6 +119,8 @@ export function MaintenanceOwner() {
 	const [quoteAcceptView] = useSessionStorage('quoteAcceptView', false);
 	const [rescheduleView] = useSessionStorage('rescheduleView', false);
 	const [payMaintenanceView] = useSessionStorage('payMaintenanceView', false);
+
+	const [editMaintenanceView] = useSessionStorage('editMaintenanceView', false);
 	const [showNewMaintenance, setshowNewMaintenance] = useState(false);
 
 	function navigateToAddMaintenanceItem() {
@@ -284,9 +287,8 @@ export function MaintenanceOwner() {
 		}
 	};
 
-    const handleBackButton = () => {
-        navigate(-1); // Fallback to default behavior if onBack is not provided
-        
+	const handleBackButton = () => {
+		navigate(-1); // Fallback to default behavior if onBack is not provided
 	};
 
 	return (
@@ -441,7 +443,9 @@ export function MaintenanceOwner() {
 
 				{!isMobile && (
 					<Grid item xs={7}>
-						{showNewMaintenance ? (
+						{ editMaintenanceView && selectedRole === 'OWNER'? (
+							<EditMaintenanceItem />
+						) : showNewMaintenance && selectedRole === 'OWNER' ? (
 							<AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
 						) : desktopView && selectedRole === 'OWNER' ? (
 							<>
